@@ -43,33 +43,36 @@ namespace Nepharia
         #region Private, Public and Internal fields
 
         #region Strings
-        internal const string   Loading = "Loading...";
-        private const string    TxtCopy = "Filename copied to Clipboard";
-        private const string    FileCopy = "File copied to Clipboard";
-        private const string    ExpFind = "Locating in file explorer";
-        private const string    NoImage = "No image loaded";
-        private const string    DragOverString = "Drop to load image";
-        private const string    SevenZipFiles = " *.jpg *jpeg. *.png *.gif *.jpe *.bmp *.tiff *.tif *.ico *.wdp *.dds *.svg";
+        internal const string Loading = "Loading...";
+        private const string TxtCopy = "Filename copied to Clipboard";
+        private const string FileCopy = "File copied to Clipboard";
+        private const string ExpFind = "Locating in file explorer";
+        private const string NoImage = "No image loaded";
+        private const string DragOverString = "Drop to load image";
+        private const string SevenZipFiles = " *.jpg *jpeg. *.png *.gif *.jpe *.bmp *.tiff *.tif *.ico *.wdp *.dds *.svg";
         /// <summary>
         /// File path of current  image
         /// </summary>
-        internal static string  PicPath { get; set; }
+        internal static string PicPath { get; set; }
         /// <summary>
         /// Backup of PicPath
         /// </summary>
-        internal static string  xPicPath { get; set; }
+        internal static string xPicPath { get; set; }
         /// <summary>
         /// File path for the extracted folder
         /// </summary>
-        private static string   TempZipPath { get; set; }
+        private static string TempZipPath { get; set; }
         /// <summary>
         /// Returns string with zoom %
         /// </summary>
-        private static string   ZoomPercentage { get { return Math.Round(AspectRatio * 100) + "%"; } }
+        private static string ZoomPercentage { get { return Math.Round(AspectRatio * 100) + "%"; } }
         /// <summary>
         /// Returns zoom % if not zero. Empty string for zero
         /// </summary>
-        private static string   Zoomed { get {
+        private static string Zoomed
+        {
+            get
+            {
                 var zoom = Math.Round(AspectRatio * 100);
                 if (zoom == 100)
                     return string.Empty;
@@ -83,8 +86,8 @@ namespace Nepharia
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        private static string   StringAspect(int width, int height)
-        { 
+        private static string StringAspect(int width, int height)
+        {
             var gcd = GCD(width, height);
             var x = (width / gcd);
             var y = (height / gcd);
@@ -137,7 +140,9 @@ namespace Nepharia
         private bool IsScrollEnabled
         {
             get { return Properties.Settings.Default.ScrollEnabled; }
-            set { Properties.Settings.Default.ScrollEnabled = value;
+            set
+            {
+                Properties.Settings.Default.ScrollEnabled = value;
                 Scroller.VerticalScrollBarVisibility = value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
                 if (!freshStartup && !string.IsNullOrEmpty(PicPath))
                 {
@@ -181,7 +186,7 @@ namespace Nepharia
         //http://www.netgfx.com/RGBaZR/
         private static ImageSource prevPicResource;
         //private static System.Timers.Timer activityTimer;
-       private static ContextMenu cm;
+        private static ContextMenu cm;
         #endregion
 
         #endregion
@@ -246,7 +251,7 @@ namespace Nepharia
             {
                 Header = "Set as wallpaper"
             };
-            wallcm.Click += (s,x) => wallpaperfilled(PicPath, WallpaperStyle.Fill);
+            wallcm.Click += (s, x) => wallpaperfilled(PicPath, WallpaperStyle.Fill);
             cm.Items.Add(wallcm);
             cm.Items.Add(new Separator());
 
@@ -336,7 +341,7 @@ namespace Nepharia
                 InputGestureText = "F2",
                 ToolTip = "Shows version and copyright"
             };
-            abcm.Click += (s,x) => about_window();
+            abcm.Click += (s, x) => about_window();
             cm.Items.Add(abcm);
 
             var helpcm = new MenuItem
@@ -345,7 +350,7 @@ namespace Nepharia
                 InputGestureText = "F1",
                 ToolTip = "Shows keyboard shortcuts and general help"
             };
-            helpcm.Click += (s,x) => help_window();
+            helpcm.Click += (s, x) => help_window();
             cm.Items.Add(helpcm);
 
             //var toolscm = new MenuItem
@@ -356,7 +361,7 @@ namespace Nepharia
             //};
             ////toolscm.Click += tools_window;
             //cm.Items.Add(toolscm);
-            //cm.Items.Add(new Separator());
+            cm.Items.Add(new Separator());
 
             var mincm = new MenuItem
             {
@@ -391,7 +396,7 @@ namespace Nepharia
                     new ScaleTransform(),
                     new TranslateTransform()
                 }
-            };          
+            };
 
             imgBorder.IsManipulationEnabled = true;
             Scroller.ClipToBounds = img.ClipToBounds = true;
@@ -484,7 +489,7 @@ namespace Nepharia
             }
             #endregion
 
-            
+
         }
 
         #endregion
@@ -660,7 +665,8 @@ namespace Nepharia
                     {
                         case 0:
                             break;
-                        case 1: await Task.Delay(700);
+                        case 1:
+                            await Task.Delay(700);
                             break;
                         case 2:
                             await Task.Delay(1500);
@@ -684,7 +690,7 @@ namespace Nepharia
 
             //if (!NeedsRefreshStartup) return;         
             //NeedsRefreshStartup = false;
-            
+
             #endregion
         }
 
@@ -764,7 +770,7 @@ namespace Nepharia
             #region Update source, size, animated gif and scroll
             if (IsScrollEnabled)
                 Scroller.ScrollToTop();
-            
+
             if (Path.GetExtension(Pics[x]) == ".gif")
                 XamlAnimatedGif.AnimationBehavior.SetSourceUri(img, new Uri(Pics[x]));
             else
@@ -824,7 +830,7 @@ namespace Nepharia
                 });
                 t.Start();
             }
-            
+
             #endregion
 
             #region Update the rest
@@ -1069,13 +1075,13 @@ namespace Nepharia
                     //Clean up behind
                     var arr = new string[3];
                     i = index - 3 < 0 ? (Pics.Count - index) - 3 : index - 3;
-                    if (i > -1)
+                    if (i > -1 && i < Pics.Count)
                         arr[0] = Pics[i];
                     i = i - 1 < 0 ? (Pics.Count - index) - 1 : i - 1;
-                    if (i > -1)
+                    if (i > -1 && i < Pics.Count)
                         arr[1] = Pics[i];
                     i = i - 1 < 0 ? (Pics.Count - index) - 1 : i - 1;
-                    if (i > -1)
+                    if (i > -1 && i < Pics.Count)
                         arr[2] = Pics[i];
                     Preloader.Clear(arr);
                 }
@@ -1291,7 +1297,7 @@ namespace Nepharia
         {
             var s1 = new StringBuilder();
             s1.Append(AppName).Append(" - ").Append(Path.GetFileName(Pics[index])).Append(" ").Append(index + 1).Append("/").Append(Pics.Count).Append(" files")
-                    .Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width,height)).Append(GetSizeReadable(new FileInfo(Pics[index]).Length)).Append(Zoomed);
+                    .Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height)).Append(GetSizeReadable(new FileInfo(Pics[index]).Length)).Append(Zoomed);
 
             var array = new string[3];
             array[0] = s1.ToString();
@@ -1335,6 +1341,7 @@ namespace Nepharia
                 case ".cb7":
                 case ".cbt":
                 case ".cbz":
+                case ".cba":
                 case ".xz":
                 case ".bzip2":
                 case ".gzip":
@@ -1405,7 +1412,7 @@ namespace Nepharia
             img.Width = img.Height = double.NaN;
             img.Source = prevPicResource;
             prevPicResource = null;
-            
+
             img.Stretch = Stretch.Uniform;
 
             isDraggedOver = false;
@@ -1604,7 +1611,7 @@ namespace Nepharia
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                         Open();
                     break;
-                #endregion,
+                    #endregion,
             }
         }
         #endregion
@@ -1862,10 +1869,10 @@ namespace Nepharia
             var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 38), height); // 38 = Titlebar height
 
             AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));
-            
+
             img.Width = xWidth = (width * AspectRatio);
-            img.Height = xHeight = (height * AspectRatio);            
-            
+            img.Height = xHeight = (height * AspectRatio);
+
             if (xWidth - 221 < 220)
                 Bar.MaxWidth = 210;
             else
@@ -2416,12 +2423,15 @@ namespace Nepharia
         private void wallpaperfilled(string path, WallpaperStyle style)
         {
             if (canNavigate)
+            {
                 if (File.Exists(path))
                     Task.Run(() => Wallpaper.SetDesktopWallpaper(path, style));
+            }
             else
             {
                 Task.Run(() =>
                 {
+                    //Handle if file from web, need clipboard image solution
                     var tempPath = Path.GetTempPath();
                     var randomName = Path.GetRandomFileName();
                     var webClient = new WebClient();
@@ -2429,6 +2439,7 @@ namespace Nepharia
                     webClient.DownloadFile(path, tempPath + randomName);
                     Wallpaper.SetDesktopWallpaper(tempPath + randomName, style);
                     File.Delete(tempPath + randomName);
+                    Thread.Sleep(2000);
                     Directory.Delete(tempPath);
                 });
             }
