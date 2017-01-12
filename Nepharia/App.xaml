@@ -1,0 +1,22 @@
+﻿<Application x:Class="Nepharia.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Nepharia"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="lib\Styles\Menu.xaml" />
+                <ResourceDictionary Source="lib\Styles\Button.xaml" />
+                <ResourceDictionary Source="lib\Styles\Border.xaml" />
+                <ResourceDictionary Source="lib\Styles\ToggleButton.xaml" />
+                <ResourceDictionary Source="lib\Styles\ToolTip.xaml" />
+                <ResourceDictionary Source="lib\Styles\ScrollBar.xaml"/>
+                <ResourceDictionary Source="lib\Styles\FlatButton.xaml" />
+                <ResourceDictionary Source="lib\Styles\TabControl.xaml" />
+                <ResourceDictionary Source="lib\Styles\RadioButton.xaml" />
+                <ResourceDictionary Source="lib\Styles\Label.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
