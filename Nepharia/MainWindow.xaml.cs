@@ -33,7 +33,7 @@ namespace Nepharia
         {
             InitializeComponent();
 
-            //Loaded += (s, e) => LoadAjaxLoading();
+            Loaded += (s, e) => MainWindow_Loaded(s,e);
 
             ContentRendered += MainWindow_ContentRendered;
         }
@@ -251,7 +251,7 @@ namespace Nepharia
             {
                 Header = "Set as wallpaper"
             };
-            wallcm.Click += (s, x) => wallpaperfilled(PicPath, WallpaperStyle.Fill);
+            wallcm.Click += (s, x) => setWallpaper(PicPath, WallpaperStyle.Fill);
             cm.Items.Add(wallcm);
             cm.Items.Add(new Separator());
 
@@ -404,94 +404,113 @@ namespace Nepharia
             st = (ScaleTransform)((TransformGroup)img.RenderTransform).Children.First(tr => tr is ScaleTransform);
             tt = (TranslateTransform)((TransformGroup)img.RenderTransform).Children.First(tr => tr is TranslateTransform);
 
-            #endregion            
-
-            #region Add events
-            Closing += Window_Closing;
-
-            #region keyboard and Mouse_Keys Keys
-            //PreviewKeyDown += previewKeys;
-            KeyDown += Keys;
-            KeyUp += MainWindow_KeyUp;
-            MouseDown += MainWindow_MouseDown;
             #endregion
 
-            #region Button Events
+            #region Do updates in seperate thread
+            var task = new Task(() => {
+                #region Add events
+                Closing += Window_Closing;
 
-            #region closebutton
-            CloseButton.PreviewMouseLeftButtonDown += CloseButtonMouseButtonDown;
-            CloseButton.MouseEnter += CloseButtonMouseOver;
-            CloseButton.MouseLeave += CloseButtonMouseLeave;
-            CloseButton.Click += (s, x) => Close();
-            #endregion
+                #region keyboard and Mouse_Keys Keys
+                //PreviewKeyDown += previewKeys;
+                KeyDown += Keys;
+                KeyUp += MainWindow_KeyUp;
+                MouseDown += MainWindow_MouseDown;
+                #endregion
 
-            #region MinButton
-            MinButton.PreviewMouseLeftButtonDown += MinButtonMouseButtonDown;
-            MinButton.MouseEnter += MinButtonMouseOver;
-            MinButton.MouseLeave += MinButtonMouseLeave;
-            MinButton.Click += (s, x) => Minimize(this);
-            #endregion
+                #region Button Events
 
-            #region MaxButton
-            MaxButton.PreviewMouseLeftButtonDown += MaxButtonMouseButtonDown;
-            MaxButton.MouseEnter += MaxButtonMouseOver;
-            MaxButton.MouseLeave += MaxButtonMouseLeave;
-            MaxButton.Click += (s, x) => Maximize(this);
-            #endregion
+                #region closebutton
+                CloseButton.PreviewMouseLeftButtonDown += CloseButtonMouseButtonDown;
+                CloseButton.MouseEnter += CloseButtonMouseOver;
+                CloseButton.MouseLeave += CloseButtonMouseLeave;
+                CloseButton.Click += (s, x) => Close();
+                #endregion
 
-            #endregion
+                #region MinButton
+                MinButton.PreviewMouseLeftButtonDown += MinButtonMouseButtonDown;
+                MinButton.MouseEnter += MinButtonMouseOver;
+                MinButton.MouseLeave += MinButtonMouseLeave;
+                MinButton.Click += (s, x) => Minimize(this);
+                #endregion
 
-            #region Bar
-            Bar.MouseLeftButtonDown += Move;
-            #endregion
+                #region MaxButton
+                MaxButton.PreviewMouseLeftButtonDown += MaxButtonMouseButtonDown;
+                MaxButton.MouseEnter += MaxButtonMouseOver;
+                MaxButton.MouseLeave += MaxButtonMouseLeave;
+                MaxButton.Click += (s, x) => Maximize(this);
+                #endregion
 
-            #region img
+                #endregion
 
-            img.MouseLeftButtonDown += img_MouseLeftButtonDown;
-            img.MouseLeftButtonUp += img_MouseLeftButtonUp;
+                #region Bar
+                Bar.MouseLeftButtonDown += Move;
+                #endregion
 
-            img.MouseMove += img_MouseMove;
-            img.MouseWheel += img_MouseWheel;
-            //img.MouseEnter += img_MouseEnter;
-            //img.MouseLeave += img_MouseLeave;
+                #region img
 
-            #endregion
+                img.MouseLeftButtonDown += img_MouseLeftButtonDown;
+                img.MouseLeftButtonUp += img_MouseLeftButtonUp;
 
-            #region bg
-            //bg.MouseMove += MouseMoves;
-            //bg.MouseLeave += MouseLeaves;
-            bg.Drop += image_Drop_1;
-            bg.DragEnter += image_DragEnter_1;
-            bg.DragLeave += bg_DragLeave;
-            //bg.MouseEnter += bg_MouseEnter;
-            //bg.MouseLeave += bg_MouseLeave;
-            //bg.MouseLeftButtonDown += bg_MouseLeftButtonDown;
-            #endregion
+                img.MouseMove += img_MouseMove;
+                img.MouseWheel += img_MouseWheel;
+                //img.MouseEnter += img_MouseEnter;
+                //img.MouseLeave += img_MouseLeave;
 
-            #region Scroller
-            //Scroller.MouseEnter += Scroller_MouseEnter;
-            //Scroller.MouseLeave += Scroller_MouseLeave;
-            #endregion
+                #endregion
 
+                #region bg
+                //bg.MouseMove += MouseMoves;
+                //bg.MouseLeave += MouseLeaves;
+                bg.Drop += image_Drop_1;
+                bg.DragEnter += image_DragEnter_1;
+                bg.DragLeave += bg_DragLeave;
+                //bg.MouseEnter += bg_MouseEnter;
+                //bg.MouseLeave += bg_MouseLeave;
+                //bg.MouseLeftButtonDown += bg_MouseLeftButtonDown;
+                #endregion
+
+                #region Scroller
+                //Scroller.MouseEnter += Scroller_MouseEnter;
+                //Scroller.MouseLeave += Scroller_MouseLeave;
+                #endregion
+
+                #endregion
+
+                #region Update settings if needed
+                if (Properties.Settings.Default.CallUpgrade)
+                {
+                    Properties.Settings.Default.Upgrade();
+                    Properties.Settings.Default.CallUpgrade = false;
+                }
+                #endregion
+            });
+            task.Start();
             #endregion
 
             #region Add UserControls :)
             LoadTooltipStyle();
             LoadAboutWindow();
             LoadHelpWindow();
-            #endregion
+            #endregion           
 
-            #region Update settings if needed
-            if (Properties.Settings.Default.CallUpgrade)
+            if (img.Source == null)
             {
-                Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.CallUpgrade = false;
+                AjaxLoadingEnd();
             }
-            #endregion
-
-
         }
 
+        #region Loaded
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            ajaxLoading = new AjaxLoading
+            {
+                Opacity = 0
+            };
+            bg.Children.Add(ajaxLoading);
+            AjaxLoadingStart();
+        }
+        #endregion
         #endregion
 
         #region Size changed
@@ -572,7 +591,7 @@ namespace Nepharia
             #region Set Loading
             Title = Bar.Text = Loading;
             Bar.ToolTip = Loading;
-            //AjaxLoadingStart();
+            AjaxLoadingStart();
             #endregion
 
             #region Check if folder has changed
@@ -686,7 +705,7 @@ namespace Nepharia
             #endregion
 
             #region Set NeedsRefreshStartup
-            //AjaxLoadingEnd();
+            AjaxLoadingEnd();
 
             //if (!NeedsRefreshStartup) return;         
             //NeedsRefreshStartup = false;
@@ -1388,26 +1407,16 @@ namespace Nepharia
                 img.Width = Scroller.ActualWidth;
                 img.Height = Scroller.ActualHeight;
             }
-            else if (!isDraggedOver)
+            else
             {
                 prevPicResource = img.Source;
+
+                if (xWidth > 0 && xHeight > 0)
+                {
+                    img.Width = xWidth;
+                    img.Height = xHeight;
+                }
             }
-
-            //if (img.Source != null)
-            //{
-            //    prevPicResource = img.Source;
-
-            //    if (xWidth > 0 && xHeight > 0)
-            //    {
-            //        img.Width = xWidth;
-            //        img.Height = xHeight;
-            //    }
-            //}
-            //else
-            //{
-            //    img.Width = Scroller.ActualWidth;
-            //    img.Height = Scroller.ActualHeight;
-            //}
 
             img.Source = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : ShellFile.FromFilePath(files[0]).Thumbnail.BitmapSource;
 
@@ -1418,15 +1427,15 @@ namespace Nepharia
             if (!isDraggedOver)
                 return;
 
-            img.Width = img.Height = double.NaN;
-
             if (prevPicResource != null)
             {
                 img.Source = prevPicResource;
                 prevPicResource = null;
             }
             else
+            {
                 img.Source = null;
+            }
 
             isDraggedOver = false;
 
@@ -1723,10 +1732,7 @@ namespace Nepharia
 
         private void img_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
-                Pic(e.Delta > 0, false);
-
-            else if (Properties.Settings.Default.ScrollEnabled)
+            if (Properties.Settings.Default.ScrollEnabled)
             {
                 if (e.Delta > 0) Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 30);
                 else if (e.Delta < 0) Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 30);
@@ -2118,7 +2124,7 @@ namespace Nepharia
         //        return;
 
         //    await Task.Delay(TimeSpan.FromSeconds(2.4));
-        //    ScrollBar s = Scroller.Template.FindName("PART_VerticalScrollBar", Scroller) as ScrollBar;
+        //    var s = Scroller.Template.FindName("PART_VerticalScrollBar", Scroller) as System.Windows.Controls.Primitives.ScrollBar;
         //    AnimationHelper.Fade(s, 0, TimeSpan.FromSeconds(1));
         //}
 
@@ -2127,7 +2133,7 @@ namespace Nepharia
         //    if (img.Source == null)
         //        return;
 
-        //    ScrollBar s = Scroller.Template.FindName("PART_VerticalScrollBar", Scroller) as ScrollBar;
+        //    var s = Scroller.Template.FindName("PART_VerticalScrollBar", Scroller) as System.Windows.Controls.Primitives.ScrollBar;
         //    AnimationHelper.Fade(s, 1, TimeSpan.FromSeconds(.7));
         //}
         #endregion
@@ -2433,7 +2439,7 @@ namespace Nepharia
 
         #region Wallpaper
 
-        private void wallpaperfilled(string path, WallpaperStyle style)
+        private void setWallpaper(string path, WallpaperStyle style)
         {
             if (canNavigate)
             {
