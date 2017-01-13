@@ -1383,37 +1383,50 @@ namespace Nepharia
             if (drag_drop_check(files) == null)
                 return;
 
-            if (img.Source != null)
-            {
-                prevPicResource = img.Source;
-
-                if (xWidth > 0 && xHeight > 0)
-                {
-                    img.Width = xWidth;
-                    img.Height = xHeight;
-                }
-            }
-            else
+            if (img.Source == null)
             {
                 img.Width = Scroller.ActualWidth;
                 img.Height = Scroller.ActualHeight;
             }
+            else if (!isDraggedOver)
+            {
+                prevPicResource = img.Source;
+            }
+
+            //if (img.Source != null)
+            //{
+            //    prevPicResource = img.Source;
+
+            //    if (xWidth > 0 && xHeight > 0)
+            //    {
+            //        img.Width = xWidth;
+            //        img.Height = xHeight;
+            //    }
+            //}
+            //else
+            //{
+            //    img.Width = Scroller.ActualWidth;
+            //    img.Height = Scroller.ActualHeight;
+            //}
 
             img.Source = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : ShellFile.FromFilePath(files[0]).Thumbnail.BitmapSource;
-            img.Stretch = Stretch.Fill;
 
         }
 
         void bg_DragLeave(object sender, DragEventArgs e)
         {
-            if (!isDraggedOver || prevPicResource == null)
+            if (!isDraggedOver)
                 return;
 
             img.Width = img.Height = double.NaN;
-            img.Source = prevPicResource;
-            prevPicResource = null;
 
-            img.Stretch = Stretch.Uniform;
+            if (prevPicResource != null)
+            {
+                img.Source = prevPicResource;
+                prevPicResource = null;
+            }
+            else
+                img.Source = null;
 
             isDraggedOver = false;
 
