@@ -2420,7 +2420,18 @@ namespace Nepharia
         {
             var dlg = new Microsoft.Win32.OpenFileDialog();
             dlg.Filter =
-                "Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg*.wdp*.svg*|jpg|*.jpg*.jpeg*|bmp|*.bmp*|png|*.png*|gif|*.gif*|ico|*.ico*|wdp|*.wdp*|svg|*.svg*|tif|*.tif*";
+                "Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg*.wdp*"                  // Common pics
+                + "|jpg| *.jpg *.jpeg *"                                                    // JPG
+                + "|bmp|*.bmp*"                                                             // BMP
+                + "|png|*.png*"                                                             // PNG
+                + "|gif|*.gif*"                                                             // GIF
+                + "|ico|*.ico*"                                                             // ICO
+                + "|wdp|*.wdp*"                                                             // WDP
+                + "|svg|*.svg*"                                                             // SVG
+                + "|tif|*.tif*"                                                             // Tif
+                + "|Photoshop|*.psd *.psb"                                                  // PSD
+                + "|Archives|*.zip *.7zip *.7z *.rar *.bzip2 *.tar *.wim *.iso *.cab"       // Archives
+                + "|Comics|*.cbr *.cb7 *.cbt *.cbz *.xz";                                   // Comics
             dlg.Title = "Open image - PicView";
             if (dlg.ShowDialog() == true)
             {
@@ -2431,7 +2442,6 @@ namespace Nepharia
             }
             else return;
         }
-
         #endregion
 
         #endregion

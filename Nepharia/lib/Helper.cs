@@ -28,6 +28,7 @@ namespace Nepharia.lib
         string pvParam, uint fWinIni);
 
         #region file properties
+        //http://stackoverflow.com/a/1936957
 
         private const int SW_SHOW = 5;
         private const uint SEE_MASK_INVOKEIDLIST = 12;
@@ -151,14 +152,6 @@ namespace Nepharia.lib
             string invalidRegStr = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
 
             return Regex.Replace(name, invalidRegStr, "_");
-        }
-
-        internal static bool IsSameFolder(string source, string target)
-        {
-            source = Path.GetDirectoryName(source);
-            target = Path.GetDirectoryName(target);
-
-            return source.Equals(target);
         }
         internal static List<string> FileList(string path)
         {
