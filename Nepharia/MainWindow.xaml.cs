@@ -269,7 +269,7 @@ namespace Nepharia
                 Header = "File Details",
                 InputGestureText = "Ctrl + I"
             };
-            fildecm.Click += (s, x) => ShowFileProperties(PicPath);
+            fildecm.Click += (s, x) => NativeMethods.ShowFileProperties(PicPath);
             cm.Items.Add(fildecm);
 
             var cppcm = new MenuItem
@@ -2051,8 +2051,7 @@ namespace Nepharia
 
         private void AjaxLoadingEnd()
         {
-            if (ajaxLoading.Opacity != 0)
-                AnimationHelper.Fade(ajaxLoading, 0, TimeSpan.FromSeconds(.2));
+            AnimationHelper.Fade(ajaxLoading, 0, TimeSpan.FromSeconds(.2));
         }
         #endregion
 
