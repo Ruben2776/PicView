@@ -826,26 +826,6 @@ namespace Nepharia
 
                     PreLoad(x, reverse.Value);
                     PreloadCount = 4;
-
-                    //if (false)
-                    //{
-                    //    var timer = new DispatcherTimer(
-                    //        TimeSpan.FromSeconds(20), DispatcherPriority.Background, (s, e) =>
-                    //        {
-                    //            var fileList = FileList(Path.GetDirectoryName(PicPath));
-                    //            if (fileList.Count != Pics.Count)
-                    //            {
-                    //                lock (Pics)
-                    //                {
-                    //                    Pics.Clear();
-                    //                    Pics = fileList;
-                    //                }
-                    //            }
-                    //        },
-                    //        Application.Current.Dispatcher
-                    //    );
-                    //    timer.Start();
-                    //}
                 });
                 t.Start();
             }
@@ -957,7 +937,6 @@ namespace Nepharia
 
             img.Width = xWidth;
             img.Height = xHeight;
-            //img.Stretch = Stretch.Fill;
 
             img.Source = Preloader.Contains(Pics[FolderIndex]) ? Preloader.Load(Pics[FolderIndex]) : ShellFile.FromFilePath(Pics[FolderIndex]).Thumbnail.BitmapSource;
 
@@ -974,9 +953,7 @@ namespace Nepharia
                 Preloader.Clear();
             }
 
-            //img.Stretch = Stretch.Uniform;
-            img.Width = double.NaN;
-            img.Height = double.NaN;
+            GoToPic = false;
             Pic(FolderIndex);
         }
 
@@ -1509,8 +1486,6 @@ namespace Nepharia
                             Pic(true, true); // Go to last if Ctrl held down
                         else
                             Pic(true, false);
-
-                        GoToPic = false;
                     }
                     else if (canNavigate)
                     {

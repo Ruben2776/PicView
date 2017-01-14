@@ -81,7 +81,7 @@ namespace Nepharia.lib
 
             var timer = new DispatcherTimer
             (
-                TimeSpan.FromSeconds(120), DispatcherPriority.ContextIdle, (s, e) => {
+                TimeSpan.FromSeconds(40), DispatcherPriority.ContextIdle, (s, e) => {
                     for (int i = 0; i < array.Length; i++)
                     {
                         Remove(array[i]);
@@ -98,7 +98,7 @@ namespace Nepharia.lib
         {
             var timer = new DispatcherTimer
             (
-                TimeSpan.FromMinutes(3), DispatcherPriority.ContextIdle, (s, e) =>
+                TimeSpan.FromMinutes(1.5), DispatcherPriority.ContextIdle, (s, e) =>
                 {
                     for (int i = 0; i < array.Length; i++)
                     {
