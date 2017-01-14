@@ -223,6 +223,9 @@ namespace Nepharia
                 if (File.Exists(file))
                     Pic(file);
                 else
+                    if (Uri.IsWellFormedUriString(file, UriKind.Absolute))
+                    PicWeb(file);
+                else
                     UnLoad();
             }
             #endregion   
@@ -750,7 +753,7 @@ namespace Nepharia
 
                     if (freshStartup || PreloadCount < 2 || Preloader.Count() < 0)
                     {
-                        // If preloader is not running, load it manually
+                        // If preloader is not running, load picture manually
                         await Task.Run(() => pic = RenderToBitmapSource(Pics[x]));
                     }
                     else
@@ -985,13 +988,29 @@ namespace Nepharia
 
         private async void PicWeb(string path)
         {
+            if (ajaxLoading.Opacity != 1)
+            {
+                AjaxLoadingStart();
+            }
             var backUp = Bar.Text;
             Bar.Text = Loading;
 
-            var pic = await LoadImageWebAsync(path);
+            BitmapSource pic = null;
+            try
+            {
+                pic = await LoadImageWebAsync(path);
+            }
+            catch (WebException)
+            {
+                pic = null;
+            }
 
             if (pic == null)
             {
+                if (backUp == Loading)
+                {
+                    backUp = NoImage;
+                }
                 Bar.Text = backUp;
                 ToolTipStyle("Unable to load image", false);
                 return;
@@ -1011,6 +1030,7 @@ namespace Nepharia
             Pics.Clear();
             NoProgress();
             canNavigate = false;
+            AjaxLoadingEnd();
         }
 
         private async Task<BitmapSource> LoadImageWebAsync(string address)

@@ -9,17 +9,6 @@ namespace Nepharia.lib
 {
     internal static class ImageManager
     {
-        #region GhostScriptFormats
-
-        static readonly string[] GhostScriptFormats =
-        {
-            ".eps",
-            ".pdf",
-            ".ps"
-        };
-
-        #endregion
-
         #region Error Handling
 
         static bool Supported(string file, string extension)
@@ -57,11 +46,8 @@ namespace Nepharia.lib
             BitmapSource pic;
             try
             {
-                var settings = new MagickReadSettings();
-                if (GhostScriptFormats.Contains(extension))
-                    settings.Density = new PointD(300);
 
-                using (MagickImage magick = new MagickImage(file, settings))
+                using (MagickImage magick = new MagickImage(file))
                 {
                     magick.Read(file);
                     magick.Quality = 100;
@@ -76,7 +62,7 @@ namespace Nepharia.lib
                         var mrs = new MagickReadSettings();
                         mrs.Format = MagickFormat.Svg;
                         mrs.ColorSpace = ColorSpace.Transparent;
-                        magick.BackgroundColor = MagickColor.Transparent;
+                        mrs.BackgroundColor = MagickColors.Transparent;
                         magick.Read(file, mrs);
                         magick.Format = MagickFormat.Png;
                         var stream = new MemoryStream();

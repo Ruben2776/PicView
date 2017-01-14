@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="ColorTheme" Type="System.Int16" Scope="User">
-      <Value Profile="(Default)">3</Value>
+      <Value Profile="(Default)">2</Value>
     </Setting>
     <Setting Name="Blue" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#FF0461B1</Value>
