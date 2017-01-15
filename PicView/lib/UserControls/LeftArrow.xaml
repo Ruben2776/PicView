@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="PicView.lib.UserControls.LeftArrow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PicView.lib.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="100">
+    <Canvas Width="50" Height="60" x:Name="canvas">
+        <Polygon x:Name="Arrow" Points="352,128.4 319.7,96 160,256 160,256 160,256 319.7,416 352,383.6 224.7,256 " Width="20" Height="40" Stretch="Uniform" Canvas.Left="12" Canvas.Top="10">
+            <Polygon.Fill>
+                <SolidColorBrush x:Name="ArrowFill" Color="White"/>
+            </Polygon.Fill>
+        </Polygon>
+        <Canvas.Background>
+            <SolidColorBrush x:Name="CanvasBGcolor" Color="#A7222222"/>
+        </Canvas.Background>
+    </Canvas>
+</UserControl>
