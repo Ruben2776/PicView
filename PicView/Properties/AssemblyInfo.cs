@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("PicView")]
 [assembly: AssemblyDescription("Image viewer")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Nepharia")]
+[assembly: AssemblyCompany("PicView")]
 [assembly: AssemblyProduct("PicView")]
-[assembly: AssemblyCopyright("© Nepharia 2013 - 2016")]
+[assembly: AssemblyCopyright("© Ruben Hyldgaard Negendahl 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,7 +51,7 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.0.1.0")]
+[assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: NeutralResourcesLanguage("en")]
 

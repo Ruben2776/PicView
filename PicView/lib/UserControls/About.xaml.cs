@@ -18,6 +18,10 @@ namespace PicView.UserControls
         public About()
         {
             InitializeComponent();
+
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+            appVersion.Content = version + fvi.FileVersion;
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)
@@ -46,9 +50,6 @@ namespace PicView.UserControls
             ionic.MouseLeave += ionicMouseLeave;
             ionic.MouseLeftButtonDown += ionicMouseButtonDown;
 
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            appVersion.Content = version + fvi.FileVersion;
         }
 
         #region Aller

@@ -63,7 +63,7 @@
     <FileAlignment>1024</FileAlignment>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Nepharia.App</StartupObject>
+    <StartupObject>PicView.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>38C58B28C178F5682598C8BE2A2BC2642D86745B</ManifestCertificateThumbprint>

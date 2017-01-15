@@ -35,7 +35,7 @@
 
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,38,0,0">
             <Rectangle Fill="#FF131313" Width="7"/>
-            <Rectangle Fill="#1F1F21" Width="336" Height="317"/>
+            <Rectangle Fill="#FF141414" Width="336" Height="317"/>
             <Rectangle Fill="#FF131313" Width="7"/>
         </StackPanel>
 
@@ -59,7 +59,7 @@
         </StackPanel>
         
         <Rectangle Fill="#FF131313" VerticalAlignment="Bottom" Height="45"/>
-        <Label Content="© Nepharia 2013 - 2015"
+        <Label Content="© PicView 2017"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Bottom"
                    Margin="0,0,0,6"
