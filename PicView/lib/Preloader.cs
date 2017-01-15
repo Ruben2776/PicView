@@ -16,7 +16,10 @@ namespace PicView.lib
         {
             if (Contains(file))
                 return;
-            var pic = ImageManager.RenderToBitmapSource(file, Path.GetExtension(file));
+            var ext = Path.GetExtension(file);
+            if (ext == ".gif")
+                return;
+            var pic = ImageManager.RenderToBitmapSource(file, ext);
             if (pic == null)
                 return;
             pic.Freeze();
@@ -31,7 +34,6 @@ namespace PicView.lib
             return Sources[file];
         }
 
-        //internal static int Count { get { return Sources.Count; } }
         internal static void Add(int i)
         {
             if (i >= MainWindow.Pics.Count || i < 0)

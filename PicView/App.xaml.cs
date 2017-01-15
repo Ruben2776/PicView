@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace Nepharia
+namespace PicView
 {
     /// <summary>
     /// Interaction logic for App.xaml

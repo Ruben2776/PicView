@@ -31,9 +31,7 @@ namespace PicView
         public MainWindow()
         {
             InitializeComponent();
-
             Loaded += (s, e) => MainWindow_Loaded(s,e);
-
             ContentRendered += MainWindow_ContentRendered;
         }
 
@@ -130,7 +128,7 @@ namespace PicView
         private static bool RightbuttonClicked;
         private static bool imageSettingsWindowOpen;
         private static bool openmenuWindowOpen;
-        private static bool settingsWindowOpen;
+        //private static bool settingsWindowOpen;
         private static bool GoToPic;
         //private static bool cursorHidden;
         private static bool isZoomed;
@@ -195,26 +193,6 @@ namespace PicView
             }
         }
 
-        //private static bool SettingsWindowOpen
-        //{
-        //    get { return settingsWindowOpen; }
-        //    set
-        //    {
-        //        settingsWindowOpen = value;
-        //        SettingsWindow.Visibility = Visibility.Visible;
-        //        var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
-        //        if (!value)
-        //        {
-        //            da.To = 0;
-        //            da.Completed += delegate { SettingsWindow.Visibility = Visibility.Hidden; };
-        //        }
-        //        else
-        //            da.To = 1;
-        //        if (SettingsWindow != null)
-        //            SettingsWindow.BeginAnimation(OpacityProperty, da);
-        //    }
-        //}
-
         #endregion
 
         #region Controls
@@ -256,13 +234,13 @@ namespace PicView
         private void MainWindow_ContentRendered(object sender, EventArgs e)
         {
             #region Extra settings
+            AllowDrop = true;
             Scroller.MaxHeight = SystemParameters.PrimaryScreenHeight - ComfySpace;
             Scroller.MaxWidth = SystemParameters.PrimaryScreenWidth - 8;
             IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
-            AllowDrop = true;
 
-            var WindowBrush = FindResource("BorderBrush") as SolidColorBrush;
-            WindowBrush.Color = AnimationHelper.GetPrefferedColorDown();
+            //var WindowBrush = FindResource("BorderBrush") as SolidColorBrush;
+            //WindowBrush.Color = AnimationHelper.GetPrefferedColorDown();
             //var MenuBrush = FindResource("MenuHighlightBrushKey") as SolidColorBrush;
             //MenuBrush.Color = AnimationHelper.GetPrefferedColorDown();
             #endregion
@@ -566,7 +544,7 @@ namespace PicView
                 LeftButton.PreviewMouseLeftButtonDown += LeftButtonMouseButtonDown;
                 LeftButton.MouseEnter += LeftButtonMouseOver;
                 LeftButton.MouseLeave += LeftButtonMouseLeave;
-                LeftButton.Click += (s, x) => { LeftbuttonClicked = true; Pic(true, false); };
+                LeftButton.Click += (s, x) => { LeftbuttonClicked = true; Pic(false, false); };
 
                 #endregion
 
@@ -575,8 +553,14 @@ namespace PicView
                 RightButton.PreviewMouseLeftButtonDown += RightButtonMouseButtonDown;
                 RightButton.MouseEnter += RightButtonMouseOver;
                 RightButton.MouseLeave += RightButtonMouseLeave;
-                RightButton.Click += (s, x) => { RightbuttonClicked = true; Pic(false, false); };
+                RightButton.Click += (s, x) => { RightbuttonClicked = true; Pic(true, false); };
 
+                #endregion
+
+                #region SettingsWindow
+                //SettingsButton.PreviewMouseLeftButtonDown += SettingsButtonButtonMouseButtonDown;
+                SettingsButton.MouseEnter += SettingsButtonButtonMouseOver;
+                SettingsButton.MouseLeave += SettingsButtonButtonMouseLeave;
                 #endregion
 
                 #endregion
@@ -615,6 +599,12 @@ namespace PicView
 
                 #region TitleBar
                 TitleBar.MouseLeftButtonDown += Move;
+                #endregion
+
+                #region Logobg
+                //Logobg.MouseEnter += LogoMouseOver;
+                //Logobg.MouseLeave += LogoMouseLeave;
+                //Logobg.PreviewMouseLeftButtonDown += LogoMouseButtonDown;
                 #endregion
 
                 #region Lower Bar
@@ -2021,14 +2011,6 @@ namespace PicView
         /// <param name="height"></param>
         private void ZoomFit(double width, double height)
         {
-            //Buttons (38 * 3 = 87) logo (canvas width 80 + margin right 7 = 87) = 179 (Bar.MinWidth 444) 444 - 179 = 270 - (comfy space) = 210
-            if (width - 221 < 220)
-                Bar.MaxWidth = 210;
-            else
-                Bar.MaxWidth = width - 220;
-
-            //img.MaxWidth = double.PositiveInfinity;
-
             //Aspect ratio calculation
             var maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth, width);
             var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 98), height); // 38 = Titlebar height, 60 = lowerbar height
@@ -2047,7 +2029,13 @@ namespace PicView
             {
                 img.Width = xWidth = (width * AspectRatio);
                 img.Height = xHeight = (height * AspectRatio);
-            }            
+            }
+
+            //Buttons (38 * 3 = 87) logo (canvas width 80 + margin right 7 = 87) = 179 (Bar.MinWidth 444) 444 - 179 = 270 - (comfy space) = 210
+            if (xWidth - 221 < 220)
+                Bar.MaxWidth = 210;
+            else
+                Bar.MaxWidth = xWidth - 220;
 
             isZoomed = false;
         }
@@ -2287,6 +2275,43 @@ namespace PicView
 
         #region MouseOver Button Events
 
+        #region Logo Mouse Over
+
+        private void LogoMouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, pBrush, false);
+            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, iBrush, false);
+            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, cBrush, false);
+            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, vBrush, false);
+            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, iiBrush, false);
+            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, eBrush, false);
+            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, wBrush, false);
+        }
+
+        private void LogoMouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, pBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, iBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, cBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, vBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, iiBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, eBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, wBrush, false);
+        }
+
+        private void LogoMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(pBrush, false);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(iBrush, false);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(cBrush, false);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(vBrush, false);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(iiBrush, false);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(eBrush, false);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(wBrush, false);
+        }
+
+        #endregion
+
         #region Close Button
 
         private void CloseButtonMouseOver(object sender, MouseEventArgs e)
@@ -2426,6 +2451,25 @@ namespace PicView
             AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, ImagePath2Fill, false);
             AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, ImagePath3Fill, false);
             AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, ImagePath4Fill, false);
+        }
+
+        #endregion
+
+        #region SettingsButton
+
+        private void SettingsButtonButtonMouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, SettingsButtonFill, false);
+        }
+
+        private void SettingsButtonButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(SettingsButtonFill, false);
+        }
+
+        private void SettingsButtonButtonMouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, SettingsButtonFill, false);
         }
 
         #endregion

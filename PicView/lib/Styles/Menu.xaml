@@ -404,10 +404,10 @@
             <Trigger Property="IsHighlighted"
                Value="true">
                 <Setter Property="Background"
-                        TargetName="Border" Value="#F2007ACC"/>
+                        TargetName="Border" Value="#E5424242"/>
                 <Setter Property="BorderBrush"
                         TargetName="Border"
-                        Value="#F5007ACC"/>               
+                        Value="#FF3A3A3A"/>               
             </Trigger>
             <Trigger Property="IsEnabled"
                Value="false">

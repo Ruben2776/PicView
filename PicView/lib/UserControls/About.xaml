@@ -27,92 +27,92 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
+    <Border Height="400" Width="350" BorderBrush="#FF2B2B2B" BorderThickness="1">
+        <Grid>
 
-    <Grid Height="370" Width="350">
-
-        <Rectangle VerticalAlignment="Top" Height="38" Fill="#FF131313"/>
-        <Button x:Name="CloseButton"
+            <Rectangle VerticalAlignment="Top" Height="34" Fill="#F2131313"/>
+            <Button x:Name="CloseButton"
                     ToolTip="Close"
                     FocusVisualStyle="{x:Null}"
                     BorderBrush="{x:Null}"
                     OverridesDefaultStyle="True"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
-                    Width="38"
-                    Height="38"
+                    Width="34"
+                    Height="34"
                     Click="Close"
                     Margin="0"
                     BorderThickness="0">
-            <Button.Background>
-                <SolidColorBrush x:Name="CloseButtonBrush" Color="#00000000"/>
-            </Button.Background>
-            <Path Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
+                <Button.Background>
+                    <SolidColorBrush x:Name="CloseButtonBrush" Color="#00000000"/>
+                </Button.Background>
+                <Path Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
                           SnapsToDevicePixels="True"
-                          Fill="White" />
-        </Button>
-        <Label HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Height="38">About</Label>
+                          Fill="WhiteSmoke" />
+            </Button>
+            <Label HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Height="34">About</Label>
 
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,38,0,0">
-            <Rectangle Fill="#FF131313" Width="7"/>
-            <Rectangle Fill="#1F1F21" Width="336" Height="317"/>
-            <Rectangle Fill="#FF131313" Width="7"/>
-        </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,34,0,0">
+                <Rectangle Fill="#F2131313" Width="7"/>
+                <Rectangle Fill="#ED141414" Width="336" Height="329"/>
+                <Rectangle Fill="#F2131313" Width="7"/>
+            </StackPanel>
 
-        <StackPanel Margin="0,43,0,0">
-            <Label Foreground="WhiteSmoke" HorizontalAlignment="Center" VerticalAlignment="Top">Fonts Used:</Label>
-            <TextBlock FontFamily="/PicView;component/lib/Fonts/#Aller" FontSize="16" TextAlignment="Center" ToolTip="http://www.fontsquirrel.com/fonts/aller">               
+            <StackPanel Margin="0,43,0,0">
+                <Label Foreground="WhiteSmoke" HorizontalAlignment="Center" VerticalAlignment="Top">Fonts Used:</Label>
+                <TextBlock FontFamily="/PicView;component/lib/Fonts/#Aller" FontSize="16" TextAlignment="Center" ToolTip="http://www.fontsquirrel.com/fonts/aller">               
                 <Hyperlink x:Name="Aller"  NavigateUri="http://www.fontsquirrel.com/fonts/aller" RequestNavigate="Hyperlink_RequestNavigate">Aller
                     <Hyperlink.Foreground>
                         <SolidColorBrush x:Name="AllerBrush" Color="WhiteSmoke"/>
                     </Hyperlink.Foreground>
                 </Hyperlink>
-            </TextBlock>
-            <TextBlock FontFamily="/PicView;component/lib/Fonts/#Cabin" FontSize="16" TextAlignment="Center" ToolTip="http://www.fontsquirrel.com/fonts/cabin">
+                </TextBlock>
+                <TextBlock FontFamily="/PicView;component/lib/Fonts/#Cabin" FontSize="16" TextAlignment="Center" ToolTip="http://www.fontsquirrel.com/fonts/cabin">
                 <Hyperlink x:Name="Cabin"  NavigateUri="http://www.fontsquirrel.com/fonts/cabin" RequestNavigate="Hyperlink_RequestNavigate">Cabin
                     <Hyperlink.Foreground>
                         <SolidColorBrush x:Name="CabinBrush" Color="WhiteSmoke"/>
                     </Hyperlink.Foreground>
                 </Hyperlink>
-            </TextBlock>
-            <TextBlock FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros" FontSize="16" TextAlignment="Center" ToolTip="http://www.fontsquirrel.com/fonts/tex-gyre-heros">
+                </TextBlock>
+                <TextBlock FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros" FontSize="16" TextAlignment="Center" ToolTip="http://www.fontsquirrel.com/fonts/tex-gyre-heros">
                 <Hyperlink x:Name="TexGyre"  NavigateUri="http://www.fontsquirrel.com/fonts/tex-gyre-heros" RequestNavigate="Hyperlink_RequestNavigate">Tex Gyre Heros
                     <Hyperlink.Foreground>
                         <SolidColorBrush x:Name="TexGyreBrush" Color="WhiteSmoke"/>
                     </Hyperlink.Foreground>
                 </Hyperlink>
-            </TextBlock>
+                </TextBlock>
 
-            <Label Margin="0,15,0,0" HorizontalAlignment="Center" Foreground="WhiteSmoke">Icons Used:</Label>
-            <TextBlock FontSize="14" TextAlignment="Center" ToolTip="https://useiconic.com/open/">
+                <Label Margin="0,15,0,0" HorizontalAlignment="Center" Foreground="WhiteSmoke">Icons Used:</Label>
+                <TextBlock FontSize="14" TextAlignment="Center" ToolTip="https://useiconic.com/open/">
                     <Hyperlink x:Name="Iconic" NavigateUri="https://useiconic.com/open/" RequestNavigate="Hyperlink_RequestNavigate">Iconic
                         <Hyperlink.Foreground>
                         <SolidColorBrush x:Name="IconicBrush" Color="WhiteSmoke"/>
                     </Hyperlink.Foreground>
                 </Hyperlink>
-            </TextBlock>
-            <TextBlock x:Name="FlatIcon" FontSize="14" TextAlignment="Center" ToolTip="http://www.flaticon.com/free-icon/file-folder_379">
+                </TextBlock>
+                <TextBlock x:Name="FlatIcon" FontSize="14" TextAlignment="Center" ToolTip="http://www.flaticon.com/free-icon/file-folder_379">
                     <Hyperlink NavigateUri="http://www.flaticon.com/free-icon/file-folder_379" RequestNavigate="Hyperlink_RequestNavigate">
                         flaticon
                         <Hyperlink.Foreground>
                         <SolidColorBrush x:Name="FlatIconBrush" Color="WhiteSmoke"/>
                     </Hyperlink.Foreground>
                 </Hyperlink>
-            </TextBlock>
-            <TextBlock x:Name="ionic" FontSize="14" TextAlignment="Center" ToolTip="http://ionicons.com/">
+                </TextBlock>
+                <TextBlock x:Name="ionic" FontSize="14" TextAlignment="Center" ToolTip="http://ionicons.com/">
                      <Hyperlink NavigateUri="http://ionicons.com/" RequestNavigate="Hyperlink_RequestNavigate">ioinicons
                          <Hyperlink.Foreground>
                         <SolidColorBrush x:Name="ionicBrush" Color="WhiteSmoke"/>
                     </Hyperlink.Foreground>
                 </Hyperlink>
-            </TextBlock>
-        </StackPanel>
+                </TextBlock>
+            </StackPanel>
 
-        <Label x:Name="appVersion" Content="Version : 0.0.0.0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="WhiteSmoke" Margin="0,0,0,60"/>
-        <Rectangle Fill="#FF131313" VerticalAlignment="Bottom" Height="45"/>
-        <Label Content="© Nepharia 2013 - 2016"
+            <Label x:Name="appVersion" Content="Version : 0.0.0.0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="WhiteSmoke" Margin="0,0,0,60"/>
+            <Rectangle Fill="#F2131313" VerticalAlignment="Bottom" Height="35"/>
+            <Label Content="© PicView 2017"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Bottom"
-                   Margin="0,0,0,6"
+                   Margin="0,0,0,2"
                    Foreground="WhiteSmoke"
                    FontSize="14"
                    FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros"
@@ -120,5 +120,6 @@
 
 
 
-    </Grid>
+        </Grid>
+    </Border>
 </UserControl>
