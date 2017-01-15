@@ -9,76 +9,48 @@ namespace Nepharia.lib
 {
     internal static class ImageManager
     {
-        #region Error Handling
-
-        static bool Supported(string file, string extension)
-        {
-            extension = extension.Substring(1);
-            MagickFormat format;
-            if (!Enum.TryParse<MagickFormat>(extension, true, out format))
-                return false;
-
-            return (from formatInfo in MagickNET.SupportedFormats
-                    where formatInfo.IsReadable && formatInfo.Format == format
-                    select formatInfo).Any();
-        }
-
-        #endregion
-
         #region RenderToBitmapSource
 
-        internal static BitmapSource RenderToBitmapSource(string file)
+        internal static BitmapSource RenderToBitmapSource(string file, string extension)
         {
             if (string.IsNullOrWhiteSpace(file) || file.Length < 2)
                 return null;
 
-            string extension = Path.GetExtension(file);
-            if (string.IsNullOrEmpty(extension))
-                return null;
-
-            extension.ToLowerInvariant();
-
             if (extension == ".gif")
                 return GetBitmapImage(new Uri(file));
-            else if (!Supported(file, extension))
-                return null;
 
             BitmapSource pic;
-            try
-            {
 
-                using (MagickImage magick = new MagickImage(file))
+            using (MagickImage magick = new MagickImage(file))
+            {                    
+                magick.Quality = 100;
+
+                if (extension == ".svg")
+                {
+                    //Create settings and make background transparent
+                    var mrs = new MagickReadSettings();
+                    mrs.Format = MagickFormat.Svg;
+                    mrs.ColorSpace = ColorSpace.Transparent;
+                    mrs.BackgroundColor = MagickColors.Transparent;
+
+                    //Write to stream as png
+                    magick.Read(file, mrs);
+                    magick.Format = MagickFormat.Png;
+                    var stream = new MemoryStream();
+                    magick.Write(stream);
+                    pic = GetBitmapImage(stream);
+                }
+                else
                 {
                     magick.Read(file);
-                    magick.Quality = 100;
                     magick.ColorSpace = ColorSpace.Transparent;
-                    /*
-                    if (magick.Width > SystemParameters.PrimaryScreenWidth + 500 || magick.Height > SystemParameters.PrimaryScreenHeight + 500)
-                        //magick.Resize((int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight);
-                        magick.Thumbnail((int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight);
-                    */
-                    if (extension == ".svg")
-                    {
-                        var mrs = new MagickReadSettings();
-                        mrs.Format = MagickFormat.Svg;
-                        mrs.ColorSpace = ColorSpace.Transparent;
-                        mrs.BackgroundColor = MagickColors.Transparent;
-                        magick.Read(file, mrs);
-                        magick.Format = MagickFormat.Png;
-                        var stream = new MemoryStream();
-                        magick.Write(stream);
-                        pic = GetBitmapImage(stream);
-                    }
-                    else
-                        pic = magick.ToBitmapSource();
-                    pic.Freeze();
-                    return pic;
+                    pic = magick.ToBitmapSource();
                 }
+                    
+                pic.Freeze();
+                return pic;
             }
-            catch (Exception)
-            {
-                return null;
-            }
+
         }
 
         #endregion

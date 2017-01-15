@@ -172,6 +172,16 @@ namespace Nepharia.lib
                         || file.ToLower().EndsWith("svg", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("psd", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("psb", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("orf", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("cr2", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("crw", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("dng", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("raf", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("ppm", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("raw", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("mrw", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("nef", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("pef", StringComparison.OrdinalIgnoreCase)
                     )
                     .ToList();
 
