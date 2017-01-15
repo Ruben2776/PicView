@@ -1,0 +1,91 @@
+﻿<UserControl x:Class="PicView.lib.UserControls.ImageSettings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PicView.lib.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <StackPanel x:Name="StackPanelz" Width="290" Height="240">
+
+        <Grid>
+            <Rectangle Margin="0,50,0,0" HorizontalAlignment="Left" Width="7" Fill="#FF0F0F0F"/>
+            <Rectangle Margin="0,50,0,0" HorizontalAlignment="Right" Width="7" Fill="#FF0F0F0F"/>
+            <Rectangle Margin="0" VerticalAlignment="Bottom" Height="7" Fill="#FF0F0F0F"/>
+            <Canvas VerticalAlignment="Top" Height="51">
+                <TextBlock x:Name="bar"
+                           Width="191"
+                           Height="60"
+                           TextTrimming="CharacterEllipsis"
+                           Padding="16,14,0,14"
+                           FontSize="16"
+                           Background="#FF0F0F0F"
+                           Foreground="#FFF7F4F4"
+                           Text="Rotate and flip image"
+                           FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros"
+                           FontWeight="Bold" />
+
+                <Button x:Name="FlipButton"
+                        Content="Flip"
+                        Canvas.Left="190"
+                        Width="51"
+                        Height="51" 
+                        FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros" FontSize="14" FontWeight="Bold">
+                    <Button.Background>
+                        <SolidColorBrush x:Name="FlipButtonBrush" Color="#FF0F0F0F"/>
+                    </Button.Background>
+                </Button>
+
+                <!--<Path Data="F1M0,50L1,50 1,0 0,0z" Fill="#E52D2D2D" Height="50" Canvas.Left="240.5" Opacity="0.078" Width="1"/>
+                <Path Data="F1M0,50L1,50 1,0 0,0z" Fill="#E52D2D2D" Height="50" Canvas.Left="239.5" Opacity="0.078" Width="1"/>
+                <Path Data="F1M0,50L1,50 1,0 0,0z" Fill="#FF1E1E1E" Height="50" Canvas.Left="238.5" Width="1"/>-->
+
+                <Button x:Name="CloseButton"
+                            ToolTip="Close"
+                            FocusVisualStyle="{x:Null}"
+                            Canvas.Left="239"
+                            Width="51"
+                            Height="51"
+                            BorderThickness="0">
+                    <Button.Background>
+                        <SolidColorBrush x:Name="CloseButtonBrush" Color="#FF0F0F0F"/>
+                    </Button.Background>
+                    <Path Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
+                              SnapsToDevicePixels="True"
+                              Fill="White" />
+                </Button>
+            </Canvas>
+
+            <Canvas Margin="0,50,0,6" Width="278" Height="162" VerticalAlignment="Top" Background="#F20F0F0F">
+                <Border x:Name="ro0Border" Style="{StaticResource SexyBorder}" Canvas.Left="7" Canvas.Top="7">
+                    <RadioButton x:Name="ro0" Content="0°" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="True" FontWeight="Bold"/>
+                    <Border.Background>
+                        <SolidColorBrush x:Name="ro0BorderBrush" Color="#A5232323"/>
+                    </Border.Background>
+                </Border>
+                <Border x:Name="ro90Border" Style="{StaticResource SexyBorder}" Canvas.Left="143" Canvas.Top="7">
+                    <RadioButton x:Name="ro90"  Content="90°" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <Border.Background>
+                        <SolidColorBrush x:Name="ro90BorderBrush" Color="#A5232323"/>
+                    </Border.Background>
+                </Border>
+
+                <Border x:Name="ro180Border" Style="{StaticResource SexyBorder}" Canvas.Left="143" Canvas.Top="82">
+                    <RadioButton x:Name="ro180"  Content="180°" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <Border.Background>
+                        <SolidColorBrush x:Name="ro180BorderBrush" Color="#A5232323"/>
+                    </Border.Background>
+                </Border>
+                <Border x:Name="ro270Border" Style="{StaticResource SexyBorder}" Canvas.Top="82" Canvas.Left="7">
+                    <RadioButton x:Name="ro270"  Content="270°" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <Border.Background>
+                        <SolidColorBrush x:Name="ro270BorderBrush" Color="#A5232323"/>
+                    </Border.Background>
+                </Border>
+            </Canvas>
+
+        </Grid>
+
+        <Polygon Points="0,0 15,30, 30,0" Fill="#FF0F0F0F" Margin="50,-7,0,0"/>
+    </StackPanel>
+</UserControl>

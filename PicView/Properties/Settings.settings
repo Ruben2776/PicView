@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Nepharia.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="PicView.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="ColorTheme" Type="System.Int16" Scope="User">
@@ -82,6 +82,9 @@
     </Setting>
     <Setting Name="ScrollEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="WindowStyle" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Default</Value>
     </Setting>
   </Settings>
 </SettingsFile>

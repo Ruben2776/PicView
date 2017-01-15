@@ -126,8 +126,11 @@ namespace PicView
         #endregion
 
         #region Booleans
-        //private static bool LeftbuttonClicked;
-        //private static bool RightbuttonClicked;
+        private static bool LeftbuttonClicked;
+        private static bool RightbuttonClicked;
+        private static bool imageSettingsWindowOpen;
+        private static bool openmenuWindowOpen;
+        private static bool settingsWindowOpen;
         private static bool GoToPic;
         //private static bool cursorHidden;
         private static bool isZoomed;
@@ -152,16 +155,72 @@ namespace PicView
             }
         }
 
+        private static bool ImageSettingsWindowOpen
+        {
+            get { return imageSettingsWindowOpen; }
+            set
+            {
+                imageSettingsWindowOpen = value;
+                ImageSettingsWindow.Visibility = Visibility.Visible;
+                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
+                if (!value)
+                {
+                    da.To = 0;
+                    da.Completed += delegate { ImageSettingsWindow.Visibility = Visibility.Hidden; };
+                }
+                else
+                    da.To = 1;
+                if (ImageSettingsWindow != null)
+                    ImageSettingsWindow.BeginAnimation(OpacityProperty, da);
+            }
+        }
+
+        private static bool OpenMenuWindowOpen
+        {
+            get { return openmenuWindowOpen; }
+            set
+            {
+                openmenuWindowOpen = value;
+                OpenWindow.Visibility = Visibility.Visible;
+                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
+                if (!value)
+                {
+                    da.To = 0;
+                    da.Completed += delegate { OpenWindow.Visibility = Visibility.Hidden; };
+                }
+                else
+                    da.To = 1;
+                if (OpenWindow != null)
+                    OpenWindow.BeginAnimation(OpacityProperty, da);
+            }
+        }
+
+        //private static bool SettingsWindowOpen
+        //{
+        //    get { return settingsWindowOpen; }
+        //    set
+        //    {
+        //        settingsWindowOpen = value;
+        //        SettingsWindow.Visibility = Visibility.Visible;
+        //        var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
+        //        if (!value)
+        //        {
+        //            da.To = 0;
+        //            da.Completed += delegate { SettingsWindow.Visibility = Visibility.Hidden; };
+        //        }
+        //        else
+        //            da.To = 1;
+        //        if (SettingsWindow != null)
+        //            SettingsWindow.BeginAnimation(OpacityProperty, da);
+        //    }
+        //}
+
         #endregion
 
         #region Controls
-        //private static Effects EffectsWindow;
-        //private static ImageSettings ImageSettingsWindow;
-        //private static OpenMenu OpenWindow;
+        private static ImageSettings ImageSettingsWindow;
+        private static OpenMenu OpenWindow;
         //private static Settings SettingsWindow;
-        //private static RightArrow FullScreenRightArrow;
-        //private static LeftArrow FullScreenLeftArrow;
-        //private static Alpha_X Alpha_X2;
         private static AjaxLoading ajaxLoading;
         private static SexyToolTip sexyToolTip;
         private static UserControls.About about_uc;
@@ -409,6 +468,14 @@ namespace PicView
 
             #endregion
 
+            #region Add UserControls :)
+            LoadTooltipStyle();
+            LoadAboutWindow();
+            LoadHelpWindow();
+            LoadOpenMenu();
+            LoadImageSettingsMenu();
+            #endregion           
+
             #region Do updates in seperate thread
             var task = new Task(() => {
                 #region Add events
@@ -442,6 +509,74 @@ namespace PicView
                 MaxButton.MouseEnter += MaxButtonMouseOver;
                 MaxButton.MouseLeave += MaxButtonMouseLeave;
                 MaxButton.Click += (s, x) => Maximize(this);
+                #endregion
+
+                #region OpenMenuButton
+
+                OpenMenuButton.PreviewMouseLeftButtonDown += OpenMenuButtonMouseButtonDown;
+                OpenMenuButton.MouseEnter += OpenMenuButtonMouseOver;
+                OpenMenuButton.MouseLeave += OpenMenuButtonMouseLeave;
+                OpenMenuButton.Click += Toggle_open_menu;
+
+                OpenWindow.Open.Click += (s, x) => Open();
+                OpenWindow.Open_File_Location.Click += (s, x) => Open_In_Explorer();
+                OpenWindow.Print.Click += (s, x) => Print(PicPath);
+
+                OpenWindow.Open_Border.MouseLeftButtonUp += (s, x) => Open();
+                OpenWindow.Open_File_Location_Border.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
+                OpenWindow.Print_Border.MouseLeftButtonUp += (s, x) => Print(PicPath);
+
+                OpenWindow.CloseButton.Click += Close_UserControls;
+                OpenWindow.PasteButton.Click += (s, x) => Paste();
+                OpenWindow.CopyButton.Click += (s, x) => CopyPic();
+                #endregion
+
+                #region image_button
+
+                image_button.PreviewMouseLeftButtonDown += ImageButtonMouseButtonDown;
+                image_button.MouseEnter += ImageButtonMouseOver;
+                image_button.MouseLeave += ImageButtonMouseLeave;
+                image_button.Click += Toggle_image_menu;
+
+                #region CloseButton
+                ImageSettingsWindow.CloseButton.Click += Close_UserControls;
+                #endregion
+
+                #region FlipButton
+                ImageSettingsWindow.FlipButton.Click += (s,x) => Flip();
+                #endregion
+
+                #region Rotation RadioButtons
+                ImageSettingsWindow.ro0.Click += (s, x) => Rotate(0);
+                ImageSettingsWindow.ro90.Click += (s, x) => Rotate(90);
+                ImageSettingsWindow.ro180.Click += (s, x) => Rotate(180);
+                ImageSettingsWindow.ro270.Click += (s, x) => Rotate(270);
+
+                ImageSettingsWindow.ro0Border.MouseLeftButtonDown += (s, x) => Rotate(0);
+                ImageSettingsWindow.ro90Border.MouseLeftButtonDown += (s, x) => Rotate(90);
+                ImageSettingsWindow.ro180Border.MouseLeftButtonDown += (s, x) => Rotate(180);
+                ImageSettingsWindow.ro270Border.MouseLeftButtonDown += (s, x) => Rotate(270);
+
+                #endregion
+
+                #endregion
+
+                #region LeftButton
+
+                LeftButton.PreviewMouseLeftButtonDown += LeftButtonMouseButtonDown;
+                LeftButton.MouseEnter += LeftButtonMouseOver;
+                LeftButton.MouseLeave += LeftButtonMouseLeave;
+                LeftButton.Click += (s, x) => { LeftbuttonClicked = true; Pic(true, false); };
+
+                #endregion
+
+                #region RightButton
+
+                RightButton.PreviewMouseLeftButtonDown += RightButtonMouseButtonDown;
+                RightButton.MouseEnter += RightButtonMouseOver;
+                RightButton.MouseLeave += RightButtonMouseLeave;
+                RightButton.Click += (s, x) => { RightbuttonClicked = true; Pic(false, false); };
+
                 #endregion
 
                 #endregion
@@ -478,6 +613,12 @@ namespace PicView
                 //Scroller.MouseLeave += Scroller_MouseLeave;
                 #endregion
 
+                #region TitleBar
+                TitleBar.MouseLeftButtonDown += Move;
+                #endregion
+
+                #region Lower Bar
+                LowerBar.Drop += image_Drop_1;
                 #endregion
 
                 #region Update settings if needed
@@ -487,17 +628,12 @@ namespace PicView
                     Properties.Settings.Default.CallUpgrade = false;
                 }
                 #endregion
+                #endregion
             });
             task.Start();
-            #endregion
+            #endregion            
 
-            #region Add UserControls :)
-            LoadTooltipStyle();
-            LoadAboutWindow();
-            LoadHelpWindow();
-            #endregion           
-
-            if (img.Source == null)
+            if (ajaxLoading.Opacity > 0)
             {
                 AjaxLoadingEnd();
             }
@@ -530,11 +666,21 @@ namespace PicView
             {
                 Left += (size.PreviousSize.Width - size.NewSize.Width) / 2;
 
+                
+            }
 
-                //if (size.NewSize.Width - 220 < 220)
-                //    Bar.MaxWidth = 220;
-                //else
-                //    Bar.MaxWidth = size.NewSize.Width - 220;
+            if (RightbuttonClicked)
+            {
+                Point p = RightButton.PointToScreen(new Point(50, 30)); //Points cursor to center of RighButton
+                NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+                RightbuttonClicked = false;
+            }
+
+            else if (LeftbuttonClicked)
+            {
+                Point p = LeftButton.PointToScreen(new Point(50, 30));
+                NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+                LeftbuttonClicked = false;
             }
             //if (size.HeightChanged || size.WidthChanged)
             //{
@@ -836,7 +982,8 @@ namespace PicView
 
             #region Update the rest
             Progress(x, Pics.Count);
-            //CenterWindowOnScreen();
+            // Loses position gradually if not forced to center
+            CenterWindowOnScreen();
             if (freshStartup)
                 freshStartup = false;
             #endregion
@@ -1687,7 +1834,7 @@ namespace PicView
 
         private void img_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            //Close_UserControls();
+            Close_UserControls();
 
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
@@ -1884,7 +2031,7 @@ namespace PicView
 
             //Aspect ratio calculation
             var maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth, width);
-            var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 38), height); // 38 = Titlebar height
+            var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 98), height); // 38 = Titlebar height, 60 = lowerbar height
 
             AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));
 
@@ -2038,6 +2185,40 @@ namespace PicView
         }
         #endregion
 
+        #region OpenMenu
+        private void LoadOpenMenu()
+        {
+            OpenWindow = new OpenMenu
+            {
+                Focusable = false,
+                Opacity = 0,
+                Visibility = Visibility.Hidden,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 0, 152, 0)
+            };
+
+            bg.Children.Add(OpenWindow);
+        }
+        #endregion
+
+        #region ImageSettingsMenu
+        private void LoadImageSettingsMenu()
+        {
+            ImageSettingsWindow = new ImageSettings
+            {
+                Focusable = false,
+                Opacity = 0,
+                Visibility = Visibility.Hidden,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 0, 112, 0)
+            };
+
+            bg.Children.Add(ImageSettingsWindow);
+        }
+        #endregion
+
         #region AjaxLoading
         private void LoadAjaxLoading()
         {
@@ -2058,6 +2239,50 @@ namespace PicView
         {
             AnimationHelper.Fade(ajaxLoading, 0, TimeSpan.FromSeconds(.2));
         }
+        #endregion
+
+        #region Close UserControls!!
+
+        private void Close_UserControls()
+        {
+            //if (EffectsWindowOpen)
+            //    EffectsWindowOpen = false;
+
+            if (ImageSettingsWindowOpen)
+                ImageSettingsWindowOpen = false;
+
+            if (OpenMenuWindowOpen)
+                OpenMenuWindowOpen = false;
+
+            //if (SettingsWindowOpen)
+            //    SettingsWindowOpen = false;
+        }
+
+        private void Close_UserControls(object sender, RoutedEventArgs e)
+        {
+            Close_UserControls();
+        }
+
+        #endregion
+
+        #region Open/Close Usercontrols
+
+        private void Toggle_open_menu(object sender, RoutedEventArgs e)
+        {
+            OpenMenuWindowOpen = !OpenMenuWindowOpen;
+
+            if (ImageSettingsWindowOpen)
+                ImageSettingsWindowOpen = false;
+        }
+
+        private void Toggle_image_menu(object sender, RoutedEventArgs e)
+        {
+            ImageSettingsWindowOpen = !ImageSettingsWindowOpen;
+
+            if (OpenMenuWindowOpen)
+                OpenMenuWindowOpen = false;
+        }
+
         #endregion
 
         #region MouseOver Button Events
@@ -2115,6 +2340,92 @@ namespace PicView
         private void MinButtonMouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(0, 20, 20, 20, MinButtonBrush, false);
+        }
+
+        #endregion
+
+        #region LeftButton
+
+        private void LeftButtonMouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, LeftArrowFill, false);
+        }
+
+        private void LeftButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(LeftArrowFill, false);
+        }
+
+        private void LeftButtonMouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, LeftArrowFill, false);
+        }
+
+        #endregion
+
+        #region RightButton
+
+        private void RightButtonMouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, RightArrowFill, false);
+        }
+
+        private void RightButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(RightArrowFill, false);
+        }
+
+
+        private void RightButtonMouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, RightArrowFill, false);
+        }
+
+        #endregion
+
+        #region OpenMenuButton
+
+        private void OpenMenuButtonMouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, FolderFill, false);
+        }
+
+        private void OpenMenuButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(FolderFill, false);
+        }
+
+        private void OpenMenuButtonMouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, FolderFill, false);
+        }
+
+        #endregion
+
+        #region ImageButton
+
+        private void ImageButtonMouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, ImagePath1Fill, false);
+            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, ImagePath2Fill, false);
+            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, ImagePath3Fill, false);
+            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, ImagePath4Fill, false);
+        }
+
+        private void ImageButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ImagePath1Fill, false);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ImagePath2Fill, false);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ImagePath3Fill, false);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ImagePath4Fill, false);
+        }
+
+        private void ImageButtonMouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, ImagePath1Fill, false);
+            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, ImagePath2Fill, false);
+            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, ImagePath3Fill, false);
+            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, ImagePath4Fill, false);
         }
 
         #endregion
@@ -2210,6 +2521,37 @@ namespace PicView
             }
             else
                 img.LayoutTransform = rt;
+
+            switch (r)
+            {
+                case 0:
+                    ImageSettingsWindow.ro0.IsChecked = true;
+                    ImageSettingsWindow.ro90.IsChecked = false;
+                    ImageSettingsWindow.ro180.IsChecked = false;
+                    ImageSettingsWindow.ro270.IsChecked = false;
+                    break;
+
+                case 180:
+                    ImageSettingsWindow.ro180.IsChecked = true;
+                    ImageSettingsWindow.ro90.IsChecked = false;
+                    ImageSettingsWindow.ro0.IsChecked = false;
+                    ImageSettingsWindow.ro270.IsChecked = false;
+                    break;
+
+                case 90:
+                    ImageSettingsWindow.ro90.IsChecked = true;
+                    ImageSettingsWindow.ro0.IsChecked = false;
+                    ImageSettingsWindow.ro180.IsChecked = false;
+                    ImageSettingsWindow.ro270.IsChecked = false;
+                    break;
+
+                case 270:
+                    ImageSettingsWindow.ro270.IsChecked = true;
+                    ImageSettingsWindow.ro90.IsChecked = false;
+                    ImageSettingsWindow.ro180.IsChecked = false;
+                    ImageSettingsWindow.ro0.IsChecked = false;
+                    break;
+            }
         }
 
         private void Rotate(bool right)
@@ -2411,7 +2753,7 @@ namespace PicView
             }
             try
             {
-                //Close_UserControls();
+                Close_UserControls();
                 ToolTipStyle(ExpFind, false);
                 Process.Start("explorer.exe", "/select,\"" + PicPath + "\"");
             }
@@ -2449,6 +2791,8 @@ namespace PicView
                     PicPath = dlg.FileName;
             }
             else return;
+
+            Close_UserControls();
         }
         #endregion
 

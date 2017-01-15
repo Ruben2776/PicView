@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="PicView.lib.UserControls.X2"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PicView.lib.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Border Width="50" Height="60" CornerRadius="0,0,0,45">
+        <Border.Background>
+            <SolidColorBrush x:Name="CanvasBGcolor" Color="#A7222222"/>
+        </Border.Background>
+        <Viewbox Width="23" Height="23" Margin="7,0,0,11">
+            <Path Data="M31.071,24l12.342-12.342c1.953-1.953,1.953-5.119,0-7.071c-1.951-1.952-5.119-1.952-7.07,0L24,16.93
+	L11.657,4.587c-1.951-1.952-5.119-1.952-7.07,0c-1.953,1.953-1.953,5.119,0,7.071L16.929,24L4.587,36.342
+	c-1.953,1.953-1.953,5.119,0,7.071c0.976,0.976,2.256,1.464,3.535,1.464s2.56-0.488,3.535-1.464L24,31.071l12.343,12.343
+	c0.976,0.976,2.256,1.464,3.535,1.464s2.56-0.488,3.535-1.464c1.953-1.953,1.953-5.119,0-7.071L31.071,24z"
+              >
+                <Path.Fill>
+                    <SolidColorBrush x:Name="CrossFill" Color="WhiteSmoke"/>
+                </Path.Fill>
+            </Path>
+        </Viewbox>
+    </Border>
+</UserControl>
