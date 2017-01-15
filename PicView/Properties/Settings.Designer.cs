@@ -346,5 +346,17 @@ namespace PicView.Properties {
                 this["ScrollEnabled"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Default")]
+        public string WindowStyle {
+            get {
+                return ((string)(this["WindowStyle"]));
+            }
+            set {
+                this["WindowStyle"] = value;
+            }
+        }
     }
 }

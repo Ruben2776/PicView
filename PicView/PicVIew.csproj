@@ -196,7 +196,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="lib\UserControls\ImageSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="lib\UserControls\LeftArrow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="lib\UserControls\OpenMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -205,6 +213,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="lib\UserControls\SexyToolTip.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="lib\UserControls\X2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -223,14 +235,23 @@
     <Compile Include="lib\UserControls\AjaxLoading.xaml.cs">
       <DependentUpon>AjaxLoading.xaml</DependentUpon>
     </Compile>
+    <Compile Include="lib\UserControls\ImageSettings.xaml.cs">
+      <DependentUpon>ImageSettings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="lib\UserControls\LeftArrow.xaml.cs">
       <DependentUpon>LeftArrow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="lib\UserControls\OpenMenu.xaml.cs">
+      <DependentUpon>OpenMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="lib\UserControls\RightArrow.xaml.cs">
       <DependentUpon>RightArrow.xaml</DependentUpon>
     </Compile>
     <Compile Include="lib\UserControls\SexyToolTip.xaml.cs">
       <DependentUpon>SexyToolTip.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="lib\UserControls\X2.xaml.cs">
+      <DependentUpon>X2.xaml</DependentUpon>
     </Compile>
     <Compile Include="lib\Wallpaper.cs" />
     <Compile Include="MainWindow.xaml.cs">
