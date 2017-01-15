@@ -17,7 +17,7 @@ namespace Nepharia.lib
         {
             if (Contains(file))
                 return;
-            var pic = ImageManager.RenderToBitmapSource(file);
+            var pic = ImageManager.RenderToBitmapSource(file, Path.GetExtension(file));
             if (pic == null)
                 return;
             pic.Freeze();

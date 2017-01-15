@@ -62,6 +62,7 @@ namespace Nepharia
         /// File path for the extracted folder
         /// </summary>
         private static string TempZipPath { get; set; }
+        private static string Extension { get; set; }
         /// <summary>
         /// Returns string with zoom %
         /// </summary>
@@ -754,7 +755,7 @@ namespace Nepharia
                     if (freshStartup || PreloadCount < 2 || Preloader.Count() < 0)
                     {
                         // If preloader is not running, load picture manually
-                        await Task.Run(() => pic = RenderToBitmapSource(Pics[x]));
+                        await Task.Run(() => pic = RenderToBitmapSource(Pics[x], Extension));
                     }
                     else
                     {
@@ -767,7 +768,7 @@ namespace Nepharia
                                 spin.SpinOnce();
                                 if (spin.Count > 2700)
                                 {
-                                    pic = RenderToBitmapSource(Pics[x]);
+                                    pic = RenderToBitmapSource(Pics[x], Extension);
                                     break;
                                 }
                             } while (!Preloader.Contains(Pics[x]));
@@ -1151,67 +1152,79 @@ namespace Nepharia
             {
                 bool zipped = false;
                 var extension = Path.GetExtension(path);
-                if (extension != null)
-                    switch (extension.ToLower())
-                    {
-                        case ".zip":
-                        case ".7zip":
-                        case ".7z":
-                        case ".rar":
-                        case ".cbr":
-                        case ".cb7":
-                        case ".cbt":
-                        case ".cbz":
-                        case ".xz":
-                        case ".bzip2":
-                        case ".gzip":
-                        case ".tar":
-                        case ".wim":
-                        case ".iso":
-                        case ".cab":
-                            var sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\7-Zip\\7z.exe";
-                            if (!File.Exists(sevenZip))
-                                sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\7-Zip\\7z.exe";
-                            if (File.Exists(sevenZip))
-                            {
-                                TempZipPath = Path.GetTempPath() + Path.GetRandomFileName();
-                                Directory.CreateDirectory(TempZipPath);
+                extension = extension.ToLower();
+                switch (extension)
+                {
+                    case ".zip":
+                    case ".7zip":
+                    case ".7z":
+                    case ".rar":
+                    case ".cbr":
+                    case ".cb7":
+                    case ".cbt":
+                    case ".cbz":
+                    case ".xz":
+                    case ".bzip2":
+                    case ".gzip":
+                    case ".tar":
+                    case ".wim":
+                    case ".iso":
+                    case ".cab":
+                        var sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\7-Zip\\7z.exe";
+                        if (!File.Exists(sevenZip))
+                            sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\7-Zip\\7z.exe";
+                        if (File.Exists(sevenZip))
+                        {
+                            TempZipPath = Path.GetTempPath() + Path.GetRandomFileName();
+                            Directory.CreateDirectory(TempZipPath);
 
-                                var x = Process.Start(new ProcessStartInfo
-                                {
-                                    FileName = sevenZip,
-                                    Arguments = "x \"" + path + "\" -o" + TempZipPath + SevenZipFiles + " -r -aou",
-                                    WindowStyle = ProcessWindowStyle.Hidden
-                                });
-                                if (x == null) goto default;
-                                x.EnableRaisingEvents = true;
-                                x.Exited += (s, e) => Pics = FileList(TempZipPath);
-                                x.WaitForExit(200);
-                                zipped = true;
-                            }
-                            else goto default;
-                            break;
-                        case ".jpg":
-                        case ".jpeg":
-                        case ".jpe":
-                        case ".png":
-                        case ".bmp":
-                        case ".tif":
-                        case ".tiff":
-                        case ".gif":
-                        case ".ico":
-                        case ".wdp":
-                        case ".dds":
-                        case ".svg":
-                        case ".psd":
-                        case ".psb":
-                            break;
-                        default:
-                            Pics = new List<string>();
-                            FolderIndex = -1;
-                            TempZipPath = string.Empty;
-                            return;
-                    }
+                            var x = Process.Start(new ProcessStartInfo
+                            {
+                                FileName = sevenZip,
+                                Arguments = "x \"" + path + "\" -o" + TempZipPath + SevenZipFiles + " -r -aou",
+                                WindowStyle = ProcessWindowStyle.Hidden
+                            });
+                            if (x == null) goto default;
+                            x.EnableRaisingEvents = true;
+                            x.Exited += (s, e) => Pics = FileList(TempZipPath);
+                            x.WaitForExit(200);
+                            zipped = true;
+                        }
+                        else goto default;
+                        break;
+                    case ".jpg":
+                    case ".jpeg":
+                    case ".jpe":
+                    case ".png":
+                    case ".bmp":
+                    case ".tif":
+                    case ".tiff":
+                    case ".gif":
+                    case ".ico":
+                    case ".wdp":
+                    case ".dds":
+                    case ".svg":
+                    case ".psd":
+                    case ".psb":
+                    case ".orf":
+                    case ".cr2":
+                    case ".crw":
+                    case ".dng":
+                    case ".raf":
+                    case ".ppm":
+                    case ".raw":
+                    case ".mrw":
+                    case ".nef":
+                    case ".pef":
+                    case ".x3f": //Questionable if it works :(
+                    case ".arw":
+                        break;
+                    default:
+                        Pics = new List<string>();
+                        FolderIndex = -1;
+                        TempZipPath = string.Empty;
+                        return;
+                }
 
                 if (zipped)
                 {
@@ -1237,26 +1250,11 @@ namespace Nepharia
                 {
                     Pics = FileList(Path.GetDirectoryName(path));
                     FolderIndex = Pics.IndexOf(path);
+                    Extension = extension;
                 }
 
                 PicPath = path;
             });
-            //.ContinueWith((t) => Parallel.Invoke(LoadImages, () => preLoad(10, FolderIndex, false)));
-            //.ContinueWith((t) =>
-            //    {
-            //        if (Pics.Count > 1)
-            //        {
-            //            //var thread = new Thread(new ThreadStart(() => LoadImages()));
-            //            //thread.Priority = ThreadPriority.Lowest;
-            //            //thread.IsBackground = true;
-            //            //thread.Start();
-
-            //            if (Pics.Count > 100)
-            //                Task.Factory.StartNew(() => LoadImages(), TaskCreationOptions.LongRunning);
-            //            else
-            //                Task.Run(() => LoadImages());
-            //        }
-            //    });
         }
 
         #endregion
@@ -1446,8 +1444,8 @@ namespace Nepharia
             // Get files as strings
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
             // check if valid
-            if (drag_drop_check(files).HasValue && drag_drop_check(files).Value)
-                return;
+            //if (drag_drop_check(files).HasValue && drag_drop_check(files).Value)
+            //    return;
 
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
             if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(files[0]) == Path.GetDirectoryName(PicPath))
@@ -2414,19 +2412,22 @@ namespace Nepharia
         private void Open()
         {
             var dlg = new Microsoft.Win32.OpenFileDialog();
+            // Needs support for not being case sensitive 
             dlg.Filter =
-                "Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg*.wdp*"                  // Common pics
-                + "|jpg| *.jpg *.jpeg *"                                                    // JPG
-                + "|bmp|*.bmp*"                                                             // BMP
-                + "|png|*.png*"                                                             // PNG
-                + "|gif|*.gif*"                                                             // GIF
-                + "|ico|*.ico*"                                                             // ICO
-                + "|wdp|*.wdp*"                                                             // WDP
-                + "|svg|*.svg*"                                                             // SVG
-                + "|tif|*.tif*"                                                             // Tif
-                + "|Photoshop|*.psd *.psb"                                                  // PSD
-                + "|Archives|*.zip *.7zip *.7z *.rar *.bzip2 *.tar *.wim *.iso *.cab"       // Archives
-                + "|Comics|*.cbr *.cb7 *.cbt *.cbz *.xz";                                   // Comics
+                "All Supported files|*.bmp *.jpg *.png *.tif *.gif *.ico *.jpeg *.wdp *.psd *.psb *.cbr *.cb7 *.cbt *.cbz *.xz *.orf *.cr2 *.crw *.dng *.raf *.ppm *.raw *.mrw *.nef *.pef *.3xf *.arw"
+                + "|Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg*.wdp*"                                // Common pics
+                + "|jpg| *.jpg *.jpeg *"                                                                    // JPG
+                + "|bmp|*.bmp*"                                                                             // BMP
+                + "|png|*.png*"                                                                             // PNG
+                + "|gif|*.gif*"                                                                             // GIF
+                + "|ico|*.ico*"                                                                             // ICO
+                + "|wdp|*.wdp*"                                                                             // WDP
+                + "|svg|*.svg*"                                                                             // SVG
+                + "|tif|*.tif*"                                                                             // Tif
+                + "|Photoshop|*.psd *.psb"                                                                  // PSD
+                + "|Archives|*.zip *.7zip *.7z *.rar *.bzip2 *.tar *.wim *.iso *.cab"                       // Archives
+                + "|Comics|*.cbr *.cb7 *.cbt *.cbz *.xz"                                                    // Comics
+                + "|Camera files|*.orf *.cr2 *.crw *.dng *.raf *.ppm *.raw *.mrw *.nef *.pef *.3xf *.arw";  // Camera files
             dlg.Title = "Open image - PicView";
             if (dlg.ShowDialog() == true)
             {
