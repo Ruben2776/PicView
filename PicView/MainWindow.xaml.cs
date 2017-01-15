@@ -146,7 +146,7 @@ namespace PicView
                 Scroller.VerticalScrollBarVisibility = value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
                 if (!freshStartup && !string.IsNullOrEmpty(PicPath))
                 {
-                    ZoomFit(Preloader.Load(PicPath).PixelWidth, Preloader.Load(PicPath).PixelHeight);
+                    ZoomFit(img.Source.Width, img.Source.Height);
                     ToolTipStyle(value ? "Scrolling enabled" : "Scrolling disabled", false);
                 }
             }
@@ -602,10 +602,10 @@ namespace PicView
             {
                 changeFolder();
                 freshStartup = true;
-                await getValues(path);
+                await GetValues(path);
             }
             else if (freshStartup)
-                await getValues(path);
+                await GetValues(path);
             else FolderIndex = Pics.IndexOf(path);
             #endregion
 
@@ -707,12 +707,11 @@ namespace PicView
             Pic(FolderIndex);
             #endregion
 
-            #region Set NeedsRefreshStartup
+            #region Set freshStartup
+            if (freshStartup)
+                freshStartup = false;
+
             AjaxLoadingEnd();
-
-            //if (!NeedsRefreshStartup) return;         
-            //NeedsRefreshStartup = false;
-
             #endregion
         }
 
@@ -836,9 +835,10 @@ namespace PicView
             #endregion
 
             #region Update the rest
-            freshStartup = freshStartup ? false : true;
             Progress(x, Pics.Count);
-            CenterWindowOnScreen();
+            //CenterWindowOnScreen();
+            if (freshStartup)
+                freshStartup = false;
             #endregion
 
         }
@@ -984,7 +984,7 @@ namespace PicView
         }
         #endregion
 
-        #region load frem web
+        #region PicWeb
 
         private async void PicWeb(string path)
         {
@@ -1031,6 +1031,7 @@ namespace PicView
             NoProgress();
             canNavigate = false;
             AjaxLoadingEnd();
+            freshStartup = freshStartup ? false : true;
         }
 
         private async Task<BitmapSource> LoadImageWebAsync(string address)
@@ -1054,99 +1055,8 @@ namespace PicView
 
         #endregion
 
-        #endregion
-
-        #region Preloading
-        /// <summary>
-        /// Starts decoding images into memory,
-        /// based on current index and if reverse or not
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="reverse"></param>
-        private static void PreLoad(int index, bool reverse)
-        {
-            #region Forward
-            if (!reverse)
-            {
-                //Add first three
-                var i = index + 1 >= Pics.Count ? (index + 1) - Pics.Count : index + 1;
-                Preloader.Add(i);
-                i = i + 1 >= Pics.Count ? (i + 1) - Pics.Count : i + 1;
-                Preloader.Add(i);
-                i = i + 1 >= Pics.Count ? (i + 1) - Pics.Count : i + 1;
-                Preloader.Add(i);
-
-                //Add two behind
-                i = index - 1 < 0 ? Pics.Count - index : index - 1;
-                Preloader.Add(i);
-                i = i - 1 < 0 ? Pics.Count - i : i - 1;
-                Preloader.Add(i);
-
-                //Add one more infront
-                i = index + 4 >= Pics.Count ? (index + 4) - Pics.Count : index + 4;
-                Preloader.Add(i);
-
-                if (!freshStartup)
-                {
-                    //Clean up behind
-                    var arr = new string[3];
-                    i = index - 3 < 0 ? (Pics.Count - index) - 3 : index - 3;
-                    if (i > -1 && i < Pics.Count)
-                        arr[0] = Pics[i];
-                    i = i - 1 < 0 ? (Pics.Count - index) - 1 : i - 1;
-                    if (i > -1 && i < Pics.Count)
-                        arr[1] = Pics[i];
-                    i = i - 1 < 0 ? (Pics.Count - index) - 1 : i - 1;
-                    if (i > -1 && i < Pics.Count)
-                        arr[2] = Pics[i];
-                    Preloader.Clear(arr);
-                }
-            }
-            #endregion
-
-            #region Backwards
-            else
-            {
-                //Add first three
-                var i = index - 1 < 0 ? Pics.Count : index - 1;
-                Preloader.Add(i);
-                i = i - 1 < 0 ? Pics.Count : i - 1;
-                Preloader.Add(i);
-                i = i - 1 < 0 ? Pics.Count : i - 1;
-                Preloader.Add(i);
-
-                //Add two behind
-                i = index + 1 >= Pics.Count ? (i + 1) - Pics.Count : index + 1;
-                Preloader.Add(i);
-                i = i + 1 >= Pics.Count ? (i + 1) - Pics.Count : i + 1;
-                Preloader.Add(i);
-
-                //Add one more infront
-                i = index - 4 < 0 ? (index + 4) - Pics.Count : index - 4;
-                Preloader.Add(i);
-
-                if (!freshStartup)
-                {
-                    //Clean up behind
-                    var arr = new string[3];
-                    i = index + 3 > Pics.Count - 1 ? Pics.Count - 1 : index + 3;
-                    arr[0] = Pics[i];
-                    i = index + 4 > Pics.Count - 1 ? Pics.Count - 1 : index + 4;
-                    arr[1] = Pics[i];
-                    i = index + 5 > Pics.Count - 1 ? Pics.Count - 1 : index + 5;
-                    arr[2] = Pics[i];
-                    Preloader.Clear(arr);
-                }
-            }
-            #endregion
-        }
-
-        #endregion
-
-        #region Uncategorized
-        #region getValues
-
-        private static Task getValues(string path)
+        #region GetValues
+        private static Task GetValues(string path)
         {
             return Task.Run(() =>
             {
@@ -1257,6 +1167,97 @@ namespace PicView
 
         #endregion
 
+        #endregion
+
+        #region Preloading
+        /// <summary>
+        /// Starts decoding images into memory,
+        /// based on current index and if reverse or not
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="reverse"></param>
+        private static void PreLoad(int index, bool reverse)
+        {
+            #region Forward
+            if (!reverse)
+            {
+                //Add first three
+                var i = index + 1 >= Pics.Count ? (index + 1) - Pics.Count : index + 1;
+                Preloader.Add(i);
+                i = i + 1 >= Pics.Count ? (i + 1) - Pics.Count : i + 1;
+                Preloader.Add(i);
+                i = i + 1 >= Pics.Count ? (i + 1) - Pics.Count : i + 1;
+                Preloader.Add(i);
+
+                //Add two behind
+                i = index - 1 < 0 ? Pics.Count - index : index - 1;
+                Preloader.Add(i);
+                i = i - 1 < 0 ? Pics.Count - i : i - 1;
+                Preloader.Add(i);
+
+                //Add one more infront
+                i = index + 4 >= Pics.Count ? (index + 4) - Pics.Count : index + 4;
+                Preloader.Add(i);
+
+                if (!freshStartup)
+                {
+                    //Clean up behind
+                    var arr = new string[3];
+                    i = index - 3 < 0 ? (Pics.Count - index) - 3 : index - 3;
+                    if (i > -1 && i < Pics.Count)
+                        arr[0] = Pics[i];
+                    i = i - 1 < 0 ? (Pics.Count - index) - 1 : i - 1;
+                    if (i > -1 && i < Pics.Count)
+                        arr[1] = Pics[i];
+                    i = i - 1 < 0 ? (Pics.Count - index) - 1 : i - 1;
+                    if (i > -1 && i < Pics.Count)
+                        arr[2] = Pics[i];
+                    Preloader.Clear(arr);
+                }
+            }
+            #endregion
+
+            #region Backwards
+            else
+            {
+                //Add first three
+                var i = index - 1 < 0 ? Pics.Count : index - 1;
+                Preloader.Add(i);
+                i = i - 1 < 0 ? Pics.Count : i - 1;
+                Preloader.Add(i);
+                i = i - 1 < 0 ? Pics.Count : i - 1;
+                Preloader.Add(i);
+
+                //Add two behind
+                i = index + 1 >= Pics.Count ? (i + 1) - Pics.Count : index + 1;
+                Preloader.Add(i);
+                i = i + 1 >= Pics.Count ? (i + 1) - Pics.Count : i + 1;
+                Preloader.Add(i);
+
+                //Add one more infront
+                i = index - 4 < 0 ? (index + 4) - Pics.Count : index - 4;
+                Preloader.Add(i);
+
+                if (!freshStartup)
+                {
+                    //Clean up behind
+                    var arr = new string[3];
+                    i = index + 3 > Pics.Count - 1 ? Pics.Count - 1 : index + 3;
+                    arr[0] = Pics[i];
+                    i = index + 4 > Pics.Count - 1 ? Pics.Count - 1 : index + 4;
+                    arr[1] = Pics[i];
+                    i = index + 5 > Pics.Count - 1 ? Pics.Count - 1 : index + 5;
+                    arr[2] = Pics[i];
+                    Preloader.Clear(arr);
+                }
+            }
+            #endregion
+        }
+
+        #endregion
+
+        #region Uncategorized
+        
         #region changeFolder + unLoad
         /// <summary>
         /// Clears data, to free objects no longer necessary to store in memory and allow changing folder without error.
@@ -1874,21 +1875,12 @@ namespace PicView
         private void ZoomFit(double width, double height)
         {
             //Buttons (38 * 3 = 87) logo (canvas width 80 + margin right 7 = 87) = 179 (Bar.MinWidth 444) 444 - 179 = 270 - (comfy space) = 210
+            if (width - 221 < 220)
+                Bar.MaxWidth = 210;
+            else
+                Bar.MaxWidth = width - 220;
 
-            //Exit early if ScrollEnabled. Aspectratio won't work in that case.
-            if (IsScrollEnabled)
-            {
-                if (width - 221 < 220)
-                    Bar.MaxWidth = 210;
-                else
-                    Bar.MaxWidth = width - 220;
-
-                img.Width = img.Height = double.NaN;
-                img.MaxWidth = width;
-                return;
-            }
-
-            img.MaxWidth = double.PositiveInfinity;
+            //img.MaxWidth = double.PositiveInfinity;
 
             //Aspect ratio calculation
             var maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth, width);
@@ -1899,10 +1891,16 @@ namespace PicView
             img.Width = xWidth = (width * AspectRatio);
             img.Height = xHeight = (height * AspectRatio);
 
-            if (xWidth - 221 < 220)
-                Bar.MaxWidth = 210;
+            if (IsScrollEnabled)
+            {
+                img.Width = img.Height = double.NaN;
+                img.MaxWidth = width;
+            }
             else
-                Bar.MaxWidth = xWidth - 220;
+            {
+                img.Width = xWidth = (width * AspectRatio);
+                img.Height = xHeight = (height * AspectRatio);
+            }            
 
             isZoomed = false;
         }
@@ -2428,20 +2426,20 @@ namespace PicView
             var dlg = new Microsoft.Win32.OpenFileDialog();
             // Needs support for not being case sensitive 
             dlg.Filter =
-                "All Supported files|*.bmp *.jpg *.png *.tif *.gif *.ico *.jpeg *.wdp *.psd *.psb *.cbr *.cb7 *.cbt *.cbz *.xz *.orf *.cr2 *.crw *.dng *.raf *.ppm *.raw *.mrw *.nef *.pef *.3xf *.arw"
-                + "|Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg*.wdp*"                               // Common pics
-                + "|jpg| *.jpg *.jpeg *"                                                                    // JPG
-                + "|bmp|*.bmp*"                                                                             // BMP
-                + "|png|*.png*"                                                                             // PNG
-                + "|gif|*.gif*"                                                                             // GIF
-                + "|ico|*.ico*"                                                                             // ICO
-                + "|wdp|*.wdp*"                                                                             // WDP
-                + "|svg|*.svg*"                                                                             // SVG
-                + "|tif|*.tif*"                                                                             // Tif
-                + "|Photoshop|*.psd *.psb"                                                                  // PSD
-                + "|Archives|*.zip *.7zip *.7z *.rar *.bzip2 *.tar *.wim *.iso *.cab"                       // Archives
-                + "|Comics|*.cbr *.cb7 *.cbt *.cbz *.xz"                                                    // Comics
-                + "|Camera files|*.orf *.cr2 *.crw *.dng *.raf *.ppm *.raw *.mrw *.nef *.pef *.3xf *.arw";  // Camera files
+                "All Supported files|*.bmp;*.jpg;*.png;*.tif;*.gif;*.ico;*.jpeg;*.wdp;*.psd;*.psb;*.cbr;*.cb7;*.cbt;*.cbz;*.xz;*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;"
+                + "|Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg*.wdp*"                                   // Common pics
+                + "|jpg| *.jpg;*.jpeg;*"                                                                        // JPG
+                + "|bmp|*.bmp;*"                                                                                // BMP
+                + "|png|*.png;*"                                                                                // PNG
+                + "|gif|*.gif;*"                                                                                // GIF
+                + "|ico|*.ico;*"                                                                                // ICO
+                + "|wdp|*.wdp;*"                                                                                // WDP
+                + "|svg|*.svg;*"                                                                                // SVG
+                + "|tif|*.tif;*"                                                                                // Tif
+                + "|Photoshop|*.psd;*.psb"                                                                      // PSD
+                + "|Archives|*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"                           // Archives
+                + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz"                                                        // Comics
+                + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw";      // Camera files
             dlg.Title = "Open image - PicView";
             if (dlg.ShowDialog() == true)
             {

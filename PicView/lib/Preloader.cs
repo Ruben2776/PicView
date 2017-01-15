@@ -31,6 +31,16 @@ namespace PicView.lib
             return Sources[file];
         }
 
+        internal static int Width(string file)
+        {
+            return Sources[file].PixelWidth;
+        }
+
+        internal static int Height(string file)
+        {
+            return Sources[file].PixelHeight;
+        }
+
         //internal static int Count { get { return Sources.Count; } }
         internal static void Add(int i)
         {
