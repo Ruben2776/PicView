@@ -239,7 +239,7 @@ namespace PicView.lib
 
         #endregion
 
-        #region window stuff
+        #region Close, Restore and mazimize windows functions
 
         internal static void Close(Window window)
         {
@@ -277,7 +277,7 @@ namespace PicView.lib
 
         #endregion
 
-        #region File stuff
+        #region File Functions
         internal static bool FilePathHasInvalidChars(string path)
         {
             return (!string.IsNullOrEmpty(path) && path.IndexOfAny(Path.GetInvalidPathChars()) >= 0);
@@ -290,42 +290,7 @@ namespace PicView.lib
 
             return Regex.Replace(name, invalidRegStr, "_");
         }
-        internal static List<string> FileList(string path)
-        {
-            var foo = Directory.GetFiles(path)
-                .AsParallel()
-                .Where(file =>
-                        file.ToLower().EndsWith("jpg", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("jpeg", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("jpe", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("png", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("bmp", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("tif", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("tiff", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("gif", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("ico", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("wdp", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("dds", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("svg", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("psd", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("psb", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("orf", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("cr2", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("crw", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("dng", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("raf", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("ppm", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("raw", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("mrw", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("nef", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("pef", StringComparison.OrdinalIgnoreCase)
-                    )
-                    .ToList();
 
-            foo.Sort((x, y) => { return NativeMethods.StrCmpLogicalW(x, y); });
-
-            return foo;
-        }
 
         internal static string GetSizeReadable(long i)
         {
@@ -372,6 +337,47 @@ namespace PicView.lib
             return sign + readable.ToString("0.## ") + suffix + 'B';
         }
         /// Credits to http://www.somacon.com/p576.php
+
+        #endregion
+
+        #region File list function
+
+        internal static List<string> FileList(string path)
+        {
+            var foo = Directory.GetFiles(path)
+                .AsParallel()
+                .Where(file =>
+                        file.ToLower().EndsWith("jpg", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("jpeg", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("jpe", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("png", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("bmp", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("tif", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("tiff", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("gif", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("ico", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("wdp", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("dds", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("svg", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("psd", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("psb", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("orf", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("cr2", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("crw", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("dng", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("raf", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("ppm", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("raw", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("mrw", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("nef", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("pef", StringComparison.OrdinalIgnoreCase)
+                    )
+                    .ToList();
+
+            foo.Sort((x, y) => { return NativeMethods.StrCmpLogicalW(x, y); });
+
+            return foo;
+        }
 
         #endregion
 
