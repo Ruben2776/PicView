@@ -24,11 +24,13 @@ namespace PicView.lib
             using (MagickImage magick = new MagickImage(file))
             {                    
                 magick.Quality = 100;
+                var mrs = new MagickReadSettings();
+                mrs.Density = new Density(300);
+                mrs.CompressionMethod = CompressionMethod.NoCompression;
 
                 if (extension == ".svg")
                 {
                     //Create settings and make background transparent
-                    var mrs = new MagickReadSettings();
                     mrs.Format = MagickFormat.Svg;
                     mrs.ColorSpace = ColorSpace.Transparent;
                     mrs.BackgroundColor = MagickColors.Transparent;
@@ -38,7 +40,8 @@ namespace PicView.lib
                     magick.Format = MagickFormat.Png;
                     var stream = new MemoryStream();
                     magick.Write(stream);
-                    pic = GetBitmapImage(stream);
+                    magick.Read(stream);
+                    pic = magick.ToBitmapSource();
                 }
                 else
                 {
@@ -84,54 +87,28 @@ namespace PicView.lib
             return pic;
         }
 
-        internal static BitmapImage GetBitmapImage(Stream s)
-        {
-            var pic = new BitmapImage();
-            pic.BeginInit();
-            pic.StreamSource = s;
-            pic.CacheOption = BitmapCacheOption.OnLoad;
-            try
-            {
-                pic.EndInit();
-            }
-            catch (ArgumentException)
-            {
-                var failpic = new BitmapImage();
-                failpic.BeginInit();
-                failpic.StreamSource = s;
-                failpic.CacheOption = BitmapCacheOption.OnLoad;
-                failpic.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
-                failpic.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
-                /// Some images crash without theese settings :(
-                failpic.EndInit();
-                failpic.Freeze();
-                return failpic;
-            }
-            pic.Freeze();
-            return pic;
-        }
-
         #endregion
 
+        #region GetMagickImage(Stream s)
         internal static BitmapSource GetMagickImage(Stream s)
         {
             BitmapSource pic;
-            try
+
+            using (MagickImage magick = new MagickImage(s))
             {
-                using (var magick = new MagickImage())
-                {
-                    magick.Read(s);
-                    magick.Quality = 100;
-                    pic = magick.ToBitmapSource();
-                }
+                magick.Quality = 100;
+                var mrs = new MagickReadSettings();
+                mrs.Density = new Density(300);
+
+                magick.Read(s);
+                magick.ColorSpace = ColorSpace.Transparent;
+                pic = magick.ToBitmapSource();
+
                 pic.Freeze();
                 return pic;
             }
-            catch (Exception)
-            {
-                return null;
-            }
         }
+        #endregion
 
         //internal static BitmapSource GetMagickImage(String s, int width, int height)
         //{

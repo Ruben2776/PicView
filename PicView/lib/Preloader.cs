@@ -11,8 +11,15 @@ namespace PicView.lib
 {
     internal static class Preloader
     {
+        #region Sources, the list of preloaded images
+        /// <summary>
+        /// Contains A list of BitmapSources
+        /// </summary>
         private static readonly ConcurrentDictionary<string, BitmapSource> Sources = new ConcurrentDictionary<string, BitmapSource>();
 
+        #endregion
+
+        #region Add
         internal static void Add(string file)
         {
             if (Contains(file))
@@ -25,14 +32,6 @@ namespace PicView.lib
                 return;
             pic.Freeze();
             Sources.TryAdd(file, pic);
-        }
-
-        internal static BitmapSource Load(string file)
-        {
-            if (!Contains(file))
-                return null;
-
-            return Sources[file];
         }
 
         internal static void Add(int i)
@@ -62,10 +61,9 @@ namespace PicView.lib
             Sources.TryAdd(key, bmp);
         }
 
-        internal static bool Contains(string key)
-        {
-            return Sources.ContainsKey(key);
-        }
+        #endregion
+
+        #region Remove || Clear
 
         internal static void Remove(string key)
         {
@@ -83,12 +81,11 @@ namespace PicView.lib
 
             var timer = new DispatcherTimer
             (
-                TimeSpan.FromSeconds(40), DispatcherPriority.ContextIdle, (s, e) => {
+                TimeSpan.FromSeconds(30), DispatcherPriority.ContextIdle, (s, e) => {
                     for (int i = 0; i < array.Length; i++)
                     {
                         Remove(array[i]);
                     }
-                    //GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
                     GC.Collect();
                 },
                 Application.Current.Dispatcher
@@ -106,7 +103,6 @@ namespace PicView.lib
                     {
                         Remove(array[i]);
                     }
-                    //GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
                     GC.Collect();
                 },
                 Application.Current.Dispatcher
@@ -114,10 +110,37 @@ namespace PicView.lib
             timer.Start();
         }
 
+        #endregion
+
+        #region Load
+
+        internal static BitmapSource Load(string file)
+        {
+            if (!Contains(file))
+                return null;
+
+            return Sources[file];
+        }
+
+        #endregion
+
+        #region Contains
+
+        internal static bool Contains(string key)
+        {
+            return Sources.ContainsKey(key);
+        }
+
+        #endregion
+
+        #region Count
+
         internal static int Count()
         {
             return Sources.Count;
         }
+
+        #endregion
 
         #region Preloading
         /// <summary>
