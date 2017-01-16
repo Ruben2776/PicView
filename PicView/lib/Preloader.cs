@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using static PicView.lib.Helper;
 
 namespace PicView.lib
 {
@@ -36,16 +37,16 @@ namespace PicView.lib
 
         internal static void Add(int i)
         {
-            if (i >= MainWindow.Pics.Count || i < 0)
+            if (i >= Pics.Count || i < 0)
                 return;
 
-            if (File.Exists(MainWindow.Pics[i]))
+            if (File.Exists(Pics[i]))
             {
-                if (!Contains(MainWindow.Pics[i]))
-                    Add(MainWindow.Pics[i]);
+                if (!Contains(Pics[i]))
+                    Add(Pics[i]);
             }
             else
-                MainWindow.Pics.Remove(MainWindow.Pics[i]);
+                Pics.Remove(Pics[i]);
         }
 
         internal static void Add(BitmapSource bmp, string key)
@@ -117,6 +118,93 @@ namespace PicView.lib
         {
             return Sources.Count;
         }
+
+        #region Preloading
+        /// <summary>
+        /// Starts decoding images into memory,
+        /// based on current index and if reverse or not
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="reverse"></param>
+        internal static void PreLoad(int index, bool reverse)
+        {
+            #region Forward
+            if (!reverse)
+            {
+                //Add first three
+                var i = index + 1 >= Pics.Count ? (index + 1) - Pics.Count : index + 1;
+                Add(i);
+                i = i + 1 >= Pics.Count ? (i + 1) - Pics.Count : i + 1;
+                Add(i);
+                i = i + 1 >= Pics.Count ? (i + 1) - Pics.Count : i + 1;
+                Add(i);
+
+                //Add two behind
+                i = index - 1 < 0 ? Pics.Count - index : index - 1;
+                Add(i);
+                i = i - 1 < 0 ? Pics.Count - i : i - 1;
+                Add(i);
+
+                //Add one more infront
+                i = index + 4 >= Pics.Count ? (index + 4) - Pics.Count : index + 4;
+                Add(i);
+
+                if (!freshStartup)
+                {
+                    //Clean up behind
+                    var arr = new string[3];
+                    i = index - 3 < 0 ? (Pics.Count - index) - 3 : index - 3;
+                    if (i > -1 && i < Pics.Count)
+                        arr[0] = Pics[i];
+                    i = i - 1 < 0 ? (Pics.Count - index) - 1 : i - 1;
+                    if (i > -1 && i < Pics.Count)
+                        arr[1] = Pics[i];
+                    i = i - 1 < 0 ? (Pics.Count - index) - 1 : i - 1;
+                    if (i > -1 && i < Pics.Count)
+                        arr[2] = Pics[i];
+                    Clear(arr);
+                }
+            }
+            #endregion
+
+            #region Backwards
+            else
+            {
+                //Add first three
+                var i = index - 1 < 0 ? Pics.Count : index - 1;
+                Add(i);
+                i = i - 1 < 0 ? Pics.Count : i - 1;
+                Add(i);
+                i = i - 1 < 0 ? Pics.Count : i - 1;
+                Add(i);
+
+                //Add two behind
+                i = index + 1 >= Pics.Count ? (i + 1) - Pics.Count : index + 1;
+                Add(i);
+                i = i + 1 >= Pics.Count ? (i + 1) - Pics.Count : i + 1;
+                Add(i);
+
+                //Add one more infront
+                i = index - 4 < 0 ? (index + 4) - Pics.Count : index - 4;
+                Add(i);
+
+                if (!freshStartup)
+                {
+                    //Clean up behind
+                    var arr = new string[3];
+                    i = index + 3 > Pics.Count - 1 ? Pics.Count - 1 : index + 3;
+                    arr[0] = Pics[i];
+                    i = index + 4 > Pics.Count - 1 ? Pics.Count - 1 : index + 4;
+                    arr[1] = Pics[i];
+                    i = index + 5 > Pics.Count - 1 ? Pics.Count - 1 : index + 5;
+                    arr[2] = Pics[i];
+                    Clear(arr);
+                }
+            }
+            #endregion
+        }
+
+        #endregion
     }
 
 }

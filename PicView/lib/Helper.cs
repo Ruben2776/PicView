@@ -1,14 +1,18 @@
 ﻿using Microsoft.WindowsAPICodePack.Taskbar;
+using PicView.lib.UserControls;
+using PicView.UserControls;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
-using System.Text;
+using System.Timers;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 
 namespace PicView.lib
@@ -77,13 +81,146 @@ namespace PicView.lib
     }
     internal static class Helper
     {
+        #region Variables
+
+        #region Strings
         internal const string AppName = "PicView";
         internal const string Loading = "Loading...";
+        internal const string TxtCopy = "Filename copied to Clipboard";
+        internal const string FileCopy = "File copied to Clipboard";
+        internal const string ExpFind = "Locating in file explorer";
+        internal const string NoImage = "No image loaded";
+        internal const string DragOverString = "Drop to load image";
+        internal const string SevenZipFiles = " *.jpg *jpeg. *.png *.gif *.jpe *.bmp *.tiff *.tif *.ico *.wdp *.dds *.svg";
 
+        /// <summary>
+        /// File path of current  image
+        /// </summary>
+        internal static string PicPath { get; set; }
+        /// <summary>
+        /// Backup of PicPath
+        /// </summary>
+        internal static string xPicPath { get; set; }
+        /// <summary>
+        /// File path for the extracted folder
+        /// </summary>
+        internal static string TempZipPath { get; set; }
+        internal static string Extension { get; set; }
+        /// <summary>
+        /// Returns string with zoom %
+        /// </summary>
+        internal static string ZoomPercentage { get { return Math.Round(AspectRatio * 100) + "%"; } }
+        /// <summary>
+        /// Returns zoom % if not zero. Empty string for zero
+        /// </summary>
+        internal static string Zoomed
+        {
+            get
+            {
+                var zoom = Math.Round(AspectRatio * 100);
+                if (zoom == 100)
+                    return string.Empty;
+
+                return " - " + zoom + "%";
+            }
+        }
+        /// <summary>
+        /// Returns aspect ratio as a formatted string
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        internal static string StringAspect(int width, int height)
+        {
+            var gcd = GCD(width, height);
+            var x = (width / gcd);
+            var y = (height / gcd);
+
+            if (x == width && y == height)
+                return ") ";
+
+            return ", " + x + ":" + y + ") ";
+        }
+        #endregion
+
+        #region Booleans
+        internal static bool LeftbuttonClicked;
+        internal static bool RightbuttonClicked;
+        internal static bool imageSettingsMenuOpen;
+        internal static bool openMenuOpen;
+        //internal static bool settingsWindowOpen;
+        internal static bool GoToPic;
+        //internal static bool cursorHidden;
+        internal static bool isZoomed;
+        internal static bool Flipped;
+        internal static bool canNavigate;
+        //internal static bool mouseIsOnArrow;
+        internal static bool isDraggedOver;
+        internal static bool freshStartup;
+
+        #endregion
+
+        #region Integers and Doubles
+        /// <summary>
+        /// Used as comfortable space for standard viewing
+        /// </summary>
+        internal const int ComfySpace = 90;
+        internal static double xWidth { get; set; }
+        internal static double xHeight { get; set; }
+
+        /// <summary>
+        /// Counter used to get/set current index
+        /// </summary>
+        internal static int FolderIndex { get; set; }
+        internal static int xFolderIndex { get; set; }
+
+        /// <summary>
+        /// Counter used to check if preloading is neccesary
+        /// </summary>
+        internal static short PreloadCount { get; set; }
+
+        internal const double MinZoom = 0.3;
+        internal static double AspectRatio { get; set; }
+        internal static int Rotateint { get; set; }
+
+        #endregion
+
+        #region Controls
+        internal static ImageSettings imageSettingsMenu;
+        internal static OpenMenu openMenu;
+        //private static Settings SettingsWindow;
+        internal static AjaxLoading ajaxLoading;
+        internal static SexyToolTip sexyToolTip;
+        internal static About about_uc;
+        internal static Help help_uc;
+        #endregion
+
+        #region Points + Scaletransform & TranslateTransform
+        internal static Point origin;
+        internal static Point start;
+
+        internal static ScaleTransform st;
+        internal static TranslateTransform tt;
+        #endregion
+
+        #region Lists
+        internal static List<string> Pics { get; set; }
+        #endregion
+
+        #region Misc
+        internal static ImageSource prevPicResource;
+        //internal static System.Timers.Timer activityTimer;
+        internal static ContextMenu cm;
+        #endregion      
+
+        #endregion
+
+        #region GCD
         internal static int GCD(int x, int y)
         {
             return y == 0 ? x : GCD(y, x % y);
         }
+        #endregion
 
         #region Win 7 Taskbar Stuff
 
@@ -250,6 +387,34 @@ namespace PicView.lib
             p.Start();
         }
 
+        #endregion
+
+        #region Wallpaper
+
+        internal static void SetWallpaper(string path, WallpaperStyle style)
+        {
+            if (canNavigate)
+            {
+                if (File.Exists(path))
+                    Task.Run(() => Wallpaper.SetDesktopWallpaper(path, style));
+            }
+            else
+            {
+                Task.Run(() =>
+                {
+                    //Handle if file from web, need clipboard image solution
+                    var tempPath = Path.GetTempPath();
+                    var randomName = Path.GetRandomFileName();
+                    var webClient = new WebClient();
+                    Directory.CreateDirectory(tempPath);
+                    webClient.DownloadFile(path, tempPath + randomName);
+                    Wallpaper.SetDesktopWallpaper(tempPath + randomName, style);
+                    File.Delete(tempPath + randomName);
+                    var timer = new Timer(2000);
+                    timer.Elapsed += (s,x) => Directory.Delete(tempPath);
+                });
+            }
+        }
         #endregion
     }
 }
