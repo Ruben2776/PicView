@@ -27,210 +27,21 @@ namespace PicView
 {
     public partial class MainWindow : Window
     {
+        #region Window Logic
+
         #region Constructor
         public MainWindow()
         {
             InitializeComponent();
-            Loaded += (s, e) => MainWindow_Loaded(s,e);
+            Loaded += (s, e) => MainWindow_Loaded(s, e);
             ContentRendered += MainWindow_ContentRendered;
         }
 
         #endregion
 
-        #region Private, Public and Internal fields
-
-        #region Strings
-        internal const string Loading = "Loading...";
-        private const string TxtCopy = "Filename copied to Clipboard";
-        private const string FileCopy = "File copied to Clipboard";
-        private const string ExpFind = "Locating in file explorer";
-        private const string NoImage = "No image loaded";
-        private const string DragOverString = "Drop to load image";
-        private const string SevenZipFiles = " *.jpg *jpeg. *.png *.gif *.jpe *.bmp *.tiff *.tif *.ico *.wdp *.dds *.svg";
-        /// <summary>
-        /// File path of current  image
-        /// </summary>
-        internal static string PicPath { get; set; }
-        /// <summary>
-        /// Backup of PicPath
-        /// </summary>
-        internal static string xPicPath { get; set; }
-        /// <summary>
-        /// File path for the extracted folder
-        /// </summary>
-        private static string TempZipPath { get; set; }
-        private static string Extension { get; set; }
-        /// <summary>
-        /// Returns string with zoom %
-        /// </summary>
-        private static string ZoomPercentage { get { return Math.Round(AspectRatio * 100) + "%"; } }
-        /// <summary>
-        /// Returns zoom % if not zero. Empty string for zero
-        /// </summary>
-        private static string Zoomed
-        {
-            get
-            {
-                var zoom = Math.Round(AspectRatio * 100);
-                if (zoom == 100)
-                    return string.Empty;
-
-                return " - " + zoom + "%";
-            }
-        }
-        /// <summary>
-        /// Returns aspect ratio as a formatted string
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <returns></returns>
-        private static string StringAspect(int width, int height)
-        {
-            var gcd = GCD(width, height);
-            var x = (width / gcd);
-            var y = (height / gcd);
-
-            if (x == width && y == height)
-                return ") ";
-
-            return ", " + x + ":" + y + ") ";
-        }
-
-        #endregion
-
-        #region Integers and Doubles
-        /// <summary>
-        /// Used as comfortable space for standard viewing
-        /// </summary>
-        private const int ComfySpace = 90;
-        private static double xWidth { get; set; }
-        private static double xHeight { get; set; }
-
-        /// <summary>
-        /// Counter used to get/set current index
-        /// </summary>
-        private static int FolderIndex { get; set; }
-        private static int xFolderIndex { get; set; }
-
-        /// <summary>
-        /// Counter used to check if preloading is neccesary
-        /// </summary>
-        private static short PreloadCount { get; set; }
-
-        private const double MinZoom = 0.3;
-        private static double AspectRatio { get; set; }
-        private static int Rotateint { get; set; }
-
-        #endregion
-
-        #region Booleans
-        private static bool LeftbuttonClicked;
-        private static bool RightbuttonClicked;
-        private static bool imageSettingsWindowOpen;
-        private static bool openmenuWindowOpen;
-        //private static bool settingsWindowOpen;
-        private static bool GoToPic;
-        //private static bool cursorHidden;
-        private static bool isZoomed;
-        private static bool Flipped;
-        private static bool canNavigate;
-        //private static bool mouseIsOnArrow;
-        private static bool isDraggedOver;
-        private static bool freshStartup;
-
-        private bool IsScrollEnabled
-        {
-            get { return Properties.Settings.Default.ScrollEnabled; }
-            set
-            {
-                Properties.Settings.Default.ScrollEnabled = value;
-                Scroller.VerticalScrollBarVisibility = value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
-                if (!freshStartup && !string.IsNullOrEmpty(PicPath))
-                {
-                    ZoomFit(img.Source.Width, img.Source.Height);
-                    ToolTipStyle(value ? "Scrolling enabled" : "Scrolling disabled", false);
-                }
-            }
-        }
-
-        private static bool ImageSettingsWindowOpen
-        {
-            get { return imageSettingsWindowOpen; }
-            set
-            {
-                imageSettingsWindowOpen = value;
-                ImageSettingsWindow.Visibility = Visibility.Visible;
-                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
-                if (!value)
-                {
-                    da.To = 0;
-                    da.Completed += delegate { ImageSettingsWindow.Visibility = Visibility.Hidden; };
-                }
-                else
-                    da.To = 1;
-                if (ImageSettingsWindow != null)
-                    ImageSettingsWindow.BeginAnimation(OpacityProperty, da);
-            }
-        }
-
-        private static bool OpenMenuWindowOpen
-        {
-            get { return openmenuWindowOpen; }
-            set
-            {
-                openmenuWindowOpen = value;
-                OpenWindow.Visibility = Visibility.Visible;
-                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
-                if (!value)
-                {
-                    da.To = 0;
-                    da.Completed += delegate { OpenWindow.Visibility = Visibility.Hidden; };
-                }
-                else
-                    da.To = 1;
-                if (OpenWindow != null)
-                    OpenWindow.BeginAnimation(OpacityProperty, da);
-            }
-        }
-
-        #endregion
-
-        #region Controls
-        private static ImageSettings ImageSettingsWindow;
-        private static OpenMenu OpenWindow;
-        //private static Settings SettingsWindow;
-        private static AjaxLoading ajaxLoading;
-        private static SexyToolTip sexyToolTip;
-        private static UserControls.About about_uc;
-        private static UserControls.Help help_uc;
-        #endregion
-
-        #region Points + Scaletransform & TranslateTransform
-        private static Point origin;
-        private static Point start;
-
-        private static ScaleTransform st;
-        private static TranslateTransform tt;
-        #endregion
-
-        #region Lists
-        public static List<string> Pics { get; set; }
-        //public static List<MyBitmaps> MyImages { get; set; }
-        #endregion
-
-        #region ... And the rest!
-        private static readonly Color bgBackColor = Color.FromArgb(242, 20, 20, 20); //#F2141414
-        //http://www.netgfx.com/RGBaZR/
-        private static ImageSource prevPicResource;
-        //private static System.Timers.Timer activityTimer;
-        private static ContextMenu cm;
-        #endregion
-
-        #endregion
-
-        #region Window Logic
-
         #region Load Events
+
+        #region ContentRendered
         private void MainWindow_ContentRendered(object sender, EventArgs e)
         {
             #region Extra settings
@@ -291,7 +102,7 @@ namespace PicView
             {
                 Header = "Set as wallpaper"
             };
-            wallcm.Click += (s, x) => setWallpaper(PicPath, WallpaperStyle.Fill);
+            wallcm.Click += (s, x) => SetWallpaper(PicPath, WallpaperStyle.Fill);
             cm.Items.Add(wallcm);
             cm.Items.Add(new Separator());
 
@@ -496,17 +307,17 @@ namespace PicView
                 OpenMenuButton.MouseLeave += OpenMenuButtonMouseLeave;
                 OpenMenuButton.Click += Toggle_open_menu;
 
-                OpenWindow.Open.Click += (s, x) => Open();
-                OpenWindow.Open_File_Location.Click += (s, x) => Open_In_Explorer();
-                OpenWindow.Print.Click += (s, x) => Print(PicPath);
+                Helper.openMenu.Open.Click += (s, x) => Open();
+                Helper.openMenu.Open_File_Location.Click += (s, x) => Open_In_Explorer();
+                Helper.openMenu.Print.Click += (s, x) => Print(PicPath);
 
-                OpenWindow.Open_Border.MouseLeftButtonUp += (s, x) => Open();
-                OpenWindow.Open_File_Location_Border.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
-                OpenWindow.Print_Border.MouseLeftButtonUp += (s, x) => Print(PicPath);
+                Helper.openMenu.Open_Border.MouseLeftButtonUp += (s, x) => Open();
+                Helper.openMenu.Open_File_Location_Border.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
+                Helper.openMenu.Print_Border.MouseLeftButtonUp += (s, x) => Print(PicPath);
 
-                OpenWindow.CloseButton.Click += Close_UserControls;
-                OpenWindow.PasteButton.Click += (s, x) => Paste();
-                OpenWindow.CopyButton.Click += (s, x) => CopyPic();
+                Helper.openMenu.CloseButton.Click += Close_UserControls;
+                Helper.openMenu.PasteButton.Click += (s, x) => Paste();
+                Helper.openMenu.CopyButton.Click += (s, x) => CopyPic();
                 #endregion
 
                 #region image_button
@@ -517,23 +328,23 @@ namespace PicView
                 image_button.Click += Toggle_image_menu;
 
                 #region CloseButton
-                ImageSettingsWindow.CloseButton.Click += Close_UserControls;
+                imageSettingsMenu.CloseButton.Click += Close_UserControls;
                 #endregion
 
                 #region FlipButton
-                ImageSettingsWindow.FlipButton.Click += (s,x) => Flip();
+                imageSettingsMenu.FlipButton.Click += (s,x) => Flip();
                 #endregion
 
                 #region Rotation RadioButtons
-                ImageSettingsWindow.ro0.Click += (s, x) => Rotate(0);
-                ImageSettingsWindow.ro90.Click += (s, x) => Rotate(90);
-                ImageSettingsWindow.ro180.Click += (s, x) => Rotate(180);
-                ImageSettingsWindow.ro270.Click += (s, x) => Rotate(270);
+                imageSettingsMenu.ro0.Click += (s, x) => Rotate(0);
+                imageSettingsMenu.ro90.Click += (s, x) => Rotate(90);
+                imageSettingsMenu.ro180.Click += (s, x) => Rotate(180);
+                imageSettingsMenu.ro270.Click += (s, x) => Rotate(270);
 
-                ImageSettingsWindow.ro0Border.MouseLeftButtonDown += (s, x) => Rotate(0);
-                ImageSettingsWindow.ro90Border.MouseLeftButtonDown += (s, x) => Rotate(90);
-                ImageSettingsWindow.ro180Border.MouseLeftButtonDown += (s, x) => Rotate(180);
-                ImageSettingsWindow.ro270Border.MouseLeftButtonDown += (s, x) => Rotate(270);
+                imageSettingsMenu.ro0Border.MouseLeftButtonDown += (s, x) => Rotate(0);
+                imageSettingsMenu.ro90Border.MouseLeftButtonDown += (s, x) => Rotate(90);
+                imageSettingsMenu.ro180Border.MouseLeftButtonDown += (s, x) => Rotate(180);
+                imageSettingsMenu.ro270Border.MouseLeftButtonDown += (s, x) => Rotate(270);
 
                 #endregion
 
@@ -628,6 +439,7 @@ namespace PicView
                 AjaxLoadingEnd();
             }
         }
+        #endregion
 
         #region Loaded
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -640,6 +452,7 @@ namespace PicView
             AjaxLoadingStart();
         }
         #endregion
+
         #endregion
 
         #region Size changed
@@ -962,7 +775,7 @@ namespace PicView
                     if (!Preloader.Contains(Pics[x]))
                         Preloader.Add(pic, Pics[x]);
 
-                    PreLoad(x, reverse.Value);
+                    Preloader.PreLoad(x, reverse.Value);
                     PreloadCount = 4;
                 });
                 t.Start();
@@ -1304,97 +1117,6 @@ namespace PicView
 
         #endregion
 
-        #endregion
-
-        #region Preloading
-        /// <summary>
-        /// Starts decoding images into memory,
-        /// based on current index and if reverse or not
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="reverse"></param>
-        private static void PreLoad(int index, bool reverse)
-        {
-            #region Forward
-            if (!reverse)
-            {
-                //Add first three
-                var i = index + 1 >= Pics.Count ? (index + 1) - Pics.Count : index + 1;
-                Preloader.Add(i);
-                i = i + 1 >= Pics.Count ? (i + 1) - Pics.Count : i + 1;
-                Preloader.Add(i);
-                i = i + 1 >= Pics.Count ? (i + 1) - Pics.Count : i + 1;
-                Preloader.Add(i);
-
-                //Add two behind
-                i = index - 1 < 0 ? Pics.Count - index : index - 1;
-                Preloader.Add(i);
-                i = i - 1 < 0 ? Pics.Count - i : i - 1;
-                Preloader.Add(i);
-
-                //Add one more infront
-                i = index + 4 >= Pics.Count ? (index + 4) - Pics.Count : index + 4;
-                Preloader.Add(i);
-
-                if (!freshStartup)
-                {
-                    //Clean up behind
-                    var arr = new string[3];
-                    i = index - 3 < 0 ? (Pics.Count - index) - 3 : index - 3;
-                    if (i > -1 && i < Pics.Count)
-                        arr[0] = Pics[i];
-                    i = i - 1 < 0 ? (Pics.Count - index) - 1 : i - 1;
-                    if (i > -1 && i < Pics.Count)
-                        arr[1] = Pics[i];
-                    i = i - 1 < 0 ? (Pics.Count - index) - 1 : i - 1;
-                    if (i > -1 && i < Pics.Count)
-                        arr[2] = Pics[i];
-                    Preloader.Clear(arr);
-                }
-            }
-            #endregion
-
-            #region Backwards
-            else
-            {
-                //Add first three
-                var i = index - 1 < 0 ? Pics.Count : index - 1;
-                Preloader.Add(i);
-                i = i - 1 < 0 ? Pics.Count : i - 1;
-                Preloader.Add(i);
-                i = i - 1 < 0 ? Pics.Count : i - 1;
-                Preloader.Add(i);
-
-                //Add two behind
-                i = index + 1 >= Pics.Count ? (i + 1) - Pics.Count : index + 1;
-                Preloader.Add(i);
-                i = i + 1 >= Pics.Count ? (i + 1) - Pics.Count : i + 1;
-                Preloader.Add(i);
-
-                //Add one more infront
-                i = index - 4 < 0 ? (index + 4) - Pics.Count : index - 4;
-                Preloader.Add(i);
-
-                if (!freshStartup)
-                {
-                    //Clean up behind
-                    var arr = new string[3];
-                    i = index + 3 > Pics.Count - 1 ? Pics.Count - 1 : index + 3;
-                    arr[0] = Pics[i];
-                    i = index + 4 > Pics.Count - 1 ? Pics.Count - 1 : index + 4;
-                    arr[1] = Pics[i];
-                    i = index + 5 > Pics.Count - 1 ? Pics.Count - 1 : index + 5;
-                    arr[2] = Pics[i];
-                    Preloader.Clear(arr);
-                }
-            }
-            #endregion
-        }
-
-        #endregion
-
-        #region Uncategorized
-        
         #region changeFolder + unLoad
         /// <summary>
         /// Clears data, to free objects no longer necessary to store in memory and allow changing folder without error.
@@ -1428,64 +1150,6 @@ namespace PicView
 
         #endregion
 
-        #region titleString
-
-        private static string[] titleString(int width, int height, int index)
-        {
-            var s1 = new StringBuilder();
-            s1.Append(AppName).Append(" - ").Append(Path.GetFileName(Pics[index])).Append(" ").Append(index + 1).Append("/").Append(Pics.Count).Append(" files")
-                    .Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height)).Append(GetSizeReadable(new FileInfo(Pics[index]).Length)).Append(Zoomed);
-
-            var array = new string[3];
-            array[0] = s1.ToString();
-            s1.Remove(0, AppName.Length + 3);   // Remove AppName + " - "
-            array[1] = s1.ToString();
-            s1.Replace(Path.GetFileName(Pics[index]), Pics[index]);
-            array[2] = s1.ToString();
-            return array;
-        }
-
-        private static string[] titleString(int width, int height, string path)
-        {
-            var s1 = new StringBuilder();
-            s1.Append(AppName).Append(" - ").Append(path).Append(" (").Append(width).Append(" x ").Append(height).Append(", ").Append(StringAspect(width, height)).Append(") ").Append(Zoomed);
-
-            var array = new string[2];
-            array[0] = s1.ToString();
-            s1.Remove(0, AppName.Length + 3);   // Remove AppName + " - "
-            array[1] = s1.ToString();
-            return array;
-        }
-
-        #endregion
-
-        #region Wallpaper
-
-        private void setWallpaper(string path, WallpaperStyle style)
-        {
-            if (canNavigate)
-            {
-                if (File.Exists(path))
-                    Task.Run(() => Wallpaper.SetDesktopWallpaper(path, style));
-            }
-            else
-            {
-                Task.Run(() =>
-                {
-                    //Handle if file from web, need clipboard image solution
-                    var tempPath = Path.GetTempPath();
-                    var randomName = Path.GetRandomFileName();
-                    var webClient = new WebClient();
-                    Directory.CreateDirectory(tempPath);
-                    webClient.DownloadFile(path, tempPath + randomName);
-                    Wallpaper.SetDesktopWallpaper(tempPath + randomName, style);
-                    File.Delete(tempPath + randomName);
-                    Thread.Sleep(2000);
-                    Directory.Delete(tempPath);
-                });
-            }
-        }
-        #endregion
         #endregion
 
         #region Drag and Drop
@@ -2044,6 +1708,102 @@ namespace PicView
 
         #region Interface stuff
 
+        #region titleString
+
+        private static string[] titleString(int width, int height, int index)
+        {
+            var s1 = new StringBuilder();
+            s1.Append(AppName).Append(" - ").Append(Path.GetFileName(Pics[index])).Append(" ").Append(index + 1).Append("/").Append(Pics.Count).Append(" files")
+                    .Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height)).Append(GetSizeReadable(new FileInfo(Pics[index]).Length)).Append(Zoomed);
+
+            var array = new string[3];
+            array[0] = s1.ToString();
+            s1.Remove(0, AppName.Length + 3);   // Remove AppName + " - "
+            array[1] = s1.ToString();
+            s1.Replace(Path.GetFileName(Pics[index]), Pics[index]);
+            array[2] = s1.ToString();
+            return array;
+        }
+
+        private static string[] titleString(int width, int height, string path)
+        {
+            var s1 = new StringBuilder();
+            s1.Append(AppName).Append(" - ").Append(path).Append(" (").Append(width).Append(" x ").Append(height).Append(", ").Append(StringAspect(width, height)).Append(") ").Append(Zoomed);
+
+            var array = new string[2];
+            array[0] = s1.ToString();
+            s1.Remove(0, AppName.Length + 3);   // Remove AppName + " - "
+            array[1] = s1.ToString();
+            return array;
+        }
+
+        #endregion
+
+        #region Toggle scroll || IsScrollEnabled
+
+        private bool IsScrollEnabled
+        {
+            get { return Properties.Settings.Default.ScrollEnabled; }
+            set
+            {
+                Properties.Settings.Default.ScrollEnabled = value;
+                Scroller.VerticalScrollBarVisibility = value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+                if (!freshStartup && !string.IsNullOrEmpty(PicPath))
+                {
+                    ZoomFit(img.Source.Width, img.Source.Height);
+                    ToolTipStyle(value ? "Scrolling enabled" : "Scrolling disabled", false);
+                }
+            }
+        }
+
+        #endregion
+
+        #region UserControl Specifics
+
+        #region Toggle Menu booleans || ImageSettingsMenuOpen, OpenMenuOpen
+
+        private static bool ImageSettingsMenuOpen
+        {
+            get { return imageSettingsMenuOpen; }
+            set
+            {
+                imageSettingsMenuOpen = value;
+                imageSettingsMenu.Visibility = Visibility.Visible;
+                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
+                if (!value)
+                {
+                    da.To = 0;
+                    da.Completed += delegate { imageSettingsMenu.Visibility = Visibility.Hidden; };
+                }
+                else
+                    da.To = 1;
+                if (imageSettingsMenu != null)
+                    imageSettingsMenu.BeginAnimation(OpacityProperty, da);
+            }
+        }
+
+        private static bool OpenMenuOpen
+        {
+            get { return openMenuOpen; }
+            set
+            {
+                openMenuOpen = value;
+                openMenu.Visibility = Visibility.Visible;
+                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
+                if (!value)
+                {
+                    da.To = 0;
+                    da.Completed += delegate { openMenu.Visibility = Visibility.Hidden; };
+                }
+                else
+                    da.To = 1;
+                if (openMenu != null)
+                    openMenu.BeginAnimation(OpacityProperty, da);
+            }
+        }
+
+        #endregion
+
         #region ToolTipStyle
         private void LoadTooltipStyle()
         {
@@ -2176,7 +1936,7 @@ namespace PicView
         #region OpenMenu
         private void LoadOpenMenu()
         {
-            OpenWindow = new OpenMenu
+            Helper.openMenu = new OpenMenu
             {
                 Focusable = false,
                 Opacity = 0,
@@ -2186,14 +1946,14 @@ namespace PicView
                 Margin = new Thickness(0, 0, 152, 0)
             };
 
-            bg.Children.Add(OpenWindow);
+            bg.Children.Add(Helper.openMenu);
         }
         #endregion
 
         #region ImageSettingsMenu
         private void LoadImageSettingsMenu()
         {
-            ImageSettingsWindow = new ImageSettings
+            imageSettingsMenu = new ImageSettings
             {
                 Focusable = false,
                 Opacity = 0,
@@ -2203,7 +1963,7 @@ namespace PicView
                 Margin = new Thickness(0, 0, 112, 0)
             };
 
-            bg.Children.Add(ImageSettingsWindow);
+            bg.Children.Add(imageSettingsMenu);
         }
         #endregion
 
@@ -2236,11 +1996,11 @@ namespace PicView
             //if (EffectsWindowOpen)
             //    EffectsWindowOpen = false;
 
-            if (ImageSettingsWindowOpen)
-                ImageSettingsWindowOpen = false;
+            if (ImageSettingsMenuOpen)
+                ImageSettingsMenuOpen = false;
 
-            if (OpenMenuWindowOpen)
-                OpenMenuWindowOpen = false;
+            if (OpenMenuOpen)
+                OpenMenuOpen = false;
 
             //if (SettingsWindowOpen)
             //    SettingsWindowOpen = false;
@@ -2253,23 +2013,25 @@ namespace PicView
 
         #endregion
 
-        #region Open/Close Usercontrols
+        #region Toggle Usercontrols
 
         private void Toggle_open_menu(object sender, RoutedEventArgs e)
         {
-            OpenMenuWindowOpen = !OpenMenuWindowOpen;
+            OpenMenuOpen = !OpenMenuOpen;
 
-            if (ImageSettingsWindowOpen)
-                ImageSettingsWindowOpen = false;
+            if (ImageSettingsMenuOpen)
+                ImageSettingsMenuOpen = false;
         }
 
         private void Toggle_image_menu(object sender, RoutedEventArgs e)
         {
-            ImageSettingsWindowOpen = !ImageSettingsWindowOpen;
+            ImageSettingsMenuOpen = !ImageSettingsMenuOpen;
 
-            if (OpenMenuWindowOpen)
-                OpenMenuWindowOpen = false;
+            if (OpenMenuOpen)
+                OpenMenuOpen = false;
         }
+
+        #endregion
 
         #endregion
 
@@ -2476,6 +2238,22 @@ namespace PicView
 
         #endregion
 
+        #region ScrollViewer
+
+        //private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        //{
+        //    var border = VisualTreeHelper.GetChild(listbox, 0) as Decorator;
+
+        //    // Get scrollviewer
+        //    var scrollviewer = border.Child as ScrollViewer;
+
+        //    if (e.Delta > 0)
+        //        scrollviewer.LineRight();
+        //    else
+        //        scrollviewer.LineLeft();
+        //    e.Handled = true;
+        //}
+
         #region Scroller events
         //private async void Scroller_MouseLeave(object sender, MouseEventArgs e)
         //{
@@ -2496,24 +2274,6 @@ namespace PicView
         //    AnimationHelper.Fade(s, 1, TimeSpan.FromSeconds(.7));
         //}
         #endregion
-
-        #region ScrollViewer
-
-        //private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        //{
-        //    var border = VisualTreeHelper.GetChild(listbox, 0) as Decorator;
-
-        //    // Get scrollviewer
-        //    var scrollviewer = border.Child as ScrollViewer;
-
-        //    if (e.Delta > 0)
-        //        scrollviewer.LineRight();
-        //    else
-        //        scrollviewer.LineLeft();
-        //    e.Handled = true;
-        //}
-
-
 
         #endregion
 
@@ -2569,31 +2329,31 @@ namespace PicView
             switch (r)
             {
                 case 0:
-                    ImageSettingsWindow.ro0.IsChecked = true;
-                    ImageSettingsWindow.ro90.IsChecked = false;
-                    ImageSettingsWindow.ro180.IsChecked = false;
-                    ImageSettingsWindow.ro270.IsChecked = false;
+                    imageSettingsMenu.ro0.IsChecked = true;
+                    imageSettingsMenu.ro90.IsChecked = false;
+                    imageSettingsMenu.ro180.IsChecked = false;
+                    imageSettingsMenu.ro270.IsChecked = false;
                     break;
 
                 case 180:
-                    ImageSettingsWindow.ro180.IsChecked = true;
-                    ImageSettingsWindow.ro90.IsChecked = false;
-                    ImageSettingsWindow.ro0.IsChecked = false;
-                    ImageSettingsWindow.ro270.IsChecked = false;
+                    imageSettingsMenu.ro180.IsChecked = true;
+                    imageSettingsMenu.ro90.IsChecked = false;
+                    imageSettingsMenu.ro0.IsChecked = false;
+                    imageSettingsMenu.ro270.IsChecked = false;
                     break;
 
                 case 90:
-                    ImageSettingsWindow.ro90.IsChecked = true;
-                    ImageSettingsWindow.ro0.IsChecked = false;
-                    ImageSettingsWindow.ro180.IsChecked = false;
-                    ImageSettingsWindow.ro270.IsChecked = false;
+                    imageSettingsMenu.ro90.IsChecked = true;
+                    imageSettingsMenu.ro0.IsChecked = false;
+                    imageSettingsMenu.ro180.IsChecked = false;
+                    imageSettingsMenu.ro270.IsChecked = false;
                     break;
 
                 case 270:
-                    ImageSettingsWindow.ro270.IsChecked = true;
-                    ImageSettingsWindow.ro90.IsChecked = false;
-                    ImageSettingsWindow.ro180.IsChecked = false;
-                    ImageSettingsWindow.ro0.IsChecked = false;
+                    imageSettingsMenu.ro270.IsChecked = true;
+                    imageSettingsMenu.ro90.IsChecked = false;
+                    imageSettingsMenu.ro180.IsChecked = false;
+                    imageSettingsMenu.ro0.IsChecked = false;
                     break;
             }
         }

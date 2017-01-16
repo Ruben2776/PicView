@@ -4,7 +4,7 @@ using System.Windows.Input;
 namespace PicView.lib.UserControls
 {
     /// <summary>
-    /// Interaction logic for OpenMenu.xaml
+    /// Interaction logic for openMenu.xaml
     /// </summary>
     public partial class OpenMenu : UserControl
     {
