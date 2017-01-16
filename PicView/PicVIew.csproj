@@ -88,9 +88,6 @@
       <HintPath>..\packages\Magick.NET-Q16-HDRI-x64.7.0.4.100\lib\net40-client\Magick.NET-Q16-HDRI-x64.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack">
-      <HintPath>..\..\..\..\gDrive\Programming Projects\PicView\PicView\PicView\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack.Shell">
       <HintPath>..\..\..\..\gDrive\Programming Projects\PicView\PicView\PicView\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
     </Reference>
@@ -321,6 +318,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="dcraw.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Microsoft.WindowsAPICodePack.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Microsoft.WindowsAPICodePack.Shell.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
