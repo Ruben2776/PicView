@@ -11,8 +11,9 @@
                         VerticalAlignment="Bottom"
                         Margin="0,0,0,95"
                         CornerRadius="7"
-                        BorderThickness="0"
+                        BorderThickness="1"
                         Background="#BF1E1E1E"
+                        BorderBrush="#FF232323"
                         >
         <TextBlock x:Name="SexyToolTipText"
                            VerticalAlignment="Center"

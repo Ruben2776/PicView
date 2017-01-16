@@ -140,44 +140,6 @@ namespace PicView
             cm.Items.Add(pastecm);
             cm.Items.Add(new Separator());
 
-            var nextcm = new MenuItem
-            {
-                Header = "Next picture",
-                InputGestureText = "ᗌ or D",
-                ToolTip = "Go to Next image in folder",
-                StaysOpenOnClick = true
-            };
-            nextcm.Click += (s, x) => Pic(true, false);
-            cm.Items.Add(nextcm);
-
-            var prevcm = new MenuItem
-            {
-                Header = "Previous picture",
-                InputGestureText = "ᗏ or A",
-                ToolTip = "Go to previous image in folder",
-                StaysOpenOnClick = true
-            };
-            prevcm.Click += (s, x) => Pic(false, false);
-            cm.Items.Add(prevcm);
-
-            var firstcm = new MenuItem
-            {
-                Header = "First picture",
-                InputGestureText = "Ctrl + D or Ctrl + ᗌ",
-                ToolTip = "Go to first image in folder"
-            };
-            firstcm.Click += (s, x) => Pic(false, true);
-            cm.Items.Add(firstcm);
-
-            var lastcm = new MenuItem
-            {
-                Header = "Last picture",
-                InputGestureText = "Ctrl + A or Ctrl + ᗏ",
-                ToolTip = "Go to last image in folder"
-            };
-            lastcm.Click += (s, x) => Pic(true, true);
-            cm.Items.Add(lastcm);
-
             var unloadcm = new MenuItem
             {
                 Header = "Clear picture"
@@ -236,6 +198,50 @@ namespace PicView
             cm.Items.Add(clcm);
 
             img.ContextMenu = bg.ContextMenu = cm;
+
+            var cmLeft = new ContextMenu();
+            var cmRight = new ContextMenu();
+
+            var nextcm = new MenuItem
+            {
+                Header = "Next picture",
+                InputGestureText = "ᗌ or D",
+                ToolTip = "Go to Next image in folder",
+                StaysOpenOnClick = true
+            };
+            nextcm.Click += (s, x) => Pic(true, false);
+            cmRight.Items.Add(nextcm);
+
+            var prevcm = new MenuItem
+            {
+                Header = "Previous picture",
+                InputGestureText = "ᗏ or A",
+                ToolTip = "Go to previous image in folder",
+                StaysOpenOnClick = true
+            };
+            prevcm.Click += (s, x) => Pic(false, false);
+            cmLeft.Items.Add(prevcm);
+
+            var firstcm = new MenuItem
+            {
+                Header = "First picture",
+                InputGestureText = "Ctrl + D or Ctrl + ᗌ",
+                ToolTip = "Go to first image in folder"
+            };
+            firstcm.Click += (s, x) => Pic(false, true);
+            cmLeft.Items.Add(firstcm);
+
+            var lastcm = new MenuItem
+            {
+                Header = "Last picture",
+                InputGestureText = "Ctrl + A or Ctrl + ᗏ",
+                ToolTip = "Go to last image in folder"
+            };
+            lastcm.Click += (s, x) => Pic(true, true);
+            cmRight.Items.Add(lastcm);
+
+            RightButton.ContextMenu = cmRight;
+            LeftButton.ContextMenu = cmLeft;
 
             #endregion
 
