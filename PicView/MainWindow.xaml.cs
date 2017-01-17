@@ -64,7 +64,7 @@ namespace PicView
 
             #region To load or not to load image, that is the question...
             if (Application.Current.Properties["ArbitraryArgName"] == null)
-                unLoad();
+                Unload();
             else
             {
                 var file = Application.Current.Properties["ArbitraryArgName"].ToString();
@@ -74,7 +74,7 @@ namespace PicView
                     if (Uri.IsWellFormedUriString(file, UriKind.Absolute))
                     PicWeb(file);
                 else
-                    unLoad();
+                    Unload();
             }
             #endregion   
 
@@ -144,7 +144,7 @@ namespace PicView
             {
                 Header = "Clear picture"
             };
-            unloadcm.Click += (s, x) => unLoad();
+            unloadcm.Click += (s, x) => Unload();
             cm.Items.Add(unloadcm);
             cm.Items.Add(new Separator());
 
@@ -154,7 +154,7 @@ namespace PicView
                 InputGestureText = "F2",
                 ToolTip = "Shows version and copyright"
             };
-            abcm.Click += (s, x) => about_window();
+            abcm.Click += (s, x) => AboutWindow();
             cm.Items.Add(abcm);
 
             var helpcm = new MenuItem
@@ -163,7 +163,7 @@ namespace PicView
                 InputGestureText = "F1",
                 ToolTip = "Shows keyboard shortcuts and general help"
             };
-            helpcm.Click += (s, x) => help_window();
+            helpcm.Click += (s, x) => HelpWindow();
             cm.Items.Add(helpcm);
 
             //var toolscm = new MenuItem
@@ -246,21 +246,7 @@ namespace PicView
             #endregion
 
             #region Initilize Zoom
-            img.RenderTransformOrigin = new Point(0.5, 0.5);
-            img.RenderTransform = new TransformGroup
-            {
-                Children = new TransformCollection {
-                    new ScaleTransform(),
-                    new TranslateTransform()
-                }
-            };
-
-            imgBorder.IsManipulationEnabled = true;
-            Scroller.ClipToBounds = img.ClipToBounds = true;
-
-            st = (ScaleTransform)((TransformGroup)img.RenderTransform).Children.First(tr => tr is ScaleTransform);
-            tt = (TranslateTransform)((TransformGroup)img.RenderTransform).Children.First(tr => tr is TranslateTransform);
-
+            InitializeZoom();
             #endregion
 
             #region Add UserControls :)
@@ -388,11 +374,11 @@ namespace PicView
 
                 #region img
 
-                img.MouseLeftButtonDown += img_MouseLeftButtonDown;
-                img.MouseLeftButtonUp += img_MouseLeftButtonUp;
+                img.MouseLeftButtonDown += Zoom_img_MouseLeftButtonDown;
+                img.MouseLeftButtonUp += Zoom_img_MouseLeftButtonUp;
 
-                img.MouseMove += img_MouseMove;
-                img.MouseWheel += img_MouseWheel;
+                img.MouseMove += Zoom_img_MouseMove;
+                img.MouseWheel += Zoom_img_MouseWheel;
                 //img.MouseEnter += img_MouseEnter;
                 //img.MouseLeave += img_MouseLeave;
 
@@ -401,9 +387,9 @@ namespace PicView
                 #region bg
                 //bg.MouseMove += MouseMoves;
                 //bg.MouseLeave += MouseLeaves;
-                bg.Drop += image_Drop_1;
-                bg.DragEnter += image_DragEnter_1;
-                bg.DragLeave += bg_DragLeave;
+                bg.Drop += Image_Drop;
+                bg.DragEnter += Image_DragEnter;
+                bg.DragLeave += Image_DragLeave;
                 //bg.MouseEnter += bg_MouseEnter;
                 //bg.MouseLeave += bg_MouseLeave;
                 //bg.MouseLeftButtonDown += bg_MouseLeftButtonDown;
@@ -425,7 +411,7 @@ namespace PicView
                 #endregion
 
                 #region Lower Bar
-                LowerBar.Drop += image_Drop_1;
+                LowerBar.Drop += Image_Drop;
                 #endregion
 
                 #region Update settings if needed
@@ -466,6 +452,7 @@ namespace PicView
         {
             base.OnRenderSizeChanged(size);
 
+            //Keep position when size has changed
             if (size.HeightChanged)
             {
                 Top += (size.PreviousSize.Height - size.NewSize.Height) / 2;
@@ -478,6 +465,7 @@ namespace PicView
                 
             }
 
+            // Move cursor after resize when the button has been pressed
             if (RightbuttonClicked)
             {
                 Point p = RightButton.PointToScreen(new Point(50, 30)); //Points cursor to center of RighButton
@@ -499,7 +487,10 @@ namespace PicView
         #endregion
 
         #region Center window
-        private void CenterWindowOnScreen() //Centers on the primary monitor.. Needs multi monitor solution....
+        /// <summary>
+        /// Centers on the primary monitor.. Needs multi monitor solution....
+        /// </summary>
+        private void CenterWindowOnScreen()
         {
             Top = (SystemParameters.WorkArea.Height - Height) / 2;
             Left = (SystemParameters.WorkArea.Width - Width) / 2;
@@ -507,6 +498,11 @@ namespace PicView
         #endregion
 
         #region Move window
+        /// <summary>
+        /// Move window and maximize on double click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Move(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton != MouseButton.Left)
@@ -522,7 +518,7 @@ namespace PicView
                 }
                 catch (InvalidOperationException)
                 {
-                    //return;
+                    //Supress "Can only call DragMove when primary mouse button is down"
                 }
             }
         }
@@ -530,11 +526,18 @@ namespace PicView
         #endregion
 
         #region Window_Closing
+
+        /// <summary>
+        /// Save settings when closing
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             Properties.Settings.Default.Save();
             DeleteTempFiles();
         }
+
         #endregion
 
         #endregion
@@ -544,6 +547,10 @@ namespace PicView
         #region Pic
 
         #region Pic(string path)
+        /// <summary>
+        /// Loads a picture from a given file path and does extra error checking
+        /// </summary>
+        /// <param name="path"></param>
         private async void Pic(string path)
         {
             #region Set Loading
@@ -555,7 +562,7 @@ namespace PicView
             #region Check if folder has changed
             if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(path) != Path.GetDirectoryName(PicPath))
             {
-                changeFolder();
+                ChangeFolder();
                 freshStartup = true;
                 await GetValues(path);
             }
@@ -572,7 +579,7 @@ namespace PicView
                 if (string.IsNullOrWhiteSpace(TempZipPath))
                 {
                     // Unexped result, return to clear state.
-                    unLoad();
+                    Unload();
                     return;
                 }
                 //TempZipPath is not null = images being extracted
@@ -597,7 +604,7 @@ namespace PicView
                                 PicPath = File.Exists(xPicPath) ? xPicPath : string.Empty;
                                 FolderIndex = xFolderIndex;
                                 if (!File.Exists(PicPath) || Directory.Exists(PicPath) || String.IsNullOrWhiteSpace(PicPath))
-                                    unLoad();
+                                    Unload();
                                 else
                                     Pic(PicPath);
                                 return;
@@ -605,7 +612,7 @@ namespace PicView
                         }
                         catch (Exception)
                         {
-                            unLoad();
+                            Unload();
                             return;
                         }
 
@@ -623,7 +630,7 @@ namespace PicView
                         }
                         catch (Exception)
                         {
-                            unLoad();
+                            Unload();
                             return;
                         }
                     }
@@ -635,7 +642,7 @@ namespace PicView
 
                     if (count > 3)
                     {
-                        unLoad();
+                        Unload();
                         return;
                     }
                     switch (count)
@@ -680,10 +687,6 @@ namespace PicView
         /// <param name="x"></param>
         private async void Pic(int x)
         {
-            if (x < 0)
-            {
-                return;
-            }
             #region fields
             // Add "pic" as local variable used for the image.
             // Use the Load() function load image from memory if available
@@ -758,7 +761,7 @@ namespace PicView
             #endregion
 
             #region Update ui stuff
-            var titleString = MainWindow.titleString(pic.PixelWidth, pic.PixelHeight, x);
+            var titleString = TitleString(pic.PixelWidth, pic.PixelHeight, x);
             Title = titleString[0];
             Bar.Text = titleString[1];
             Bar.ToolTip = titleString[2];
@@ -801,9 +804,14 @@ namespace PicView
         #endregion
 
         #region Pic(BitmapSource, imageName)
+        /// <summary>
+        /// Load a picture from a prepared bitmap
+        /// </summary>
+        /// <param name="pic"></param>
+        /// <param name="imageName"></param>
         private void Pic(BitmapSource pic, string imageName)
         {
-            unLoad();
+            Unload();
 
             #region Update source, size, animated gif and scroll
             if (IsScrollEnabled)
@@ -817,7 +825,7 @@ namespace PicView
             #endregion
 
             #region Update ui stuff
-            var titleString = MainWindow.titleString(pic.PixelWidth, pic.PixelHeight, imageName);
+            var titleString = TitleString(pic.PixelWidth, pic.PixelHeight, imageName);
             Title = titleString[0];
             Bar.Text = titleString[1];
             Bar.ToolTip = titleString[1];
@@ -889,7 +897,9 @@ namespace PicView
         #endregion
 
         #region FastPic
-
+        /// <summary>
+        /// Only load image from preload or thumbnail without resizing
+        /// </summary>
         private void FastPic()
         {
             Bar.ToolTip = Title = Bar.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count;
@@ -904,6 +914,9 @@ namespace PicView
             GoToPic = true;
         }
 
+        /// <summary>
+        /// Update after FastPic() was used
+        /// </summary>
         private void FastPicUpdate()
         {
             if (!Preloader.Contains(Pics[FolderIndex]))
@@ -978,7 +991,7 @@ namespace PicView
             if (IsScrollEnabled)
                 Scroller.ScrollToTop();
 
-            var titleString = MainWindow.titleString(pic.PixelWidth, pic.PixelHeight, path);
+            var titleString = MainWindow.TitleString(pic.PixelWidth, pic.PixelHeight, path);
             Title = titleString[0];
             Bar.Text = titleString[1];
             Bar.ToolTip = titleString[0];
@@ -1011,123 +1024,11 @@ namespace PicView
 
         #endregion
 
-        #region GetValues
-        private static Task GetValues(string path)
-        {
-            return Task.Run(() =>
-            {
-                bool zipped = false;
-                var extension = Path.GetExtension(path);
-                extension = extension.ToLower();
-                switch (extension)
-                {
-                    case ".zip":
-                    case ".7zip":
-                    case ".7z":
-                    case ".rar":
-                    case ".cbr":
-                    case ".cb7":
-                    case ".cbt":
-                    case ".cbz":
-                    case ".xz":
-                    case ".bzip2":
-                    case ".gzip":
-                    case ".tar":
-                    case ".wim":
-                    case ".iso":
-                    case ".cab":
-                        var sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\7-Zip\\7z.exe";
-                        if (!File.Exists(sevenZip))
-                            sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\7-Zip\\7z.exe";
-                        if (File.Exists(sevenZip))
-                        {
-                            TempZipPath = Path.GetTempPath() + Path.GetRandomFileName();
-                            Directory.CreateDirectory(TempZipPath);
-
-                            var x = Process.Start(new ProcessStartInfo
-                            {
-                                FileName = sevenZip,
-                                Arguments = "x \"" + path + "\" -o" + TempZipPath + SevenZipFiles + " -r -aou",
-                                WindowStyle = ProcessWindowStyle.Hidden
-                            });
-                            if (x == null) goto default;
-                            x.EnableRaisingEvents = true;
-                            x.Exited += (s, e) => Pics = FileList(TempZipPath);
-                            x.WaitForExit(200);
-                            zipped = true;
-                        }
-                        else goto default;
-                        break;
-                    case ".jpg":
-                    case ".jpeg":
-                    case ".jpe":
-                    case ".png":
-                    case ".bmp":
-                    case ".tif":
-                    case ".tiff":
-                    case ".gif":
-                    case ".ico":
-                    case ".wdp":
-                    case ".dds":
-                    case ".svg":
-                    case ".psd":
-                    case ".psb":
-                    case ".orf":
-                    case ".cr2":
-                    case ".crw":
-                    case ".dng":
-                    case ".raf":
-                    case ".ppm":
-                    case ".raw":
-                    case ".mrw":
-                    case ".nef":
-                    case ".pef":
-                    case ".x3f": //Questionable if it works :(
-                    case ".arw":
-                        break;
-                    default:
-                        Pics = new List<string>();
-                        FolderIndex = -1;
-                        TempZipPath = string.Empty;
-                        return;
-                }
-
-                if (zipped)
-                {
-                    if (FolderIndex > -1)
-                    {
-                        xFolderIndex = FolderIndex;
-                    }
-                    if (!string.IsNullOrWhiteSpace(PicPath))
-                    {
-                        xPicPath = PicPath;
-                    }
-                    FolderIndex = 0;
-                    if (Directory.Exists(TempZipPath))
-                    {
-                        var test = Directory.EnumerateFileSystemEntries(TempZipPath);
-                        if (test.Count() > -1)
-                            Pics = FileList(TempZipPath);
-                    }
-                }
-                else
-                {
-                    Pics = FileList(Path.GetDirectoryName(path));
-                    FolderIndex = Pics.IndexOf(path);
-                    Extension = extension;
-                }
-
-                PicPath = path;
-            });
-        }
-
-        #endregion
-
-        #region changeFolder + unLoad
+        #region ChangeFolder + Unload
         /// <summary>
         /// Clears data, to free objects no longer necessary to store in memory and allow changing folder without error.
         /// </summary>
-        private void changeFolder()
+        private void ChangeFolder()
         {
             Pics.Clear();
             Preloader.Clear();
@@ -1136,10 +1037,13 @@ namespace PicView
 
         #region unLoad
 
-        private void unLoad()
+        /// <summary>
+        /// Reset to default state
+        /// </summary>
+        private void Unload()
         {
-            Bar.Text = Title = NoImage;
-            Bar.ToolTip = NoImage;
+            Bar.ToolTip = Bar.Text = NoImage;
+            Title = NoImage + " - " + AppName;
             canNavigate = false;
             img.Source = null;
             freshStartup = true;
@@ -1159,8 +1063,14 @@ namespace PicView
         #endregion
 
         #region Drag and Drop
-
-        bool? drag_drop_check(string[] files)
+        /// <summary>
+        /// Check if dragged file is valid
+        /// Returns null if not useable thumbnail,
+        /// false if it is, true if invalid
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns></returns>
+        bool? Drag_Drop_Check(string[] files)
         {
             // Return if file strings are null
             if (files == null) return true;
@@ -1187,6 +1097,16 @@ namespace PicView
                 case ".svg":
                 case ".psd":
                 case ".psb":
+                case ".orf":
+                case ".cr2":
+                case ".crw":
+                case ".dng":
+                case ".raf":
+                case ".ppm":
+                case ".raw":
+                case ".mrw":
+                case ".nef":
+                case ".pef":
                     return null;
                 case ".jpg":
                 case ".jpeg":
@@ -1204,19 +1124,19 @@ namespace PicView
             }
         }
 
-        private void image_DragEnter_1(object sender, DragEventArgs e)
+        private void Image_DragEnter(object sender, DragEventArgs e)
         {
             if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
 
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-            if (drag_drop_check(files).HasValue && drag_drop_check(files).Value)
+            if (Drag_Drop_Check(files).HasValue && Drag_Drop_Check(files).Value)
                 return;
 
             isDraggedOver = true;
 
             ToolTipStyle(DragOverString, false);
 
-            if (drag_drop_check(files) == null)
+            if (Drag_Drop_Check(files) == null)
                 return;
 
             if (img.Source == null)
@@ -1239,7 +1159,7 @@ namespace PicView
 
         }
 
-        void bg_DragLeave(object sender, DragEventArgs e)
+        void Image_DragLeave(object sender, DragEventArgs e)
         {
             if (!isDraggedOver)
                 return;
@@ -1259,14 +1179,14 @@ namespace PicView
             CloseToolTipStyle();
         }
 
-        private void image_Drop_1(object sender, DragEventArgs e)
+        private void Image_Drop(object sender, DragEventArgs e)
         {
             if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
 
             // Get files as strings
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
             // check if valid
-            //if (drag_drop_check(files).HasValue && drag_drop_check(files).Value)
+            //if (Drag_Drop_Check(files).HasValue && Drag_Drop_Check(files).Value)
             //    return;
 
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
@@ -1491,11 +1411,13 @@ namespace PicView
         #endregion
 
         #region Zoom and Mouse Buttons
-
-        private void img_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        /// <summary>
+        /// Pan and Zoom, reset zoom and double click to go to next picture
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Zoom_img_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Close_UserControls();
-
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
                 if (e.ClickCount == 2)
@@ -1523,21 +1445,18 @@ namespace PicView
             //    }
         }
 
-        private void img_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void Zoom_img_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             img.ReleaseMouseCapture();
         }
 
-        private void img_MouseMove(object sender, MouseEventArgs e)
+        /// <summary>
+        /// Tracks where the mouse drags to
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Zoom_img_MouseMove(object sender, MouseEventArgs e)
         {
-            //if (Properties.Settings.Default.Fullscreen)
-            //{
-            //    if (cursorHidden)
-            //        Cursor = Cursors.Arrow;
-
-            //    activityTimer.Start();
-            //}
-
             if (!img.IsMouseCaptured) return;
             var v = start - e.GetPosition(this);
             tt.X = origin.X - v.X;
@@ -1545,7 +1464,12 @@ namespace PicView
             e.Handled = true;
         }
 
-        private void img_MouseWheel(object sender, MouseWheelEventArgs e)
+        /// <summary>
+        /// Zooms or scrolls with mousewheel
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Zoom_img_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (Properties.Settings.Default.ScrollEnabled)
             {
@@ -1559,16 +1483,30 @@ namespace PicView
                 Zoom(e.Delta, true);
         }
 
-        private static void imgBorder_ManipulationDelta(object sender, ManipulationDeltaEventArgs e)
+        /// <summary>
+        /// Manipulates the required elements to allow zooming
+        /// </summary>
+        private void InitializeZoom()
         {
-            st.ScaleX *= e.DeltaManipulation.Scale.X;
-            st.ScaleY *= e.DeltaManipulation.Scale.X;
-            tt.X += e.DeltaManipulation.Translation.X;
-            tt.Y += e.DeltaManipulation.Translation.Y;
+            img.RenderTransformOrigin = new Point(0.5, 0.5);
+            img.RenderTransform = new TransformGroup
+            {
+                Children = new TransformCollection {
+                    new ScaleTransform(),
+                    new TranslateTransform()
+                }
+            };
 
-            e.Handled = true;
+            imgBorder.IsManipulationEnabled = true;
+            Scroller.ClipToBounds = img.ClipToBounds = true;
+
+            st = (ScaleTransform)((TransformGroup)img.RenderTransform).Children.First(tr => tr is ScaleTransform);
+            tt = (TranslateTransform)((TransformGroup)img.RenderTransform).Children.First(tr => tr is TranslateTransform);
         }
 
+        /// <summary>
+        /// Resets element values to their loaded values
+        /// </summary>
         private void ResetZoom()
         {
             if (IsScrollEnabled)
@@ -1600,12 +1538,17 @@ namespace PicView
                 height = info.Height;
             }
             ZoomFit(width, height);
-            var titleString = MainWindow.titleString(width, height, FolderIndex);
+            var titleString = TitleString(width, height, FolderIndex);
             Title = titleString[0];
             Bar.Text = titleString[1];
             Bar.ToolTip = titleString[2];
         }
 
+        /// <summary>
+        /// Scales or zooms, depending on given values
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="zoomMode"></param>
         private void Zoom(int i, bool zoomMode)
         {
             if (!isZoomed)
@@ -1613,6 +1556,7 @@ namespace PicView
 
             AspectRatio += i > 0 ? .01 : -.01;
 
+            // Scales the window with img.LayoutTransform
             if (zoomMode)
             {
                 var scaletransform = new ScaleTransform();
@@ -1629,6 +1573,7 @@ namespace PicView
                 img.LayoutTransform = scaletransform;
             }
 
+            // Pan and zoom
             else
             {
                 Point position;
@@ -1661,11 +1606,12 @@ namespace PicView
                 }
             }
 
+            // Displays zoompercentage in the center window
             ToolTipStyle(ZoomPercentage, true);
 
             if (Preloader.Contains(PicPath))
             {
-                var titleString = MainWindow.titleString(Preloader.Load(PicPath).PixelWidth, Preloader.Load(PicPath).PixelHeight, FolderIndex);
+                var titleString = TitleString(Preloader.Load(PicPath).PixelWidth, Preloader.Load(PicPath).PixelHeight, FolderIndex);
                 Title = titleString[0];
                 Bar.Text = titleString[1];
                 Bar.ToolTip = titleString[2];
@@ -1714,9 +1660,16 @@ namespace PicView
 
         #region Interface stuff
 
-        #region titleString
-
-        private static string[] titleString(int width, int height, int index)
+        #region TitleString
+        /// <summary>
+        /// Returns string with file name, folder position,
+        /// zoom, aspect ratio, resolution and file size
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        private static string[] TitleString(int width, int height, int index)
         {
             var s1 = new StringBuilder();
             s1.Append(AppName).Append(" - ").Append(Path.GetFileName(Pics[index])).Append(" ").Append(index + 1).Append("/").Append(Pics.Count).Append(" files")
@@ -1731,7 +1684,15 @@ namespace PicView
             return array;
         }
 
-        private static string[] titleString(int width, int height, string path)
+        /// <summary>
+        /// Returns string with file name,
+        /// zoom, aspect ratio and resolution
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private static string[] TitleString(int width, int height, string path)
         {
             var s1 = new StringBuilder();
             s1.Append(AppName).Append(" - ").Append(path).Append(" (").Append(width).Append(" x ").Append(height).Append(", ").Append(StringAspect(width, height)).Append(") ").Append(Zoomed);
@@ -1746,7 +1707,9 @@ namespace PicView
         #endregion
 
         #region Toggle scroll || IsScrollEnabled
-
+        /// <summary>
+        /// Toggles scroll and displays it with TooltipStle
+        /// </summary>
         private bool IsScrollEnabled
         {
             get { return Properties.Settings.Default.ScrollEnabled; }
@@ -1767,7 +1730,9 @@ namespace PicView
         #region UserControl Specifics
 
         #region Toggle Menu booleans || ImageSettingsMenuOpen, OpenMenuOpen
-
+        /// <summary>
+        /// Toggles whether ImageSettingsMenu is open or not with a fade animatiomn 
+        /// </summary>
         private static bool ImageSettingsMenuOpen
         {
             get { return imageSettingsMenuOpen; }
@@ -1788,6 +1753,9 @@ namespace PicView
             }
         }
 
+        /// <summary>
+        /// Toggles whether OpenMenu is open or not with a fade animatiomn 
+        /// </summary>
         private static bool OpenMenuOpen
         {
             get { return openMenuOpen; }
@@ -1821,7 +1789,7 @@ namespace PicView
             };
 
             bg.Children.Add(sexyToolTip);
-            sexyToolTip.MouseWheel += img_MouseWheel;
+            sexyToolTip.MouseWheel += Zoom_img_MouseWheel;
         }
 
         private void ToolTipStyle(string path, bool center, TimeSpan time)
@@ -1882,7 +1850,7 @@ namespace PicView
             bg.Children.Add(about_uc);
         }
 
-        private void about_window()
+        private void AboutWindow()
         {
             about_uc.Visibility = Visibility.Visible;
             var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
@@ -1923,7 +1891,7 @@ namespace PicView
             bg.Children.Add(help_uc);
         }
 
-        private void help_window()
+        private void HelpWindow()
         {
             help_uc.Visibility = Visibility.Visible;
             var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
@@ -2042,7 +2010,12 @@ namespace PicView
         #endregion
 
         #region MouseOver Button Events
+        /*
+        
+            Adds MouseOver events for the given elements with the AnimationHelper.
+            Changes color depending on the users settings.
 
+        */
         #region Logo Mouse Over
 
         private void LogoMouseOver(object sender, MouseEventArgs e)
@@ -2286,6 +2259,9 @@ namespace PicView
         #endregion
 
         #region DeleteTempFiles
+        /// <summary>
+        /// Deletes the temporary files when an archived file has been opened
+        /// </summary>
         private static void DeleteTempFiles()
         {
             if (!Directory.Exists(TempZipPath))
@@ -2312,7 +2288,10 @@ namespace PicView
         #endregion
 
         #region Rotation and Flipping
-
+        /// <summary>
+        /// Rotates the image the specified degrees and updates imageSettingsMenu value
+        /// </summary>
+        /// <param name="r"></param>
         private void Rotate(int r)
         {
             if (img.Source == null)
@@ -2321,6 +2300,7 @@ namespace PicView
             }
             var rt = new RotateTransform { Angle = Rotateint = r };
 
+            // If it's flipped, keep it flipped when rotating
             if (Flipped)
             {
                 var tg = new TransformGroup();
@@ -2361,9 +2341,15 @@ namespace PicView
                     imageSettingsMenu.ro180.IsChecked = false;
                     imageSettingsMenu.ro0.IsChecked = false;
                     break;
+                default: imageSettingsMenu.ro0.IsChecked = true;
+                    break;
             }
         }
 
+        /// <summary>
+        /// Rotates left or right
+        /// </summary>
+        /// <param name="right"></param>
         private void Rotate(bool right)
         {
             if (img.Source == null)
@@ -2403,6 +2389,9 @@ namespace PicView
             }
         }
 
+        /// <summary>
+        /// Flips the image
+        /// </summary>
         private void Flip()
         {
             if (img.Source == null)
@@ -2454,14 +2443,19 @@ namespace PicView
         #region Open + Copy/Paste
 
         #region copy/Paste
-
-        private void CopyText() // Copy image location to clipboard
+        /// <summary>
+        /// Copy image location to clipboard
+        /// </summary>
+        private void CopyText()
         {
             Clipboard.SetText(PicPath);
             ToolTipStyle(TxtCopy, false);
         }
 
-        private void CopyPic() // Add image to clipboard
+        /// <summary>
+        /// Add image to clipboard
+        /// </summary>
+        private void CopyPic()
         {
             if (string.IsNullOrWhiteSpace(PicPath) || Uri.IsWellFormedUriString(PicPath, UriKind.Absolute))
             {
@@ -2479,6 +2473,9 @@ namespace PicView
             ToolTipStyle(FileCopy, false);
         }
 
+        /// <summary>
+        /// Retrieves the data from the clipboard and attemps to load image, if possible
+        /// </summary>
         private void Paste()
         {
             #region file
@@ -2510,11 +2507,15 @@ namespace PicView
 
             #endregion
 
+            #region Clipboard Image
+
             if (Clipboard.ContainsImage())
             {
                 Pic(Clipboard.GetImage(), "Clipboard Image");
                 return;
             }
+
+            #endregion
 
             #region text/string/adddress
 
@@ -2527,7 +2528,7 @@ namespace PicView
                 MakeValidFileName(s);
 
             s = s.Replace("\"", "");
-            s = s.Trim(); // Removes spaces
+            s = s.Trim();
 
             if (File.Exists(s))
             {
@@ -2538,7 +2539,7 @@ namespace PicView
             }
             else if (Directory.Exists(s))
             {
-                changeFolder();
+                ChangeFolder();
                 Pics = FileList(s);
                 Pic(Pics[0]);
             }
@@ -2553,7 +2554,9 @@ namespace PicView
         #endregion
 
         #region Open and Open_In_Eplorer
-
+        /// <summary>
+        /// Opens image in File Explorer
+        /// </summary>
         private void Open_In_Explorer()
         {
             if (!File.Exists(PicPath) || img.Source == null)
@@ -2573,6 +2576,9 @@ namespace PicView
             }
         }
 
+        /// <summary>
+        /// Open a file dialog where usr can select a supported file
+        /// </summary>
         private void Open()
         {
             var dlg = new Microsoft.Win32.OpenFileDialog();

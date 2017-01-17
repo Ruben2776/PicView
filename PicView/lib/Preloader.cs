@@ -9,6 +9,9 @@ using static PicView.lib.Helper;
 
 namespace PicView.lib
 {
+    /// <summary>
+    /// Used for containing a list of BitmapSources
+    /// </summary>
     internal static class Preloader
     {
         #region Sources, the list of preloaded images
@@ -64,7 +67,10 @@ namespace PicView.lib
         #endregion
 
         #region Remove || Clear
-
+        /// <summary>
+        /// Removes the key, after checking if it exists
+        /// </summary>
+        /// <param name="key"></param>
         internal static void Remove(string key)
         {
             if (key == null) return;
@@ -75,6 +81,9 @@ namespace PicView.lib
             value = null;
         }
 
+        /// <summary>
+        /// Removes all keys and clears them when app is idle
+        /// </summary>
         internal static void Clear()
         {
             var array = Sources.Keys.ToArray();
@@ -92,7 +101,10 @@ namespace PicView.lib
             );
             timer.Start();
         }
-
+        /// <summary>
+        /// Removes specific keys and clears them when app is idle
+        /// </summary>
+        /// <param name="array"></param>
         internal static void Clear(string[] array)
         {
             var timer = new DispatcherTimer
@@ -113,28 +125,42 @@ namespace PicView.lib
         #endregion
 
         #region Load
-
-        internal static BitmapSource Load(string file)
+        /// <summary>
+        /// Returns the specified BitmapSource.
+        /// Returns null if key not found.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        internal static BitmapSource Load(string key)
         {
-            if (!Contains(file))
+            if (string.IsNullOrWhiteSpace(key) || !Contains(key))
                 return null;
 
-            return Sources[file];
+            return Sources[key];
         }
 
         #endregion
 
         #region Contains
-
+        /// <summary>
+        /// Checks if the specified key exists
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         internal static bool Contains(string key)
         {
+            if (string.IsNullOrWhiteSpace(key))
+                return false;
             return Sources.ContainsKey(key);
         }
 
         #endregion
 
         #region Count
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         internal static int Count()
         {
             return Sources.Count;
