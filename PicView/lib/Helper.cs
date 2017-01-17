@@ -370,7 +370,7 @@ namespace PicView.lib
         #endregion
 
         #region File list
-
+       
         internal static List<string> FileList(string path)
         {
             var foo = Directory.GetFiles(path)
@@ -403,6 +403,7 @@ namespace PicView.lib
                     )
                     .ToList();
 
+            // Sort like Windows Explorer sorts file names alphanumerically
             foo.Sort((x, y) => { return NativeMethods.StrCmpLogicalW(x, y); });
 
             return foo;
@@ -440,7 +441,7 @@ namespace PicView.lib
                     case ".wim":
                     case ".iso":
                     case ".cab":
-                        zipped = Extract(path, zipped);                       
+                        zipped = Extract(path);                       
                         if (!zipped)
                             goto default;
                         break;
@@ -513,10 +514,9 @@ namespace PicView.lib
         /// <summary>
         /// Attemps to extract folder
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="result"></param>
+        /// <param name="path">The path to the archived file</param>
         /// <returns></returns>
-        internal static bool Extract(string path, bool result)
+        internal static bool Extract(string path)
         {
             var sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\7-Zip\\7z.exe";
             if (!File.Exists(sevenZip))
@@ -544,12 +544,17 @@ namespace PicView.lib
         #endregion
 
         #region Print
+
+        /// <summary>
+        /// Sends the file to Windows print system
+        /// </summary>
+        /// <param name="path">The file path</param>
         internal static void Print(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
                 return;
 
-            var p = new System.Diagnostics.Process();
+            var p = new Process();
             p.StartInfo.FileName = path;
             p.StartInfo.Verb = "print";
             p.Start();
