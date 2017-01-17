@@ -14,6 +14,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Diagnostics;
 
 namespace PicView.lib
 {
@@ -97,19 +98,24 @@ namespace PicView.lib
         /// File path of current  image
         /// </summary>
         internal static string PicPath { get; set; }
+
         /// <summary>
         /// Backup of PicPath
         /// </summary>
-        internal static string xPicPath { get; set; }
+        internal static string xPicPath;
+
         /// <summary>
         /// File path for the extracted folder
         /// </summary>
         internal static string TempZipPath { get; set; }
+
         internal static string Extension { get; set; }
+
         /// <summary>
         /// Returns string with zoom %
         /// </summary>
         internal static string ZoomPercentage { get { return Math.Round(AspectRatio * 100) + "%"; } }
+
         /// <summary>
         /// Returns zoom % if not zero. Empty string for zero
         /// </summary>
@@ -124,6 +130,7 @@ namespace PicView.lib
                 return " - " + zoom + "%";
             }
         }
+
         /// <summary>
         /// Returns aspect ratio as a formatted string
         /// </summary>
@@ -165,14 +172,26 @@ namespace PicView.lib
         /// Used as comfortable space for standard viewing
         /// </summary>
         internal const int ComfySpace = 90;
-        internal static double xWidth { get; set; }
-        internal static double xHeight { get; set; }
+
+        /// <summary>
+        /// Backup of Width data
+        /// </summary>
+        internal static double xWidth;
+
+        /// <summary>
+        /// Backup of Height data
+        /// </summary>
+        internal static double xHeight;
 
         /// <summary>
         /// Counter used to get/set current index
         /// </summary>
         internal static int FolderIndex { get; set; }
-        internal static int xFolderIndex { get; set; }
+
+        /// <summary>
+        /// Backup of FolderIndex
+        /// </summary>
+        internal static int xFolderIndex;
 
         /// <summary>
         /// Counter used to check if preloading is neccesary
@@ -204,11 +223,18 @@ namespace PicView.lib
         #endregion
 
         #region Lists
+        /// <summary>
+        /// The list of images
+        /// </summary>
         internal static List<string> Pics { get; set; }
         #endregion
 
         #region Misc
+        /// <summary>
+        /// Backup of image
+        /// </summary>
         internal static ImageSource prevPicResource;
+
         //internal static System.Timers.Timer activityTimer;
         internal static ContextMenu cm;
         #endregion      
@@ -241,11 +267,10 @@ namespace PicView.lib
 
         #region Close, Restore and mazimize windows functions
 
-        internal static void Close(Window window)
-        {
-            SystemCommands.CloseWindow(window);
-        }
-
+        /// <summary>
+        /// Close UserControl with fade animation
+        /// </summary>
+        /// <param name="usercontrol"></param>
         internal static void Close(UserControl usercontrol)
         {
             usercontrol.Visibility = Visibility.Visible;
@@ -291,7 +316,11 @@ namespace PicView.lib
             return Regex.Replace(name, invalidRegStr, "_");
         }
 
-
+        /// <summary>
+        /// Return file size in a readable format
+        /// </summary>
+        /// <param name="i"></param>
+        /// <returns></returns>
         internal static string GetSizeReadable(long i)
         {
             string sign = (i < 0 ? "-" : string.Empty);
@@ -340,7 +369,7 @@ namespace PicView.lib
 
         #endregion
 
-        #region File list function
+        #region File list
 
         internal static List<string> FileList(string path)
         {
@@ -377,6 +406,139 @@ namespace PicView.lib
             foo.Sort((x, y) => { return NativeMethods.StrCmpLogicalW(x, y); });
 
             return foo;
+        }
+
+        #endregion
+
+        #region GetValues
+        /// <summary>
+        /// Gets values and extracts archives
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        internal static Task GetValues(string path)
+        {
+            return Task.Run(() =>
+            {
+                bool zipped = false;
+                var extension = Path.GetExtension(path);
+                extension = extension.ToLower();
+                switch (extension)
+                {
+                    case ".zip":
+                    case ".7zip":
+                    case ".7z":
+                    case ".rar":
+                    case ".cbr":
+                    case ".cb7":
+                    case ".cbt":
+                    case ".cbz":
+                    case ".xz":
+                    case ".bzip2":
+                    case ".gzip":
+                    case ".tar":
+                    case ".wim":
+                    case ".iso":
+                    case ".cab":
+                        zipped = Extract(path, zipped);                       
+                        if (!zipped)
+                            goto default;
+                        break;
+                    case ".jpg":
+                    case ".jpeg":
+                    case ".jpe":
+                    case ".png":
+                    case ".bmp":
+                    case ".tif":
+                    case ".tiff":
+                    case ".gif":
+                    case ".ico":
+                    case ".wdp":
+                    case ".dds":
+                    case ".svg":
+                    case ".psd":
+                    case ".psb":
+                    case ".orf":
+                    case ".cr2":
+                    case ".crw":
+                    case ".dng":
+                    case ".raf":
+                    case ".ppm":
+                    case ".raw":
+                    case ".mrw":
+                    case ".nef":
+                    case ".pef":
+                    case ".x3f": //Questionable if it works :(
+                    case ".arw":
+                        break;
+                    default:
+                        Pics = new List<string>();
+                        FolderIndex = -1;
+                        TempZipPath = string.Empty;
+                        return;
+                }
+
+                if (zipped)
+                {
+                    if (FolderIndex > -1)
+                    {
+                        xFolderIndex = FolderIndex;
+                    }
+                    if (!string.IsNullOrWhiteSpace(PicPath))
+                    {
+                        xPicPath = PicPath;
+                    }
+                    FolderIndex = 0;
+                    if (Directory.Exists(TempZipPath))
+                    {
+                        var test = Directory.EnumerateFileSystemEntries(TempZipPath);
+                        if (test.Count() > -1)
+                            Pics = FileList(TempZipPath);
+                    }
+                }
+                else
+                {
+                    Pics = FileList(Path.GetDirectoryName(path));
+                    FolderIndex = Pics.IndexOf(path);
+                    Extension = extension;
+                }
+
+                PicPath = path;
+            });
+        }
+
+        #endregion
+
+        #region Extract
+        /// <summary>
+        /// Attemps to extract folder
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        internal static bool Extract(string path, bool result)
+        {
+            var sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\7-Zip\\7z.exe";
+            if (!File.Exists(sevenZip))
+                sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\7-Zip\\7z.exe";
+            if (File.Exists(sevenZip))
+            {
+                TempZipPath = Path.GetTempPath() + Path.GetRandomFileName();
+                Directory.CreateDirectory(TempZipPath);
+
+                var x = Process.Start(new ProcessStartInfo
+                {
+                    FileName = sevenZip,
+                    Arguments = "x \"" + path + "\" -o" + TempZipPath + SevenZipFiles + " -r -aou",
+                    WindowStyle = ProcessWindowStyle.Hidden
+                });
+                if (x == null) return false;
+                x.EnableRaisingEvents = true;
+                x.Exited += (s, e) => Pics = FileList(TempZipPath);
+                x.WaitForExit(200);
+                return true;
+            }
+            return false;
         }
 
         #endregion
