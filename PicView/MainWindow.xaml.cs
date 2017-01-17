@@ -547,6 +547,7 @@ namespace PicView
         #region Pic
 
         #region Pic(string path)
+
         /// <summary>
         /// Loads a picture from a given file path and does extra error checking
         /// </summary>
@@ -572,97 +573,7 @@ namespace PicView
             #endregion
 
             #region Check if images exists
-            // If there are no pictures, but a folder when TempZipPath has a value,
-            // we should open the folder
-            if (Pics.Count < 1)
-            {
-                if (string.IsNullOrWhiteSpace(TempZipPath))
-                {
-                    // Unexped result, return to clear state.
-                    Unload();
-                    return;
-                }
-                //TempZipPath is not null = images being extracted
-                short count = 0;
-                Bar.Text = "Unzipping...";
-                do
-                {
-                    if (count == 0 || count == 2)
-                    {
-                        try
-                        {
-                            var directory = Directory.GetDirectories(TempZipPath);
-                            if (directory.Length == 1)
-                            {
-                                TempZipPath = directory[0];
-                                Pics = FileList(TempZipPath);
-                            }
-                            else
-                            {
-                                //Fix non working archive
-                                ToolTipStyle("Non working zip file, reloading...", false);
-                                PicPath = File.Exists(xPicPath) ? xPicPath : string.Empty;
-                                FolderIndex = xFolderIndex;
-                                if (!File.Exists(PicPath) || Directory.Exists(PicPath) || String.IsNullOrWhiteSpace(PicPath))
-                                    Unload();
-                                else
-                                    Pic(PicPath);
-                                return;
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            Unload();
-                            return;
-                        }
-
-                    }
-                    else
-                    {
-                        try
-                        {
-                            if (Directory.Exists(TempZipPath))
-                            {
-                                var test = Directory.EnumerateFileSystemEntries(TempZipPath);
-                                if (test.Count() > -1)
-                                    Pics = FileList(TempZipPath);
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            Unload();
-                            return;
-                        }
-                    }
-
-                    if (count > 0)
-                    {
-                        Bar.Text = "Still " + Loading + " Attempt " + count + " of 3";
-                    }
-
-                    if (count > 3)
-                    {
-                        Unload();
-                        return;
-                    }
-                    switch (count)
-                    {
-                        case 0:
-                            break;
-                        case 1:
-                            await Task.Delay(700);
-                            break;
-                        case 2:
-                            await Task.Delay(1500);
-                            break;
-                        default:
-                            await Task.Delay(3000);
-                            break;
-                    }
-                    count++;
-
-                } while (Pics.Count < 1);
-            }
+            RecoverFailedArchiveAsync();
             #endregion
 
             #region Get image
@@ -673,7 +584,10 @@ namespace PicView
             if (freshStartup)
                 freshStartup = false;
 
-            AjaxLoadingEnd();
+            if (ajaxLoading.Opacity > 0)
+            {
+                AjaxLoadingEnd();
+            }
             #endregion
         }
 
@@ -953,8 +867,112 @@ namespace PicView
         }
         #endregion
 
-        #region PicWeb
+        #region RecoverFailedArchiveAsync()
+        /// <summary>
+        /// Attemps to recover from failed archive extraction
+        /// </summary>
+        private async void RecoverFailedArchiveAsync()
+        {
+            // If there are no pictures, but a folder when TempZipPath has a value,
+            // we should open the folder
+            if (Pics.Count < 1)
+            {
+                if (string.IsNullOrWhiteSpace(TempZipPath))
+                {
+                    // Unexped result, return to clear state.
+                    Unload();
+                    return;
+                }
+                //TempZipPath is not null = images being extracted
+                short count = 0;
+                Bar.Text = "Unzipping...";
+                do
+                {
+                    if (count == 0 || count == 2)
+                    {
+                        try
+                        {
+                            var directory = Directory.GetDirectories(TempZipPath);
+                            if (directory.Length == 1)
+                            {
+                                TempZipPath = directory[0];
+                                Pics = FileList(TempZipPath);
+                            }
+                            else
+                            {
+                                //Fix non working archive
+                                ToolTipStyle("Non working zip file, reloading...", false);
+                                PicPath = File.Exists(xPicPath) ? xPicPath : string.Empty;
+                                FolderIndex = xFolderIndex;
+                                if (!File.Exists(PicPath) || Directory.Exists(PicPath) || String.IsNullOrWhiteSpace(PicPath))
+                                    Unload();
+                                else
+                                    Pic(PicPath);
+                                return;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            Unload();
+                            return;
+                        }
 
+                    }
+                    else
+                    {
+                        try
+                        {
+                            if (Directory.Exists(TempZipPath))
+                            {
+                                var test = Directory.EnumerateFileSystemEntries(TempZipPath);
+                                if (test.Count() > -1)
+                                    Pics = FileList(TempZipPath);
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            Unload();
+                            return;
+                        }
+                    }
+
+                    if (count > 0)
+                    {
+                        Bar.Text = "Still " + Loading + " Attempt " + count + " of 3";
+                    }
+
+                    if (count > 3)
+                    {
+                        Unload();
+                        return;
+                    }
+                    switch (count)
+                    {
+                        case 0:
+                            break;
+                        case 1:
+                            await Task.Delay(700);
+                            break;
+                        case 2:
+                            await Task.Delay(1500);
+                            break;
+                        default:
+                            await Task.Delay(3000);
+                            break;
+                    }
+                    count++;
+
+                } while (Pics.Count < 1);
+            }
+        }
+
+        #endregion
+
+        #region PicWeb
+        /// <summary>
+        /// Attemps to download image and display it
+        /// </summary>
+        /// <param name="path"></param>
         private async void PicWeb(string path)
         {
             if (ajaxLoading.Opacity != 1)
@@ -991,7 +1009,7 @@ namespace PicView
             if (IsScrollEnabled)
                 Scroller.ScrollToTop();
 
-            var titleString = MainWindow.TitleString(pic.PixelWidth, pic.PixelHeight, path);
+            var titleString = TitleString(pic.PixelWidth, pic.PixelHeight, path);
             Title = titleString[0];
             Bar.Text = titleString[1];
             Bar.ToolTip = titleString[0];
@@ -1000,19 +1018,25 @@ namespace PicView
             NoProgress();
             canNavigate = false;
             AjaxLoadingEnd();
-            freshStartup = freshStartup ? false : true;
+            if (freshStartup)
+                freshStartup = false;
         }
 
+        /// <summary>
+        /// Downloads image from web and returns as BitmapSource
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
         private async Task<BitmapSource> LoadImageWebAsync(string address)
         {
             BitmapSource pic = null;
             await Task.Run(async () =>
             {
-                var client = new System.Net.WebClient();
+                var client = new WebClient();
                 client.DownloadProgressChanged += (sender, e) =>
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                     {
-                        Bar.Text = e.BytesReceived + "/" + e.TotalBytesToReceive + ". " + e.ProgressPercentage + "% complete...";
+                        Title = Bar.Text = e.BytesReceived + "/" + e.TotalBytesToReceive + ". " + e.ProgressPercentage + "% complete...";
                     }));
 
                 var bytes = await client.DownloadDataTaskAsync(new Uri(address));
@@ -1243,7 +1267,7 @@ namespace PicView
                     if (!e.IsRepeat) //If the key is (not) held down 
                     {
                         if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                            Pic(true, true); // Go to last if Ctrl held down
+                            Pic(true, true); // Go to first if Ctrl held down
                         else
                             Pic(true, false);
                     }
