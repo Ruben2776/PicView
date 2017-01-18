@@ -21,16 +21,25 @@ namespace PicView.lib
     //https://msdn.microsoft.com/en-us/library/ms182161.aspx
     internal static class NativeMethods
     {
+        #region logical sorting
+
         [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
-        internal static extern int StrCmpLogicalW(String x, String y); // logical sorting
+        internal static extern int StrCmpLogicalW(String x, String y);
+
+        #endregion
+
+        #region Set Cursor Position
 
         [DllImport("User32.dll")]
         internal static extern bool SetCursorPos(int x, int y);
 
+        // Used to check for wallpaper support
         [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool SystemParametersInfo(uint uiAction, uint uiParam,
         string pvParam, uint fWinIni);
+
+        #endregion
 
         #region file properties
         //http://stackoverflow.com/a/1936957
@@ -80,6 +89,7 @@ namespace PicView.lib
 
         #endregion
     }
+
     internal static class Helper
     {
         #region Variables
@@ -303,6 +313,37 @@ namespace PicView.lib
         #endregion
 
         #region File Functions
+
+        #region DeleteTempFiles
+        /// <summary>
+        /// Deletes the temporary files when an archived file has been opened
+        /// </summary>
+        internal static void DeleteTempFiles()
+        {
+            if (!Directory.Exists(TempZipPath))
+                return;
+            try
+            {
+                Array.ForEach(Directory.GetFiles(TempZipPath), File.Delete);
+            }
+            catch (Exception)
+            {
+                return;
+            }
+
+            try
+            {
+                Directory.Delete(TempZipPath);
+            }
+            catch (Exception)
+            {
+                return;
+            }
+        }
+        #endregion
+
+        #region Clean file names
+
         internal static bool FilePathHasInvalidChars(string path)
         {
             return (!string.IsNullOrEmpty(path) && path.IndexOfAny(Path.GetInvalidPathChars()) >= 0);
@@ -315,6 +356,10 @@ namespace PicView.lib
 
             return Regex.Replace(name, invalidRegStr, "_");
         }
+
+        #endregion
+
+        #region GetSizeReadable
 
         /// <summary>
         /// Return file size in a readable format
@@ -366,6 +411,8 @@ namespace PicView.lib
             return sign + readable.ToString("0.## ") + suffix + 'B';
         }
         /// Credits to http://www.somacon.com/p576.php
+        
+        #endregion
 
         #endregion
 
@@ -587,6 +634,18 @@ namespace PicView.lib
                     timer.Elapsed += (s,x) => Directory.Delete(tempPath);
                 });
             }
+        }
+        #endregion
+
+        #region GetWindowsThumbnail
+        /// <summary>
+        /// Returns a Windows Thumbnail
+        /// </summary>
+        /// <param name="path">The path to the file</param>
+        /// <returns></returns>
+        internal static System.Windows.Media.Imaging.BitmapSource GetWindowsThumbnail(string path)
+        {
+            return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
         }
         #endregion
     }
