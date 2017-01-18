@@ -576,6 +576,7 @@ namespace PicView
             #endregion
 
             #region Check if folder has changed
+            // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
             if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(path) != Path.GetDirectoryName(PicPath))
             {
                 ChangeFolder();
@@ -586,19 +587,23 @@ namespace PicView
             else FolderIndex = Pics.IndexOf(path);
             #endregion
 
-            #region Check if images exists
+            #region Check if failed archive
             RecoverFailedArchiveAsync();
             #endregion
 
             #region Get image
-            Pic(FolderIndex);
+            if (Pics.Count > 0)
+                Pic(FolderIndex);
+            else
+                Unload();
             #endregion
 
             #region Set freshStartup
             if (freshStartup)
                 freshStartup = false;
 
-            if (ajaxLoading.Opacity > 0)
+            // Fix possible loading bug
+            if (ajaxLoading.Visibility == Visibility.Visible)
             {
                 AjaxLoadingEnd();
             }
@@ -862,23 +867,38 @@ namespace PicView
         #endregion
 
         #region PicErrorFix
-        private async void PicErrorFix(int x)
+
+        /// <summary>
+        /// Attemps to fix list by removing invalid files
+        /// </summary>
+        /// <param name="x"></param>
+        private void PicErrorFix(int x)
         {
             var file = Pics[x];
             Pics.Remove(Pics[x]);
-            if (Pics.Count > 0)
-            {
-                if (FolderIndex + 1 == Pics.Count)
-                    FolderIndex = 0;
-                else
-                    FolderIndex++;
-
-                PreloadCount++;
-                Pic(FolderIndex);
-                await Task.Delay(300);
-                ToolTipStyle("File not found or unable to render, " + file, true, TimeSpan.FromSeconds(3));
+            if (Pics.Count < 1)
+            { 
+                ToolTipStyle("Unexpected error", false, TimeSpan.FromSeconds(3));
+                Unload();
+                return;
             }
+
+            if (FolderIndex + 1 == Pics.Count)
+                FolderIndex = 0;
+            else
+                FolderIndex++;
+
+            if (FolderIndex == 0 || Pics.Count < 1)
+                Unload();
+            else
+            {
+                Pic(FolderIndex);
+                PreloadCount++;
+            }
+
+            ToolTipStyle("File not found or unable to render, " + file, true, TimeSpan.FromSeconds(3));
         }
+
         #endregion
 
         #region RecoverFailedArchiveAsync()
@@ -889,95 +909,103 @@ namespace PicView
         {
             // If there are no pictures, but a folder when TempZipPath has a value,
             // we should open the folder
-            if (Pics.Count < 1)
+            if (Pics.Count > 1)
+                return;
+
+            if (string.IsNullOrWhiteSpace(TempZipPath))
             {
-                if (string.IsNullOrWhiteSpace(TempZipPath))
+                // Unexped result, return to clear state.
+                Unload();
+                return;
+            }
+
+            //TempZipPath is not null = images being extracted
+            short count = 0;
+            Bar.Text = "Unzipping...";
+            do
+            {
+                if (count == 0 || count == 2)
                 {
-                    // Unexped result, return to clear state.
-                    Unload();
-                    return;
-                }
-                //TempZipPath is not null = images being extracted
-                short count = 0;
-                Bar.Text = "Unzipping...";
-                do
-                {
-                    if (count == 0 || count == 2)
+                    try
                     {
-                        try
+                        var directory = Directory.GetDirectories(TempZipPath);
+                        if (directory.Length == 1)
                         {
-                            var directory = Directory.GetDirectories(TempZipPath);
-                            if (directory.Length == 1)
-                            {
-                                TempZipPath = directory[0];
-                                Pics = FileList(TempZipPath);
-                            }
-                            else
-                            {
-                                //Fix non working archive
-                                ToolTipStyle("Non working zip file, reloading...", false);
-                                PicPath = File.Exists(xPicPath) ? xPicPath : string.Empty;
-                                FolderIndex = xFolderIndex;
-                                if (!File.Exists(PicPath) || String.IsNullOrWhiteSpace(PicPath))
-                                    Unload();
-                                else
-                                    Pic(PicPath);
-                                return;
-                            }
+                            TempZipPath = directory[0];
+                            Pics = FileList(TempZipPath);
                         }
-                        catch (Exception)
+                        else
                         {
-                            Unload();
+                            //Fix non working archive
+                            ToolTipStyle("Non working zip file, reloading...", false);
+                            PicPath = File.Exists(xPicPath) ? xPicPath : string.Empty;
+                            FolderIndex = xFolderIndex;
+                            if (!File.Exists(PicPath) || String.IsNullOrWhiteSpace(PicPath))
+                                Unload();
+                            else
+                                Pic(PicPath);
                             return;
                         }
-
                     }
-                    else
+                    catch (Exception)
                     {
-                        try
+                        Unload();
+                        return;
+                    }
+
+                }
+                else
+                {
+                    try
+                    {
+                        if (Directory.Exists(TempZipPath))
                         {
-                            if (Directory.Exists(TempZipPath))
+                            try
                             {
                                 var test = Directory.EnumerateFileSystemEntries(TempZipPath);
                                 if (test.Count() > -1)
                                     Pics = FileList(TempZipPath);
                             }
-                        }
-                        catch (Exception)
-                        {
-                            Unload();
-                            return;
+                            catch (Exception e)
+                            {
+                                ToolTipStyle(e.Message, true, TimeSpan.FromSeconds(5));
+                            }
                         }
                     }
-
-                    if (count > 0)
-                    {
-                        Bar.Text = "Still " + Loading + " Attempt " + count + " of 3";
-                    }
-
-                    if (count > 3)
+                    catch (Exception)
                     {
                         Unload();
                         return;
                     }
-                    switch (count)
-                    {
-                        case 0:
-                            break;
-                        case 1:
-                            await Task.Delay(700);
-                            break;
-                        case 2:
-                            await Task.Delay(1500);
-                            break;
-                        default:
-                            await Task.Delay(3000);
-                            break;
-                    }
-                    count++;
+                }
 
-                } while (Pics.Count < 1);
-            }
+                if (count > 0)
+                {
+                    Bar.Text = "Still " + Loading + " Attempt " + count + " of 3";
+                }
+
+                if (count > 3)
+                {
+                    Unload();
+                    return;
+                }
+                switch (count)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        await Task.Delay(700);
+                        break;
+                    case 2:
+                        await Task.Delay(1500);
+                        break;
+                    default:
+                        await Task.Delay(3000);
+                        break;
+                }
+                count++;
+
+            } while (Pics.Count < 1);
         }
 
         #endregion
@@ -1254,11 +1282,8 @@ namespace PicView
             if (!Drag_Drop_Check(files).HasValue && Drag_Drop_Check(files).Value)
                 return;
 
-            // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
-            if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(files[0]) == Path.GetDirectoryName(PicPath))
-                Pic(Pics.IndexOf(files[0]));
-            else
-                Pic(files[0]);
+            // Load it
+            Pic(files[0]);
 
             // Start multiple clients if user drags multiple files
             if (files.Length > 0)
