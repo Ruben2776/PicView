@@ -22,13 +22,14 @@ namespace PicView.lib
             using (MagickImage magick = new MagickImage(file))
             {                    
                 magick.Quality = 100;
-                var mrs = new MagickReadSettings();
-                mrs.Density = new Density(300);
-                mrs.CompressionMethod = CompressionMethod.NoCompression;
+                var mrs = new MagickReadSettings() {
+                    Density = new Density(300),
+                    CompressionMethod = CompressionMethod.NoCompression
+                };
 
                 if (extension == ".svg")
                 {
-                    //Create settings and make background transparent
+                    //Make background transparent
                     mrs.Format = MagickFormat.Svg;
                     mrs.ColorSpace = ColorSpace.Transparent;
                     mrs.BackgroundColor = MagickColors.Transparent;

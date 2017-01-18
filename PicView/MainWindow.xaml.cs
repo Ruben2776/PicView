@@ -14,7 +14,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.lib.Helper;
 using static PicView.lib.ImageManager;
-using Microsoft.WindowsAPICodePack.Shell;
 using System.Reflection;
 using ImageMagick;
 using System.Windows.Media.Animation;
@@ -80,6 +79,7 @@ namespace PicView
 
             #region Add ContextMenu
 
+            // Add main contextmenu
             cm = new ContextMenu();
 
             var opencm = new MenuItem
@@ -197,8 +197,10 @@ namespace PicView
             clcm.Click += (s, x) => Close();
             cm.Items.Add(clcm);
 
+            // Add to elements
             img.ContextMenu = bg.ContextMenu = cm;
 
+            // Add left and right ContextMenus
             var cmLeft = new ContextMenu();
             var cmRight = new ContextMenu();
 
@@ -240,8 +242,21 @@ namespace PicView
             lastcm.Click += (s, x) => Pic(true, true);
             cmRight.Items.Add(lastcm);
 
+            // Add to elements
             RightButton.ContextMenu = cmRight;
             LeftButton.ContextMenu = cmLeft;
+
+            // Add Title contextMenu
+            var cmTitle = new ContextMenu();
+
+            var clTc = new MenuItem
+            {
+                Header = "Copy path to clipboard"
+            };
+            clTc.Click += (s, x) => CopyText();
+            cmTitle.Items.Add(clTc);
+
+            Bar.ContextMenu = cmTitle;
 
             #endregion
 
@@ -564,7 +579,6 @@ namespace PicView
             if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(path) != Path.GetDirectoryName(PicPath))
             {
                 ChangeFolder();
-                freshStartup = true;
                 await GetValues(path);
             }
             else if (freshStartup)
@@ -619,7 +633,7 @@ namespace PicView
                     Bar.ToolTip = Loading;
                     canNavigate = false;
                     if (img.Source != null)
-                        img.Source = ShellFile.FromFilePath(Pics[x]).Thumbnail.BitmapSource;
+                        img.Source = GetWindowsThumbnail(Pics[x]);
                     #endregion
 
                     if (freshStartup || PreloadCount < 2 || Preloader.Count() < 0)
@@ -821,7 +835,7 @@ namespace PicView
             img.Width = xWidth;
             img.Height = xHeight;
 
-            img.Source = Preloader.Contains(Pics[FolderIndex]) ? Preloader.Load(Pics[FolderIndex]) : ShellFile.FromFilePath(Pics[FolderIndex]).Thumbnail.BitmapSource;
+            img.Source = Preloader.Contains(Pics[FolderIndex]) ? Preloader.Load(Pics[FolderIndex]) : GetWindowsThumbnail(Pics[FolderIndex]);
 
             Progress(FolderIndex, Pics.Count);
 
@@ -904,7 +918,7 @@ namespace PicView
                                 ToolTipStyle("Non working zip file, reloading...", false);
                                 PicPath = File.Exists(xPicPath) ? xPicPath : string.Empty;
                                 FolderIndex = xFolderIndex;
-                                if (!File.Exists(PicPath) || Directory.Exists(PicPath) || String.IsNullOrWhiteSpace(PicPath))
+                                if (!File.Exists(PicPath) || String.IsNullOrWhiteSpace(PicPath))
                                     Unload();
                                 else
                                     Pic(PicPath);
@@ -1148,21 +1162,28 @@ namespace PicView
             }
         }
 
+        /// <summary>
+        /// Logic for handling drag over event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Image_DragEnter(object sender, DragEventArgs e)
         {
+            // Error handling
             if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
 
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
             if (Drag_Drop_Check(files).HasValue && Drag_Drop_Check(files).Value)
                 return;
 
-            isDraggedOver = true;
-
-            ToolTipStyle(DragOverString, false);
-
             if (Drag_Drop_Check(files) == null)
                 return;
 
+            // Tell that it's succeeded
+            isDraggedOver = true;
+            ToolTipStyle(DragOverString, false);
+
+            // Use the images dimensions if available, else fix it to container
             if (img.Source == null)
             {
                 img.Width = Scroller.ActualWidth;
@@ -1170,6 +1191,7 @@ namespace PicView
             }
             else
             {
+                // Save our image so we can swap back to it later if neccesary
                 prevPicResource = img.Source;
 
                 if (xWidth > 0 && xHeight > 0)
@@ -1177,17 +1199,30 @@ namespace PicView
                     img.Width = xWidth;
                     img.Height = xHeight;
                 }
+                else
+                {
+                    img.Width = Scroller.ActualWidth;
+                    img.Height = Scroller.ActualHeight;
+                }
             }
 
-            img.Source = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : ShellFile.FromFilePath(files[0]).Thumbnail.BitmapSource;
+            // Load from preloader or Windows thumbnails
+            img.Source = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : GetWindowsThumbnail(files[0]);
 
         }
 
+        /// <summary>
+        /// Logic for handling when the cursor leaves drag area
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void Image_DragLeave(object sender, DragEventArgs e)
         {
+            // Error handling
             if (!isDraggedOver)
                 return;
 
+            // Switch to previous image if available, else display no image
             if (prevPicResource != null)
             {
                 img.Source = prevPicResource;
@@ -1198,20 +1233,26 @@ namespace PicView
                 img.Source = null;
             }
 
+            // Update status
             isDraggedOver = false;
-
-            CloseToolTipStyle();
         }
 
+        /// <summary>
+        /// Logic for handling the drop event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Image_Drop(object sender, DragEventArgs e)
         {
+            // Error handling
             if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
 
             // Get files as strings
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+
             // check if valid
-            //if (Drag_Drop_Check(files).HasValue && Drag_Drop_Check(files).Value)
-            //    return;
+            if (!Drag_Drop_Check(files).HasValue && Drag_Drop_Check(files).Value)
+                return;
 
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
             if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(files[0]) == Path.GetDirectoryName(PicPath))
@@ -1434,7 +1475,7 @@ namespace PicView
 
         #endregion
 
-        #region Zoom and Mouse Buttons
+        #region Zoom and Scroll
         /// <summary>
         /// Pan and Zoom, reset zoom and double click to go to next picture
         /// </summary>
@@ -1816,7 +1857,13 @@ namespace PicView
             sexyToolTip.MouseWheel += Zoom_img_MouseWheel;
         }
 
-        private void ToolTipStyle(string path, bool center, TimeSpan time)
+        /// <summary>
+        /// Shows a black tooltip on screen in a given time
+        /// </summary>
+        /// <param name="message">The message to display</param>
+        /// <param name="center">If centered or on bottom</param>
+        /// <param name="time">How long until it fades away</param>
+        private void ToolTipStyle(string message, bool center, TimeSpan time)
         {
             sexyToolTip.Visibility = Visibility.Visible;
 
@@ -1831,16 +1878,21 @@ namespace PicView
                 sexyToolTip.VerticalAlignment = VerticalAlignment.Bottom;
             }
 
-            sexyToolTip.SexyToolTipText.Text = path;
+            sexyToolTip.SexyToolTipText.Text = message;
             var anim = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
             anim.Completed += (s, _) => AnimationHelper.Fade(sexyToolTip, TimeSpan.FromSeconds(1.5), time, 1, 0);
 
             sexyToolTip.BeginAnimation(OpacityProperty, anim);
         }
 
-        private void ToolTipStyle(string path, bool center)
+        /// <summary>
+        /// Shows a black tooltip on screen for a small time
+        /// </summary>
+        /// <param name="message">The message to display</param>
+        /// <param name="center">If centered or on bottom</param>
+        private void ToolTipStyle(string message, bool center)
         {
-            ToolTipStyle(path, center, TimeSpan.FromSeconds(1));
+            ToolTipStyle(message, center, TimeSpan.FromSeconds(1));
         }
 
         private void CloseToolTipStyle()
@@ -2282,35 +2334,6 @@ namespace PicView
 
         #endregion
 
-        #region DeleteTempFiles
-        /// <summary>
-        /// Deletes the temporary files when an archived file has been opened
-        /// </summary>
-        private static void DeleteTempFiles()
-        {
-            if (!Directory.Exists(TempZipPath))
-                return;
-            try
-            {
-                Array.ForEach(Directory.GetFiles(TempZipPath), File.Delete);
-            }
-            catch (Exception)
-            {
-                return;
-            }
-
-            try
-            {
-                Directory.Delete(TempZipPath);
-            }
-            catch (Exception)
-            {
-                return;
-            }
-
-        }
-        #endregion
-
         #region Rotation and Flipping
         /// <summary>
         /// Rotates the image the specified degrees and updates imageSettingsMenu value
@@ -2605,10 +2628,12 @@ namespace PicView
         /// </summary>
         private void Open()
         {
-            var dlg = new Microsoft.Win32.OpenFileDialog();
-            // Needs support for not being case sensitive 
-            dlg.Filter =
-                "All Supported files|*.bmp;*.jpg;*.png;*.tif;*.gif;*.ico;*.jpeg;*.wdp;*.psd;*.psb;*.cbr;*.cb7;*.cbt;*.cbz;*.xz;*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;"
+            var dlg = new Microsoft.Win32.OpenFileDialog()
+            {
+                // Needs support for not being case sensitive 
+                Filter = "All Supported files|*.bmp;*.jpg;*.png;*.tif;*.gif;*.ico;*.jpeg;*.wdp;*.psd;*.psb;*.cbr;*.cb7;*.cbt;"
+                + "*.cbz;*.xz;*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;"
+                ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
                 + "|Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg*.wdp*"                                   // Common pics
                 + "|jpg| *.jpg;*.jpeg;*"                                                                        // JPG
                 + "|bmp|*.bmp;*"                                                                                // BMP
@@ -2621,8 +2646,10 @@ namespace PicView
                 + "|Photoshop|*.psd;*.psb"                                                                      // PSD
                 + "|Archives|*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"                           // Archives
                 + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz"                                                        // Comics
-                + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw";      // Camera files
-            dlg.Title = "Open image - PicView";
+                + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw",      // Camera files
+                ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                Title = "Open image - PicView"
+            };
             if (dlg.ShowDialog() == true)
             {
                 Pic(dlg.FileName);
