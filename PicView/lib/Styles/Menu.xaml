@@ -45,7 +45,9 @@
                 <ControlTemplate TargetType="{x:Type ContextMenu}">
                     <Border x:Name="Border"
                             Background="#F2141414"
-                            BorderThickness="0"
+                            BorderThickness="1"
+                            BorderBrush="#F90F0F0F"
+                            CornerRadius="2"
                             >
                         <StackPanel IsItemsHost="True"
                       KeyboardNavigation.DirectionalNavigation="Cycle" />
@@ -223,7 +225,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Separator}">
                     <Border BorderThickness="2"
-                  BorderBrush="#FF383838">
+                  BorderBrush="#F91D1D1D">
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
