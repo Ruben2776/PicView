@@ -4,7 +4,10 @@
     <Style x:Key="SexyBorder" TargetType="Border">
         <Setter Property="Height" Value="70"/>
         <Setter Property="Width" Value="128"/>
-        <Setter Property="CornerRadius" Value="6"/>
+        <!--<Setter Property="CornerRadius" Value="6"/>-->
+        <Setter Property="CornerRadius" Value="2"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="#F90F0F0F" />
         <!--<Setter Property="Background" Value="#0CFFFFFF"/>-->
     </Style>
 

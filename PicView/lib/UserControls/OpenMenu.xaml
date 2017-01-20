@@ -6,16 +6,13 @@
              xmlns:local="clr-namespace:PicView.lib.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <StackPanel x:Name="StackPanelz" Width="290" Height="240">
-
-        <Grid>
-            <Rectangle Margin="0,50,0,0" HorizontalAlignment="Left" Width="7" Fill="#FF0F0F0F"/>
-            <Rectangle Margin="0,50,0,0" HorizontalAlignment="Right" Width="7" Fill="#FF0F0F0F"/>
-            <Rectangle Margin="0" VerticalAlignment="Bottom" Height="7" Fill="#FF0F0F0F"/>
-            <Canvas VerticalAlignment="Top" Height="51">
-                <TextBlock x:Name="bar"
-                           Background="#FF0F0F0F"
-                           Width="140"
+    <StackPanel>
+        <Border BorderBrush="#FF2B2B2B" BorderThickness="1" Width="292" Height="217">
+            <Grid>
+                <Canvas VerticalAlignment="Top" Height="51">
+                    <TextBlock x:Name="bar"
+                           Background="#F90F0F0F"
+                           Width="137"
                            TextTrimming="CharacterEllipsis"
                            Padding="25,14"
                            Height="51"
@@ -25,55 +22,55 @@
                            FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros"
                            FontWeight="Bold" />
 
-                <Button x:Name="CopyButton"
+                    <Button x:Name="CopyButton"
                                 Content="Copy"
                                 ToolTip="Copy image to clipholder"
                                 BorderThickness="0"
-                                Canvas.Left="139"
+                                Canvas.Left="137"
                                 Margin="0"
                                 Width="51"
                                 Height="51" 
                                 Padding="0" 
                                 FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros" FontSize="12" FontWeight="Bold">
-                    <Button.Background>
-                        <SolidColorBrush x:Name="CopyButtonBrush" Color="#FF0F0F0F"/>
-                    </Button.Background>
-                </Button>
+                        <Button.Background>
+                            <SolidColorBrush x:Name="CopyButtonBrush" Color="#F90F0F0F"/>
+                        </Button.Background>
+                    </Button>
 
-                <Button x:Name="PasteButton"
+                    <Button x:Name="PasteButton"
                         Content="Paste"
                         ToolTip="Paste image from clipholder"
                         BorderThickness="0"
-                        Canvas.Left="189"
+                        Canvas.Left="188"
                         Margin="0"
                         Width="51"
                         Height="51" 
                         Padding="0"
                         FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros" FontSize="12" FontWeight="Bold">
-                    <Button.Background>
-                        <SolidColorBrush x:Name="PasteButtonBrush" Color="#FF0F0F0F"/>
-                    </Button.Background>
-                </Button>
+                        <Button.Background>
+                            <SolidColorBrush x:Name="PasteButtonBrush" Color="#F90F0F0F"/>
+                        </Button.Background>
+                    </Button>
 
-                <Button x:Name="CloseButton"
+                    <Button x:Name="CloseButton"
                             ToolTip="Close"
                             FocusVisualStyle="{x:Null}"
                             Canvas.Left="239"
                             Width="51"
                             Height="51"
                             BorderThickness="0">
-                    <Button.Background>
-                        <SolidColorBrush x:Name="CloseButtonBrush" Color="#FF0F0F0F"/>
-                    </Button.Background>
-                    <Path Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
+                        <Button.Background>
+                            <SolidColorBrush x:Name="CloseButtonBrush" Color="#F90F0F0F"/>
+                        </Button.Background>
+                        <Path Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
                               SnapsToDevicePixels="True"
                               Fill="White" />
-                </Button>
-            </Canvas>
+                    </Button>
+                </Canvas>
 
-            <Canvas Margin="0,50,0,6" Width="278" Height="162" VerticalAlignment="Top" Background="#F20F0F0F" >
-                <Border x:Name="Open_Border" Style="{StaticResource SexyBorder}" Canvas.Left="7" Canvas.Top="7">
-                    <Button x:Name="Open"
+                <Canvas Margin="0,51,0,6" Width="290" Height="164" VerticalAlignment="Top" Background="#F90F0F0F" >
+                    <Border x:Name="Open_Border" Style="{StaticResource SexyBorder}" Canvas.Left="14" Canvas.Top="7">
+                        <Button x:Name="Open"
                             Width="80"
                             Height="70"
                             Content="Open"
@@ -82,13 +79,13 @@
                             FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros Cn"
                             FontWeight="Bold"
                             FocusVisualStyle="{x:Null}"/>
-                    <Border.Background>
-                        <SolidColorBrush x:Name="OpenBorderBrush" Color="#A5232323"/>
-                    </Border.Background>
-                </Border>
+                        <Border.Background>
+                            <SolidColorBrush x:Name="OpenBorderBrush" Color="#A5171717"/>
+                        </Border.Background>
+                    </Border>
 
-                <Border x:Name="Open_File_Location_Border" Style="{StaticResource SexyBorder}" Canvas.Left="143" Canvas.Top="7">
-                    <Button x:Name="Open_File_Location"
+                    <Border x:Name="Open_File_Location_Border" Style="{StaticResource SexyBorder}" Canvas.Left="150" Canvas.Top="7">
+                        <Button x:Name="Open_File_Location"
                             Width="128"
                             Height="70"
                             Content="Locate on Disk"
@@ -97,13 +94,13 @@
                             FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros Cn"
                             FontWeight="Bold"
                             FocusVisualStyle="{x:Null}"/>
-                    <Border.Background>
-                        <SolidColorBrush x:Name="OpenFileLocationBorderBrush" Color="#A5232323"/>
-                    </Border.Background>
-                </Border>
+                        <Border.Background>
+                            <SolidColorBrush x:Name="OpenFileLocationBorderBrush" Color="#A5171717"/>
+                        </Border.Background>
+                    </Border>
 
-                <Border x:Name="Print_Border" Style="{StaticResource SexyBorder}" Canvas.Left="7" Canvas.Top="85">
-                    <Button x:Name="Print"
+                    <Border x:Name="Print_Border" Style="{StaticResource SexyBorder}" Canvas.Left="14" Canvas.Top="82">
+                        <Button x:Name="Print"
                             Width="80"
                             Height="70"
                             Content="Print"
@@ -112,14 +109,15 @@
                             FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros Cn"
                             FontWeight="Bold"
                             FocusVisualStyle="{x:Null}"/>
-                    <Border.Background>
-                        <SolidColorBrush x:Name="PrintBorderBrush" Color="#A5232323"/>
-                    </Border.Background>
-                </Border>
-            </Canvas>
+                        <Border.Background>
+                            <SolidColorBrush x:Name="PrintBorderBrush" Color="#A5171717"/>
+                        </Border.Background>
+                    </Border>
+                </Canvas>
 
-        </Grid>
-
-        <Polygon Points="0,0 15,30, 30,0" Fill="#FF0F0F0F" Margin="30,-7,0,0"/>
+            </Grid>
+        </Border>
+        <Rectangle Width="22" Height="1" Fill="#FF0F0F0F" Margin="29,-2,0,0" HorizontalAlignment="Left"/>
+        <Polygon Points="0,0 15,30, 30,0" Fill="#FF0F0F0F" Stroke="#FF2B2B2B" Margin="25,-7,0,0" Panel.ZIndex="-1" />
     </StackPanel>
 </UserControl>

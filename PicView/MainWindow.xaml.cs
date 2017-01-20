@@ -625,6 +625,7 @@ namespace PicView
             // Use the Load() function load image from memory if available
             // if not, it will be null
             BitmapSource pic = Preloader.Load(Pics[x]);
+            var Extension = Path.GetExtension(Pics[x]);
             #endregion
 
             #region if (pic == null)  On demand loading
@@ -731,8 +732,7 @@ namespace PicView
             CenterWindowOnScreen();
             if (freshStartup)
                 freshStartup = false;
-            #endregion
-
+            #endregion            
         }
         #endregion
 
@@ -1935,19 +1935,6 @@ namespace PicView
                 Opacity = 0,
                 Visibility = Visibility.Hidden
             };
-
-            about_uc.CloseButton.MouseEnter += (s, e) =>
-            {
-                AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, about_uc.CloseButtonBrush, true);
-            };
-            about_uc.CloseButton.MouseLeave += (s, e) =>
-            {
-                AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, about_uc.CloseButtonBrush, true);
-            };
-            about_uc.CloseButton.PreviewMouseLeftButtonDown += (s, e) =>
-            {
-                AnimationHelper.PreviewMouseLeftButtonDownColorEvent(about_uc.CloseButtonBrush, true);
-            };
             bg.Children.Add(about_uc);
         }
 
@@ -1975,19 +1962,6 @@ namespace PicView
                 Focusable = false,
                 Opacity = 0,
                 Visibility = Visibility.Hidden
-            };
-
-            help_uc.CloseButton.MouseEnter += (s, e) =>
-            {
-                AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, help_uc.CloseButtonBrush, true);
-            };
-            help_uc.CloseButton.MouseLeave += (s, e) =>
-            {
-                AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, help_uc.CloseButtonBrush, true);
-            };
-            help_uc.CloseButton.PreviewMouseLeftButtonDown += (s, e) =>
-            {
-                AnimationHelper.PreviewMouseLeftButtonDownColorEvent(help_uc.CloseButtonBrush, true);
             };
             bg.Children.Add(help_uc);
         }
