@@ -41,7 +41,7 @@ namespace PicView.lib.UserControls
         #region 0 border
         void ro0Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 35, 35, 35, ro0BorderBrush, true);
+            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, ro0BorderBrush, true);
         }
 
         void ro0Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -51,14 +51,14 @@ namespace PicView.lib.UserControls
 
         void ro0Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 35, 35, 35, ro0BorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, ro0BorderBrush, true);
         }
         #endregion
 
         #region 90 border
         void ro90Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 35, 35, 35, ro90BorderBrush, true);
+            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, ro90BorderBrush, true);
         }
 
         void ro90Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -68,14 +68,14 @@ namespace PicView.lib.UserControls
 
         void ro90Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 35, 35, 35, ro90BorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, ro90BorderBrush, true);
         }
         #endregion
 
         #region 180 border
         void ro180Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 35, 35, 35, ro180BorderBrush, true);
+            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, ro180BorderBrush, true);
         }
 
         void ro180Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -85,14 +85,14 @@ namespace PicView.lib.UserControls
 
         void ro180Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 35, 35, 35, ro180BorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, ro180BorderBrush, true);
         }
         #endregion
 
         #region 270 border
         void ro270Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 35, 35, 35, ro270BorderBrush, true);
+            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, ro270BorderBrush, true);
         }
 
         void ro270Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -102,7 +102,7 @@ namespace PicView.lib.UserControls
 
         void ro270Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 35, 35, 35, ro270BorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, ro270BorderBrush, true);
         }
         #endregion
 
@@ -110,7 +110,7 @@ namespace PicView.lib.UserControls
 
         private void CloseButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(255, 15, 15, 15, CloseButtonBrush, false);
+            AnimationHelper.MouseEnterColorEvent(250, 15, 15, 15, CloseButtonBrush, false);
         }
 
         private void CloseButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -120,7 +120,7 @@ namespace PicView.lib.UserControls
 
         private void CloseButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(255, 15, 15, 15, CloseButtonBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(250, 15, 15, 15, CloseButtonBrush, false);
         }
 
         #endregion
@@ -129,7 +129,7 @@ namespace PicView.lib.UserControls
 
         private void FlipButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(255, 15, 15, 15, FlipButtonBrush, false);
+            AnimationHelper.MouseEnterColorEvent(250, 15, 15, 15, FlipButtonBrush, false);
         }
 
         private void FlipButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -139,7 +139,7 @@ namespace PicView.lib.UserControls
 
         private void FlipButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(255, 15, 15, 15, FlipButtonBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(250, 15, 15, 15, FlipButtonBrush, false);
         }
 
         #endregion

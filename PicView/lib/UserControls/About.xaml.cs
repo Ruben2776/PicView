@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
-using System.Windows;
+using static PicView.lib.Helper;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Navigation;
@@ -15,17 +15,54 @@ namespace PicView.UserControls
     public partial class About : UserControl
     {
         private const string version = "Version : ";
+
+        #region Window Logic
+
+        #region Constructor
+
         public About()
         {
             InitializeComponent();
+            Loaded += About_Loaded;
+
+            #region Get version
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
             appVersion.Content = version + fvi.FileVersion;
+
+            #endregion
         }
 
-        private void Window_ContentRendered(object sender, EventArgs e)
+        #endregion
+
+        #region Loaded
+
+        private void About_Loaded(object sender, EventArgs e)
         {
+            #region Add events
+
+            #region CloseButton
+
+            CloseButton.Click += (s, x) => Close(this);
+
+            CloseButton.MouseEnter += (s, x) =>
+            {
+                AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, CloseButtonBrush, true);
+            };
+
+            CloseButton.MouseLeave += (s, x) =>
+            {
+                AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CloseButtonBrush, true);
+            };
+
+            CloseButton.PreviewMouseLeftButtonDown += (s, x) =>
+            {
+                AnimationHelper.PreviewMouseLeftButtonDownColorEvent(CloseButtonBrush, true);
+            };
+
+            #endregion
+
             Aller.MouseEnter += AllerMouseOver;
             Aller.MouseLeave += AllerMouseLeave;
             Aller.MouseLeftButtonDown += AllerMouseButtonDown;
@@ -50,7 +87,12 @@ namespace PicView.UserControls
             ionic.MouseLeave += ionicMouseLeave;
             ionic.MouseLeftButtonDown += ionicMouseButtonDown;
 
+            #endregion
         }
+
+        #endregion
+
+        #region Add Mouseover events
 
         #region Aller
 
@@ -166,15 +208,19 @@ namespace PicView.UserControls
 
         #endregion
 
+        #endregion
+
+        #endregion
+
+        #region Hyperlink
+
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
         }
 
-        private void Close(object sender, RoutedEventArgs e)
-        {
-            Helper.Close(this);
-        }
+        #endregion
+
     }
 }

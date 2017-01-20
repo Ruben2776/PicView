@@ -119,8 +119,6 @@ namespace PicView.lib
         /// </summary>
         internal static string TempZipPath { get; set; }
 
-        internal static string Extension { get; set; }
-
         /// <summary>
         /// Returns string with zoom %
         /// </summary>
@@ -473,6 +471,7 @@ namespace PicView.lib
                 extension = extension.ToLower();
                 switch (extension)
                 {
+                    // Archives
                     case ".zip":
                     case ".7zip":
                     case ".7z":
@@ -548,7 +547,6 @@ namespace PicView.lib
                 {
                     Pics = FileList(Path.GetDirectoryName(path));
                     FolderIndex = Pics.IndexOf(path);
-                    Extension = extension;
                 }
 
                 PicPath = path;

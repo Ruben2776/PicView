@@ -6,8 +6,8 @@
         SizeToContent="WidthAndHeight"
         Foreground="#FFF7F4F4"
         MinWidth="455"
-        MinHeight="465"
-        FontFamily="/Nepharia;component/lib/fonts/#Cabin"
+        MinHeight="510"
+        FontFamily="/PicView;component/lib/fonts/#Cabin"
         TextOptions.TextFormattingMode="Display"
         Style="{DynamicResource MyWindowStyle}"
         Title="Loading...">

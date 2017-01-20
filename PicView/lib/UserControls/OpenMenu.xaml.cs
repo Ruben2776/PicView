@@ -45,7 +45,7 @@ namespace PicView.lib.UserControls
 
         private void CloseButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(255, 15, 15, 15, CloseButtonBrush, false);
+            AnimationHelper.MouseEnterColorEvent(250, 15, 15, 15, CloseButtonBrush, false);
         }
 
         private void CloseButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -55,7 +55,7 @@ namespace PicView.lib.UserControls
 
         private void CloseButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(255, 15, 15, 15, CloseButtonBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(250, 15, 15, 15, CloseButtonBrush, false);
         }
 
         #endregion
@@ -64,7 +64,7 @@ namespace PicView.lib.UserControls
 
         private void PasteButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(255, 15, 15, 15, PasteButtonBrush, false);
+            AnimationHelper.MouseEnterColorEvent(250, 15, 15, 15, PasteButtonBrush, false);
         }
 
         private void PasteButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -74,7 +74,7 @@ namespace PicView.lib.UserControls
 
         private void PasteButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(255, 15, 15, 15, PasteButtonBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(250, 15, 15, 15, PasteButtonBrush, false);
         }
 
         #endregion
@@ -83,7 +83,7 @@ namespace PicView.lib.UserControls
 
         private void CopyButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(255, 15, 15, 15, CopyButtonBrush, false);
+            AnimationHelper.MouseEnterColorEvent(250, 15, 15, 15, CopyButtonBrush, false);
         }
 
         private void CopyButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -93,7 +93,7 @@ namespace PicView.lib.UserControls
 
         private void CopyButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(255, 15, 15, 15, CopyButtonBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(250, 15, 15, 15, CopyButtonBrush, false);
         }
 
         #endregion
@@ -104,17 +104,17 @@ namespace PicView.lib.UserControls
 
         private void Open_Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 35, 35, 35, OpenBorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, OpenBorderBrush, true);
         }
 
         private void Open_File_Location_Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 35, 35, 35, OpenFileLocationBorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, OpenFileLocationBorderBrush, true);
         }
 
         private void Print_Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 35, 35, 35, PrintBorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, PrintBorderBrush, true);
         }
 
         #endregion
@@ -123,17 +123,17 @@ namespace PicView.lib.UserControls
 
         private void Open_File_Location_Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 35, 35, 35, OpenFileLocationBorderBrush, true);
+            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, OpenFileLocationBorderBrush, true);
         }
 
         private void Open_Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 35, 35, 35, OpenBorderBrush, true);
+            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, OpenBorderBrush, true);
         }
 
         private void Print_Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 35, 35, 35, PrintBorderBrush, true);
+            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, PrintBorderBrush, true);
         }
 
         #endregion
