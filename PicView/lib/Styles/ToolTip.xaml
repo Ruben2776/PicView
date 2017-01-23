@@ -1,47 +1,51 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-<!--<SnippetToolTip>-->
-  <Style x:Key="{x:Type ToolTip}"
+    <!--<SnippetToolTip>-->
+    <Style x:Key="{x:Type ToolTip}"
          TargetType="ToolTip">
-    <Setter Property="OverridesDefaultStyle"
+        <Setter Property="OverridesDefaultStyle"
             Value="true" />
-    <Setter Property="HasDropShadow"
+        <Setter Property="HasDropShadow"
             Value="True" />
-    <Setter Property="FontFamily"
-            Value="/Nepharia;component/lib/fonts/#TeX Gyre Heros Cn"/>
-    <Setter Property="FontSize"
+        <Setter Property="FontFamily"
+            Value="/PicView;component/lib/fonts/#TeX Gyre Heros"/>
+        <Setter Property="FontSize"
             Value="12"/>
-    <Setter Property="Foreground"
+        <Setter Property="Foreground"
             Value="#F4f4f4f4"/>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="ToolTip">
-          <Border Name="Border"
+        <!--<Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="#F90F0F0F" />-->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToolTip">
+                    <Border Name="Border"
+                  CornerRadius="2"
                   BorderThickness="1.5"
+                  BorderBrush="#FF191919"
                   Width="{TemplateBinding Width}"
                   Height="{TemplateBinding Height}"
                   Background="#99000000">
 
-            <ContentPresenter Margin="6"
+                        <ContentPresenter Margin="6"
                               HorizontalAlignment="Left"
                               VerticalAlignment="Top" />
-          </Border>
-          <ControlTemplate.Triggers>
-            <Trigger Property="HasDropShadow"
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasDropShadow"
                      Value="true">
-              <Setter TargetName="Border"
+                            <Setter TargetName="Border"
                       Property="CornerRadius"
                       Value="0" />
-              <Setter TargetName="Border"
+                            <Setter TargetName="Border"
                       Property="SnapsToDevicePixels"
                       Value="true" />
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
-  <!--</SnippetToolTip>-->
-    
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <!--</SnippetToolTip>-->
+
 </ResourceDictionary>

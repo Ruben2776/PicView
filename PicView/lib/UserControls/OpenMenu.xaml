@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <StackPanel>
-        <Border BorderBrush="#FF2B2B2B" BorderThickness="1" Width="292" Height="217">
+        <Border BorderBrush="#FF1B1B1B" BorderThickness="1" Width="292" Height="217">
             <Grid>
                 <Canvas VerticalAlignment="Top" Height="51">
                     <TextBlock x:Name="bar"
@@ -118,6 +118,6 @@
             </Grid>
         </Border>
         <Rectangle Width="22" Height="1" Fill="#FF0F0F0F" Margin="29,-2,0,0" HorizontalAlignment="Left"/>
-        <Polygon Points="0,0 15,30, 30,0" Fill="#FF0F0F0F" Stroke="#FF2B2B2B" Margin="25,-7,0,0" Panel.ZIndex="-1" />
+        <Polygon Points="0,0 15,30, 30,0" Fill="#FF0F0F0F" Stroke="#FF1B1B1B" Margin="25,-7,0,0" Panel.ZIndex="-1" />
     </StackPanel>
 </UserControl>
