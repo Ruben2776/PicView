@@ -444,7 +444,9 @@ namespace PicView.lib
                         || file.ToLower().EndsWith("raw", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("mrw", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("nef", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("pef", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("x3f", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("arw", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("webp", StringComparison.OrdinalIgnoreCase)
                     )
                     .ToList();
 
@@ -517,6 +519,7 @@ namespace PicView.lib
                     case ".pef":
                     case ".x3f": //Questionable if it works :(
                     case ".arw":
+                    case ".webp":
                         break;
                     default:
                         Pics = new List<string>();

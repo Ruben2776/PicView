@@ -909,7 +909,7 @@ namespace PicView
         {
             // If there are no pictures, but a folder when TempZipPath has a value,
             // we should open the folder
-            if (Pics.Count > 1)
+            if (Pics.Count > 0)
                 return;
 
             if (string.IsNullOrWhiteSpace(TempZipPath))
@@ -1173,6 +1173,9 @@ namespace PicView
                 case ".mrw":
                 case ".nef":
                 case ".pef":
+                case ".arw":
+                case ".x3f":
+                case ".webp":
                     return null;
                 case ".jpg":
                 case ".jpeg":
@@ -1279,8 +1282,9 @@ namespace PicView
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
 
             // check if valid
-            if (!Drag_Drop_Check(files).HasValue && Drag_Drop_Check(files).Value)
-                return;
+            if (Drag_Drop_Check(files).HasValue)
+                if (!Drag_Drop_Check(files).Value)
+                    return;
 
             // Load it
             Pic(files[0]);
@@ -2631,7 +2635,7 @@ namespace PicView
             {
                 // Needs support for not being case sensitive 
                 Filter = "All Supported files|*.bmp;*.jpg;*.png;*.tif;*.gif;*.ico;*.jpeg;*.wdp;*.psd;*.psb;*.cbr;*.cb7;*.cbt;"
-                + "*.cbz;*.xz;*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;"
+                + "*.cbz;*.xz;*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;*.webp;"
                 ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
                 + "|Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg*.wdp*"                                   // Common pics
                 + "|jpg| *.jpg;*.jpeg;*"                                                                        // JPG
