@@ -19,7 +19,7 @@ namespace PicView.lib
 
             BitmapSource pic;
 
-            using (MagickImage magick = new MagickImage(file))
+            using (MagickImage magick = new MagickImage())
             {                    
                 magick.Quality = 100;
                 var mrs = new MagickReadSettings() {
@@ -93,7 +93,7 @@ namespace PicView.lib
         {
             BitmapSource pic;
 
-            using (MagickImage magick = new MagickImage(s))
+            using (MagickImage magick = new MagickImage())
             {
                 magick.Quality = 100;
                 var mrs = new MagickReadSettings();
