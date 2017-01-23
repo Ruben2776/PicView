@@ -22,6 +22,8 @@ namespace PicView.lib
             using (MagickImage magick = new MagickImage())
             {                    
                 magick.Quality = 100;
+                magick.ColorSpace = ColorSpace.Transparent;
+
                 var mrs = new MagickReadSettings() {
                     Density = new Density(300),
                     CompressionMethod = CompressionMethod.NoCompression
@@ -31,24 +33,15 @@ namespace PicView.lib
                 {
                     //Make background transparent
                     mrs.Format = MagickFormat.Svg;
-                    mrs.ColorSpace = ColorSpace.Transparent;
                     mrs.BackgroundColor = MagickColors.Transparent;
-
-                    //Write to stream as png
-                    magick.Read(file, mrs);
-                    magick.Format = MagickFormat.Png;
-                    var stream = new MemoryStream();
-                    magick.Write(stream);
-                    magick.Read(stream);
-                    pic = magick.ToBitmapSource();
+                    magick.Read(file, mrs);                    
                 }
                 else
                 {
                     magick.Read(file);
-                    magick.ColorSpace = ColorSpace.Transparent;
-                    pic = magick.ToBitmapSource();
                 }
-                    
+
+                pic = magick.ToBitmapSource();
                 pic.Freeze();
                 return pic;
             }
