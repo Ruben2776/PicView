@@ -163,7 +163,7 @@ namespace PicView.lib
         internal static bool RightbuttonClicked;
         internal static bool imageSettingsMenuOpen;
         internal static bool openMenuOpen;
-        //internal static bool settingsWindowOpen;
+        internal static bool quickSettingsMenuOpen;
         internal static bool GoToPic;
         //internal static bool cursorHidden;
         internal static bool isZoomed;
@@ -215,7 +215,7 @@ namespace PicView.lib
         #region Controls
         internal static ImageSettings imageSettingsMenu;
         internal static OpenMenu openMenu;
-        //private static Settings SettingsWindow;
+        internal static QuickSettingsMenu quickSettingsMenu;
         internal static AjaxLoading ajaxLoading;
         internal static SexyToolTip sexyToolTip;
         internal static About about_uc;

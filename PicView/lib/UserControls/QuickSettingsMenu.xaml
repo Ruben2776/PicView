@@ -1,0 +1,176 @@
+﻿<UserControl x:Class="PicView.lib.UserControls.QuickSettingsMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PicView.lib.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="400">
+    <StackPanel>
+        <Border BorderBrush="#FF1B1B1B" BorderThickness="1" Width="360" >
+            <Grid>
+                <Canvas VerticalAlignment="Top" Height="51">
+                    <TextBlock x:Name="bar"
+                           Background="#F90F0F0F"
+                           Width="256"
+                           TextTrimming="CharacterEllipsis"
+                           Padding="25,14"
+                           Height="51"
+                           FontSize="16"
+                           Foreground="#FFF7F4F4"
+                           Text="Quick Settings"
+                           FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros"
+                           FontWeight="Bold" />
+
+                    <Button x:Name="MoreButton"
+                        Content="More"
+                        ToolTip="All settings"
+                        BorderThickness="0"
+                        Canvas.Left="256"
+                        Margin="0"
+                        Width="51"
+                        Height="51" 
+                        Padding="0"
+                        FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros" FontSize="12" FontWeight="Bold">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="PasteButtonBrush" Color="#F90F0F0F"/>
+                        </Button.Background>
+                    </Button>
+
+                    <Button x:Name="CloseButton"
+                            ToolTip="Close"
+                            FocusVisualStyle="{x:Null}"
+                            Canvas.Left="307"
+                            Width="51"
+                            Height="51"
+                            BorderThickness="0">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="CloseButtonBrush" Color="#F90F0F0F"/>
+                        </Button.Background>
+                        <Path Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
+                              SnapsToDevicePixels="True"
+                              Fill="White" />
+                    </Button>
+                </Canvas>
+
+                <StackPanel Margin="0,50,0,-1" Background="#F90F0F0F">
+                    <Label Content="Set as Wallpaper" HorizontalAlignment="Center" Foreground="WhiteSmoke" Margin="0,2,0,0"/>
+                    <Canvas Width="320" Height="93">
+
+                        <Button x:Name="fill" Content="Fill" Canvas.Left="0" Canvas.Top="0" Style="{StaticResource MetroAlphaFlatButton}">
+                            <Button.Background>
+                                <SolidColorBrush x:Name="fillBrush" Color="#A5232323"/>
+                            </Button.Background>
+                        </Button>
+
+                        <Button x:Name="center" Content="Center" Canvas.Left="106" Canvas.Top="0" Style="{StaticResource MetroAlphaFlatButton}">
+                            <Button.Background>
+                                <SolidColorBrush x:Name="centerBrush" Color="#A5232323"/>
+                            </Button.Background>
+                        </Button>
+
+                        <Button x:Name="fit" Content="Fit" Canvas.Left="212" Canvas.Top="0" Style="{StaticResource MetroAlphaFlatButton}">
+                            <Button.Background>
+                                <SolidColorBrush x:Name="fitBrush" Color="#A5232323"/>
+                            </Button.Background>
+                        </Button>
+
+                        <Button x:Name="tile" Content="Tile" Canvas.Left="0" Canvas.Top="46" Style="{StaticResource MetroAlphaFlatButton}">
+                            <Button.Background>
+                                <SolidColorBrush x:Name="tileBrush" Color="#A5232323"/>
+                            </Button.Background>
+                        </Button>
+
+                        <Button x:Name="stretch" Content="Stretch" Canvas.Left="106" Canvas.Top="46" Style="{StaticResource MetroAlphaFlatButton}">
+                            <Button.Background>
+                                <SolidColorBrush x:Name="stretchBrush" Color="#A5232323"/>
+                            </Button.Background>
+                        </Button>
+                    </Canvas>
+
+                    <Label HorizontalAlignment="Center">Image Stretching</Label>
+                    <StackPanel Orientation="Horizontal" Width="320" Margin="0,3,0,0">
+                        <ToggleButton x:Name="ToggleScroll" Content="Scroll" ToolTip="Great for manga/comic reading" Margin="3" Width="100" Height="40">
+                            <ToggleButton.Background>
+                                <SolidColorBrush x:Name="ToggleScrollBrush" Color="#A5232323"/>
+                            </ToggleButton.Background>
+                        </ToggleButton>
+                        <RadioButton x:Name="SetFit" Content="Fit" ToolTip="Resize window to image size" IsChecked="True" Margin="3" Width="100" Height="40">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="SetFitBrush" Color="#A5232323"/>
+                            </RadioButton.Background>
+                        </RadioButton>
+                    </StackPanel>
+
+                    <Label Content="Color Themes" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,3,0,0"/>
+                    <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Top" Orientation="Horizontal" Margin="0,3,0,8" Width="320">
+                        <RadioButton x:Name="cyanradio" Content="Cyan" Margin="3" Width="100" Height="40">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="cyanBrush" Color="#A5232323"/>
+                            </RadioButton.Background>
+                        </RadioButton>
+                        <RadioButton x:Name="blueradio" Content="Blue" Margin="3" Width="100" Height="40">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="blueBrush" Color="#A5232323"/>
+                            </RadioButton.Background>
+                        </RadioButton>
+                        <RadioButton x:Name="aquaradio" Content="Aqua" Margin="3" Width="100" Height="40">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="aquaBrush" Color="#A5232323"/>
+                            </RadioButton.Background>
+                        </RadioButton>
+                        <RadioButton x:Name="magentaradio" Content="Magenta" Margin="3" Width="100" Height="40">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="magentaBrush" Color="#A5232323"/>
+                            </RadioButton.Background>
+                        </RadioButton>
+                        <RadioButton x:Name="pinkradio" Content="Pink" Margin="3" Width="100" Height="40">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="pinkBrush" Color="#A5232323"/>
+                            </RadioButton.Background>
+                        </RadioButton>
+                        <RadioButton x:Name="purpleradio" Content="Purple" Margin="3" Width="100" Height="40">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="purpleBrush" Color="#A5232323"/>
+                            </RadioButton.Background>
+                        </RadioButton>
+                        <RadioButton x:Name="greenradio" Content="Green" Margin="3" Width="100" Height="40">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="greenBrush" Color="#A5232323"/>
+                            </RadioButton.Background>
+                        </RadioButton>
+                        <RadioButton x:Name="tealradio" Content="Teal" Margin="3" Width="100" Height="40">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="tealBrush" Color="#A5232323"/>
+                            </RadioButton.Background>
+                        </RadioButton>
+                        <RadioButton x:Name="redradio" Content="Red" Margin="3" Width="100" Height="40">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="redBrush" Color="#A5232323"/>
+                            </RadioButton.Background>
+                        </RadioButton>
+                        <RadioButton x:Name="orangeradio" Content="Orange" Margin="3" Width="100" Height="40">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="orangeBrush" Color="#A5232323"/>
+                            </RadioButton.Background>
+                        </RadioButton>
+                        <RadioButton x:Name="sandyradio" Content="Sandy" Margin="3" Width="100" Height="40">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="sandyBrush" Color="#A5232323"/>
+                            </RadioButton.Background>
+                        </RadioButton>
+                        <RadioButton x:Name="yellowradio" Content="Yellow" Margin="3" Width="100" Height="40">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="yellowBrush" Color="#A5232323"/>
+                            </RadioButton.Background>
+                        </RadioButton>
+                    </WrapPanel>
+
+                </StackPanel>
+
+            </Grid>
+        </Border>
+        <Rectangle Width="22" Height="1" Fill="#FF0F0F0F" Margin="0,-2,94,0" HorizontalAlignment="Right"/>
+        <Polygon Points="0,0 15,30, 30,0" Fill="#FF0F0F0F" Stroke="#FF1B1B1B" Margin="277,-7,0,0" Panel.ZIndex="-1" />
+    </StackPanel>
+</UserControl>
