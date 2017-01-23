@@ -270,9 +270,11 @@ namespace PicView
             LoadHelpWindow();
             LoadOpenMenu();
             LoadImageSettingsMenu();
+            LoadQuickSettingsMenu();
             #endregion           
 
             #region Do updates in seperate thread
+
             var task = new Task(() => {
                 #region Add events
                 Closing += Window_Closing;
@@ -376,9 +378,11 @@ namespace PicView
                 #endregion
 
                 #region SettingsWindow
-                //SettingsButton.PreviewMouseLeftButtonDown += SettingsButtonButtonMouseButtonDown;
+                SettingsButton.PreviewMouseLeftButtonDown += SettingsButtonButtonMouseButtonDown;
                 SettingsButton.MouseEnter += SettingsButtonButtonMouseOver;
                 SettingsButton.MouseLeave += SettingsButtonButtonMouseLeave;
+
+                SettingsButton.Click += Toggle_quick_settings_menu;
                 #endregion
 
                 #endregion
@@ -436,6 +440,7 @@ namespace PicView
                     Properties.Settings.Default.CallUpgrade = false;
                 }
                 #endregion
+
                 #endregion
             });
             task.Start();
@@ -1870,6 +1875,26 @@ namespace PicView
             }
         }
 
+        private static bool QuickSettingsMenuOpen
+        {
+            get { return quickSettingsMenuOpen; }
+            set
+            {
+                quickSettingsMenuOpen = value;
+                quickSettingsMenu.Visibility = Visibility.Visible;
+                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
+                if (!value)
+                {
+                    da.To = 0;
+                    da.Completed += delegate { quickSettingsMenu.Visibility = Visibility.Hidden; };
+                }
+                else
+                    da.To = 1;
+                if (quickSettingsMenu != null)
+                    quickSettingsMenu.BeginAnimation(OpacityProperty, da);
+            }
+        }
+
         #endregion
 
         #region ToolTipStyle
@@ -1989,7 +2014,7 @@ namespace PicView
         #region OpenMenu
         private void LoadOpenMenu()
         {
-            Helper.openMenu = new OpenMenu
+            openMenu = new OpenMenu
             {
                 Focusable = false,
                 Opacity = 0,
@@ -1999,7 +2024,7 @@ namespace PicView
                 Margin = new Thickness(0, 0, 152, 0)
             };
 
-            bg.Children.Add(Helper.openMenu);
+            bg.Children.Add(openMenu);
         }
         #endregion
 
@@ -2017,6 +2042,23 @@ namespace PicView
             };
 
             bg.Children.Add(imageSettingsMenu);
+        }
+        #endregion
+
+        #region QuickSettingsMenu
+        private void LoadQuickSettingsMenu()
+        {
+            quickSettingsMenu = new QuickSettingsMenu
+            {
+                Focusable = false,
+                Opacity = 0,
+                Visibility = Visibility.Hidden,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(17, 0, 0, 0)
+            };
+
+            bg.Children.Add(quickSettingsMenu);
         }
         #endregion
 
@@ -2046,17 +2088,14 @@ namespace PicView
 
         private void Close_UserControls()
         {
-            //if (EffectsWindowOpen)
-            //    EffectsWindowOpen = false;
-
             if (ImageSettingsMenuOpen)
                 ImageSettingsMenuOpen = false;
 
             if (OpenMenuOpen)
                 OpenMenuOpen = false;
 
-            //if (SettingsWindowOpen)
-            //    SettingsWindowOpen = false;
+            if (QuickSettingsMenuOpen)
+                QuickSettingsMenuOpen = false;
         }
 
         private void Close_UserControls(object sender, RoutedEventArgs e)
@@ -2074,6 +2113,9 @@ namespace PicView
 
             if (ImageSettingsMenuOpen)
                 ImageSettingsMenuOpen = false;
+
+            if (QuickSettingsMenuOpen)
+                QuickSettingsMenuOpen = false;
         }
 
         private void Toggle_image_menu(object sender, RoutedEventArgs e)
@@ -2082,6 +2124,20 @@ namespace PicView
 
             if (OpenMenuOpen)
                 OpenMenuOpen = false;
+
+            if (QuickSettingsMenuOpen)
+                QuickSettingsMenuOpen = false;
+        }
+
+        private void Toggle_quick_settings_menu(object sender, RoutedEventArgs e)
+        {
+            QuickSettingsMenuOpen = !QuickSettingsMenuOpen;
+
+            if (OpenMenuOpen)
+                OpenMenuOpen = false;
+
+            if (ImageSettingsMenuOpen)
+                ImageSettingsMenuOpen = false;
         }
 
         #endregion

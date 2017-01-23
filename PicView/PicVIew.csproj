@@ -205,6 +205,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="lib\UserControls\QuickSettingsMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="lib\UserControls\RightArrow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -240,6 +244,9 @@
     </Compile>
     <Compile Include="lib\UserControls\OpenMenu.xaml.cs">
       <DependentUpon>OpenMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="lib\UserControls\QuickSettingsMenu.xaml.cs">
+      <DependentUpon>QuickSettingsMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="lib\UserControls\RightArrow.xaml.cs">
       <DependentUpon>RightArrow.xaml</DependentUpon>
