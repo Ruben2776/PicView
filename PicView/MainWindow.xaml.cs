@@ -394,18 +394,7 @@ namespace PicView
 
                 #region FlipButton
 
-                imageSettingsMenu.FlipButton.Click += (s, x) => {
-                    Flip();
-                    if (Flipped)
-                    {
-                        imageSettingsMenu.FlipButton.Content = "Unflip";
-                    }
-                    else
-                    {
-                        imageSettingsMenu.FlipButton.Content = "Flip";
-                    }
-                    
-                };
+                imageSettingsMenu.FlipButton.Click += (s, x) => Flip();
 
                 #endregion
 

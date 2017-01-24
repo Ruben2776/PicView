@@ -16,22 +16,25 @@
                            TextTrimming="CharacterEllipsis"
                            Padding="16,14,0,14"
                            FontSize="16"
-                           Background="#F90F0F0F"
+                           Background="#F9111111"
                            Foreground="#FFF7F4F4"
-                           Text="Rotate and flip image"
-                           FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros"
+                           Text="Rotate and flip"
+                           FontFamily="/PicView;component/lib/fonts/#TeX Gyre Heros"
                            FontWeight="Bold" />
 
-                    <Button x:Name="FlipButton"
-                        Content="Flip"
+                    <CheckBox x:Name="FlipButton"
                         Canvas.Left="188"
                         Width="51"
                         Height="51" 
-                        FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros" FontSize="14" FontWeight="Bold">
-                        <Button.Background>
-                            <SolidColorBrush x:Name="FlipButtonBrush" Color="#F90F0F0F"/>
-                        </Button.Background>
-                    </Button>
+                        FontWeight="Bold">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="FlipButtonBrush" Color="#F9111111"/>
+                        </CheckBox.Background>
+                        <CheckBox.Content>
+                            <Path x:Name="FlipPath" Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192
+	L192,96z" Stretch="Fill" Fill="WhiteSmoke" Height="13" Width="13" />
+                        </CheckBox.Content>
+                    </CheckBox>
 
                     <Button x:Name="CloseButton"
                             ToolTip="Close"
@@ -41,7 +44,7 @@
                             Height="51"
                             BorderThickness="0">
                         <Button.Background>
-                            <SolidColorBrush x:Name="CloseButtonBrush" Color="#F90F0F0F"/>
+                            <SolidColorBrush x:Name="CloseButtonBrush" Color="#F9111111"/>
                         </Button.Background>
                         <Path Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
                               SnapsToDevicePixels="True"
@@ -49,7 +52,7 @@
                     </Button>
                 </Canvas>
 
-                <Canvas Margin="0,51,0,0" Width="290" Height="165" VerticalAlignment="Top" Background="#F90F0F0F">
+                <Canvas Margin="0,51,0,0" Width="290" Height="165" VerticalAlignment="Top" Background="#F9111111">
                     <Border x:Name="ro0Border" Style="{StaticResource SexyBorder}" Canvas.Left="14" Canvas.Top="7">
                         <RadioButton x:Name="ro0" Content="0°" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="True" FontWeight="Bold"/>
                         <Border.Background>
