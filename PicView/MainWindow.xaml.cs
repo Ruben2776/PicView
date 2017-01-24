@@ -273,7 +273,7 @@ namespace PicView
             LoadQuickSettingsMenu();
             #endregion           
 
-            #region Do updates in seperate thread
+            #region Do updates in seperate task
 
             var task = new Task(() => {
                 #region Add events
@@ -316,17 +316,17 @@ namespace PicView
                 OpenMenuButton.MouseLeave += OpenMenuButtonMouseLeave;
                 OpenMenuButton.Click += Toggle_open_menu;
 
-                Helper.openMenu.Open.Click += (s, x) => Open();
-                Helper.openMenu.Open_File_Location.Click += (s, x) => Open_In_Explorer();
-                Helper.openMenu.Print.Click += (s, x) => Print(PicPath);
+                openMenu.Open.Click += (s, x) => Open();
+                openMenu.Open_File_Location.Click += (s, x) => Open_In_Explorer();
+                openMenu.Print.Click += (s, x) => Print(PicPath);
 
-                Helper.openMenu.Open_Border.MouseLeftButtonUp += (s, x) => Open();
-                Helper.openMenu.Open_File_Location_Border.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
-                Helper.openMenu.Print_Border.MouseLeftButtonUp += (s, x) => Print(PicPath);
+                openMenu.Open_Border.MouseLeftButtonUp += (s, x) => Open();
+                openMenu.Open_File_Location_Border.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
+                openMenu.Print_Border.MouseLeftButtonUp += (s, x) => Print(PicPath);
 
-                Helper.openMenu.CloseButton.Click += Close_UserControls;
-                Helper.openMenu.PasteButton.Click += (s, x) => Paste();
-                Helper.openMenu.CopyButton.Click += (s, x) => CopyPic();
+                openMenu.CloseButton.Click += Close_UserControls;
+                openMenu.PasteButton.Click += (s, x) => Paste();
+                openMenu.CopyButton.Click += (s, x) => CopyPic();
                 #endregion
 
                 #region image_button
@@ -377,12 +377,14 @@ namespace PicView
 
                 #endregion
 
-                #region SettingsWindow
+                #region Settings
                 SettingsButton.PreviewMouseLeftButtonDown += SettingsButtonButtonMouseButtonDown;
                 SettingsButton.MouseEnter += SettingsButtonButtonMouseOver;
                 SettingsButton.MouseLeave += SettingsButtonButtonMouseLeave;
 
                 SettingsButton.Click += Toggle_quick_settings_menu;
+
+                quickSettingsMenu.CloseButton.Click += Toggle_quick_settings_menu;
                 #endregion
 
                 #endregion
@@ -597,10 +599,9 @@ namespace PicView
             #endregion
 
             #region Get image
-            if (Pics.Count > 0)
-                Pic(FolderIndex);
-            else
-                Unload();
+
+            Pic(FolderIndex);
+
             #endregion
 
             #region Set freshStartup
