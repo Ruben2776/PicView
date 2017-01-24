@@ -340,10 +340,6 @@ namespace PicView
                 imageSettingsMenu.CloseButton.Click += Close_UserControls;
                 #endregion
 
-                #region FlipButton
-                imageSettingsMenu.FlipButton.Click += (s,x) => Flip();
-                #endregion
-
                 #region Rotation RadioButtons
                 imageSettingsMenu.ro0.Click += (s, x) => Rotate(0);
                 imageSettingsMenu.ro90.Click += (s, x) => Rotate(90);
@@ -385,6 +381,34 @@ namespace PicView
                 SettingsButton.Click += Toggle_quick_settings_menu;
 
                 quickSettingsMenu.CloseButton.Click += Toggle_quick_settings_menu;
+                quickSettingsMenu.ToggleScroll.Checked += (s, x) =>
+                {
+                    IsScrollEnabled = true;
+                    Close_UserControls();
+                };
+                quickSettingsMenu.ToggleScroll.Unchecked += (s, x) =>
+                {
+                    IsScrollEnabled = false;
+                    Close_UserControls();
+                };
+
+                #region FlipButton
+
+                imageSettingsMenu.FlipButton.Click += (s, x) => {
+                    Flip();
+                    if (Flipped)
+                    {
+                        imageSettingsMenu.FlipButton.Content = "Unflip";
+                    }
+                    else
+                    {
+                        imageSettingsMenu.FlipButton.Content = "Flip";
+                    }
+                    
+                };
+
+                #endregion
+
                 #endregion
 
                 #endregion
@@ -1326,7 +1350,14 @@ namespace PicView
             {
                 #region Close
                 case Key.Escape:
-                    Close();
+                    if (UserControls_Open())
+                        Close_UserControls();
+
+                    //else if (Properties.Settings.Default.Fullscreen)
+                    //    FullScreen();
+
+                    else
+                        Close();
                     break;
                 #endregion
 
@@ -1829,75 +1860,6 @@ namespace PicView
 
         #region UserControl Specifics
 
-        #region Toggle Menu booleans || ImageSettingsMenuOpen, OpenMenuOpen
-        /// <summary>
-        /// Toggles whether ImageSettingsMenu is open or not with a fade animatiomn 
-        /// </summary>
-        private static bool ImageSettingsMenuOpen
-        {
-            get { return imageSettingsMenuOpen; }
-            set
-            {
-                imageSettingsMenuOpen = value;
-                imageSettingsMenu.Visibility = Visibility.Visible;
-                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
-                if (!value)
-                {
-                    da.To = 0;
-                    da.Completed += delegate { imageSettingsMenu.Visibility = Visibility.Hidden; };
-                }
-                else
-                    da.To = 1;
-                if (imageSettingsMenu != null)
-                    imageSettingsMenu.BeginAnimation(OpacityProperty, da);
-            }
-        }
-
-        /// <summary>
-        /// Toggles whether OpenMenu is open or not with a fade animatiomn 
-        /// </summary>
-        private static bool OpenMenuOpen
-        {
-            get { return openMenuOpen; }
-            set
-            {
-                openMenuOpen = value;
-                openMenu.Visibility = Visibility.Visible;
-                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
-                if (!value)
-                {
-                    da.To = 0;
-                    da.Completed += delegate { openMenu.Visibility = Visibility.Hidden; };
-                }
-                else
-                    da.To = 1;
-                if (openMenu != null)
-                    openMenu.BeginAnimation(OpacityProperty, da);
-            }
-        }
-
-        private static bool QuickSettingsMenuOpen
-        {
-            get { return quickSettingsMenuOpen; }
-            set
-            {
-                quickSettingsMenuOpen = value;
-                quickSettingsMenu.Visibility = Visibility.Visible;
-                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
-                if (!value)
-                {
-                    da.To = 0;
-                    da.Completed += delegate { quickSettingsMenu.Visibility = Visibility.Hidden; };
-                }
-                else
-                    da.To = 1;
-                if (quickSettingsMenu != null)
-                    quickSettingsMenu.BeginAnimation(OpacityProperty, da);
-            }
-        }
-
-        #endregion
-
         #region ToolTipStyle
         private void LoadTooltipStyle()
         {
@@ -2085,7 +2047,99 @@ namespace PicView
         }
         #endregion
 
-        #region Close UserControls!!
+        #region Open/Close/Check UserControls!!
+
+        #region Toggle Menu booleans || ImageSettingsMenuOpen, OpenMenuOpen, QuickSettingsMenuOpen
+        /// <summary>
+        /// Toggles whether ImageSettingsMenu is open or not with a fade animatiomn 
+        /// </summary>
+        private static bool ImageSettingsMenuOpen
+        {
+            get { return imageSettingsMenuOpen; }
+            set
+            {
+                imageSettingsMenuOpen = value;
+                imageSettingsMenu.Visibility = Visibility.Visible;
+                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
+                if (!value)
+                {
+                    da.To = 0;
+                    da.Completed += delegate { imageSettingsMenu.Visibility = Visibility.Hidden; };
+                }
+                else
+                    da.To = 1;
+                if (imageSettingsMenu != null)
+                    imageSettingsMenu.BeginAnimation(OpacityProperty, da);
+            }
+        }
+
+        /// <summary>
+        /// Toggles whether OpenMenu is open or not with a fade animatiomn 
+        /// </summary>
+        private static bool OpenMenuOpen
+        {
+            get { return openMenuOpen; }
+            set
+            {
+                openMenuOpen = value;
+                openMenu.Visibility = Visibility.Visible;
+                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
+                if (!value)
+                {
+                    da.To = 0;
+                    da.Completed += delegate { openMenu.Visibility = Visibility.Hidden; };
+                }
+                else
+                    da.To = 1;
+                if (openMenu != null)
+                    openMenu.BeginAnimation(OpacityProperty, da);
+            }
+        }
+
+        private static bool QuickSettingsMenuOpen
+        {
+            get { return quickSettingsMenuOpen; }
+            set
+            {
+                quickSettingsMenuOpen = value;
+                quickSettingsMenu.Visibility = Visibility.Visible;
+                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
+                if (!value)
+                {
+                    da.To = 0;
+                    da.Completed += delegate { quickSettingsMenu.Visibility = Visibility.Hidden; };
+                }
+                else
+                    da.To = 1;
+                if (quickSettingsMenu != null)
+                    quickSettingsMenu.BeginAnimation(OpacityProperty, da);
+            }
+        }
+
+        #endregion
+
+        #region userControls_Open()
+        /// <summary>
+        /// Check if any UserControls are open
+        /// </summary>
+        /// <returns></returns>
+        private bool UserControls_Open()
+        {
+            if (ImageSettingsMenuOpen)
+                return true;
+
+            if (OpenMenuOpen)
+                return true;
+
+            if (QuickSettingsMenuOpen)
+                return true;
+
+            return false;
+        }
+
+        #endregion
+
+        #region Close_UserControls()
 
         private void Close_UserControls()
         {
@@ -2140,6 +2194,8 @@ namespace PicView
             if (ImageSettingsMenuOpen)
                 ImageSettingsMenuOpen = false;
         }
+
+        #endregion
 
         #endregion
 
