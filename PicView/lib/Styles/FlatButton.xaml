@@ -10,7 +10,7 @@
         <Setter Property="FontSize"
                 Value="12" />
         <Setter Property="FontFamily"
-                Value="/PicView;component/Fonts/#Cabin"/>
+                Value="/PicView;component/Fonts/#Aller"/>
         <Setter Property="Padding"
                 Value="15,5" />
         <Setter Property="Height"
@@ -61,7 +61,7 @@
         <Setter Property="FontSize"
                 Value="14" />
         <Setter Property="FontFamily"
-                Value="/PicView;component/Fonts/#Cabin"/>
+                Value="/PicView;component/Fonts/#Aller"/>
         <Setter Property="Width"
                 Value="101" />
         <Setter Property="Height"
