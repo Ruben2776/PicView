@@ -121,6 +121,10 @@
     <Compile Include="lib\UserControls\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
+    <Page Include="lib\Styles\Colors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="lib\Styles\Border.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -286,14 +290,10 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Resource Include="lib\fonts\Aller_Rg.ttf" />
-    <Resource Include="lib\fonts\Cabin-Bold.otf" />
-    <Resource Include="lib\fonts\Cabin-BoldItalic.otf" />
-    <Resource Include="lib\fonts\Cabin-Italic.otf" />
     <Resource Include="lib\fonts\texgyreheros-bold.otf" />
     <Resource Include="lib\fonts\texgyreheros-bolditalic.otf" />
     <Resource Include="lib\fonts\texgyreheros-italic.otf" />
     <Resource Include="lib\fonts\texgyreheros-regular.otf" />
-    <None Include="Nepharia_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">

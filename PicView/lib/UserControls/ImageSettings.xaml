@@ -1,88 +1,151 @@
-﻿<UserControl x:Class="PicView.lib.UserControls.ImageSettings"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:PicView.lib.UserControls"
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+﻿<UserControl
+    x:Class="PicView.lib.UserControls.ImageSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:PicView.lib.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
     <StackPanel>
-        <Border BorderBrush="#FF191919" BorderThickness="1" Width="292">
+        <Border
+            Width="292"
+            BorderBrush="{StaticResource BorderBrushAlt}"
+            BorderThickness="1">
             <Grid>
-                <Canvas VerticalAlignment="Top" Height="51">
-                    <TextBlock x:Name="bar"
-                           Width="188"
-                           Height="51"
-                           TextTrimming="CharacterEllipsis"
-                           Padding="16,14,0,14"
-                           FontSize="16"
-                           Background="#F9111111"
-                           Foreground="#FFF7F4F4"
-                           Text="Rotate and flip"
-                           FontFamily="/PicView;component/lib/fonts/#TeX Gyre Heros"
-                           FontWeight="Bold" />
+                <Canvas Height="51" VerticalAlignment="Top">
+                    <TextBlock
+                        x:Name="bar"
+                        Width="188"
+                        Height="51"
+                        Padding="16,14,0,14"
+                        Background="{StaticResource BackgroundColorBrushAlt}"
+                        FontFamily="/PicView;component/lib/fonts/#TeX Gyre Heros"
+                        FontSize="16"
+                        FontWeight="Bold"
+                        Foreground="{StaticResource MainColorBrush}"
+                        Text="Rotate and flip"
+                        TextTrimming="CharacterEllipsis" />
 
-                    <CheckBox x:Name="FlipButton"
+                    <CheckBox
+                        x:Name="FlipButton"
                         Canvas.Left="188"
                         Width="51"
-                        Height="51" 
-                        FontWeight="Bold">
+                        Height="51"
+                        FontWeight="Bold"
+                        ToolTip="Flip image">
                         <CheckBox.Background>
-                            <SolidColorBrush x:Name="FlipButtonBrush" Color="#F9111111"/>
+                            <SolidColorBrush x:Name="FlipButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </CheckBox.Background>
                         <CheckBox.Content>
-                            <Path x:Name="FlipPath" Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192
-	L192,96z" Stretch="Fill" Fill="WhiteSmoke" Height="13" Width="13" />
+                            <Path
+                                x:Name="FlipPath"
+                                Width="13"
+                                Height="13"
+                                Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
+                                Fill="{StaticResource MainColorBrush}"
+                                Stretch="Fill" />
                         </CheckBox.Content>
                     </CheckBox>
 
-                    <Button x:Name="CloseButton"
-                            ToolTip="Close"
-                            FocusVisualStyle="{x:Null}"
-                            Canvas.Left="239"
-                            Width="51"
-                            Height="51"
-                            BorderThickness="0">
+                    <Button
+                        x:Name="CloseButton"
+                        Canvas.Left="239"
+                        Width="51"
+                        Height="51"
+                        BorderThickness="0"
+                        FocusVisualStyle="{x:Null}"
+                        ToolTip="Close">
                         <Button.Background>
-                            <SolidColorBrush x:Name="CloseButtonBrush" Color="#F9111111"/>
+                            <SolidColorBrush x:Name="CloseButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Button.Background>
-                        <Path Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
-                              SnapsToDevicePixels="True"
-                              Fill="White" />
+                        <Path
+                            Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
+                            Fill="{StaticResource MainColorBrush}"
+                            SnapsToDevicePixels="True" />
                     </Button>
                 </Canvas>
 
-                <Canvas Margin="0,51,0,0" Width="290" Height="165" VerticalAlignment="Top" Background="#F9111111">
-                    <Border x:Name="ro0Border" Style="{StaticResource SexyBorder}" Canvas.Left="14" Canvas.Top="7">
-                        <RadioButton x:Name="ro0" Content="0°" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="True" FontWeight="Bold"/>
+                <Canvas
+                    Width="290"
+                    Height="165"
+                    Margin="0,51,0,0"
+                    VerticalAlignment="Top"
+                    Background="{StaticResource BackgroundColorBrushAlt}">
+                    <Border
+                        x:Name="ro0Border"
+                        Canvas.Left="14"
+                        Canvas.Top="7"
+                        Style="{StaticResource SexyBorder}">
+                        <RadioButton
+                            x:Name="ro0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="0°"
+                            FontWeight="Bold"
+                            IsChecked="True" />
                         <Border.Background>
-                            <SolidColorBrush x:Name="ro0BorderBrush" Color="#A5171717"/>
+                            <SolidColorBrush x:Name="ro0BorderBrush" Color="{StaticResource BackgroundColorFade}" />
                         </Border.Background>
                     </Border>
-                    <Border x:Name="ro90Border" Style="{StaticResource SexyBorder}" Canvas.Left="150" Canvas.Top="7">
-                        <RadioButton x:Name="ro90"  Content="90°" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <Border
+                        x:Name="ro90Border"
+                        Canvas.Left="150"
+                        Canvas.Top="7"
+                        Style="{StaticResource SexyBorder}">
+                        <RadioButton
+                            x:Name="ro90"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="90°"
+                            FontWeight="Bold" />
                         <Border.Background>
-                            <SolidColorBrush x:Name="ro90BorderBrush" Color="#A5171717"/>
+                            <SolidColorBrush x:Name="ro90BorderBrush" Color="{StaticResource BackgroundColorFade}" />
                         </Border.Background>
                     </Border>
 
-                    <Border x:Name="ro180Border" Style="{StaticResource SexyBorder}" Canvas.Left="150" Canvas.Top="82">
-                        <RadioButton x:Name="ro180"  Content="180°" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <Border
+                        x:Name="ro180Border"
+                        Canvas.Left="150"
+                        Canvas.Top="82"
+                        Style="{StaticResource SexyBorder}">
+                        <RadioButton
+                            x:Name="ro180"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="180°"
+                            FontWeight="Bold" />
                         <Border.Background>
-                            <SolidColorBrush x:Name="ro180BorderBrush" Color="#A5171717"/>
+                            <SolidColorBrush x:Name="ro180BorderBrush" Color="{StaticResource BackgroundColorFade}" />
                         </Border.Background>
                     </Border>
-                    <Border x:Name="ro270Border" Style="{StaticResource SexyBorder}" Canvas.Top="82" Canvas.Left="14">
-                        <RadioButton x:Name="ro270"  Content="270°" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <Border
+                        x:Name="ro270Border"
+                        Canvas.Left="14"
+                        Canvas.Top="82"
+                        Style="{StaticResource SexyBorder}">
+                        <RadioButton
+                            x:Name="ro270"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="270°"
+                            FontWeight="Bold" />
                         <Border.Background>
-                            <SolidColorBrush x:Name="ro270BorderBrush" Color="#A5171717"/>
+                            <SolidColorBrush x:Name="ro270BorderBrush" Color="{StaticResource BackgroundColorFade}" />
                         </Border.Background>
                     </Border>
                 </Canvas>
 
             </Grid>
         </Border>
-        <Rectangle Width="22" Height="2" Fill="#FF0F0F0F" Margin="54,-2,0,0" HorizontalAlignment="Left"/>
-        <Polygon Points="0,0 15,30, 30,0" Fill="#FF0F0F0F" Stroke="#FF191919" Margin="50,-7,0,0" Panel.ZIndex="-1" />
+        <Rectangle
+            Width="22"
+            Height="2"
+            Margin="54,-2,0,0"
+            HorizontalAlignment="Left"
+            Fill="{StaticResource BackgroundColorBrushAlt}" />
+        <Polygon
+            Margin="50,-7,0,0"
+            Panel.ZIndex="-1"
+            Fill="{StaticResource BackgroundColorBrushAlt}"
+            Points="0,0 15,30, 30,0"
+            Stroke="{StaticResource BorderBrushAlt}" />
     </StackPanel>
 </UserControl>
