@@ -32,18 +32,6 @@ namespace PicView.UserControls
             appVersion.Content = version + fvi.FileVersion;
 
             #endregion
-
-            #region Get Copyrights
-
-            var Cright = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
-            string[] AcopyRight = Cright.LegalCopyright.ToString().Split('&');
-            foreach (string Crights in AcopyRight)
-            {
-                CopyRights.Content = Cright.LegalCopyright.ToString().Remove(29);
-                CopyRights1.Content = Crights;
-            }
-
-            #endregion
         }
 
         #endregion
@@ -78,10 +66,6 @@ namespace PicView.UserControls
             Aller.MouseEnter += AllerMouseOver;
             Aller.MouseLeave += AllerMouseLeave;
             Aller.MouseLeftButtonDown += AllerMouseButtonDown;
-
-            Cabin.MouseEnter += CabinMouseOver;
-            Cabin.MouseLeave += CabinMouseLeave;
-            Cabin.MouseLeftButtonDown += CabinMouseButtonDown;
 
             TexGyre.MouseEnter += TexGyreMouseOver;
             TexGyre.MouseLeave += TexGyreMouseLeave;
@@ -121,25 +105,6 @@ namespace PicView.UserControls
         private void AllerMouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, AllerBrush, false);
-        }
-
-        #endregion
-
-        #region Cabin
-
-        private void CabinMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, CabinBrush, false);
-        }
-
-        private void CabinMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(CabinBrush, false);
-        }
-
-        private void CabinMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, CabinBrush, false);
         }
 
         #endregion

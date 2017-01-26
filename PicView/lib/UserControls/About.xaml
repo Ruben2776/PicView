@@ -65,13 +65,7 @@
                     </Hyperlink.Foreground>
                 </Hyperlink>
                 </TextBlock>
-                <TextBlock FontFamily="/PicView;component/lib/Fonts/#Cabin" FontSize="16" TextAlignment="Center" ToolTip="http://www.fontsquirrel.com/fonts/cabin">
-                <Hyperlink x:Name="Cabin"  NavigateUri="http://www.fontsquirrel.com/fonts/cabin" RequestNavigate="Hyperlink_RequestNavigate">Cabin
-                    <Hyperlink.Foreground>
-                        <SolidColorBrush x:Name="CabinBrush" Color="WhiteSmoke"/>
-                    </Hyperlink.Foreground>
-                </Hyperlink>
-                </TextBlock>
+                
                 <TextBlock FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros" FontSize="16" TextAlignment="Center" ToolTip="http://www.fontsquirrel.com/fonts/tex-gyre-heros">
                 <Hyperlink x:Name="TexGyre"  NavigateUri="http://www.fontsquirrel.com/fonts/tex-gyre-heros" RequestNavigate="Hyperlink_RequestNavigate">Tex Gyre Heros
                     <Hyperlink.Foreground>
@@ -104,9 +98,9 @@
                 </Hyperlink>
                 </TextBlock>
             </StackPanel>
-            <Label x:Name="CopyRights" Content="Copyrights: " HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="WhiteSmoke" Margin="0,0,0,100"/>
-            <Label x:Name="CopyRights1" Content="" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="WhiteSmoke" Margin="0,0,0,80"/>
-            <Label x:Name="appVersion" Content="Version : 0.0.0.0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="WhiteSmoke" Margin="0,0,0,60"/>
+            <TextBlock Text="Made by Ruben Hyldgaard Negendahl" FontSize="12"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="{StaticResource MainColorBrush}" Margin="0,0,0,90" FontFamily="/PicView;component/lib/fonts/#Aller"/>
+            <TextBlock Text="Special thanks to Mathias Nielsen" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="WhiteSmoke" Margin="0,0,0,70" FontFamily="/PicView;component/lib/fonts/#Aller"/>
+            <Label x:Name="appVersion" Content="Version : 0.0.0.0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="WhiteSmoke" Margin="0,0,0,35"/>
             <Rectangle Fill="#F2131313" VerticalAlignment="Bottom" Height="35"/>
             <Label Content="© PicView 2017"
                    HorizontalAlignment="Center"

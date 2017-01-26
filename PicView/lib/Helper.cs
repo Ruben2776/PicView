@@ -102,8 +102,9 @@ namespace PicView.lib
         internal const string ExpFind = "Locating in file explorer";
         internal const string NoImage = "No image loaded";
         internal const string DragOverString = "Drop to load image";
-        internal const string SevenZipFiles = " *.jpg *jpeg. *.png *.gif *.jpe *.bmp *.tiff *.tif *.ico *.wdp *.dds *.svg";
-        internal const string WinRARFiles = " *.jpg *jpeg. *.png *.gif *.jpe *.bmp *.tiff *.tif *.ico *.wdp *.dds *.svg";
+
+        // Supported files needs update
+        internal const string SupportedFiles = " *.jpg *jpeg. *.png *.gif *.jpe *.bmp *.tiff *.tif *.ico *.wdp *.dds *.svg";
 
         /// <summary>
         /// File path of current  image
@@ -182,6 +183,8 @@ namespace PicView.lib
         /// Used as comfortable space for standard viewing
         /// </summary>
         internal const int ComfySpace = 90;
+
+        internal const int AlphaColorIndex = 244;
 
         /// <summary>
         /// Backup of Width data
@@ -568,50 +571,43 @@ namespace PicView.lib
         /// <returns></returns>
         internal static bool Extract(string path)
         {
-            
             var sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\7-Zip\\7z.exe";
             if (!File.Exists(sevenZip))
                 sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\7-Zip\\7z.exe";
             if (File.Exists(sevenZip))
             {
-                TempZipPath = Path.GetTempPath() + Path.GetRandomFileName();
-                Directory.CreateDirectory(TempZipPath);
-
-                var x = Process.Start(new ProcessStartInfo
-                {
-                    FileName = sevenZip,
-                    Arguments = "x \"" + path + "\" -o" + TempZipPath + SevenZipFiles + " -r -aou",
-                    WindowStyle = ProcessWindowStyle.Hidden
-                });
-                if (x == null) return false;
-                x.EnableRaisingEvents = true;
-                x.Exited += (s, e) => Pics = FileList(TempZipPath);
-                x.WaitForExit(200);
+                Extract(path, sevenZip);
                 return true;
             }
-
 
             var Winrar = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\WinRAR\\unRAR.exe";
             if (!File.Exists(Winrar))
                 Winrar = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\WinRAR\\unRAR.exe";
             if (File.Exists(Winrar))
             {
-                TempZipPath = Path.GetTempPath() + Path.GetRandomFileName();
-                Directory.CreateDirectory(TempZipPath);
-
-                var x = Process.Start(new ProcessStartInfo
-                {
-                    FileName = Winrar,
-                    Arguments = "x \"" + path + "\" " + TempZipPath + WinRARFiles + " -r -aou",
-                    WindowStyle = ProcessWindowStyle.Hidden
-                });
-                if (x == null) return false;
-                x.EnableRaisingEvents = true;
-                x.Exited += (s, e) => Pics = FileList(TempZipPath);
-                x.WaitForExit(200);
+                Extract(path, Winrar);
                 return true;
             }
+
             return false;
+        }
+
+        private static void Extract(string path, string exe)
+        {
+            TempZipPath = Path.GetTempPath() + Path.GetRandomFileName();
+            Directory.CreateDirectory(TempZipPath);
+
+            var x = Process.Start(new ProcessStartInfo
+            {
+                FileName = exe,
+                Arguments = "x \"" + path + "\" -o" + TempZipPath + SupportedFiles + " -r -aou",
+                WindowStyle = ProcessWindowStyle.Hidden
+            });
+
+            if (x == null) return;
+            x.EnableRaisingEvents = true;
+            x.Exited += (s, e) => Pics = FileList(TempZipPath);
+            x.WaitForExit(200);
         }
 
         #endregion
