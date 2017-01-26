@@ -459,6 +459,8 @@ namespace PicView
                 LowerBar.Drop += Image_Drop;
                 #endregion
 
+                #endregion
+
                 #region Update settings if needed
                 if (Properties.Settings.Default.CallUpgrade)
                 {
@@ -467,7 +469,7 @@ namespace PicView
                 }
                 #endregion
 
-                #endregion
+
             });
             task.Start();
             #endregion            
@@ -506,9 +508,7 @@ namespace PicView
 
             if (size.WidthChanged)
             {
-                Left += (size.PreviousSize.Width - size.NewSize.Width) / 2;
-
-
+                Left += (size.PreviousSize.Width - size.NewSize.Width) / 2;         
             }
 
             // Move cursor after resize when the button has been pressed
@@ -2764,7 +2764,7 @@ namespace PicView
         }
 
         /// <summary>
-        /// Open a file dialog where usr can select a supported file
+        /// Open a file dialog where user can select a supported file
         /// </summary>
         private void Open()
         {

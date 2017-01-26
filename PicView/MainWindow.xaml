@@ -1,384 +1,372 @@
-﻿<Window x:Name="window" x:Class="PicView.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:PicView"
-        WindowStartupLocation="CenterScreen"
-        SizeToContent="WidthAndHeight"
-        Foreground="#FFF7F4F4"
-        MinWidth="455"
-        MinHeight="510"
-        FontFamily="/PicView;component/lib/fonts/#Cabin"
-        TextOptions.TextFormattingMode="Display"
-        Style="{DynamicResource MyWindowStyle}"
-        Title="Loading...">
+﻿<Window
+    x:Class="PicView.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:PicView"
+    x:Name="window"
+    Title="Loading..."
+    MinWidth="465"
+    MinHeight="515"
+    Foreground="{StaticResource MainColorBrush}"
+    SizeToContent="WidthAndHeight"
+    Style="{DynamicResource MyWindowStyle}"
+    TextOptions.TextFormattingMode="Display"
+    TextOptions.TextRenderingMode="ClearType"
+    WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="bool2VisibilityConverter" />
-        <Color x:Key="WindowBackgroundColor">#1F1F21</Color>
-        <Color x:Key="HighlightColor">#FF3F3F41</Color>
-        <Color x:Key="ForegroundColor">#FFF7F4F4</Color>
-
-        <SolidColorBrush x:Key="WindowBackgroundColorBrush" Color="{StaticResource WindowBackgroundColor}"/>
-        <SolidColorBrush x:Key="HighlightColorBrush" Color="{StaticResource HighlightColor}"/>
-        <SolidColorBrush x:Key="BorderBrush" Color="#FF222223"/>
-        <SolidColorBrush x:Key="ForegroundColorBrush" Color="{StaticResource ForegroundColor}"/>
-        
         <Style x:Key="MyWindowStyle" TargetType="local:MainWindow">
-            <Setter Property="Foreground" Value="{DynamicResource ForegroundColorBrush}" />
-            <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}"/>
-            <Setter Property="ResizeMode" Value="CanResizeWithGrip" />
             <Setter Property="UseLayoutRounding" Value="True" />
-            <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="local:MainWindow">
-                        <Border x:Name="WindowBorder" Margin="0" Background="{StaticResource WindowBackgroundColorBrush}">
+                        <Border
+                            x:Name="WindowBorder"
+                            Margin="0"
+                            Background="{StaticResource WindowBackgroundColorBrush}">
                             <Grid>
                                 <Border BorderThickness="1">
                                     <AdornerDecorator>
                                         <Grid x:Name="LayoutRoot">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="*" />
-                                                <RowDefinition Height="12" />
-                                            </Grid.RowDefinitions>
-                                            <ContentPresenter Grid.Row="0" Grid.RowSpan="2" />
-                                            <!--<Grid Grid.Row="1">
-                                                <Path x:Name="ResizeGrip" Visibility="Collapsed" Width="12" Height="12" Margin="1" HorizontalAlignment="Right"
-                                        Stroke="{StaticResource BorderBrush}" StrokeThickness="1" Stretch="None" Data="F1 M1,10 L3,10 M5,10 L7,10 M9,10 L11,10 M2,9 L2,11 M6,9 L6,11 M10,9 L10,11 M5,6 L7,6 M9,6 L11,6 M6,5 L6,7 M10,5 L10,7 M9,2 L11,2 M10,1 L10,3" />
-                                            </Grid>-->
+                                            <ContentPresenter />
                                         </Grid>
                                     </AdornerDecorator>
                                 </Border>
-                                <Border BorderBrush="#FF3A3A3A" BorderThickness="1" Visibility="{Binding IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource bool2VisibilityConverter}}" Opacity=".4"/>
+                                <Border
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    Opacity=".4"
+                                    Visibility="{Binding IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource bool2VisibilityConverter}}" />
                             </Grid>
                         </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="WindowState" Value="Maximized">
-                                <Setter TargetName="LayoutRoot" Property="Margin" Value="7" />
-                            </Trigger>
-                            <!--<Trigger Property="WindowState" Value="Normal">
-                                --><!--<Setter TargetName="Maximize" Property="Visibility" Value="Visible" />
-                                <Setter TargetName="Restore" Property="Visibility" Value="Collapsed" />--><!--
-                            </Trigger>-->
-                            <!--<MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="ResizeMode" Value="CanResizeWithGrip" />
-                                    <Condition Property="WindowState" Value="Normal" />
-                                </MultiTrigger.Conditions>
-                                <Setter TargetName="ResizeGrip" Property="Visibility" Value="Visible" />
-                            </MultiTrigger>-->
-                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
             <Setter Property="WindowChrome.WindowChrome">
                 <Setter.Value>
-                    <WindowChrome CornerRadius="0" GlassFrameThickness="1" UseAeroCaptionButtons="False" CaptionHeight="0" ResizeBorderThickness="0" />
+                    <WindowChrome
+                        CaptionHeight="0"
+                        CornerRadius="0"
+                        GlassFrameThickness="1"
+                        ResizeBorderThickness="0"
+                        UseAeroCaptionButtons="False" />
                 </Setter.Value>
             </Setter>
         </Style>
     </Window.Resources>
     <DockPanel LastChildFill="True">
-        <DockPanel x:Name="TitleBar"
-                       DockPanel.Dock="Top"
-                       Height="38"
-                       MinWidth="444"
-                       Background="#F2141414">
-
-                <Canvas x:Name="Logobg" DockPanel.Dock="Left" Width="90">
-                <Path Margin="7,0,0,0" Data="M2.968,11.236H9.9c3.511,0,5.239,1.008,5.239,4.267c0,3.259-1.963,4.429-5.708,4.429h-1.53v3.907H2.968V11.236z
-		 M7.901,13.721v3.655h0.99c0.486-0.054,1.513-0.45,1.513-1.657c0-1.62-0.612-1.908-1.314-1.999H7.901z" >
+        <DockPanel
+            x:Name="TitleBar"
+            Height="38"
+            MinWidth="444"
+            Background="{StaticResource BackgroundColorBrush}"
+            DockPanel.Dock="Top">
+            <Canvas
+                x:Name="Logobg"
+                Width="90"
+                DockPanel.Dock="Left">
+                <Path Margin="7,0,0,0" Data="M2.968,11.236H9.9c3.511,0,5.239,1.008,5.239,4.267c0,3.259-1.963,4.429-5.708,4.429h-1.53v3.907H2.968V11.236z    M7.901,13.721v3.655h0.99c0.486-0.054,1.513-0.45,1.513-1.657c0-1.62-0.612-1.908-1.314-1.999H7.901z">
                     <Path.Fill>
-                        <SolidColorBrush x:Name="pBrush" Color="WhiteSmoke"/>
+                        <SolidColorBrush x:Name="pBrush" Color="{StaticResource MainColor}" />
                     </Path.Fill>
                 </Path>
                 <Path Margin="7,0,0,0" Data="M15.819,10.336h5.113v3.079h-5.113V10.336z M20.843,23.84h-4.934v-9.003h4.934V23.84z">
                     <Path.Fill>
-                        <SolidColorBrush x:Name="iBrush" Color="WhiteSmoke"/>
+                        <SolidColorBrush x:Name="iBrush" Color="{StaticResource MainColor}" />
                     </Path.Fill>
                 </Path>
-                <Path Margin="7,0,0,0" Data="M30.654,23.804c-0.937,0.126-1.423,0.18-2.071,0.18c-3.042,0-7.058-0.342-7.058-4.646c0-3.601,3.205-4.645,6.122-4.645
-		c1.098,0,2.143,0.144,2.971,0.36v2.503c-0.468-0.18-0.937-0.252-1.387-0.252c-1.53,0-2.755,0.937-2.755,2.035
-		c0,1.333,1.08,1.891,2.899,1.891c0.342,0,0.576-0.036,1.278-0.108V23.804z">
+                <Path Margin="7,0,0,0" Data="M30.654,23.804c-0.937,0.126-1.423,0.18-2.071,0.18c-3.042,0-7.058-0.342-7.058-4.646c0-3.601,3.205-4.645,6.122-4.645   c1.098,0,2.143,0.144,2.971,0.36v2.503c-0.468-0.18-0.937-0.252-1.387-0.252c-1.53,0-2.755,0.937-2.755,2.035   c0,1.333,1.08,1.891,2.899,1.891c0.342,0,0.576-0.036,1.278-0.108V23.804z">
                     <Path.Fill>
-                        <SolidColorBrush x:Name="cBrush" Color="WhiteSmoke"/>
+                        <SolidColorBrush x:Name="cBrush" Color="{StaticResource MainColor}" />
                     </Path.Fill>
                 </Path>
                 <Path Margin="7,0,0,0" Data="M42.444,23.84h-7.04l-4.429-12.604h4.933l3.008,8.588l3.024-8.588h4.934L42.444,23.84z">
                     <Path.Fill>
-                        <SolidColorBrush x:Name="vBrush" Color="WhiteSmoke"/>
+                        <SolidColorBrush x:Name="vBrush" Color="{StaticResource MainColor}" />
                     </Path.Fill>
                 </Path>
                 <Path Margin="7,0,0,0" Data="M47.283,10.336h5.113v3.079h-5.113V10.336z M52.307,23.84h-4.934v-9.003h4.934V23.84z">
                     <Path.Fill>
-                        <SolidColorBrush x:Name="iiBrush" Color="WhiteSmoke"/>
+                        <SolidColorBrush x:Name="iiBrush" Color="{StaticResource MainColor}" />
                     </Path.Fill>
                 </Path>
-                <Path Margin="7,0,0,0" Data="M62.946,23.336c-1.188,0.306-3.043,0.648-4.682,0.648c-1.746,0-5.275-0.954-5.275-4.646c0-3.853,3.151-4.681,5.672-4.681
-		c2.503,0,4.789,0.918,4.789,4.375v1.458h-5.905c0,0.774,1.08,1.081,1.836,1.081c1.404,0,3.259-0.378,3.565-0.486V23.336z
-		 M57.545,18.528h1.836c-0.054-0.558-0.27-1.152-0.9-1.152C58.049,17.376,57.563,17.412,57.545,18.528z">
+                <Path Margin="7,0,0,0" Data="M62.946,23.336c-1.188,0.306-3.043,0.648-4.682,0.648c-1.746,0-5.275-0.954-5.275-4.646c0-3.853,3.151-4.681,5.672-4.681   c2.503,0,4.789,0.918,4.789,4.375v1.458h-5.905c0,0.774,1.08,1.081,1.836,1.081c1.404,0,3.259-0.378,3.565-0.486V23.336z    M57.545,18.528h1.836c-0.054-0.558-0.27-1.152-0.9-1.152C58.049,17.376,57.563,17.412,57.545,18.528z">
                     <Path.Fill>
-                        <SolidColorBrush x:Name="eBrush" Color="WhiteSmoke"/>
+                        <SolidColorBrush x:Name="eBrush" Color="{StaticResource MainColor}" />
                     </Path.Fill>
                 </Path>
-                <Path Margin="7,0,0,0" Data="M66.49,23.84l-3.276-9.003h4.573l1.152,5.348l1.765-5.348h3.528l1.783,5.348l1.134-5.348h4.573l-3.295,9.003h-4.861
-		l-1.116-4.717l-1.099,4.717H66.49z">
+                <Path Margin="7,0,0,0" Data="M66.49,23.84l-3.276-9.003h4.573l1.152,5.348l1.765-5.348h3.528l1.783,5.348l1.134-5.348h4.573l-3.295,9.003h-4.861   l-1.116-4.717l-1.099,4.717H66.49z">
                     <Path.Fill>
-                        <SolidColorBrush x:Name="wBrush" Color="WhiteSmoke"/>
+                        <SolidColorBrush x:Name="wBrush" Color="{StaticResource MainColor}" />
                     </Path.Fill>
                 </Path>
-                </Canvas>
-
-                <Button x:Name="CloseButton"             
-                        ToolTip="Close"
-                        FocusVisualStyle="{x:Null}"
-                        DockPanel.Dock="Right"
-                        Width="38"
-                        Height="38"
-                        BorderThickness="0"
-                        VerticalAlignment="Center"
-                        Focusable="False">
-                    <Button.Background>
-                        <SolidColorBrush x:Name="CloseButtonBrush" />
-                    </Button.Background>
-                    <Path Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
-                          SnapsToDevicePixels="True"
-                          Fill="WhiteSmoke" />
-                </Button>
-
-                <Button x:Name="MaxButton"                   
-                        ToolTip="Fullscreen"
-                        FocusVisualStyle="{x:Null}"
-                        DockPanel.Dock="Right"
-                        Width="38"
-                        Height="38"
-                        BorderThickness="0"
-                        VerticalAlignment="Center"
-                        Focusable="False">
-                    <Button.Background>
-                        <SolidColorBrush x:Name="MaxButtonBrush" />
-                    </Button.Background>
-                    <Path Data="F1M0,0L0,9 9,9 9,0 0,0 0,3 8,3 8,8 1,8 1,3z"
-                          SnapsToDevicePixels="True"
-                          Fill="WhiteSmoke" />
-                </Button>
-
-                <Button x:Name="MinButton"   
-                    ToolTip="Minimize"
+            </Canvas>
+            <Button
+                x:Name="CloseButton"
+                Width="38"
+                Height="38"
+                VerticalAlignment="Center"
+                BorderThickness="0"
+                DockPanel.Dock="Right"
+                FocusVisualStyle="{x:Null}"
+                Focusable="False"
+                ToolTip="Close">
+                <Button.Background>
+                    <SolidColorBrush x:Name="CloseButtonBrush" />
+                </Button.Background>
+                <Path
+                    Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
+                    Fill="{StaticResource MainColorBrush}"
+                    SnapsToDevicePixels="True" />
+            </Button>
+            <Button
+                x:Name="MaxButton"
+                Width="38"
+                Height="38"
+                VerticalAlignment="Center"
+                BorderThickness="0"
+                DockPanel.Dock="Right"
+                FocusVisualStyle="{x:Null}"
+                Focusable="False"
+                ToolTip="Fullscreen">
+                <Button.Background>
+                    <SolidColorBrush x:Name="MaxButtonBrush" />
+                </Button.Background>
+                <Path
+                    Data="F1M0,0L0,9 9,9 9,0 0,0 0,3 8,3 8,8 1,8 1,3z"
+                    Fill="{StaticResource MainColorBrush}"
+                    SnapsToDevicePixels="True" />
+            </Button>
+            <Button
+                x:Name="MinButton"
+                Width="38"
+                Height="38"
+                Margin="5,0,0,0"
+                VerticalAlignment="Center"
+                BorderThickness="0"
+                DockPanel.Dock="Right"
+                FocusVisualStyle="{x:Null}"
+                Focusable="False"
+                ToolTip="Minimize">
+                <Button.Background>
+                    <SolidColorBrush x:Name="MinButtonBrush" />
+                </Button.Background>
+                <Path
+                    Data="F1M0,6L0,9 9,9 9,6 0,6z"
+                    Fill="{StaticResource MainColorBrush}"
+                    SnapsToDevicePixels="True" />
+            </Button>
+            <TextBlock
+                x:Name="Bar"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Background="{x:Null}"
+                FontFamily="/PicView;component/lib/fonts/#Aller"
+                FontSize="14"
+                FontWeight="Bold"
+                Foreground="{StaticResource MainColorBrush}"
+                Text="Loading..."
+                TextAlignment="Center"
+                TextTrimming="CharacterEllipsis" />
+        </DockPanel>
+        <StackPanel
+            x:Name="LowerBar"
+            Height="55"
+            MinWidth="444"
+            Background="{StaticResource BackgroundColorBrush}"
+            DockPanel.Dock="Bottom">
+            <Canvas Width="395" HorizontalAlignment="Center">
+                <Button
+                    x:Name="OpenMenuButton"
+                    Canvas.Left="-5"
+                    Width="40"
+                    Height="55"
                     FocusVisualStyle="{x:Null}"
-                    DockPanel.Dock="Right"
-                    Width="38"
-                    Height="38"
-                    Margin="5,0,0,0"
-                    BorderThickness="0"
-                    VerticalAlignment="Center"
-                    Focusable="False">
-                    <Button.Background>
-                        <SolidColorBrush x:Name="MinButtonBrush" />
-                    </Button.Background>
-                    <Path Data="F1M0,6L0,9 9,9 9,6 0,6z"
-                          SnapsToDevicePixels="True"
-                          Fill="WhiteSmoke" />
+                    Focusable="False"
+                    ToolTip="Open file browser">
+                    <Path
+                        x:Name="FolderPath"
+                        Width="30.725"
+                        Height="24.58"
+                        Data="M30.718,23.404l0.007-19.877c-0.003-0.611-0.499-1.107-1.109-1.107H15.597  c-0.433-0.01-0.771-0.807-0.771-1.111V1.182c0-0.648-0.528-1.182-1.18-1.182h-7.46C5.535,0,5.008,0.533,5.008,1.182v0.127  c0,0.309-0.341,1.117-0.784,1.117h0.013c-0.604,0.008-1.094,0.5-1.094,1.105l0.005,5.754H0.763c0,0-1.056-0.057-0.683,1.199  l2.516,12.92c0,0.65,0.453,1.176,1.104,1.176h26.474C30.824,24.58,30.718,23.404,30.718,23.404z M29.359,10.949l-0.014,12.975  l-2.502-13.908c-0.212-0.764-1.075-0.711-1.075-0.711H4.51V4.891h24.85V10.949z"
+                        Stretch="Fill">
+                        <Path.Fill>
+                            <SolidColorBrush x:Name="FolderFill" Color="{StaticResource MainColor}" />
+                        </Path.Fill>
+                    </Path>
                 </Button>
-
-                <TextBlock x:Name="Bar"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Center"
-                           TextAlignment="Center"
-                           Background="{x:Null}"
-                           TextTrimming="CharacterEllipsis"
-                           Text="Loading..."
-                           FontWeight="Bold" 
-                           FontFamily="/Nepharia;component/lib/Fonts/#TeX Gyre Heros"
-                           FontSize="14">
-                </TextBlock>
-            </DockPanel>
-        <StackPanel x:Name="LowerBar"
-                Height="55"
-                MinWidth="444"
-                DockPanel.Dock="Bottom"
-                Background="#F2141414">
-
-                <Canvas Width="395" HorizontalAlignment="Center">
-
-                    <Button x:Name="OpenMenuButton"
-                        ToolTip="Open file browser"
-                        FocusVisualStyle="{x:Null}"
-                        Width="40"
-                        Height="55"
-                        Focusable="False"
-                        Canvas.Left="-5">
-                        <Path x:Name="FolderPath"
-                          Data="M30.718,23.404l0.007-19.877c-0.003-0.611-0.499-1.107-1.109-1.107H15.597
-	c-0.433-0.01-0.771-0.807-0.771-1.111V1.182c0-0.648-0.528-1.182-1.18-1.182h-7.46C5.535,0,5.008,0.533,5.008,1.182v0.127
-	c0,0.309-0.341,1.117-0.784,1.117h0.013c-0.604,0.008-1.094,0.5-1.094,1.105l0.005,5.754H0.763c0,0-1.056-0.057-0.683,1.199
-	l2.516,12.92c0,0.65,0.453,1.176,1.104,1.176h26.474C30.824,24.58,30.718,23.404,30.718,23.404z M29.359,10.949l-0.014,12.975
-	l-2.502-13.908c-0.212-0.764-1.075-0.711-1.075-0.711H4.51V4.891h24.85V10.949z"
-                          Height="24.58"
-                          Width="30.725"
-                          Stretch="Fill">
+                <Button
+                    x:Name="image_button"
+                    Canvas.Left="40"
+                    Width="55"
+                    Height="55"
+                    FocusVisualStyle="{x:Null}"
+                    Focusable="False"
+                    ToolTip="Rotate and flip">
+                    <Canvas Width="28" Height="31">
+                        <Path
+                            x:Name="ImagePath1"
+                            Canvas.Left="0"
+                            Canvas.Bottom="5"
+                            Width="27.534"
+                            Height="30.318"
+                            Data="F1M27.242,10.47L5.429,0.05C5.173,-0.072,4.868,0.035,4.748,0.287L0,10.223 2.587,10.223 6.073,2.922 24.983,11.956 19.071,24.335 15.741,22.744 15.741,29.289 17.786,30.267C18.042,30.39,18.346,30.28,18.467,30.027L27.484,11.149C27.605,10.897,27.497,10.593,27.242,10.47"
+                            Stretch="Fill">
                             <Path.Fill>
-                                <SolidColorBrush x:Name="FolderFill" Color="WhiteSmoke"/>
+                                <SolidColorBrush x:Name="ImagePath1Fill" Color="{StaticResource MainColor}" />
                             </Path.Fill>
                         </Path>
-                    </Button>
-
-                    <Button x:Name="image_button"
-                        ToolTip="Image settings"    
-                        FocusVisualStyle="{x:Null}"
-                        Canvas.Left="40"
-                        Width="55"
-                        Height="55"                   
-                        Focusable="False">
-                        <Canvas Height="31" Width="28">
-                            <Path x:Name="ImagePath1"
-                              Data="F1M27.242,10.47L5.429,0.05C5.173,-0.072,4.868,0.035,4.748,0.287L0,10.223 2.587,10.223 6.073,2.922 24.983,11.956 19.071,24.335 15.741,22.744 15.741,29.289 17.786,30.267C18.042,30.39,18.346,30.28,18.467,30.027L27.484,11.149C27.605,10.897,27.497,10.593,27.242,10.47"
-                              Height="30.318"                             
-                              Width="27.534"
-                              Canvas.Left="0"
-                              Canvas.Bottom="5"
-                              Stretch="Fill">
-                                <Path.Fill>
-                                    <SolidColorBrush x:Name="ImagePath1Fill" Color="WhiteSmoke"/>
-                                </Path.Fill>
-                            </Path>
-                            <Path x:Name="ImagePath2"
-                              Data="F1M23.29,16.034L21.76,16.034C20.866,13.747 19.768,10.543 18.102,10.97 16.146,11.47 15.168,16.034 15.168,16.034 15.168,16.034 14.172,10.883 11.414,8.124 8.654,5.367 5.983,16.034 5.983,16.034L2.333,16.034 2.333,2.314 23.29,2.314z M24.688,0L0.511,0C0.228,0,0,0.229,0,0.509L0,21.429C0,21.71,0.228,21.94,0.511,21.94L24.688,21.94C24.97,21.94,25.198,21.71,25.198,21.429L25.198,0.509C25.198,0.229,24.97,0,24.688,0"
-                              Height="21.94"
-                              Width="25.198"
-                              Canvas.Right="13"
-                              Canvas.Top="7">
-                                <Path.Fill>
-                                    <SolidColorBrush x:Name="ImagePath2Fill" Color="WhiteSmoke"/>
-                                </Path.Fill>
-                            </Path>
-                            <Path x:Name="ImagePath3"
-                              Data="F1M1.711,3.42C2.655,3.42 3.422,2.655 3.422,1.71 3.422,0.766 2.655,0 1.711,0 0.765,0 0,0.766 0,1.71 0,2.655 0.765,3.42 1.711,3.42"
-                              Height="3.42"
-                              Width="3.422"
-                              Canvas.Top="11.4"
-                              Canvas.Left="-6">
-                                <Path.Fill>
-                                    <SolidColorBrush x:Name="ImagePath3Fill" Color="WhiteSmoke"/>
-                                </Path.Fill>
-                            </Path>
-                            <Path x:Name="ImagePath4"
-                              Data="F1M2.383,2.6C2.769,2.6 3.125,2.56 3.446,2.495 3.82,2.655 4.274,2.751 4.765,2.751 6.024,2.751 7.046,2.135 7.046,1.376 7.046,0.616 6.024,0 4.765,0 4.291,0 3.854,0.087 3.489,0.236 3.34,0.091 3.139,0 2.915,0L2.582,0C2.162,0 1.828,0.321 1.779,0.729 0.758,0.836 0,1.205 0,1.647 0,2.174 1.068,2.6 2.383,2.6"
-                              Height="2.751"
-                              Width="7.046"
-                              Canvas.Right="16"
-                              Canvas.Bottom="17">
-                                <Path.Fill>
-                                    <SolidColorBrush x:Name="ImagePath4Fill" Color="WhiteSmoke"/>
-                                </Path.Fill>
-                            </Path>
-                        </Canvas>
-                    </Button>
-
-                <Canvas Canvas.Left="92" Height="50" Width="205">
-                    <Rectangle Stroke="#19FFFFFF" Height="55" Canvas.Left="102" Canvas.Top="0" Width="1" StrokeThickness="1"/>
-
-
-                        <Button x:Name="LeftButton"
-                            ToolTip="Previous picture. You can also press A or Left"
-                            FocusVisualStyle="{x:Null}"
-                            Width="100"
-                            Height="55"
-                            Focusable="False" 
-                            KeyboardNavigation.TabNavigation="None"
-                            KeyboardNavigation.DirectionalNavigation="None">
-                            <Path x:Name="LeftArrow"
-                               Data="F1M27.008,0L27.01,31.062 0,15.529z"
-                               Height="31.062"
-                               Width="27.01">
-                                <Path.Fill>
-                                    <SolidColorBrush x:Name="LeftArrowFill" Color="White"/>
-                                </Path.Fill>
-                            </Path>
-
-                        </Button>
-
-                        <Button x:Name="RightButton"
-                            ToolTip="Next picture. You can also press D or Right"
-                            FocusVisualStyle="{x:Null}"
-                            Width="102"
-                            Height="55"
-                            Canvas.Left="100"
-                            Focusable="False"
-                            KeyboardNavigation.TabNavigation="None"
-                            KeyboardNavigation.DirectionalNavigation="None">
-                            <Path x:Name="RightArrow"
-                               Data="F1M0.002,31.062L0,0 27.01,15.534z"
-                               Height="31.062"
-                               Width="27.01">
-                                <Path.Fill>
-                                    <SolidColorBrush x:Name="RightArrowFill" Color="White"/>
-                                </Path.Fill>
-                            </Path>
-                        </Button>
+                        <Path
+                            x:Name="ImagePath2"
+                            Canvas.Top="7"
+                            Canvas.Right="13"
+                            Width="25.198"
+                            Height="21.94"
+                            Data="F1M23.29,16.034L21.76,16.034C20.866,13.747 19.768,10.543 18.102,10.97 16.146,11.47 15.168,16.034 15.168,16.034 15.168,16.034 14.172,10.883 11.414,8.124 8.654,5.367 5.983,16.034 5.983,16.034L2.333,16.034 2.333,2.314 23.29,2.314z M24.688,0L0.511,0C0.228,0,0,0.229,0,0.509L0,21.429C0,21.71,0.228,21.94,0.511,21.94L24.688,21.94C24.97,21.94,25.198,21.71,25.198,21.429L25.198,0.509C25.198,0.229,24.97,0,24.688,0">
+                            <Path.Fill>
+                                <SolidColorBrush x:Name="ImagePath2Fill" Color="{StaticResource MainColor}" />
+                            </Path.Fill>
+                        </Path>
+                        <Path
+                            x:Name="ImagePath3"
+                            Canvas.Left="-6"
+                            Canvas.Top="11.4"
+                            Width="3.422"
+                            Height="3.42"
+                            Data="F1M1.711,3.42C2.655,3.42 3.422,2.655 3.422,1.71 3.422,0.766 2.655,0 1.711,0 0.765,0 0,0.766 0,1.71 0,2.655 0.765,3.42 1.711,3.42">
+                            <Path.Fill>
+                                <SolidColorBrush x:Name="ImagePath3Fill" Color="{StaticResource MainColor}" />
+                            </Path.Fill>
+                        </Path>
+                        <Path
+                            x:Name="ImagePath4"
+                            Canvas.Right="16"
+                            Canvas.Bottom="17"
+                            Width="7.046"
+                            Height="2.751"
+                            Data="F1M2.383,2.6C2.769,2.6 3.125,2.56 3.446,2.495 3.82,2.655 4.274,2.751 4.765,2.751 6.024,2.751 7.046,2.135 7.046,1.376 7.046,0.616 6.024,0 4.765,0 4.291,0 3.854,0.087 3.489,0.236 3.34,0.091 3.139,0 2.915,0L2.582,0C2.162,0 1.828,0.321 1.779,0.729 0.758,0.836 0,1.205 0,1.647 0,2.174 1.068,2.6 2.383,2.6">
+                            <Path.Fill>
+                                <SolidColorBrush x:Name="ImagePath4Fill" Color="{StaticResource MainColor}" />
+                            </Path.Fill>
+                        </Path>
                     </Canvas>
-
-
-                    <Button x:Name="SettingsButton"
-                         ToolTip="Open the settings page"
-                         FocusVisualStyle="{x:Null}"
-                         Canvas.Left="297"
-                         Width="45"
-                         Height="55"
-                         Margin="0"
-                         Focusable="False">
-                        <Path x:Name="SettingsPath" Stretch="Fill"
-                          Data="M413.967,276.8c1.06-6.235,1.06-13.518,1.06-20.8s-1.06-13.518-1.06-20.8l44.667-34.318
-		c4.26-3.118,5.319-8.317,2.13-13.518L418.215,115.6c-2.129-4.164-8.507-6.235-12.767-4.164l-53.186,20.801
-		c-10.638-8.318-23.394-15.601-36.16-20.801l-7.448-55.117c-1.06-4.154-5.319-8.318-10.638-8.318h-85.098
-		c-5.318,0-9.577,4.164-10.637,8.318l-8.508,55.117c-12.767,5.2-24.464,12.482-36.171,20.801l-53.186-20.801
-		c-5.319-2.071-10.638,0-12.767,4.164l-42.549,71.765c-2.119,4.153-1.061,10.399,2.129,13.518L96.97,235.2
-		c0,7.282-1.06,13.518-1.06,20.8s1.06,13.518,1.06,20.8l-44.668,34.318c-4.26,3.118-5.318,8.317-2.13,13.518L92.721,396.4
-		c2.13,4.164,8.508,6.235,12.767,4.164l53.187-20.801c10.637,8.318,23.394,15.601,36.16,20.801l8.508,55.117
-		c1.069,5.2,5.318,8.318,10.637,8.318h85.098c5.319,0,9.578-4.164,10.638-8.318l8.518-55.117c12.757-5.2,24.464-12.482,36.16-20.801
-		l53.187,20.801c5.318,2.071,10.637,0,12.767-4.164l42.549-71.765c2.129-4.153,1.06-10.399-2.13-13.518L413.967,276.8z
-		 M255.468,328.8c-41.489,0-74.46-32.235-74.46-72.8s32.971-72.8,74.46-72.8s74.461,32.235,74.461,72.8S296.957,328.8,255.468,328.8
-		z"
-                          Height="28"
-                          Width="28">
+                </Button>
+                <Canvas
+                    Canvas.Left="92"
+                    Width="205"
+                    Height="50">
+                    <Rectangle
+                        Canvas.Left="102"
+                        Canvas.Top="0"
+                        Width="1"
+                        Height="55"
+                        Stroke="#19FFFFFF"
+                        StrokeThickness="1" />
+                    <Button
+                        x:Name="LeftButton"
+                        Width="100"
+                        Height="55"
+                        FocusVisualStyle="{x:Null}"
+                        Focusable="False"
+                        KeyboardNavigation.DirectionalNavigation="None"
+                        KeyboardNavigation.TabNavigation="None"
+                        ToolTip="Previous picture. You can also press A or Left">
+                        <Path
+                            x:Name="LeftArrow"
+                            Width="27.01"
+                            Height="31.062"
+                            Data="F1M27.008,0L27.01,31.062 0,15.529z">
                             <Path.Fill>
-                                <SolidColorBrush x:Name="SettingsButtonFill" Color="WhiteSmoke"/>
+                                <SolidColorBrush x:Name="LeftArrowFill" Color="{StaticResource MainColor}" />
                             </Path.Fill>
                         </Path>
                     </Button>
-
-                <Button x:Name="QuestionButton"
-                         ToolTip="Not Implemented"
-                         FocusVisualStyle="{x:Null}"
-                         Canvas.Left="339"
-                         Width="45"
-                         Height="55"
-                         Margin="0"
-                         Focusable="False">
-                    <Path x:Name="QuestionPath1"
-                          
-                          Data="M345.1,77.1C317.6,56.2,286.6,49,247.3,49c-29.8,0-55.3,6.1-75.5,19.7C142,89,128,123.1,128,177h76.8
-		c0-14.4-1.4-29.9,7-43.2c8.4-13.3,20.1-23.5,40.2-23.5c20.4,0,30.9,5.9,40.8,18.1c8.4,10.4,11.6,22.8,11.6,36
-		c0,11.4-5.8,21.9-12.7,31.4c-3.8,5.6-8.8,10.6-15.1,15.4c0,0-41.5,24.7-56.1,48.1c-10.9,17.4-14.8,39.2-15.7,65.3
-		c-0.1,1.9,0.6,5.8,7.2,5.8c6.5,0,56,0,61.8,0c5.8,0,7-4.4,7.1-6.2c0.4-9.5,1.6-24.1,3.3-29.6c3.3-10.4,9.7-19.5,19.7-27.3
-		l20.7-14.3c18.7-14.6,33.6-26.5,40.2-35.9c11.3-15.4,19.2-34.4,19.2-56.9C384,123.5,370.5,96.4,345.1,77.1z M242,370.2
-		c-25.9-0.8-47.3,17.2-48.2,45.3c-0.8,28.2,19.5,46.7,45.5,47.5c27,0.8,47.9-16.6,48.7-44.7C288.8,390.2,269,371,242,370.2z"
-                          Height="28"
-                          Width="28"
-                          Stretch="Fill">
+                    <Button
+                        x:Name="RightButton"
+                        Canvas.Left="100"
+                        Width="102"
+                        Height="55"
+                        FocusVisualStyle="{x:Null}"
+                        Focusable="False"
+                        KeyboardNavigation.DirectionalNavigation="None"
+                        KeyboardNavigation.TabNavigation="None"
+                        ToolTip="Next picture. You can also press D or Right">
+                        <Path
+                            x:Name="RightArrow"
+                            Width="27.01"
+                            Height="31.062"
+                            Data="F1M0.002,31.062L0,0 27.01,15.534z">
                             <Path.Fill>
-                                <SolidColorBrush x:Name="QuestionButtonFill1" Color="WhiteSmoke"/>
+                                <SolidColorBrush x:Name="RightArrowFill" Color="{StaticResource MainColor}" />
                             </Path.Fill>
                         </Path>
+                    </Button>
+                </Canvas>
+                <Button
+                    x:Name="SettingsButton"
+                    Canvas.Left="297"
+                    Width="45"
+                    Height="55"
+                    Margin="0"
+                    FocusVisualStyle="{x:Null}"
+                    Focusable="False"
+                    ToolTip="Open the settings page">
+                    <Path
+                        x:Name="SettingsPath"
+                        Width="28"
+                        Height="28"
+                        Data="M413.967,276.8c1.06-6.235,1.06-13.518,1.06-20.8s-1.06-13.518-1.06-20.8l44.667-34.318   c4.26-3.118,5.319-8.317,2.13-13.518L418.215,115.6c-2.129-4.164-8.507-6.235-12.767-4.164l-53.186,20.801   c-10.638-8.318-23.394-15.601-36.16-20.801l-7.448-55.117c-1.06-4.154-5.319-8.318-10.638-8.318h-85.098   c-5.318,0-9.577,4.164-10.637,8.318l-8.508,55.117c-12.767,5.2-24.464,12.482-36.171,20.801l-53.186-20.801   c-5.319-2.071-10.638,0-12.767,4.164l-42.549,71.765c-2.119,4.153-1.061,10.399,2.129,13.518L96.97,235.2   c0,7.282-1.06,13.518-1.06,20.8s1.06,13.518,1.06,20.8l-44.668,34.318c-4.26,3.118-5.318,8.317-2.13,13.518L92.721,396.4   c2.13,4.164,8.508,6.235,12.767,4.164l53.187-20.801c10.637,8.318,23.394,15.601,36.16,20.801l8.508,55.117   c1.069,5.2,5.318,8.318,10.637,8.318h85.098c5.319,0,9.578-4.164,10.638-8.318l8.518-55.117c12.757-5.2,24.464-12.482,36.16-20.801   l53.187,20.801c5.318,2.071,10.637,0,12.767-4.164l42.549-71.765c2.129-4.153,1.06-10.399-2.13-13.518L413.967,276.8z    M255.468,328.8c-41.489,0-74.46-32.235-74.46-72.8s32.971-72.8,74.46-72.8s74.461,32.235,74.461,72.8S296.957,328.8,255.468,328.8   z"
+                        Stretch="Fill">
+                        <Path.Fill>
+                            <SolidColorBrush x:Name="SettingsButtonFill" Color="{StaticResource MainColor}" />
+                        </Path.Fill>
+                    </Path>
+                </Button>
+                <Button
+                    x:Name="QuestionButton"
+                    Canvas.Left="339"
+                    Width="45"
+                    Height="55"
+                    Margin="0"
+                    FocusVisualStyle="{x:Null}"
+                    Focusable="False"
+                    ToolTip="Not Implemented">
+                    <Path
+                        x:Name="QuestionPath1"
+                        Width="28"
+                        Height="28"
+                        Data="M345.1,77.1C317.6,56.2,286.6,49,247.3,49c-29.8,0-55.3,6.1-75.5,19.7C142,89,128,123.1,128,177h76.8   c0-14.4-1.4-29.9,7-43.2c8.4-13.3,20.1-23.5,40.2-23.5c20.4,0,30.9,5.9,40.8,18.1c8.4,10.4,11.6,22.8,11.6,36   c0,11.4-5.8,21.9-12.7,31.4c-3.8,5.6-8.8,10.6-15.1,15.4c0,0-41.5,24.7-56.1,48.1c-10.9,17.4-14.8,39.2-15.7,65.3   c-0.1,1.9,0.6,5.8,7.2,5.8c6.5,0,56,0,61.8,0c5.8,0,7-4.4,7.1-6.2c0.4-9.5,1.6-24.1,3.3-29.6c3.3-10.4,9.7-19.5,19.7-27.3   l20.7-14.3c18.7-14.6,33.6-26.5,40.2-35.9c11.3-15.4,19.2-34.4,19.2-56.9C384,123.5,370.5,96.4,345.1,77.1z M242,370.2   c-25.9-0.8-47.3,17.2-48.2,45.3c-0.8,28.2,19.5,46.7,45.5,47.5c27,0.8,47.9-16.6,48.7-44.7C288.8,390.2,269,371,242,370.2z"
+                        Stretch="Fill">
+                        <Path.Fill>
+                            <SolidColorBrush x:Name="QuestionButtonFill1" Color="{StaticResource MainColor}" />
+                        </Path.Fill>
+                    </Path>
                 </Button>
             </Canvas>
-            </StackPanel>
+        </StackPanel>
         <DockPanel LastChildFill="True">
-            <Rectangle x:Name="LeftBorderRectangle" Fill="#F2141414" Width="7" DockPanel.Dock="Left"/>
-            <Rectangle x:Name="RightBorderRectangle" Fill="#F2141414" Width="7" Margin="-1,0,0,0" DockPanel.Dock="Right"/>
-            <Grid x:Name="bg"
-              AllowDrop="True"
-              Background="#F2141414">
-                <ScrollViewer x:Name="Scroller" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled" CanContentScroll="False" Focusable="False" FocusVisualStyle="{x:Null}">
+            <Rectangle
+                x:Name="LeftBorderRectangle"
+                Width="7"
+                DockPanel.Dock="Left"
+                Fill="{StaticResource BackgroundColorBrush}" />
+            <Rectangle
+                x:Name="RightBorderRectangle"
+                Width="7"
+                Margin="-1,0,0,0"
+                DockPanel.Dock="Right"
+                Fill="{StaticResource BackgroundColorBrush}" />
+            <Grid
+                x:Name="bg"
+                AllowDrop="True"
+                Background="{StaticResource BackgroundColorBrush}">
+                <ScrollViewer
+                    x:Name="Scroller"
+                    CanContentScroll="False"
+                    FocusVisualStyle="{x:Null}"
+                    Focusable="False"
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Disabled">
                     <!--<ScrollViewer.Style>
                 <Style TargetType="{x:Type ScrollViewer}">
                     <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -409,13 +397,14 @@
                 </Style>
             </ScrollViewer.Style>-->
                     <Border x:Name="imgBorder" Focusable="False">
-                        <Image x:Name="img"
-                               AllowDrop="True"               
-                               RenderTransformOrigin="0.5,0.5"
-                               RenderOptions.BitmapScalingMode="Fant"
-                               RenderOptions.EdgeMode="Aliased"
-                               Stretch="Fill"
-                               Focusable="False"/>
+                        <Image
+                            x:Name="img"
+                            AllowDrop="True"
+                            Focusable="False"
+                            RenderOptions.BitmapScalingMode="Fant"
+                            RenderOptions.EdgeMode="Aliased"
+                            RenderTransformOrigin="0.5,0.5"
+                            Stretch="Fill" />
                     </Border>
                 </ScrollViewer>
             </Grid>

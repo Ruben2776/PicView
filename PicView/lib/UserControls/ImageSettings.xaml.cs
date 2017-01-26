@@ -13,6 +13,8 @@ namespace PicView.lib.UserControls
         {
             InitializeComponent();
 
+            #region Add events
+
             CloseButton.MouseEnter += CloseButtonMouseOver;
             CloseButton.MouseLeave += CloseButtonMouseLeave;
             CloseButton.PreviewMouseLeftButtonDown += CloseButtonMouseButtonDown;
@@ -40,7 +42,11 @@ namespace PicView.lib.UserControls
             ro270Border.MouseLeave += ro270Border_MouseLeave;
             ro270Border.PreviewMouseLeftButtonDown += ro270Border_PreviewMouseLeftButtonDown;
 
+            #endregion
+
         }
+
+        #region Change FlipButton icon on checked
 
         private void FlipButton_Unchecked(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -53,6 +59,8 @@ namespace PicView.lib.UserControls
             FlipButton.ToolTip = "Unflip image";
             FlipPath.Data = Geometry.Parse("M448,192l-128,96v-64H128v128h248c4.4,0,8,3.6,8,8v48c0,4.4-3.6,8-8,8H72c-4.4,0-8-3.6-8-8V168c0-4.4,3.6-8,8-8h248V96 L448, 192z");
         }
+
+        #endregion
 
         #region 0 border
         void ro0Border_MouseEnter(object sender, MouseEventArgs e)
