@@ -2764,7 +2764,7 @@ namespace PicView
         }
 
         /// <summary>
-        /// Open a file dialog where usr can select a supported file
+        /// Open a file dialog where user can select a supported file
         /// </summary>
         private void Open()
         {

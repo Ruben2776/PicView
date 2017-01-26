@@ -140,17 +140,22 @@
                         </Border.Background>
                     </Border>
 
-                    <Border x:Name="Save_File_Location_Border" Style="{StaticResource SexyBorder}" Canvas.Left="150" Canvas.Top="82">
-                        <Button x:Name="Save_File"
+                    <Border
+                        x:Name="Save_File_Location_Border"
+                        Canvas.Left="150"
+                        Canvas.Top="82"
+                        Style="{StaticResource SexyBorder}">
+                        <Button
+                            x:Name="Save_File"
                             Width="128"
                             Height="70"
                             Content="Save Pic"
-                            ToolTip="Saves current image in your file system"
+                            FocusVisualStyle="{x:Null}"
                             FontSize="14"
                             FontWeight="Bold"
-                            FocusVisualStyle="{x:Null}"/>
+                            ToolTip="Saves current image in your file system" />
                         <Border.Background>
-                            <SolidColorBrush x:Name="SaveFileLocationBorderBrush" Color="#A5171717"/>
+                            <SolidColorBrush x:Name="SaveFileLocationBorderBrush" Color="{StaticResource BackgroundColorFade}" />
                         </Border.Background>
                     </Border>
                 </Canvas>
