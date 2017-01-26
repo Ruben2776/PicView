@@ -103,6 +103,7 @@ namespace PicView.lib
         internal const string NoImage = "No image loaded";
         internal const string DragOverString = "Drop to load image";
         internal const string SevenZipFiles = " *.jpg *jpeg. *.png *.gif *.jpe *.bmp *.tiff *.tif *.ico *.wdp *.dds *.svg";
+        internal const string WinRARFiles = " *.jpg *jpeg. *.png *.gif *.jpe *.bmp *.tiff *.tif *.ico *.wdp *.dds *.svg";
 
         /// <summary>
         /// File path of current  image
@@ -567,6 +568,7 @@ namespace PicView.lib
         /// <returns></returns>
         internal static bool Extract(string path)
         {
+            
             var sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\7-Zip\\7z.exe";
             if (!File.Exists(sevenZip))
                 sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\7-Zip\\7z.exe";
@@ -579,6 +581,28 @@ namespace PicView.lib
                 {
                     FileName = sevenZip,
                     Arguments = "x \"" + path + "\" -o" + TempZipPath + SevenZipFiles + " -r -aou",
+                    WindowStyle = ProcessWindowStyle.Hidden
+                });
+                if (x == null) return false;
+                x.EnableRaisingEvents = true;
+                x.Exited += (s, e) => Pics = FileList(TempZipPath);
+                x.WaitForExit(200);
+                return true;
+            }
+
+
+            var Winrar = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\WinRAR\\unRAR.exe";
+            if (!File.Exists(Winrar))
+                Winrar = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\WinRAR\\unRAR.exe";
+            if (File.Exists(Winrar))
+            {
+                TempZipPath = Path.GetTempPath() + Path.GetRandomFileName();
+                Directory.CreateDirectory(TempZipPath);
+
+                var x = Process.Start(new ProcessStartInfo
+                {
+                    FileName = Winrar,
+                    Arguments = "x \"" + path + "\" " + TempZipPath + WinRARFiles + " -r -aou",
                     WindowStyle = ProcessWindowStyle.Hidden
                 });
                 if (x == null) return false;

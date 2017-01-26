@@ -42,8 +42,11 @@
                 <TextBlock Text="F2 for copyright info" Margin="5,2,0,2"/>
                 <TextBlock Text="F3 to locate the picture on your pc" Margin="5,2,0,2"/>
 
-                <TextBlock Text="O or Ctrl + O To open a picture." Margin="5,7,0,2"/>
+                <TextBlock Text="Ctrl + O or O To open a picture." Margin="5,7,0,2"/>
                 <TextBlock Text="Ctrl + C to copy image to clipboard" Margin="5,2,0,2"/>
+                <TextBlock Text="Ctrl + V to paste image from clipboard" Margin="5,2,0,2"/>
+                <TextBlock Text="Ctrl + S to save current image" Margin="5,2,0,2"/>
+                <TextBlock Text="Ctrl + P to print current image" Margin="5,2,0,2"/>
 
                 <TextBlock Text="Press up or W to rotate right" Margin="5,7,0,2"/>
                 <TextBlock Text="Press Down or S to rotate left" Margin="5,2,0,2"/>
@@ -51,7 +54,7 @@
                 <TextBlock Text="Left or A to show previous file in folder" Margin="5,2,0,2"/>
                 <TextBlock Text="Spacebar to center on screen" Margin="5,2,0,2"/>
 
-                <TextBlock Text="Escape (esc) to close window" Margin="5,2,0,2"/>
+                <TextBlock Text="Escape (esc) to close window" Margin="5,7,0,2"/>
             </StackPanel>
 
             <Rectangle Fill="#FF131313" VerticalAlignment="Bottom" Height="35"/>

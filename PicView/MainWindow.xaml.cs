@@ -2772,7 +2772,7 @@ namespace PicView
             {
                 // Needs support for not being case sensitive 
                 Filter = "All Supported files|*.bmp;*.jpg;*.png;*.tif;*.gif;*.ico;*.jpeg;*.wdp;*.psd;*.psb;*.cbr;*.cb7;*.cbt;"
-                + "*.cbz;*.xz;*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;*.webp;"
+                + "*.cbz;*.xz;*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;*.webp;*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"
                 ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
                 + "|Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg*.wdp*"                                   // Common pics
                 + "|jpg| *.jpg;*.jpeg;*"                                                                        // JPG
@@ -2840,6 +2840,10 @@ namespace PicView
                 else return;
 
                 Close_UserControls();
+            }
+            else
+            {
+                ToolTipStyle("Error, File does not exist, or something went wrong...", true);
             }
         }
         #endregion

@@ -104,7 +104,8 @@
                 </Hyperlink>
                 </TextBlock>
             </StackPanel>
-
+            <Label x:Name="CopyRights" Content="Copyrights: " HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="WhiteSmoke" Margin="0,0,0,100"/>
+            <Label x:Name="CopyRights1" Content="" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="WhiteSmoke" Margin="0,0,0,80"/>
             <Label x:Name="appVersion" Content="Version : 0.0.0.0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="WhiteSmoke" Margin="0,0,0,60"/>
             <Rectangle Fill="#F2131313" VerticalAlignment="Bottom" Height="35"/>
             <Label Content="© PicView 2017"

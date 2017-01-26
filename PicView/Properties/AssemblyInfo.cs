@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("PicView")]
 [assembly: AssemblyProduct("PicView")]
-[assembly: AssemblyCopyright("© Ruben Hyldgaard Negendahl 2017")]
+[assembly: AssemblyCopyright("© Ruben Hyldgaard Negendahl & Mathias Nielsen 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

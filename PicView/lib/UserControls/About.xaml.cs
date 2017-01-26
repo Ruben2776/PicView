@@ -32,6 +32,18 @@ namespace PicView.UserControls
             appVersion.Content = version + fvi.FileVersion;
 
             #endregion
+
+            #region Get Copyrights
+
+            var Cright = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
+            string[] AcopyRight = Cright.LegalCopyright.ToString().Split('&');
+            foreach (string Crights in AcopyRight)
+            {
+                CopyRights.Content = Cright.LegalCopyright.ToString().Remove(29);
+                CopyRights1.Content = Crights;
+            }
+
+            #endregion
         }
 
         #endregion
