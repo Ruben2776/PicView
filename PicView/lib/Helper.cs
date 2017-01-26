@@ -164,6 +164,7 @@ namespace PicView.lib
         internal static bool imageSettingsMenuOpen;
         internal static bool openMenuOpen;
         internal static bool quickSettingsMenuOpen;
+        internal static bool saveMenuSave;
         internal static bool GoToPic;
         //internal static bool cursorHidden;
         internal static bool isZoomed;

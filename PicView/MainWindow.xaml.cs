@@ -90,6 +90,14 @@ namespace PicView
             opencm.Click += (s, x) => Open();
             cm.Items.Add(opencm);
 
+            var savecm = new MenuItem()
+            {
+                Header = "Save",
+                InputGestureText = "Ctrl + S"
+            };
+            savecm.Click += (s, x) => SaveFiles();
+            cm.Items.Add(savecm);
+
             var printcm = new MenuItem
             {
                 Header = "Print",
@@ -275,7 +283,8 @@ namespace PicView
 
             #region Do updates in seperate task
 
-            var task = new Task(() => {
+            var task = new Task(() =>
+            {
                 #region Add events
                 Closing += Window_Closing;
 
@@ -319,10 +328,12 @@ namespace PicView
                 openMenu.Open.Click += (s, x) => Open();
                 openMenu.Open_File_Location.Click += (s, x) => Open_In_Explorer();
                 openMenu.Print.Click += (s, x) => Print(PicPath);
+                openMenu.Save_File.Click += (s, x) => SaveFiles();
 
                 openMenu.Open_Border.MouseLeftButtonUp += (s, x) => Open();
                 openMenu.Open_File_Location_Border.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
                 openMenu.Print_Border.MouseLeftButtonUp += (s, x) => Print(PicPath);
+                openMenu.Save_File_Location_Border.MouseLeftButtonUp += (s, x) => SaveFiles();
 
                 openMenu.CloseButton.Click += Close_UserControls;
                 openMenu.PasteButton.Click += (s, x) => Paste();
@@ -497,7 +508,7 @@ namespace PicView
             {
                 Left += (size.PreviousSize.Width - size.NewSize.Width) / 2;
 
-                
+
             }
 
             // Move cursor after resize when the button has been pressed
@@ -896,7 +907,7 @@ namespace PicView
             var file = Pics[x];
             Pics.Remove(Pics[x]);
             if (Pics.Count < 1)
-            { 
+            {
                 ToolTipStyle("Unexpected error", false, TimeSpan.FromSeconds(3));
                 Unload();
                 return;
@@ -2105,6 +2116,26 @@ namespace PicView
             }
         }
 
+        private static bool SaveMenuSave
+        {
+            get { return saveMenuSave; }
+            set
+            {
+                saveMenuSave = value;
+                openMenu.Visibility = Visibility.Visible;
+                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
+                if (!value)
+                {
+                    da.To = 0;
+                    da.Completed += delegate { openMenu.Visibility = Visibility.Hidden; };
+                }
+                else
+                    da.To = 1;
+                if (openMenu != null)
+                    openMenu.BeginAnimation(OpacityProperty, da);
+            }
+        }
+
         #endregion
 
         #region userControls_Open()
@@ -2140,6 +2171,9 @@ namespace PicView
 
             if (QuickSettingsMenuOpen)
                 QuickSettingsMenuOpen = false;
+
+            if (saveMenuSave)
+                saveMenuSave = false;
         }
 
         private void Close_UserControls(object sender, RoutedEventArgs e)
@@ -2493,7 +2527,8 @@ namespace PicView
                     imageSettingsMenu.ro180.IsChecked = false;
                     imageSettingsMenu.ro0.IsChecked = false;
                     break;
-                default: imageSettingsMenu.ro0.IsChecked = true;
+                default:
+                    imageSettingsMenu.ro0.IsChecked = true;
                     break;
             }
         }
@@ -2705,7 +2740,7 @@ namespace PicView
 
         #endregion
 
-        #region Open and Open_In_Eplorer
+        #region Open and Open_In_Eplorer and Save
         /// <summary>
         /// Opens image in File Explorer
         /// </summary>
@@ -2765,6 +2800,47 @@ namespace PicView
             else return;
 
             Close_UserControls();
+        }
+
+        private void SaveFiles()
+        {
+            var Savedlg = new Microsoft.Win32.SaveFileDialog()
+            {
+                // Needs support for not being case sensitive 
+                Filter = "All Supported files|*.bmp;*.jpg;*.png;*.tif;*.gif;*.ico;*.jpeg;*.wdp;*.psd;*.psb;*.cbr;*.cb7;*.cbt;"
+                + "*.cbz;*.xz;*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;*.webp;"
+                ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                + "|Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg*.wdp*"                                   // Common pics
+                + "|jpg| *.jpg;*.jpeg;*"                                                                        // JPG
+                + "|bmp|*.bmp;*"                                                                                // BMP
+                + "|png|*.png;*"                                                                                // PNG
+                + "|gif|*.gif;*"                                                                                // GIF
+                + "|ico|*.ico;*"                                                                                // ICO
+                + "|wdp|*.wdp;*"                                                                                // WDP
+                + "|svg|*.svg;*"                                                                                // SVG
+                + "|tif|*.tif;*"                                                                                // Tif
+                + "|Photoshop|*.psd;*.psb"                                                                      // PSD
+                + "|Archives|*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"                           // Archives
+                + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz"                                                        // Comics
+                + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw",      // Camera files
+                ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                Title = "Save image - PicView"
+            };
+            if(!string.IsNullOrEmpty(PicPath))
+            {
+                MagickImage SaveImage = new MagickImage(PicPath);
+
+                if (Savedlg.ShowDialog() == true)
+                {
+                    SaveImage.Write(Savedlg.FileName);
+
+                    if (string.IsNullOrEmpty(PicPath))
+                        PicPath = Savedlg.FileName;
+                }
+                else return;
+
+                Close_UserControls();
+            }
         }
         #endregion
 
