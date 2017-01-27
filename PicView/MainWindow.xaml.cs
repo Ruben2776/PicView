@@ -959,7 +959,7 @@ namespace PicView
                     try
                     {
                         var directory = Directory.GetDirectories(TempZipPath);
-                        if (directory.Length == 1)
+                        if (directory.Length > -1)
                         {
                             TempZipPath = directory[0];
                             Pics = FileList(TempZipPath);
@@ -1754,29 +1754,41 @@ namespace PicView
         /// <summary>
         /// Fits image size based on users screen resolution
         /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
+        /// <param name="width">The pixel width of the image</param>
+        /// <param name="height">The pixel height of the image</param>
         private void ZoomFit(double width, double height)
         {
-            //Aspect ratio calculation
+            // Get max width and height, based on user's screen
             var maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth, width);
-            var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 98), height); // 38 = Titlebar height, 60 = lowerbar height
+            var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 93), height); // 38 = Titlebar height, 60 = lowerbar height
 
-            AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));
-
-            img.Width = xWidth = (width * AspectRatio);
-            img.Height = xHeight = (height * AspectRatio);
+            AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));           
 
             if (IsScrollEnabled)
             {
-                img.Width = img.Height = double.NaN;
-                img.MaxWidth = width;
+                // Scroll by its original height
+                img.Height = height;
+
+                // Set Scroller's height to fit screen
+                Scroller.Height = maxHeight;
+
+                // Calculate width based on aspect ratio
+                img.Width = maxHeight * (maxWidth / maxHeight);
+
+                // Update values
+                xWidth = img.Width;
+                xHeight = maxHeight;
             }
             else
             {
-                img.Width = xWidth = (width * AspectRatio);
+                // Fit image by aspect ratio calculation
+                // and update values
                 img.Height = xHeight = (height * AspectRatio);
-            }
+                img.Width = xWidth = (width * AspectRatio);
+
+                // Reset Scroller's height to auto
+                Scroller.Height = double.NaN;
+            }          
 
             //Buttons (38 * 3 = 87) logo (canvas width 80 + margin right 7 = 87) = 179 (Bar.MinWidth 444) 444 - 179 = 270 - (comfy space) = 210
             if (xWidth - 221 < 220)
