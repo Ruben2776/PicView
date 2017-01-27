@@ -106,6 +106,25 @@ namespace PicView.lib
         // Supported files needs update
         internal const string SupportedFiles = " *.jpg *jpeg. *.png *.gif *.jpe *.bmp *.tiff *.tif *.ico *.wdp *.dds *.svg";
 
+        internal const string FilterFiles =
+            "All Supported files|*.bmp;*.jpg;*.png;*.tif;*.gif;*.ico;*.jpeg;*.wdp;*.psd;*.psb;*.cbr;*.cb7;*.cbt;"
+            + "*.cbz;*.xz;*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;*.webp;*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"
+            ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+            + "|Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg*.wdp*"                                   // Common pics
+            + "|jpg| *.jpg;*.jpeg;*"                                                                        // JPG
+            + "|bmp|*.bmp;*"                                                                                // BMP
+            + "|png|*.png;*"                                                                                // PNG
+            + "|gif|*.gif;*"                                                                                // GIF
+            + "|ico|*.ico;*"                                                                                // ICO
+            + "|wdp|*.wdp;*"                                                                                // WDP
+            + "|svg|*.svg;*"                                                                                // SVG
+            + "|tif|*.tif;*"                                                                                // Tif
+            + "|Photoshop|*.psd;*.psb"                                                                      // PSD
+            + "|Archives|*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"                           // Archives
+            + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz"                                                        // Comics
+            + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw";      // Camera files
+            ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
         /// <summary>
         /// File path of current  image
         /// </summary>
@@ -598,7 +617,7 @@ namespace PicView.lib
             Directory.CreateDirectory(TempZipPath);
 
             var arguments = winrar ? 
-                // Add WinRar specifics
+                // Add WinRAR specifics
                 "x \"" + path + "\" " 
                 :
                 // Add 7-Zip specifics

@@ -2771,23 +2771,7 @@ namespace PicView
             var dlg = new Microsoft.Win32.OpenFileDialog()
             {
                 // Needs support for not being case sensitive 
-                Filter = "All Supported files|*.bmp;*.jpg;*.png;*.tif;*.gif;*.ico;*.jpeg;*.wdp;*.psd;*.psb;*.cbr;*.cb7;*.cbt;"
-                + "*.cbz;*.xz;*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;*.webp;*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"
-                ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-                + "|Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg*.wdp*"                                   // Common pics
-                + "|jpg| *.jpg;*.jpeg;*"                                                                        // JPG
-                + "|bmp|*.bmp;*"                                                                                // BMP
-                + "|png|*.png;*"                                                                                // PNG
-                + "|gif|*.gif;*"                                                                                // GIF
-                + "|ico|*.ico;*"                                                                                // ICO
-                + "|wdp|*.wdp;*"                                                                                // WDP
-                + "|svg|*.svg;*"                                                                                // SVG
-                + "|tif|*.tif;*"                                                                                // Tif
-                + "|Photoshop|*.psd;*.psb"                                                                      // PSD
-                + "|Archives|*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"                           // Archives
-                + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz"                                                        // Comics
-                + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw",      // Camera files
-                ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                Filter = FilterFiles,
                 Title = "Open image - PicView"
             };
             if (dlg.ShowDialog() == true)
@@ -2807,23 +2791,7 @@ namespace PicView
             var Savedlg = new Microsoft.Win32.SaveFileDialog()
             {
                 // Needs support for not being case sensitive 
-                Filter = "All Supported files|*.bmp;*.jpg;*.png;*.tif;*.gif;*.ico;*.jpeg;*.wdp;*.psd;*.psb;*.cbr;*.cb7;*.cbt;"
-                + "*.cbz;*.xz;*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;*.webp;"
-                ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-                + "|Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg*.wdp*"                                   // Common pics
-                + "|jpg| *.jpg;*.jpeg;*"                                                                        // JPG
-                + "|bmp|*.bmp;*"                                                                                // BMP
-                + "|png|*.png;*"                                                                                // PNG
-                + "|gif|*.gif;*"                                                                                // GIF
-                + "|ico|*.ico;*"                                                                                // ICO
-                + "|wdp|*.wdp;*"                                                                                // WDP
-                + "|svg|*.svg;*"                                                                                // SVG
-                + "|tif|*.tif;*"                                                                                // Tif
-                + "|Photoshop|*.psd;*.psb"                                                                      // PSD
-                + "|Archives|*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"                           // Archives
-                + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz"                                                        // Comics
-                + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw",      // Camera files
-                ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                Filter = FilterFiles,
                 Title = "Save image - PicView"
             };
             if(!string.IsNullOrEmpty(PicPath))
