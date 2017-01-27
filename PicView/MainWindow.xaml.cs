@@ -1313,7 +1313,7 @@ namespace PicView
 
             // check if valid
             if (Drag_Drop_Check(files).HasValue)
-                if (!Drag_Drop_Check(files).Value)
+                if (Drag_Drop_Check(files).Value)
                     return;
 
             // Load it
