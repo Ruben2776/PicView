@@ -26,21 +26,21 @@ namespace PicView.lib.UserControls
             FlipButton.Checked += FlipButton_Checked;
             FlipButton.Unchecked += FlipButton_Unchecked;
 
-            ro0Border.MouseEnter += ro0Border_MouseEnter;
-            ro0Border.MouseLeave += ro0Border_MouseLeave;
-            ro0Border.PreviewMouseLeftButtonDown += ro0Border_PreviewMouseLeftButtonDown;
+            Rotation0Border.MouseEnter += Rotation0Border_MouseEnter;
+            Rotation0Border.MouseLeave += Rotation0Border_MouseLeave;
+            Rotation0Border.PreviewMouseLeftButtonDown += Rotation0Border_PreviewMouseLeftButtonDown;
 
-            ro90Border.MouseEnter += ro90Border_MouseEnter;
-            ro90Border.MouseLeave += ro90Border_MouseLeave;
-            ro90Border.PreviewMouseLeftButtonDown += ro90Border_PreviewMouseLeftButtonDown;
+            Rotation90Border.MouseEnter += Rotation90Border_MouseEnter;
+            Rotation90Border.MouseLeave += Rotation90Border_MouseLeave;
+            Rotation90Border.PreviewMouseLeftButtonDown += Rotation90Border_PreviewMouseLeftButtonDown;
 
-            ro180Border.MouseEnter += ro180Border_MouseEnter;
-            ro180Border.MouseLeave += ro180Border_MouseLeave;
-            ro180Border.PreviewMouseLeftButtonDown += ro180Border_PreviewMouseLeftButtonDown;
+            Rotation180Border.MouseEnter += Rotation180Border_MouseEnter;
+            Rotation180Border.MouseLeave += Rotation180Border_MouseLeave;
+            Rotation180Border.PreviewMouseLeftButtonDown += Rotation180Border_PreviewMouseLeftButtonDown;
 
-            ro270Border.MouseEnter += ro270Border_MouseEnter;
-            ro270Border.MouseLeave += ro270Border_MouseLeave;
-            ro270Border.PreviewMouseLeftButtonDown += ro270Border_PreviewMouseLeftButtonDown;
+            Rotation270Border.MouseEnter += Rotation270Border_MouseEnter;
+            Rotation270Border.MouseLeave += Rotation270Border_MouseLeave;
+            Rotation270Border.PreviewMouseLeftButtonDown += Rotation270Border_PreviewMouseLeftButtonDown;
 
             #endregion
 
@@ -63,70 +63,70 @@ namespace PicView.lib.UserControls
         #endregion
 
         #region 0 border
-        void ro0Border_MouseEnter(object sender, MouseEventArgs e)
+        void Rotation0Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, ro0BorderBrush, true);
+            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, Rotation0BorderBrush, true);
         }
 
-        void ro0Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        void Rotation0Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ro0BorderBrush, true);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(Rotation0BorderBrush, true);
         }
 
-        void ro0Border_MouseLeave(object sender, MouseEventArgs e)
+        void Rotation0Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, ro0BorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, Rotation0BorderBrush, true);
         }
         #endregion
 
         #region 90 border
-        void ro90Border_MouseEnter(object sender, MouseEventArgs e)
+        void Rotation90Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, ro90BorderBrush, true);
+            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, Rotation90BorderBrush, true);
         }
 
-        void ro90Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        void Rotation90Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ro90BorderBrush, true);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(Rotation90BorderBrush, true);
         }
 
-        void ro90Border_MouseLeave(object sender, MouseEventArgs e)
+        void Rotation90Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, ro90BorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, Rotation90BorderBrush, true);
         }
         #endregion
 
         #region 180 border
-        void ro180Border_MouseEnter(object sender, MouseEventArgs e)
+        void Rotation180Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, ro180BorderBrush, true);
+            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, Rotation180BorderBrush, true);
         }
 
-        void ro180Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        void Rotation180Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ro180BorderBrush, true);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(Rotation180BorderBrush, true);
         }
 
-        void ro180Border_MouseLeave(object sender, MouseEventArgs e)
+        void Rotation180Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, ro180BorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, Rotation180BorderBrush, true);
         }
         #endregion
 
         #region 270 border
-        void ro270Border_MouseEnter(object sender, MouseEventArgs e)
+        void Rotation270Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, ro270BorderBrush, true);
+            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, Rotation270BorderBrush, true);
         }
 
-        void ro270Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        void Rotation270Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ro270BorderBrush, true);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(Rotation270BorderBrush, true);
         }
 
-        void ro270Border_MouseLeave(object sender, MouseEventArgs e)
+        void Rotation270Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, ro270BorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, Rotation270BorderBrush, true);
         }
         #endregion
 

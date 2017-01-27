@@ -352,15 +352,15 @@ namespace PicView
                 #endregion
 
                 #region Rotation RadioButtons
-                imageSettingsMenu.ro0.Click += (s, x) => Rotate(0);
-                imageSettingsMenu.ro90.Click += (s, x) => Rotate(90);
-                imageSettingsMenu.ro180.Click += (s, x) => Rotate(180);
-                imageSettingsMenu.ro270.Click += (s, x) => Rotate(270);
+                imageSettingsMenu.Rotation0Button.Click += (s, x) => Rotate(0);
+                imageSettingsMenu.Rotation90Button.Click += (s, x) => Rotate(90);
+                imageSettingsMenu.Rotation180Button.Click += (s, x) => Rotate(180);
+                imageSettingsMenu.Rotation270Button.Click += (s, x) => Rotate(270);
 
-                imageSettingsMenu.ro0Border.MouseLeftButtonDown += (s, x) => Rotate(0);
-                imageSettingsMenu.ro90Border.MouseLeftButtonDown += (s, x) => Rotate(90);
-                imageSettingsMenu.ro180Border.MouseLeftButtonDown += (s, x) => Rotate(180);
-                imageSettingsMenu.ro270Border.MouseLeftButtonDown += (s, x) => Rotate(270);
+                imageSettingsMenu.Rotation0Border.MouseLeftButtonDown += (s, x) => Rotate(0);
+                imageSettingsMenu.Rotation90Border.MouseLeftButtonDown += (s, x) => Rotate(90);
+                imageSettingsMenu.Rotation180Border.MouseLeftButtonDown += (s, x) => Rotate(180);
+                imageSettingsMenu.Rotation270Border.MouseLeftButtonDown += (s, x) => Rotate(270);
 
                 #endregion
 
@@ -2501,34 +2501,34 @@ namespace PicView
             switch (r)
             {
                 case 0:
-                    imageSettingsMenu.ro0.IsChecked = true;
-                    imageSettingsMenu.ro90.IsChecked = false;
-                    imageSettingsMenu.ro180.IsChecked = false;
-                    imageSettingsMenu.ro270.IsChecked = false;
+                    imageSettingsMenu.Rotation0Button.IsChecked = true;
+                    imageSettingsMenu.Rotation90Button.IsChecked = false;
+                    imageSettingsMenu.Rotation180Button.IsChecked = false;
+                    imageSettingsMenu.Rotation270Button.IsChecked = false;
                     break;
 
                 case 180:
-                    imageSettingsMenu.ro180.IsChecked = true;
-                    imageSettingsMenu.ro90.IsChecked = false;
-                    imageSettingsMenu.ro0.IsChecked = false;
-                    imageSettingsMenu.ro270.IsChecked = false;
+                    imageSettingsMenu.Rotation180Button.IsChecked = true;
+                    imageSettingsMenu.Rotation90Button.IsChecked = false;
+                    imageSettingsMenu.Rotation0Button.IsChecked = false;
+                    imageSettingsMenu.Rotation270Button.IsChecked = false;
                     break;
 
                 case 90:
-                    imageSettingsMenu.ro90.IsChecked = true;
-                    imageSettingsMenu.ro0.IsChecked = false;
-                    imageSettingsMenu.ro180.IsChecked = false;
-                    imageSettingsMenu.ro270.IsChecked = false;
+                    imageSettingsMenu.Rotation90Button.IsChecked = true;
+                    imageSettingsMenu.Rotation0Button.IsChecked = false;
+                    imageSettingsMenu.Rotation180Button.IsChecked = false;
+                    imageSettingsMenu.Rotation270Button.IsChecked = false;
                     break;
 
                 case 270:
-                    imageSettingsMenu.ro270.IsChecked = true;
-                    imageSettingsMenu.ro90.IsChecked = false;
-                    imageSettingsMenu.ro180.IsChecked = false;
-                    imageSettingsMenu.ro0.IsChecked = false;
+                    imageSettingsMenu.Rotation270Button.IsChecked = true;
+                    imageSettingsMenu.Rotation90Button.IsChecked = false;
+                    imageSettingsMenu.Rotation180Button.IsChecked = false;
+                    imageSettingsMenu.Rotation0Button.IsChecked = false;
                     break;
                 default:
-                    imageSettingsMenu.ro0.IsChecked = true;
+                    imageSettingsMenu.Rotation0Button.IsChecked = true;
                     break;
             }
         }

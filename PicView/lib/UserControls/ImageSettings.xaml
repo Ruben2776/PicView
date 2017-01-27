@@ -70,65 +70,65 @@
                     VerticalAlignment="Top"
                     Background="{StaticResource BackgroundColorBrushAlt}">
                     <Border
-                        x:Name="ro0Border"
+                        x:Name="Rotation0Border"
                         Canvas.Left="14"
                         Canvas.Top="7"
                         Style="{StaticResource SexyBorder}">
                         <RadioButton
-                            x:Name="ro0"
+                            x:Name="Rotation0Button"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Content="0°"
                             FontWeight="Bold"
                             IsChecked="True" />
                         <Border.Background>
-                            <SolidColorBrush x:Name="ro0BorderBrush" Color="{StaticResource BackgroundColorFade}" />
+                            <SolidColorBrush x:Name="Rotation0BorderBrush" Color="{StaticResource BackgroundColorFade}" />
                         </Border.Background>
                     </Border>
                     <Border
-                        x:Name="ro90Border"
+                        x:Name="Rotation90Border"
                         Canvas.Left="150"
                         Canvas.Top="7"
                         Style="{StaticResource SexyBorder}">
                         <RadioButton
-                            x:Name="ro90"
+                            x:Name="Rotation90Button"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Content="90°"
                             FontWeight="Bold" />
                         <Border.Background>
-                            <SolidColorBrush x:Name="ro90BorderBrush" Color="{StaticResource BackgroundColorFade}" />
+                            <SolidColorBrush x:Name="Rotation90BorderBrush" Color="{StaticResource BackgroundColorFade}" />
                         </Border.Background>
                     </Border>
 
                     <Border
-                        x:Name="ro180Border"
+                        x:Name="Rotation180Border"
                         Canvas.Left="150"
                         Canvas.Top="82"
                         Style="{StaticResource SexyBorder}">
                         <RadioButton
-                            x:Name="ro180"
+                            x:Name="Rotation180Button"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Content="180°"
                             FontWeight="Bold" />
                         <Border.Background>
-                            <SolidColorBrush x:Name="ro180BorderBrush" Color="{StaticResource BackgroundColorFade}" />
+                            <SolidColorBrush x:Name="Rotation180BorderBrush" Color="{StaticResource BackgroundColorFade}" />
                         </Border.Background>
                     </Border>
                     <Border
-                        x:Name="ro270Border"
+                        x:Name="Rotation270Border"
                         Canvas.Left="14"
                         Canvas.Top="82"
                         Style="{StaticResource SexyBorder}">
                         <RadioButton
-                            x:Name="ro270"
+                            x:Name="Rotation270Button"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Content="270°"
                             FontWeight="Bold" />
                         <Border.Background>
-                            <SolidColorBrush x:Name="ro270BorderBrush" Color="{StaticResource BackgroundColorFade}" />
+                            <SolidColorBrush x:Name="Rotation270BorderBrush" Color="{StaticResource BackgroundColorFade}" />
                         </Border.Background>
                     </Border>
                 </Canvas>

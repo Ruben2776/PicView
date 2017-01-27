@@ -1,17 +1,15 @@
-﻿<UserControl x:Class="PicView.UserControls.About"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             mc:Ignorable="d" 
-             d:DesignHeight="550" d:DesignWidth="550">
+﻿<UserControl
+    x:Class="PicView.UserControls.About"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Foreground="{StaticResource MainColorBrush}">
     <UserControl.Resources>
         <ResourceDictionary>
             <Style x:Key="{x:Type Hyperlink}" TargetType="{x:Type Hyperlink}">
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="true">
                         <!--<Setter Property="Foreground" Value="#007acc" />-->
-                        <Setter Property="TextDecorations" Value="UnderLine"/>
+                        <Setter Property="TextDecorations" Value="UnderLine" />
                     </Trigger>
                     <Trigger Property="IsEnabled" Value="false">
                         <Setter Property="Foreground" Value="#FF1D1D1D" />
@@ -20,98 +18,168 @@
                         <Setter Property="Cursor" Value="Hand" />
                     </Trigger>
                 </Style.Triggers>
-                <Setter Property="Foreground" Value="#FFD4CCCC" />
+                <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
                 <Setter Property="TextDecorations" Value="{x:Null}" />
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Border Height="400" Width="350" BorderBrush="#FF2B2B2B" BorderThickness="1">
+    <Border
+        Width="350"
+        Height="400"
+        BorderBrush="{StaticResource BorderBrushAlt}"
+        BorderThickness="1">
         <Grid>
 
-            <Rectangle VerticalAlignment="Top" Height="34" Fill="#F2131313"/>
-            <Button x:Name="CloseButton"
-                    ToolTip="Close"
-                    FocusVisualStyle="{x:Null}"
-                    BorderBrush="{x:Null}"
-                    OverridesDefaultStyle="True"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Width="34"
-                    Height="34"
-                    Margin="0"
-                    BorderThickness="0">
+            <Rectangle
+                Height="34"
+                VerticalAlignment="Top"
+                Fill="{StaticResource BackgroundColorBrush}" />
+            <Button
+                x:Name="CloseButton"
+                Width="34"
+                Height="34"
+                Margin="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                BorderBrush="{x:Null}"
+                BorderThickness="0"
+                FocusVisualStyle="{x:Null}"
+                OverridesDefaultStyle="True"
+                ToolTip="Close">
                 <Button.Background>
-                    <SolidColorBrush x:Name="CloseButtonBrush" Color="#00000000"/>
+                    <SolidColorBrush x:Name="CloseButtonBrush" />
                 </Button.Background>
-                <Path Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
-                          SnapsToDevicePixels="True"
-                          Fill="WhiteSmoke" />
+                <Path
+                    Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
+                    Fill="WhiteSmoke"
+                    SnapsToDevicePixels="True" />
             </Button>
-            <Label HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Height="34">About</Label>
+            <Label
+                Height="34"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                VerticalContentAlignment="Center">
+                About
+            </Label>
 
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,34,0,0">
-                <Rectangle Fill="#F2131313" Width="7"/>
-                <Rectangle Fill="#ED141414" Width="336" Height="329"/>
-                <Rectangle Fill="#F2131313" Width="7"/>
+            <StackPanel
+                Margin="0,34,0,0"
+                VerticalAlignment="Top"
+                Orientation="Horizontal">
+                <Rectangle Width="7" Fill="{StaticResource BackgroundColorBrush}" />
+                <Rectangle
+                    Width="336"
+                    Height="329"
+                    Fill="{StaticResource BackgroundColorBrushAlt}" />
+                <Rectangle Width="7" Fill="{StaticResource BackgroundColorBrush}" />
             </StackPanel>
 
             <StackPanel Margin="0,43,0,0">
-                <Label Foreground="WhiteSmoke" HorizontalAlignment="Center" VerticalAlignment="Top">Fonts Used:</Label>
-                <TextBlock FontFamily="/PicView;component/lib/Fonts/#Aller" FontSize="16" TextAlignment="Center" ToolTip="http://www.fontsquirrel.com/fonts/aller">               
-                <Hyperlink x:Name="Aller"  NavigateUri="http://www.fontsquirrel.com/fonts/aller" RequestNavigate="Hyperlink_RequestNavigate">Aller
-                    <Hyperlink.Foreground>
-                        <SolidColorBrush x:Name="AllerBrush" Color="WhiteSmoke"/>
-                    </Hyperlink.Foreground>
-                </Hyperlink>
-                </TextBlock>
-                
-                <TextBlock FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros" FontSize="16" TextAlignment="Center" ToolTip="http://www.fontsquirrel.com/fonts/tex-gyre-heros">
-                <Hyperlink x:Name="TexGyre"  NavigateUri="http://www.fontsquirrel.com/fonts/tex-gyre-heros" RequestNavigate="Hyperlink_RequestNavigate">Tex Gyre Heros
-                    <Hyperlink.Foreground>
-                        <SolidColorBrush x:Name="TexGyreBrush" Color="WhiteSmoke"/>
-                    </Hyperlink.Foreground>
-                </Hyperlink>
+                <Label HorizontalAlignment="Center" VerticalAlignment="Top">Fonts Used:</Label>
+                <TextBlock
+                    FontFamily="/PicView;component/lib/Fonts/#Aller"
+                    FontSize="16"
+                    TextAlignment="Center"
+                    ToolTip="http://www.fontsquirrel.com/fonts/aller">
+                    <Hyperlink
+                        x:Name="Aller"
+                        NavigateUri="http://www.fontsquirrel.com/fonts/aller"
+                        RequestNavigate="Hyperlink_RequestNavigate">
+                        Aller
+                        <Hyperlink.Foreground>
+                            <SolidColorBrush x:Name="AllerBrush" Color="{StaticResource MainColor}" />
+                        </Hyperlink.Foreground>
+                    </Hyperlink>
                 </TextBlock>
 
-                <Label Margin="0,15,0,0" HorizontalAlignment="Center" Foreground="WhiteSmoke">Icons Used:</Label>
-                <TextBlock FontSize="14" TextAlignment="Center" ToolTip="https://useiconic.com/open/">
-                    <Hyperlink x:Name="Iconic" NavigateUri="https://useiconic.com/open/" RequestNavigate="Hyperlink_RequestNavigate">Iconic
+                <TextBlock
+                    FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros"
+                    FontSize="16"
+                    TextAlignment="Center"
+                    ToolTip="http://www.fontsquirrel.com/fonts/tex-gyre-heros">
+                    <Hyperlink
+                        x:Name="TexGyre"
+                        NavigateUri="http://www.fontsquirrel.com/fonts/tex-gyre-heros"
+                        RequestNavigate="Hyperlink_RequestNavigate">
+                        Tex Gyre Heros
                         <Hyperlink.Foreground>
-                        <SolidColorBrush x:Name="IconicBrush" Color="WhiteSmoke"/>
-                    </Hyperlink.Foreground>
-                </Hyperlink>
+                            <SolidColorBrush x:Name="TexGyreBrush" Color="{StaticResource MainColor}" />
+                        </Hyperlink.Foreground>
+                    </Hyperlink>
                 </TextBlock>
-                <TextBlock x:Name="FlatIcon" FontSize="14" TextAlignment="Center" ToolTip="http://www.flaticon.com/free-icon/file-folder_379">
+
+                <Label Margin="0,15,0,0" HorizontalAlignment="Center">Icons Used:</Label>
+                <TextBlock
+                    FontSize="14"
+                    TextAlignment="Center"
+                    ToolTip="https://useiconic.com/open/">
+                    <Hyperlink
+                        x:Name="Iconic"
+                        NavigateUri="https://useiconic.com/open/"
+                        RequestNavigate="Hyperlink_RequestNavigate">
+                        Iconic
+                        <Hyperlink.Foreground>
+                            <SolidColorBrush x:Name="IconicBrush" Color="{StaticResource MainColor}" />
+                        </Hyperlink.Foreground>
+                    </Hyperlink>
+                </TextBlock>
+                <TextBlock
+                    x:Name="FlatIcon"
+                    FontSize="14"
+                    TextAlignment="Center"
+                    ToolTip="http://www.flaticon.com/free-icon/file-folder_379">
                     <Hyperlink NavigateUri="http://www.flaticon.com/free-icon/file-folder_379" RequestNavigate="Hyperlink_RequestNavigate">
                         flaticon
                         <Hyperlink.Foreground>
-                        <SolidColorBrush x:Name="FlatIconBrush" Color="WhiteSmoke"/>
-                    </Hyperlink.Foreground>
-                </Hyperlink>
+                            <SolidColorBrush x:Name="FlatIconBrush" Color="{StaticResource MainColor}" />
+                        </Hyperlink.Foreground>
+                    </Hyperlink>
                 </TextBlock>
-                <TextBlock x:Name="ionic" FontSize="14" TextAlignment="Center" ToolTip="http://ionicons.com/">
-                     <Hyperlink NavigateUri="http://ionicons.com/" RequestNavigate="Hyperlink_RequestNavigate">ioinicons
-                         <Hyperlink.Foreground>
-                        <SolidColorBrush x:Name="ionicBrush" Color="WhiteSmoke"/>
-                    </Hyperlink.Foreground>
-                </Hyperlink>
+                <TextBlock
+                    x:Name="ionic"
+                    FontSize="14"
+                    TextAlignment="Center"
+                    ToolTip="http://ionicons.com/">
+                    <Hyperlink NavigateUri="http://ionicons.com/" RequestNavigate="Hyperlink_RequestNavigate">
+                        ioinicons
+                        <Hyperlink.Foreground>
+                            <SolidColorBrush x:Name="ionicBrush" Color="{StaticResource MainColor}" />
+                        </Hyperlink.Foreground>
+                    </Hyperlink>
                 </TextBlock>
             </StackPanel>
-            <TextBlock Text="Made by Ruben Hyldgaard Negendahl" FontSize="12"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="{StaticResource MainColorBrush}" Margin="0,0,0,90" FontFamily="/PicView;component/lib/fonts/#Aller"/>
-            <TextBlock Text="Special thanks to Mathias Nielsen" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="WhiteSmoke" Margin="0,0,0,70" FontFamily="/PicView;component/lib/fonts/#Aller"/>
-            <Label x:Name="appVersion" Content="Version : 0.0.0.0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="WhiteSmoke" Margin="0,0,0,35"/>
-            <Rectangle Fill="#F2131313" VerticalAlignment="Bottom" Height="35"/>
-            <Label Content="© PicView 2017"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Bottom"
-                   Margin="0,0,0,2"
-                   Foreground="WhiteSmoke"
-                   FontSize="14"
-                   FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros"
-                   FontStyle="Italic"/>
-
-
+            <TextBlock
+                Margin="0,0,0,90"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                FontFamily="/PicView;component/lib/fonts/#Aller"
+                FontSize="12"
+                Text="Made by Ruben Hyldgaard Negendahl" />
+            <TextBlock
+                Margin="0,0,0,70"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                FontFamily="/PicView;component/lib/fonts/#Aller"
+                FontSize="12"
+                Text="Special thanks to Mathias Nielsen" />
+            <Label
+                x:Name="appVersion"
+                Margin="0,0,0,35"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Content="Version : 0.0.0.0" />
+            <Rectangle
+                Height="35"
+                VerticalAlignment="Bottom"
+                Fill="{StaticResource BackgroundColorBrush}" />
+            <Label
+                Margin="0,0,0,2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Content="© PicView 2017"
+                FontSize="14"
+                FontStyle="Italic" />
 
         </Grid>
     </Border>
