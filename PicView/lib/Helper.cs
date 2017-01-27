@@ -576,7 +576,7 @@ namespace PicView.lib
                 sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\7-Zip\\7z.exe";
             if (File.Exists(sevenZip))
             {
-                Extract(path, sevenZip);
+                Extract(path, sevenZip, false);
                 return true;
             }
 
@@ -585,22 +585,31 @@ namespace PicView.lib
                 Winrar = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\WinRAR\\unRAR.exe";
             if (File.Exists(Winrar))
             {
-                Extract(path, Winrar);
+                Extract(path, Winrar, true);
                 return true;
             }
 
             return false;
         }
 
-        private static void Extract(string path, string exe)
+        private static void Extract(string path, string exe, bool winrar)
         {
             TempZipPath = Path.GetTempPath() + Path.GetRandomFileName();
             Directory.CreateDirectory(TempZipPath);
 
+            var arguments = winrar ? 
+                // Add WinRar specifics
+                "x \"" + path + "\" " 
+                :
+                // Add 7-Zip specifics
+                "x \"" + path + "\" -o";
+
+            arguments += TempZipPath + SupportedFiles + " -r -aou";
+
             var x = Process.Start(new ProcessStartInfo
             {
                 FileName = exe,
-                Arguments = "x \"" + path + "\" -o" + TempZipPath + SupportedFiles + " -r -aou",
+                Arguments = arguments,
                 WindowStyle = ProcessWindowStyle.Hidden
             });
 
