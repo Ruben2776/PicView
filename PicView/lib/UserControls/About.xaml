@@ -111,6 +111,7 @@
 
                 <Label Margin="0,15,0,0" HorizontalAlignment="Center">Icons Used:</Label>
                 <TextBlock
+                    FontFamily="/PicView;component/lib/fonts/#Aller"
                     FontSize="14"
                     TextAlignment="Center"
                     ToolTip="https://useiconic.com/open/">
@@ -126,6 +127,7 @@
                 </TextBlock>
                 <TextBlock
                     x:Name="FlatIcon"
+                    FontFamily="/PicView;component/lib/fonts/#Aller"
                     FontSize="14"
                     TextAlignment="Center"
                     ToolTip="http://www.flaticon.com/free-icon/file-folder_379">
@@ -138,6 +140,7 @@
                 </TextBlock>
                 <TextBlock
                     x:Name="ionic"
+                    FontFamily="/PicView;component/lib/fonts/#Aller"
                     FontSize="14"
                     TextAlignment="Center"
                     ToolTip="http://ionicons.com/">
