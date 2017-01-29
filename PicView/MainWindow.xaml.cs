@@ -45,14 +45,7 @@ namespace PicView
         {
             #region Extra settings
             AllowDrop = true;
-            Scroller.MaxHeight = SystemParameters.PrimaryScreenHeight - ComfySpace;
-            Scroller.MaxWidth = SystemParameters.PrimaryScreenWidth - 8;
             IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
-
-            //var WindowBrush = FindResource("BorderBrush") as SolidColorBrush;
-            //WindowBrush.Color = AnimationHelper.GetPrefferedColorDown();
-            //var MenuBrush = FindResource("MenuHighlightBrushKey") as SolidColorBrush;
-            //MenuBrush.Color = AnimationHelper.GetPrefferedColorDown();
             #endregion
 
             #region Set required stuff
@@ -76,201 +69,6 @@ namespace PicView
                     Unload();
             }
             #endregion   
-
-            #region Add ContextMenu
-
-            // Add main contextmenu
-            cm = new ContextMenu();
-
-            var opencm = new MenuItem
-            {
-                Header = "Open",
-                InputGestureText = "Ctrl + O"
-            };
-            opencm.Click += (s, x) => Open();
-            cm.Items.Add(opencm);
-
-            var savecm = new MenuItem()
-            {
-                Header = "Save",
-                InputGestureText = "Ctrl + S"
-            };
-            savecm.Click += (s, x) => SaveFiles();
-            cm.Items.Add(savecm);
-
-            var printcm = new MenuItem
-            {
-                Header = "Print",
-                InputGestureText = "Ctrl + P"
-            };
-            printcm.Click += (s, x) => Print(PicPath);
-            cm.Items.Add(printcm);
-
-            var wallcm = new MenuItem
-            {
-                Header = "Set as wallpaper"
-            };
-            wallcm.Click += (s, x) => SetWallpaper(PicPath, WallpaperStyle.Fill);
-            cm.Items.Add(wallcm);
-            cm.Items.Add(new Separator());
-
-            var lcdcm = new MenuItem
-            {
-                Header = "Locate on disk",
-                InputGestureText = "F3",
-                ToolTip = "Opens the current image on your drive"
-            };
-            lcdcm.Click += (s, x) => Open_In_Explorer();
-            cm.Items.Add(lcdcm);
-
-            var fildecm = new MenuItem
-            {
-                Header = "File Details",
-                InputGestureText = "Ctrl + I"
-            };
-            fildecm.Click += (s, x) => NativeMethods.ShowFileProperties(PicPath);
-            cm.Items.Add(fildecm);
-
-            var cppcm = new MenuItem
-            {
-                Header = "Copy picture",
-                InputGestureText = "Ctrl + C"
-            };
-            cppcm.Click += (s, x) => CopyPic();
-            cm.Items.Add(cppcm);
-
-            var pastecm = new MenuItem
-            {
-                Header = "Paste picture",
-                InputGestureText = "Ctrl + V"
-            };
-            pastecm.Click += (s, x) => Paste();
-            cm.Items.Add(pastecm);
-            cm.Items.Add(new Separator());
-
-            var unloadcm = new MenuItem
-            {
-                Header = "Clear picture"
-            };
-            unloadcm.Click += (s, x) => Unload();
-            cm.Items.Add(unloadcm);
-            cm.Items.Add(new Separator());
-
-            var abcm = new MenuItem
-            {
-                Header = "About",
-                InputGestureText = "F2",
-                ToolTip = "Shows version and copyright"
-            };
-            abcm.Click += (s, x) => AboutWindow();
-            cm.Items.Add(abcm);
-
-            var helpcm = new MenuItem
-            {
-                Header = "Help",
-                InputGestureText = "F1",
-                ToolTip = "Shows keyboard shortcuts and general help"
-            };
-            helpcm.Click += (s, x) => HelpWindow();
-            cm.Items.Add(helpcm);
-
-            //var toolscm = new MenuItem
-            //{
-            //    Header = "Tools",
-            //    InputGestureText = "F6",
-            //    ToolTip = "Tools and stuff"
-            //};
-            ////toolscm.Click += tools_window;
-            //cm.Items.Add(toolscm);
-            cm.Items.Add(new Separator());
-
-            var mincm = new MenuItem
-            {
-                Header = "Minimize"
-            };
-            mincm.Click += (s, x) => Minimize(this);
-            cm.Items.Add(mincm);
-
-            var maxcm = new MenuItem
-            {
-                Header = "Fullscreen/Restore"
-            };
-            maxcm.Click += (s, x) => Maximize(this);
-            cm.Items.Add(maxcm);
-
-            var clcm = new MenuItem
-            {
-                Header = "Close"
-            };
-            clcm.Click += (s, x) => Close();
-            cm.Items.Add(clcm);
-
-            // Add to elements
-            img.ContextMenu = bg.ContextMenu = cm;
-
-            // Add left and right ContextMenus
-            var cmLeft = new ContextMenu();
-            var cmRight = new ContextMenu();
-
-            var nextcm = new MenuItem
-            {
-                Header = "Next picture",
-                InputGestureText = "ᗌ or D",
-                ToolTip = "Go to Next image in folder",
-                StaysOpenOnClick = true
-            };
-            nextcm.Click += (s, x) => Pic(true, false);
-            cmRight.Items.Add(nextcm);
-
-            var prevcm = new MenuItem
-            {
-                Header = "Previous picture",
-                InputGestureText = "ᗏ or A",
-                ToolTip = "Go to previous image in folder",
-                StaysOpenOnClick = true
-            };
-            prevcm.Click += (s, x) => Pic(false, false);
-            cmLeft.Items.Add(prevcm);
-
-            var firstcm = new MenuItem
-            {
-                Header = "First picture",
-                InputGestureText = "Ctrl + D or Ctrl + ᗌ",
-                ToolTip = "Go to first image in folder"
-            };
-            firstcm.Click += (s, x) => Pic(false, true);
-            cmLeft.Items.Add(firstcm);
-
-            var lastcm = new MenuItem
-            {
-                Header = "Last picture",
-                InputGestureText = "Ctrl + A or Ctrl + ᗏ",
-                ToolTip = "Go to last image in folder"
-            };
-            lastcm.Click += (s, x) => Pic(true, true);
-            cmRight.Items.Add(lastcm);
-
-            // Add to elements
-            RightButton.ContextMenu = cmRight;
-            LeftButton.ContextMenu = cmLeft;
-
-            // Add Title contextMenu
-            var cmTitle = new ContextMenu();
-
-            var clTc = new MenuItem
-            {
-                Header = "Copy path to clipboard"
-            };
-            clTc.Click += (s, x) => CopyText();
-            cmTitle.Items.Add(clTc);
-
-            Bar.ContextMenu = cmTitle;
-
-            #endregion
-
-            #region Initilize Zoom
-            InitializeZoom();
-            #endregion
 
             #region Add UserControls :)
             LoadTooltipStyle();
@@ -472,7 +270,203 @@ namespace PicView
 
             });
             task.Start();
-            #endregion            
+            #endregion
+
+            #region Initilize Zoom
+            InitializeZoom();
+            #endregion
+
+            #region Add ContextMenu
+
+            // Add main contextmenu
+            cm = new ContextMenu();
+
+            var opencm = new MenuItem
+            {
+                Header = "Open",
+                InputGestureText = "Ctrl + O"
+            };
+            opencm.Click += (s, x) => Open();
+            cm.Items.Add(opencm);
+
+            var savecm = new MenuItem()
+            {
+                Header = "Save",
+                InputGestureText = "Ctrl + S"
+            };
+            savecm.Click += (s, x) => SaveFiles();
+            cm.Items.Add(savecm);
+
+            var printcm = new MenuItem
+            {
+                Header = "Print",
+                InputGestureText = "Ctrl + P"
+            };
+            printcm.Click += (s, x) => Print(PicPath);
+            cm.Items.Add(printcm);
+
+            var wallcm = new MenuItem
+            {
+                Header = "Set as wallpaper"
+            };
+            wallcm.Click += (s, x) => SetWallpaper(PicPath, WallpaperStyle.Fill);
+            cm.Items.Add(wallcm);
+            cm.Items.Add(new Separator());
+
+            var lcdcm = new MenuItem
+            {
+                Header = "Locate on disk",
+                InputGestureText = "F3",
+                ToolTip = "Opens the current image on your drive"
+            };
+            lcdcm.Click += (s, x) => Open_In_Explorer();
+            cm.Items.Add(lcdcm);
+
+            var fildecm = new MenuItem
+            {
+                Header = "File Details",
+                InputGestureText = "Ctrl + I"
+            };
+            fildecm.Click += (s, x) => NativeMethods.ShowFileProperties(PicPath);
+            cm.Items.Add(fildecm);
+
+            var cppcm = new MenuItem
+            {
+                Header = "Copy picture",
+                InputGestureText = "Ctrl + C"
+            };
+            cppcm.Click += (s, x) => CopyPic();
+            cm.Items.Add(cppcm);
+
+            var pastecm = new MenuItem
+            {
+                Header = "Paste picture",
+                InputGestureText = "Ctrl + V"
+            };
+            pastecm.Click += (s, x) => Paste();
+            cm.Items.Add(pastecm);
+            cm.Items.Add(new Separator());
+
+            var unloadcm = new MenuItem
+            {
+                Header = "Clear picture"
+            };
+            unloadcm.Click += (s, x) => Unload();
+            cm.Items.Add(unloadcm);
+            cm.Items.Add(new Separator());
+
+            var abcm = new MenuItem
+            {
+                Header = "About",
+                InputGestureText = "F2",
+                ToolTip = "Shows version and copyright"
+            };
+            abcm.Click += (s, x) => AboutWindow();
+            cm.Items.Add(abcm);
+
+            var helpcm = new MenuItem
+            {
+                Header = "Help",
+                InputGestureText = "F1",
+                ToolTip = "Shows keyboard shortcuts and general help"
+            };
+            helpcm.Click += (s, x) => HelpWindow();
+            cm.Items.Add(helpcm);
+
+            //var toolscm = new MenuItem
+            //{
+            //    Header = "Tools",
+            //    InputGestureText = "F6",
+            //    ToolTip = "Tools and stuff"
+            //};
+            ////toolscm.Click += tools_window;
+            //cm.Items.Add(toolscm);
+            cm.Items.Add(new Separator());
+
+            var mincm = new MenuItem
+            {
+                Header = "Minimize"
+            };
+            mincm.Click += (s, x) => Minimize(this);
+            cm.Items.Add(mincm);
+
+            var maxcm = new MenuItem
+            {
+                Header = "Fullscreen/Restore"
+            };
+            maxcm.Click += (s, x) => Maximize(this);
+            cm.Items.Add(maxcm);
+
+            var clcm = new MenuItem
+            {
+                Header = "Close"
+            };
+            clcm.Click += (s, x) => Close();
+            cm.Items.Add(clcm);
+
+            // Add to elements
+            img.ContextMenu = bg.ContextMenu = cm;
+
+            // Add left and right ContextMenus
+            var cmLeft = new ContextMenu();
+            var cmRight = new ContextMenu();
+
+            var nextcm = new MenuItem
+            {
+                Header = "Next picture",
+                InputGestureText = "ᗌ or D",
+                ToolTip = "Go to Next image in folder",
+                StaysOpenOnClick = true
+            };
+            nextcm.Click += (s, x) => Pic(true, false);
+            cmRight.Items.Add(nextcm);
+
+            var prevcm = new MenuItem
+            {
+                Header = "Previous picture",
+                InputGestureText = "ᗏ or A",
+                ToolTip = "Go to previous image in folder",
+                StaysOpenOnClick = true
+            };
+            prevcm.Click += (s, x) => Pic(false, false);
+            cmLeft.Items.Add(prevcm);
+
+            var firstcm = new MenuItem
+            {
+                Header = "First picture",
+                InputGestureText = "Ctrl + D or Ctrl + ᗌ",
+                ToolTip = "Go to first image in folder"
+            };
+            firstcm.Click += (s, x) => Pic(false, true);
+            cmLeft.Items.Add(firstcm);
+
+            var lastcm = new MenuItem
+            {
+                Header = "Last picture",
+                InputGestureText = "Ctrl + A or Ctrl + ᗏ",
+                ToolTip = "Go to last image in folder"
+            };
+            lastcm.Click += (s, x) => Pic(true, true);
+            cmRight.Items.Add(lastcm);
+
+            // Add to elements
+            RightButton.ContextMenu = cmRight;
+            LeftButton.ContextMenu = cmLeft;
+
+            // Add Title contextMenu
+            var cmTitle = new ContextMenu();
+
+            var clTc = new MenuItem
+            {
+                Header = "Copy path to clipboard"
+            };
+            clTc.Click += (s, x) => CopyText();
+            cmTitle.Items.Add(clTc);
+
+            Bar.ContextMenu = cmTitle;
+
+            #endregion
+
 
             if (ajaxLoading.Opacity > 0)
             {
@@ -618,10 +612,6 @@ namespace PicView
             else FolderIndex = Pics.IndexOf(path);
             #endregion
 
-            #region Check if failed archive
-            RecoverFailedArchiveAsync();
-            #endregion
-
             #region Get image
 
             Pic(FolderIndex);
@@ -650,6 +640,13 @@ namespace PicView
         /// <param name="x"></param>
         private async void Pic(int x)
         {
+            if (Pics.Count == 0)
+            {
+                var foo = await RecoverFailedArchiveAsync();
+                if (!foo)
+                    return;
+            }
+
             #region fields
             // Add "pic" as local variable used for the image.
             // Use the Load() function load image from memory if available
@@ -935,21 +932,19 @@ namespace PicView
         /// <summary>
         /// Attemps to recover from failed archive extraction
         /// </summary>
-        private async void RecoverFailedArchiveAsync()
+        private async Task<bool> RecoverFailedArchiveAsync()
         {
-            // If there are no pictures, but a folder when TempZipPath has a value,
-            // we should open the folder
             if (Pics.Count > 0)
-                return;
+                return true;
 
             if (string.IsNullOrWhiteSpace(TempZipPath))
             {
                 // Unexped result, return to clear state.
                 Unload();
-                return;
+                return false;
             }
 
-            //TempZipPath is not null = images being extracted
+            // TempZipPath is not null = images being extracted
             short count = 0;
             Bar.Text = "Unzipping...";
             do
@@ -958,55 +953,46 @@ namespace PicView
                 {
                     try
                     {
+                        // If there are no pictures, but a folder when TempZipPath has a value,
+                        // we should open the folder
                         var directory = Directory.GetDirectories(TempZipPath);
                         if (directory.Length > -1)
                         {
                             TempZipPath = directory[0];
                             Pics = FileList(TempZipPath);
                         }
-                        else
+                        else if (count > 3)
                         {
-                            //Fix non working archive
+                            // Attempt to reload
                             ToolTipStyle("Non working zip file, reloading...", false);
                             PicPath = File.Exists(xPicPath) ? xPicPath : string.Empty;
                             FolderIndex = xFolderIndex;
-                            if (!File.Exists(PicPath) || String.IsNullOrWhiteSpace(PicPath))
+                            if (!File.Exists(PicPath) || string.IsNullOrWhiteSpace(PicPath))
                                 Unload();
                             else
                                 Pic(PicPath);
-                            return;
+                            return false;
                         }
                     }
-                    catch (Exception)
-                    {
-                        Unload();
-                        return;
-                    }
+                    catch (Exception) { }
 
                 }
                 else
                 {
-                    try
+                    if (Directory.Exists(TempZipPath))
                     {
-                        if (Directory.Exists(TempZipPath))
+                        try
                         {
-                            try
-                            {
-                                var test = Directory.EnumerateFileSystemEntries(TempZipPath);
-                                if (test.Count() > -1)
-                                    Pics = FileList(TempZipPath);
-                            }
-                            catch (Exception e)
-                            {
-                                ToolTipStyle(e.Message, true, TimeSpan.FromSeconds(5));
-                            }
+                            var test = Directory.EnumerateFileSystemEntries(TempZipPath);
+                            if (test.Count() > -1)
+                                Pics = FileList(TempZipPath);
+                        }
+                        catch (Exception e)
+                        {
+                            ToolTipStyle(e.Message, true, TimeSpan.FromSeconds(5));
                         }
                     }
-                    catch (Exception)
-                    {
-                        Unload();
-                        return;
-                    }
+                    
                 }
 
                 if (count > 0)
@@ -1017,7 +1003,7 @@ namespace PicView
                 if (count > 3)
                 {
                     Unload();
-                    return;
+                    return false;
                 }
                 switch (count)
                 {
@@ -1036,6 +1022,7 @@ namespace PicView
                 count++;
 
             } while (Pics.Count < 1);
+            return true;
         }
 
         #endregion
@@ -1549,31 +1536,19 @@ namespace PicView
         /// <param name="e"></param>
         private void Zoom_img_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            if (e.ClickCount == 2)
             {
-                if (e.ClickCount == 2)
-                    ResetZoom();
-                else
-                {
-                    img.CaptureMouse();
-                    start = e.GetPosition(this);
-                    origin = new Point(tt.X, tt.Y);
-                }
-
+                ResetZoom();
+                return;
+            }
+            if (!IsScrollEnabled)
+            {
+                img.CaptureMouse();
+                start = e.GetPosition(this);
+                origin = new Point(tt.X, tt.Y);
             }
 
-            else if (e.ClickCount == 2)
-                Pic(true, false);
 
-            //else
-            //    try
-            //    {
-            //        DragMove();
-            //    }
-            //    catch (InvalidOperationException)
-            //    {
-            //        //return;
-            //    }
         }
 
         private void Zoom_img_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -1609,9 +1584,9 @@ namespace PicView
             }
 
             else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                Zoom(e.Delta, false);
-            else
                 Zoom(e.Delta, true);
+            else
+                Zoom(e.Delta, false);
         }
 
         /// <summary>
@@ -1682,73 +1657,71 @@ namespace PicView
         /// <param name="zoomMode"></param>
         private void Zoom(int i, bool zoomMode)
         {
-            if (!isZoomed)
-                AspectRatio = 1.0;
 
-            AspectRatio += i > 0 ? .01 : -.01;
+            #region Scale size
 
             // Scales the window with img.LayoutTransform
             if (zoomMode)
             {
-                var scaletransform = new ScaleTransform();
+                AspectRatio += i > 0 ? .01 : -.01;
 
-                if (!isZoomed)
-                    if (scaletransform.ScaleX == 1.0)
-                        scaletransform.ScaleX = scaletransform.ScaleY += i > 0 ? .01 : -.01;
-                    else
-                        scaletransform.ScaleY = scaletransform.ScaleX = i > 0 ? .01 : -.01;
-                else
-                    scaletransform.ScaleY = scaletransform.ScaleX += i > 0 ? .01 : -.01;
+                var scaletransform = new ScaleTransform();
 
                 scaletransform.ScaleX = scaletransform.ScaleY = AspectRatio;
                 img.LayoutTransform = scaletransform;
             }
 
-            // Pan and zoom
+            #endregion
+
+            #region Pan and zoom
+
             else
             {
-                Point position;
 
-                //if (ZoomLevel > 100)
-                position = Mouse.GetPosition(img);
-                //else
-                //    position = Mouse.GetPosition(imgBorder);
+                // Get position where user points cursor
+                var position = Mouse.GetPosition(img);
 
+                // Use our position as starting point for zoom
                 img.RenderTransformOrigin = new Point(position.X / img.ActualWidth, position.Y / img.ActualHeight);
 
-                if (!isZoomed)
-                    if (st.ScaleX == 1.0)
-                        st.ScaleX = st.ScaleY += i > 0 ? .01 : -.01;
-                    else
-                        st.ScaleY = st.ScaleX = i > 0 ? .01 : -.01;
-                else
-                    st.ScaleY = st.ScaleX += i > 0 ? .01 : -.01;
+                // Determine zoom speed
+                var x = st.ScaleX > 1.3 ? .04 : .01;
+                if (st.ScaleX > 1.5)
+                    x += .007;
+                if (st.ScaleX > 1.7)
+                    x += .009;
 
-                ////if (st.ScaleX < MinZoom)
-                ////{
-                ////    st.ScaleX = st.ScaleY =
-                ////    ZoomLevel = MinZoom;
-                ////}
+
+                if (st.ScaleX >= 1.0 && st.ScaleX + x >= 1.0 || st.ScaleX - x >= 1.0)
+                {
+                    // Start zoom
+                    st.ScaleY = st.ScaleX = AspectRatio += i > 0 ? x : -x;
+                }
 
                 if (st.ScaleX < 1.0)
                 {
-                    st.ScaleX = st.ScaleY =
-                    AspectRatio = 1.0;
+                    // Don't zoom less than 1.0, does not work so good...
+                    st.ScaleX = st.ScaleY = AspectRatio = 1.0;
                 }
+
             }
+
+            #endregion
+
+            isZoomed = true;
+
+            #region Display updated values
 
             // Displays zoompercentage in the center window
             ToolTipStyle(ZoomPercentage, true);
 
-            if (Preloader.Contains(PicPath))
-            {
-                var titleString = TitleString(Preloader.Load(PicPath).PixelWidth, Preloader.Load(PicPath).PixelHeight, FolderIndex);
-                Title = titleString[0];
-                Bar.Text = titleString[1];
-                Bar.ToolTip = titleString[2];
-            }
+            var titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, FolderIndex);
+            Title = titleString[0];
+            Bar.Text = titleString[1];
+            Bar.ToolTip = titleString[2];
 
-            isZoomed = true;
+            #endregion
+            
         }
 
         /// <summary>
@@ -1760,7 +1733,7 @@ namespace PicView
         {
             // Get max width and height, based on user's screen
             var maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth, width);
-            var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 93), height); // 38 = Titlebar height, 60 = lowerbar height
+            var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 93), height); // 38 = Titlebar height, 55 = lowerbar height
 
             AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));           
 
