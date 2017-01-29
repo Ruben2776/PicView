@@ -14,7 +14,7 @@ namespace PicView.lib
             if (string.IsNullOrWhiteSpace(file) || file.Length < 2)
                 return null;
 
-            if (extension == ".gif")
+            if (extension == ".gif" || extension == ".ico")
                 return GetBitmapImage(new Uri(file));
 
             BitmapSource pic;
