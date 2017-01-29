@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -250,6 +251,20 @@ namespace PicView.lib
                     Clear(arr);
                 }
             }
+            #endregion
+
+            #region Update Pics if needed
+
+            // If very large archive being extracted, update Pics
+            if (!string.IsNullOrWhiteSpace(TempZipPath) && index >= 5 && Pics.Count > 10)
+            {
+                var getProcesses = Process.GetProcessesByName("7z");
+                if (getProcesses.Length > 0)
+                    Pics = FileList(TempZipPath);
+
+                // Need WinRAR support...
+            }
+
             #endregion
         }
 
