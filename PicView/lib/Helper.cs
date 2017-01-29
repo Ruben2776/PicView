@@ -203,8 +203,6 @@ namespace PicView.lib
         /// </summary>
         internal const int ComfySpace = 90;
 
-        internal const int AlphaColorIndex = 244;
-
         /// <summary>
         /// Backup of Width data
         /// </summary>
