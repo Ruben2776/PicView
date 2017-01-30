@@ -44,11 +44,11 @@
     <Setting Name="AquaMouse" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#F209A68E</Value>
     </Setting>
-    <Setting Name="Sandy" Type="System.Windows.Media.Color" Scope="User">
+    <Setting Name="Beige" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#FFEAD393</Value>
     </Setting>
-    <Setting Name="SandyMouse" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#00000000</Value>
+    <Setting Name="BeigeMouse" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#F2BAAB7E</Value>
     </Setting>
     <Setting Name="Teal" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#FF931AF7</Value>

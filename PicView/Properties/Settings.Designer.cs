@@ -12,7 +12,7 @@ namespace PicView.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.0.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -194,24 +194,24 @@ namespace PicView.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("#FFEAD393")]
-        public global::System.Windows.Media.Color Sandy {
+        public global::System.Windows.Media.Color Beige {
             get {
-                return ((global::System.Windows.Media.Color)(this["Sandy"]));
+                return ((global::System.Windows.Media.Color)(this["Beige"]));
             }
             set {
-                this["Sandy"] = value;
+                this["Beige"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#00000000")]
-        public global::System.Windows.Media.Color SandyMouse {
+        [global::System.Configuration.DefaultSettingValueAttribute("#F2BAAB7E")]
+        public global::System.Windows.Media.Color BeigeMouse {
             get {
-                return ((global::System.Windows.Media.Color)(this["SandyMouse"]));
+                return ((global::System.Windows.Media.Color)(this["BeigeMouse"]));
             }
             set {
-                this["SandyMouse"] = value;
+                this["BeigeMouse"] = value;
             }
         }
         

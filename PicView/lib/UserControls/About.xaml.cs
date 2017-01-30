@@ -79,9 +79,9 @@ namespace PicView.UserControls
             FlatIcon.MouseLeave += FlatIconMouseLeave;
             FlatIcon.MouseLeftButtonDown += FlatIconMouseButtonDown;
 
-            ionic.MouseEnter += ionicMouseOver;
-            ionic.MouseLeave += ionicMouseLeave;
-            ionic.MouseLeftButtonDown += ionicMouseButtonDown;
+            Ionic.MouseEnter += IonicMouseOver;
+            Ionic.MouseLeave += IonicMouseLeave;
+            Ionic.MouseLeftButtonDown += IonicMouseButtonDown;
 
             #endregion
         }
@@ -166,21 +166,21 @@ namespace PicView.UserControls
 
         #endregion
 
-        #region ionic
+        #region Ionic
 
-        private void ionicMouseOver(object sender, MouseEventArgs e)
+        private void IonicMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, ionicBrush, false);
+            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, IonicBrush, false);
         }
 
-        private void ionicMouseButtonDown(object sender, MouseButtonEventArgs e)
+        private void IonicMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ionicBrush, false);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(IonicBrush, false);
         }
 
-        private void ionicMouseLeave(object sender, MouseEventArgs e)
+        private void IonicMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, ionicBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, IonicBrush, false);
         }
 
         #endregion

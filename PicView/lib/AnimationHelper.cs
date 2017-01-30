@@ -100,7 +100,7 @@ namespace PicView.lib
                     ccAnim.From = Settings.Default.Aqua;
                     break;
                 case 8:
-                    ccAnim.From = Settings.Default.Sandy;
+                    ccAnim.From = Settings.Default.Beige;
                     break;
                 case 9:
                     ccAnim.From = Settings.Default.Purple;
@@ -147,7 +147,7 @@ namespace PicView.lib
                     ccAnim.To = Settings.Default.Aqua;
                     break;
                 case 8:
-                    ccAnim.To = Settings.Default.Sandy;
+                    ccAnim.To = Settings.Default.Beige;
                     break;
                 case 9:
                     ccAnim.To = Settings.Default.Purple;
@@ -199,8 +199,8 @@ namespace PicView.lib
                     ccAnim.To = Settings.Default.AquaMouse;
                     break;
                 case 8:
-                    ccAnim.From = Settings.Default.Sandy;
-                    ccAnim.To = Settings.Default.SandyMouse;
+                    ccAnim.From = Settings.Default.Beige;
+                    ccAnim.To = Settings.Default.BeigeMouse;
                     break;
                 case 9:
                     ccAnim.From = Settings.Default.Purple;
@@ -248,7 +248,7 @@ namespace PicView.lib
                 case 7:
                     return Settings.Default.Aqua;
                 case 8:
-                    return Settings.Default.Sandy;
+                    return Settings.Default.Beige;
                 case 9:
                     return Settings.Default.Purple;
                 case 10:
@@ -281,7 +281,7 @@ namespace PicView.lib
                 case 7:
                     return Settings.Default.AquaMouse;
                 case 8:
-                    return Settings.Default.SandyMouse;
+                    return Settings.Default.BeigeMouse;
                 case 9:
                     return Settings.Default.PurpleMouse;
                 case 10:
@@ -345,9 +345,9 @@ namespace PicView.lib
                 case 8:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.SandyMouse.R,
-                        Settings.Default.SandyMouse.G,
-                        Settings.Default.SandyMouse.B);
+                        Settings.Default.BeigeMouse.R,
+                        Settings.Default.BeigeMouse.G,
+                        Settings.Default.BeigeMouse.B);
                 case 9:
                     return Color.FromArgb(
                         220,
@@ -425,9 +425,9 @@ namespace PicView.lib
                 case 8:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.Sandy.R,
-                        Settings.Default.Sandy.G,
-                        Settings.Default.Sandy.B);
+                        Settings.Default.Beige.R,
+                        Settings.Default.Beige.G,
+                        Settings.Default.Beige.B);
                 case 9:
                     return Color.FromArgb(
                         220,

@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    FontFamily="/PicView;component/lib/fonts/#Aller"
     Foreground="{StaticResource MainColorBrush}">
 
     <Border
@@ -55,26 +56,76 @@
                     Fill="{StaticResource BackgroundColorBrushAlt}" />
                 <Rectangle Width="7" Fill="{StaticResource BackgroundColorBrush}" />
             </StackPanel>
+            <Label Margin="15,38,0,0">Shortcuts:</Label>
 
-            <StackPanel Margin="15,43,0,0">
-                <TextBlock Margin="5,2,0,2" Text="F1 to show help" />
-                <TextBlock Margin="5,2,0,2" Text="F2 for copyright info" />
-                <TextBlock Margin="5,2,0,2" Text="F3 to locate the picture on your pc" />
+            <Rectangle
+                Width="307"
+                Height="1"
+                Margin="0,66,0,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Stroke="{StaticResource BorderBrushAlt}" />
+            <ScrollViewer Height="290" Margin="15,25,0,0">
+                <StackPanel>
+                    <Label
+                        Margin="0,2,0,2"
+                        Content="Show windows:"
+                        FontSize="12" />
+                    <TextBlock Margin="5,2,0,2" Text="F1 to show help" />
+                    <TextBlock Margin="5,2,0,2" Text="F2 to show about" />
+                    <TextBlock Margin="5,2,0,2" Text="Escape (esc) to close current window" />
 
-                <TextBlock Margin="5,7,0,2" Text="Ctrl + O or O To open a picture." />
-                <TextBlock Margin="5,2,0,2" Text="Ctrl + C to copy image to clipboard" />
-                <TextBlock Margin="5,2,0,2" Text="Ctrl + V to paste image from clipboard" />
-                <TextBlock Margin="5,2,0,2" Text="Ctrl + S to save current image" />
-                <TextBlock Margin="5,2,0,2" Text="Ctrl + P to print current image" />
+                    <Label
+                        Margin="0,10,0,0"
+                        Content="File functions:"
+                        FontSize="12" />
+                    <TextBlock Margin="5,3,0,0" Text="F3 to locate the picture on your pc" />
+                    <TextBlock Margin="5,5,0,2" Text="Ctrl + O or O To open a picture." />
+                    <TextBlock Margin="5,2,0,2" Text="Ctrl + C to copy image to clipboard" />
+                    <TextBlock Margin="5,2,0,2" Text="Ctrl + V to paste image from clipboard" />
+                    <TextBlock Margin="5,2,0,2" Text="Ctrl + S to save current image" />
+                    <TextBlock Margin="5,2,0,2" Text="Ctrl + P to print current image" />
 
-                <TextBlock Margin="5,7,0,2" Text="Press up or W to rotate right" />
-                <TextBlock Margin="5,2,0,2" Text="Press Down or S to rotate left" />
-                <TextBlock Margin="5,2,0,2" Text="Right or D to show next file in folder" />
-                <TextBlock Margin="5,2,0,2" Text="Left or A to show previous file in folder" />
-                <TextBlock Margin="5,2,0,2" Text="Spacebar to center on screen" />
+                    <Label
+                        Margin="0,10,0,0"
+                        Content="Navigate:"
+                        FontSize="12" />
+                    <TextBlock Margin="5,2,0,2" Text="Right arrow for next image" />
+                    <TextBlock Margin="5,2,0,2" Text="D to show for next image" />
+                    <TextBlock Margin="5,2,0,2" Text="Mouse button forward  for next image" />
+                    <TextBlock Margin="5,2,0,2" Text="Left arrow to show previous file in folder" />
+                    <TextBlock Margin="5,2,0,2" Text="A to show previous image" />
+                    <TextBlock Margin="5,2,0,2" Text="Mouse button backward to show previous image" />
 
-                <TextBlock Margin="5,7,0,2" Text="Escape (esc) to close window" />
-            </StackPanel>
+                    <Label
+                        Margin="0,10,0,0"
+                        Content="Transform image:"
+                        FontSize="12" />
+                    <TextBlock Margin="5,5,0,0" Text="Arrow up to rotate right" />
+                    <TextBlock Margin="5,5,0,2" Text="W to rotate right" />
+                    <TextBlock Margin="5,5,0,2" Text="Arrow down to rotate left" />
+                    <TextBlock Margin="5,5,0,2" Text="S to rotate left" />
+                    <TextBlock Margin="5,2,0,2" Text="Press F to flip" />
+
+                    <Label
+                        Margin="0,10,0,0"
+                        Content="Zoom:"
+                        FontSize="12" />
+                    <TextBlock Margin="5,2,0,0" Text="Mousewheel to zoom at cursor position" />
+                    <TextBlock Margin="5,2,0,2" Text="Mousewheel while holding Ctrl to scale" />
+                    <TextBlock Margin="5,2,0,4" Text="Plus (+) to zoom in" />
+                    <TextBlock Margin="5,2,0,2" Text="Minus (-) to zoom out" />
+                    <TextBlock Margin="5,2,0,4" Text="Ctrl Plus (+) to scale" />
+                    <TextBlock Margin="5,2,0,2" Text="CtrlMinus (-) to scale" />
+
+                    <Label
+                        Margin="0,10,0,0"
+                        Content="Misc:"
+                        FontSize="12" />
+                    <TextBlock Margin="5,2,0,0" Text="Spacebar to center on screen" />
+                    <TextBlock Margin="5,2,0,2" Text="X to toggle scroll" />
+                </StackPanel>
+            </ScrollViewer>
 
             <Rectangle
                 Height="35"

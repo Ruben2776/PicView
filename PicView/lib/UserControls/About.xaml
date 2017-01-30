@@ -132,22 +132,22 @@
                     TextAlignment="Center"
                     ToolTip="http://www.flaticon.com/free-icon/file-folder_379">
                     <Hyperlink NavigateUri="http://www.flaticon.com/free-icon/file-folder_379" RequestNavigate="Hyperlink_RequestNavigate">
-                        flaticon
+                        Flaticon
                         <Hyperlink.Foreground>
                             <SolidColorBrush x:Name="FlatIconBrush" Color="{StaticResource MainColor}" />
                         </Hyperlink.Foreground>
                     </Hyperlink>
                 </TextBlock>
                 <TextBlock
-                    x:Name="ionic"
+                    x:Name="Ionic"
                     FontFamily="/PicView;component/lib/fonts/#Aller"
                     FontSize="14"
                     TextAlignment="Center"
-                    ToolTip="http://ionicons.com/">
-                    <Hyperlink NavigateUri="http://ionicons.com/" RequestNavigate="Hyperlink_RequestNavigate">
-                        ioinicons
+                    ToolTip="http://Ionicons.com/">
+                    <Hyperlink NavigateUri="http://Ionicons.com/" RequestNavigate="Hyperlink_RequestNavigate">
+                        Ioinicons
                         <Hyperlink.Foreground>
-                            <SolidColorBrush x:Name="ionicBrush" Color="{StaticResource MainColor}" />
+                            <SolidColorBrush x:Name="IonicBrush" Color="{StaticResource MainColor}" />
                         </Hyperlink.Foreground>
                     </Hyperlink>
                 </TextBlock>
