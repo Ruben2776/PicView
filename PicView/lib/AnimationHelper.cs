@@ -34,12 +34,12 @@ namespace PicView.lib
             element.BeginAnimation(UIElement.OpacityProperty, da);
         }
 
-        //internal static void FadeWindow(Window window, Double to, Duration duration)
-        //{
-        //    var anim = new DoubleAnimation(to, duration);
-        //    anim.Completed += (s, _) => Close(window);
-        //    window.BeginAnimation(UIElement.OpacityProperty, anim);
-        //}
+        internal static void FadeWindow(Window window, Double to, Duration duration)
+        {
+            var anim = new DoubleAnimation(to, duration);
+            anim.Completed += (s, _) => Helper.Close(window);
+            window.BeginAnimation(UIElement.OpacityProperty, anim);
+        }
         #endregion
 
         #region Color Events

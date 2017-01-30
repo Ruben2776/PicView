@@ -21,6 +21,7 @@ using System.ComponentModel;
 using System.Net;
 using System.Threading;
 using PicView.lib.UserControls;
+using PicView.Windows;
 
 namespace PicView
 {
@@ -72,8 +73,6 @@ namespace PicView
 
             #region Add UserControls :)
             LoadTooltipStyle();
-            LoadAboutWindow();
-            LoadHelpWindow();
             LoadOpenMenu();
             LoadImageSettingsMenu();
             LoadQuickSettingsMenu();
@@ -467,7 +466,6 @@ namespace PicView
 
             #endregion
 
-
             if (ajaxLoading.Opacity > 0)
             {
                 AjaxLoadingEnd();
@@ -665,8 +663,8 @@ namespace PicView
                     Title = Bar.Text = Loading;
                     Bar.ToolTip = Loading;
                     canNavigate = false;
-                    if (img.Source != null)
-                        img.Source = GetWindowsThumbnail(Pics[x]);
+                    //if (img.Source != null)
+                    //    img.Source = GetWindowsThumbnail(Pics[x]);
                     #endregion
 
                     if (freshStartup || PreloadCount < 2 || Preloader.Count() < 0)
@@ -710,13 +708,14 @@ namespace PicView
             #region Update source, size, animated gif and scroll
             if (IsScrollEnabled)
                 Scroller.ScrollToTop();
+            ZoomFit(pic.PixelWidth, pic.PixelHeight);
 
             if (Extension == ".gif")
                 XamlAnimatedGif.AnimationBehavior.SetSourceUri(img, new Uri(Pics[x]));
             else
                 img.Source = pic;
 
-            ZoomFit(pic.PixelWidth, pic.PixelHeight);
+            
             PicPath = Pics[x];
             canNavigate = true;
             #endregion
@@ -740,7 +739,7 @@ namespace PicView
 
             if (reverse.HasValue)
             {
-                var t = new Thread(() =>
+                var t = new Task(() =>
                 {
                     if (!Preloader.Contains(Pics[x]))
                         Preloader.Add(pic, Pics[x]);
@@ -949,56 +948,30 @@ namespace PicView
             Bar.Text = "Unzipping...";
             do
             {
-                if (count == 0 || count == 2)
+                try
                 {
-                    try
+                    // If there are no pictures, but a folder when TempZipPath has a value,
+                    // we should open the folder
+                    var directory = Directory.GetDirectories(TempZipPath);
+                    if (directory.Length > -1)
                     {
-                        // If there are no pictures, but a folder when TempZipPath has a value,
-                        // we should open the folder
-                        var directory = Directory.GetDirectories(TempZipPath);
-                        if (directory.Length > -1)
-                        {
-                            TempZipPath = directory[0];
-                            Pics = FileList(TempZipPath);
-                        }
-                        else if (count > 3)
-                        {
-                            // Attempt to reload
-                            ToolTipStyle("Non working zip file, reloading...", false);
-                            PicPath = File.Exists(xPicPath) ? xPicPath : string.Empty;
-                            FolderIndex = xFolderIndex;
-                            if (!File.Exists(PicPath) || string.IsNullOrWhiteSpace(PicPath))
-                                Unload();
-                            else
-                                Pic(PicPath);
-                            return false;
-                        }
+                        TempZipPath = directory[0];
+                        Pics = FileList(TempZipPath);
                     }
-                    catch (Exception) { }
-
-                }
-                else
-                {
-                    if (Directory.Exists(TempZipPath))
+                    else if (count > 3)
                     {
-                        try
-                        {
-                            var test = Directory.EnumerateFileSystemEntries(TempZipPath);
-                            if (test.Count() > -1)
-                                Pics = FileList(TempZipPath);
-                        }
-                        catch (Exception e)
-                        {
-                            ToolTipStyle(e.Message, true, TimeSpan.FromSeconds(5));
-                        }
+                        // Attempt to reload
+                        ToolTipStyle("Non working zip file, reloading...", false);
+                        PicPath = File.Exists(xPicPath) ? xPicPath : string.Empty;
+                        FolderIndex = xFolderIndex;
+                        if (!File.Exists(PicPath) || string.IsNullOrWhiteSpace(PicPath))
+                            Unload();
+                        else
+                            Pic(PicPath);
+                        return false;
                     }
-                    
                 }
-
-                if (count > 0)
-                {
-                    Bar.Text = "Still " + Loading + " Attempt " + count + " of 3";
-                }
+                catch (Exception) {}
 
                 if (count > 3)
                 {
@@ -1486,7 +1459,20 @@ namespace PicView
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                         Open();
                     break;
-                    #endregion,
+                #endregion,
+
+                #region Help
+                case Key.F1:
+                        HelpWindow();
+                    break;
+                #endregion
+
+                #region Help
+                case Key.F2:
+                    AboutWindow();
+                    break;
+                #endregion
+
             }
         }
         #endregion
@@ -1732,7 +1718,7 @@ namespace PicView
         private void ZoomFit(double width, double height)
         {
             // Get max width and height, based on user's screen
-            var maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth, width);
+            var maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth - ComfySpace, width);
             var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 93), height); // 38 = Titlebar height, 55 = lowerbar height
 
             AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));           
@@ -1904,58 +1890,39 @@ namespace PicView
         #endregion
 
         #region AboutWindow
-        private void LoadAboutWindow()
-        {
-            about_uc = new UserControls.About()
-            {
-                Focusable = false,
-                Opacity = 0,
-                Visibility = Visibility.Hidden
-            };
-            bg.Children.Add(about_uc);
-        }
 
         private void AboutWindow()
         {
-            about_uc.Visibility = Visibility.Visible;
-            var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
-            if (about_uc.Opacity > 0)
+            Window window = new About
             {
-                da.To = 0;
-                da.Completed += delegate { about_uc.Visibility = Visibility.Hidden; };
-            }
-            else
-                da.To = 1;
-            if (about_uc != null)
-                about_uc.BeginAnimation(OpacityProperty, da); ;
+                Width = Width,
+                Height = Height,
+                Opacity = 0,
+                Owner = Application.Current.MainWindow,
+            };
+
+            var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
+            window.BeginAnimation(OpacityProperty, animation);
+
+            window.ShowDialog();
         }
         #endregion
 
         #region HelpWindow
-        private void LoadHelpWindow()
-        {
-            help_uc = new UserControls.Help()
-            {
-                Focusable = false,
-                Opacity = 0,
-                Visibility = Visibility.Hidden
-            };
-            bg.Children.Add(help_uc);
-        }
 
         private void HelpWindow()
         {
-            help_uc.Visibility = Visibility.Visible;
-            var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
-            if (help_uc.Opacity > 0)
+            Window window = new Help
             {
-                da.To = 0;
-                da.Completed += delegate { help_uc.Visibility = Visibility.Hidden; };
-            }
-            else
-                da.To = 1;
-            if (help_uc != null)
-                help_uc.BeginAnimation(OpacityProperty, da); ;
+                Width = Width,
+                Height = Height,
+                Opacity = 0,
+                Owner = Application.Current.MainWindow,
+            };
+
+            var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
+            window.BeginAnimation(OpacityProperty, animation);
+            window.Show();
         }
         #endregion
 
@@ -2612,9 +2579,9 @@ namespace PicView
 
         #endregion
 
-        #region Open + Copy/Paste
+        #region Open, Save and Copy/Paste
 
-        #region copy/Paste
+        #region Copy/Paste
         /// <summary>
         /// Copy image location to clipboard
         /// </summary>
@@ -2725,7 +2692,7 @@ namespace PicView
 
         #endregion
 
-        #region Open and Open_In_Eplorer and Save
+        #region Open, Open_In_Eplorer and Save
         /// <summary>
         /// Opens image in File Explorer
         /// </summary>
@@ -2755,7 +2722,6 @@ namespace PicView
         {
             var dlg = new Microsoft.Win32.OpenFileDialog()
             {
-                // Needs support for not being case sensitive 
                 Filter = FilterFiles,
                 Title = "Open image - PicView"
             };
@@ -2775,7 +2741,6 @@ namespace PicView
         {
             var Savedlg = new Microsoft.Win32.SaveFileDialog()
             {
-                // Needs support for not being case sensitive 
                 Filter = FilterFiles,
                 Title = "Save image - PicView"
             };

@@ -59,7 +59,7 @@
             x:Name="TitleBar"
             Height="38"
             MinWidth="444"
-            Background="{StaticResource BackgroundColorBrush}"
+            Background="{StaticResource BackgroundColorBrushAlt}"
             DockPanel.Dock="Top">
             <Canvas
                 x:Name="Logobg"
@@ -173,7 +173,7 @@
             x:Name="LowerBar"
             Height="55"
             MinWidth="444"
-            Background="{StaticResource BackgroundColorBrush}"
+            Background="{StaticResource BackgroundColorBrushAlt}"
             DockPanel.Dock="Bottom">
             <Canvas Width="395" HorizontalAlignment="Center">
                 <Button
@@ -349,13 +349,13 @@
                 x:Name="LeftBorderRectangle"
                 Width="7"
                 DockPanel.Dock="Left"
-                Fill="{StaticResource BackgroundColorBrush}" />
+                Fill="{StaticResource BackgroundColorBrushAlt}" />
             <Rectangle
                 x:Name="RightBorderRectangle"
                 Width="7"
                 Margin="-1,0,0,0"
                 DockPanel.Dock="Right"
-                Fill="{StaticResource BackgroundColorBrush}" />
+                Fill="{StaticResource BackgroundColorBrushAlt}" />
             <Grid
                 x:Name="bg"
                 AllowDrop="True"

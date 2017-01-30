@@ -116,10 +116,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="lib\UserControls\Help.xaml.cs">
+    <Compile Include="lib\SupportedFormats.cs" />
+    <Compile Include="lib\Windows\Help.xaml.cs">
       <DependentUpon>Help.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\About.xaml.cs">
+    <Compile Include="lib\Windows\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
     <Page Include="lib\Styles\Colors.xaml">
@@ -190,7 +191,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\UserControls\Help.xaml">
+    <Page Include="lib\Windows\Help.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -267,7 +268,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="lib\UserControls\About.xaml">
+    <Page Include="lib\Windows\About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

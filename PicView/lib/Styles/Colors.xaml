@@ -2,7 +2,7 @@
 
     <Color x:Key="WindowBackgroundColor">#1F1F21</Color>
     <Color x:Key="MainColor">#FFF7F4F4</Color>
-    <Color x:Key="BackgroundColor">#FF111111</Color>
+    <Color x:Key="BackgroundColor">#FF131313</Color>
     <Color x:Key="BackgroundColorAlt">#F9111111</Color>
     <Color x:Key="BackgroundColorFade">#A5171717</Color>
     <SolidColorBrush x:Key="WindowBackgroundColorBrush" Color="{StaticResource WindowBackgroundColor}" />

@@ -1,9 +1,18 @@
-﻿<UserControl
-    x:Class="PicView.UserControls.About"
+﻿<Window
+    x:Class="PicView.Windows.About"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Foreground="{StaticResource MainColorBrush}">
-    <UserControl.Resources>
+    Foreground="{StaticResource MainColorBrush}"        
+        Title="About PicView"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        AllowsTransparency="True"
+        WindowStyle="None"  
+        Background="#99000000"
+        ContentRendered="Window_ContentRendered"
+        Closing="Window_Closing">
+    <Window.Resources>
         <ResourceDictionary>
             <Style x:Key="{x:Type Hyperlink}" TargetType="{x:Type Hyperlink}">
                 <Style.Triggers>
@@ -22,7 +31,7 @@
                 <Setter Property="TextDecorations" Value="{x:Null}" />
             </Style>
         </ResourceDictionary>
-    </UserControl.Resources>
+    </Window.Resources>
 
     <Border
         Width="350"
@@ -34,7 +43,7 @@
             <Rectangle
                 Height="34"
                 VerticalAlignment="Top"
-                Fill="{StaticResource BackgroundColorBrush}" />
+                Fill="{StaticResource BackgroundColorBrushAlt}" />
             <Button
                 x:Name="CloseButton"
                 Width="34"
@@ -67,12 +76,12 @@
                 Margin="0,34,0,0"
                 VerticalAlignment="Top"
                 Orientation="Horizontal">
-                <Rectangle Width="7" Fill="{StaticResource BackgroundColorBrush}" />
+                <Rectangle Width="7" Fill="{StaticResource BackgroundColorBrushAlt}" />
                 <Rectangle
                     Width="336"
                     Height="329"
-                    Fill="{StaticResource BackgroundColorBrushAlt}" />
-                <Rectangle Width="7" Fill="{StaticResource BackgroundColorBrush}" />
+                    Fill="{StaticResource BackgroundColorBrush}" />
+                <Rectangle Width="7" Fill="{StaticResource BackgroundColorBrushAlt}" />
             </StackPanel>
 
             <StackPanel Margin="0,43,0,0">
@@ -175,7 +184,7 @@
             <Rectangle
                 Height="35"
                 VerticalAlignment="Bottom"
-                Fill="{StaticResource BackgroundColorBrush}" />
+                Fill="{StaticResource BackgroundColorBrushAlt}" />
             <Label
                 Margin="0,0,0,2"
                 HorizontalAlignment="Center"
@@ -186,4 +195,4 @@
 
         </Grid>
     </Border>
-</UserControl>
+</Window>

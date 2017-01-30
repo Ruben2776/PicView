@@ -1,14 +1,17 @@
 ﻿using PicView.lib;
+using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using static PicView.lib.Helper;
 
-namespace PicView.UserControls
+namespace PicView.Windows
 {
     /// <summary>
     /// A userControl used to inform about the application
     /// </summary>
-    public partial class Help : UserControl
+    public partial class Help : Window
     {
         #region Window Logic
 
@@ -16,20 +19,18 @@ namespace PicView.UserControls
         public Help()
         {
             InitializeComponent();
-
-            Loaded += Help_Loaded;
         }
         #endregion
 
         #region Loaded
 
-        private void Help_Loaded(object sender, RoutedEventArgs e)
+        private void Window_ContentRendered(object sender, EventArgs e)
         {
             #region Add Events
 
             #region CloseButton
 
-            CloseButton.Click += (s,x) => Close(this);
+            CloseButton.Click += (s,x) => Close();
 
             CloseButton.MouseEnter += (s, x) =>
             {
@@ -48,12 +49,33 @@ namespace PicView.UserControls
 
             #endregion
 
-            #endregion
+            KeyDown += keys;
 
+            #endregion
+        }
+
+        #endregion
+
+        #region Closing
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            Closing -= Window_Closing;
+            e.Cancel = true;
+            AnimationHelper.FadeWindow(this, 0, TimeSpan.FromSeconds(.5));
         }
 
         #endregion
 
         #endregion
+
+        private void keys(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape ||
+                e.Key == Key.Q && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control || e.Key == Key.F1)
+            {
+                Close();
+            }
+        }
     }
 }

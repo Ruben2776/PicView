@@ -6,13 +6,15 @@ using static PicView.lib.Helper;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using System.Windows;
+using System.ComponentModel;
 
-namespace PicView.UserControls
+namespace PicView.Windows
 {
     /// <summary>
     /// Interaction logic for About.xaml
     /// </summary>
-    public partial class About : UserControl
+    public partial class About : Window
     {
         private const string version = "Version : ";
 
@@ -23,7 +25,6 @@ namespace PicView.UserControls
         public About()
         {
             InitializeComponent();
-            Loaded += About_Loaded;
 
             #region Get version
 
@@ -38,13 +39,13 @@ namespace PicView.UserControls
 
         #region Loaded
 
-        private void About_Loaded(object sender, EventArgs e)
+        private void Window_ContentRendered(object sender, EventArgs e)
         {
             #region Add events
 
             #region CloseButton
 
-            CloseButton.Click += (s, x) => Close(this);
+            CloseButton.Click += (s, x) => Close();
 
             CloseButton.MouseEnter += (s, x) =>
             {
@@ -62,6 +63,8 @@ namespace PicView.UserControls
             };
 
             #endregion
+
+            KeyDown += keys;
 
             Aller.MouseEnter += AllerMouseOver;
             Aller.MouseLeave += AllerMouseLeave;
@@ -187,6 +190,17 @@ namespace PicView.UserControls
 
         #endregion
 
+        #region Closing
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            Closing -= Window_Closing;
+            e.Cancel = true;
+            AnimationHelper.FadeWindow(this, 0, TimeSpan.FromSeconds(.5));
+        }
+
+        #endregion
+
         #endregion
 
         #region Hyperlink
@@ -195,6 +209,18 @@ namespace PicView.UserControls
         {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
+        }
+
+        #endregion
+
+        #region Keys
+        private void keys(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape ||
+                e.Key == Key.Q && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control || e.Key == Key.F2)
+            {
+                Close();
+            }
         }
 
         #endregion

@@ -1,6 +1,13 @@
-﻿using Microsoft.WindowsAPICodePack.Taskbar;
+﻿/*
+
+---------------------------
+
+---------------------------
+All supported formats (...)|*.threefr;*.a;*.aai;*.ai;*.art;*.arw;*.avi;*.avs;*.b;*.bgr;*.bgra;*.bgro;*.bmp;*.c;*.cal;*.cals;*.canvas;*.caption;*.cin;*.clip;*.clipboard;*.cmyk;*.cmyka;*.cr2;*.crw;*.cur;*.cut;*.dcm;*.dcr;*.dcx;*.dds;*.dfont;*.dib;*.dng;*.dpx;*.dxt1;*.dxt5;*.emf;*.epdf;*.epi;*.eps;*.epsf;*.epsi;*.ept;*.ept2;*.ept3;*.erf;*.exr;*.fax;*.file;*.fits;*.flif;*.fractal;*.ftp;*.fts;*.g;*.g3;*.g4;*.gif;*.gif87;*.gradient;*.gray;*.group4;*.hald;*.hdr;*.hrz;*.http;*.https;*.icb;*.ico;*.icon;*.iiq;*.inline;*.ipl;*.j2c;*.j2k;*.jng;*.jnx;*.jp2;*.jpc;*.jpe;*.jpeg;*.jpg;*.jpm;*.jps;*.jpt;*.k;*.k25;*.kdc;*.label;*.m;*.m2v;*.m4v;*.mac;*.map;*.mask;*.mat;*.mef;*.miff;*.mkv;*.mng;*.mono;*.mov;*.mp4;*.mpc;*.mpeg;*.mpg;*.mrw;*.msl;*.msvg;*.mtv;*.mvg;*.nef;*.nrw;*.null;*.o;*.orf;*.otb;*.otf;*.pal;*.palm;*.pam;*.pango;*.pattern;*.pbm;*.pcd;*.pcds;*.pcl;*.pct;*.pcx;*.pdb;*.pdf;*.pdfa;*.pef;*.pes;*.pfa;*.pfb;*.pfm;*.pgm;*.picon;*.pict;*.pix;*.pjpeg;*.plasma;*.png;*.png00;*.png24;*.png32;*.png48;*.png64;*.png8;*.pnm;*.ppm;*.ps;*.psb;*.psd;*.ptif;*.pwp;*.r;*.radialgradient;*.raf;*.ras;*.raw;*.rgb;*.rgba;*.rgbo;*.rgf;*.rla;*.rle;*.rmf;*.rw2;*.scr;*.screenshot;*.sct;*.sfw;*.sgi;*.six;*.sixel;*.sr2;*.srf;*.stegano;*.sun;*.svg;*.svgz;*.text;*.tga;*.tif;*.tiff;*.tiff64;*.tile;*.tim;*.ttc;*.ttf;*.txt;*.uyvy;*.vda;*.vicar;*.vid;*.viff;*.vips;*.vst;*.webp;*.wbmp;*.wmf;*.wmv;*.wpg;*.x3f;*.xbm;*.xc;*.xcf;*.xpm;*.xps;*.xv;*.y;*.ycbcr;*.ycbcra;*.yuv
+
+*/
+using Microsoft.WindowsAPICodePack.Taskbar;
 using PicView.lib.UserControls;
-using PicView.UserControls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -108,17 +115,18 @@ namespace PicView.lib
 
         internal const string FilterFiles =
             "All Supported files|*.bmp;*.jpg;*.png;*.tif;*.gif;*.ico;*.jpeg;*.wdp;*.psd;*.psb;*.cbr;*.cb7;*.cbt;"
-            + "*.cbz;*.xz;*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;*.webp;*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"
+            + "*.cbz;*.xz;*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;*.webp;"
+            + "*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"
             ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
             + "|Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg*.wdp*"                                   // Common pics
-            + "|jpg| *.jpg;*.jpeg;*"                                                                        // JPG
-            + "|bmp|*.bmp;*"                                                                                // BMP
-            + "|png|*.png;*"                                                                                // PNG
-            + "|gif|*.gif;*"                                                                                // GIF
-            + "|ico|*.ico;*"                                                                                // ICO
-            + "|wdp|*.wdp;*"                                                                                // WDP
-            + "|svg|*.svg;*"                                                                                // SVG
-            + "|tif|*.tif;*"                                                                                // Tif
+            + "|jpg| *.jpg;*.jpeg*"                                                                         // JPG
+            + "|bmp|*.bmp*"                                                                                 // BMP
+            + "|PNG|*.png"                                                                                  // PNG
+            + "|gif|*.gif*"                                                                                 // GIF
+            + "|ico|*.ico*"                                                                                 // ICO
+            + "|wdp|*.wdp*"                                                                                 // WDP
+            + "|svg|*.svg*"                                                                                 // SVG
+            + "|tif|*.tif*"                                                                                 // Tif
             + "|Photoshop|*.psd;*.psb"                                                                      // PSD
             + "|Archives|*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"                           // Archives
             + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz"                                                        // Comics
@@ -201,7 +209,7 @@ namespace PicView.lib
         /// <summary>
         /// Used as comfortable space for standard viewing
         /// </summary>
-        internal const int ComfySpace = 90;
+        internal const int ComfySpace = 350;
 
         /// <summary>
         /// Backup of Width data
@@ -240,8 +248,6 @@ namespace PicView.lib
         internal static QuickSettingsMenu quickSettingsMenu;
         internal static AjaxLoading ajaxLoading;
         internal static SexyToolTip sexyToolTip;
-        internal static About about_uc;
-        internal static Help help_uc;
         #endregion
 
         #region Points + Scaletransform & TranslateTransform
@@ -310,6 +316,11 @@ namespace PicView.lib
 
             if (usercontrol != null)
                 usercontrol.BeginAnimation(UIElement.OpacityProperty, da); ;
+        }
+
+        internal static void Close(Window window)
+        {
+            SystemCommands.CloseWindow(window);
         }
 
         internal static void Restore(Window window)
@@ -542,6 +553,7 @@ namespace PicView.lib
                     case ".x3f": //Questionable if it works :(
                     case ".arw":
                     case ".webp":
+                    case ".bpg":
                         break;
                     default:
                         Pics = new List<string>();

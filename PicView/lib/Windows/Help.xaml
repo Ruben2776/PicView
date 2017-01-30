@@ -1,10 +1,19 @@
-﻿<UserControl
-    x:Class="PicView.UserControls.Help"
+﻿<Window
+    x:Class="PicView.Windows.Help"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     FontFamily="/PicView;component/lib/fonts/#Aller"
-    Foreground="{StaticResource MainColorBrush}">
+    Foreground="{StaticResource MainColorBrush}"
+    Title="Help - PicView"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        AllowsTransparency="True"
+        WindowStyle="None"  
+        Background="#99000000"
+        ContentRendered="Window_ContentRendered"
+        Closing="Window_Closing">
 
     <Border
         Width="350"
@@ -12,11 +21,10 @@
         BorderBrush="{StaticResource BorderBrushAlt}"
         BorderThickness="1">
         <Grid>
-
             <Rectangle
                 Height="38"
                 VerticalAlignment="Top"
-                Fill="#FF131313" />
+                Fill="{StaticResource BackgroundColorBrushAlt}" />
             <Button
                 x:Name="CloseButton"
                 Width="38"
@@ -30,7 +38,7 @@
                 OverridesDefaultStyle="True"
                 ToolTip="Close">
                 <Button.Background>
-                    <SolidColorBrush x:Name="CloseButtonBrush" Color="#00000000" />
+                    <SolidColorBrush x:Name="CloseButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                 </Button.Background>
                 <Path
                     Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
@@ -49,24 +57,17 @@
                 Margin="0,38,0,0"
                 VerticalAlignment="Top"
                 Orientation="Horizontal">
-                <Rectangle Width="7" Fill="{StaticResource BackgroundColorBrush}" />
+                <Rectangle Width="7" Fill="{StaticResource BackgroundColorBrushAlt}" />
                 <Rectangle
                     Width="336"
                     Height="327"
-                    Fill="{StaticResource BackgroundColorBrushAlt}" />
-                <Rectangle Width="7" Fill="{StaticResource BackgroundColorBrush}" />
+                    Fill="{StaticResource BackgroundColorBrush}" />
+                <Rectangle Width="7" Fill="{StaticResource BackgroundColorBrushAlt}" />
             </StackPanel>
-            <Label Margin="15,38,0,0">Shortcuts:</Label>
-
-            <Rectangle
-                Width="307"
-                Height="1"
-                Margin="0,66,0,0"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Top"
-                Stroke="{StaticResource BorderBrushAlt}" />
-            <ScrollViewer Height="290" Margin="15,25,0,0">
+            
+            <ScrollViewer Height="315" Margin="15,0,0,0">
                 <StackPanel>
+                    <Label Margin="0,5,0,0">Shortcuts:</Label>
                     <Label
                         Margin="0,2,0,2"
                         Content="Show windows:"
@@ -145,4 +146,4 @@
 
         </Grid>
     </Border>
-</UserControl>
+</Window>
