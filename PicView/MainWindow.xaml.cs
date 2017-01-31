@@ -2720,6 +2720,7 @@ namespace PicView
         /// </summary>
         private void Open()
         {
+            Unload();
             var dlg = new Microsoft.Win32.OpenFileDialog()
             {
                 Filter = FilterFiles,
