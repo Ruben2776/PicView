@@ -600,6 +600,7 @@ namespace PicView.lib
         /// <returns></returns>
         internal static bool Extract(string path)
         {
+            
             var sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\7-Zip\\7z.exe";
             if (!File.Exists(sevenZip))
                 sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\7-Zip\\7z.exe";
@@ -628,7 +629,7 @@ namespace PicView.lib
 
             var arguments = winrar ? 
                 // Add WinRAR specifics
-                "x \"" + path + "\" " 
+                "x -o- \"" + path + "\" " 
                 :
                 // Add 7-Zip specifics
                 "x \"" + path + "\" -o";

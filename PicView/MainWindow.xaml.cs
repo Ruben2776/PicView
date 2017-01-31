@@ -2727,6 +2727,7 @@ namespace PicView
             };
             if (dlg.ShowDialog() == true)
             {
+                
                 Pic(dlg.FileName);
 
                 if (string.IsNullOrWhiteSpace(PicPath))
@@ -2742,15 +2743,29 @@ namespace PicView
             var Savedlg = new Microsoft.Win32.SaveFileDialog()
             {
                 Filter = FilterFiles,
-                Title = "Save image - PicView"
+                Title = "Save image - PicView",
+                FileName = PicPath
+
+
             };
             if(!string.IsNullOrEmpty(PicPath))
             {
                 MagickImage SaveImage = new MagickImage(PicPath);
-
+                var IsFlipped = new ScaleTransform();
                 if (Savedlg.ShowDialog() == true)
                 {
-                    SaveImage.Write(Savedlg.FileName);
+                    if(Flipped)
+                    {
+                        SaveImage.Flop();
+                        SaveImage.Rotate(Rotateint);
+                        SaveImage.Write(Savedlg.FileName);
+                    }
+                    else
+                    {
+                        SaveImage.Rotate(Rotateint);
+                        SaveImage.Write(Savedlg.FileName);
+                    }
+
 
                     if (string.IsNullOrEmpty(PicPath))
                         PicPath = Savedlg.FileName;
