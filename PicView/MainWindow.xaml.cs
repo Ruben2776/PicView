@@ -1197,12 +1197,12 @@ namespace PicView
             if (Drag_Drop_Check(files).HasValue && Drag_Drop_Check(files).Value)
                 return;
 
-            if (Drag_Drop_Check(files) == null)
-                return;
-
             // Tell that it's succeeded
             isDraggedOver = true;
-            ToolTipStyle(DragOverString, false);
+            ToolTipStyle(DragOverString, true);
+
+            if (Drag_Drop_Check(files) == null)
+                return;
 
             // Use the images dimensions if available, else fix it to container
             if (img.Source == null)
@@ -1467,11 +1467,17 @@ namespace PicView
                     break;
                 #endregion
 
-                #region Help
+                #region About
                 case Key.F2:
                     AboutWindow();
                     break;
                 #endregion
+
+                #region Open Explorer
+                case Key.F3:
+                    Open_In_Explorer();
+                    break;
+                    #endregion,
 
             }
         }
@@ -1515,8 +1521,11 @@ namespace PicView
         #endregion
 
         #region Zoom and Scroll
+
+        #region MouseLeftButtonDown
+
         /// <summary>
-        /// Pan and Zoom, reset zoom and double click to go to next picture
+        /// Pan and Zoom, reset zoom and double click to reset
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1537,10 +1546,18 @@ namespace PicView
 
         }
 
+        #endregion
+
+        #region MouseLeftButtonUp
+
         private void Zoom_img_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             img.ReleaseMouseCapture();
         }
+
+        #endregion
+
+        #region MouseMove
 
         /// <summary>
         /// Tracks where the mouse drags to
@@ -1555,6 +1572,10 @@ namespace PicView
             tt.Y = origin.Y - v.Y;
             e.Handled = true;
         }
+
+        #endregion
+
+        #region MouseWheel
 
         /// <summary>
         /// Zooms or scrolls with mousewheel
@@ -1574,6 +1595,10 @@ namespace PicView
             else
                 Zoom(e.Delta, false);
         }
+
+        #endregion
+
+        #region InitializeZoom()
 
         /// <summary>
         /// Manipulates the required elements to allow zooming
@@ -1596,45 +1621,36 @@ namespace PicView
             tt = (TranslateTransform)((TransformGroup)img.RenderTransform).Children.First(tr => tr is TranslateTransform);
         }
 
+        #endregion
+
+        #region ResetZoom()
+
         /// <summary>
         /// Resets element values to their loaded values
         /// </summary>
         private void ResetZoom()
         {
-            if (IsScrollEnabled)
-            {
-                var scaletransform = new ScaleTransform();
-                scaletransform.ScaleX = scaletransform.ScaleY = 1.0;
-                img.LayoutTransform = scaletransform;
-            }
-            else
-            {
-                st.ScaleX = st.ScaleY = 1;
-                tt.X = tt.Y = 0;
-                img.RenderTransformOrigin = new Point(0.5, 0.5);
-            }
+            var scaletransform = new ScaleTransform();
+            scaletransform.ScaleX = scaletransform.ScaleY = 1.0;
+            img.LayoutTransform = scaletransform;
+
+            st.ScaleX = st.ScaleY = 1;
+            tt.X = tt.Y = 0;
+            img.RenderTransformOrigin = new Point(0.5, 0.5);
 
             CloseToolTipStyle();
             isZoomed = false;
 
-            int width, height;
-            if (Preloader.Contains(PicPath))
-            {
-                width = Preloader.Load(PicPath).PixelWidth;
-                height = Preloader.Load(PicPath).PixelHeight;
-            }
-            else
-            {
-                var info = new MagickImageInfo(PicPath);
-                width = info.Width;
-                height = info.Height;
-            }
-            ZoomFit(width, height);
-            var titleString = TitleString(width, height, FolderIndex);
+            ZoomFit(img.Source.Width, img.Source.Height);
+            var titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, FolderIndex);
             Title = titleString[0];
             Bar.Text = titleString[1];
             Bar.ToolTip = titleString[2];
         }
+
+        #endregion
+
+        #region Zoom
 
         /// <summary>
         /// Scales or zooms, depending on given values
@@ -1710,6 +1726,10 @@ namespace PicView
             
         }
 
+        #endregion
+
+        #region ZoomFit
+
         /// <summary>
         /// Fits image size based on users screen resolution
         /// </summary>
@@ -1718,45 +1738,76 @@ namespace PicView
         private void ZoomFit(double width, double height)
         {
             // Get max width and height, based on user's screen
-            var maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth - ComfySpace, width);
-            var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 93), height); // 38 = Titlebar height, 55 = lowerbar height
+            // 38 = Titlebar height, 55 = lowerbar height = 93
+            var maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth - 93, width);
+            var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 93), height);
 
-            AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));           
+            AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));
 
             if (IsScrollEnabled)
             {
-                // Scroll by its original height
-                img.Height = height;
+                // Calculate height based on width
+                img.Width = maxWidth;
+                img.Height = maxWidth * height / width;
 
-                // Set Scroller's height to fit screen
-                Scroller.Height = maxHeight;
-
-                // Calculate width based on aspect ratio
-                img.Width = maxHeight * (maxWidth / maxHeight);
+                // Set scroller height to aspect ratio calculation
+                Scroller.Height = (height * AspectRatio);
 
                 // Update values
                 xWidth = img.Width;
-                xHeight = maxHeight;
+                xHeight = Scroller.Height;
+
             }
             else
             {
+                // Reset Scroller's height to auto
+                Scroller.Height = double.NaN;
+
                 // Fit image by aspect ratio calculation
                 // and update values
                 img.Height = xHeight = (height * AspectRatio);
                 img.Width = xWidth = (width * AspectRatio);
 
-                // Reset Scroller's height to auto
-                Scroller.Height = double.NaN;
-            }          
+            }
 
-            //Buttons (38 * 3 = 87) logo (canvas width 80 + margin right 7 = 87) = 179 (Bar.MinWidth 444) 444 - 179 = 270 - (comfy space) = 210
+            // Update TitleBar width to fit new size
+            // Calculation works, don't ask...
             if (xWidth - 221 < 220)
                 Bar.MaxWidth = 210;
             else
                 Bar.MaxWidth = xWidth - 220;
 
             isZoomed = false;
+
+
+
+            /*
+
+                            _.._   _..---.
+                         .-"    ;-"       \
+                        /      /           |
+                       |      |       _=   |
+                       ;   _.-'\__.-')     |
+                        `-'      |   |    ;
+                                 |  /;   /      _,
+                               .-.;.-=-./-""-.-` _`
+                              /   |     \     \-` `,
+                             |    |      |     |
+                             |____|______|     |
+                              \0 / \0   /      /
+                           .--.-""-.`--'     .'
+                          (#   )          ,  \
+                          ('--'          /\`  \
+                           \       ,,  .'      \
+                            `-._    _.'\        \
+                   jgs          `""`    \        \
+
+
+                   So much math!
+            */
         }
+
+        #endregion
 
         #endregion
 
@@ -2720,7 +2771,8 @@ namespace PicView
         /// </summary>
         private void Open()
         {
-            Unload();
+            //Unload(); Why???
+
             var dlg = new Microsoft.Win32.OpenFileDialog()
             {
                 Filter = FilterFiles,
