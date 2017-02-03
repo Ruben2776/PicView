@@ -1,12 +1,4 @@
-﻿/*
-
----------------------------
-
----------------------------
-All supported formats (...)|*.threefr;*.a;*.aai;*.ai;*.art;*.arw;*.avi;*.avs;*.b;*.bgr;*.bgra;*.bgro;*.bmp;*.c;*.cal;*.cals;*.canvas;*.caption;*.cin;*.clip;*.clipboard;*.cmyk;*.cmyka;*.cr2;*.crw;*.cur;*.cut;*.dcm;*.dcr;*.dcx;*.dds;*.dfont;*.dib;*.dng;*.dpx;*.dxt1;*.dxt5;*.emf;*.epdf;*.epi;*.eps;*.epsf;*.epsi;*.ept;*.ept2;*.ept3;*.erf;*.exr;*.fax;*.file;*.fits;*.flif;*.fractal;*.ftp;*.fts;*.g;*.g3;*.g4;*.gif;*.gif87;*.gradient;*.gray;*.group4;*.hald;*.hdr;*.hrz;*.http;*.https;*.icb;*.ico;*.icon;*.iiq;*.inline;*.ipl;*.j2c;*.j2k;*.jng;*.jnx;*.jp2;*.jpc;*.jpe;*.jpeg;*.jpg;*.jpm;*.jps;*.jpt;*.k;*.k25;*.kdc;*.label;*.m;*.m2v;*.m4v;*.mac;*.map;*.mask;*.mat;*.mef;*.miff;*.mkv;*.mng;*.mono;*.mov;*.mp4;*.mpc;*.mpeg;*.mpg;*.mrw;*.msl;*.msvg;*.mtv;*.mvg;*.nef;*.nrw;*.null;*.o;*.orf;*.otb;*.otf;*.pal;*.palm;*.pam;*.pango;*.pattern;*.pbm;*.pcd;*.pcds;*.pcl;*.pct;*.pcx;*.pdb;*.pdf;*.pdfa;*.pef;*.pes;*.pfa;*.pfb;*.pfm;*.pgm;*.picon;*.pict;*.pix;*.pjpeg;*.plasma;*.png;*.png00;*.png24;*.png32;*.png48;*.png64;*.png8;*.pnm;*.ppm;*.ps;*.psb;*.psd;*.ptif;*.pwp;*.r;*.radialgradient;*.raf;*.ras;*.raw;*.rgb;*.rgba;*.rgbo;*.rgf;*.rla;*.rle;*.rmf;*.rw2;*.scr;*.screenshot;*.sct;*.sfw;*.sgi;*.six;*.sixel;*.sr2;*.srf;*.stegano;*.sun;*.svg;*.svgz;*.text;*.tga;*.tif;*.tiff;*.tiff64;*.tile;*.tim;*.ttc;*.ttf;*.txt;*.uyvy;*.vda;*.vicar;*.vid;*.viff;*.vips;*.vst;*.webp;*.wbmp;*.wmf;*.wmv;*.wpg;*.x3f;*.xbm;*.xc;*.xcf;*.xpm;*.xps;*.xv;*.y;*.ycbcr;*.ycbcra;*.yuv
-
-*/
-using Microsoft.WindowsAPICodePack.Taskbar;
+﻿using Microsoft.WindowsAPICodePack.Taskbar;
 using PicView.lib.UserControls;
 using System;
 using System.Collections.Generic;
@@ -464,7 +456,6 @@ namespace PicView.lib
                         || file.ToLower().EndsWith("gif", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("ico", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("wdp", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("dds", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("svg", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("psd", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("psb", StringComparison.OrdinalIgnoreCase)
@@ -480,6 +471,109 @@ namespace PicView.lib
                         || file.ToLower().EndsWith("x3f", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("arw", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("webp", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("aai", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("ai", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("art", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("bgra", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("bgro", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("canvas", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("cin", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("cmyk", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("cmyka", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("cur", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("cut", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("dcm", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("dcr", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("dcx", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("dds", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("dfont", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("dlib", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("dpx", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("dxt1", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("dxt5", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("emf", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("epdf", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("epi", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("eps", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("ept", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("ept2", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("ept3", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("exr", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("fax", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("fits", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("flif", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("g3", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("g4", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("gif87", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("gradient", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("gray", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("group4", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("hald", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("hdr", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("hrz", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("icb", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("icon", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("ipl", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("jc2", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("j2k", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("jng", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("jnx", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("jpm", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("jps", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("jpt", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("kdc", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("label", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("map", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("nrw", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("otb", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("otf", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("pbm", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("pcd", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("pcds", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("pcl", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("pct", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("pcx", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("pfa", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("pfb", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("pfm", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("picon", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("pict", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("pix", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("pjpeg", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("png00", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("png24", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("png32", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("png48", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("png64", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("png8", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("pnm", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("ppm", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("ps", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("radialgradient", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("ras", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("rgb", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("rgba", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("rgbo", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("rla", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("rle", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("scr", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("screenshot", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("sgi", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("srf", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("sun", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("svgz", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("tiff64", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("ttf", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("vda", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("vicar", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("vid", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("viff", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("vst", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("vmf", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("wpg", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("xbm", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("xcf", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower().EndsWith("yuv", StringComparison.OrdinalIgnoreCase)
                     )
                     .ToList();
 
@@ -522,44 +616,14 @@ namespace PicView.lib
                     case ".wim":
                     case ".iso":
                     case ".cab":
-                        zipped = Extract(path);                       
-                        if (!zipped)
-                            goto default;
+                        zipped = Extract(path);
+                        if (!zipped) {
+                            Pics = new List<string>();
+                            FolderIndex = -1;
+                            TempZipPath = string.Empty;
+                            return;
+                        }
                         break;
-                    case ".jpg":
-                    case ".jpeg":
-                    case ".jpe":
-                    case ".png":
-                    case ".bmp":
-                    case ".tif":
-                    case ".tiff":
-                    case ".gif":
-                    case ".ico":
-                    case ".wdp":
-                    case ".dds":
-                    case ".svg":
-                    case ".psd":
-                    case ".psb":
-                    case ".orf":
-                    case ".cr2":
-                    case ".crw":
-                    case ".dng":
-                    case ".raf":
-                    case ".ppm":
-                    case ".raw":
-                    case ".mrw":
-                    case ".nef":
-                    case ".pef":
-                    case ".x3f": //Questionable if it works :(
-                    case ".arw":
-                    case ".webp":
-                    case ".bpg":
-                        break;
-                    default:
-                        Pics = new List<string>();
-                        FolderIndex = -1;
-                        TempZipPath = string.Empty;
-                        return;
                 }
 
                 if (zipped)
@@ -709,5 +773,6 @@ namespace PicView.lib
             return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
         }
         #endregion
+
     }
 }

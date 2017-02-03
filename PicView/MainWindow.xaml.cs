@@ -1,27 +1,26 @@
 ﻿using PicView.lib;
+using PicView.lib.UserControls;
+using PicView.Windows;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.lib.Helper;
 using static PicView.lib.ImageManager;
-using System.Reflection;
-using ImageMagick;
-using System.Windows.Media.Animation;
-using System.ComponentModel;
-using System.Net;
-using System.Threading;
-using PicView.lib.UserControls;
-using PicView.Windows;
 
 namespace PicView
 {
@@ -638,12 +637,16 @@ namespace PicView
         /// <param name="x"></param>
         private async void Pic(int x)
         {
+            #region Error Handling
+
             if (Pics.Count == 0)
             {
                 var foo = await RecoverFailedArchiveAsync();
                 if (!foo)
                     return;
             }
+
+            #endregion
 
             #region fields
             // Add "pic" as local variable used for the image.
@@ -688,7 +691,7 @@ namespace PicView
                                 }
                             } while (!Preloader.Contains(Pics[x]));
                         });
-                        if (spin.Count < 2700)
+                        if (spin.Count < 5700)
                             pic = Preloader.Load(Pics[x]);
                     }
                     if (pic == null)
@@ -1307,26 +1310,7 @@ namespace PicView
         private void Keys(object sender, KeyEventArgs e)
         {
             switch (e.Key)
-            {
-                #region Close
-                case Key.Escape:
-                    if (UserControls_Open())
-                        Close_UserControls();
-
-                    //else if (Properties.Settings.Default.Fullscreen)
-                    //    FullScreen();
-
-                    else
-                        Close();
-                    break;
-                #endregion
-
-                #region CenterWindowOnScreen()
-                case Key.Space:
-                    CenterWindowOnScreen();
-                    break;
-                #endregion
-
+            {             
                 #region Next/last
                 case Key.BrowserForward:
                 case Key.Right:
@@ -1375,12 +1359,6 @@ namespace PicView
                     break;
                 #endregion
 
-                #region Toggle Scroll
-                case Key.X:
-                    IsScrollEnabled = IsScrollEnabled ? false : true;
-                    break;
-                #endregion
-
                 #region Scroll
                 case Key.PageUp:
                     if (Properties.Settings.Default.ScrollEnabled)
@@ -1411,13 +1389,6 @@ namespace PicView
 
                 #endregion
 
-                #region Flip
-                case Key.F:
-                    Flip();
-                    break;
-
-                #endregion
-
                 #region Zoom
                 case Key.Add:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
@@ -1432,53 +1403,6 @@ namespace PicView
                         Zoom(-1, true);
                     break;
                 #endregion
-
-                #region Print
-                case Key.P:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                        Print(PicPath);
-                    break;
-                #endregion
-
-                #region Copy
-                case Key.C:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                        CopyPic();
-                    break;
-                #endregion
-
-                #region Paste
-                case Key.V:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                        Paste();
-                    break;
-                #endregion
-
-                #region Open
-                case Key.O:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                        Open();
-                    break;
-                #endregion,
-
-                #region Help
-                case Key.F1:
-                        HelpWindow();
-                    break;
-                #endregion
-
-                #region About
-                case Key.F2:
-                    AboutWindow();
-                    break;
-                #endregion
-
-                #region Open Explorer
-                case Key.F3:
-                    Open_In_Explorer();
-                    break;
-                    #endregion,
-
             }
         }
         #endregion
@@ -1486,12 +1410,151 @@ namespace PicView
         #region KeyUp
         private void MainWindow_KeyUp(object sender, KeyEventArgs e)
         {
+            #region FastPicUpdate()
+
             if (e.Key == Key.Left || e.Key == Key.A || e.Key == Key.Right || e.Key == Key.D)
             {
                 if (!GoToPic)
                     return;
                 FastPicUpdate();
             }
+
+            #endregion
+
+            #region Esc                             !---- Close ----!
+
+            else if (e.Key == Key.Escape)
+            {
+                if (UserControls_Open())
+                    Close_UserControls();
+
+                //else if (Properties.Settings.Default.Fullscreen)
+                //    FullScreen();
+
+                else
+                    Close();
+            }
+            #endregion
+
+            #region Ctrl + Q, Ctrl + W              !---- Close ----!
+
+            else if (e.Key == Key.Q && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control
+                || e.Key == Key.W && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                Close();
+
+            #endregion
+
+            #region O, Ctrl + O                     !---- Open file ----!
+
+            else if (e.Key == Key.O && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control || e.Key == Key.O)
+                Open();
+
+            #endregion
+
+            #region X                               !---- Toggle Scroll ----!
+
+            else if (e.Key == Key.X)
+                IsScrollEnabled = IsScrollEnabled ? false : true;
+
+            #endregion
+
+            #region F                               !---- Flip ----!
+
+            else if (e.Key == Key.F)
+                Flip();
+
+            #endregion
+
+            #region Shift + Delete                  !---- Delete Picture ----!
+
+            else if (e.Key == Key.Delete && (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            {
+                //DeleteFile(PicPath);
+            }
+            #endregion
+
+            #region Ctrl + C                        !---- Copy Picture ----!
+
+            else if (e.Key == Key.C && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                CopyPic();
+
+            #endregion
+
+            #region Ctrl + V                        !---- Paste + flip ----!
+
+            else if (e.Key == Key.V)
+            {
+                if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                {
+                    Paste();
+                    return;
+                }
+
+                Flip();
+            }
+
+            #endregion
+
+            #region Ctrl + I                        !---- Show FIle Properties ----!
+
+            else if (e.Key == Key.I && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                NativeMethods.ShowFileProperties(PicPath);
+
+            #endregion
+
+            #region Ctrl + P                        !---- Print ----!
+
+            else if (e.Key == Key.P && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                Print(PicPath);
+
+            #endregion
+
+            #region Alt + Enter                     !---- Fullscreen ----!
+
+            else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.Enter))
+            {
+                //FullScreen();
+            }
+
+            #endregion
+
+            #region Space                           !---- Center Window ----!
+
+            else if (e.Key == Key.Space)
+                CenterWindowOnScreen();
+
+            #endregion
+
+            #region F1                              !---- Help ----!
+
+            else if (e.Key == Key.F1)
+                HelpWindow();
+
+            #endregion
+
+            #region F2                              !---- About ----!
+
+            else if (e.Key == Key.F2)
+                AboutWindow();
+
+            #endregion
+
+            #region F3                              !---- Open In Explorer ----!
+
+            else if (e.Key == Key.F3)
+                Open_In_Explorer();
+
+            #endregion
+
+            #region F6                              !---- Reset Zoom ----!
+
+            else if (e.Key == Key.F6)
+            {
+                ResetZoom();
+            }
+
+            #endregion
+
         }
         #endregion
 
@@ -1560,13 +1623,16 @@ namespace PicView
         #region MouseMove
 
         /// <summary>
-        /// Tracks where the mouse drags to
+        /// Used to drag image
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Zoom_img_MouseMove(object sender, MouseEventArgs e)
         {
-            if (!img.IsMouseCaptured) return;
+            if (!img.IsMouseCaptured || st.ScaleX == 1)
+                return;
+
+            // Needs solution to not drag image away from visible area
             var v = start - e.GetPosition(this);
             tt.X = origin.X - v.X;
             tt.Y = origin.Y - v.Y;
@@ -1739,7 +1805,7 @@ namespace PicView
         {
             // Get max width and height, based on user's screen
             // 38 = Titlebar height, 55 = lowerbar height = 93
-            var maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth - 93, width);
+            var maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth - ComfySpace, width);
             var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 93), height);
 
             AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));
@@ -2647,6 +2713,7 @@ namespace PicView
         /// </summary>
         private void CopyPic()
         {
+            // Copy pic if from web
             if (string.IsNullOrWhiteSpace(PicPath) || Uri.IsWellFormedUriString(PicPath, UriKind.Absolute))
             {
                 var source = img.Source as BitmapImage;
@@ -2780,7 +2847,6 @@ namespace PicView
             };
             if (dlg.ShowDialog() == true)
             {
-                
                 Pic(dlg.FileName);
 
                 if (string.IsNullOrWhiteSpace(PicPath))
@@ -2798,30 +2864,14 @@ namespace PicView
                 Filter = FilterFiles,
                 Title = "Save image - PicView",
                 FileName = PicPath
-
-
             };
+
             if(!string.IsNullOrEmpty(PicPath))
             {
-                MagickImage SaveImage = new MagickImage(PicPath);
-                var IsFlipped = new ScaleTransform();
+
                 if (Savedlg.ShowDialog() == true)
                 {
-                    if(Flipped)
-                    {
-                        SaveImage.Flop();
-                        SaveImage.Rotate(Rotateint);
-                        SaveImage.Write(Savedlg.FileName);
-                    }
-                    else
-                    {
-                        SaveImage.Rotate(Rotateint);
-                        SaveImage.Write(Savedlg.FileName);
-                    }
-
-
-                    if (string.IsNullOrEmpty(PicPath))
-                        PicPath = Savedlg.FileName;
+                    TrySaveImage(Rotateint, Flipped, PicPath, Savedlg.FileName);
                 }
                 else return;
 

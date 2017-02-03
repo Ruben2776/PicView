@@ -134,7 +134,7 @@ namespace PicView.lib.UserControls
 
         private void CloseButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(250, 17, 17, 17, CloseButtonBrush, false);
+            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
         }
 
         private void CloseButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -144,7 +144,7 @@ namespace PicView.lib.UserControls
 
         private void CloseButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(250, 17, 17, 17, CloseButtonBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
         }
 
         #endregion
@@ -153,7 +153,7 @@ namespace PicView.lib.UserControls
 
         private void FlipButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(250, 17, 17, 17, FlipButtonBrush, false);
+            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, FlipButtonBrush, false);
         }
 
         private void FlipButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -163,7 +163,7 @@ namespace PicView.lib.UserControls
 
         private void FlipButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(250, 17, 17, 17, FlipButtonBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, FlipButtonBrush, false);
         }
 
         #endregion

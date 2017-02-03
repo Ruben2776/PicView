@@ -28,10 +28,8 @@ namespace PicView.lib
         {
             if (Contains(file))
                 return;
-            var ext = Path.GetExtension(file);
-            if (ext == ".gif")
-                return;
-            var pic = ImageManager.RenderToBitmapSource(file, ext);
+
+            var pic = ImageManager.RenderToBitmapSource(file, Path.GetExtension(file));
             if (pic == null)
                 return;
             pic.Freeze();

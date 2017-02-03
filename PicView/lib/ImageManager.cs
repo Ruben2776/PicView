@@ -14,7 +14,7 @@ namespace PicView.lib
             if (string.IsNullOrWhiteSpace(file) || file.Length < 2)
                 return null;
 
-            if (extension == ".gif" || extension == ".ico")
+            if (extension == ".ico")
                 return GetBitmapImage(new Uri(file));
 
             BitmapSource pic;
@@ -25,7 +25,7 @@ namespace PicView.lib
                 magick.ColorSpace = ColorSpace.Transparent;
 
                 var mrs = new MagickReadSettings() {
-                    Density = new Density(300),
+                    Density = new Density(300,300),
                     CompressionMethod = CompressionMethod.NoCompression
                 };
 
@@ -101,6 +101,21 @@ namespace PicView.lib
             }
         }
         #endregion
+
+        internal static bool TrySaveImage(int rotate, bool flipped, string path, string destination)
+        {
+            MagickImage SaveImage = new MagickImage(path);
+
+            if (flipped)
+            {
+                SaveImage.Flop();
+            }
+
+            SaveImage.Rotate(rotate);
+            SaveImage.Write(destination);
+            
+            return true;
+        }
 
         //internal static BitmapSource GetMagickImage(String s, int width, int height)
         //{

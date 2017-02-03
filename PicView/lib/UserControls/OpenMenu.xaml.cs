@@ -48,7 +48,7 @@ namespace PicView.lib.UserControls
 
         private void CloseButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(250, 17, 17, 17, CloseButtonBrush, false);
+            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
         }
 
         private void CloseButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -58,7 +58,7 @@ namespace PicView.lib.UserControls
 
         private void CloseButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(250, 17, 17, 17, CloseButtonBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
         }
 
         #endregion
@@ -67,7 +67,7 @@ namespace PicView.lib.UserControls
 
         private void PasteButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(250, 17, 17, 17, PasteButtonBrush, false);
+            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, PasteButtonBrush, false);
         }
 
         private void PasteButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -77,7 +77,7 @@ namespace PicView.lib.UserControls
 
         private void PasteButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(250, 17, 17, 17, PasteButtonBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, PasteButtonBrush, false);
         }
 
         #endregion
@@ -86,7 +86,7 @@ namespace PicView.lib.UserControls
 
         private void CopyButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(250, 17, 17, 17, CopyButtonBrush, false);
+            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, CopyButtonBrush, false);
         }
 
         private void CopyButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -96,7 +96,7 @@ namespace PicView.lib.UserControls
 
         private void CopyButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(250, 17, 17, 17, CopyButtonBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CopyButtonBrush, false);
         }
 
         #endregion

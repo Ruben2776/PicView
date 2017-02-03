@@ -8,8 +8,14 @@
     <StackPanel>
         <Border
             Width="360"
-            BorderBrush="{StaticResource BorderBrushAlt}"
+            BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1">
+            <Border.Background>
+                <LinearGradientBrush StartPoint=".5,0" EndPoint=".5,1">
+                    <GradientStop Color="{StaticResource BackgroundColorAlt}" Offset="0.23"/>
+                    <GradientStop Color="{StaticResource BackgroundColor}" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
             <Grid>
                 <Canvas Height="51" VerticalAlignment="Top">
                     <TextBlock
@@ -17,7 +23,6 @@
                         Width="256"
                         Height="51"
                         Padding="25,14"
-                        Background="{StaticResource BackgroundColorBrushAlt}"
                         FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros"
                         FontSize="16"
                         FontWeight="Bold"
@@ -34,7 +39,7 @@
                         BorderThickness="0"
                         ToolTip="All settings [Not implemented]">
                         <Button.Background>
-                            <SolidColorBrush x:Name="SettingsButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            <SolidColorBrush x:Name="SettingsButtonBrush" Color="Transparent" />
                         </Button.Background>
                         <Button.Content>
                             <Path
@@ -55,7 +60,7 @@
                         FocusVisualStyle="{x:Null}"
                         ToolTip="Close">
                         <Button.Background>
-                            <SolidColorBrush x:Name="CloseButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            <SolidColorBrush x:Name="CloseButtonBrush" Color="Transparent" />
                         </Button.Background>
                         <Path
                             Width="10"
@@ -66,8 +71,8 @@
                             Stretch="Fill" />
                     </Button>
                 </Canvas>
-
-                <StackPanel Margin="0,51,0,0" Background="{StaticResource BackgroundColorBrushAlt}">
+                
+                <StackPanel Margin="0,51,0,0">
                     <Label
                         Margin="0,2,0,0"
                         HorizontalAlignment="Center"
@@ -343,14 +348,14 @@
         <Rectangle
             Width="22"
             Height="2"
-            Margin="0,-2,56,0"
+            Margin="0,-2,57,0"
             HorizontalAlignment="Right"
-            Fill="{StaticResource BackgroundColorBrushAlt}" />
+            Fill="{StaticResource BackgroundColorBrush}" />
         <Polygon
             Margin="277,-7,0,0"
             Panel.ZIndex="-1"
-            Fill="{StaticResource BackgroundColorBrushAlt}"
+            Fill="{StaticResource BackgroundColorBrush}"
             Points="0,0 15,30, 30,0"
-            Stroke="{StaticResource BorderBrushAlt}" />
+            Stroke="{StaticResource BorderBrush}" />
     </StackPanel>
 </UserControl>

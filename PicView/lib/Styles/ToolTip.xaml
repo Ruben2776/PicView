@@ -13,7 +13,7 @@
         <Setter Property="FontSize"
             Value="12"/>
         <Setter Property="Foreground"
-            Value="#F4f4f4f4"/>
+            Value="{StaticResource MainColorBrush}"/>
         <!--<Setter Property="BorderThickness" Value="1"/>
         <Setter Property="BorderBrush" Value="#F90F0F0F" />-->
         <Setter Property="Template">
@@ -21,11 +21,11 @@
                 <ControlTemplate TargetType="ToolTip">
                     <Border Name="Border"
                   CornerRadius="2"
-                  BorderThickness="1.5"
-                  BorderBrush="#FF191919"
+                  BorderThickness="1"
+                  BorderBrush="{StaticResource BorderBrushAlt}"
                   Width="{TemplateBinding Width}"
                   Height="{TemplateBinding Height}"
-                  Background="#99000000">
+                  Background="{StaticResource BackgroundColorBrush}">
 
                         <ContentPresenter Margin="6"
                               HorizontalAlignment="Left"

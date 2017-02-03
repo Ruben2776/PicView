@@ -7,8 +7,14 @@
     <StackPanel>
         <Border
             Width="292"
-            BorderBrush="{StaticResource BorderBrushAlt}"
+            BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1">
+            <Border.Background>
+                <LinearGradientBrush StartPoint=".5,0" EndPoint=".5,1">
+                    <GradientStop Color="{StaticResource BackgroundColorAlt}" Offset="0.23"/>
+                    <GradientStop Color="{StaticResource BackgroundColor}" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
             <Grid>
                 <Canvas Height="51" VerticalAlignment="Top">
                     <TextBlock
@@ -16,7 +22,6 @@
                         Width="188"
                         Height="51"
                         Padding="16,14,0,14"
-                        Background="{StaticResource BackgroundColorBrushAlt}"
                         FontFamily="/PicView;component/lib/fonts/#TeX Gyre Heros"
                         FontSize="16"
                         FontWeight="Bold"
@@ -32,7 +37,7 @@
                         FontWeight="Bold"
                         ToolTip="Flip image">
                         <CheckBox.Background>
-                            <SolidColorBrush x:Name="FlipButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            <SolidColorBrush x:Name="FlipButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
                         <CheckBox.Content>
                             <Path
@@ -54,7 +59,7 @@
                         FocusVisualStyle="{x:Null}"
                         ToolTip="Close">
                         <Button.Background>
-                            <SolidColorBrush x:Name="CloseButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            <SolidColorBrush x:Name="CloseButtonBrush" Color="Transparent" />
                         </Button.Background>
                         <Path
                             Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
@@ -67,8 +72,7 @@
                     Width="290"
                     Height="165"
                     Margin="0,51,0,0"
-                    VerticalAlignment="Top"
-                    Background="{StaticResource BackgroundColorBrushAlt}">
+                    VerticalAlignment="Top">
                     <Border
                         x:Name="Rotation0Border"
                         Canvas.Left="14"
@@ -146,6 +150,6 @@
             Panel.ZIndex="-1"
             Fill="{StaticResource BackgroundColorBrushAlt}"
             Points="0,0 15,30, 30,0"
-            Stroke="{StaticResource BorderBrushAlt}" />
+            Stroke="{StaticResource BorderBrush}" />
     </StackPanel>
 </UserControl>

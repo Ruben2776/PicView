@@ -10,8 +10,14 @@
         <Border
             Width="292"
             Height="217"
-            BorderBrush="{StaticResource BorderBrushAlt}"
+            BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1">
+            <Border.Background>
+                <LinearGradientBrush StartPoint=".5,0" EndPoint=".5,1">
+                    <GradientStop Color="{StaticResource BackgroundColorAlt}" Offset="0.23"/>
+                    <GradientStop Color="{StaticResource BackgroundColor}" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
             <Grid>
                 <Canvas Height="51" VerticalAlignment="Top">
                     <TextBlock
@@ -19,7 +25,6 @@
                         Width="137"
                         Height="51"
                         Padding="25,14"
-                        Background="{StaticResource BackgroundColorBrushAlt}"
                         FontFamily="/PicView;component/lib/fonts/#TeX Gyre Heros"
                         FontSize="16"
                         FontWeight="Bold"
@@ -37,7 +42,7 @@
                         FontWeight="Bold"
                         ToolTip="Copy image to clipholder">
                         <Button.Background>
-                            <SolidColorBrush x:Name="CopyButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            <SolidColorBrush x:Name="CopyButtonBrush" Color="Transparent" />
                         </Button.Background>
                     </Button>
 
@@ -52,7 +57,7 @@
                         FontWeight="Bold"
                         ToolTip="Paste image from clipholder">
                         <Button.Background>
-                            <SolidColorBrush x:Name="PasteButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            <SolidColorBrush x:Name="PasteButtonBrush" Color="Transparent" />
                         </Button.Background>
                     </Button>
 
@@ -65,7 +70,7 @@
                         FocusVisualStyle="{x:Null}"
                         ToolTip="Close">
                         <Button.Background>
-                            <SolidColorBrush x:Name="CloseButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            <SolidColorBrush x:Name="CloseButtonBrush" Color="Transparent" />
                         </Button.Background>
                         <Path
                             Width="10"
@@ -81,8 +86,7 @@
                     Width="290"
                     Height="164"
                     Margin="0,51,0,6"
-                    VerticalAlignment="Top"
-                    Background="{StaticResource BackgroundColorBrushAlt}">
+                    VerticalAlignment="Top">
                     <Border
                         x:Name="Open_Border"
                         Canvas.Left="14"
@@ -173,6 +177,6 @@
             Panel.ZIndex="-1"
             Fill="{StaticResource BackgroundColorBrushAlt}"
             Points="0,0 15,30, 30,0"
-            Stroke="{StaticResource BorderBrushAlt}" />
+            Stroke="{StaticResource BorderBrush}" />
     </StackPanel>
 </UserControl>
