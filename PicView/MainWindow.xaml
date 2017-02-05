@@ -178,7 +178,7 @@
             DockPanel.Dock="Bottom">
             <Canvas Width="395" HorizontalAlignment="Center">
                 <Button
-                    x:Name="OpenMenuButton"
+                    x:Name="FileMenuButton"
                     Canvas.Left="-5"
                     Width="40"
                     Height="55"
@@ -408,6 +408,7 @@
                             Stretch="Fill" />
                     </Border>
                 </ScrollViewer>
+                <Canvas x:Name="topLayer" IsHitTestVisible="False" />
             </Grid>
         </DockPanel>
     </DockPanel>

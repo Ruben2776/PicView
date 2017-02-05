@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Diagnostics;
 
 namespace PicView.lib
@@ -109,21 +108,21 @@ namespace PicView.lib
             "All Supported files|*.bmp;*.jpg;*.png;*.tif;*.gif;*.ico;*.jpeg;*.wdp;*.psd;*.psb;*.cbr;*.cb7;*.cbt;"
             + "*.cbz;*.xz;*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;*.webp;"
             + "*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"
-            ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+            ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
             + "|Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg*.wdp*"                                   // Common pics
             + "|jpg| *.jpg;*.jpeg*"                                                                         // JPG
-            + "|bmp|*.bmp*"                                                                                 // BMP
-            + "|PNG|*.png"                                                                                  // PNG
-            + "|gif|*.gif*"                                                                                 // GIF
-            + "|ico|*.ico*"                                                                                 // ICO
-            + "|wdp|*.wdp*"                                                                                 // WDP
-            + "|svg|*.svg*"                                                                                 // SVG
-            + "|tif|*.tif*"                                                                                 // Tif
+            + "|bmp|*.bmp;"                                                                                 // BMP
+            + "|PNG|*.png;"                                                                                 // PNG
+            + "|gif|*.gif;"                                                                                 // GIF
+            + "|ico|*.ico;"                                                                                 // ICO
+            + "|wdp|*.wdp;"                                                                                 // WDP
+            + "|svg|*.svg;"                                                                                 // SVG
+            + "|tif|*.tif;"                                                                                 // Tif
             + "|Photoshop|*.psd;*.psb"                                                                      // PSD
             + "|Archives|*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"                           // Archives
             + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz"                                                        // Comics
             + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw";      // Camera files
-            ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+            ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
         /// <summary>
         /// File path of current  image
@@ -183,17 +182,15 @@ namespace PicView.lib
         internal static bool LeftbuttonClicked;
         internal static bool RightbuttonClicked;
         internal static bool imageSettingsMenuOpen;
-        internal static bool openMenuOpen;
+        internal static bool fileMenuOpen;
         internal static bool quickSettingsMenuOpen;
-        internal static bool saveMenuSave;
         internal static bool GoToPic;
-        //internal static bool cursorHidden;
         internal static bool isZoomed;
         internal static bool Flipped;
         internal static bool canNavigate;
-        //internal static bool mouseIsOnArrow;
         internal static bool isDraggedOver;
         internal static bool freshStartup;
+        internal static bool autoScrolling;
 
         #endregion
 
@@ -228,23 +225,32 @@ namespace PicView.lib
         /// </summary>
         internal static short PreloadCount { get; set; }
 
-        internal const double MinZoom = 0.3;
+        /// <summary>
+        /// Used to get and set Aspect Ratio
+        /// </summary>
         internal static double AspectRatio { get; set; }
+
+        /// <summary>
+        /// Used to get how much image is rotated
+        /// </summary>
         internal static int Rotateint { get; set; }
 
         #endregion
 
         #region Controls
         internal static ImageSettings imageSettingsMenu;
-        internal static OpenMenu openMenu;
+        internal static FileMenu fileMenu;
         internal static QuickSettingsMenu quickSettingsMenu;
         internal static AjaxLoading ajaxLoading;
         internal static SexyToolTip sexyToolTip;
+        internal static AutoScrollSign autoScrollSign;
         #endregion
 
         #region Points + Scaletransform & TranslateTransform
         internal static Point origin;
         internal static Point start;
+        internal static Point? autoScrollOrigin;
+        internal static Point autoScrollPos;
 
         internal static ScaleTransform st;
         internal static TranslateTransform tt;
@@ -252,7 +258,7 @@ namespace PicView.lib
 
         #region Lists
         /// <summary>
-        /// The list of images
+        /// List of file paths to supported files
         /// </summary>
         internal static List<string> Pics { get; set; }
         #endregion
@@ -263,8 +269,9 @@ namespace PicView.lib
         /// </summary>
         internal static ImageSource prevPicResource;
 
-        //internal static System.Timers.Timer activityTimer;
         internal static ContextMenu cm;
+
+        internal static Timer autoScrollTimer;
         #endregion      
 
         #endregion
@@ -294,21 +301,6 @@ namespace PicView.lib
         #endregion
 
         #region Close, Restore and mazimize windows functions
-
-        /// <summary>
-        /// Close UserControl with fade animation
-        /// </summary>
-        /// <param name="usercontrol"></param>
-        internal static void Close(UserControl usercontrol)
-        {
-            usercontrol.Visibility = Visibility.Visible;
-            var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
-            da.To = 0;
-            da.Completed += delegate { usercontrol.Visibility = Visibility.Hidden; };
-
-            if (usercontrol != null)
-                usercontrol.BeginAnimation(UIElement.OpacityProperty, da); ;
-        }
 
         internal static void Close(Window window)
         {

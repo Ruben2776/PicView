@@ -333,7 +333,7 @@
                     Grid.Column="2"
                     Margin="5,2,0,2"
                     DockPanel.Dock="Right"
-                    Foreground="WhiteSmoke"
+                    Foreground="{StaticResource MainColorBrush}"
                     Text="{TemplateBinding InputGestureText}" />
             </Grid>
         </Border>
@@ -349,14 +349,15 @@
                 <Setter TargetName="Check" Property="Visibility" Value="Visible" />
                 <Setter TargetName="Icon" Property="Visibility" Value="Hidden" />
             </Trigger>
+            <!--Menu highligt/hover-->
             <Trigger Property="IsHighlighted" Value="true">
-                <Setter TargetName="Border" Property="Background" Value="#E5424242" />
-                <Setter TargetName="Border" Property="BorderBrush" Value="#FF3A3A3A" />
+                <Setter TargetName="Border" Property="Background" Value="{DynamicResource ChosenColorBrush}" />
+                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ChosenColorBrush}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
                 <Setter Property="Foreground">
                     <Setter.Value>
-                        <SolidColorBrush Color="#FF9C9C9C" />
+                        <SolidColorBrush Color="{StaticResource MainColor}" />
                     </Setter.Value>
                 </Setter>
             </Trigger>

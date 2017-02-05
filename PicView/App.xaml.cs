@@ -15,7 +15,6 @@ namespace PicView
                 Properties["ArbitraryArgName"] = e.Args[0];
             }
             base.OnStartup(e);
-
             System.Runtime.ProfileOptimization.SetProfileRoot(AppDomain.CurrentDomain.BaseDirectory);
             System.Runtime.ProfileOptimization.StartProfile("Profile optimization");
         }

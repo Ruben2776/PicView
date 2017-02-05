@@ -34,11 +34,25 @@ namespace PicView.lib
                     //Make background transparent
                     mrs.Format = MagickFormat.Svg;
                     mrs.BackgroundColor = MagickColors.Transparent;
-                    magick.Read(file, mrs);                    
+                    try
+                    {
+                        magick.Read(file, mrs);
+                    }
+                    catch (MagickException)
+                    {
+                        return null;
+                    }                    
                 }
                 else
                 {
-                    magick.Read(file);
+                    try
+                    {
+                        magick.Read(file);
+                    }
+                    catch (MagickException)
+                    {
+                        return null;
+                    }
                 }
 
                 pic = magick.ToBitmapSource();
@@ -102,8 +116,12 @@ namespace PicView.lib
         }
         #endregion
 
+        #region Save Image
+
         internal static bool TrySaveImage(int rotate, bool flipped, string path, string destination)
         {
+            // Needs error handling
+
             MagickImage SaveImage = new MagickImage(path);
 
             if (flipped)
@@ -117,26 +135,6 @@ namespace PicView.lib
             return true;
         }
 
-        //internal static BitmapSource GetMagickImage(String s, int width, int height)
-        //{
-        //    BitmapSource pic;
-        //    try
-        //    {
-        //        using (var magick = new MagickImage())
-        //        {
-        //            magick.Read(s);
-        //            magick.Quality = 60;
-        //            magick.AdaptiveResize(width, height);
-        //            pic = magick.ToBitmapSource();
-        //        }
-        //        pic.Freeze();
-        //        return pic;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return null;
-        //    }
-        //}
-
+        #endregion
     }
 }

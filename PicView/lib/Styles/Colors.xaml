@@ -5,6 +5,8 @@
     <Color x:Key="BackgroundColor">#FF131313</Color>
     <Color x:Key="BackgroundColorAlt">#F7111111</Color>
     <Color x:Key="BackgroundColorFade">#A5171717</Color>
+    <Color x:Key="ChosenColor">Blue</Color>
+    <SolidColorBrush x:Key="ChosenColorBrush" Color="{DynamicResource ChosenColor}" />
     <SolidColorBrush x:Key="WindowBackgroundColorBrush" Color="{StaticResource WindowBackgroundColor}" />
     <SolidColorBrush x:Key="BorderBrush" Color="#FF3A3A3A" />
     <SolidColorBrush x:Key="BorderBrushAlt" Color="#FF1B1B1B" />

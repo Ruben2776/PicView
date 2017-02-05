@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="PicView.lib.UserControls.OpenMenu"
+    x:Class="PicView.lib.UserControls.FileMenu"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -14,8 +14,8 @@
             BorderThickness="1">
             <Border.Background>
                 <LinearGradientBrush StartPoint=".5,0" EndPoint=".5,1">
-                    <GradientStop Color="{StaticResource BackgroundColorAlt}" Offset="0.23"/>
-                    <GradientStop Color="{StaticResource BackgroundColor}" Offset="1"/>
+                    <GradientStop Offset="0.23" Color="{StaticResource BackgroundColorAlt}" />
+                    <GradientStop Offset="1" Color="{StaticResource BackgroundColor}" />
                 </LinearGradientBrush>
             </Border.Background>
             <Grid>

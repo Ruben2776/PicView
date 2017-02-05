@@ -15,10 +15,10 @@
                         Fill="#FF464545" />
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="ellipse" Property="Fill" Value="#FF8D8D8D"></Setter>
+                            <Setter TargetName="ellipse" Property="Fill" Value="{DynamicResource ChosenColorBrush}"/>
                         </Trigger>
                         <Trigger Property="IsDragging" Value="True">
-                            <Setter TargetName="ellipse" Property="Fill" Value="#FF8D8D8D"></Setter>
+                            <Setter TargetName="ellipse" Property="Fill" Value="{DynamicResource ChosenColorBrush}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

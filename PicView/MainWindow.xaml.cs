@@ -44,8 +44,12 @@ namespace PicView
         private void MainWindow_ContentRendered(object sender, EventArgs e)
         {
             #region Extra settings
+
             AllowDrop = true;
             IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
+
+            Application.Current.Resources["ChosenColor"] = AnimationHelper.GetPrefferedColorOver();
+
             #endregion
 
             #region Set required stuff
@@ -72,15 +76,24 @@ namespace PicView
 
             #region Add UserControls :)
             LoadTooltipStyle();
-            LoadOpenMenu();
+            LoadFileMenu();
             LoadImageSettingsMenu();
             LoadQuickSettingsMenu();
+            LoadAutoScrollSign();
             #endregion           
 
             #region Do updates in seperate task
 
             var task = new Task(() =>
             {
+                autoScrollTimer = new System.Timers.Timer()
+                {
+                    Interval = 7,
+                    AutoReset = true,
+                    Enabled = false
+                };
+                autoScrollTimer.Elapsed += autoScrollTimerEvent;
+
                 #region Add events
                 Closing += Window_Closing;
 
@@ -114,26 +127,26 @@ namespace PicView
                 MaxButton.Click += (s, x) => Maximize(this);
                 #endregion
 
-                #region OpenMenuButton
+                #region FileMenuButton
 
-                OpenMenuButton.PreviewMouseLeftButtonDown += OpenMenuButtonMouseButtonDown;
-                OpenMenuButton.MouseEnter += OpenMenuButtonMouseOver;
-                OpenMenuButton.MouseLeave += OpenMenuButtonMouseLeave;
-                OpenMenuButton.Click += Toggle_open_menu;
+                FileMenuButton.PreviewMouseLeftButtonDown += OpenMenuButtonMouseButtonDown;
+                FileMenuButton.MouseEnter += OpenMenuButtonMouseOver;
+                FileMenuButton.MouseLeave += OpenMenuButtonMouseLeave;
+                FileMenuButton.Click += Toggle_open_menu;
 
-                openMenu.Open.Click += (s, x) => Open();
-                openMenu.Open_File_Location.Click += (s, x) => Open_In_Explorer();
-                openMenu.Print.Click += (s, x) => Print(PicPath);
-                openMenu.Save_File.Click += (s, x) => SaveFiles();
+                fileMenu.Open.Click += (s, x) => Open();
+                fileMenu.Open_File_Location.Click += (s, x) => Open_In_Explorer();
+                fileMenu.Print.Click += (s, x) => Print(PicPath);
+                fileMenu.Save_File.Click += (s, x) => SaveFiles();
 
-                openMenu.Open_Border.MouseLeftButtonUp += (s, x) => Open();
-                openMenu.Open_File_Location_Border.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
-                openMenu.Print_Border.MouseLeftButtonUp += (s, x) => Print(PicPath);
-                openMenu.Save_File_Location_Border.MouseLeftButtonUp += (s, x) => SaveFiles();
+                fileMenu.Open_Border.MouseLeftButtonUp += (s, x) => Open();
+                fileMenu.Open_File_Location_Border.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
+                fileMenu.Print_Border.MouseLeftButtonUp += (s, x) => Print(PicPath);
+                fileMenu.Save_File_Location_Border.MouseLeftButtonUp += (s, x) => SaveFiles();
 
-                openMenu.CloseButton.Click += Close_UserControls;
-                openMenu.PasteButton.Click += (s, x) => Paste();
-                openMenu.CopyButton.Click += (s, x) => CopyPic();
+                fileMenu.CloseButton.Click += Close_UserControls;
+                fileMenu.PasteButton.Click += (s, x) => Paste();
+                fileMenu.CopyButton.Click += (s, x) => CopyPic();
                 #endregion
 
                 #region image_button
@@ -646,6 +659,12 @@ namespace PicView
                     return;
             }
 
+            if (!File.Exists(Pics[x]))
+            {
+                PicErrorFix(x);
+                return;
+            }
+
             #endregion
 
             #region fields
@@ -660,47 +679,40 @@ namespace PicView
             // Failed to load image from memory
             if (pic == null)
             {
-                if (File.Exists(Pics[x]))
-                {
-                    #region Set Loading
-                    Title = Bar.Text = Loading;
-                    Bar.ToolTip = Loading;
-                    canNavigate = false;
-                    //if (img.Source != null)
-                    //    img.Source = GetWindowsThumbnail(Pics[x]);
-                    #endregion
 
-                    if (freshStartup || PreloadCount < 2 || Preloader.Count() < 0)
-                    {
-                        // If preloader is not running, load picture manually
-                        await Task.Run(() => pic = RenderToBitmapSource(Pics[x], Extension));
-                    }
-                    else
-                    {
-                        // Preloader is running, wait for it to decode image
-                        var spin = new SpinWait();
-                        await Task.Run(() =>
-                        {
-                            do
-                            {
-                                spin.SpinOnce();
-                                if (spin.Count > 2700)
-                                {
-                                    pic = RenderToBitmapSource(Pics[x], Extension);
-                                    break;
-                                }
-                            } while (!Preloader.Contains(Pics[x]));
-                        });
-                        if (spin.Count < 5700)
-                            pic = Preloader.Load(Pics[x]);
-                    }
-                    if (pic == null)
-                    {
-                        PicErrorFix(x);
-                        return;
-                    }
+                #region Set Loading
+                Title = Bar.Text = Loading;
+                Bar.ToolTip = Loading;
+                canNavigate = false;
+                //if (img.Source != null)
+                //    img.Source = GetWindowsThumbnail(Pics[x]);
+                #endregion
+
+                if (freshStartup || PreloadCount < 2 || Preloader.Count() < 0)
+                {
+                    // If preloader is not running, load picture manually
+                    await Task.Run(() => pic = RenderToBitmapSource(Pics[x], Extension));
                 }
                 else
+                {
+                    // Preloader is running, wait for it to decode image
+                    var spin = new SpinWait();
+                    await Task.Run(() =>
+                    {
+                        do
+                        {
+                            spin.SpinOnce();
+                            if (spin.Count > 4700)
+                            {
+                                pic = RenderToBitmapSource(Pics[x], Extension);
+                                break;
+                            }
+                        } while (!Preloader.Contains(Pics[x]));
+                    });
+                    if (spin.Count < 4700)
+                        pic = Preloader.Load(Pics[x]);
+                }
+                if (pic == null)
                 {
                     PicErrorFix(x);
                     return;
@@ -917,7 +929,7 @@ namespace PicView
             else
                 FolderIndex++;
 
-            if (FolderIndex == 0 || Pics.Count < 1)
+            if (FolderIndex == -1 || Pics.Count < 1)
                 Unload();
             else
             {
@@ -1555,6 +1567,24 @@ namespace PicView
 
             #endregion
 
+            #region Home                            !---- Zoom to top ----!
+
+            else if (e.Key == Key.Home)
+            {
+                Scroller.ScrollToHome();
+            }
+
+            #endregion
+
+            #region End                             !---- Zoom to bottom ----!
+
+            else if (e.Key == Key.End)
+            {
+                Scroller.ScrollToEnd();
+            }
+
+            #endregion
+
         }
         #endregion
 
@@ -1566,6 +1596,10 @@ namespace PicView
                 case MouseButton.Left:
                     break;
                 case MouseButton.Middle:
+                    if (!autoScrolling)
+                        StartAutoScroll(e);
+                    else
+                        StopAutoScroll();
                     break;
                 case MouseButton.Right:
                     break;
@@ -1585,6 +1619,53 @@ namespace PicView
 
         #region Zoom and Scroll
 
+        private void StartAutoScroll(MouseButtonEventArgs e)
+        {
+            if (Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed)
+                return;
+
+            autoScrolling = true;
+            autoScrollOrigin = e.GetPosition(Scroller);
+
+            ShowAutoScrollSign();
+        }
+
+        private void StopAutoScroll()
+        {
+            autoScrollTimer.Stop();
+            //window.ReleaseMouseCapture();
+            autoScrollTimer.Enabled = false;
+            autoScrolling = false;
+            autoScrollOrigin = null;
+            HideAutoScrollSign();
+        }
+
+        private async void autoScrollTimerEvent(object sender, System.Timers.ElapsedEventArgs E)
+        {
+            if (autoScrollPos == null || autoScrollOrigin == null)
+            {
+                return;
+            }
+            await Application.Current.Dispatcher.BeginInvoke((Action)(() =>
+            {
+                if (autoScrollOrigin.HasValue)
+                {
+                    var offset = (autoScrollPos.Y - autoScrollOrigin.Value.Y) / 15;
+                    //ToolTipStyle("pos = " + autoScrollPos.Y.ToString() + " origin = " + autoScrollOrigin.Value.Y.ToString()
+                    //    + Environment.NewLine + "offset = " + offset, false);
+
+                    if (Scroller.VerticalOffset < 2)
+                    {
+
+                    }
+                    if (autoScrolling)
+                    {
+                        Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + offset);
+                    }
+                }
+            }));
+        }
+
         #region MouseLeftButtonDown
 
         /// <summary>
@@ -1594,6 +1675,13 @@ namespace PicView
         /// <param name="e"></param>
         private void Zoom_img_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (autoScrolling)
+            {
+                //window.CaptureMouse();
+                autoScrollOrigin = e.GetPosition(this);
+                autoScrollTimer.Enabled = true;
+                return;
+            }
             if (e.ClickCount == 2)
             {
                 ResetZoom();
@@ -1605,8 +1693,6 @@ namespace PicView
                 start = e.GetPosition(this);
                 origin = new Point(tt.X, tt.Y);
             }
-
-
         }
 
         #endregion
@@ -1615,7 +1701,12 @@ namespace PicView
 
         private void Zoom_img_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            img.ReleaseMouseCapture();
+            if (autoScrolling)
+            {
+                StopAutoScroll();
+            }
+            else
+                img.ReleaseMouseCapture();
         }
 
         #endregion
@@ -1629,6 +1720,12 @@ namespace PicView
         /// <param name="e"></param>
         private void Zoom_img_MouseMove(object sender, MouseEventArgs e)
         {
+            if (autoScrolling)
+            {
+                autoScrollPos = e.GetPosition(Scroller);
+                autoScrollTimer.Start();
+            }
+
             if (!img.IsMouseCaptured || st.ScaleX == 1)
                 return;
 
@@ -1650,15 +1747,15 @@ namespace PicView
         /// <param name="e"></param>
         private void Zoom_img_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (Properties.Settings.Default.ScrollEnabled)
+            if (Properties.Settings.Default.ScrollEnabled && !autoScrolling)
             {
-                if (e.Delta > 0) Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 30);
-                else if (e.Delta < 0) Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 30);
+                if (e.Delta > 0) Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 45);
+                else if (e.Delta < 0) Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 45);
             }
 
-            else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !autoScrolling)
                 Zoom(e.Delta, true);
-            else
+            else if (!autoScrolling)
                 Zoom(e.Delta, false);
         }
 
@@ -1804,9 +1901,8 @@ namespace PicView
         private void ZoomFit(double width, double height)
         {
             // Get max width and height, based on user's screen
-            // 38 = Titlebar height, 55 = lowerbar height = 93
             var maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth - ComfySpace, width);
-            var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 93), height);
+            var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 72), height);
 
             AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));
 
@@ -1879,6 +1975,47 @@ namespace PicView
 
         #region Interface stuff
 
+        #region Open Windows
+
+        #region AboutWindow
+
+        private void AboutWindow()
+        {
+            Window window = new About
+            {
+                Width = Width,
+                Height = Height,
+                Opacity = 0,
+                Owner = Application.Current.MainWindow,
+            };
+
+            var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
+            window.BeginAnimation(OpacityProperty, animation);
+
+            window.ShowDialog();
+        }
+        #endregion
+
+        #region HelpWindow
+
+        private void HelpWindow()
+        {
+            Window window = new Help
+            {
+                Width = Width,
+                Height = Height,
+                Opacity = 0,
+                Owner = Application.Current.MainWindow,
+            };
+
+            var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
+            window.BeginAnimation(OpacityProperty, animation);
+            window.Show();
+        }
+        #endregion
+
+        #endregion
+
         #region TitleString
         /// <summary>
         /// Returns string with file name, folder position,
@@ -1949,6 +2086,9 @@ namespace PicView
         #region UserControl Specifics
 
         #region ToolTipStyle
+        /// <summary>
+        /// Loads TooltipStyle and adds it to the window
+        /// </summary>
         private void LoadTooltipStyle()
         {
             sexyToolTip = new SexyToolTip
@@ -2006,47 +2146,13 @@ namespace PicView
         }
         #endregion
 
-        #region AboutWindow
-
-        private void AboutWindow()
+        #region FileMenu
+        /// <summary>
+        /// Loads FileMenu and adds it to the window
+        /// </summary>
+        private void LoadFileMenu()
         {
-            Window window = new About
-            {
-                Width = Width,
-                Height = Height,
-                Opacity = 0,
-                Owner = Application.Current.MainWindow,
-            };
-
-            var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
-            window.BeginAnimation(OpacityProperty, animation);
-
-            window.ShowDialog();
-        }
-        #endregion
-
-        #region HelpWindow
-
-        private void HelpWindow()
-        {
-            Window window = new Help
-            {
-                Width = Width,
-                Height = Height,
-                Opacity = 0,
-                Owner = Application.Current.MainWindow,
-            };
-
-            var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
-            window.BeginAnimation(OpacityProperty, animation);
-            window.Show();
-        }
-        #endregion
-
-        #region OpenMenu
-        private void LoadOpenMenu()
-        {
-            openMenu = new OpenMenu
+            fileMenu = new FileMenu
             {
                 Focusable = false,
                 Opacity = 0,
@@ -2056,11 +2162,14 @@ namespace PicView
                 Margin = new Thickness(0, 0, 152, 0)
             };
 
-            bg.Children.Add(openMenu);
+            bg.Children.Add(fileMenu);
         }
         #endregion
 
         #region ImageSettingsMenu
+        /// <summary>
+        /// Loads ImageSettingsMenu and adds it to the window
+        /// </summary>
         private void LoadImageSettingsMenu()
         {
             imageSettingsMenu = new ImageSettings
@@ -2078,6 +2187,9 @@ namespace PicView
         #endregion
 
         #region QuickSettingsMenu
+        /// <summary>
+        /// Loads QuickSettingsMenu and adds it to the window
+        /// </summary>
         private void LoadQuickSettingsMenu()
         {
             quickSettingsMenu = new QuickSettingsMenu
@@ -2095,6 +2207,9 @@ namespace PicView
         #endregion
 
         #region AjaxLoading
+        /// <summary>
+        /// Loads AjaxLoading and adds it to the window
+        /// </summary>
         private void LoadAjaxLoading()
         {
             ajaxLoading = new AjaxLoading
@@ -2105,22 +2220,63 @@ namespace PicView
 
             bg.Children.Add(ajaxLoading);
         }
+        /// <summary>
+        /// Start loading animation
+        /// </summary>
         private void AjaxLoadingStart()
         {
             AnimationHelper.Fade(ajaxLoading, 1, TimeSpan.FromSeconds(.2));
         }
 
+        /// <summary>
+        /// End loading animation
+        /// </summary>
         private void AjaxLoadingEnd()
         {
             AnimationHelper.Fade(ajaxLoading, 0, TimeSpan.FromSeconds(.2));
         }
         #endregion
 
+        #region AutoScrollSign
+
+        /// <summary>
+        /// Loads AutoScrollSign and adds it to the window
+        /// </summary>
+        private void LoadAutoScrollSign()
+        {
+            autoScrollSign = new AutoScrollSign
+            {
+                Focusable = false,
+                Opacity = 0,
+                Visibility = Visibility.Hidden,
+                Width = 20,
+                Height = 35
+            };
+
+            topLayer.Children.Add(autoScrollSign);
+        }
+
+        private void HideAutoScrollSign()
+        {
+            autoScrollSign.Visibility = Visibility.Collapsed;
+            autoScrollSign.Opacity = 0;
+        }
+
+        private void ShowAutoScrollSign()
+        {
+            Canvas.SetTop(autoScrollSign, autoScrollOrigin.Value.Y);
+            Canvas.SetLeft(autoScrollSign, autoScrollOrigin.Value.X);
+            autoScrollSign.Visibility = Visibility.Visible;
+            autoScrollSign.Opacity = 1;
+        }
+
+        #endregion
+
         #region Open/Close/Check UserControls!!
 
         #region Toggle Menu booleans || ImageSettingsMenuOpen, OpenMenuOpen, QuickSettingsMenuOpen
         /// <summary>
-        /// Toggles whether ImageSettingsMenu is open or not with a fade animatiomn 
+        /// Toggles whether ImageSettingsMenu is open or not with a fade animation 
         /// </summary>
         private static bool ImageSettingsMenuOpen
         {
@@ -2143,28 +2299,30 @@ namespace PicView
         }
 
         /// <summary>
-        /// Toggles whether OpenMenu is open or not with a fade animatiomn 
+        /// Toggles whether FileMenu is open or not with a fade animation 
         /// </summary>
-        private static bool OpenMenuOpen
+        private static bool FileMenuOpen
         {
-            get { return openMenuOpen; }
+            get { return fileMenuOpen; }
             set
             {
-                openMenuOpen = value;
-                openMenu.Visibility = Visibility.Visible;
+                fileMenuOpen = value;
+                fileMenu.Visibility = Visibility.Visible;
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
                 if (!value)
                 {
                     da.To = 0;
-                    da.Completed += delegate { openMenu.Visibility = Visibility.Hidden; };
+                    da.Completed += delegate { fileMenu.Visibility = Visibility.Hidden; };
                 }
                 else
                     da.To = 1;
-                if (openMenu != null)
-                    openMenu.BeginAnimation(OpacityProperty, da);
+                if (fileMenu != null)
+                    fileMenu.BeginAnimation(OpacityProperty, da);
             }
         }
-
+        /// <summary>
+        /// Toggles whether QuickSettingsMenu is open or not with a fade animation 
+        /// </summary>
         private static bool QuickSettingsMenuOpen
         {
             get { return quickSettingsMenuOpen; }
@@ -2175,6 +2333,7 @@ namespace PicView
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
                 if (!value)
                 {
+                    Application.Current.Resources["ChosenColor"] = AnimationHelper.GetPrefferedColorOver();
                     da.To = 0;
                     da.Completed += delegate { quickSettingsMenu.Visibility = Visibility.Hidden; };
                 }
@@ -2182,26 +2341,6 @@ namespace PicView
                     da.To = 1;
                 if (quickSettingsMenu != null)
                     quickSettingsMenu.BeginAnimation(OpacityProperty, da);
-            }
-        }
-
-        private static bool SaveMenuSave
-        {
-            get { return saveMenuSave; }
-            set
-            {
-                saveMenuSave = value;
-                openMenu.Visibility = Visibility.Visible;
-                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
-                if (!value)
-                {
-                    da.To = 0;
-                    da.Completed += delegate { openMenu.Visibility = Visibility.Hidden; };
-                }
-                else
-                    da.To = 1;
-                if (openMenu != null)
-                    openMenu.BeginAnimation(OpacityProperty, da);
             }
         }
 
@@ -2217,7 +2356,7 @@ namespace PicView
             if (ImageSettingsMenuOpen)
                 return true;
 
-            if (OpenMenuOpen)
+            if (FileMenuOpen)
                 return true;
 
             if (QuickSettingsMenuOpen)
@@ -2229,20 +2368,19 @@ namespace PicView
         #endregion
 
         #region Close_UserControls()
-
+        /// <summary>
+        /// Closes usercontrol menus
+        /// </summary>
         private void Close_UserControls()
         {
             if (ImageSettingsMenuOpen)
                 ImageSettingsMenuOpen = false;
 
-            if (OpenMenuOpen)
-                OpenMenuOpen = false;
+            if (FileMenuOpen)
+                FileMenuOpen = false;
 
             if (QuickSettingsMenuOpen)
                 QuickSettingsMenuOpen = false;
-
-            if (saveMenuSave)
-                saveMenuSave = false;
         }
 
         private void Close_UserControls(object sender, RoutedEventArgs e)
@@ -2256,7 +2394,7 @@ namespace PicView
 
         private void Toggle_open_menu(object sender, RoutedEventArgs e)
         {
-            OpenMenuOpen = !OpenMenuOpen;
+            FileMenuOpen = !FileMenuOpen;
 
             if (ImageSettingsMenuOpen)
                 ImageSettingsMenuOpen = false;
@@ -2269,8 +2407,8 @@ namespace PicView
         {
             ImageSettingsMenuOpen = !ImageSettingsMenuOpen;
 
-            if (OpenMenuOpen)
-                OpenMenuOpen = false;
+            if (FileMenuOpen)
+                FileMenuOpen = false;
 
             if (QuickSettingsMenuOpen)
                 QuickSettingsMenuOpen = false;
@@ -2280,8 +2418,8 @@ namespace PicView
         {
             QuickSettingsMenuOpen = !QuickSettingsMenuOpen;
 
-            if (OpenMenuOpen)
-                OpenMenuOpen = false;
+            if (FileMenuOpen)
+                FileMenuOpen = false;
 
             if (ImageSettingsMenuOpen)
                 ImageSettingsMenuOpen = false;
@@ -2497,45 +2635,6 @@ namespace PicView
             AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, SettingsButtonFill, false);
         }
 
-        #endregion
-
-        #endregion
-
-        #region ScrollViewer
-
-        //private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        //{
-        //    var border = VisualTreeHelper.GetChild(listbox, 0) as Decorator;
-
-        //    // Get scrollviewer
-        //    var scrollviewer = border.Child as ScrollViewer;
-
-        //    if (e.Delta > 0)
-        //        scrollviewer.LineRight();
-        //    else
-        //        scrollviewer.LineLeft();
-        //    e.Handled = true;
-        //}
-
-        #region Scroller events
-        //private async void Scroller_MouseLeave(object sender, MouseEventArgs e)
-        //{
-        //    if (img.Source == null)
-        //        return;
-
-        //    await Task.Delay(TimeSpan.FromSeconds(2.4));
-        //    var s = Scroller.Template.FindName("PART_VerticalScrollBar", Scroller) as System.Windows.Controls.Primitives.ScrollBar;
-        //    AnimationHelper.Fade(s, 0, TimeSpan.FromSeconds(1));
-        //}
-
-        //void Scroller_MouseEnter(object sender, MouseEventArgs e)
-        //{
-        //    if (img.Source == null)
-        //        return;
-
-        //    var s = Scroller.Template.FindName("PART_VerticalScrollBar", Scroller) as System.Windows.Controls.Primitives.ScrollBar;
-        //    AnimationHelper.Fade(s, 1, TimeSpan.FromSeconds(.7));
-        //}
         #endregion
 
         #endregion

@@ -89,7 +89,7 @@ namespace PicView.lib
 
             var timer = new DispatcherTimer
             (
-                TimeSpan.FromSeconds(30), DispatcherPriority.ContextIdle, (s, e) => {
+                TimeSpan.FromSeconds(20), DispatcherPriority.Background, (s, e) => {
                     for (int i = 0; i < array.Length; i++)
                     {
                         Remove(array[i]);
@@ -108,7 +108,7 @@ namespace PicView.lib
         {
             var timer = new DispatcherTimer
             (
-                TimeSpan.FromMinutes(1.5), DispatcherPriority.ContextIdle, (s, e) =>
+                TimeSpan.FromSeconds(25), DispatcherPriority.Background, (s, e) =>
                 {
                     for (int i = 0; i < array.Length; i++)
                     {
