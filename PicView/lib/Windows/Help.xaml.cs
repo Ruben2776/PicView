@@ -2,9 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using static PicView.lib.Helper;
 
 namespace PicView.Windows
 {
@@ -30,7 +28,7 @@ namespace PicView.Windows
 
             #region CloseButton
 
-            CloseButton.Click += (s,x) => Close();
+            CloseButton.Click += (s, x) => Close();
 
             CloseButton.MouseEnter += (s, x) =>
             {
@@ -49,7 +47,7 @@ namespace PicView.Windows
 
             #endregion
 
-            KeyDown += keys;
+            KeyDown += Keys;
 
             #endregion
         }
@@ -69,7 +67,9 @@ namespace PicView.Windows
 
         #endregion
 
-        private void keys(object sender, KeyEventArgs e)
+        #region Keyboard Shortcuts
+
+        private void Keys(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape ||
                 e.Key == Key.Q && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control || e.Key == Key.F1)
@@ -77,5 +77,7 @@ namespace PicView.Windows
                 Close();
             }
         }
+
+        #endregion
     }
 }

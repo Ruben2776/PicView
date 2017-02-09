@@ -48,8 +48,6 @@ namespace PicView
             AllowDrop = true;
             IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
 
-            Application.Current.Resources["ChosenColor"] = AnimationHelper.GetPrefferedColorOver();
-
             #endregion
 
             #region Set required stuff
@@ -80,19 +78,25 @@ namespace PicView
             LoadImageSettingsMenu();
             LoadQuickSettingsMenu();
             LoadAutoScrollSign();
+            LoadClickArrow(true);
+            LoadClickArrow(false);
             #endregion           
 
             #region Do updates in seperate task
 
             var task = new Task(() =>
             {
+                #region Add AutoScrollTimer
+
                 autoScrollTimer = new System.Timers.Timer()
                 {
                     Interval = 7,
                     AutoReset = true,
                     Enabled = false
                 };
-                autoScrollTimer.Elapsed += autoScrollTimerEvent;
+                autoScrollTimer.Elapsed += AutoScrollTimerEvent;
+
+                #endregion
 
                 #region Add events
                 Closing += Window_Closing;
@@ -217,6 +221,20 @@ namespace PicView
                 imageSettingsMenu.FlipButton.Click += (s, x) => Flip();
 
                 #endregion
+
+                #endregion
+
+                #region ClickArrows
+
+                clickArrowLeft.Arrow.MouseLeftButtonDown += (s,x) => {
+                    //clicked = true;
+                    Pic(false, false);
+                };
+
+                clickArrowRight.Arrow.MouseLeftButtonDown += (s, x) => {
+                    //clicked = true;
+                    Pic(true, false);
+                };
 
                 #endregion
 
@@ -488,6 +506,7 @@ namespace PicView
         #region Loaded
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            Application.Current.Resources["ChosenColor"] = AnimationHelper.GetPrefferedColorOver();
             ajaxLoading = new AjaxLoading
             {
                 Opacity = 0
@@ -1316,7 +1335,7 @@ namespace PicView
 
         #endregion
 
-        #region Keyboard Shortcuts
+        #region Keyboard & Mouse Shortcuts
 
         #region KeyDown
         private void Keys(object sender, KeyEventArgs e)
@@ -1585,6 +1604,13 @@ namespace PicView
 
             #endregion
 
+            #region Alt + Z                         !---- Hide Interface ----!
+
+            else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.Z))
+                HideInterface();
+
+            #endregion
+
         }
         #endregion
 
@@ -1593,15 +1619,16 @@ namespace PicView
         {
             switch (e.ChangedButton)
             {
+                case MouseButton.Right:
                 case MouseButton.Left:
+                    if (autoScrolling)
+                        StopAutoScroll();
                     break;
                 case MouseButton.Middle:
                     if (!autoScrolling)
                         StartAutoScroll(e);
                     else
                         StopAutoScroll();
-                    break;
-                case MouseButton.Right:
                     break;
                 case MouseButton.XButton1:
                     Pic(false, false);
@@ -1618,6 +1645,8 @@ namespace PicView
         #endregion
 
         #region Zoom and Scroll
+
+        #region AutoScroll
 
         private void StartAutoScroll(MouseButtonEventArgs e)
         {
@@ -1640,7 +1669,7 @@ namespace PicView
             HideAutoScrollSign();
         }
 
-        private async void autoScrollTimerEvent(object sender, System.Timers.ElapsedEventArgs E)
+        private async void AutoScrollTimerEvent(object sender, System.Timers.ElapsedEventArgs E)
         {
             if (autoScrollPos == null || autoScrollOrigin == null)
             {
@@ -1654,10 +1683,6 @@ namespace PicView
                     //ToolTipStyle("pos = " + autoScrollPos.Y.ToString() + " origin = " + autoScrollOrigin.Value.Y.ToString()
                     //    + Environment.NewLine + "offset = " + offset, false);
 
-                    if (Scroller.VerticalOffset < 2)
-                    {
-
-                    }
                     if (autoScrolling)
                     {
                         Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + offset);
@@ -1665,6 +1690,8 @@ namespace PicView
                 }
             }));
         }
+
+        #endregion
 
         #region MouseLeftButtonDown
 
@@ -1975,6 +2002,65 @@ namespace PicView
 
         #region Interface stuff
 
+        #region HideInterface
+
+        private void HideInterface()
+        {
+            if (Properties.Settings.Default.WindowStyle == "Default")
+            {
+                TitleBar.Visibility =
+                LowerBar.Visibility =
+                LeftBorderRectangle.Visibility =
+                RightBorderRectangle.Visibility
+                = Visibility.Collapsed;
+
+                clickArrowLeft.Visibility =
+                clickArrowRight.Visibility =
+                Visibility.Visible;
+
+                Properties.Settings.Default.WindowStyle = "Alt";
+                    
+            }
+            else
+            {
+                TitleBar.Visibility =
+                LowerBar.Visibility =
+                LeftBorderRectangle.Visibility =
+                RightBorderRectangle.Visibility
+                = Visibility.Visible;
+
+                clickArrowLeft.Visibility =
+                clickArrowRight.Visibility =
+                Visibility.Collapsed;
+
+                Properties.Settings.Default.WindowStyle = "Default";
+            }
+            
+        }
+
+        #region Scroller events
+        //private async void Scroller_MouseLeave(object sender, MouseEventArgs e)
+        //{
+        //    if (img.Source == null)
+        //        return;
+
+        //    await Task.Delay(TimeSpan.FromSeconds(2.4));
+        //    var s = Scroller.Template.FindName("PART_VerticalScrollBar", Scroller) as System.Windows.Controls.Primitives.ScrollBar;
+        //    AnimationHelper.Fade(s, 0, TimeSpan.FromSeconds(1));
+        //}
+
+        //private void Scroller_MouseEnter(object sender, MouseEventArgs e)
+        //{
+        //    if (img.Source == null)
+        //        return;
+
+        //    var s = Scroller.Template.FindName("PART_VerticalScrollBar", Scroller) as System.Windows.Controls.Primitives.ScrollBar;
+        //    AnimationHelper.Fade(s, 1, TimeSpan.FromSeconds(.7));
+        //}
+        #endregion
+
+        #endregion
+
         #region Open Windows
 
         #region AboutWindow
@@ -2143,6 +2229,40 @@ namespace PicView
         private void CloseToolTipStyle()
         {
             sexyToolTip.Visibility = Visibility.Hidden;
+        }
+        #endregion
+
+        #region ClickArrows
+        /// <summary>
+        /// Loads ClickArrow and adds it to the window
+        /// </summary>
+        private void LoadClickArrow(bool right)
+        {
+            if (right)
+            {
+                clickArrowRight = new ClickArrow(true)
+                {
+                    Focusable = false,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Visibility = Visibility.Collapsed,
+                    HorizontalAlignment = HorizontalAlignment.Right
+                };
+
+                bg.Children.Add(clickArrowRight);
+            }
+            else
+            {
+                clickArrowLeft = new ClickArrow(false)
+                {
+                    Focusable = false,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Visibility = Visibility.Collapsed,
+                    HorizontalAlignment = HorizontalAlignment.Left
+                };
+
+                bg.Children.Add(clickArrowLeft);
+            }
+            
         }
         #endregion
 

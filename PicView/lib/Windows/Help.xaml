@@ -2,7 +2,6 @@
     x:Class="PicView.Windows.Help"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Help - PicView"
     AllowsTransparency="True"
     Background="#99000000"
@@ -12,6 +11,8 @@
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
+    TextOptions.TextFormattingMode="Display"
+    TextOptions.TextRenderingMode="ClearType"
     WindowStartupLocation="CenterOwner"
     WindowStyle="None">
 
@@ -25,7 +26,7 @@
             <Canvas
                 Height="34"
                 VerticalAlignment="Top"
-                Background="#FF0C0C0C">
+                Background="{StaticResource BackgroundColorBrushAltW}">
                 <Canvas
                     x:Name="Logobg"
                     Width="90"
@@ -107,24 +108,24 @@
                     x:Name="LeftBorderRectangle"
                     Width="7"
                     Height="332"
-                    Fill="#FF0C0C0C" />
+                    Fill="{StaticResource BackgroundColorBrushAltW}" />
                 <Rectangle
                     x:Name="RightBorderRectangle"
                     Canvas.Left="341"
                     Width="7"
                     Height="332"
-                    Fill="#FF0C0C0C" />
+                    Fill="{StaticResource BackgroundColorBrushAltW}" />
                 <ScrollViewer
                     Width="336"
                     Height="332"
                     Margin="6,-1,0,0"
-                    Background="#FF111111">
+                    Background="{StaticResource BackgroundColorBrushAlt}">
                     <StackPanel>
                         <Label Margin="0,5,0,0">Shortcuts:</Label>
                         <Label
                             Margin="0,2,0,2"
                             Content="Show windows:"
-                            FontSize="12" />
+                            FontSize="14" />
                         <BulletDecorator Margin="7,2">
                             <BulletDecorator.Bullet>
                                 <Ellipse
@@ -167,8 +168,8 @@
                         <Label
                             Margin="0,10,0,0"
                             Content="File functions:"
-                            FontSize="12" />
-                        
+                            FontSize="14" />
+
                         <BulletDecorator Margin="7,2">
                             <BulletDecorator.Bullet>
                                 <Ellipse
@@ -245,7 +246,7 @@
                         <Label
                             Margin="0,10,0,0"
                             Content="Navigate:"
-                            FontSize="12" />
+                            FontSize="14" />
                         <BulletDecorator Margin="7,2">
                             <BulletDecorator.Bullet>
                                 <Ellipse
@@ -322,7 +323,7 @@
                         <Label
                             Margin="0,10,0,0"
                             Content="Transform image:"
-                            FontSize="12" />
+                            FontSize="14" />
                         <BulletDecorator Margin="7,2">
                             <BulletDecorator.Bullet>
                                 <Ellipse
@@ -355,7 +356,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Arrow dowb</Bold>
+                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Arrow down</Bold>
                                 to rotate left.
                             </TextBlock>
                         </BulletDecorator>
@@ -387,7 +388,7 @@
                         <Label
                             Margin="0,10,0,0"
                             Content="Zoom:"
-                            FontSize="12" />
+                            FontSize="14" />
                         <BulletDecorator Margin="7,2">
                             <BulletDecorator.Bullet>
                                 <Ellipse
@@ -409,7 +410,9 @@
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
                                 <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Mousewheel</Bold>
-                                while holding Ctrl to scale size.
+                                while holding
+                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Ctrl</Bold>
+                                to scale size.
                             </TextBlock>
                         </BulletDecorator>
                         <BulletDecorator Margin="7,2">
@@ -420,7 +423,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Plus </Bold>
+                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Plus</Bold>
                                 (
                                 <Bold FontFamily="/PicView;component/lib/fonts/#Aller">+</Bold>
                                 ) to zoom in.
@@ -434,7 +437,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Minus </Bold>
+                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Minus</Bold>
                                 (
                                 <Bold FontFamily="/PicView;component/lib/fonts/#Aller">-</Bold>
                                 ) to zoom out.
@@ -448,7 +451,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Ctrl Plus </Bold>
+                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Ctrl Plus</Bold>
                                 (
                                 <Bold FontFamily="/PicView;component/lib/fonts/#Aller">+</Bold>
                                 ) to scale.
@@ -462,7 +465,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Ctrl Minus </Bold>
+                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Ctrl Minus</Bold>
                                 (
                                 <Bold FontFamily="/PicView;component/lib/fonts/#Aller">-</Bold>
                                 ) to scale.
@@ -472,7 +475,7 @@
                         <Label
                             Margin="0,10,0,0"
                             Content="Misc:"
-                            FontSize="12" />
+                            FontSize="14" />
                         <BulletDecorator Margin="7,2">
                             <BulletDecorator.Bullet>
                                 <Ellipse

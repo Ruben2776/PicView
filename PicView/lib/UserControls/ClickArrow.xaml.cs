@@ -7,14 +7,11 @@ using System.Windows.Media.Animation;
 
 namespace PicView.lib.UserControls
 {
-    /// <summary>
-    /// Interaction logic for RightArrow.xaml
-    /// </summary>
-    public partial class RightArrow : UserControl
+    public partial class ClickArrow : UserControl
     {
         private static ColorAnimation ccAnim;
         private static ColorAnimation ccAnim2;
-        public RightArrow()
+        public ClickArrow(bool right)
         {
             InitializeComponent();
 
@@ -29,6 +26,14 @@ namespace PicView.lib.UserControls
             canvas.MouseEnter += Arrow_MouseEnter;
             canvas.MouseLeave += Arrow_MouseLeave;
             canvas.PreviewMouseLeftButtonDown += Arrow_MouseLeftButtonDown;
+
+            if (!right)
+            {
+                Arrow.LayoutTransform = new ScaleTransform()
+                {
+                    ScaleX = -1
+                };
+            }
         }
 
         void Arrow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

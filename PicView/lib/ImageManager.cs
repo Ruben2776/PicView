@@ -103,8 +103,10 @@ namespace PicView.lib
             using (MagickImage magick = new MagickImage())
             {
                 magick.Quality = 100;
-                var mrs = new MagickReadSettings();
-                mrs.Density = new Density(300);
+                var mrs = new MagickReadSettings()
+                {
+                    Density = new Density(300)
+                };
 
                 magick.Read(s);
                 magick.ColorSpace = ColorSpace.Transparent;
@@ -136,5 +138,6 @@ namespace PicView.lib
         }
 
         #endregion
+
     }
 }

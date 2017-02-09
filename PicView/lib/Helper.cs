@@ -244,6 +244,8 @@ namespace PicView.lib
         internal static AjaxLoading ajaxLoading;
         internal static SexyToolTip sexyToolTip;
         internal static AutoScrollSign autoScrollSign;
+        internal static ClickArrow clickArrowLeft;
+        internal static ClickArrow clickArrowRight;
         #endregion
 
         #region Points + Scaletransform & TranslateTransform

@@ -10,6 +10,8 @@
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
+    TextOptions.TextFormattingMode="Display"
+    TextOptions.TextRenderingMode="ClearType"
     WindowStartupLocation="CenterOwner"
     WindowStyle="None">
     <Window.Resources>
@@ -43,7 +45,7 @@
             <Canvas
                 Height="34"
                 VerticalAlignment="Top"
-                Background="#FF0C0C0C">
+                Background="{StaticResource BackgroundColorBrushAltW}">
                 <Canvas
                     x:Name="Logobg"
                     Width="90"
@@ -125,18 +127,18 @@
                     x:Name="LeftBorderRectangle"
                     Width="7"
                     Height="332"
-                    Fill="#FF0C0C0C" />
+                    Fill="{StaticResource BackgroundColorBrushAltW}" />
                 <Rectangle
                     x:Name="RightBorderRectangle"
                     Canvas.Left="341"
                     Width="7"
                     Height="332"
-                    Fill="#FF0C0C0C" />
+                    Fill="{StaticResource BackgroundColorBrushAltW}" />
                 <StackPanel
                     Width="336"
                     Height="332"
                     Margin="6,-1,0,0"
-                    Background="#FF111111">
+                    Background="{StaticResource BackgroundColorBrushAlt}">
                     <StackPanel Margin="0,7">
                         <Label
                             HorizontalAlignment="Center"
@@ -221,25 +223,26 @@
                         </TextBlock>
                     </StackPanel>
 
-                    <StackPanel Margin="0,65,0,0" >
+                    <StackPanel Margin="0,65,0,0">
                         <TextBlock
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Bottom"
-                            FontFamily="/PicView;component/lib/fonts/#Aller"
-                            FontSize="12"
-                            Text="Made by Ruben Hyldgaard Negendahl" Margin="0,2" />
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Bottom"
-                            FontFamily="/PicView;component/lib/fonts/#Aller"
-                            FontSize="12"
                             Margin="0,2"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Bottom"
+                            FontFamily="/PicView;component/lib/fonts/#Aller"
+                            FontSize="12"
+                            Text="Made by Ruben Hyldgaard Negendahl" />
+                        <TextBlock
+                            Margin="0,2"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Bottom"
+                            FontFamily="/PicView;component/lib/fonts/#Aller"
+                            FontSize="12"
                             Text="Special thanks to Mathias Nielsen" />
                         <Label
                             x:Name="appVersion"
+                            Margin="0,2"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
-                            Margin="0,2"
                             Content="Version : 0.0.0.0" />
                     </StackPanel>
                 </StackPanel>

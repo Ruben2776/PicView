@@ -4,8 +4,9 @@
     <Color x:Key="MainColor">#FFF7F4F4</Color>
     <Color x:Key="BackgroundColor">#FF131313</Color>
     <Color x:Key="BackgroundColorAlt">#F7111111</Color>
+    <Color x:Key="BackgroundColorAltW">#FF0C0C0C</Color>
     <Color x:Key="BackgroundColorFade">#A5171717</Color>
-    <Color x:Key="ChosenColor">Blue</Color>
+    <Color x:Key="ChosenColor">#F236BBFF</Color>
     <SolidColorBrush x:Key="ChosenColorBrush" Color="{DynamicResource ChosenColor}" />
     <SolidColorBrush x:Key="WindowBackgroundColorBrush" Color="{StaticResource WindowBackgroundColor}" />
     <SolidColorBrush x:Key="BorderBrush" Color="#FF3A3A3A" />
@@ -13,5 +14,6 @@
     <SolidColorBrush x:Key="MainColorBrush" Color="{StaticResource MainColor}" />
     <SolidColorBrush x:Key="BackgroundColorBrush" Color="{StaticResource BackgroundColor}" />
     <SolidColorBrush x:Key="BackgroundColorBrushAlt" Color="{StaticResource BackgroundColorAlt}" />
+    <SolidColorBrush x:Key="BackgroundColorBrushAltW" Color="{StaticResource BackgroundColorAltW}" />
     <SolidColorBrush x:Key="BackgroundColorBrushFade" Color="{StaticResource BackgroundColorFade}" />
 </ResourceDictionary>

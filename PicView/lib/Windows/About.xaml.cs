@@ -1,13 +1,11 @@
 ﻿using PicView.lib;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
-using static PicView.lib.Helper;
-using System.Windows.Controls;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Navigation;
-using System.Windows;
-using System.ComponentModel;
 
 namespace PicView.Windows
 {
@@ -16,7 +14,11 @@ namespace PicView.Windows
     /// </summary>
     public partial class About : Window
     {
+        #region Variables
+
         private const string version = "Version : ";
+
+        #endregion
 
         #region Window Logic
 
@@ -37,7 +39,7 @@ namespace PicView.Windows
 
         #endregion
 
-        #region Loaded
+        #region Window_ContentRendered
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
@@ -64,7 +66,7 @@ namespace PicView.Windows
 
             #endregion
 
-            KeyDown += keys;
+            KeyDown += Keys;
 
             Aller.MouseEnter += AllerMouseOver;
             Aller.MouseLeave += AllerMouseLeave;
@@ -89,7 +91,32 @@ namespace PicView.Windows
             #endregion
         }
 
+        #endregion     
+
+        #region Closing
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            Closing -= Window_Closing;
+            e.Cancel = true;
+            AnimationHelper.FadeWindow(this, 0, TimeSpan.FromSeconds(.5));
+        }
+
         #endregion
+
+        #endregion
+
+        #region Hyperlink
+
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
+        }
+
+        #endregion
+
+        #region Interface
 
         #region Add Mouseover events
 
@@ -190,31 +217,10 @@ namespace PicView.Windows
 
         #endregion
 
-        #region Closing
-
-        private void Window_Closing(object sender, CancelEventArgs e)
-        {
-            Closing -= Window_Closing;
-            e.Cancel = true;
-            AnimationHelper.FadeWindow(this, 0, TimeSpan.FromSeconds(.5));
-        }
-
-        #endregion
-
-        #endregion
-
-        #region Hyperlink
-
-        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
-            e.Handled = true;
-        }
-
         #endregion
 
         #region Keys
-        private void keys(object sender, KeyEventArgs e)
+        private void Keys(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape ||
                 e.Key == Key.Q && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control || e.Key == Key.F2)

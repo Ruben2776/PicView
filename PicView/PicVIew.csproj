@@ -209,10 +209,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\LeftArrow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="lib\UserControls\FileMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -221,7 +217,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\RightArrow.xaml">
+    <Page Include="lib\UserControls\ClickArrow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -251,17 +247,14 @@
     <Compile Include="lib\UserControls\ImageSettings.xaml.cs">
       <DependentUpon>ImageSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\LeftArrow.xaml.cs">
-      <DependentUpon>LeftArrow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="lib\UserControls\FileMenu.xaml.cs">
       <DependentUpon>FileMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="lib\UserControls\QuickSettingsMenu.xaml.cs">
       <DependentUpon>QuickSettingsMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\RightArrow.xaml.cs">
-      <DependentUpon>RightArrow.xaml</DependentUpon>
+    <Compile Include="lib\UserControls\ClickArrow.xaml.cs">
+      <DependentUpon>ClickArrow.xaml</DependentUpon>
     </Compile>
     <Compile Include="lib\UserControls\SexyToolTip.xaml.cs">
       <DependentUpon>SexyToolTip.xaml</DependentUpon>
