@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using static PicView.lib.Helper;
 
 namespace PicView.Windows
 {
@@ -70,23 +71,23 @@ namespace PicView.Windows
 
             Aller.MouseEnter += AllerMouseOver;
             Aller.MouseLeave += AllerMouseLeave;
-            Aller.MouseLeftButtonDown += AllerMouseButtonDown;
+            Aller.PreviewMouseLeftButtonDown += AllerMouseButtonDown;
 
             TexGyre.MouseEnter += TexGyreMouseOver;
             TexGyre.MouseLeave += TexGyreMouseLeave;
-            TexGyre.MouseLeftButtonDown += TexGyreMouseButtonDown;
+            TexGyre.PreviewMouseLeftButtonDown += TexGyreMouseButtonDown;
 
             Iconic.MouseEnter += IconicMouseOver;
             Iconic.MouseLeave += IconicMouseLeave;
-            Iconic.MouseLeftButtonDown += IconicMouseButtonDown;
+            Iconic.PreviewMouseLeftButtonDown += IconicMouseButtonDown;
 
             FlatIcon.MouseEnter += FlatIconMouseOver;
             FlatIcon.MouseLeave += FlatIconMouseLeave;
-            FlatIcon.MouseLeftButtonDown += FlatIconMouseButtonDown;
+            FlatIcon.PreviewMouseLeftButtonDown += FlatIconMouseButtonDown;
 
             Ionic.MouseEnter += IonicMouseOver;
             Ionic.MouseLeave += IonicMouseLeave;
-            Ionic.MouseLeftButtonDown += IonicMouseButtonDown;
+            Ionic.PreviewMouseLeftButtonDown += IonicMouseButtonDown;
 
             #endregion
         }
@@ -124,7 +125,14 @@ namespace PicView.Windows
 
         private void AllerMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, AllerBrush, false);
+            AnimationHelper.MouseEnterColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                AllerBrush,
+                false
+            );
         }
 
         private void AllerMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -134,7 +142,14 @@ namespace PicView.Windows
 
         private void AllerMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, AllerBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                AllerBrush,
+                false
+            );
         }
 
         #endregion
@@ -143,7 +158,14 @@ namespace PicView.Windows
 
         private void TexGyreMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, TexGyreBrush, false);
+            AnimationHelper.MouseEnterColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                TexGyreBrush,
+                false
+            );
         }
 
         private void TexGyreMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -153,7 +175,14 @@ namespace PicView.Windows
 
         private void TexGyreMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, TexGyreBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                TexGyreBrush,
+                false
+            );
         }
 
         #endregion
@@ -162,7 +191,14 @@ namespace PicView.Windows
 
         private void IconicMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, IconicBrush, false);
+            AnimationHelper.MouseEnterColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                IconicBrush,
+                false
+            );
         }
 
         private void IconicMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -172,7 +208,14 @@ namespace PicView.Windows
 
         private void IconicMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, IconicBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                IconicBrush,
+                false
+            );
         }
 
         #endregion
@@ -181,7 +224,14 @@ namespace PicView.Windows
 
         private void FlatIconMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, FlatIconBrush, false);
+            AnimationHelper.MouseEnterColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                FlatIconBrush,
+                false
+            );
         }
 
         private void FlatIconMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -191,7 +241,14 @@ namespace PicView.Windows
 
         private void FlatIconMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, FlatIconBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                FlatIconBrush,
+                false
+            );
         }
 
         #endregion
@@ -200,7 +257,14 @@ namespace PicView.Windows
 
         private void IonicMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, IonicBrush, false);
+            AnimationHelper.MouseEnterColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                IonicBrush,
+                false
+            );
         }
 
         private void IonicMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -210,7 +274,14 @@ namespace PicView.Windows
 
         private void IonicMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, IonicBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                IonicBrush,
+                false
+            );
         }
 
         #endregion

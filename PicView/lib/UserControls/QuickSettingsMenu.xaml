@@ -12,7 +12,7 @@
             BorderThickness="1">
             <Border.Background>
                 <LinearGradientBrush StartPoint=".5,0" EndPoint=".5,1">
-                    <GradientStop Color="{StaticResource BackgroundColorAlt}" Offset="0.23"/>
+                    <GradientStop Color="{StaticResource BackgroundColorAlt}" Offset="0.60"/>
                     <GradientStop Color="{StaticResource BackgroundColor}" Offset="1"/>
                 </LinearGradientBrush>
             </Border.Background>

@@ -43,22 +43,24 @@ namespace PicView
         #region ContentRendered
         private void MainWindow_ContentRendered(object sender, EventArgs e)
         {
-            #region Extra settings
+            var endLoading = false;
+
+            #region Update values
 
             AllowDrop = true;
             IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
-
-            #endregion
-
-            #region Set required stuff
             Pics = new List<string>();
             freshStartup = true;
             DataContext = this;
+
             #endregion
 
             #region To load or not to load image, that is the question...
             if (Application.Current.Properties["ArbitraryArgName"] == null)
+            {
                 Unload();
+                endLoading = true;
+            }
             else
             {
                 var file = Application.Current.Properties["ArbitraryArgName"].ToString();
@@ -66,11 +68,31 @@ namespace PicView
                     Pic(file);
                 else
                     if (Uri.IsWellFormedUriString(file, UriKind.Absolute))
-                    PicWeb(file);
+                        PicWeb(file);
                 else
+                {
                     Unload();
+                    endLoading = true;
+                }
             }
             #endregion   
+
+            #region Update WindowStyle
+
+            if (Properties.Settings.Default.WindowStyle == "Alt")
+            {
+                clickArrowLeft.Opacity =
+                clickArrowRight.Opacity =
+                x2.Opacity =
+                0;
+
+                clickArrowLeft.Visibility =
+                clickArrowRight.Visibility =
+                x2.Visibility =
+                Visibility.Visible;
+            }
+
+            #endregion
 
             #region Add UserControls :)
             LoadTooltipStyle();
@@ -80,13 +102,21 @@ namespace PicView
             LoadAutoScrollSign();
             LoadClickArrow(true);
             LoadClickArrow(false);
-            #endregion           
+            Loadx2();
+            #endregion
+
+            #region Update UserControl values
+            backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorFade"];
+            mainColor = (Color)Application.Current.Resources["MainColor"];
+            quickSettingsMenu.ToggleScroll.IsChecked = IsScrollEnabled;
+
+            #endregion
 
             #region Do updates in seperate task
 
             var task = new Task(() =>
             {
-                #region Add AutoScrollTimer
+                #region Add Timers
 
                 autoScrollTimer = new System.Timers.Timer()
                 {
@@ -96,10 +126,18 @@ namespace PicView
                 };
                 autoScrollTimer.Elapsed += AutoScrollTimerEvent;
 
+                activityTimer = new System.Timers.Timer()
+                {
+                    Interval = 2500,
+                    AutoReset = true,
+                    Enabled = false
+                };
+                activityTimer.Elapsed += CursorActivityTimer_Elapsed;
+
                 #endregion
 
                 #region Add events
-                Closing += Window_Closing;
+                
 
                 #region keyboard and Mouse_Keys Keys
                 //PreviewKeyDown += previewKeys;
@@ -226,15 +264,21 @@ namespace PicView
 
                 #region ClickArrows
 
-                clickArrowLeft.Arrow.MouseLeftButtonDown += (s,x) => {
-                    //clicked = true;
+                clickArrowLeft.MouseLeftButtonUp += (s,x) => {
+                    clickArrowLeftClicked = true;
                     Pic(false, false);
                 };
 
-                clickArrowRight.Arrow.MouseLeftButtonDown += (s, x) => {
-                    //clicked = true;
+                clickArrowRight.MouseLeftButtonUp += (s, x) => {
+                    clickArrowRightClicked = true;
                     Pic(true, false);
                 };
+
+                #endregion
+
+                #region x2
+
+                x2.MouseLeftButtonUp += (x, xx) => Close();
 
                 #endregion
 
@@ -284,6 +328,15 @@ namespace PicView
 
                 #region Lower Bar
                 LowerBar.Drop += Image_Drop;
+                #endregion
+
+                #region This
+
+                Closing += Window_Closing;
+
+                MouseMove += MainWindow_MouseMove;
+                MouseLeave += MainWindow_MouseLeave;
+
                 #endregion
 
                 #endregion
@@ -494,13 +547,14 @@ namespace PicView
 
             Bar.ContextMenu = cmTitle;
 
-            #endregion
+            #endregion           
 
-            if (ajaxLoading.Opacity > 0)
+            if (endLoading)
             {
                 AjaxLoadingEnd();
             }
         }
+
         #endregion
 
         #region Loaded
@@ -513,6 +567,15 @@ namespace PicView
             };
             bg.Children.Add(ajaxLoading);
             AjaxLoadingStart();
+
+            if (Properties.Settings.Default.WindowStyle == "Alt")
+            {
+                TitleBar.Visibility =
+                LowerBar.Visibility =
+                LeftBorderRectangle.Visibility =
+                RightBorderRectangle.Visibility
+                = Visibility.Collapsed;
+            }
         }
         #endregion
 
@@ -548,10 +611,20 @@ namespace PicView
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 LeftbuttonClicked = false;
             }
-            //if (size.HeightChanged || size.WidthChanged)
-            //{
-            //    CenterWindowOnScreen();
-            //}
+
+            else if (clickArrowRightClicked)
+            {
+                Point p = clickArrowRight.PointToScreen(new Point(25, 30));
+                NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+                clickArrowRightClicked = false;
+            }
+
+            else if (clickArrowLeftClicked)
+            {
+                Point p = clickArrowLeft.PointToScreen(new Point(25, 30));
+                NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+                clickArrowLeftClicked = false;
+            }
         }
         #endregion
 
@@ -626,7 +699,10 @@ namespace PicView
             #region Set Loading
             Title = Bar.Text = Loading;
             Bar.ToolTip = Loading;
-            AjaxLoadingStart();
+            if (img.Source == null)
+            {
+                AjaxLoadingStart();
+            }
             #endregion
 
             #region Check if folder has changed
@@ -652,7 +728,7 @@ namespace PicView
                 freshStartup = false;
 
             // Fix possible loading bug
-            if (ajaxLoading.Visibility == Visibility.Visible)
+            if (ajaxLoading.Opacity != 1 && canNavigate)
             {
                 AjaxLoadingEnd();
             }
@@ -698,13 +774,42 @@ namespace PicView
             // Failed to load image from memory
             if (pic == null)
             {
-
                 #region Set Loading
+
                 Title = Bar.Text = Loading;
                 Bar.ToolTip = Loading;
                 canNavigate = false;
-                //if (img.Source != null)
+
+                #region Set thumbnail loading
+
+                //if (Extension == ".jpg")
+                //{
                 //    img.Source = GetWindowsThumbnail(Pics[x]);
+
+                //    var exifDimensions = GetExifSize(Pics[x]);
+
+                //    if (exifDimensions.Width > 0)
+                //    {
+                //        img.Width = exifDimensions.Width;
+                //        img.Height = exifDimensions.Height;
+                //    }
+                //    else
+                //    {
+                //        if (xWidth > 0 && xHeight > 0)
+                //        {
+                //            img.Width = xWidth;
+                //            img.Height = xHeight;
+                //        }
+                //        else
+                //        {
+                //            img.Width = Scroller.ActualWidth;
+                //            img.Height = Scroller.ActualHeight;
+                //        }
+                //    }
+                //}               
+
+                #endregion
+
                 #endregion
 
                 if (freshStartup || PreloadCount < 2 || Preloader.Count() < 0)
@@ -721,14 +826,14 @@ namespace PicView
                         do
                         {
                             spin.SpinOnce();
-                            if (spin.Count > 4700)
+                            if (spin.Count > 2000)
                             {
                                 pic = RenderToBitmapSource(Pics[x], Extension);
                                 break;
                             }
                         } while (!Preloader.Contains(Pics[x]));
                     });
-                    if (spin.Count < 4700)
+                    if (spin.Count < 2000)
                         pic = Preloader.Load(Pics[x]);
                 }
                 if (pic == null)
@@ -790,9 +895,9 @@ namespace PicView
             Progress(x, Pics.Count);
             // Loses position gradually if not forced to center
             CenterWindowOnScreen();
-            if (freshStartup)
-                freshStartup = false;
+            AjaxLoadingEnd();
             #endregion            
+
         }
         #endregion
 
@@ -934,29 +1039,58 @@ namespace PicView
         /// <param name="x"></param>
         private void PicErrorFix(int x)
         {
-            var file = Pics[x];
-            Pics.Remove(Pics[x]);
-            if (Pics.Count < 1)
+            if (Pics.Count < 0)
             {
-                ToolTipStyle("Unexpected error", false, TimeSpan.FromSeconds(3));
+                ToolTipStyle("Unexpected error", true, TimeSpan.FromSeconds(3));
                 Unload();
                 return;
             }
 
+            var file = Pics[x];
+
+            if (file == null)
+            {
+                ToolTipStyle("Unexpected error", true, TimeSpan.FromSeconds(3));
+                Unload();
+                return;
+            }
+
+            if (File.Exists(file))
+            {
+                Preloader.Add(file);
+                BitmapSource pic = Preloader.Load(file);
+                if (pic != null)
+                {
+                    Pic(file);
+                    return;
+                }
+            }
+
+            Pics.Remove(file);
+
+            if (Pics.Count < 0)
+            {
+                ToolTipStyle("No images in folder", true, TimeSpan.FromSeconds(3));
+                Unload();
+                return;
+            }
+
+            ToolTipStyle("File not found or unable to render, " + file, false, TimeSpan.FromSeconds(2.5));
+
             if (FolderIndex + 1 == Pics.Count)
                 FolderIndex = 0;
             else
-                FolderIndex++;
+                FolderIndex += 1;
 
-            if (FolderIndex == -1 || Pics.Count < 1)
-                Unload();
-            else
+            if (File.Exists(Pics[FolderIndex]))
             {
                 Pic(FolderIndex);
-                PreloadCount++;
+                PreloadCount++;               
             }
-
-            ToolTipStyle("File not found or unable to render, " + file, true, TimeSpan.FromSeconds(3));
+            else
+            {
+                PicErrorFix(FolderIndex);
+            }
         }
 
         #endregion
@@ -2016,9 +2150,12 @@ namespace PicView
 
                 clickArrowLeft.Visibility =
                 clickArrowRight.Visibility =
+                x2.Visibility =
                 Visibility.Visible;
 
                 Properties.Settings.Default.WindowStyle = "Alt";
+
+                activityTimer.Start();
                     
             }
             else
@@ -2031,11 +2168,53 @@ namespace PicView
 
                 clickArrowLeft.Visibility =
                 clickArrowRight.Visibility =
+                x2.Visibility =
                 Visibility.Collapsed;
 
                 Properties.Settings.Default.WindowStyle = "Default";
+                activityTimer.Stop();
             }
             
+        }
+
+        private async void FadeControlsAsync(bool show)
+        {
+            var fadeTo = show ? 1 : 0;
+
+            if (Properties.Settings.Default.WindowStyle == "Alt")
+            {
+                if (clickArrowRight != null && clickArrowLeft != null && x2 != null)
+                {
+                    await Application.Current.Dispatcher.BeginInvoke((Action)(() =>
+                    {
+                        AnimationHelper.Fade(clickArrowLeft, fadeTo, TimeSpan.FromSeconds(.5));
+                        AnimationHelper.Fade(clickArrowRight, fadeTo, TimeSpan.FromSeconds(.5));
+                        AnimationHelper.Fade(x2, fadeTo, TimeSpan.FromSeconds(.5));
+                    }));
+                }
+            }
+        }
+
+        private void CursorActivityTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            FadeControlsAsync(false);
+        }
+
+        private void MainWindow_MouseMove(object sender, MouseEventArgs e)
+        {
+            activityTimer.Stop();
+            FadeControlsAsync(true);
+        }
+
+        private void MainWindow_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (Properties.Settings.Default.WindowStyle == "Alt")
+            {
+                if (!clickArrowLeftClicked && !clickArrowRightClicked)
+                {
+                    activityTimer.Start();
+                }
+            }
         }
 
         #region Scroller events
@@ -2226,6 +2405,11 @@ namespace PicView
             ToolTipStyle(message, center, TimeSpan.FromSeconds(1));
         }
 
+        private void ToolTipStyle(string message)
+        {
+            ToolTipStyle(message, false, TimeSpan.FromSeconds(1));
+        }
+
         private void CloseToolTipStyle()
         {
             sexyToolTip.Visibility = Visibility.Hidden;
@@ -2263,6 +2447,25 @@ namespace PicView
                 bg.Children.Add(clickArrowLeft);
             }
             
+        }
+        #endregion
+
+        #region X2
+        /// <summary>
+        /// Loads x2 and adds it to the window
+        /// </summary>
+        private void Loadx2()
+        {
+            x2 = new X2()
+            {
+                Focusable = false,
+                VerticalAlignment = VerticalAlignment.Top,
+                Visibility = Visibility.Collapsed,
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+
+            bg.Children.Add(x2);
+
         }
         #endregion
 
@@ -2345,7 +2548,10 @@ namespace PicView
         /// </summary>
         private void AjaxLoadingStart()
         {
-            AnimationHelper.Fade(ajaxLoading, 1, TimeSpan.FromSeconds(.2));
+            if (ajaxLoading.Opacity != 1)
+            {
+                AnimationHelper.Fade(ajaxLoading, 1, TimeSpan.FromSeconds(.2));
+            }
         }
 
         /// <summary>
@@ -2353,7 +2559,10 @@ namespace PicView
         /// </summary>
         private void AjaxLoadingEnd()
         {
-            AnimationHelper.Fade(ajaxLoading, 0, TimeSpan.FromSeconds(.2));
+            if (ajaxLoading.Opacity != 0)
+            {
+                AnimationHelper.Fade(ajaxLoading, 0, TimeSpan.FromSeconds(.2));
+            }
         }
         #endregion
 

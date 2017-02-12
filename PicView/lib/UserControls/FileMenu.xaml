@@ -14,8 +14,8 @@
             BorderThickness="1">
             <Border.Background>
                 <LinearGradientBrush StartPoint=".5,0" EndPoint=".5,1">
-                    <GradientStop Offset="0.23" Color="{StaticResource BackgroundColorAlt}" />
-                    <GradientStop Offset="1" Color="{StaticResource BackgroundColor}" />
+                    <GradientStop Color="{StaticResource BackgroundColorAlt}" Offset="0.60"/>
+                    <GradientStop Color="{StaticResource BackgroundColor}" Offset="1"/>
                 </LinearGradientBrush>
             </Border.Background>
             <Grid>
@@ -171,11 +171,11 @@
             Height="1"
             Margin="29,-2,0,0"
             HorizontalAlignment="Left"
-            Fill="{StaticResource BackgroundColorBrushAlt}" />
+            Fill="{StaticResource BackgroundColorBrush}" />
         <Polygon
             Margin="25,-7,0,0"
             Panel.ZIndex="-1"
-            Fill="{StaticResource BackgroundColorBrushAlt}"
+            Fill="{StaticResource BackgroundColorBrush}"
             Points="0,0 15,30, 30,0"
             Stroke="{StaticResource BorderBrush}" />
     </StackPanel>

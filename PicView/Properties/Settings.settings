@@ -27,7 +27,7 @@
       <Value Profile="(Default)">#F2F19DFA</Value>
     </Setting>
     <Setting Name="RedMouse" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#F2FA2A29</Value>
+      <Value Profile="(Default)">#FFF35353</Value>
     </Setting>
     <Setting Name="BlueMouse" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#F200ADEE</Value>

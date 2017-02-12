@@ -360,7 +360,7 @@
             <Grid
                 x:Name="bg"
                 AllowDrop="True"
-                Background="{StaticResource BackgroundColorBrush}">
+                Background="{StaticResource bgBackgroundColorBrush}">
                 <ScrollViewer
                     x:Name="Scroller"
                     CanContentScroll="False"

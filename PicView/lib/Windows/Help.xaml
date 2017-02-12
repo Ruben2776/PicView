@@ -7,7 +7,7 @@
     Background="#99000000"
     Closing="Window_Closing"
     ContentRendered="Window_ContentRendered"
-    FontFamily="/PicView;component/lib/fonts/#Aller Light"
+    FontFamily="/PicView;component/lib/fonts/#TeX Gyre Heros"
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
@@ -15,6 +15,13 @@
     TextOptions.TextRenderingMode="ClearType"
     WindowStartupLocation="CenterOwner"
     WindowStyle="None">
+
+    <Window.Resources>
+        <Style TargetType="Bold">
+            <Setter Property="FontFamily" Value="/PicView;component/lib/fonts/#TeX Gyre Heros" />
+            <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
+        </Style>
+    </Window.Resources>
 
     <Border
         Width="350"
@@ -69,13 +76,13 @@
                 </Canvas>
                 <Label
                     Canvas.Left="150"
-                    Canvas.Top="4"
+                    Canvas.Top="3"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Background="{x:Null}"
                     Content="Help"
                     FontFamily="/PicView;component/lib/fonts/#Aller"
-                    FontSize="14"
+                    FontSize="15"
                     FontWeight="Bold" />
                 <Button
                     x:Name="CloseButton"
@@ -134,7 +141,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">F1</Bold>
+                                <Bold>F1</Bold>
                                 to show help window (this).
                             </TextBlock>
                         </BulletDecorator>
@@ -147,7 +154,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">F2</Bold>
+                                <Bold>F2</Bold>
                                 to show about window.
                             </TextBlock>
                         </BulletDecorator>
@@ -160,7 +167,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Esc</Bold>
+                                <Bold>Esc</Bold>
                                 to close current window.
                             </TextBlock>
                         </BulletDecorator>
@@ -178,11 +185,11 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Ctrl</Bold>
+                                <Bold>Ctrl</Bold>
                                 +
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">0</Bold>
+                                <Bold>0</Bold>
                                 or
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">0</Bold>
+                                <Bold>0</Bold>
                                 to open a file.
                             </TextBlock>
                         </BulletDecorator>
@@ -194,9 +201,9 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Ctrl</Bold>
+                                <Bold>Ctrl</Bold>
                                 +
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">C</Bold>
+                                <Bold>C</Bold>
                                 to copy image to clipboard.
                             </TextBlock>
                         </BulletDecorator>
@@ -208,9 +215,9 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Ctrl</Bold>
+                                <Bold>Ctrl</Bold>
                                 +
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">V</Bold>
+                                <Bold>V</Bold>
                                 to paste image from clipboard.
                             </TextBlock>
                         </BulletDecorator>
@@ -222,9 +229,9 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Ctrl</Bold>
+                                <Bold>Ctrl</Bold>
                                 +
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">S</Bold>
+                                <Bold>S</Bold>
                                 to save current image.
                             </TextBlock>
                         </BulletDecorator>
@@ -236,9 +243,9 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Ctrl</Bold>
+                                <Bold>Ctrl</Bold>
                                 +
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">P</Bold>
+                                <Bold>P</Bold>
                                 to print current image.
                             </TextBlock>
                         </BulletDecorator>
@@ -255,7 +262,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Right arrow</Bold>
+                                <Bold>Right arrow</Bold>
                                 for next image
                             </TextBlock>
                         </BulletDecorator>
@@ -267,7 +274,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">D</Bold>
+                                <Bold>D</Bold>
                                 for next image.
                             </TextBlock>
                         </BulletDecorator>
@@ -279,7 +286,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Mouse button forward</Bold>
+                                <Bold>Mouse button forward</Bold>
                                 for next file image.
                             </TextBlock>
                         </BulletDecorator>
@@ -291,7 +298,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Left arrow</Bold>
+                                <Bold>Left arrow</Bold>
                                 to show previous image.
                             </TextBlock>
                         </BulletDecorator>
@@ -303,7 +310,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">A</Bold>
+                                <Bold>A</Bold>
                                 to show previous image.
                             </TextBlock>
                         </BulletDecorator>
@@ -315,7 +322,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Mouse button backward</Bold>
+                                <Bold>Mouse button backward</Bold>
                                 to show previous image.
                             </TextBlock>
                         </BulletDecorator>
@@ -332,7 +339,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Arrow up</Bold>
+                                <Bold>Arrow up</Bold>
                                 to rotate right.
                             </TextBlock>
                         </BulletDecorator>
@@ -344,7 +351,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">W</Bold>
+                                <Bold>W</Bold>
                                 to rotate right.
                             </TextBlock>
                         </BulletDecorator>
@@ -356,7 +363,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Arrow down</Bold>
+                                <Bold>Arrow down</Bold>
                                 to rotate left.
                             </TextBlock>
                         </BulletDecorator>
@@ -368,7 +375,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">S</Bold>
+                                <Bold>S</Bold>
                                 to rotate left.
                             </TextBlock>
                         </BulletDecorator>
@@ -380,7 +387,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">F</Bold>
+                                <Bold>F</Bold>
                                 to flip image.
                             </TextBlock>
                         </BulletDecorator>
@@ -397,7 +404,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Mousewheel</Bold>
+                                <Bold>Mousewheel</Bold>
                                 to zoom at cursor position.
                             </TextBlock>
                         </BulletDecorator>
@@ -409,9 +416,9 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Mousewheel</Bold>
+                                <Bold>Mousewheel</Bold>
                                 while holding
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Ctrl</Bold>
+                                <Bold>Ctrl</Bold>
                                 to scale size.
                             </TextBlock>
                         </BulletDecorator>
@@ -423,9 +430,9 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Plus</Bold>
+                                <Bold>Plus</Bold>
                                 (
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">+</Bold>
+                                <Bold>+</Bold>
                                 ) to zoom in.
                             </TextBlock>
                         </BulletDecorator>
@@ -437,9 +444,9 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Minus</Bold>
+                                <Bold>Minus</Bold>
                                 (
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">-</Bold>
+                                <Bold>-</Bold>
                                 ) to zoom out.
                             </TextBlock>
                         </BulletDecorator>
@@ -451,9 +458,9 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Ctrl Plus</Bold>
+                                <Bold>Ctrl Plus</Bold>
                                 (
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">+</Bold>
+                                <Bold>+</Bold>
                                 ) to scale.
                             </TextBlock>
                         </BulletDecorator>
@@ -465,9 +472,9 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Ctrl Minus</Bold>
+                                <Bold>Ctrl Minus</Bold>
                                 (
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">-</Bold>
+                                <Bold>-</Bold>
                                 ) to scale.
                             </TextBlock>
                         </BulletDecorator>
@@ -484,7 +491,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">Spacebar</Bold>
+                                <Bold>Spacebar</Bold>
                                 to center on screen.
                             </TextBlock>
                         </BulletDecorator>
@@ -496,7 +503,7 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,30">
-                                <Bold FontFamily="/PicView;component/lib/fonts/#Aller">X</Bold>
+                                <Bold>X</Bold>
                                 to toggle scroll.
                             </TextBlock>
                         </BulletDecorator>

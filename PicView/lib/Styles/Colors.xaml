@@ -12,7 +12,8 @@
     <SolidColorBrush x:Key="BorderBrush" Color="#FF3A3A3A" />
     <SolidColorBrush x:Key="BorderBrushAlt" Color="#FF1B1B1B" />
     <SolidColorBrush x:Key="MainColorBrush" Color="{StaticResource MainColor}" />
-    <SolidColorBrush x:Key="BackgroundColorBrush" Color="{StaticResource BackgroundColor}" />
+    <SolidColorBrush x:Key="bgBackgroundColorBrush" Color="{StaticResource BackgroundColor}" />
+    <SolidColorBrush x:Key="BackgroundColorBrush" Color="#FF171717" />
     <SolidColorBrush x:Key="BackgroundColorBrushAlt" Color="{StaticResource BackgroundColorAlt}" />
     <SolidColorBrush x:Key="BackgroundColorBrushAltW" Color="{StaticResource BackgroundColorAltW}" />
     <SolidColorBrush x:Key="BackgroundColorBrushFade" Color="{StaticResource BackgroundColorFade}" />

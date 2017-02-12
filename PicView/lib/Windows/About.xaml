@@ -20,7 +20,7 @@
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="true">
                         <!--<Setter Property="Foreground" Value="#007acc" />-->
-                        <Setter Property="TextDecorations" Value="UnderLine" />
+                        <!--<Setter Property="TextDecorations" Value="UnderLine" />-->
                     </Trigger>
                     <Trigger Property="IsEnabled" Value="false">
                         <Setter Property="Foreground" Value="#FF1D1D1D" />
@@ -88,13 +88,13 @@
                 </Canvas>
                 <Label
                     Canvas.Left="150"
-                    Canvas.Top="4"
+                    Canvas.Top="3"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Background="{x:Null}"
                     Content="About"
                     FontFamily="/PicView;component/lib/fonts/#Aller"
-                    FontSize="14"
+                    FontSize="15"
                     FontWeight="Bold" />
                 <Button
                     x:Name="CloseButton"

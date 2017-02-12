@@ -1,5 +1,6 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
+using static PicView.lib.Helper;
 
 namespace PicView.lib.UserControls
 {
@@ -107,22 +108,50 @@ namespace PicView.lib.UserControls
 
         private void Open_Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, OpenBorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                OpenBorderBrush,
+                true
+            );
         }
 
         private void Open_File_Location_Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, OpenFileLocationBorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                OpenFileLocationBorderBrush,
+                true
+            );
         }
 
         private void Print_Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, PrintBorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                PrintBorderBrush,
+                true
+            );
         }
 
         private void Save_File_Location_Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, SaveFileLocationBorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                SaveFileLocationBorderBrush,
+                true
+            );
         }
 
         #endregion

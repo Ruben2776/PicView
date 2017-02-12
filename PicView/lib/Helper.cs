@@ -191,7 +191,8 @@ namespace PicView.lib
         internal static bool isDraggedOver;
         internal static bool freshStartup;
         internal static bool autoScrolling;
-
+        internal static bool clickArrowRightClicked;
+        internal static bool clickArrowLeftClicked;
         #endregion
 
         #region Integers and Doubles
@@ -246,6 +247,7 @@ namespace PicView.lib
         internal static AutoScrollSign autoScrollSign;
         internal static ClickArrow clickArrowLeft;
         internal static ClickArrow clickArrowRight;
+        internal static X2 x2;
         #endregion
 
         #region Points + Scaletransform & TranslateTransform
@@ -265,6 +267,14 @@ namespace PicView.lib
         internal static List<string> Pics { get; set; }
         #endregion
 
+        #region Timers
+
+        internal static Timer autoScrollTimer;
+
+        internal static Timer activityTimer;
+
+        #endregion
+
         #region Misc
         /// <summary>
         /// Backup of image
@@ -273,8 +283,10 @@ namespace PicView.lib
 
         internal static ContextMenu cm;
 
-        internal static Timer autoScrollTimer;
-        #endregion      
+        internal static Color backgroundBorderColor;
+        internal static Color mainColor;
+
+        #endregion
 
         #endregion
 
