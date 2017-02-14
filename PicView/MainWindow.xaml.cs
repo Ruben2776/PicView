@@ -77,23 +77,6 @@ namespace PicView
             }
             #endregion   
 
-            #region Update WindowStyle
-
-            if (Properties.Settings.Default.WindowStyle == "Alt")
-            {
-                clickArrowLeft.Opacity =
-                clickArrowRight.Opacity =
-                x2.Opacity =
-                0;
-
-                clickArrowLeft.Visibility =
-                clickArrowRight.Visibility =
-                x2.Visibility =
-                Visibility.Visible;
-            }
-
-            #endregion
-
             #region Add UserControls :)
             LoadTooltipStyle();
             LoadFileMenu();
@@ -109,6 +92,23 @@ namespace PicView
             backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorFade"];
             mainColor = (Color)Application.Current.Resources["MainColor"];
             quickSettingsMenu.ToggleScroll.IsChecked = IsScrollEnabled;
+
+            #endregion
+
+            #region Update WindowStyle
+
+            if (Properties.Settings.Default.WindowStyle == "Alt")
+            {
+                clickArrowLeft.Opacity =
+                clickArrowRight.Opacity =
+                x2.Opacity =
+                0;
+
+                clickArrowLeft.Visibility =
+                clickArrowRight.Visibility =
+                x2.Visibility =
+                Visibility.Visible;
+            }
 
             #endregion
 

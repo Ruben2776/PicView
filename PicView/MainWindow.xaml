@@ -368,7 +368,7 @@
                     Focusable="False"
                     HorizontalScrollBarVisibility="Disabled"
                     VerticalScrollBarVisibility="Disabled">
-                    <!--<ScrollViewer.Style>
+                    <ScrollViewer.Style>
                 <Style TargetType="{x:Type ScrollViewer}">
                     <Setter Property="OverridesDefaultStyle" Value="True" />
                     <Setter Property="Template">
@@ -396,7 +396,7 @@
                         </Setter.Value>
                     </Setter>
                 </Style>
-            </ScrollViewer.Style>-->
+            </ScrollViewer.Style>
                     <Border x:Name="imgBorder" Focusable="False">
                         <Image
                             x:Name="img"
