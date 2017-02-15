@@ -4,7 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:PicView.lib.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Foreground="{StaticResource MainColorBrush}">
+    Foreground="{StaticResource MainColorBrush}"
+    TextOptions.TextFormattingMode="Display"
+    TextOptions.TextRenderingMode="ClearType">
     <StackPanel>
         <Border
             Width="360"
@@ -12,8 +14,8 @@
             BorderThickness="1">
             <Border.Background>
                 <LinearGradientBrush StartPoint=".5,0" EndPoint=".5,1">
-                    <GradientStop Color="{StaticResource BackgroundColorAlt}" Offset="0.60"/>
-                    <GradientStop Color="{StaticResource BackgroundColor}" Offset="1"/>
+                    <GradientStop Offset="0.60" Color="{StaticResource BackgroundColorAlt}" />
+                    <GradientStop Offset="1" Color="{StaticResource BackgroundColor}" />
                 </LinearGradientBrush>
             </Border.Background>
             <Grid>
@@ -71,7 +73,7 @@
                             Stretch="Fill" />
                     </Button>
                 </Canvas>
-                
+
                 <StackPanel Margin="0,51,0,0">
                     <Label
                         Margin="0,2,0,0"

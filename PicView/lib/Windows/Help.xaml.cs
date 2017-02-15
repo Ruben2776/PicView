@@ -76,6 +76,16 @@ namespace PicView.Windows
             {
                 Close();
             }
+
+            else if (e.Key == Key.S || e.Key == Key.Down)
+            {
+                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 10);
+            }
+
+            else if (e.Key == Key.W || e.Key == Key.Up)
+            {
+                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 10);
+            }
         }
 
         #endregion

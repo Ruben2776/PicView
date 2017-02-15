@@ -1277,6 +1277,7 @@ namespace PicView
             FolderIndex = 0;
             img.Width = 0;
             img.Height = 0;
+            AjaxLoadingEnd();
         }
 
         #endregion

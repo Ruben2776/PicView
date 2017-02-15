@@ -5,7 +5,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PicView.lib.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Foreground="{StaticResource MainColorBrush}">
+    Foreground="{StaticResource MainColorBrush}"
+    TextOptions.TextFormattingMode="Display"
+    TextOptions.TextRenderingMode="ClearType">
     <StackPanel>
         <Border
             Width="292"
@@ -14,8 +16,8 @@
             BorderThickness="1">
             <Border.Background>
                 <LinearGradientBrush StartPoint=".5,0" EndPoint=".5,1">
-                    <GradientStop Color="{StaticResource BackgroundColorAlt}" Offset="0.60"/>
-                    <GradientStop Color="{StaticResource BackgroundColor}" Offset="1"/>
+                    <GradientStop Offset="0.60" Color="{StaticResource BackgroundColorAlt}" />
+                    <GradientStop Offset="1" Color="{StaticResource BackgroundColor}" />
                 </LinearGradientBrush>
             </Border.Background>
             <Grid>
