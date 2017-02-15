@@ -132,13 +132,12 @@ namespace PicView
                     AutoReset = true,
                     Enabled = false
                 };
-                activityTimer.Elapsed += CursorActivityTimer_Elapsed;
+                activityTimer.Elapsed += ActivityTimer_Elapsed;
 
                 #endregion
 
                 #region Add events
                 
-
                 #region keyboard and Mouse_Keys Keys
                 //PreviewKeyDown += previewKeys;
                 KeyDown += Keys;
@@ -2181,21 +2180,24 @@ namespace PicView
         {
             var fadeTo = show ? 1 : 0;
 
-            if (Properties.Settings.Default.WindowStyle == "Alt")
+            await Application.Current.Dispatcher.BeginInvoke((Action)(() =>
             {
-                if (clickArrowRight != null && clickArrowLeft != null && x2 != null)
+                if (Properties.Settings.Default.WindowStyle == "Alt")
                 {
-                    await Application.Current.Dispatcher.BeginInvoke((Action)(() =>
+                    if (clickArrowRight != null && clickArrowLeft != null && x2 != null)
                     {
                         AnimationHelper.Fade(clickArrowLeft, fadeTo, TimeSpan.FromSeconds(.5));
                         AnimationHelper.Fade(clickArrowRight, fadeTo, TimeSpan.FromSeconds(.5));
                         AnimationHelper.Fade(x2, fadeTo, TimeSpan.FromSeconds(.5));
-                    }));
+                    }
                 }
-            }
+
+                // Hide/show Scrollbar
+                ScrollbarFade(show);
+            }));
         }
 
-        private void CursorActivityTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void ActivityTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             FadeControlsAsync(false);
         }
@@ -2208,34 +2210,23 @@ namespace PicView
 
         private void MainWindow_MouseLeave(object sender, MouseEventArgs e)
         {
-            if (Properties.Settings.Default.WindowStyle == "Alt")
-            {
-                if (!clickArrowLeftClicked && !clickArrowRightClicked)
-                {
-                    activityTimer.Start();
-                }
-            }
+            activityTimer.Start();
         }
 
         #region Scroller events
-        //private async void Scroller_MouseLeave(object sender, MouseEventArgs e)
-        //{
-        //    if (img.Source == null)
-        //        return;
+        private void ScrollbarFade(bool show)
+        {
+            var s = Scroller.Template.FindName("PART_VerticalScrollBar", Scroller) as System.Windows.Controls.Primitives.ScrollBar;
 
-        //    await Task.Delay(TimeSpan.FromSeconds(2.4));
-        //    var s = Scroller.Template.FindName("PART_VerticalScrollBar", Scroller) as System.Windows.Controls.Primitives.ScrollBar;
-        //    AnimationHelper.Fade(s, 0, TimeSpan.FromSeconds(1));
-        //}
-
-        //private void Scroller_MouseEnter(object sender, MouseEventArgs e)
-        //{
-        //    if (img.Source == null)
-        //        return;
-
-        //    var s = Scroller.Template.FindName("PART_VerticalScrollBar", Scroller) as System.Windows.Controls.Primitives.ScrollBar;
-        //    AnimationHelper.Fade(s, 1, TimeSpan.FromSeconds(.7));
-        //}
+            if (show)
+            {
+                AnimationHelper.Fade(s, 1, TimeSpan.FromSeconds(.7));
+            }
+            else
+            {
+                AnimationHelper.Fade(s, 0, TimeSpan.FromSeconds(1));
+            }
+        }
         #endregion
 
         #endregion

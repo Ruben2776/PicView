@@ -601,6 +601,7 @@ namespace PicView.lib
         {
             return Task.Run(() =>
             {
+                // Determine if archive to be extracted or not
                 bool zipped = false;
                 var extension = Path.GetExtension(path);
                 extension = extension.ToLower();
@@ -634,6 +635,7 @@ namespace PicView.lib
 
                 if (zipped)
                 {
+                    // Make a backup of FolderIndex and PicPath
                     if (FolderIndex > -1)
                     {
                         xFolderIndex = FolderIndex;
@@ -642,7 +644,11 @@ namespace PicView.lib
                     {
                         xPicPath = PicPath;
                     }
+
+                    // Start at first file
                     FolderIndex = 0;
+
+                    // Set extracted files to Pics
                     if (Directory.Exists(TempZipPath))
                     {
                         var test = Directory.EnumerateFileSystemEntries(TempZipPath);
@@ -652,6 +658,7 @@ namespace PicView.lib
                 }
                 else
                 {
+                    // Set files to Pics and get index
                     Pics = FileList(Path.GetDirectoryName(path));
                     FolderIndex = Pics.IndexOf(path);
                 }
