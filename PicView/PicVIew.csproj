@@ -115,7 +115,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="lib\UserControls\AutoScrollSign.xaml.cs">
+    <Compile Include="lib\UserControls\CustomControls\AutoScrollSign.xaml.cs">
       <DependentUpon>AutoScrollSign.xaml</DependentUpon>
     </Compile>
     <Compile Include="lib\Windows\Help.xaml.cs">
@@ -192,7 +192,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\UserControls\AutoScrollSign.xaml">
+    <Page Include="lib\UserControls\CustomControls\AutoScrollSign.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -200,31 +200,31 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\UserControls\AjaxLoading.xaml">
+    <Page Include="lib\UserControls\CustomControls\AjaxLoading.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\ImageSettings.xaml">
+    <Page Include="lib\UserControls\Menus\ImageSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\FileMenu.xaml">
+    <Page Include="lib\UserControls\Menus\FileMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\QuickSettingsMenu.xaml">
+    <Page Include="lib\UserControls\Menus\QuickSettingsMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\ClickArrow.xaml">
+    <Page Include="lib\UserControls\CustomControls\ClickArrow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\SexyToolTip.xaml">
+    <Page Include="lib\UserControls\CustomControls\SexyToolTip.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\X2.xaml">
+    <Page Include="lib\UserControls\CustomControls\X2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -240,25 +240,25 @@
     <Compile Include="lib\Helper.cs" />
     <Compile Include="lib\ImageManager.cs" />
     <Compile Include="lib\Preloader.cs" />
-    <Compile Include="lib\UserControls\AjaxLoading.xaml.cs">
+    <Compile Include="lib\UserControls\CustomControls\AjaxLoading.xaml.cs">
       <DependentUpon>AjaxLoading.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\ImageSettings.xaml.cs">
+    <Compile Include="lib\UserControls\Menus\ImageSettings.xaml.cs">
       <DependentUpon>ImageSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\FileMenu.xaml.cs">
+    <Compile Include="lib\UserControls\Menus\FileMenu.xaml.cs">
       <DependentUpon>FileMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\QuickSettingsMenu.xaml.cs">
+    <Compile Include="lib\UserControls\Menus\QuickSettingsMenu.xaml.cs">
       <DependentUpon>QuickSettingsMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\ClickArrow.xaml.cs">
+    <Compile Include="lib\UserControls\CustomControls\ClickArrow.xaml.cs">
       <DependentUpon>ClickArrow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\SexyToolTip.xaml.cs">
+    <Compile Include="lib\UserControls\CustomControls\SexyToolTip.xaml.cs">
       <DependentUpon>SexyToolTip.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\X2.xaml.cs">
+    <Compile Include="lib\UserControls\CustomControls\X2.xaml.cs">
       <DependentUpon>X2.xaml</DependentUpon>
     </Compile>
     <Compile Include="lib\Wallpaper.cs" />
@@ -332,6 +332,8 @@
     <Content Include="dcraw.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="lib\img\noisy-texture-200x200-o4-d25-c-121212-t0.png" />
+    <Resource Include="lib\img\noisy-texture-200x200-o4-d38-c-0c0c0c-t0.png" />
     <Content Include="Microsoft.WindowsAPICodePack.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -339,6 +341,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Magick.NET-Q16-HDRI-x64.7.0.4.701\build\net40-client\Magick.NET-Q16-HDRI-x64.targets" Condition="Exists('..\packages\Magick.NET-Q16-HDRI-x64.7.0.4.701\build\net40-client\Magick.NET-Q16-HDRI-x64.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

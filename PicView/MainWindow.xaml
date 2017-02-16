@@ -60,8 +60,14 @@
             x:Name="TitleBar"
             Height="38"
             MinWidth="444"
-            Background="{StaticResource BackgroundColorBrushAlt}"
             DockPanel.Dock="Top">
+            <DockPanel.Background>
+                <ImageBrush
+                    ImageSource="lib/img/noisy-texture-200x200-o4-d38-c-0c0c0c-t0.png"
+                    TileMode="FlipXY"
+                    Viewport="0,0,100,100"
+                    ViewportUnits="Absolute" />
+            </DockPanel.Background>
             <Canvas
                 x:Name="Logobg"
                 Width="90"
@@ -174,8 +180,14 @@
             x:Name="LowerBar"
             Height="55"
             MinWidth="444"
-            Background="{StaticResource BackgroundColorBrushAlt}"
             DockPanel.Dock="Bottom">
+            <StackPanel.Background>
+                <ImageBrush
+                    ImageSource="lib/img/noisy-texture-200x200-o4-d38-c-0c0c0c-t0.png"
+                    TileMode="FlipXY"
+                    Viewport="0,0,100,100"
+                    ViewportUnits="Absolute" />
+            </StackPanel.Background>
             <Canvas Width="395" HorizontalAlignment="Center">
                 <Button
                     x:Name="FileMenuButton"
@@ -255,14 +267,13 @@
                 <Canvas
                     Canvas.Left="92"
                     Width="205"
-                    Height="50">
+                    Height="55">
                     <Rectangle
                         Canvas.Left="102"
                         Canvas.Top="0"
                         Width="1"
                         Height="55"
-                        Stroke="#19FFFFFF"
-                        StrokeThickness="1" />
+                        Fill="{StaticResource BorderBrushAlt}"/>
                     <Button
                         x:Name="LeftButton"
                         Width="100"
@@ -349,18 +360,36 @@
             <Rectangle
                 x:Name="LeftBorderRectangle"
                 Width="7"
-                DockPanel.Dock="Left"
-                Fill="{StaticResource BackgroundColorBrushAlt}" />
+                DockPanel.Dock="Left">
+                <Rectangle.Fill>
+                    <ImageBrush
+                        ImageSource="lib/img/noisy-texture-200x200-o4-d38-c-0c0c0c-t0.png"
+                        TileMode="FlipXY"
+                        Viewport="0,0,100,100"
+                        ViewportUnits="Absolute" />
+                </Rectangle.Fill>
+            </Rectangle>
             <Rectangle
                 x:Name="RightBorderRectangle"
                 Width="7"
                 Margin="-1,0,0,0"
-                DockPanel.Dock="Right"
-                Fill="{StaticResource BackgroundColorBrushAlt}" />
-            <Grid
-                x:Name="bg"
-                AllowDrop="True"
-                Background="{StaticResource bgBackgroundColorBrush}">
+                DockPanel.Dock="Right">
+                <Rectangle.Fill>
+                    <ImageBrush
+                        ImageSource="lib/img/noisy-texture-200x200-o4-d38-c-0c0c0c-t0.png"
+                        TileMode="FlipXY"
+                        Viewport="0,0,100,100"
+                        ViewportUnits="Absolute" />
+                </Rectangle.Fill>
+            </Rectangle>
+            <Grid x:Name="bg" AllowDrop="True">
+                <Grid.Background>
+                    <ImageBrush
+                        ImageSource="lib/img/noisy-texture-200x200-o4-d25-c-121212-t0.png"
+                        TileMode="FlipXY"
+                        Viewport="0,0,100,100"
+                        ViewportUnits="Absolute" />
+                </Grid.Background>
                 <ScrollViewer
                     x:Name="Scroller"
                     CanContentScroll="False"

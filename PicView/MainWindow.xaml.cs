@@ -488,6 +488,7 @@ namespace PicView
             // Add to elements
             img.ContextMenu = bg.ContextMenu = cm;
 
+
             // Add left and right ContextMenus
             var cmLeft = new ContextMenu();
             var cmRight = new ContextMenu();
@@ -534,6 +535,10 @@ namespace PicView
             RightButton.ContextMenu = cmRight;
             LeftButton.ContextMenu = cmLeft;
 
+            clickArrowRight.ContextMenu = cmRight;
+            clickArrowLeft.ContextMenu = cmLeft;
+
+
             // Add Title contextMenu
             var cmTitle = new ContextMenu();
 
@@ -545,6 +550,25 @@ namespace PicView
             cmTitle.Items.Add(clTc);
 
             Bar.ContextMenu = cmTitle;
+
+            // Add Close x2 contextMenu
+            var closeX2 = new ContextMenu();
+
+            var clX2z = new MenuItem
+            {
+                Header = "Return to normal interface"
+            };
+            clX2z.Click += (s, x) => HideInterface();
+            closeX2.Items.Add(clX2z);
+
+            var clX2x = new MenuItem
+            {
+                Header = "Close"
+            };
+            clX2x.Click += (s, x) => Close();
+            closeX2.Items.Add(clX2x);
+
+            x2.ContextMenu = closeX2;
 
             #endregion           
 
@@ -1204,6 +1228,7 @@ namespace PicView
                 }
                 Bar.Text = backUp;
                 ToolTipStyle("Unable to load image", false);
+                AjaxLoadingEnd();
                 return;
             }
 
@@ -1280,9 +1305,12 @@ namespace PicView
             Preloader.Clear();
             PicPath = string.Empty;
             FolderIndex = 0;
-            img.Width = 0;
-            img.Height = 0;
+            img.Width = Scroller.Width = Scroller.Height =
+            img.Height = double.NaN;
             AjaxLoadingEnd();
+
+            Width = 465;
+            Height = 515;
         }
 
         #endregion
@@ -2223,8 +2251,8 @@ namespace PicView
             }
 
             // Update TitleBar width to fit new size
-            if (xWidth - 221 < 220)
-                Bar.MaxWidth = 210;
+            if (xWidth - 220 < 220)
+                Bar.MaxWidth = 220;
             else
                 Bar.MaxWidth = xWidth - 220;
 
