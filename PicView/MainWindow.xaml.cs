@@ -230,7 +230,7 @@ namespace PicView
                 RightButton.PreviewMouseLeftButtonDown += RightButtonMouseButtonDown;
                 RightButton.MouseEnter += RightButtonMouseOver;
                 RightButton.MouseLeave += RightButtonMouseLeave;
-                RightButton.Click += (s, x) => { RightbuttonClicked = true; Pic(true, false); };
+                RightButton.Click += (s, x) => { RightbuttonClicked = true; Pic(); };
 
                 #endregion
 
@@ -270,7 +270,7 @@ namespace PicView
 
                 clickArrowRight.MouseLeftButtonUp += (s, x) => {
                     clickArrowRightClicked = true;
-                    Pic(true, false);
+                    Pic();
                 };
 
                 #endregion
@@ -499,7 +499,7 @@ namespace PicView
                 ToolTip = "Go to Next image in folder",
                 StaysOpenOnClick = true
             };
-            nextcm.Click += (s, x) => Pic(true, false);
+            nextcm.Click += (s, x) => Pic();
             cmRight.Items.Add(nextcm);
 
             var prevcm = new MenuItem
@@ -509,7 +509,7 @@ namespace PicView
                 ToolTip = "Go to previous image in folder",
                 StaysOpenOnClick = true
             };
-            prevcm.Click += (s, x) => Pic(false, false);
+            prevcm.Click += (s, x) => Pic(false);
             cmLeft.Items.Add(prevcm);
 
             var firstcm = new MenuItem
@@ -944,14 +944,14 @@ namespace PicView
         #region Pic(bool next, bool end)
         /// <summary>
         /// Goes to next, previous, first or last image
-        /// next = true, false;
-        /// previous = false, false;
+        /// previous = false;
         /// last = true, true;
         /// first = false, true;
         /// </summary>
-        /// <param name="next"></param>
-        /// <param name="end"></param>
-        private void Pic(bool next, bool end)
+        /// <param name="next">Whether it's forward or not</param>
+        /// <param name="end">Whether to go to last or first,
+        /// depending on the next value</param>
+        private void Pic(bool next = true, bool end = false)
         {
             // Exit if not intended to change picture
             if (!canNavigate)
@@ -988,7 +988,6 @@ namespace PicView
                 }
             }
             Pic(FolderIndex);
-            CloseToolTipStyle();
         }
 
         #endregion
@@ -1036,13 +1035,13 @@ namespace PicView
         /// Attemps to fix list by removing invalid files
         /// </summary>
         /// <param name="x"></param>
-        private void PicErrorFix(int x)
+        private bool PicErrorFix(int x)
         {
-            if (Pics.Count < 0)
+            if (Pics.Count < 0 || x >= Pics.Count)
             {
                 ToolTipStyle("Unexpected error", true, TimeSpan.FromSeconds(3));
                 Unload();
-                return;
+                return false;
             }
 
             var file = Pics[x];
@@ -1051,9 +1050,10 @@ namespace PicView
             {
                 ToolTipStyle("Unexpected error", true, TimeSpan.FromSeconds(3));
                 Unload();
-                return;
+                return false;
             }
 
+            // Retry if exists, fixes rare error
             if (File.Exists(file))
             {
                 Preloader.Add(file);
@@ -1061,21 +1061,23 @@ namespace PicView
                 if (pic != null)
                 {
                     Pic(file);
-                    return;
+                    return true;
                 }
             }
 
+            // Continue to remove file if can't be rendered
             Pics.Remove(file);
 
             if (Pics.Count < 0)
             {
                 ToolTipStyle("No images in folder", true, TimeSpan.FromSeconds(3));
                 Unload();
-                return;
+                return false;
             }
 
             ToolTipStyle("File not found or unable to render, " + file, false, TimeSpan.FromSeconds(2.5));
 
+            // Go to next image
             if (FolderIndex + 1 == Pics.Count)
                 FolderIndex = 0;
             else
@@ -1084,12 +1086,15 @@ namespace PicView
             if (File.Exists(Pics[FolderIndex]))
             {
                 Pic(FolderIndex);
-                PreloadCount++;               
+                PreloadCount++;
+                return true;               
             }
             else
             {
+                // Repeat process if the next image was not found
                 PicErrorFix(FolderIndex);
             }
+            return false;
         }
 
         #endregion
@@ -1287,6 +1292,8 @@ namespace PicView
         #endregion
 
         #region Drag and Drop
+
+        #region bool? Drag_Drop_Check(string[] files)
         /// <summary>
         /// Check if dragged file is valid
         /// Returns null if not useable thumbnail,
@@ -1300,9 +1307,10 @@ namespace PicView
             if (files == null) return true;
             if (files[0] == null) return true;
 
-            // Return if not useable file
+            // Return status of useable file
             switch (Path.GetExtension(files[0]))
             {
+                // Archives
                 case ".zip":
                 case ".7zip":
                 case ".7z":
@@ -1311,13 +1319,15 @@ namespace PicView
                 case ".cb7":
                 case ".cbt":
                 case ".cbz":
-                case ".cba":
                 case ".xz":
                 case ".bzip2":
                 case ".gzip":
                 case ".tar":
                 case ".wim":
-                case ".dds":
+                case ".iso":
+                case ".cab":
+
+                // Non-standards
                 case ".svg":
                 case ".psd":
                 case ".psb":
@@ -1326,15 +1336,118 @@ namespace PicView
                 case ".crw":
                 case ".dng":
                 case ".raf":
-                case ".ppm":
                 case ".raw":
                 case ".mrw":
                 case ".nef":
-                case ".pef":
-                case ".arw":
                 case ".x3f":
+                case ".arw":
                 case ".webp":
+                case ".aai":
+                case ".ai":
+                case ".art":
+                case ".bgra":
+                case ".bgro":
+                case ".canvas":
+                case ".cin":
+                case ".cmyk":
+                case ".cmyka":
+                case ".cur":
+                case ".cut":
+                case ".dcm":
+                case ".dcr":
+                case ".dcx":
+                case ".dds":
+                case ".dfont":
+                case ".dlib":
+                case ".dpx":
+                case ".dxt1":
+                case ".dxt5":
+                case ".emf":
+                case ".epdf":
+                case ".epi":
+                case ".eps":
+                case ".ept":
+                case ".ept2":
+                case ".ept3":
+                case ".exr":
+                case ".fax":
+                case ".fits":
+                case ".flif":
+                case ".g3":
+                case ".g4":
+                case ".gif87":
+                case ".gradient":
+                case ".gray":
+                case ".group4":
+                case ".hald":
+                case ".hdr":
+                case ".hrz":
+                case ".icb":
+                case ".icon":
+                case ".ipl":
+                case ".jc2":
+                case ".j2k":
+                case ".jng":
+                case ".jnx":
+                case ".jpm":
+                case ".jps":
+                case ".jpt":
+                case ".kdc":
+                case ".label":
+                case ".map":
+                case ".nrw":
+                case ".otb":
+                case ".otf":
+                case ".pbm":
+                case ".pcd":
+                case ".pcds":
+                case ".pcl":
+                case ".pct":
+                case ".pcx":
+                case ".pfa":
+                case ".pfb":
+                case ".pfm":
+                case ".picon":
+                case ".pict":
+                case ".pix":
+                case ".pjpeg":
+                case ".png00":
+                case ".png24":
+                case ".png32":
+                case ".png48":
+                case ".png64":
+                case ".png8":
+                case ".pnm":
+                case ".ppm":
+                case ".ps":
+                case ".radialgradient":
+                case ".ras":
+                case ".rgb":
+                case ".rgba":
+                case ".rgbo":
+                case ".rla":
+                case ".rle":
+                case ".scr":
+                case ".screenshot":
+                case ".sgi":
+                case ".srf":
+                case ".sun":
+                case ".svgz":
+                case ".tiff64":
+                case ".ttf":
+                case ".vda":
+                case ".vicar":
+                case ".vid":
+                case ".viff":
+                case ".vst":
+                case ".vmf":
+                case ".wpg":
+                case ".xbm":
+                case ".xcf":
+                case ".yuv":
                     return null;
+
+                // Standards
                 case ".jpg":
                 case ".jpeg":
                 case ".jpe":
@@ -1346,10 +1459,16 @@ namespace PicView
                 case ".ico":
                 case ".wdp":
                     return false;
+
+                // Non supported
                 default:
                     return true;
             }
         }
+
+        #endregion
+
+        #region DragEnter
 
         /// <summary>
         /// Logic for handling drag over event
@@ -1400,6 +1519,10 @@ namespace PicView
 
         }
 
+        #endregion
+
+        #region DragLeave
+
         /// <summary>
         /// Logic for handling when the cursor leaves drag area
         /// </summary>
@@ -1426,6 +1549,9 @@ namespace PicView
             isDraggedOver = false;
         }
 
+        #endregion
+
+        #region Drop
         /// <summary>
         /// Logic for handling the drop event
         /// </summary>
@@ -1469,6 +1595,8 @@ namespace PicView
 
         #endregion
 
+        #endregion
+
         #region Keyboard & Mouse Shortcuts
 
         #region KeyDown
@@ -1485,7 +1613,7 @@ namespace PicView
                         if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                             Pic(true, true); // Go to first if Ctrl held down
                         else
-                            Pic(true, false);
+                            Pic();
                     }
                     else if (canNavigate)
                     {
@@ -1508,7 +1636,7 @@ namespace PicView
                         if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                             Pic(false, true); // Go to last if Ctrl held down
                         else
-                            Pic(false, false);
+                            Pic(false);
 
                         GoToPic = false;
                     }
@@ -1768,7 +1896,7 @@ namespace PicView
                     Pic(false, false);
                     break;
                 case MouseButton.XButton2:
-                    Pic(true, false);
+                    Pic();
                     break;
                 default:
                     break;
@@ -1784,6 +1912,7 @@ namespace PicView
 
         private void StartAutoScroll(MouseButtonEventArgs e)
         {
+            // Don't scroll if not scrollable
             if (Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed)
                 return;
 
@@ -2064,7 +2193,7 @@ namespace PicView
             // Get max width and height, based on user's screen
             var maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth - ComfySpace, width);
             var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 72), height);
-
+           
             AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));
 
             if (IsScrollEnabled)
@@ -2094,7 +2223,6 @@ namespace PicView
             }
 
             // Update TitleBar width to fit new size
-            // Calculation works, don't ask...
             if (xWidth - 221 < 220)
                 Bar.MaxWidth = 210;
             else

@@ -19,7 +19,7 @@ namespace PicView.lib
     //https://msdn.microsoft.com/en-us/library/ms182161.aspx
     internal static class NativeMethods
     {
-        #region logical sorting
+        #region StrCmpLogicalW
 
         [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
         internal static extern int StrCmpLogicalW(String x, String y);
@@ -232,7 +232,7 @@ namespace PicView.lib
         internal static double AspectRatio { get; set; }
 
         /// <summary>
-        /// Used to get how much image is rotated
+        /// Used to get and set image rotation by degrees
         /// </summary>
         internal static int Rotateint { get; set; }
 
@@ -253,7 +253,14 @@ namespace PicView.lib
         #region Points + Scaletransform & TranslateTransform
         internal static Point origin;
         internal static Point start;
+
+        /// <summary>
+        /// Starting point of AutoScroll
+        /// </summary>
         internal static Point? autoScrollOrigin;
+        /// <summary>
+        /// Current point of AutoScroll
+        /// </summary>
         internal static Point autoScrollPos;
 
         internal static ScaleTransform st;
@@ -268,9 +275,14 @@ namespace PicView.lib
         #endregion
 
         #region Timers
-
+        /// <summary>
+        /// Timer used to continously scroll with AutoScroll
+        /// </summary>
         internal static Timer autoScrollTimer;
 
+        /// <summary>
+        /// Timer used to hide interface and/or scrollbar
+        /// </summary>
         internal static Timer activityTimer;
 
         #endregion
@@ -281,9 +293,18 @@ namespace PicView.lib
         /// </summary>
         internal static ImageSource prevPicResource;
 
+        /// <summary>
+        /// Primary ContextMenu
+        /// </summary>
         internal static ContextMenu cm;
 
+        /// <summary>
+        /// Helper for user color settings
+        /// </summary>
         internal static Color backgroundBorderColor;
+        /// <summary>
+        /// Helper for user color settings
+        /// </summary>
         internal static Color mainColor;
 
         #endregion
@@ -299,6 +320,11 @@ namespace PicView.lib
 
         #region Win 7 Taskbar Stuff
 
+        /// <summary>
+        /// Show progress on taskbar
+        /// </summary>
+        /// <param name="i">index</param>
+        /// <param name="ii">size</param>
         internal static void Progress(int i, int ii)
         {
             TaskbarManager prog = TaskbarManager.Instance;
@@ -306,6 +332,9 @@ namespace PicView.lib
             prog.SetProgressValue(i, ii);
         }
 
+        /// <summary>
+        /// Stop showing taskbar progress, return to default
+        /// </summary>
         internal static void NoProgress()
         {
             TaskbarManager prog = TaskbarManager.Instance;
@@ -440,13 +469,16 @@ namespace PicView.lib
             return sign + readable.ToString("0.## ") + suffix + 'B';
         }
         /// Credits to http://www.somacon.com/p576.php
-        
+
         #endregion
 
         #endregion
 
         #region File list
-       
+
+        /// <summary>
+        /// Sort and return list of supported files
+        /// </summary>
         internal static List<string> FileList(string path)
         {
             var foo = Directory.GetFiles(path)
@@ -470,7 +502,6 @@ namespace PicView.lib
                         || file.ToLower().EndsWith("crw", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("dng", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("raf", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("ppm", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("raw", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("mrw", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("nef", StringComparison.OrdinalIgnoreCase)
@@ -586,6 +617,8 @@ namespace PicView.lib
             // Sort like Windows Explorer sorts file names alphanumerically
             foo.Sort((x, y) => { return NativeMethods.StrCmpLogicalW(x, y); });
 
+            // Needs to support: sort by file size, last modified, as an option
+
             return foo;
         }
 
@@ -699,6 +732,12 @@ namespace PicView.lib
             return false;
         }
 
+        /// <summary>
+        /// Attemps to extract folder
+        /// </summary>
+        /// <param name="path">The path to the archived file</param>
+        /// <param name="exe">Full path of the executeable</param>
+        /// <param name="winrar">If WinRar or 7-Zip</param>
         private static void Extract(string path, string exe, bool winrar)
         {
             TempZipPath = Path.GetTempPath() + Path.GetRandomFileName();

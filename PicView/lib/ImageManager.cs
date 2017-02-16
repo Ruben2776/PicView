@@ -138,27 +138,5 @@ namespace PicView.lib
         }
 
         #endregion
-
-        #region Get EXIF data
-
-        //internal static Size GetExifSize(string file)
-        //{
-        //    using (var pic = new MagickImage(file))
-        //    {
-        //        var profile = pic.GetExifProfile();
-
-        //        if (profile.GetValue(ExifTag.ImageWidth) != null && profile.GetValue(ExifTag.ImageLength) != null)
-        //        {
-        //            return new Size(
-        //                (double)profile.GetValue(ExifTag.ImageWidth).Value,
-        //                (double)profile.GetValue(ExifTag.ImageWidth).Value
-        //            );
-        //        }
-        //    }
-        //    return new Size(0, 0);
-        //}
-
-        #endregion
-
     }
 }

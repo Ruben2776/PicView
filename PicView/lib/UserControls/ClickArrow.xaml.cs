@@ -33,6 +33,8 @@ namespace PicView.lib.UserControls
                 {
                     ScaleX = -1
                 };
+                border.BorderThickness = new System.Windows.Thickness(0, 1, 1, 1);
+                border.CornerRadius = new System.Windows.CornerRadius(0, 2, 2, 0);
             }
         }
 
