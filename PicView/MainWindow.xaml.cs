@@ -848,7 +848,7 @@ namespace PicView
 
                 #endregion
 
-                if (freshStartup || PreloadCount < 2)
+                if (freshStartup || PreloadCount < 2 || PreloadCount > 5)
                 {
                     // If preloader is not running, load picture manually
                     await Task.Run(() => pic = RenderToBitmapSource(Pics[x], Extension));
@@ -864,7 +864,7 @@ namespace PicView
                             spin.SpinOnce();
 
                             // Break if too many spins
-                            if (spin.Count > 12000)
+                            if (spin.Count > 7000)
                             {
                                 pic = RenderToBitmapSource(Pics[x], Extension);
                                 break;

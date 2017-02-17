@@ -333,7 +333,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="lib\img\noisy-texture-200x200-o4-d38-c-0c0c0c-t0.png" />
-    <Resource Include="lib\img\noisy-texture-200x200-o5-d20-c-171717-t0.png" />
+    <Resource Include="lib\img\noisy-texture-200x200-o4-d38-c-171717-t0.png" />
+    <Resource Include="lib\img\noisy-texture-200x200-o4-d40-c-121212-t0.png" />
     <Content Include="Microsoft.WindowsAPICodePack.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
