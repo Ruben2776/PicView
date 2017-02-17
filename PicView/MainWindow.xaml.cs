@@ -604,6 +604,30 @@ namespace PicView
 
         #endregion
 
+        #region Unload
+
+        /// <summary>
+        /// Reset to default state
+        /// </summary>
+        private void Unload()
+        {
+            Bar.ToolTip = Bar.Text = NoImage;
+            Title = NoImage + " - " + AppName;
+            canNavigate = false;
+            img.Source = null;
+            freshStartup = true;
+            Pics.Clear();
+            PreloadCount = 0;
+            Preloader.Clear();
+            PicPath = string.Empty;
+            FolderIndex = 0;
+            img.Width = Scroller.Width = Scroller.Height =
+            img.Height = double.NaN;
+            AjaxLoadingEnd();
+        }
+
+        #endregion
+
         #region Size changed
         protected override void OnRenderSizeChanged(SizeChangedInfo size)
         {
@@ -808,26 +832,15 @@ namespace PicView
                 //if (Extension == ".jpg")
                 //{
                 //    img.Source = GetWindowsThumbnail(Pics[x]);
-
-                //    var exifDimensions = GetExifSize(Pics[x]);
-
-                //    if (exifDimensions.Width > 0)
+                //    if (xWidth > 0 && xHeight > 0)
                 //    {
-                //        img.Width = exifDimensions.Width;
-                //        img.Height = exifDimensions.Height;
+                //          img.Width = xWidth;
+                //          img.Height = xHeight;
                 //    }
                 //    else
                 //    {
-                //        if (xWidth > 0 && xHeight > 0)
-                //        {
-                //            img.Width = xWidth;
-                //            img.Height = xHeight;
-                //        }
-                //        else
-                //        {
-                //            img.Width = Scroller.ActualWidth;
-                //            img.Height = Scroller.ActualHeight;
-                //        }
+                //          img.Width = Scroller.ActualWidth;
+                //          img.Height = Scroller.ActualHeight;
                 //    }
                 //}               
 
@@ -835,29 +848,29 @@ namespace PicView
 
                 #endregion
 
-                if (freshStartup || PreloadCount < 2 || Preloader.Count() < 0)
+                if (freshStartup || PreloadCount < 2)
                 {
                     // If preloader is not running, load picture manually
                     await Task.Run(() => pic = RenderToBitmapSource(Pics[x], Extension));
                 }
                 else
                 {
-                    // Preloader is running, wait for it to decode image
-                    var spin = new SpinWait();
+                    // Preloader is running, wait for it to decode image                   
                     await Task.Run(() =>
                     {
+                        var spin = new SpinWait();
                         do
                         {
                             spin.SpinOnce();
-                            if (spin.Count > 2000)
+
+                            // Break if too many spins
+                            if (spin.Count > 12000)
                             {
                                 pic = RenderToBitmapSource(Pics[x], Extension);
                                 break;
                             }
                         } while (!Preloader.Contains(Pics[x]));
                     });
-                    if (spin.Count < 2000)
-                        pic = Preloader.Load(Pics[x]);
                 }
                 if (pic == null)
                 {
@@ -865,6 +878,7 @@ namespace PicView
                     return;
                 }
             }
+
             #endregion
 
             #region Update source, size, animated gif and scroll
@@ -876,8 +890,7 @@ namespace PicView
                 XamlAnimatedGif.AnimationBehavior.SetSourceUri(img, new Uri(Pics[x]));
             else
                 img.Source = pic;
-
-            
+           
             PicPath = Pics[x];
             canNavigate = true;
             #endregion
@@ -1277,7 +1290,7 @@ namespace PicView
 
         #endregion
 
-        #region ChangeFolder + Unload
+        #region ChangeFolder
         /// <summary>
         /// Clears data, to free objects no longer necessary to store in memory and allow changing folder without error.
         /// </summary>
@@ -1286,34 +1299,8 @@ namespace PicView
             Pics.Clear();
             Preloader.Clear();
             DeleteTempFiles();
-        }
-
-        #region unLoad
-
-        /// <summary>
-        /// Reset to default state
-        /// </summary>
-        private void Unload()
-        {
-            Bar.ToolTip = Bar.Text = NoImage;
-            Title = NoImage + " - " + AppName;
-            canNavigate = false;
-            img.Source = null;
-            freshStartup = true;
-            Pics.Clear();
             PreloadCount = 0;
-            Preloader.Clear();
-            PicPath = string.Empty;
-            FolderIndex = 0;
-            img.Width = Scroller.Width = Scroller.Height =
-            img.Height = double.NaN;
-            AjaxLoadingEnd();
-
-            Width = 465;
-            Height = 515;
         }
-
-        #endregion
 
         #endregion
 

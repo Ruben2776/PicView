@@ -745,7 +745,7 @@ namespace PicView.lib
 
             var arguments = winrar ? 
                 // Add WinRAR specifics
-                "x -o- \"" + path + "\" " 
+                "e -o- \"" + path + "\" " 
                 :
                 // Add 7-Zip specifics
                 "x \"" + path + "\" -o";

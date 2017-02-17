@@ -273,7 +273,7 @@
                         Canvas.Top="0"
                         Width="1"
                         Height="55"
-                        Fill="{StaticResource BorderBrushAlt}"/>
+                        Fill="{StaticResource BorderBrushAlt}" />
                     <Button
                         x:Name="LeftButton"
                         Width="100"
@@ -385,7 +385,7 @@
             <Grid x:Name="bg" AllowDrop="True">
                 <Grid.Background>
                     <ImageBrush
-                        ImageSource="lib/img/noisy-texture-200x200-o4-d25-c-121212-t0.png"
+                        ImageSource="lib/img/noisy-texture-200x200-o5-d20-c-171717-t0.png"
                         TileMode="FlipXY"
                         Viewport="0,0,100,100"
                         ViewportUnits="Absolute" />

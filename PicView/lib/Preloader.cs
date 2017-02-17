@@ -78,6 +78,11 @@ namespace PicView.lib
             var value = Sources[key];
             Sources.TryRemove(key, out value);
             value = null;
+
+            if (PreloadCount <= 4)
+                PreloadCount--;
+            else
+                PreloadCount++;
         }
 
         /// <summary>
