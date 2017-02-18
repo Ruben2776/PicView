@@ -13,20 +13,14 @@ namespace PicView.Windows
     {
         #region Window Logic
 
-        #region Constructor
         public Help()
         {
             InitializeComponent();
         }
-        #endregion
-
-        #region Loaded
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             #region Add Events
-
-            #region CloseButton
 
             CloseButton.Click += (s, x) => Close();
 
@@ -45,25 +39,17 @@ namespace PicView.Windows
                 AnimationHelper.PreviewMouseLeftButtonDownColorEvent(CloseButtonBrush, true);
             };
 
-            #endregion
-
             KeyDown += Keys;
 
             #endregion
         }
-
-        #endregion
-
-        #region Closing
-
+        
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             Closing -= Window_Closing;
             e.Cancel = true;
             AnimationHelper.FadeWindow(this, 0, TimeSpan.FromSeconds(.5));
         }
-
-        #endregion
 
         #endregion
 

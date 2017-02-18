@@ -4,11 +4,40 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Threading.Tasks;
+using System.Timers;
+using static PicView.lib.Variables;
 
 namespace PicView.lib
 {
     public static class Wallpaper // Taken from a Microsoft sample...
     {
+        internal static void SetWallpaper(string path, WallpaperStyle style)
+        {
+            if (canNavigate)
+            {
+                if (File.Exists(path))
+                    Task.Run(() => SetDesktopWallpaper(path, style));
+            }
+            else
+            {
+                Task.Run(() =>
+                {
+                    //Handle if file from web, need clipboard image solution
+                    var tempPath = Path.GetTempPath();
+                    var randomName = Path.GetRandomFileName();
+                    var webClient = new System.Net.WebClient();
+                    Directory.CreateDirectory(tempPath);
+                    webClient.DownloadFile(path, tempPath + randomName);
+                    SetDesktopWallpaper(tempPath + randomName, style);
+                    File.Delete(tempPath + randomName);
+                    var timer = new Timer(2000);
+                    timer.Elapsed += (s, x) => Directory.Delete(tempPath);
+                });
+            }
+        }
+
+
         /// <summary>
         /// Determine if .jpg files are supported as wallpaper in the current 
         /// operating system. The .jpg wallpapers are not supported before 

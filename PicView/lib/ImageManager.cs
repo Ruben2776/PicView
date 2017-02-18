@@ -7,8 +7,6 @@ namespace PicView.lib
 {
     internal static class ImageManager
     {
-        #region RenderToBitmapSource
-
         internal static BitmapSource RenderToBitmapSource(string file, string extension)
         {
             if (string.IsNullOrWhiteSpace(file) || file.Length < 2)
@@ -62,10 +60,6 @@ namespace PicView.lib
 
         }
 
-        #endregion
-
-        #region GetBitmapImage
-
         internal static BitmapImage GetBitmapImage(Uri s)
         {
             var pic = new BitmapImage();
@@ -93,9 +87,6 @@ namespace PicView.lib
             return pic;
         }
 
-        #endregion
-
-        #region GetMagickImage(Stream s)
         internal static BitmapSource GetMagickImage(Stream s)
         {
             BitmapSource pic;
@@ -116,9 +107,6 @@ namespace PicView.lib
                 return pic;
             }
         }
-        #endregion
-
-        #region Save Image
 
         internal static bool TrySaveImage(int rotate, bool flipped, string path, string destination)
         {
@@ -136,7 +124,5 @@ namespace PicView.lib
             
             return true;
         }
-
-        #endregion
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
-using static PicView.lib.Helper;
+using static PicView.lib.Variables;
 
 namespace PicView.lib.UserControls
 {
@@ -12,8 +12,6 @@ namespace PicView.lib.UserControls
         public FileMenu()
         {
             InitializeComponent();
-
-            #region Register Events...
 
             CloseButton.MouseEnter += CloseButtonMouseOver;
             CloseButton.MouseLeave += CloseButtonMouseLeave;
@@ -41,11 +39,9 @@ namespace PicView.lib.UserControls
             Open_File_Location_Border.MouseLeftButtonDown += Open_File_Location_Border_MouseLeftButtonDown;
             Print_Border.MouseLeftButtonDown += Print_Border_MouseLeftButtonDown;
             Save_File_Location_Border.MouseLeftButtonDown += Save_Border_MouseLeftButtonDown;
-
-            #endregion
         }
 
-        #region Close Button
+        #region Interface Logic
 
         private void CloseButtonMouseOver(object sender, MouseEventArgs e)
         {
@@ -62,10 +58,6 @@ namespace PicView.lib.UserControls
             AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
         }
 
-        #endregion
-
-        #region Paste Button
-
         private void PasteButtonMouseOver(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, PasteButtonBrush, false);
@@ -81,10 +73,6 @@ namespace PicView.lib.UserControls
             AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, PasteButtonBrush, false);
         }
 
-        #endregion
-
-        #region Copy Button
-
         private void CopyButtonMouseOver(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, CopyButtonBrush, false);
@@ -99,12 +87,6 @@ namespace PicView.lib.UserControls
         {
             AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CopyButtonBrush, false);
         }
-
-        #endregion
-
-        #region Borders
-
-        #region Mouse Leave
 
         private void Open_Border_MouseLeave(object sender, MouseEventArgs e)
         {
@@ -154,10 +136,6 @@ namespace PicView.lib.UserControls
             );
         }
 
-        #endregion
-
-        #region Mouse Enter
-
         private void Open_File_Location_Border_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, OpenFileLocationBorderBrush, true);
@@ -178,10 +156,6 @@ namespace PicView.lib.UserControls
             AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, SaveFileLocationBorderBrush, true);
         }
 
-        #endregion
-
-        #region Preview Mouse LeftButton Down....
-
         private void Open_File_Location_Border_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(OpenFileLocationBorderBrush, true);
@@ -201,9 +175,6 @@ namespace PicView.lib.UserControls
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(SaveFileLocationBorderBrush, true);
         }
-
-
-        #endregion
 
         #endregion
     }

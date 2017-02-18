@@ -6,7 +6,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using static PicView.lib.Helper;
+using static PicView.lib.FileFunctions;
+using static PicView.lib.Variables;
 
 namespace PicView.lib
 {
@@ -15,15 +16,13 @@ namespace PicView.lib
     /// </summary>
     internal static class Preloader
     {
-        #region Sources, the list of preloaded images
         /// <summary>
         /// Contains A list of BitmapSources
         /// </summary>
         private static readonly ConcurrentDictionary<string, BitmapSource> Sources = new ConcurrentDictionary<string, BitmapSource>();
 
-        #endregion
+        #region Manage list methods
 
-        #region Add
         internal static void Add(string file)
         {
             if (Contains(file))
@@ -63,9 +62,6 @@ namespace PicView.lib
             Sources.TryAdd(key, bmp);
         }
 
-        #endregion
-
-        #region Remove || Clear
         /// <summary>
         /// Removes the key, after checking if it exists
         /// </summary>
@@ -79,10 +75,12 @@ namespace PicView.lib
             Sources.TryRemove(key, out value);
             value = null;
 
-            if (PreloadCount <= 4)
-                PreloadCount--;
-            else
-                PreloadCount++;
+            //if (PreloadCount <= 4)
+            //    PreloadCount--;
+            //else
+            //    PreloadCount++;
+
+            //MessageBox.Show(key);
         }
 
         /// <summary>
@@ -94,7 +92,7 @@ namespace PicView.lib
 
             var timer = new DispatcherTimer
             (
-                TimeSpan.FromSeconds(20), DispatcherPriority.Background, (s, e) => {
+                TimeSpan.FromSeconds(20), DispatcherPriority.Loaded, (s, e) => {
                     for (int i = 0; i < array.Length; i++)
                     {
                         Remove(array[i]);
@@ -105,6 +103,7 @@ namespace PicView.lib
             );
             timer.Start();
         }
+
         /// <summary>
         /// Removes specific keys and clears them when app is idle
         /// </summary>
@@ -113,7 +112,7 @@ namespace PicView.lib
         {
             var timer = new DispatcherTimer
             (
-                TimeSpan.FromSeconds(25), DispatcherPriority.Background, (s, e) =>
+                TimeSpan.FromSeconds(25), DispatcherPriority.Loaded, (s, e) =>
                 {
                     for (int i = 0; i < array.Length; i++)
                     {
@@ -126,9 +125,6 @@ namespace PicView.lib
             timer.Start();
         }
 
-        #endregion
-
-        #region Load
         /// <summary>
         /// Returns the specified BitmapSource.
         /// Returns null if key not found.
@@ -143,9 +139,6 @@ namespace PicView.lib
             return Sources[key];
         }
 
-        #endregion
-
-        #region Contains
         /// <summary>
         /// Checks if the specified key exists
         /// </summary>
@@ -160,18 +153,6 @@ namespace PicView.lib
 
         #endregion
 
-        #region Count
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        internal static int Count()
-        {
-            return Sources.Count;
-        }
-
-        #endregion
-
         #region Preloading
         /// <summary>
         /// Starts decoding images into memory,
@@ -181,7 +162,6 @@ namespace PicView.lib
         /// <param name="reverse"></param>
         internal static void PreLoad(int index, bool reverse)
         {
-            #region Forward
             if (!reverse)
             {
                 //Add first three
@@ -218,9 +198,7 @@ namespace PicView.lib
                     Clear(arr);
                 }
             }
-            #endregion
 
-            #region Backwards
             else
             {
                 //Add first three
@@ -254,7 +232,6 @@ namespace PicView.lib
                     Clear(arr);
                 }
             }
-            #endregion
 
             #region Update Pics if needed
 

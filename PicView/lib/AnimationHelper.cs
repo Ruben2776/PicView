@@ -37,7 +37,7 @@ namespace PicView.lib
         internal static void FadeWindow(Window window, Double to, Duration duration)
         {
             var anim = new DoubleAnimation(to, duration);
-            anim.Completed += (s, _) => Helper.Close(window);
+            anim.Completed += (s, _) => WindowFunctions.Close(window);
             window.BeginAnimation(UIElement.OpacityProperty, anim);
         }
         #endregion

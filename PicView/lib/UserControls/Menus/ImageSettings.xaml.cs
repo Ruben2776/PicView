@@ -1,5 +1,4 @@
-﻿using PicView.lib;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using System.Windows.Media;
 
 namespace PicView.lib.UserControls
@@ -46,8 +45,9 @@ namespace PicView.lib.UserControls
 
         }
 
-        #region Change FlipButton icon on checked
+        #region Methods
 
+        // Change FlipButton's icon when (un)checked
         private void FlipButton_Unchecked(object sender, System.Windows.RoutedEventArgs e)
         {
             FlipButton.ToolTip = "Flip image";
@@ -60,9 +60,7 @@ namespace PicView.lib.UserControls
             FlipPath.Data = Geometry.Parse("M448,192l-128,96v-64H128v128h248c4.4,0,8,3.6,8,8v48c0,4.4-3.6,8-8,8H72c-4.4,0-8-3.6-8-8V168c0-4.4,3.6-8,8-8h248V96 L448, 192z");
         }
 
-        #endregion
-
-        #region 0 border
+        // Rotation0Border
         void Rotation0Border_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, Rotation0BorderBrush, true);
@@ -77,9 +75,8 @@ namespace PicView.lib.UserControls
         {
             AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, Rotation0BorderBrush, true);
         }
-        #endregion
 
-        #region 90 border
+        // 90 border
         void Rotation90Border_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, Rotation90BorderBrush, true);
@@ -94,9 +91,8 @@ namespace PicView.lib.UserControls
         {
             AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, Rotation90BorderBrush, true);
         }
-        #endregion
 
-        #region 180 border
+        // Rotation180Border
         void Rotation180Border_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, Rotation180BorderBrush, true);
@@ -111,9 +107,8 @@ namespace PicView.lib.UserControls
         {
             AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, Rotation180BorderBrush, true);
         }
-        #endregion
 
-        #region 270 border
+        // Rotation270Border
         void Rotation270Border_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, Rotation270BorderBrush, true);
@@ -128,10 +123,8 @@ namespace PicView.lib.UserControls
         {
             AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, Rotation270BorderBrush, true);
         }
-        #endregion
 
-        #region Close Button
-
+        // Close Button
         private void CloseButtonMouseOver(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
@@ -147,10 +140,7 @@ namespace PicView.lib.UserControls
             AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
         }
 
-        #endregion
-
-        #region Flip Button
-
+        // Flip Button
         private void FlipButtonMouseOver(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, FlipButtonBrush, false);

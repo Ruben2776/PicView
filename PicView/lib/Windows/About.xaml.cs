@@ -6,47 +6,29 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Navigation;
-using static PicView.lib.Helper;
+using static PicView.lib.Variables;
 
 namespace PicView.Windows
 {
     /// <summary>
-    /// Interaction logic for About.xaml
+    /// About window
     /// </summary>
     public partial class About : Window
     {
-        #region Variables
-
-        private const string version = "Version : ";
-
-        #endregion
-
         #region Window Logic
-
-        #region Constructor
 
         public About()
         {
             InitializeComponent();
 
-            #region Get version
-
+            // Get version
             Assembly assembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            appVersion.Content = version + fvi.FileVersion;
-
-            #endregion
+            appVersion.Content += fvi.FileVersion;
         }
-
-        #endregion
-
-        #region Window_ContentRendered
-
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             #region Add events
-
-            #region CloseButton
 
             CloseButton.Click += (s, x) => Close();
 
@@ -64,9 +46,7 @@ namespace PicView.Windows
             {
                 AnimationHelper.PreviewMouseLeftButtonDownColorEvent(CloseButtonBrush, true);
             };
-
-            #endregion
-
+            
             KeyDown += Keys;
 
             Aller.MouseEnter += AllerMouseOver;
@@ -92,10 +72,6 @@ namespace PicView.Windows
             #endregion
         }
 
-        #endregion     
-
-        #region Closing
-
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             Closing -= Window_Closing;
@@ -105,14 +81,21 @@ namespace PicView.Windows
 
         #endregion
 
-        #endregion
-
-        #region Hyperlink
+        #region Methods
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
+        }
+
+        private void Keys(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape ||
+                e.Key == Key.Q && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control || e.Key == Key.F2)
+            {
+                Close();
+            }
         }
 
         #endregion
@@ -287,18 +270,6 @@ namespace PicView.Windows
         #endregion
 
         #endregion
-
-        #endregion
-
-        #region Keys
-        private void Keys(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Escape ||
-                e.Key == Key.Q && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control || e.Key == Key.F2)
-            {
-                Close();
-            }
-        }
 
         #endregion
 
