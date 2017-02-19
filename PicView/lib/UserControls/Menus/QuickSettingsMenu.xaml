@@ -86,8 +86,6 @@
                             x:Name="Fill"
                             Canvas.Left="0"
                             Canvas.Top="0"
-                            BorderBrush="{StaticResource BorderBrushAlt}"
-                            BorderThickness="1"
                             Content="Fill"
                             Style="{StaticResource MetroAlphaFlatButton}">
                             <Button.Background>
@@ -99,8 +97,6 @@
                             x:Name="Center"
                             Canvas.Left="106"
                             Canvas.Top="0"
-                            BorderBrush="{StaticResource BorderBrushAlt}"
-                            BorderThickness="1"
                             Content="Center"
                             Style="{StaticResource MetroAlphaFlatButton}">
                             <Button.Background>
@@ -112,8 +108,6 @@
                             x:Name="Fit"
                             Canvas.Left="212"
                             Canvas.Top="0"
-                            BorderBrush="{StaticResource BorderBrushAlt}"
-                            BorderThickness="1"
                             Content="Fit"
                             Style="{StaticResource MetroAlphaFlatButton}">
                             <Button.Background>
@@ -125,8 +119,6 @@
                             x:Name="Tile"
                             Canvas.Left="0"
                             Canvas.Top="46"
-                            BorderBrush="{StaticResource BorderBrushAlt}"
-                            BorderThickness="1"
                             Content="Tile"
                             Style="{StaticResource MetroAlphaFlatButton}">
                             <Button.Background>
@@ -138,8 +130,6 @@
                             x:Name="Stretch"
                             Canvas.Left="106"
                             Canvas.Top="46"
-                            BorderBrush="{StaticResource BorderBrushAlt}"
-                            BorderThickness="1"
                             Content="Stretch"
                             Style="{StaticResource MetroAlphaFlatButton}">
                             <Button.Background>

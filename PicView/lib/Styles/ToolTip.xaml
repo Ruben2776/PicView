@@ -22,7 +22,7 @@
                     <Border Name="Border"
                   CornerRadius="2"
                   BorderThickness="1"
-                  BorderBrush="{StaticResource BorderBrushAlt}"
+                  BorderBrush="{StaticResource BorderBrush}"
                   Width="{TemplateBinding Width}"
                   Height="{TemplateBinding Height}"
                   Background="{StaticResource BackgroundColorBrush}">

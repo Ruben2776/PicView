@@ -105,7 +105,7 @@ namespace PicView.lib
         internal static bool imageSettingsMenuOpen;
         internal static bool fileMenuOpen;
         internal static bool quickSettingsMenuOpen;
-        internal static bool GoToPic;
+        internal static bool FastPicRunning;
         internal static bool isZoomed;
         internal static bool Flipped;
         internal static bool canNavigate;
@@ -194,6 +194,11 @@ namespace PicView.lib
         /// Timer used to hide interface and/or scrollbar
         /// </summary>
         internal static Timer activityTimer;
+
+        /// <summary>
+        /// Timer used for FastPic()
+        /// </summary>
+        internal static Timer fastPicTimer;
 
         /// <summary>
         /// Backup of image

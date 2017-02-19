@@ -46,7 +46,7 @@
                     <Border
                         x:Name="Border"
                         Background="{StaticResource BackgroundColorBrush}"
-                        BorderBrush="{StaticResource BorderBrushAlt}"
+                        BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1"
                         CornerRadius="2">
                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
@@ -198,7 +198,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Separator}">
-                    <Border BorderBrush="#F91D1D1D" BorderThickness="2" />
+                    <Border BorderBrush="{StaticResource BorderBrushAlt}" BorderThickness="2" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -333,7 +333,7 @@
                     Grid.Column="2"
                     Margin="5,2,0,2"
                     DockPanel.Dock="Right"
-                    Foreground="{StaticResource MainColorBrush}"
+                    Foreground="{StaticResource MainColorFadedBrush}"
                     Text="{TemplateBinding InputGestureText}" />
             </Grid>
         </Border>

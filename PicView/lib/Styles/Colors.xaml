@@ -12,6 +12,10 @@
     <Color x:Key="MainColor">#FFF7F4F4</Color>
     <SolidColorBrush x:Key="MainColorBrush" Color="{StaticResource MainColor}" />
 
+    <!--  Main Color faded  -->
+    <Color x:Key="MainColorFaded">#FFB1B1B1</Color>
+    <SolidColorBrush x:Key="MainColorFadedBrush" Color="{StaticResource MainColorFaded}" />
+
     <!--  Fade Color  -->
     <Color x:Key="FadeColor">#FFF7F4F4</Color>
     <SolidColorBrush x:Key="FadeColorBrush" Color="{StaticResource FadeColor}" />

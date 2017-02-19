@@ -38,7 +38,7 @@ namespace PicView.lib
         /// <returns></returns>
         internal static System.Windows.Media.Imaging.BitmapSource GetWindowsThumbnail(string path)
         {
-            return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
+            return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.ExtraLargeBitmapSource;
         }
 
         /// <summary>

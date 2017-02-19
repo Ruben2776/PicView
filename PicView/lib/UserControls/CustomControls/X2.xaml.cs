@@ -1,7 +1,4 @@
-﻿using System;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
+﻿using System.Windows.Controls;
 
 namespace PicView.lib.UserControls
 {
@@ -10,26 +7,17 @@ namespace PicView.lib.UserControls
     /// </summary>
     public partial class X2 : UserControl
     {
-        private static ColorAnimation ccAnim;
         public X2()
         {
             InitializeComponent();
-            ccAnim = new ColorAnimation
-            {
-                Duration = TimeSpan.FromSeconds(.32)
-            };
 
             MouseEnter += (sender, e) =>
             {
-                ccAnim.From = Colors.WhiteSmoke;
-                ccAnim.To = AnimationHelper.GetPrefferedColorDown();
-                CrossFill.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+                AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, CrossFill, false);
             };
             MouseLeave += (sender, e) =>
             {
-                ccAnim.From = AnimationHelper.GetPrefferedColorDown();
-                ccAnim.To = Colors.WhiteSmoke;
-                CrossFill.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+                AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, CrossFill, false);
             };
         }
     }

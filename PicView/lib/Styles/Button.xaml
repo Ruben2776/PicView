@@ -79,13 +79,14 @@
     </Style>
 
     <Style x:Key="MetroAlphaFlatButton" TargetType="{x:Type Button}">
-        <Setter Property="Background" Value="#A5232323" />
+        <Setter Property="Background" Value="{StaticResource BackgroundColorBrushFade}" />
         <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="FontFamily" Value="/PicView;component/Fonts/#Aller" />
         <Setter Property="Width" Value="101" />
         <Setter Property="Height" Value="40" />
-        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrushAlt}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">

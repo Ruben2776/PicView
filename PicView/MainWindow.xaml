@@ -63,7 +63,7 @@
             DockPanel.Dock="Top">
             <DockPanel.Background>
                 <ImageBrush
-                    ImageSource="lib/img/noisy-texture-200x200-o4-d38-c-0c0c0c-t0.png"
+                    ImageSource="lib/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
                     TileMode="FlipXY"
                     Viewport="0,0,100,100"
                     ViewportUnits="Absolute" />
@@ -122,9 +122,12 @@
                     <SolidColorBrush x:Name="CloseButtonBrush" />
                 </Button.Background>
                 <Path
-                    Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
-                    Fill="{StaticResource MainColorBrush}"
-                    SnapsToDevicePixels="True" />
+                            Width="10"
+                            Height="10"
+                            Data="M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z"
+                            Fill="{StaticResource MainColorBrush}"
+                            SnapsToDevicePixels="True"
+                            Stretch="Fill" />
             </Button>
             <Button
                 x:Name="MaxButton"
@@ -183,7 +186,7 @@
             DockPanel.Dock="Bottom">
             <StackPanel.Background>
                 <ImageBrush
-                    ImageSource="lib/img/noisy-texture-200x200-o4-d38-c-0c0c0c-t0.png"
+                    ImageSource="lib/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
                     TileMode="FlipXY"
                     Viewport="0,0,100,100"
                     ViewportUnits="Absolute" />
@@ -242,24 +245,13 @@
                         </Path>
                         <Path
                             x:Name="ImagePath3"
-                            Canvas.Left="-6"
-                            Canvas.Top="11.4"
-                            Width="3.422"
-                            Height="3.42"
+                            Canvas.Right="14"
+                            Canvas.Bottom="12"
+                            Width="7"
+                            Height="7"
                             Data="F1M1.711,3.42C2.655,3.42 3.422,2.655 3.422,1.71 3.422,0.766 2.655,0 1.711,0 0.765,0 0,0.766 0,1.71 0,2.655 0.765,3.42 1.711,3.42">
                             <Path.Fill>
                                 <SolidColorBrush x:Name="ImagePath3Fill" Color="{StaticResource MainColor}" />
-                            </Path.Fill>
-                        </Path>
-                        <Path
-                            x:Name="ImagePath4"
-                            Canvas.Right="16"
-                            Canvas.Bottom="17"
-                            Width="7.046"
-                            Height="2.751"
-                            Data="F1M2.383,2.6C2.769,2.6 3.125,2.56 3.446,2.495 3.82,2.655 4.274,2.751 4.765,2.751 6.024,2.751 7.046,2.135 7.046,1.376 7.046,0.616 6.024,0 4.765,0 4.291,0 3.854,0.087 3.489,0.236 3.34,0.091 3.139,0 2.915,0L2.582,0C2.162,0 1.828,0.321 1.779,0.729 0.758,0.836 0,1.205 0,1.647 0,2.174 1.068,2.6 2.383,2.6">
-                            <Path.Fill>
-                                <SolidColorBrush x:Name="ImagePath4Fill" Color="{StaticResource MainColor}" />
                             </Path.Fill>
                         </Path>
                     </Canvas>
@@ -363,7 +355,7 @@
                 DockPanel.Dock="Left">
                 <Rectangle.Fill>
                     <ImageBrush
-                        ImageSource="lib/img/noisy-texture-200x200-o4-d38-c-0c0c0c-t0.png"
+                        ImageSource="lib/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
                         TileMode="FlipXY"
                         Viewport="0,0,100,100"
                         ViewportUnits="Absolute" />
@@ -376,7 +368,7 @@
                 DockPanel.Dock="Right">
                 <Rectangle.Fill>
                     <ImageBrush
-                        ImageSource="lib/img/noisy-texture-200x200-o4-d38-c-0c0c0c-t0.png"
+                        ImageSource="lib/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
                         TileMode="FlipXY"
                         Viewport="0,0,100,100"
                         ViewportUnits="Absolute" />
@@ -385,7 +377,7 @@
             <Grid x:Name="bg" AllowDrop="True">
                 <Grid.Background>
                     <ImageBrush
-                        ImageSource="lib/img/noisy-texture-200x200-o4-d40-c-121212-t0.png"
+                        ImageSource="lib/img/noisy-texture-200x200-o4-d31-c-161616-t0.png"
                         TileMode="FlipXY"
                         Viewport="0,0,100,100"
                         ViewportUnits="Absolute" />
@@ -397,35 +389,6 @@
                     Focusable="False"
                     HorizontalScrollBarVisibility="Disabled"
                     VerticalScrollBarVisibility="Disabled">
-                    <ScrollViewer.Style>
-                        <Style TargetType="{x:Type ScrollViewer}">
-                            <Setter Property="OverridesDefaultStyle" Value="True" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="*" />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-                                            <ScrollContentPresenter Grid.RowSpan="2" Grid.ColumnSpan="2" />
-                                            <ScrollBar
-                                                Name="PART_VerticalScrollBar"
-                                                Grid.Column="1"
-                                                Maximum="{TemplateBinding ScrollableHeight}"
-                                                ViewportSize="{TemplateBinding ViewportHeight}"
-                                                Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
-                                                Value="{TemplateBinding VerticalOffset}" />
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ScrollViewer.Style>
                     <Border x:Name="imgBorder" Focusable="False">
                         <Image
                             x:Name="img"

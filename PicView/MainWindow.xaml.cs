@@ -18,11 +18,11 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using static PicView.lib.FileFunctions;
 using static PicView.lib.Helper;
 using static PicView.lib.ImageManager;
 using static PicView.lib.Variables;
 using static PicView.lib.WindowFunctions;
-using static PicView.lib.FileFunctions;
 
 namespace PicView
 {
@@ -125,7 +125,7 @@ namespace PicView
 
                 // keyboard and Mouse_Keys Keys
                 //PreviewKeyDown += previewKeys;
-                KeyDown += Keys;
+                KeyDown += MainWindow_KeyDown;
                 KeyUp += MainWindow_KeyUp;
                 MouseDown += MainWindow_MouseDown;
 
@@ -279,7 +279,15 @@ namespace PicView
                     AutoReset = true,
                     Enabled = false
                 };
-                activityTimer.Elapsed += ActivityTimer_Elapsed;              
+                activityTimer.Elapsed += ActivityTimer_Elapsed;
+
+                fastPicTimer = new System.Timers.Timer()
+                {
+                    Interval = 85,
+                    AutoReset = true,
+                    Enabled = false
+                };
+                fastPicTimer.Elapsed += FastPic;
 
                 // Updates settings from older version to newer version
                 if (Properties.Settings.Default.CallUpgrade)
@@ -701,6 +709,9 @@ namespace PicView
                 Title = Bar.Text = Loading;
                 Bar.ToolTip = Loading;
 
+                if (Properties.Settings.Default.WindowStyle == "Alt")
+                    AjaxLoadingStart();
+
                 // Dissallow changing image while loading
                 canNavigate = false;
 
@@ -853,18 +864,22 @@ namespace PicView
         /// <summary>
         /// Only load image from preload or thumbnail without resizing
         /// </summary>
-        private void FastPic()
+        private async void FastPic(object sender, EventArgs e)
         {
-            Bar.ToolTip = Title = Bar.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count;
+            await Application.Current.Dispatcher.BeginInvoke((Action)(() =>
+            {
+                Bar.ToolTip = Title = Bar.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count;
 
-            img.Width = xWidth;
-            img.Height = xHeight;
+                img.Width = xWidth;
+                img.Height = xHeight;
+                //Width = img.Width = 465;
+                //Height = img.Height = 515;
 
-            img.Source = Preloader.Contains(Pics[FolderIndex]) ? Preloader.Load(Pics[FolderIndex]) : GetWindowsThumbnail(Pics[FolderIndex]);
+                img.Source = Preloader.Contains(Pics[FolderIndex]) ? Preloader.Load(Pics[FolderIndex]) : GetWindowsThumbnail(Pics[FolderIndex]);
+                FastPicRunning = true;
 
+            }));
             Progress(FolderIndex, Pics.Count);
-
-            GoToPic = true;
         }
 
 
@@ -873,14 +888,15 @@ namespace PicView
         /// </summary>
         private void FastPicUpdate()
         {
+            Pic(FolderIndex);
+
+            fastPicTimer.Stop();
+            FastPicRunning = false;
             if (!Preloader.Contains(Pics[FolderIndex]))
             {
                 PreloadCount = 0;
                 Preloader.Clear();
             }
-
-            GoToPic = false;
-            Pic(FolderIndex);
         }
 
 
@@ -1368,6 +1384,9 @@ namespace PicView
             // Load it
             Pic(files[0]);
 
+            // Don't show drop message any longer
+            CloseToolTipStyle();
+
             // Start multiple clients if user drags multiple files
             if (files.Length > 0)
             {
@@ -1392,18 +1411,19 @@ namespace PicView
 
         #region Keyboard & Mouse Shortcuts
         
-        private void Keys(object sender, KeyEventArgs e)
+        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.Key)
-            {             
-                #region Next/last
+            {
+                // Next             
                 case Key.BrowserForward:
                 case Key.Right:
                 case Key.D:
-                    if (!e.IsRepeat) //If the key is (not) held down 
+                    if (!e.IsRepeat)
                     {
+                        // Go to first if Ctrl held down
                         if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                            Pic(true, true); // Go to first if Ctrl held down
+                            Pic(true, true);
                         else
                             Pic();
                     }
@@ -1414,23 +1434,24 @@ namespace PicView
                         else
                             FolderIndex++;
 
-                        FastPic();
+                        fastPicTimer.Start();
+                        e.Handled = true;
                     }
                     break;
-                #endregion
 
-                #region Prev/first
+                // Prev
                 case Key.BrowserBack:
                 case Key.Left:
                 case Key.A:
-                    if (!e.IsRepeat) //If the key is (not) held down 
+                    if (!e.IsRepeat)
                     {
+                        // Go to first if Ctrl held down
                         if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                            Pic(false, true); // Go to last if Ctrl held down
+                            Pic(false, true);
                         else
                             Pic(false);
 
-                        GoToPic = false;
+                        FastPicRunning = false;
                     }
                     else if (canNavigate)
                     {
@@ -1439,12 +1460,11 @@ namespace PicView
                         else
                             FolderIndex--;
 
-                        FastPic();
+                        fastPicTimer.Start();
                     }
                     break;
-                #endregion
 
-                #region Scroll
+                // Scroll
                 case Key.PageUp:
                     if (Properties.Settings.Default.ScrollEnabled)
                         Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 30);
@@ -1453,13 +1473,19 @@ namespace PicView
                     if (Properties.Settings.Default.ScrollEnabled)
                         Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 30);
                     break;
-                #endregion
 
-                #region Rotate ||Scroll
+                // Rotate or Scroll
                 case Key.Up:
                 case Key.W:
                     if (Properties.Settings.Default.ScrollEnabled)
-                        Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 30);
+                    {
+                        if (Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed && !e.IsRepeat)
+                            Rotate(false);
+                        else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !e.IsRepeat)
+                            Rotate(false);
+                        else
+                            Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 30);
+                    }
                     else if (!e.IsRepeat)
                         Rotate(false);
                     break;
@@ -1467,14 +1493,19 @@ namespace PicView
                 case Key.Down:
                 case Key.S:
                     if (Properties.Settings.Default.ScrollEnabled)
-                        Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 30);
+                    {
+                        if (Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed && !e.IsRepeat)
+                            Rotate(true);
+                        else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !e.IsRepeat)
+                            Rotate(true);
+                        else
+                            Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 30);
+                    }
                     else if (!e.IsRepeat)
                         Rotate(true);
                     break;
 
-                #endregion
-
-                #region Zoom
+                // Zoom
                 case Key.Add:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                         Zoom(1, false);
@@ -1487,182 +1518,138 @@ namespace PicView
                     else
                         Zoom(-1, true);
                     break;
-                #endregion
             }
         }
 
         private void MainWindow_KeyUp(object sender, KeyEventArgs e)
         {
-            #region FastPicUpdate()
-
+            // FastPicUpdate()
             if (e.Key == Key.Left || e.Key == Key.A || e.Key == Key.Right || e.Key == Key.D)
             {
-                if (!GoToPic)
+                if (!FastPicRunning)
                     return;
                 FastPicUpdate();
             }
 
-            #endregion
-
-            #region Esc                             !---- Close ----!
-
+            // Esc
             else if (e.Key == Key.Escape)
             {
                 if (UserControls_Open())
                     Close_UserControls();
-
-                //else if (Properties.Settings.Default.Fullscreen)
-                //    FullScreen();
-
                 else
                     Close();
             }
-            #endregion
 
-            #region Ctrl + Q, Ctrl + W              !---- Close ----!
-
-            else if (e.Key == Key.Q && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control
-                || e.Key == Key.W && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            // Ctrl + Q
+            else if (e.Key == Key.Q && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
                 Close();
+            }
 
-            #endregion
-
-            #region O, Ctrl + O                     !---- Open file ----!
-
+            // O, Ctrl + O
             else if (e.Key == Key.O && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control || e.Key == Key.O)
+            {
                 Open();
+            }
 
-            #endregion
-
-            #region X                               !---- Toggle Scroll ----!
-
+            // X
             else if (e.Key == Key.X)
+            {
                 IsScrollEnabled = IsScrollEnabled ? false : true;
+            }
 
-            #endregion
-
-            #region F                               !---- Flip ----!
-
+            // F
             else if (e.Key == Key.F)
+            {
                 Flip();
+            }
 
-            #endregion
-
-            #region Shift + Delete                  !---- Delete Picture ----!
-
+            // Shift + Delete
             else if (e.Key == Key.Delete && (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
             {
                 //DeleteFile(PicPath);
             }
-            #endregion
 
-            #region Ctrl + C                        !---- Copy Picture ----!
-
+            // Ctrl + C
             else if (e.Key == Key.C && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
                 CopyPic();
+            }
 
-            #endregion
-
-            #region Ctrl + V                        !---- Paste + flip ----!
-
+            // Ctrl + V
             else if (e.Key == Key.V)
             {
                 if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                 {
                     Paste();
-                    return;
                 }
-
-                Flip();
             }
 
-            #endregion
-
-            #region Ctrl + I                        !---- Show FIle Properties ----!
-
+            // Ctrl + I
             else if (e.Key == Key.I && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
                 NativeMethods.ShowFileProperties(PicPath);
+            }
 
-            #endregion
-
-            #region Ctrl + P                        !---- Print ----!
-
+            // Ctrl + P
             else if (e.Key == Key.P && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
                 Print(PicPath);
+            }
 
-            #endregion
-
-            #region Alt + Enter                     !---- Fullscreen ----!
-
+            // Alt + Enter
             else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.Enter))
             {
                 //FullScreen();
             }
 
-            #endregion
-
-            #region Space                           !---- Center Window ----!
-
+            // Space
             else if (e.Key == Key.Space)
+            {
                 CenterWindowOnScreen();
+            }
 
-            #endregion
-
-            #region F1                              !---- Help ----!
-
+            // F1
             else if (e.Key == Key.F1)
+            {
                 HelpWindow();
+            }
 
-            #endregion
-
-            #region F2                              !---- About ----!
-
+            //F2
             else if (e.Key == Key.F2)
+            {
                 AboutWindow();
+            }
 
-            #endregion
-
-            #region F3                              !---- Open In Explorer ----!
-
+            // F3
             else if (e.Key == Key.F3)
+            {
                 Open_In_Explorer();
+            }
 
-            #endregion
-
-            #region F6                              !---- Reset Zoom ----!
-
+            // F6
             else if (e.Key == Key.F6)
             {
                 ResetZoom();
             }
 
-            #endregion
-
-            #region Home                            !---- Zoom to top ----!
-
+            // Home
             else if (e.Key == Key.Home)
             {
                 Scroller.ScrollToHome();
             }
 
-            #endregion
-
-            #region End                             !---- Zoom to bottom ----!
-
+            // End
             else if (e.Key == Key.End)
             {
                 Scroller.ScrollToEnd();
             }
 
-            #endregion
-
-            #region Alt + Z                         !---- Hide Interface ----!
-
+            // Alt + Z
             else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.Z))
+            {
                 HideInterface();
-
-            #endregion
-
+            }
         }
 
         private void MainWindow_MouseDown(object sender, MouseButtonEventArgs e)
@@ -2550,6 +2537,9 @@ namespace PicView
 
         #region Manipulate Interface
 
+        /// <summary>
+        /// Toggle between "Alt" interface and default
+        /// </summary>
         private void HideInterface()
         {
             if (Properties.Settings.Default.WindowStyle == "Default")
@@ -2745,8 +2735,8 @@ namespace PicView
             Changes color depending on the users settings.
 
         */
-        #region Logo Mouse Over
 
+        // Logo Mouse Over
         private void LogoMouseOver(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, pBrush, false);
@@ -2780,10 +2770,7 @@ namespace PicView
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(wBrush, false);
         }
 
-        #endregion
-
-        #region Close Button
-
+        // Close Button
         private void CloseButtonMouseOver(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
@@ -2799,10 +2786,7 @@ namespace PicView
             AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
         }
 
-        #endregion
-
-        #region MaxButton
-
+        // MaxButton
         private void MaxButtonMouseOver(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, MaxButtonBrush, false);
@@ -2818,10 +2802,7 @@ namespace PicView
             AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, MaxButtonBrush, false);
         }
 
-        #endregion
-
-        #region MinButton
-
+        // MinButton
         private void MinButtonMouseOver(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, MinButtonBrush, false);
@@ -2837,10 +2818,7 @@ namespace PicView
             AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, MinButtonBrush, false);
         }
 
-        #endregion
-
-        #region LeftButton
-
+        // LeftButton
         private void LeftButtonMouseOver(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
@@ -2870,10 +2848,7 @@ namespace PicView
             );
         }
 
-        #endregion
-
-        #region RightButton
-
+        // RightButton
         private void RightButtonMouseOver(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
@@ -2904,10 +2879,7 @@ namespace PicView
             );
         }
 
-        #endregion
-
-        #region OpenMenuButton
-
+        // OpenMenuButton
         private void OpenMenuButtonMouseOver(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
@@ -2937,10 +2909,7 @@ namespace PicView
             );
         }
 
-        #endregion
-
-        #region ImageButton
-
+        // ImageButton
         private void ImageButtonMouseOver(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
@@ -2967,14 +2936,14 @@ namespace PicView
                 ImagePath3Fill,
                 false
             );
-            AnimationHelper.MouseEnterColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                ImagePath4Fill,
-                false
-            );
+            //AnimationHelper.MouseEnterColorEvent(
+            //    mainColor.A,
+            //    mainColor.R,
+            //    mainColor.G,
+            //    mainColor.B,
+            //    ImagePath4Fill,
+            //    false
+            //);
         }
 
         private void ImageButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -2982,7 +2951,7 @@ namespace PicView
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ImagePath1Fill, false);
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ImagePath2Fill, false);
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ImagePath3Fill, false);
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ImagePath4Fill, false);
+            //AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ImagePath4Fill, false);
         }
 
         private void ImageButtonMouseLeave(object sender, MouseEventArgs e)
@@ -3011,20 +2980,17 @@ namespace PicView
                 ImagePath3Fill,
                 false
             );
-            AnimationHelper.MouseLeaveColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                ImagePath4Fill,
-                false
-            );
+            //AnimationHelper.MouseLeaveColorEvent(
+            //    mainColor.A,
+            //    mainColor.R,
+            //    mainColor.G,
+            //    mainColor.B,
+            //    ImagePath4Fill,
+            //    false
+            //);
         }
 
-        #endregion
-
-        #region SettingsButton
-
+        // SettingsButton
         private void SettingsButtonButtonMouseOver(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
@@ -3053,8 +3019,6 @@ namespace PicView
                 false
             );
         }
-
-        #endregion
 
         #endregion
 
