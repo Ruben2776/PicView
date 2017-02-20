@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
 namespace PicView.lib
@@ -23,7 +19,7 @@ namespace PicView.lib
         internal static extern bool SystemParametersInfo(uint uiAction, uint uiParam,
         string pvParam, uint fWinIni);
 
-        #region file properties
+        // file properties
         //http://stackoverflow.com/a/1936957
 
         private const int SW_SHOW = 5;
@@ -68,7 +64,5 @@ namespace PicView.lib
             public IntPtr hIcon;
             public IntPtr hProcess;
         }
-
-        #endregion
     }
 }

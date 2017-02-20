@@ -5,6 +5,12 @@ namespace PicView.lib
 {
     internal static class Helper
     {
+        /// <summary>
+        /// Greatest Common Divisor
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         internal static int GCD(int x, int y)
         {
             return y == 0 ? x : GCD(y, x % y);
@@ -38,7 +44,7 @@ namespace PicView.lib
         /// <returns></returns>
         internal static System.Windows.Media.Imaging.BitmapSource GetWindowsThumbnail(string path)
         {
-            return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.ExtraLargeBitmapSource;
+            return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
         }
 
         /// <summary>

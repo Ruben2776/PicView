@@ -888,15 +888,16 @@ namespace PicView
         /// </summary>
         private void FastPicUpdate()
         {
-            Pic(FolderIndex);
-
             fastPicTimer.Stop();
             FastPicRunning = false;
+
             if (!Preloader.Contains(Pics[FolderIndex]))
             {
                 PreloadCount = 0;
                 Preloader.Clear();
             }
+
+            Pic(FolderIndex);
         }
 
 
