@@ -111,16 +111,22 @@ namespace PicView.lib
         internal static bool TrySaveImage(int rotate, bool flipped, string path, string destination)
         {
             // Needs error handling
-
-            MagickImage SaveImage = new MagickImage(path);
-
-            if (flipped)
+            try
             {
-                SaveImage.Flop();
-            }
+                MagickImage SaveImage = new MagickImage(path);
 
-            SaveImage.Rotate(rotate);
-            SaveImage.Write(destination);
+                if (flipped)
+                {
+                    SaveImage.Flop();
+                }
+
+                SaveImage.Rotate(rotate);
+                SaveImage.Write(destination);
+            }
+            catch (IOException)
+            {
+                return false;
+            }           
             
             return true;
         }

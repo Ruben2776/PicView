@@ -81,13 +81,13 @@ namespace PicView
                     Pic(file);
                 else
                     if (Uri.IsWellFormedUriString(file, UriKind.Absolute))
-                        PicWeb(file);
+                    PicWeb(file);
                 else
                 {
                     Unload();
                     endLoading = true;
                 }
-            } 
+            }
 
             // Add UserControls :)
             LoadTooltipStyle();
@@ -217,11 +217,13 @@ namespace PicView
                 imageSettingsMenu.FlipButton.Click += (s, x) => Flip();
 
                 // ClickArrows
-                clickArrowLeft.MouseLeftButtonUp += (s, x) => {
+                clickArrowLeft.MouseLeftButtonUp += (s, x) =>
+                {
                     clickArrowLeftClicked = true;
                     Pic(false, false);
                 };
-                clickArrowRight.MouseLeftButtonUp += (s, x) => {
+                clickArrowRight.MouseLeftButtonUp += (s, x) =>
+                {
                     clickArrowRightClicked = true;
                     Pic();
                 };
@@ -554,7 +556,7 @@ namespace PicView
 
             if (size.WidthChanged)
             {
-                Left += (size.PreviousSize.Width - size.NewSize.Width) / 2;         
+                Left += (size.PreviousSize.Width - size.NewSize.Width) / 2;
             }
 
             // Move cursor after resize when the button has been pressed
@@ -586,7 +588,7 @@ namespace PicView
                 clickArrowLeftClicked = false;
             }
         }
-        
+
         /// <summary>
         /// Centers on the primary monitor.. Needs multi monitor solution....
         /// </summary>
@@ -595,7 +597,7 @@ namespace PicView
             Top = (SystemParameters.WorkArea.Height - Height) / 2;
             Left = (SystemParameters.WorkArea.Width - Width) / 2;
         }
-        
+
         /// <summary>
         /// Move window and maximize on double click
         /// </summary>
@@ -650,7 +652,7 @@ namespace PicView
             {
                 AjaxLoadingStart();
             }
-            
+
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
             if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(path) != Path.GetDirectoryName(PicPath))
             {
@@ -660,7 +662,12 @@ namespace PicView
             else if (freshStartup)
                 await GetValues(path);
             else
+            {
+                Pics = FileList(Path.GetDirectoryName(path));
                 FolderIndex = Pics.IndexOf(path);
+            }
+
+
 
             Pic(FolderIndex);
 
@@ -724,10 +731,14 @@ namespace PicView
                     return;
                 }
             }
-            
+
             // Scroll to top if scroll enabled
             if (IsScrollEnabled)
                 Scroller.ScrollToTop();
+
+            //Prevent the next pichure to be flipped if previous is.
+            if (Flipped)
+                Flip();
 
             // Fit window to new values
             ZoomFit(pic.PixelWidth, pic.PixelHeight);
@@ -736,7 +747,8 @@ namespace PicView
             if (Extension == ".gif")
                 XamlAnimatedGif.AnimationBehavior.SetSourceUri(img, new Uri(Pics[x]));
             else
-                img.Source = pic;          
+                img.Source = pic;
+
 
             // Update Title to reflect new image
             var titleString = TitleString(pic.PixelWidth, pic.PixelHeight, x);
@@ -777,7 +789,7 @@ namespace PicView
             CenterWindowOnScreen();
 
             // Stop AjaxLoading if it's shown
-            AjaxLoadingEnd();          
+            AjaxLoadingEnd();
         }
 
 
@@ -798,7 +810,7 @@ namespace PicView
             ZoomFit(pic.PixelWidth, pic.PixelHeight);
             CloseToolTipStyle();
             canNavigate = true;
-            
+
             var titleString = TitleString(pic.PixelWidth, pic.PixelHeight, imageName);
             Title = titleString[0];
             Bar.Text = titleString[1];
@@ -1078,7 +1090,7 @@ namespace PicView
                         Pics = FileList(TempZipPath);
                     }
                 }
-                catch (Exception) {}
+                catch (Exception) { }
 
                 if (count > 3)
                 {
@@ -1120,7 +1132,7 @@ namespace PicView
         #endregion
 
         #region Drag and Drop
-        
+
         /// <summary>
         /// Check if dragged file is valid,
         /// returns false for valid file with no thumbnail,
@@ -1410,7 +1422,7 @@ namespace PicView
         #endregion
 
         #region Keyboard & Mouse Shortcuts
-        
+
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.Key)
@@ -1577,12 +1589,10 @@ namespace PicView
             }
 
             // Ctrl + V
-            else if (e.Key == Key.V)
+            else if (e.Key == Key.V && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
-                if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                {
-                    Paste();
-                }
+                Paste();
+
             }
 
             // Ctrl + I
@@ -1920,7 +1930,7 @@ namespace PicView
             Bar.ToolTip = titleString[2];
 
             #endregion
-            
+
         }
 
         /// <summary>
@@ -1933,7 +1943,7 @@ namespace PicView
             // Get max width and height, based on user's screen
             var maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth - ComfySpace, width);
             var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 72), height);
-           
+
             AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));
 
             if (IsScrollEnabled)
@@ -2558,7 +2568,7 @@ namespace PicView
                 Properties.Settings.Default.WindowStyle = "Alt";
 
                 activityTimer.Start();
-                    
+
             }
             else
             {
@@ -2576,7 +2586,7 @@ namespace PicView
                 Properties.Settings.Default.WindowStyle = "Default";
                 activityTimer.Stop();
             }
-            
+
         }
 
         private async void FadeControlsAsync(bool show)
@@ -3159,7 +3169,7 @@ namespace PicView
         /// </summary>
         private void Open()
         {
-            //Unload(); Why???
+
 
             var dlg = new Microsoft.Win32.OpenFileDialog()
             {
@@ -3178,30 +3188,36 @@ namespace PicView
             Close_UserControls();
         }
 
+        /// <summary>
+        /// Open a file dialog where user can save the selected file in a supported filtype.
+        /// </summary>
         private void SaveFiles()
         {
-            var Savedlg = new Microsoft.Win32.SaveFileDialog()
-            {
-                Filter = FilterFiles,
-                Title = "Save image - PicView",
-                FileName = PicPath
-            };
-
-            if(!string.IsNullOrEmpty(PicPath))
-            {
-
-                if (Savedlg.ShowDialog() == true)
+            
+                var Savedlg = new Microsoft.Win32.SaveFileDialog()
                 {
-                    TrySaveImage(Rotateint, Flipped, PicPath, Savedlg.FileName);
-                }
-                else return;
+                    Filter = FilterFiles,
+                    Title = "Save image - PicView",
+                    FileName = Path.GetFileName(PicPath)
+                };
 
-                Close_UserControls();
-            }
-            else
-            {
-                ToolTipStyle("Error, File does not exist, or something went wrong...", true);
-            }
+                if (!string.IsNullOrEmpty(PicPath))
+                {
+
+                    if (Savedlg.ShowDialog() == true)
+                    {
+                        TrySaveImage(Rotateint, Flipped, PicPath, Savedlg.FileName);
+                    }
+                    else return;
+
+                    Close_UserControls();
+                }
+                else
+                {
+                    ToolTipStyle("Error, File does not exist, or something went wrong...", true);
+                }
+
+         
         }
 
         #endregion     
