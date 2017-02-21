@@ -21,7 +21,8 @@ namespace PicView.lib
             }
             else
             {
-                Task.Run(() =>
+                if (File.Exists(path))
+                    Task.Run(() =>
                 {
                     //Handle if file from web, need clipboard image solution
                     var tempPath = Path.GetTempPath();
