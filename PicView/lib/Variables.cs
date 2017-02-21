@@ -219,5 +219,10 @@ namespace PicView.lib
         /// </summary>
         internal static Color mainColor;
 
+        /// <summary>
+        /// File list for Most Recently Used files
+        /// </summary>
+        internal static RecentFiles mruList; 
+
     }
 }
