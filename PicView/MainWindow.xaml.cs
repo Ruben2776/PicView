@@ -79,8 +79,7 @@ namespace PicView
                 var file = Application.Current.Properties["ArbitraryArgName"].ToString();
                 if (File.Exists(file))
                     Pic(file);
-                else
-                    if (Uri.IsWellFormedUriString(file, UriKind.Absolute))
+                else if (Uri.IsWellFormedUriString(file, UriKind.Absolute))
                     PicWeb(file);
                 else
                 {
@@ -310,12 +309,19 @@ namespace PicView
 
             // Add main contextmenu
             cm = new ContextMenu();
+            var scbf = (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"];
 
             var opencm = new MenuItem
             {
                 Header = "Open",
                 InputGestureText = "Ctrl + O"
             };
+            var opencmIcon = new System.Windows.Shapes.Path();
+            opencmIcon.Data = Geometry.Parse("M1717 931q0-35-53-35h-1088q-40 0-85.5 21.5t-71.5 52.5l-294 363q-18 24-18 40 0 35 53 35h1088q40 0 86-22t71-53l294-363q18-22 18-39zm-1141-163h768v-160q0-40-28-68t-68-28h-576q-40 0-68-28t-28-68v-64q0-40-28-68t-68-28h-320q-40 0-68 28t-28 68v853l256-315q44-53 116-87.5t140-34.5zm1269 163q0 62-46 120l-295 363q-43 53-116 87.5t-140 34.5h-1088q-92 0-158-66t-66-158v-960q0-92 66-158t158-66h320q92 0 158 66t66 158v32h544q92 0 158 66t66 158v160h192q54 0 99 24.5t67 70.5q15 32 15 68z");
+            opencmIcon.Stretch = Stretch.Fill;
+            opencmIcon.Width = opencmIcon.Height = 12;
+            opencmIcon.Fill = scbf;
+            opencm.Icon = opencmIcon;
             opencm.Click += (s, x) => Open();
             cm.Items.Add(opencm);
 
@@ -324,6 +330,12 @@ namespace PicView
                 Header = "Save",
                 InputGestureText = "Ctrl + S"
             };
+            var savecmIcon = new System.Windows.Shapes.Path();
+            savecmIcon.Data = Geometry.Parse("M512 1536h768v-384h-768v384zm896 0h128v-896q0-14-10-38.5t-20-34.5l-281-281q-10-10-34-20t-39-10v416q0 40-28 68t-68 28h-576q-40 0-68-28t-28-68v-416h-128v1280h128v-416q0-40 28-68t68-28h832q40 0 68 28t28 68v416zm-384-928v-320q0-13-9.5-22.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 22.5v320q0 13 9.5 22.5t22.5 9.5h192q13 0 22.5-9.5t9.5-22.5zm640 32v928q0 40-28 68t-68 28h-1344q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h928q40 0 88 20t76 48l280 280q28 28 48 76t20 88z");
+            savecmIcon.Stretch = Stretch.Fill;
+            savecmIcon.Width = savecmIcon.Height = 12;
+            savecmIcon.Fill = scbf;
+            savecm.Icon = savecmIcon;
             savecm.Click += (s, x) => SaveFiles();
             cm.Items.Add(savecm);
 
@@ -332,6 +344,12 @@ namespace PicView
                 Header = "Print",
                 InputGestureText = "Ctrl + P"
             };
+            var printcmIcon = new System.Windows.Shapes.Path();
+            printcmIcon.Data = Geometry.Parse("M448 1536h896v-256h-896v256zm0-640h896v-384h-160q-40 0-68-28t-28-68v-160h-640v640zm1152 64q0-26-19-45t-45-19-45 19-19 45 19 45 45 19 45-19 19-45zm128 0v416q0 13-9.5 22.5t-22.5 9.5h-224v160q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-224q-13 0-22.5-9.5t-9.5-22.5v-416q0-79 56.5-135.5t135.5-56.5h64v-544q0-40 28-68t68-28h672q40 0 88 20t76 48l152 152q28 28 48 76t20 88v256h64q79 0 135.5 56.5t56.5 135.5z");
+            printcmIcon.Stretch = Stretch.Fill;
+            printcmIcon.Width = printcmIcon.Height = 12;
+            printcmIcon.Fill = scbf;
+            printcm.Icon = printcmIcon;
             printcm.Click += (s, x) => Print(PicPath);
             cm.Items.Add(printcm);
 
@@ -365,6 +383,12 @@ namespace PicView
                 Header = "Copy picture",
                 InputGestureText = "Ctrl + C"
             };
+            var cppcmIcon = new System.Windows.Shapes.Path();
+            cppcmIcon.Data = Geometry.Parse("M1696 384q40 0 68 28t28 68v1216q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-288h-544q-40 0-68-28t-28-68v-672q0-40 20-88t48-76l408-408q28-28 76-48t88-20h416q40 0 68 28t28 68v328q68-40 128-40h416zm-544 213l-299 299h299v-299zm-640-384l-299 299h299v-299zm196 647l316-316v-416h-384v416q0 40-28 68t-68 28h-416v640h512v-256q0-40 20-88t48-76zm956 804v-1152h-384v416q0 40-28 68t-68 28h-416v640h896z");
+            cppcmIcon.Stretch = Stretch.Fill;
+            cppcmIcon.Width = cppcmIcon.Height = 12;
+            cppcmIcon.Fill = scbf;
+            cppcm.Icon = cppcmIcon;
             cppcm.Click += (s, x) => CopyPic();
             cm.Items.Add(cppcm);
 
@@ -373,6 +397,12 @@ namespace PicView
                 Header = "Paste picture",
                 InputGestureText = "Ctrl + V"
             };
+            var pastecmIcon = new System.Windows.Shapes.Path();
+            pastecmIcon.Data = Geometry.Parse("M768 1664h896v-640h-416q-40 0-68-28t-28-68v-416h-384v1152zm256-1440v-64q0-13-9.5-22.5t-22.5-9.5h-704q-13 0-22.5 9.5t-9.5 22.5v64q0 13 9.5 22.5t22.5 9.5h704q13 0 22.5-9.5t9.5-22.5zm256 672h299l-299-299v299zm512 128v672q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-544q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h1088q40 0 68 28t28 68v328q21 13 36 28l408 408q28 28 48 76t20 88z");
+            pastecmIcon.Stretch = Stretch.Fill;
+            pastecmIcon.Width = pastecmIcon.Height = 12;
+            pastecmIcon.Fill = scbf;
+            pastecm.Icon = pastecmIcon;
             pastecm.Click += (s, x) => Paste();
             cm.Items.Add(pastecm);
             cm.Items.Add(new Separator());
@@ -391,6 +421,13 @@ namespace PicView
                 InputGestureText = "F2",
                 ToolTip = "Shows version and copyright"
             };
+            var abcmIcon = new System.Windows.Shapes.Path();
+            abcmIcon.Data = Geometry.Parse("M1216 1344v128q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h64v-384h-64q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h384q26 0 45 19t19 45v576h64q26 0 45 19t19 45zm-128-1152v192q0 26-19 45t-45 19h-256q-26 0-45-19t-19-45v-192q0-26 19-45t45-19h256q26 0 45 19t19 45z");
+            abcmIcon.Stretch = Stretch.Fill;
+            abcmIcon.Height = 12;
+            abcmIcon.Width = 9;
+            abcmIcon.Fill = scbf;
+            abcm.Icon = abcmIcon;
             abcm.Click += (s, x) => AboutWindow();
             cm.Items.Add(abcm);
 
@@ -400,30 +437,42 @@ namespace PicView
                 InputGestureText = "F1",
                 ToolTip = "Shows keyboard shortcuts and general help"
             };
+            var helpcmIcon = new System.Windows.Shapes.Path();
+            helpcmIcon.Data = Geometry.Parse("M1088 1256v240q0 16-12 28t-28 12h-240q-16 0-28-12t-12-28v-240q0-16 12-28t28-12h240q16 0 28 12t12 28zm316-600q0 54-15.5 101t-35 76.5-55 59.5-57.5 43.5-61 35.5q-41 23-68.5 65t-27.5 67q0 17-12 32.5t-28 15.5h-240q-15 0-25.5-18.5t-10.5-37.5v-45q0-83 65-156.5t143-108.5q59-27 84-56t25-76q0-42-46.5-74t-107.5-32q-65 0-108 29-35 25-107 115-13 16-31 16-12 0-25-8l-164-125q-13-10-15.5-25t5.5-28q160-266 464-266 80 0 161 31t146 83 106 127.5 41 158.5z");
+            helpcmIcon.Stretch = Stretch.Fill;
+            helpcmIcon.Width = helpcmIcon.Height = 12;
+            helpcmIcon.Fill = scbf;
+            helpcm.Icon = helpcmIcon;
             helpcm.Click += (s, x) => HelpWindow();
             cm.Items.Add(helpcm);
 
-            //var toolscm = new MenuItem
-            //{
-            //    Header = "Tools",
-            //    InputGestureText = "F6",
-            //    ToolTip = "Tools and stuff"
-            //};
-            ////toolscm.Click += tools_window;
-            //cm.Items.Add(toolscm);
             cm.Items.Add(new Separator());
-
+            
             var mincm = new MenuItem
             {
                 Header = "Minimize"
             };
+            var mincmIcon = new System.Windows.Shapes.Path();
+            mincmIcon.Data = Geometry.Parse("F1M0,6L0,9 9,9 9,6 0,6z");
+            mincmIcon.Stretch = Stretch.Fill;
+            mincmIcon.Width = 12;
+            mincmIcon.Height = 5;
+            mincmIcon.Fill = scbf;
+            mincm.Icon = mincmIcon;
             mincm.Click += (s, x) => Minimize(this);
             cm.Items.Add(mincm);
 
+            
             var maxcm = new MenuItem
             {
-                Header = "Fullscreen/Restore"
+                Header = "Maximize"
             };
+            var maxcmIcon = new System.Windows.Shapes.Path();
+            maxcmIcon.Data = Geometry.Parse("F1M0,0L0,9 9,9 9,0 0,0 0,3 8,3 8,8 1,8 1,3z");
+            maxcmIcon.Stretch = Stretch.Fill;
+            maxcmIcon.Width = maxcmIcon.Height = 12;
+            maxcmIcon.Fill = scbf;
+            maxcm.Icon = maxcmIcon;
             maxcm.Click += (s, x) => Maximize(this);
             cm.Items.Add(maxcm);
 
@@ -431,6 +480,12 @@ namespace PicView
             {
                 Header = "Close"
             };
+            var mclcmIcon = new System.Windows.Shapes.Path();
+            mclcmIcon.Data = Geometry.Parse("M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z");
+            mclcmIcon.Stretch = Stretch.Fill;
+            mclcmIcon.Width = mclcmIcon.Height = 12;
+            mclcmIcon.Fill = scbf;
+            clcm.Icon = mclcmIcon;
             clcm.Click += (s, x) => Close();
             cm.Items.Add(clcm);
 

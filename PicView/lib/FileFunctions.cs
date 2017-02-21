@@ -290,7 +290,6 @@ namespace PicView.lib
 
                 if (zipped)
                 {
-                    FolderIndex = 0;
                     // Make a backup of FolderIndex and PicPath
                     if (FolderIndex > -1)
                     {

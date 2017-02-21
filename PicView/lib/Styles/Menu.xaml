@@ -299,7 +299,7 @@
                 </Grid.ColumnDefinitions>
                 <ContentPresenter
                     x:Name="Icon"
-                    Margin="5,0,5,0"
+                    Margin="5,0,10,0"
                     VerticalAlignment="Center"
                     ContentSource="Icon" />
                 <Border

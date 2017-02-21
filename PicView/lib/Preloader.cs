@@ -21,8 +21,6 @@ namespace PicView.lib
         /// </summary>
         private static readonly ConcurrentDictionary<string, BitmapSource> Sources = new ConcurrentDictionary<string, BitmapSource>();
 
-        #region Manage list methods
-
         internal static void Add(string file)
         {
             if (Contains(file))
@@ -151,9 +149,8 @@ namespace PicView.lib
             return Sources.ContainsKey(key);
         }
 
-        #endregion
+        internal static int Count { get { return Sources.Count; } }
 
-        #region Preloading
         /// <summary>
         /// Starts decoding images into memory,
         /// based on current index and if reverse or not
@@ -233,7 +230,7 @@ namespace PicView.lib
                 }
             }
 
-            #region Update Pics if needed
+            // Update Pics if needed
 
             // If very large archive being extracted, update Pics
             if (!string.IsNullOrWhiteSpace(TempZipPath) && index >= 5 && Pics.Count > 10)
@@ -244,11 +241,8 @@ namespace PicView.lib
 
                 // Need WinRAR support...
             }
-
-            #endregion
         }
-
-        #endregion
+        
     }
 
 }
