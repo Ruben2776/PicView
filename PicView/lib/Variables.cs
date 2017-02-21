@@ -225,7 +225,7 @@ namespace PicView.lib
         /// <summary>
         /// File list for Most Recently Used files
         /// </summary>
-        internal static RecentFiles mruList; 
+        //internal static RecentFiles mruList; 
 
     }
 }

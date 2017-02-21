@@ -122,7 +122,7 @@ namespace PicView
             var task = new Task(() =>
             {
                 // Initilize Most Recently used
-                mruList = new RecentFiles();
+                //mruList = new RecentFiles();
 
                 #region Add events
 
@@ -643,7 +643,7 @@ namespace PicView
         {
             Properties.Settings.Default.Save();
             DeleteTempFiles();
-            mruList.WriteToFile();
+            //mruList.WriteToFile();
         }
 
         #endregion
@@ -664,8 +664,8 @@ namespace PicView
                 AjaxLoadingStart();
             }
 
-            if (!string.IsNullOrWhiteSpace(TempZipPath) && mruList != null)
-                mruList.SetZipped(PicPath);
+            //if (!string.IsNullOrWhiteSpace(TempZipPath) && mruList != null)
+            //    mruList.SetZipped(PicPath);
             
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
             if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(path) != Path.GetDirectoryName(PicPath)
@@ -799,8 +799,8 @@ namespace PicView
             canNavigate = true;
             Progress(x, Pics.Count);
             FolderIndex = x;
-            if (mruList != null)
-                mruList.Add(Pics[x]);
+            //if (mruList != null)
+            //    mruList.Add(Pics[x]);
 
             // Loses position gradually if not forced to center       
             CenterWindowOnScreen();
