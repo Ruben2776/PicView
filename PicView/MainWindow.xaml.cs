@@ -121,6 +121,9 @@ namespace PicView
             // Do updates in seperate task
             var task = new Task(() =>
             {
+                // Initilize Most Recently used
+                mruList = new RecentFiles();
+
                 #region Add events
 
                 // keyboard and Mouse_Keys Keys
@@ -541,6 +544,13 @@ namespace PicView
             FolderIndex = 0;
             img.Width = Scroller.Width = Scroller.Height =
             img.Height = double.NaN;
+
+            if (!string.IsNullOrWhiteSpace(TempZipPath))
+            {
+                DeleteTempFiles();
+                TempZipPath = string.Empty;
+            }
+
             AjaxLoadingEnd();
         }
 
@@ -633,6 +643,7 @@ namespace PicView
         {
             Properties.Settings.Default.Save();
             DeleteTempFiles();
+            mruList.WriteToFile();
         }
 
         #endregion
@@ -653,6 +664,9 @@ namespace PicView
                 AjaxLoadingStart();
             }
 
+            if (!string.IsNullOrWhiteSpace(TempZipPath) && mruList != null)
+                mruList.SetZipped(PicPath);
+            
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
             if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(path) != Path.GetDirectoryName(PicPath)
                 || string.IsNullOrWhiteSpace(TempZipPath))
@@ -785,6 +799,8 @@ namespace PicView
             canNavigate = true;
             Progress(x, Pics.Count);
             FolderIndex = x;
+            if (mruList != null)
+                mruList.Add(Pics[x]);
 
             // Loses position gradually if not forced to center       
             CenterWindowOnScreen();
@@ -1717,6 +1733,11 @@ namespace PicView
             HideAutoScrollSign();
         }
 
+        /// <summary>
+        /// Uses timer to scroll vertical up/down every seventh milisecond
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="E"></param>
         private async void AutoScrollTimerEvent(object sender, System.Timers.ElapsedEventArgs E)
         {
             if (autoScrollPos == null || autoScrollOrigin == null)
@@ -1766,6 +1787,11 @@ namespace PicView
             }
         }
 
+        /// <summary>
+        /// Occurs when the users clicks on the img control
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Zoom_img_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (autoScrolling)
