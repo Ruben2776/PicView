@@ -68,7 +68,7 @@ namespace PicView.lib
         internal static string ZoomPercentage { get { return Math.Round(AspectRatio * 100) + "%"; } }
 
         /// <summary>
-        /// Returns zoom % if not zero. Empty string for zero
+        /// Returns zoom percentage. if 100%, return empty string
         /// </summary>
         internal static string Zoomed
         {
@@ -141,7 +141,10 @@ namespace PicView.lib
         internal static int xFolderIndex;
 
         /// <summary>
-        /// Counter used to check if preloading is neccesary
+        /// Counter used to check if preloading is neccesary.
+        /// If 0, not neccesary.
+        /// If higher than 0, Preload forwards.
+        /// If less than 0, Preload backwards.
         /// </summary>
         internal static short PreloadCount { get; set; }
 

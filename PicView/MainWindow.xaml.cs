@@ -1028,10 +1028,7 @@ namespace PicView
             ToolTipStyle("File not found or unable to render, " + file, false, TimeSpan.FromSeconds(2.5));
 
             // Go to next image
-            if (FolderIndex + 1 == Pics.Count)
-                FolderIndex = 0;
-            else
-                FolderIndex += 1;
+            FolderIndex = FolderIndex == Pics.Count - 1 ? 0 : FolderIndex + 1;
 
             if (File.Exists(Pics[FolderIndex]))
             {
@@ -1039,11 +1036,9 @@ namespace PicView
                 PreloadCount++;
                 return true;
             }
-            else
-            {
-                // Repeat process if the next image was not found
-                PicErrorFix(FolderIndex);
-            }
+
+            // Repeat process if the next image was not found
+            PicErrorFix(FolderIndex);
             return false;
         }
 
@@ -1074,10 +1069,9 @@ namespace PicView
                     // we should open the folder
                     var directory = Directory.GetDirectories(TempZipPath);
                     if (directory.Length > -1)
-                    {
                         TempZipPath = directory[0];
-                        Pics = FileList(TempZipPath);
-                    }
+
+                    Pics = FileList(TempZipPath);
                 }
                 catch (Exception) {}
 
