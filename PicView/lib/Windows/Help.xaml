@@ -176,6 +176,19 @@
                             </TextBlock>
                         </BulletDecorator>
 
+                        <BulletDecorator Margin="7,2">
+                            <BulletDecorator.Bullet>
+                                <Ellipse
+                                    Width="7"
+                                    Height="7"
+                                    Fill="{StaticResource MainColorBrush}" />
+                            </BulletDecorator.Bullet>
+                            <TextBlock Margin="5,0,0,0">
+                                <Bold>Alt + Z</Bold>
+                                to show/hide interface.
+                            </TextBlock>
+                        </BulletDecorator>
+
                         <Label
                             Margin="0,10,0,0"
                             Content="File functions:"
@@ -253,6 +266,24 @@
                                 to print current image.
                             </TextBlock>
                         </BulletDecorator>
+                        <BulletDecorator Margin="7,2">
+                            <BulletDecorator.Bullet>
+                                <Ellipse
+                                    Width="7"
+                                    Height="7"
+                                    Fill="{StaticResource MainColorBrush}" />
+                            </BulletDecorator.Bullet>
+                            <TextBlock Margin="5,0,0,0">
+                                <Bold>Ctrl</Bold>
+                                +
+                                <Bold>I</Bold>
+                                to show imagefile details.
+                            </TextBlock>
+                        </BulletDecorator>
+                        
+                        
+                        
+
 
                         <Label
                             Margin="0,10,0,0"

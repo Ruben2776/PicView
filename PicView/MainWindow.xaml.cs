@@ -654,7 +654,8 @@ namespace PicView
             }
 
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
-            if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(path) != Path.GetDirectoryName(PicPath))
+            if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(path) != Path.GetDirectoryName(PicPath)
+                || string.IsNullOrWhiteSpace(TempZipPath))
             {
                 ChangeFolder();
                 await GetValues(path);
@@ -1045,7 +1046,8 @@ namespace PicView
             else
                 FolderIndex += 1;
 
-            if (File.Exists(Pics[FolderIndex]))
+
+           if (File.Exists(Pics[FolderIndex]))
             {
                 Pic(FolderIndex);
                 PreloadCount++;
@@ -3194,31 +3196,32 @@ namespace PicView
         /// </summary>
         private void SaveFiles()
         {
-            
-                var Savedlg = new Microsoft.Win32.SaveFileDialog()
-                {
-                    Filter = FilterFiles,
-                    Title = "Save image - PicView",
-                    FileName = Path.GetFileName(PicPath)
-                };
+            var Savedlg = new Microsoft.Win32.SaveFileDialog()
+            {
+                Filter = FilterFiles,
+                Title = "Save image - PicView",
+                FileName = Path.GetFileName(PicPath)
+            };
 
-                if (!string.IsNullOrEmpty(PicPath))
+            if (!string.IsNullOrEmpty(PicPath))
+            {
+                if (Savedlg.ShowDialog() == true)
                 {
-
-                    if (Savedlg.ShowDialog() == true)
+                    if (TrySaveImage(Rotateint, Flipped, PicPath, Savedlg.FileName) == false)
                     {
-                        TrySaveImage(Rotateint, Flipped, PicPath, Savedlg.FileName);
+                        ToolTipStyle("Error, File didnt get saved - File not Found.", true);
                     }
-                    else return;
-
-                    Close_UserControls();
                 }
                 else
-                {
-                    ToolTipStyle("Error, File does not exist, or something went wrong...", true);
-                }
+                    return;
 
-         
+                Close_UserControls();
+            }
+            else
+            {
+                ToolTipStyle("Error, File does not exist, or something went wrong...", true);
+            }
+
         }
 
         #endregion     

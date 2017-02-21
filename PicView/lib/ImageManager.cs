@@ -18,12 +18,13 @@ namespace PicView.lib
             BitmapSource pic;
 
             using (MagickImage magick = new MagickImage())
-            {                    
+            {
                 magick.Quality = 100;
                 magick.ColorSpace = ColorSpace.Transparent;
 
-                var mrs = new MagickReadSettings() {
-                    Density = new Density(300,300),
+                var mrs = new MagickReadSettings()
+                {
+                    Density = new Density(300, 300),
                     CompressionMethod = CompressionMethod.NoCompression
                 };
 
@@ -39,7 +40,7 @@ namespace PicView.lib
                     catch (MagickException)
                     {
                         return null;
-                    }                    
+                    }
                 }
                 else
                 {
@@ -110,8 +111,8 @@ namespace PicView.lib
 
         internal static bool TrySaveImage(int rotate, bool flipped, string path, string destination)
         {
-            // Needs error handling
-            try
+
+            if (File.Exists(path))
             {
                 MagickImage SaveImage = new MagickImage(path);
 
@@ -123,12 +124,12 @@ namespace PicView.lib
                 SaveImage.Rotate(rotate);
                 SaveImage.Write(destination);
             }
-            catch (IOException)
-            {
+            else
+            {       
                 return false;
             }           
             
             return true;
         }
-    }
+}
 }
