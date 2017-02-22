@@ -17,9 +17,14 @@ namespace PicView.lib
         internal static void Maximize(Window window)
         {
             if (window.WindowState == WindowState.Normal)
+            {
                 SystemCommands.MaximizeWindow(window);
+            }
             else if (window.WindowState == WindowState.Maximized)
+            {
                 Restore(window);
+            }
+                
         }
 
         internal static void Minimize(Window window)

@@ -736,7 +736,7 @@ namespace PicView
                 Pics = FileList(Path.GetDirectoryName(path));
                 FolderIndex = Pics.IndexOf(path);
             }
-
+            
 
 
             Pic(FolderIndex);
@@ -2306,7 +2306,7 @@ namespace PicView
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(0, 0, 152, 0)
             };
-
+            
             bg.Children.Add(fileMenu);
         }
 
@@ -2346,6 +2346,21 @@ namespace PicView
             bg.Children.Add(quickSettingsMenu);
         }
 
+        private void LoadQuickSettingsSecondMenu()
+        {
+            
+            SettingsButton = new lib.UserControls.Menus.QuickSettingsSecondMenu
+            {
+                Focusable = false,
+                Opacity = 0,
+                Visibility = Visibility.Hidden,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(17, 0, 0, 0)
+            };
+
+            
+        }
 
         // Tooltip
 
@@ -2619,6 +2634,7 @@ namespace PicView
 
             if (ImageSettingsMenuOpen)
                 ImageSettingsMenuOpen = false;
+
         }
 
         #endregion
@@ -3289,6 +3305,9 @@ namespace PicView
                 }
                 else
                     return;
+
+                if (Path.GetDirectoryName(Savedlg.FileName) == Path.GetDirectoryName(PicPath))
+                    Pics = FileList(PicPath);
 
                 Close_UserControls();
             }
