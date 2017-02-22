@@ -22,7 +22,6 @@ using static PicView.lib.FileFunctions;
 using static PicView.lib.Helper;
 using static PicView.lib.ImageManager;
 using static PicView.lib.Variables;
-using static PicView.lib.WindowFunctions;
 
 namespace PicView
 {
@@ -47,7 +46,7 @@ namespace PicView
             bg.Children.Add(ajaxLoading);
             AjaxLoadingStart();
 
-            if (Properties.Settings.Default.WindowStyle == "Alt")
+            if (Properties.Settings.Default.WindowStyle == 2)
             {
                 TitleBar.Visibility =
                 LowerBar.Visibility =
@@ -104,7 +103,7 @@ namespace PicView
             quickSettingsMenu.ToggleScroll.IsChecked = IsScrollEnabled;
 
             // Update WindowStyle
-            if (Properties.Settings.Default.WindowStyle == "Alt")
+            if (Properties.Settings.Default.WindowStyle == 2)
             {
                 clickArrowLeft.Opacity =
                 clickArrowRight.Opacity =
@@ -141,13 +140,13 @@ namespace PicView
                 MinButton.PreviewMouseLeftButtonDown += MinButtonMouseButtonDown;
                 MinButton.MouseEnter += MinButtonMouseOver;
                 MinButton.MouseLeave += MinButtonMouseLeave;
-                MinButton.Click += (s, x) => Minimize(this);
+                MinButton.Click += (s, x) => SystemCommands.MinimizeWindow(this);
 
                 // MaxButton
                 MaxButton.PreviewMouseLeftButtonDown += MaxButtonMouseButtonDown;
                 MaxButton.MouseEnter += MaxButtonMouseOver;
                 MaxButton.MouseLeave += MaxButtonMouseLeave;
-                MaxButton.Click += (s, x) => Maximize(this);
+                MaxButton.Click += (s, x) => Maximize_Restore();
 
                 // FileMenuButton
                 FileMenuButton.PreviewMouseLeftButtonDown += OpenMenuButtonMouseButtonDown;
@@ -474,7 +473,7 @@ namespace PicView
             mincmIcon.Height = 5;
             mincmIcon.Fill = scbf;
             mincm.Icon = mincmIcon;
-            mincm.Click += (s, x) => Minimize(this);
+            mincm.Click += (s, x) => SystemCommands.MinimizeWindow(this);
             cm.Items.Add(mincm);
 
             
@@ -488,7 +487,7 @@ namespace PicView
             maxcmIcon.Width = maxcmIcon.Height = 12;
             maxcmIcon.Fill = scbf;
             maxcm.Icon = maxcmIcon;
-            maxcm.Click += (s, x) => Maximize(this);
+            maxcm.Click += (s, x) => Maximize_Restore();
             cm.Items.Add(maxcm);
 
             var clcm = new MenuItem
@@ -598,7 +597,6 @@ namespace PicView
             }
         }
 
-
         /// <summary>
         /// Reset to default state
         /// </summary>
@@ -691,7 +689,7 @@ namespace PicView
                 return;
 
             if (e.ClickCount == 2)
-                Maximize(this);
+                Maximize_Restore();
             else
             {
                 try
@@ -716,6 +714,49 @@ namespace PicView
             Properties.Settings.Default.Save();
             DeleteTempFiles();
             RecentFiles.WriteToFile();
+        }
+
+        /// <summary>
+        /// Maximizes/restore window
+        /// </summary>
+        private void Maximize_Restore()
+        {
+            // Maximize
+            if (WindowState == WindowState.Normal)
+            {
+                // Update sizing
+                SizeToContent = SizeToContent.Manual;
+
+                // Tell Windows that it's maximized
+                WindowState = WindowState.Maximized;
+                SystemCommands.MaximizeWindow(this);
+
+                // Update button to reflect change
+                MaxButton.ToolTip = "Restore";
+                MaxButtonPath.Data = Geometry.Parse("M143-7h428v286h-428v-286z m571 286h286v428h-429v-143h54q37 0 63-26t26-63v-196z m429 482v-536q0-37-26-63t-63-26h-340v-197q0-37-26-63t-63-26h-536q-36 0-63 26t-26 63v536q0 37 26 63t63 26h340v197q0 37 26 63t63 26h536q36 0 63-26t26-63z");
+
+                // Update new setting
+                Properties.Settings.Default.WindowStyle = 1;
+            }
+
+            // Restore
+            else if (WindowState == WindowState.Maximized)
+            {
+                // Update sizing
+                SizeToContent = SizeToContent.WidthAndHeight;
+
+                // Tell Windows that it's normal
+                WindowState = WindowState.Normal;
+                SystemCommands.RestoreWindow(this);
+
+                // Update button to reflect change
+                MaxButton.ToolTip = "Maximize";
+                MaxButtonPath.Data = Geometry.Parse("M143 64h714v429h-714v-429z m857 625v-678q0-37-26-63t-63-27h-822q-36 0-63 27t-26 63v678q0 37 26 63t63 27h822q37 0 63-27t26-63z");
+
+                // Update new setting
+                Properties.Settings.Default.WindowStyle = 0;
+            }
+
         }
 
         #endregion
@@ -794,7 +835,7 @@ namespace PicView
                 Title = Bar.Text = Loading;
                 Bar.ToolTip = Loading;
 
-                if (Properties.Settings.Default.WindowStyle == "Alt")
+                if (Properties.Settings.Default.WindowStyle == 2)
                     AjaxLoadingStart();
 
                 // Dissallow changing image while loading
@@ -2025,6 +2066,7 @@ namespace PicView
         /// <param name="height">The pixel height of the image</param>
         private void ZoomFit(double width, double height)
         {
+            // Needs update to fit maximized window condition
             // Get max width and height, based on user's screen
             var maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth - ComfySpace, width);
             var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 72), height);
@@ -2653,7 +2695,7 @@ namespace PicView
         /// </summary>
         private void HideInterface()
         {
-            if (Properties.Settings.Default.WindowStyle == "Default")
+            if (Properties.Settings.Default.WindowStyle == 2)
             {
                 TitleBar.Visibility =
                 LowerBar.Visibility =
@@ -2666,7 +2708,7 @@ namespace PicView
                 x2.Visibility =
                 Visibility.Visible;
 
-                Properties.Settings.Default.WindowStyle = "Alt";
+                Properties.Settings.Default.WindowStyle = 2;
 
                 activityTimer.Start();
 
@@ -2684,7 +2726,7 @@ namespace PicView
                 x2.Visibility =
                 Visibility.Collapsed;
 
-                Properties.Settings.Default.WindowStyle = "Default";
+                Properties.Settings.Default.WindowStyle = 0;
                 activityTimer.Stop();
             }
 
@@ -2696,7 +2738,7 @@ namespace PicView
 
             await Application.Current.Dispatcher.BeginInvoke((Action)(() =>
             {
-                if (Properties.Settings.Default.WindowStyle == "Alt")
+                if (Properties.Settings.Default.WindowStyle == 2)
                 {
                     if (clickArrowRight != null && clickArrowLeft != null && x2 != null)
                     {

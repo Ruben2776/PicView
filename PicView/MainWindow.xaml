@@ -138,14 +138,18 @@
                 DockPanel.Dock="Right"
                 FocusVisualStyle="{x:Null}"
                 Focusable="False"
-                ToolTip="Fullscreen">
+                ToolTip="Maximize_Restore">
                 <Button.Background>
                     <SolidColorBrush x:Name="MaxButtonBrush" />
                 </Button.Background>
                 <Path
-                    Data="F1M0,0L0,9 9,9 9,0 0,0 0,3 8,3 8,8 1,8 1,3z"
+                    x:Name="MaxButtonPath"
+                    Width="10"
+                    Height="10"
+                    Data="M143 64h714v429h-714v-429z m857 625v-678q0-37-26-63t-63-27h-822q-36 0-63 27t-26 63v678q0 37 26 63t63 27h822q37 0 63-27t26-63z"
                     Fill="{StaticResource MainColorBrush}"
-                    SnapsToDevicePixels="True" />
+                    SnapsToDevicePixels="True"
+                    Stretch="Fill" />
             </Button>
             <Button
                 x:Name="MinButton"

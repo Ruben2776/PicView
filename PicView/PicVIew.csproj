@@ -126,7 +126,6 @@
       <DependentUpon>QuickSettingsSecondMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="lib\Variables.cs" />
-    <Compile Include="lib\WindowFunctions.cs" />
     <Compile Include="lib\Windows\Help.xaml.cs">
       <DependentUpon>Help.xaml</DependentUpon>
     </Compile>
