@@ -224,6 +224,19 @@
                                 </Hyperlink.Foreground>
                             </Hyperlink>
                         </TextBlock>
+                        <TextBlock
+                            x:Name="FontAwesome"
+                            FontFamily="/PicView;component/lib/fonts/#Aller"
+                            FontSize="14"
+                            TextAlignment="Center"
+                            ToolTip="http://fontawesome.io/">
+                            <Hyperlink NavigateUri="http://fontawesome.io/" RequestNavigate="Hyperlink_RequestNavigate">
+                                FontAwesome
+                                <Hyperlink.Foreground>
+                                    <SolidColorBrush x:Name="FontAwesomeBrush" Color="{StaticResource MainColor}" />
+                                </Hyperlink.Foreground>
+                            </Hyperlink>
+                        </TextBlock>
                     </StackPanel>
 
                     <StackPanel Margin="0,65,0,0">

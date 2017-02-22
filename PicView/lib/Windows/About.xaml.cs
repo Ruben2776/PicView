@@ -69,6 +69,10 @@ namespace PicView.Windows
             Ionic.MouseLeave += IonicMouseLeave;
             Ionic.PreviewMouseLeftButtonDown += IonicMouseButtonDown;
 
+            FontAwesome.MouseEnter += FontAwesomeMouseOver;
+            FontAwesome.MouseLeave += FontAwesomeMouseLeave;
+            FontAwesome.PreviewMouseLeftButtonDown += FontAwesomeMouseButtonDown;
+
             #endregion
         }
 
@@ -263,6 +267,39 @@ namespace PicView.Windows
                 mainColor.G,
                 mainColor.B,
                 IonicBrush,
+                false
+            );
+        }
+
+        #endregion
+
+        #region FontAwesome
+
+        private void FontAwesomeMouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                FontAwesomeBrush,
+                false
+            );
+        }
+
+        private void FontAwesomeMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(FontAwesomeBrush, false);
+        }
+
+        private void FontAwesomeMouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                FontAwesomeBrush,
                 false
             );
         }
