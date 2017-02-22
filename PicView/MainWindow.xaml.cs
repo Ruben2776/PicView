@@ -2695,7 +2695,7 @@ namespace PicView
         /// </summary>
         private void HideInterface()
         {
-            if (Properties.Settings.Default.WindowStyle == 2)
+            if (Properties.Settings.Default.WindowStyle == 0)
             {
                 TitleBar.Visibility =
                 LowerBar.Visibility =
