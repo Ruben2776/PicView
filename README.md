@@ -6,8 +6,21 @@ Scrollable Image Viewer, optimised for manga and comic book reading.
 
 [Download](https://github.com/Ruben2776/PicView/releases/download/v.0.7-beta/PicView_Release.zip)
 
+# Features:
+* extracting archives, if you have 7-Zip or WinRAR installed, comic book archives (.cbr, .cb7, .cbt, .cbz, .cba) and common archives with images inside can be extracted
+* Toggleable scroll function by pressing _X_
+* Scroll function supports auto scroll
+* Minimal interface just displaying the image by pressing _Alt + Z_
+* Fit image to window resolution
+* Zoom image
+* Drag and drop
+* Copy/paste image from clipboard/web address/file
+* Rotate and flip image
+* Save and convert image
+* Animated .Gif support
+* Print image
+* View recent images
+
 Built with C# WPF, using ImageMagick and XamlAnimatedGif.
 
-Features extracting archives, if you have 7-Zip or WinRAR installed, allowing extracting comic book archives (.cbr, .cb7, .cbt, .cbz, .cba) and extracting common archives with images inside.
-
-Devolopment build, some features are unfinished.
+*Devolopment build, some features are unfinished.*
