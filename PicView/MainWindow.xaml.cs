@@ -358,6 +358,12 @@ namespace PicView
             {
                 Header = "Recent files"
             };
+            var recentcmIcon = new System.Windows.Shapes.Path();
+            recentcmIcon.Data = Geometry.Parse("M288,48H136c-22.092,0-40,17.908-40,40v336c0,22.092,17.908,40,40,40h240c22.092,0,40-17.908,40-40V176L288,48z M272,192 V80l112, 112H272z");
+            recentcmIcon.Stretch = Stretch.Fill;
+            recentcmIcon.Width = recentcmIcon.Height = 12;
+            recentcmIcon.Fill = scbf;
+            recentcm.Icon = recentcmIcon;
             recentcm.MouseEnter += (xx,xxx) => Recentcm_MouseEnter(recentcm);
             cm.Items.Add(recentcm);
             cm.Items.Add(new Separator());
@@ -592,42 +598,6 @@ namespace PicView
             }
         }
 
-        private void Recentcm_MouseEnter(object sender)
-        {
-            var RecentFilesMenuItem = (MenuItem)sender;
-            var fileNames = RecentFiles.LoadValues();
-
-            if (fileNames == null)
-                return;
-
-            if (RecentFilesMenuItem.Items.Count >= 5)
-            {
-                for (int i = 0; i < fileNames.Length; i++)
-                {
-                    var item = fileNames[i];
-                    var menuItem = (MenuItem)RecentFilesMenuItem.Items[i];
-                    menuItem.Header = Path.GetFileName(item);
-                    menuItem.ToolTip = item;
-                    menuItem.Click += (x, xx) => Pic(item);
-                }
-                return;
-            }
-
-            for (int i = 0; i < fileNames.Length; i++)
-            {
-                if (i >= 5)
-                    break;
-
-                var item = fileNames[i];
-                var menuItem = new MenuItem()
-                {
-                    Header = Path.GetFileNameWithoutExtension(item),
-                    ToolTip = item
-                };
-                menuItem.Click += (x, xx) => Pic(item);
-                RecentFilesMenuItem.Items.Add(menuItem);
-            }
-        }
 
         /// <summary>
         /// Reset to default state
@@ -766,7 +736,7 @@ namespace PicView
                 AjaxLoadingStart();
             }
 
-            if (Pics.Count <= FolderIndex || FolderIndex < 0)
+            if (Pics.Count <= FolderIndex || FolderIndex < 0 ||freshStartup)
                 await GetValues(path);
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
             else if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(path) != Path.GetDirectoryName(PicPath))
@@ -774,11 +744,8 @@ namespace PicView
                 ChangeFolder();
                 await GetValues(path);
             }
-            else if (freshStartup)
-                await GetValues(path);
             else
                 FolderIndex = Pics.IndexOf(path);
-            
 
             Pic(FolderIndex);
 
@@ -3171,6 +3138,57 @@ namespace PicView
         #region File Methods
 
         /// <summary>
+        /// Adds events and submenu items to recent items in the context menu
+        /// </summary>
+        /// <param name="sender"></param>
+        private void Recentcm_MouseEnter(object sender)
+        {
+            // Need to register the object as a MenuItem to use it
+            var RecentFilesMenuItem = (MenuItem)sender;
+
+            // Load values and check if succeeded
+            var fileNames = RecentFiles.LoadValues();
+            if (fileNames == null)
+                return;
+
+            // If items exist: replace them, else add them 
+            if (RecentFilesMenuItem.Items.Count >= 5)
+            {
+                for (int i = 0; i < fileNames.Length; i++)
+                {
+                    // Don't add the same item more than once
+                    var item = fileNames[i];
+                    if (i != 0 && fileNames[i - 1] == item)
+                        break;
+                    
+                    // Change values
+                    var menuItem = (MenuItem)RecentFilesMenuItem.Items[i];
+                    menuItem.Header = Path.GetFileName(item);
+                    menuItem.ToolTip = item;
+                }
+                return;
+            }
+
+            for (int i = 0; i < fileNames.Length; i++)
+            {
+                // Don't add the same item more than once
+                var item = fileNames[i];
+                if (i != 0 && fileNames[i - 1] == item)
+                    break;
+
+                // Add items
+                var menuItem = new MenuItem()
+                {
+                    Header = Path.GetFileName(item),
+                    ToolTip = item
+                };
+                // Set tooltip as argument to avoid subscribing and unsubscribing to events
+                menuItem.Click += (x, xx) => Pic(menuItem.ToolTip.ToString());
+                RecentFilesMenuItem.Items.Add(menuItem);
+            }
+        }
+
+        /// <summary>
         /// Copy image location to clipboard
         /// </summary>
         private void CopyText()
@@ -3321,7 +3339,7 @@ namespace PicView
         }
 
         /// <summary>
-        /// Open a file dialog where user can save the selected file in a supported filtype.
+        /// Open a File Dialog, where the user can save a supported file type.
         /// </summary>
         private void SaveFiles()
         {
