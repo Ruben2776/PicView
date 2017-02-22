@@ -303,12 +303,17 @@ namespace PicView.lib
                     // Start at first file
                     FolderIndex = 0;
 
+                    // Add zipped files as recent file
+                    RecentFiles.SetZipped(PicPath);
+
                     // Set extracted files to Pics
                     if (Directory.Exists(TempZipPath))
                     {
-                        var test = Directory.EnumerateFileSystemEntries(TempZipPath);
-                        if (test.Count() > -1)
-                            Pics = FileList(TempZipPath);
+                        var directory = Directory.GetDirectories(TempZipPath);
+                        if (directory.Length > 0)
+                            TempZipPath = directory[0];
+
+                        Pics = FileList(TempZipPath);
                     }
                 }
                 else

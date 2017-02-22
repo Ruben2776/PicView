@@ -121,7 +121,7 @@ namespace PicView
             var task = new Task(() =>
             {
                 // Initilize Most Recently used
-                //mruList = new RecentFiles();
+                RecentFiles.Initialize();
 
                 #region Add events
 
@@ -353,6 +353,15 @@ namespace PicView
             printcm.Click += (s, x) => Print(PicPath);
             cm.Items.Add(printcm);
 
+            cm.Items.Add(new Separator());
+            var recentcm = new MenuItem
+            {
+                Header = "Recent files"
+            };
+            recentcm.MouseEnter += (xx,xxx) => Recentcm_MouseEnter(recentcm);
+            cm.Items.Add(recentcm);
+            cm.Items.Add(new Separator());
+
             var wallcm = new MenuItem
             {
                 Header = "Set as wallpaper"
@@ -576,9 +585,47 @@ namespace PicView
 
             #endregion           
 
+            Recentcm_MouseEnter(recentcm);
             if (endLoading)
             {
                 AjaxLoadingEnd();
+            }
+        }
+
+        private void Recentcm_MouseEnter(object sender)
+        {
+            var RecentFilesMenuItem = (MenuItem)sender;
+            var fileNames = RecentFiles.LoadValues();
+
+            if (fileNames == null)
+                return;
+
+            if (RecentFilesMenuItem.Items.Count >= 5)
+            {
+                for (int i = 0; i < fileNames.Length; i++)
+                {
+                    var item = fileNames[i];
+                    var menuItem = (MenuItem)RecentFilesMenuItem.Items[i];
+                    menuItem.Header = Path.GetFileName(item);
+                    menuItem.ToolTip = item;
+                    menuItem.Click += (x, xx) => Pic(item);
+                }
+                return;
+            }
+
+            for (int i = 0; i < fileNames.Length; i++)
+            {
+                if (i >= 5)
+                    break;
+
+                var item = fileNames[i];
+                var menuItem = new MenuItem()
+                {
+                    Header = Path.GetFileNameWithoutExtension(item),
+                    ToolTip = item
+                };
+                menuItem.Click += (x, xx) => Pic(item);
+                RecentFilesMenuItem.Items.Add(menuItem);
             }
         }
 
@@ -698,7 +745,7 @@ namespace PicView
         {
             Properties.Settings.Default.Save();
             DeleteTempFiles();
-            //mruList.WriteToFile();
+            RecentFiles.WriteToFile();
         }
 
         #endregion
@@ -719,12 +766,10 @@ namespace PicView
                 AjaxLoadingStart();
             }
 
-            //if (!string.IsNullOrWhiteSpace(TempZipPath) && mruList != null)
-            //    mruList.SetZipped(PicPath);
-            
+            if (Pics.Count <= FolderIndex || FolderIndex < 0)
+                await GetValues(path);
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
-            if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(path) != Path.GetDirectoryName(PicPath)
-                || string.IsNullOrWhiteSpace(TempZipPath))
+            else if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(path) != Path.GetDirectoryName(PicPath))
             {
                 ChangeFolder();
                 await GetValues(path);
@@ -732,12 +777,7 @@ namespace PicView
             else if (freshStartup)
                 await GetValues(path);
             else
-            {
-                Pics = FileList(Path.GetDirectoryName(path));
                 FolderIndex = Pics.IndexOf(path);
-            }
-
-
 
             Pic(FolderIndex);
 
@@ -806,7 +846,7 @@ namespace PicView
             if (IsScrollEnabled)
                 Scroller.ScrollToTop();
 
-            //Prevent the next pichure to be flipped if previous is.
+            // Prevent next picture from being flipped if previous is.
             if (Flipped)
                 Flip();
 
@@ -854,8 +894,7 @@ namespace PicView
             canNavigate = true;
             Progress(x, Pics.Count);
             FolderIndex = x;
-            //if (mruList != null)
-            //    mruList.Add(Pics[x]);
+            RecentFiles.Add(Pics[x]);
 
             // Loses position gradually if not forced to center       
             CenterWindowOnScreen();
@@ -2346,7 +2385,6 @@ namespace PicView
             bg.Children.Add(quickSettingsMenu);
         }
 
-
         // Tooltip
 
         /// <summary>
@@ -3247,8 +3285,6 @@ namespace PicView
         /// </summary>
         private void Open()
         {
-
-
             var dlg = new Microsoft.Win32.OpenFileDialog()
             {
                 Filter = FilterFiles,
@@ -3296,7 +3332,6 @@ namespace PicView
             {
                 ToolTipStyle("Error, File does not exist, or something went wrong...", true);
             }
-
         }
 
         #endregion     
