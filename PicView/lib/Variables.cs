@@ -48,7 +48,7 @@ namespace PicView.lib
             + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw";      // Camera files
 
         /// <summary>
-        /// File path of current  image
+        /// File path of current image
         /// </summary>
         internal static string PicPath { get; set; }
 
@@ -158,6 +158,7 @@ namespace PicView.lib
         /// </summary>
         internal static int Rotateint { get; set; }
 
+        // UserControls
         internal static ImageSettings imageSettingsMenu;
         internal static FileMenu fileMenu;
         internal static QuickSettingsMenu quickSettingsMenu;
@@ -221,11 +222,6 @@ namespace PicView.lib
         /// Helper for user color settings
         /// </summary>
         internal static Color mainColor;
-
-        /// <summary>
-        /// File list for Most Recently Used files
-        /// </summary>
-        //internal static RecentFiles mruList; 
 
     }
 }

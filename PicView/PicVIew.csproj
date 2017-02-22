@@ -118,6 +118,7 @@
     <Compile Include="lib\ArchiveExtraction.cs" />
     <Compile Include="lib\FileFunctions.cs" />
     <Compile Include="lib\NativeMethods.cs" />
+    <Compile Include="lib\RecentFiles.cs" />
     <Compile Include="lib\UserControls\CustomControls\AutoScrollSign.xaml.cs">
       <DependentUpon>AutoScrollSign.xaml</DependentUpon>
     </Compile>
