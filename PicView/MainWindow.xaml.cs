@@ -262,6 +262,7 @@ namespace PicView
                 // bg
                 bg.Drop += Image_Drop;
                 bg.DragOver += Image_DraOver;
+                bg.DragEnter += Image_DraEnter;
                 bg.DragLeave += Image_DragLeave;
 
                 // TooltipStyle
@@ -1541,10 +1542,17 @@ namespace PicView
             e.Effects = DragDropEffects.Copy;
             isDraggedOver = e.Handled = true;
             ToolTipStyle(DragOverString);
+        }
 
-            // If standard image, show thumbnail preview
-            if (!Drag_Drop_Check(files).Value)
-                return;
+        private void Image_DraEnter(object sender, DragEventArgs e)
+        {
+            // Error handling
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+            var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+            
+            // Do nothing for invalid files
+            if (!Drag_Drop_Check(files).HasValue)
+                    return;
 
             // If no image, fix it to container
             if (img.Source == null)
@@ -1560,7 +1568,6 @@ namespace PicView
 
             // Load from preloader or Windows thumbnails
             img.Source = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : GetWindowsThumbnail(files[0]);
-
         }
 
         /// <summary>
