@@ -132,10 +132,10 @@ namespace PicView.lib
                 }
             }
             else
-            {       
+            {
                 return false;
-            }           
-            
+            }
+
             return true;
         }
 

@@ -17,10 +17,6 @@ namespace PicView.lib
         /// <returns></returns>
         internal static bool Extract(string path)
         {
-            
-
-
-            
             var Winrar = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\WinRAR\\WinRAR.exe";
             if (!File.Exists(Winrar))
                 Winrar = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\WinRAR\\WinRAR.exe";
@@ -29,7 +25,6 @@ namespace PicView.lib
                 Extract(path, Winrar, true);
                 return true;
             }
-            
 
             var sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\7-Zip\\7z.exe";
             if (!File.Exists(sevenZip))
@@ -39,15 +34,6 @@ namespace PicView.lib
                 Extract(path, sevenZip, false);
                 return true;
             }
-
-            /*
-            if(!File.Exists(sevenZip) || !File.Exists(Winrar))
-            {
-                
-                
-            }
-            
-             */
 
             return false;
         }

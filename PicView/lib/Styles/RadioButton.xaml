@@ -80,7 +80,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type CheckBox}">
+    <Style x:Key="Checkstyle" TargetType="{x:Type CheckBox}">
         <Setter Property="Margin" Value="0" />
         <Setter Property="Foreground" Value="WhiteSmoke" />
         <Setter Property="Background" Value="Transparent" />

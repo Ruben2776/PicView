@@ -1,6 +1,4 @@
-﻿using ImageGlass.Library.Image;
-using ImageGlass.Services.Configuration;
-using PicView.lib;
+﻿using PicView.lib;
 using PicView.lib.UserControls;
 using PicView.Windows;
 using System;
@@ -94,7 +92,7 @@ namespace PicView
             LoadFileMenu();
             LoadImageSettingsMenu();
             LoadQuickSettingsMenu();
-            LoadEkstraMenu();
+            LoadFunctionsMenu();
             LoadAutoScrollSign();
             LoadClickArrow(true);
             LoadClickArrow(false);
@@ -223,15 +221,14 @@ namespace PicView
                 quickSettingsMenu.SetFit.Unchecked += (s, x) => { SizeMode = true; };
                 quickSettingsMenu.SettingsButton.Click += (s, x) => AllsettingsWindow();
 
-                //EkstraMenu
-                QuestionButton.PreviewMouseLeftButtonDown += EkstraMenuButtonButtonMouseButtonDown;
-                QuestionButton.MouseEnter += EkstraMenuButtonButtonMouseOver;
-                QuestionButton.MouseLeave += EkstraMenuButtonButtonMouseLeave;
-                QuestionButton.Click += Toggle_quick_ekstra_menu;
-                ekstraMenu.CloseButton.Click += Toggle_quick_ekstra_menu;
-                ekstraMenu.SettingsButton.Click += (s, x) => AllsettingsWindow();
-                ekstraMenu.Help.Click += (s, x) => HelpWindow();
-                ekstraMenu.About.Click += (s, x) => AboutWindow();
+                //FunctionMenu
+                FunctionMenuButton.PreviewMouseLeftButtonDown += FunctionMenuButtonButtonMouseButtonDown;
+                FunctionMenuButton.MouseEnter += FunctionMenuButtonButtonMouseOver;
+                FunctionMenuButton.MouseLeave += FunctionMenuButtonButtonMouseLeave;
+                FunctionMenuButton.Click += Toggle_Functions_menu;
+                functionsMenu.CloseButton.Click += Toggle_Functions_menu;
+                functionsMenu.Help.Click += (s, x) => HelpWindow();
+                functionsMenu.About.Click += (s, x) => AboutWindow();
                 
                 
 
@@ -457,94 +454,95 @@ namespace PicView
             MovetoRecycleBin.Click += (s, x) => DeleteToRecycleBin();
             cm.Items.Add(MovetoRecycleBin);*/
 
-            var DeletePic = new MenuItem
-            {
-                Header = "Delete Permanent",
-                InputGestureText = "Shift + Del"
-            };
-            var DeletePicIcon = new System.Windows.Shapes.Path();
-            DeletePicIcon.Data = Geometry.Parse("M2 0l-2 3 2 3h6v-6h-6zm1.5.78l1.5 1.5 1.5-1.5.72.72-1.5 1.5 1.5 1.5-.72.72-1.5-1.5-1.5 1.5-.72-.72 1.5-1.5-1.5-1.5.72-.72z");
-            DeletePicIcon.Stretch = Stretch.Fill;
-            DeletePicIcon.Width = DeletePicIcon.Height = 12;
-            DeletePicIcon.Fill = scbf;
-            DeletePic.Icon = DeletePicIcon;
-            DeletePic.Click += (s, x) => DeletePermanent();
-            cm.Items.Add(DeletePic);
+            //var DeletePic = new MenuItem
+            //{
+            //    Header = "Delete Permanent",
+            //    InputGestureText = "Shift + Del"
+            //};
+            //var DeletePicIcon = new System.Windows.Shapes.Path();
+            //DeletePicIcon.Data = Geometry.Parse("M2 0l-2 3 2 3h6v-6h-6zm1.5.78l1.5 1.5 1.5-1.5.72.72-1.5 1.5 1.5 1.5-.72.72-1.5-1.5-1.5 1.5-.72-.72 1.5-1.5-1.5-1.5.72-.72z");
+            //DeletePicIcon.Stretch = Stretch.Fill;
+            //DeletePicIcon.Width = DeletePicIcon.Height = 12;
+            //DeletePicIcon.Fill = scbf;
+            //DeletePic.Icon = DeletePicIcon;
+            //DeletePic.Click += (s, x) => DeletePermanent();
+            //cm.Items.Add(DeletePic);
 
-            cm.Items.Add(new Separator());
+            //cm.Items.Add(new Separator());
 
-            var unloadcm = new MenuItem
-            {
-                Header = "Clear picture"
-            };
-            unloadcm.Click += (s, x) => Unload();
-            cm.Items.Add(unloadcm);
-            cm.Items.Add(new Separator());
+            //var unloadcm = new MenuItem
+            //{
+            //    Header = "Clear picture"
+            //};
+            //unloadcm.Click += (s, x) => Unload();
+            //cm.Items.Add(unloadcm);
+            //cm.Items.Add(new Separator());
 
-            var abcm = new MenuItem
-            {
-                Header = "About",
-                InputGestureText = "F2",
-                ToolTip = "Shows version and copyright"
-            };
-            var abcmIcon = new System.Windows.Shapes.Path();
-            abcmIcon.Data = Geometry.Parse("M1216 1344v128q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h64v-384h-64q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h384q26 0 45 19t19 45v576h64q26 0 45 19t19 45zm-128-1152v192q0 26-19 45t-45 19h-256q-26 0-45-19t-19-45v-192q0-26 19-45t45-19h256q26 0 45 19t19 45z");
-            abcmIcon.Stretch = Stretch.Fill;
-            abcmIcon.Height = 12;
-            abcmIcon.Width = 9;
-            abcmIcon.Fill = scbf;
-            abcm.Icon = abcmIcon;
-            abcm.Click += (s, x) => AboutWindow();
-            cm.Items.Add(abcm);
+            //var abcm = new MenuItem
+            //{
+            //    Header = "About",
+            //    InputGestureText = "F2",
+            //    ToolTip = "Shows version and copyright"
+            //};
+            //var abcmIcon = new System.Windows.Shapes.Path();
+            //abcmIcon.Data = Geometry.Parse("M1216 1344v128q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h64v-384h-64q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h384q26 0 45 19t19 45v576h64q26 0 45 19t19 45zm-128-1152v192q0 26-19 45t-45 19h-256q-26 0-45-19t-19-45v-192q0-26 19-45t45-19h256q26 0 45 19t19 45z");
+            //abcmIcon.Stretch = Stretch.Fill;
+            //abcmIcon.Height = 12;
+            //abcmIcon.Width = 9;
+            //abcmIcon.Fill = scbf;
+            //abcm.Icon = abcmIcon;
+            //abcm.Click += (s, x) => AboutWindow();
+            //cm.Items.Add(abcm);
 
-            var helpcm = new MenuItem
-            {
-                Header = "Help",
-                InputGestureText = "F1",
-                ToolTip = "Shows keyboard shortcuts and general help"
-            };
-            var helpcmIcon = new System.Windows.Shapes.Path();
-            helpcmIcon.Data = Geometry.Parse("M1088 1256v240q0 16-12 28t-28 12h-240q-16 0-28-12t-12-28v-240q0-16 12-28t28-12h240q16 0 28 12t12 28zm316-600q0 54-15.5 101t-35 76.5-55 59.5-57.5 43.5-61 35.5q-41 23-68.5 65t-27.5 67q0 17-12 32.5t-28 15.5h-240q-15 0-25.5-18.5t-10.5-37.5v-45q0-83 65-156.5t143-108.5q59-27 84-56t25-76q0-42-46.5-74t-107.5-32q-65 0-108 29-35 25-107 115-13 16-31 16-12 0-25-8l-164-125q-13-10-15.5-25t5.5-28q160-266 464-266 80 0 161 31t146 83 106 127.5 41 158.5z");
-            helpcmIcon.Stretch = Stretch.Fill;
-            helpcmIcon.Width = helpcmIcon.Height = 12;
-            helpcmIcon.Fill = scbf;
-            helpcm.Icon = helpcmIcon;
-            helpcm.Click += (s, x) => HelpWindow();
-            cm.Items.Add(helpcm);
-
-            cm.Items.Add(new Separator());
+            //var helpcm = new MenuItem
+            //{
+            //    Header = "Help",
+            //    InputGestureText = "F1",
+            //    ToolTip = "Shows keyboard shortcuts and general help"
+            //};
+            //var helpcmIcon = new System.Windows.Shapes.Path();
+            //helpcmIcon.Data = Geometry.Parse("M1088 1256v240q0 16-12 28t-28 12h-240q-16 0-28-12t-12-28v-240q0-16 12-28t28-12h240q16 0 28 12t12 28zm316-600q0 54-15.5 101t-35 76.5-55 59.5-57.5 43.5-61 35.5q-41 23-68.5 65t-27.5 67q0 17-12 32.5t-28 15.5h-240q-15 0-25.5-18.5t-10.5-37.5v-45q0-83 65-156.5t143-108.5q59-27 84-56t25-76q0-42-46.5-74t-107.5-32q-65 0-108 29-35 25-107 115-13 16-31 16-12 0-25-8l-164-125q-13-10-15.5-25t5.5-28q160-266 464-266 80 0 161 31t146 83 106 127.5 41 158.5z");
+            //helpcmIcon.Stretch = Stretch.Fill;
+            //helpcmIcon.Width = helpcmIcon.Height = 12;
+            //helpcmIcon.Fill = scbf;
+            //helpcm.Icon = helpcmIcon;
+            //helpcm.Click += (s, x) => HelpWindow();
+            //cm.Items.Add(helpcm);
+            //cm.Items.Add(new Separator());
             
-            var mincm = new MenuItem
-            {
-                Header = "Minimize"
-            };
-            var mincmIcon = new System.Windows.Shapes.Path();
-            mincmIcon.Data = Geometry.Parse("F1M0,6L0,9 9,9 9,6 0,6z");
-            mincmIcon.Stretch = Stretch.Fill;
-            mincmIcon.Width = 12;
-            mincmIcon.Height = 5;
-            mincmIcon.Fill = scbf;
-            mincm.Icon = mincmIcon;
-            mincm.Click += (s, x) => SystemCommands.MinimizeWindow(this);
-            cm.Items.Add(mincm);
+            //var mincm = new MenuItem
+            //{
+            //    Header = "Minimize"
+            //};
+            //var mincmIcon = new System.Windows.Shapes.Path();
+            //mincmIcon.Data = Geometry.Parse("F1M0,6L0,9 9,9 9,6 0,6z");
+            //mincmIcon.Stretch = Stretch.Fill;
+            //mincmIcon.Width = 12;
+            //mincmIcon.Height = 5;
+            //mincmIcon.Fill = scbf;
+            //mincm.Icon = mincmIcon;
+            //mincm.Click += (s, x) => SystemCommands.MinimizeWindow(this);
+            //cm.Items.Add(mincm);
 
             
-            var maxcm = new MenuItem
-            {
-                Header = "Maximize"
-            };
-            var maxcmIcon = new System.Windows.Shapes.Path();
-            maxcmIcon.Data = Geometry.Parse("F1M0,0L0,9 9,9 9,0 0,0 0,3 8,3 8,8 1,8 1,3z");
-            maxcmIcon.Stretch = Stretch.Fill;
-            maxcmIcon.Width = maxcmIcon.Height = 12;
-            maxcmIcon.Fill = scbf;
-            maxcm.Icon = maxcmIcon;
-            maxcm.Click += (s, x) => Maximize_Restore();
-            cm.Items.Add(maxcm);
+            //var maxcm = new MenuItem
+            //{
+            //    Header = "Maximize"
+            //};
+            //var maxcmIcon = new System.Windows.Shapes.Path();
+            //maxcmIcon.Data = Geometry.Parse("F1M0,0L0,9 9,9 9,0 0,0 0,3 8,3 8,8 1,8 1,3z");
+            //maxcmIcon.Stretch = Stretch.Fill;
+            //maxcmIcon.Width = maxcmIcon.Height = 12;
+            //maxcmIcon.Fill = scbf;
+            //maxcm.Icon = maxcmIcon;
+            //maxcm.Click += (s, x) => Maximize_Restore();
+            //cm.Items.Add(maxcm);
 
+            cm.Items.Add(new Separator());
             var clcm = new MenuItem
             {
-                Header = "Close"
+                Header = "Close",
+                InputGestureText = "Esc"
             };
             var mclcmIcon = new System.Windows.Shapes.Path();
             mclcmIcon.Data = Geometry.Parse("M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z");
@@ -633,7 +631,8 @@ namespace PicView
 
             var clX2x = new MenuItem
             {
-                Header = "Close"
+                Header = "Close",
+                InputGestureText = "Esc"
             };
             clX2x.Click += (s, x) => Close();
             closeX2.Items.Add(clX2x);
@@ -2540,22 +2539,19 @@ namespace PicView
             bg.Children.Add(quickSettingsMenu);
         }
 
-
-        //EkstraMenu
-
-        private void LoadEkstraMenu()
+        private void LoadFunctionsMenu()
         {
-            ekstraMenu = new lib.UserControls.Menus.EkstraMenu
+            functionsMenu = new lib.UserControls.Menus.FunctionsMenu
             {
                 Focusable = false,
                 Opacity = 0,
                 Visibility = Visibility.Hidden,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(125, 0, 0, 0)
+                Margin = new Thickness(4, 0, 0, 0)
             };
 
-            bg.Children.Add(ekstraMenu);
+            bg.Children.Add(functionsMenu);
         }
 
         // Tooltip
@@ -2760,23 +2756,26 @@ namespace PicView
             }
         }
 
-        private static bool EkstraMenuOpen
+        /// <summary>
+        /// Toggles whether FunctionsMenu is open or not with a fade animation 
+        /// </summary>
+        private static bool FunctionsMenuOpen
         {
-            get { return ekstraMenuOpen; }
+            get { return functionsMenuOpen; }
             set
             {
-                ekstraMenuOpen = value;
-                ekstraMenu.Visibility = Visibility.Visible;
+                functionsMenuOpen = value;
+                functionsMenu.Visibility = Visibility.Visible;
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
                 if (!value)
                 {
                     da.To = 0;
-                    da.Completed += delegate { ekstraMenu.Visibility = Visibility.Hidden; };
+                    da.Completed += delegate { functionsMenu.Visibility = Visibility.Hidden; };
                 }
                 else
                     da.To = 1;
-                if (ekstraMenu != null)
-                    ekstraMenu.BeginAnimation(OpacityProperty, da);
+                if (functionsMenu != null)
+                    functionsMenu.BeginAnimation(OpacityProperty, da);
             }
         }
 
@@ -2795,7 +2794,7 @@ namespace PicView
             if (QuickSettingsMenuOpen)
                 return true;
 
-            if (EkstraMenuOpen)
+            if (FunctionsMenuOpen)
                 return true;
 
             return false;
@@ -2815,8 +2814,8 @@ namespace PicView
             if (QuickSettingsMenuOpen)
                 QuickSettingsMenuOpen = false;
 
-            if (EkstraMenuOpen)
-                EkstraMenuOpen = false;
+            if (FunctionsMenuOpen)
+                FunctionsMenuOpen = false;
         }
 
         private void Close_UserControls(object sender, RoutedEventArgs e)
@@ -2834,8 +2833,8 @@ namespace PicView
             if (QuickSettingsMenuOpen)
                 QuickSettingsMenuOpen = false;
 
-            if (EkstraMenuOpen)
-                EkstraMenuOpen = false;
+            if (FunctionsMenuOpen)
+                FunctionsMenuOpen = false;
 
 
         }
@@ -2850,8 +2849,8 @@ namespace PicView
             if (QuickSettingsMenuOpen)
                 QuickSettingsMenuOpen = false;
 
-            if (EkstraMenuOpen)
-                EkstraMenuOpen = false;
+            if (FunctionsMenuOpen)
+                FunctionsMenuOpen = false;
         }
 
         private void Toggle_quick_settings_menu(object sender, RoutedEventArgs e)
@@ -2864,14 +2863,14 @@ namespace PicView
             if (ImageSettingsMenuOpen)
                 ImageSettingsMenuOpen = false;
 
-            if (EkstraMenuOpen)
-                EkstraMenuOpen = false;
+            if (FunctionsMenuOpen)
+                FunctionsMenuOpen = false;
 
         }
 
-        private void Toggle_quick_ekstra_menu(object sender, RoutedEventArgs e)
+        private void Toggle_Functions_menu(object sender, RoutedEventArgs e)
         {
-            EkstraMenuOpen = !EkstraMenuOpen;
+            FunctionsMenuOpen = !FunctionsMenuOpen;
 
             if (FileMenuOpen)
                 FileMenuOpen = false;
@@ -3388,9 +3387,9 @@ namespace PicView
                 false
             );
         }
-        
-        //EkstraMenu
-        private void EkstraMenuButtonButtonMouseOver(object sender, MouseEventArgs e)
+
+        // FunctionMenu
+        private void FunctionMenuButtonButtonMouseOver(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
                 mainColor.A,
@@ -3402,12 +3401,12 @@ namespace PicView
             );
         }
 
-        private void EkstraMenuButtonButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        private void FunctionMenuButtonButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(QuestionButtonFill1, false);
         }
 
-        private void EkstraMenuButtonButtonMouseLeave(object sender, MouseEventArgs e)
+        private void FunctionMenuButtonButtonMouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 mainColor.A,
@@ -3664,100 +3663,100 @@ namespace PicView
 
         private void DeleteToRecycleBin()
         {
-            try
-            {
-                if (!File.Exists(PicPath))
-                {
-                    return;
-                }
-            }
-            catch { return; }
+            //try
+            //{
+            //    if (!File.Exists(PicPath))
+            //    {
+            //        return;
+            //    }
+            //}
+            //catch { return; }
 
-            //string f = GlobalSetting.ImageList.GetFileName(GlobalSetting.CurrentIndex);
-            string f = Path.GetFullPath(PicPath);
-            try
-            {
-                //in case of GIF file...
-                string ext = Path.GetExtension(Path.GetFileName(PicPath)).ToLower();
-                if (ext == ".gif")
-                {
-                    try
-                    {
-                        //delete thumbnail list
-                        //thumbnailBar.Items.RemoveAt(GlobalSetting.CurrentIndex);
-                    }
-                    catch { }
+            ////string f = GlobalSetting.ImageList.GetFileName(GlobalSetting.CurrentIndex);
+            //string f = Path.GetFullPath(PicPath);
+            //try
+            //{
+            //    //in case of GIF file...
+            //    string ext = Path.GetExtension(Path.GetFileName(PicPath)).ToLower();
+            //    if (ext == ".gif")
+            //    {
+            //        try
+            //        {
+            //            //delete thumbnail list
+            //            //thumbnailBar.Items.RemoveAt(GlobalSetting.CurrentIndex);
+            //        }
+            //        catch { }
 
-                    //delete image list
-                    GlobalSetting.ImageList.Remove(GlobalSetting.CurrentIndex);
-                    GlobalSetting.ImageFilenameList.RemoveAt(GlobalSetting.CurrentIndex);
+            //        //delete image list
+            //        GlobalSetting.ImageList.Remove(GlobalSetting.CurrentIndex);
+            //        GlobalSetting.ImageFilenameList.RemoveAt(GlobalSetting.CurrentIndex);
 
-                    Pic(0);
-                }
+            //        Pic(0);
+            //    }
 
-                if(File.Exists(f))
-                {
-                    ImageInfo.DeleteFile(f, true);
+            //    if(File.Exists(f))
+            //    {
+            //        ImageInfo.DeleteFile(f, true);
 
-                    PicErrorFix(FolderIndex);
-                }
+            //        PicErrorFix(FolderIndex);
+            //    }
                 
 
-            }
-            catch (Exception ex)
-            {
-                ToolTipStyle(ex.Message , true);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    ToolTipStyle(ex.Message , true);
+            //}
 
         }
 
 
         private void DeletePermanent()
         {
-            try
-            {
-                if (!File.Exists(PicPath))
-                {
-                    return;
-                }
-            }
-            catch { return; }
+            //try
+            //{
+            //    if (!File.Exists(PicPath))
+            //    {
+            //        return;
+            //    }
+            //}
+            //catch { return; }
 
-            //string f = GlobalSetting.ImageList.GetFileName(GlobalSetting.CurrentIndex);
-            string f = Path.GetFullPath(PicPath);
-            try
-            {
-                //in case of GIF file...
-                string ext = Path.GetExtension(Path.GetFileName(PicPath)).ToLower();
-                if (ext == ".gif")
-                {
-                    try
-                    {
-                        //delete thumbnail list
-                        //thumbnailBar.Items.RemoveAt(GlobalSetting.CurrentIndex);
-                    }
-                    catch { }
+            ////string f = GlobalSetting.ImageList.GetFileName(GlobalSetting.CurrentIndex);
+            //string f = Path.GetFullPath(PicPath);
+            //try
+            //{
+            //    //in case of GIF file...
+            //    string ext = Path.GetExtension(Path.GetFileName(PicPath)).ToLower();
+            //    if (ext == ".gif")
+            //    {
+            //        try
+            //        {
+            //            //delete thumbnail list
+            //            //thumbnailBar.Items.RemoveAt(GlobalSetting.CurrentIndex);
+            //        }
+            //        catch { }
 
-                    //delete image list
-                    GlobalSetting.ImageList.Remove(GlobalSetting.CurrentIndex);
-                    GlobalSetting.ImageFilenameList.RemoveAt(GlobalSetting.CurrentIndex);
+            //        //delete image list
+            //        GlobalSetting.ImageList.Remove(GlobalSetting.CurrentIndex);
+            //        GlobalSetting.ImageFilenameList.RemoveAt(GlobalSetting.CurrentIndex);
 
-                    Pic(0);
-                }
+            //        Pic(0);
+            //    }
 
-                if (File.Exists(f))
-                {
-                    ImageInfo.DeleteFile(f, false);
+            //    if (File.Exists(f))
+            //    {
+            //        ImageInfo.DeleteFile(f, false);
 
-                    PicErrorFix(FolderIndex);
-                }
+            //        PicErrorFix(FolderIndex);
+            //    }
 
 
-            }
-            catch (Exception ex)
-            {
-                ToolTipStyle(ex.Message, true);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    ToolTipStyle(ex.Message, true);
+            //}
 
         }
 

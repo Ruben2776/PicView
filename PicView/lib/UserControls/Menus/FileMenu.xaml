@@ -165,7 +165,7 @@
                             x:Name="Save_File"
                             Width="128"
                             Height="70"
-                            Content="Save Pic"
+                            Content="Save"
                             FocusVisualStyle="{x:Null}"
                             FontSize="14"
                             FontWeight="Bold"

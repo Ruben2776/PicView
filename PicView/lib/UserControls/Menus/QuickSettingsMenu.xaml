@@ -154,6 +154,7 @@
                             BorderBrush="{StaticResource BorderBrushAlt}"
                             BorderThickness="1"
                             Content="Scroll"
+                            Style="{StaticResource Checkstyle}"
                             ToolTip="Great for manga/comic reading">
                             <CheckBox.Background>
                                 <SolidColorBrush x:Name="ToggleScrollBrush" Color="{StaticResource BackgroundColorFade}" />

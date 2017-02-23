@@ -203,7 +203,7 @@
                     Height="55"
                     FocusVisualStyle="{x:Null}"
                     Focusable="False"
-                    ToolTip="Open file browser">
+                    ToolTip="Open file menu">
                     <Path
                         x:Name="FolderPath"
                         Width="30.725"
@@ -222,7 +222,7 @@
                     Height="55"
                     FocusVisualStyle="{x:Null}"
                     Focusable="False"
-                    ToolTip="Rotate and flip">
+                    ToolTip="Rotate and flip menu">
                     <Canvas Width="28" Height="31">
                         <Path
                             x:Name="ImagePath1"
@@ -318,7 +318,7 @@
                     Margin="0"
                     FocusVisualStyle="{x:Null}"
                     Focusable="False"
-                    ToolTip="Open the settings page">
+                    ToolTip="Quick Settings Menu">
                     <Path
                         x:Name="SettingsPath"
                         Width="28"
@@ -331,7 +331,7 @@
                     </Path>
                 </Button>
                 <Button
-                    x:Name="QuestionButton"
+                    x:Name="FunctionMenuButton"
                     Canvas.Left="339"
                     Canvas.Top="1"
                     Width="45"
@@ -339,16 +339,20 @@
                     Margin="0"
                     FocusVisualStyle="{x:Null}"
                     Focusable="False"
-                    ToolTip="Ekstra Menu">
-                    <Path
-                        Width="26"
-                        Height="26"
-                        Data="M1664 1344v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45z"
-                        Stretch="Fill">
-                        <Path.Fill>
-                            <SolidColorBrush x:Name="QuestionButtonFill1" Color="{StaticResource MainColor}" />
-                        </Path.Fill>
-                    </Path>
+                    ToolTip="Open Menu">
+                    <Canvas>
+                        <Path
+                            Canvas.Left="-11"
+                            Canvas.Top="-11"
+                            Width="24"
+                            Height="24"
+                            Data="M1664 1344v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45z"
+                            Stretch="Fill">
+                            <Path.Fill>
+                                <SolidColorBrush x:Name="QuestionButtonFill1" Color="{StaticResource MainColor}" />
+                            </Path.Fill>
+                        </Path>
+                    </Canvas>
                 </Button>
             </Canvas>
         </StackPanel>

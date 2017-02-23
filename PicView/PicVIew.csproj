@@ -84,15 +84,6 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ImageGlass.Core">
-      <HintPath>..\..\..\..\ImageGlass-master\Source\Components\ImageGlass.Services\bin\Release\ImageGlass.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="ImageGlass.Library">
-      <HintPath>..\..\..\..\ImageGlass-master\Source\Components\ImageGlass.Library\bin\Debug\ImageGlass.Library.dll</HintPath>
-    </Reference>
-    <Reference Include="ImageGlass.Services">
-      <HintPath>..\..\..\..\ImageGlass-master\Source\Components\ImageGlass.Services\bin\Release\ImageGlass.Services.dll</HintPath>
-    </Reference>
     <Reference Include="Magick.NET-Q16-HDRI-x64, Version=7.0.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=AMD64">
       <HintPath>..\packages\Magick.NET-Q16-HDRI-x64.7.0.4.701\lib\net40-client\Magick.NET-Q16-HDRI-x64.dll</HintPath>
     </Reference>
@@ -132,8 +123,8 @@
     <Compile Include="lib\UserControls\CustomControls\AutoScrollSign.xaml.cs">
       <DependentUpon>AutoScrollSign.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\Menus\EkstraMenu.xaml.cs">
-      <DependentUpon>EkstraMenu.xaml</DependentUpon>
+    <Compile Include="lib\UserControls\Menus\FunctionsMenu.xaml.cs">
+      <DependentUpon>FunctionsMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="lib\Windows\AllSettings.xaml.cs">
       <DependentUpon>AllSettings.xaml</DependentUpon>
@@ -217,7 +208,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\Menus\EkstraMenu.xaml">
+    <Page Include="lib\UserControls\Menus\FunctionsMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

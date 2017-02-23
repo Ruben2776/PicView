@@ -39,7 +39,6 @@
                         BorderBrush="{x:Null}"
                         FontWeight="Bold"
                         Foreground="{x:Null}"
-                        Style="{x:Null}"
                         ToolTip="Flip image">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="FlipButtonBrush" Color="Transparent" />
@@ -47,6 +46,7 @@
                         <CheckBox.Content>
                             <Path
                                 x:Name="FlipPath"
+                                Canvas.Top="19"
                                 Width="13"
                                 Height="13"
                                 Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
