@@ -349,10 +349,10 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Default")]
-        public string WindowStyle {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public short WindowStyle {
             get {
-                return ((string)(this["WindowStyle"]));
+                return ((short)(this["WindowStyle"]));
             }
             set {
                 this["WindowStyle"] = value;

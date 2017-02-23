@@ -223,7 +223,7 @@
                     PopupAnimation="Fade">
                     <Border
                         x:Name="SubmenuBorder"
-                        Background="#FF242424"
+                        Background="Yellow"
                         BorderThickness="1"
                         SnapsToDevicePixels="True">
                         <Border.BorderBrush>
@@ -349,7 +349,7 @@
                 <Setter TargetName="Check" Property="Visibility" Value="Visible" />
                 <Setter TargetName="Icon" Property="Visibility" Value="Hidden" />
             </Trigger>
-            <!--Menu highligt/hover-->
+            <!--  Menu highligt/hover  -->
             <Trigger Property="IsHighlighted" Value="true">
                 <Setter TargetName="Border" Property="Background" Value="{DynamicResource ChosenColorBrush}" />
                 <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ChosenColorBrush}" />
@@ -365,10 +365,11 @@
     </ControlTemplate>
 
     <ControlTemplate x:Key="{x:Static MenuItem.SubmenuHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
+        <!--  it is here  -->
         <Border
             x:Name="Border"
-            Padding="5,0"
-            BorderThickness="1">
+            Padding="0,5"
+            Background="{StaticResource BackgroundColorBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="Icon" />
@@ -378,7 +379,7 @@
                 </Grid.ColumnDefinitions>
                 <ContentPresenter
                     x:Name="Icon"
-                    Margin="6,0,6,0"
+                    Margin="5,0,10,0"
                     VerticalAlignment="Center"
                     ContentSource="Icon" />
                 <ContentPresenter
@@ -389,9 +390,9 @@
                 <TextBlock
                     x:Name="InputGestureText"
                     Grid.Column="2"
-                    Margin="5,2,2,2"
+                    Margin="5,2,0,2"
                     DockPanel.Dock="Right"
-                    Foreground="#FFF7F4F4"
+                    Foreground="{StaticResource MainColorFadedBrush}"
                     Text="{TemplateBinding InputGestureText}" />
                 <Path
                     Grid.Column="3"
@@ -399,7 +400,7 @@
                     VerticalAlignment="Center"
                     Data="F1M2,11.906C2,11.906 2,1.906 2,1.906 2,1.906 12,6.875 12,6.875">
                     <Path.Fill>
-                        <SolidColorBrush Color="#FFD8D8D8" />
+                        <SolidColorBrush Color="{StaticResource MainColorFaded}" />
                     </Path.Fill>
                 </Path>
                 <Popup
@@ -410,17 +411,16 @@
                     OpacityMask="#7F000000"
                     Placement="Right"
                     PopupAnimation="Fade">
+                    <!--  Sub level border  -->
                     <Border
                         x:Name="SubmenuBorder"
-                        Background="#FF242424"
+                        Background="{StaticResource BackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1"
                         SnapsToDevicePixels="True">
-                        <Border.BorderBrush>
-                            <SolidColorBrush Color="#7F000000" />
-                        </Border.BorderBrush>
                         <ScrollViewer
                             CanContentScroll="True"
-                            Foreground="White"
+                            Foreground="{StaticResource MainColorBrush}"
                             Style="{StaticResource MenuScrollViewer}">
                             <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
                         </ScrollViewer>
@@ -433,19 +433,13 @@
                 <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
             </Trigger>
             <Trigger Property="IsHighlighted" Value="true">
-                <Setter TargetName="Border" Property="Background" Value="#E5424242" />
-                <Setter TargetName="Border" Property="BorderBrush" Value="#FF424242" />
+                <Setter TargetName="Border" Property="Background" Value="{DynamicResource ChosenColorBrush}" />
             </Trigger>
             <Trigger SourceName="Popup" Property="AllowsTransparency" Value="True">
-                <Setter TargetName="SubmenuBorder" Property="CornerRadius" Value="0,0,0,0" />
                 <Setter TargetName="SubmenuBorder" Property="Padding" Value="0,3,0,3" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
-                <Setter Property="Foreground">
-                    <Setter.Value>
-                        <SolidColorBrush Color="#FFDADADA" />
-                    </Setter.Value>
-                </Setter>
+                <Setter Property="Foreground" Value="{StaticResource MainColorFaded}" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>

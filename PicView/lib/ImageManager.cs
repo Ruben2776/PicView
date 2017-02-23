@@ -30,7 +30,7 @@ namespace PicView.lib
 
                 if (extension == ".svg")
                 {
-                    //Make background transparent
+                    // Make background transparent
                     mrs.Format = MagickFormat.Svg;
                     mrs.BackgroundColor = MagickColors.Transparent;
                     try
@@ -73,13 +73,13 @@ namespace PicView.lib
             }
             catch (ArgumentException)
             {
+                // Some images crash without these settings
                 var failpic = new BitmapImage();
                 failpic.BeginInit();
                 failpic.UriSource = s;
                 failpic.CacheOption = BitmapCacheOption.None;
                 failpic.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
                 failpic.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
-                /// Some images crash without theese settings :(
                 failpic.EndInit();
                 failpic.Freeze();
                 return failpic;
@@ -111,18 +111,24 @@ namespace PicView.lib
 
         internal static bool TrySaveImage(int rotate, bool flipped, string path, string destination)
         {
-
             if (File.Exists(path))
             {
-                MagickImage SaveImage = new MagickImage(path);
-
-                if (flipped)
+                try
                 {
-                    SaveImage.Flop();
-                }
+                    MagickImage SaveImage = new MagickImage(path);
 
-                SaveImage.Rotate(rotate);
-                SaveImage.Write(destination);
+                    if (flipped)
+                    {
+                        SaveImage.Flop();
+                    }
+
+                    SaveImage.Rotate(rotate);
+                    SaveImage.Write(destination);
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
             else
             {       
@@ -131,5 +137,5 @@ namespace PicView.lib
             
             return true;
         }
-}
+    }
 }

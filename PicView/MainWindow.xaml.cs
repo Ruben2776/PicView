@@ -22,7 +22,6 @@ using static PicView.lib.FileFunctions;
 using static PicView.lib.Helper;
 using static PicView.lib.ImageManager;
 using static PicView.lib.Variables;
-using static PicView.lib.WindowFunctions;
 
 namespace PicView
 {
@@ -47,7 +46,7 @@ namespace PicView
             bg.Children.Add(ajaxLoading);
             AjaxLoadingStart();
 
-            if (Properties.Settings.Default.WindowStyle == "Alt")
+            if (Properties.Settings.Default.WindowStyle == 2)
             {
                 TitleBar.Visibility =
                 LowerBar.Visibility =
@@ -105,7 +104,7 @@ namespace PicView
             quickSettingsMenu.ToggleScroll.IsChecked = IsScrollEnabled;
 
             // Update WindowStyle
-            if (Properties.Settings.Default.WindowStyle == "Alt")
+            if (Properties.Settings.Default.WindowStyle == 2)
             {
                 clickArrowLeft.Opacity =
                 clickArrowRight.Opacity =
@@ -142,13 +141,13 @@ namespace PicView
                 MinButton.PreviewMouseLeftButtonDown += MinButtonMouseButtonDown;
                 MinButton.MouseEnter += MinButtonMouseOver;
                 MinButton.MouseLeave += MinButtonMouseLeave;
-                MinButton.Click += (s, x) => Minimize(this);
+                MinButton.Click += (s, x) => SystemCommands.MinimizeWindow(this);
 
                 // MaxButton
                 MaxButton.PreviewMouseLeftButtonDown += MaxButtonMouseButtonDown;
                 MaxButton.MouseEnter += MaxButtonMouseOver;
                 MaxButton.MouseLeave += MaxButtonMouseLeave;
-                MaxButton.Click += (s, x) => Maximize(this);
+                MaxButton.Click += (s, x) => Maximize_Restore();
 
                 // FileMenuButton
                 FileMenuButton.PreviewMouseLeftButtonDown += OpenMenuButtonMouseButtonDown;
@@ -372,6 +371,12 @@ namespace PicView
             {
                 Header = "Recent files"
             };
+            var recentcmIcon = new System.Windows.Shapes.Path();
+            recentcmIcon.Data = Geometry.Parse("M288,48H136c-22.092,0-40,17.908-40,40v336c0,22.092,17.908,40,40,40h240c22.092,0,40-17.908,40-40V176L288,48z M272,192 V80l112, 112H272z");
+            recentcmIcon.Stretch = Stretch.Fill;
+            recentcmIcon.Width = recentcmIcon.Height = 12;
+            recentcmIcon.Fill = scbf;
+            recentcm.Icon = recentcmIcon;
             recentcm.MouseEnter += (xx,xxx) => Recentcm_MouseEnter(recentcm);
             cm.Items.Add(recentcm);
             cm.Items.Add(new Separator());
@@ -482,7 +487,7 @@ namespace PicView
             mincmIcon.Height = 5;
             mincmIcon.Fill = scbf;
             mincm.Icon = mincmIcon;
-            mincm.Click += (s, x) => Minimize(this);
+            mincm.Click += (s, x) => SystemCommands.MinimizeWindow(this);
             cm.Items.Add(mincm);
 
             
@@ -496,7 +501,7 @@ namespace PicView
             maxcmIcon.Width = maxcmIcon.Height = 12;
             maxcmIcon.Fill = scbf;
             maxcm.Icon = maxcmIcon;
-            maxcm.Click += (s, x) => Maximize(this);
+            maxcm.Click += (s, x) => Maximize_Restore();
             cm.Items.Add(maxcm);
 
             var clcm = new MenuItem
@@ -606,43 +611,6 @@ namespace PicView
             }
         }
 
-        private void Recentcm_MouseEnter(object sender)
-        {
-            var RecentFilesMenuItem = (MenuItem)sender;
-            var fileNames = RecentFiles.LoadValues();
-
-            if (fileNames == null)
-                return;
-
-            if (RecentFilesMenuItem.Items.Count >= 5)
-            {
-                for (int i = 0; i < fileNames.Length; i++)
-                {
-                    var item = fileNames[i];
-                    var menuItem = (MenuItem)RecentFilesMenuItem.Items[i];
-                    menuItem.Header = Path.GetFileName(item);
-                    menuItem.ToolTip = item;
-                    menuItem.Click += (x, xx) => Pic(item);
-                }
-                return;
-            }
-
-            for (int i = 0; i < fileNames.Length; i++)
-            {
-                if (i >= 5)
-                    break;
-
-                var item = fileNames[i];
-                var menuItem = new MenuItem()
-                {
-                    Header = Path.GetFileNameWithoutExtension(item),
-                    ToolTip = item
-                };
-                menuItem.Click += (x, xx) => Pic(item);
-                RecentFilesMenuItem.Items.Add(menuItem);
-            }
-        }
-
         /// <summary>
         /// Reset to default state
         /// </summary>
@@ -735,7 +703,7 @@ namespace PicView
                 return;
 
             if (e.ClickCount == 2)
-                Maximize(this);
+                Maximize_Restore();
             else
             {
                 try
@@ -762,6 +730,49 @@ namespace PicView
             RecentFiles.WriteToFile();
         }
 
+        /// <summary>
+        /// Maximizes/restore window
+        /// </summary>
+        private void Maximize_Restore()
+        {
+            // Maximize
+            if (WindowState == WindowState.Normal)
+            {
+                // Update sizing
+                SizeToContent = SizeToContent.Manual;
+
+                // Tell Windows that it's maximized
+                WindowState = WindowState.Maximized;
+                SystemCommands.MaximizeWindow(this);
+
+                // Update button to reflect change
+                MaxButton.ToolTip = "Restore";
+                MaxButtonPath.Data = Geometry.Parse("M143-7h428v286h-428v-286z m571 286h286v428h-429v-143h54q37 0 63-26t26-63v-196z m429 482v-536q0-37-26-63t-63-26h-340v-197q0-37-26-63t-63-26h-536q-36 0-63 26t-26 63v536q0 37 26 63t63 26h340v197q0 37 26 63t63 26h536q36 0 63-26t26-63z");
+
+                // Update new setting
+                Properties.Settings.Default.WindowStyle = 1;
+            }
+
+            // Restore
+            else if (WindowState == WindowState.Maximized)
+            {
+                // Update sizing
+                SizeToContent = SizeToContent.WidthAndHeight;
+
+                // Tell Windows that it's normal
+                WindowState = WindowState.Normal;
+                SystemCommands.RestoreWindow(this);
+
+                // Update button to reflect change
+                MaxButton.ToolTip = "Maximize";
+                MaxButtonPath.Data = Geometry.Parse("M143 64h714v429h-714v-429z m857 625v-678q0-37-26-63t-63-27h-822q-36 0-63 27t-26 63v678q0 37 26 63t63 27h822q37 0 63-27t26-63z");
+
+                // Update new setting
+                Properties.Settings.Default.WindowStyle = 0;
+            }
+
+        }
+
         #endregion
 
         #region Image Logic
@@ -780,7 +791,7 @@ namespace PicView
                 AjaxLoadingStart();
             }
 
-            if (Pics.Count <= FolderIndex || FolderIndex < 0)
+            if (Pics.Count <= FolderIndex || FolderIndex < 0 ||freshStartup)
                 await GetValues(path);
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
             else if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(path) != Path.GetDirectoryName(PicPath))
@@ -788,11 +799,8 @@ namespace PicView
                 ChangeFolder();
                 await GetValues(path);
             }
-            else if (freshStartup)
-                await GetValues(path);
             else
                 FolderIndex = Pics.IndexOf(path);
-            
 
             Pic(FolderIndex);
 
@@ -841,7 +849,7 @@ namespace PicView
                 Title = Bar.Text = Loading;
                 Bar.ToolTip = Loading;
 
-                if (Properties.Settings.Default.WindowStyle == "Alt")
+                if (Properties.Settings.Default.WindowStyle == 2)
                     AjaxLoadingStart();
 
                 // Dissallow changing image while loading
@@ -2072,6 +2080,7 @@ namespace PicView
         /// <param name="height">The pixel height of the image</param>
         private void ZoomFit(double width, double height)
         {
+            // Needs update to fit maximized window condition
             // Get max width and height, based on user's screen
             var maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth - ComfySpace, width);
             var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 72), height);
@@ -2755,7 +2764,7 @@ namespace PicView
         /// </summary>
         private void HideInterface()
         {
-            if (Properties.Settings.Default.WindowStyle == "Default")
+            if (Properties.Settings.Default.WindowStyle == 0)
             {
                 TitleBar.Visibility =
                 LowerBar.Visibility =
@@ -2768,7 +2777,7 @@ namespace PicView
                 x2.Visibility =
                 Visibility.Visible;
 
-                Properties.Settings.Default.WindowStyle = "Alt";
+                Properties.Settings.Default.WindowStyle = 2;
 
                 activityTimer.Start();
 
@@ -2786,7 +2795,7 @@ namespace PicView
                 x2.Visibility =
                 Visibility.Collapsed;
 
-                Properties.Settings.Default.WindowStyle = "Default";
+                Properties.Settings.Default.WindowStyle = 0;
                 activityTimer.Stop();
             }
 
@@ -2798,7 +2807,7 @@ namespace PicView
 
             await Application.Current.Dispatcher.BeginInvoke((Action)(() =>
             {
-                if (Properties.Settings.Default.WindowStyle == "Alt")
+                if (Properties.Settings.Default.WindowStyle == 2)
                 {
                     if (clickArrowRight != null && clickArrowLeft != null && x2 != null)
                     {
@@ -3286,6 +3295,57 @@ namespace PicView
         #region File Methods
 
         /// <summary>
+        /// Adds events and submenu items to recent items in the context menu
+        /// </summary>
+        /// <param name="sender"></param>
+        private void Recentcm_MouseEnter(object sender)
+        {
+            // Need to register the object as a MenuItem to use it
+            var RecentFilesMenuItem = (MenuItem)sender;
+
+            // Load values and check if succeeded
+            var fileNames = RecentFiles.LoadValues();
+            if (fileNames == null)
+                return;
+
+            // If items exist: replace them, else add them 
+            if (RecentFilesMenuItem.Items.Count >= fileNames.Length)
+            {
+                for (int i = 0; i < fileNames.Length; i++)
+                {
+                    // Don't add the same item more than once
+                    var item = fileNames[i];
+                    if (i != 0 && fileNames[i - 1] == item)
+                        break;
+                    
+                    // Change values
+                    var menuItem = (MenuItem)RecentFilesMenuItem.Items[i];
+                    menuItem.Header = Path.GetFileName(item);
+                    menuItem.ToolTip = item;
+                }
+                return;
+            }
+
+            for (int i = 0; i < fileNames.Length; i++)
+            {
+                // Don't add the same item more than once
+                var item = fileNames[i];
+                if (i != 0 && fileNames[i - 1] == item)
+                    break;
+
+                // Add items
+                var menuItem = new MenuItem()
+                {
+                    Header = Path.GetFileName(item),
+                    ToolTip = item
+                };
+                // Set tooltip as argument to avoid subscribing and unsubscribing to events
+                menuItem.Click += (x, xx) => Pic(menuItem.ToolTip.ToString());
+                RecentFilesMenuItem.Items.Add(menuItem);
+            }
+        }
+
+        /// <summary>
         /// Copy image location to clipboard
         /// </summary>
         private void CopyText()
@@ -3436,7 +3496,7 @@ namespace PicView
         }
 
         /// <summary>
-        /// Open a file dialog where user can save the selected file in a supported filtype.
+        /// Open a File Dialog, where the user can save a supported file type.
         /// </summary>
         private void SaveFiles()
         {

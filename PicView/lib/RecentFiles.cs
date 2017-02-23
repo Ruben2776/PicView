@@ -41,7 +41,7 @@ namespace PicView.lib
             try
             {
                 // Read file stream
-                var listToRead = new StreamReader(Environment.CurrentDirectory + "\\Recent.txt");
+                var listToRead = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "\\Recent.txt");
                 string line;
 
                 // Read each line until end of file
@@ -91,7 +91,7 @@ namespace PicView.lib
         internal static void WriteToFile()
         {
             // Create file called "Recent.txt" located on app folder
-            var streamWriter = new StreamWriter(Environment.CurrentDirectory + "\\Recent.txt");
+            var streamWriter = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "\\Recent.txt");
             foreach (string item in MRUlist)
             {
                 // Write list to stream
