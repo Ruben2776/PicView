@@ -1,4 +1,6 @@
-﻿using PicView.lib;
+﻿using ImageGlass.Library.Image;
+using ImageGlass.Services.Configuration;
+using PicView.lib;
 using PicView.lib.UserControls;
 using PicView.Windows;
 using System;
@@ -366,6 +368,7 @@ namespace PicView
             printcm.Click += (s, x) => Print(PicPath);
             cm.Items.Add(printcm);
 
+
             cm.Items.Add(new Separator());
             var recentcm = new MenuItem
             {
@@ -433,6 +436,36 @@ namespace PicView
             pastecm.Icon = pastecmIcon;
             pastecm.Click += (s, x) => Paste();
             cm.Items.Add(pastecm);
+
+            /*
+            var MovetoRecycleBin = new MenuItem
+            {
+                Header = "Delete to Bin.",
+                InputGestureText = "Del"
+            };
+            var MovetoRecycleBinIcon = new System.Windows.Shapes.Path();
+            MovetoRecycleBinIcon.Data = Geometry.Parse("M2 0l-2 3 2 3h6v-6h-6zm1.5.78l1.5 1.5 1.5-1.5.72.72-1.5 1.5 1.5 1.5-.72.72-1.5-1.5-1.5 1.5-.72-.72 1.5-1.5-1.5-1.5.72-.72z");
+            MovetoRecycleBinIcon.Stretch = Stretch.Fill;
+            MovetoRecycleBinIcon.Width = MovetoRecycleBinIcon.Height = 12;
+            MovetoRecycleBinIcon.Fill = scbf;
+            MovetoRecycleBin.Icon = MovetoRecycleBinIcon;
+            MovetoRecycleBin.Click += (s, x) => DeleteToRecycleBin();
+            cm.Items.Add(MovetoRecycleBin);*/
+
+            var DeletePic = new MenuItem
+            {
+                Header = "Delete Permanent",
+                InputGestureText = "Shift + Del"
+            };
+            var DeletePicIcon = new System.Windows.Shapes.Path();
+            DeletePicIcon.Data = Geometry.Parse("M2 0l-2 3 2 3h6v-6h-6zm1.5.78l1.5 1.5 1.5-1.5.72.72-1.5 1.5 1.5 1.5-.72.72-1.5-1.5-1.5 1.5-.72-.72 1.5-1.5-1.5-1.5.72-.72z");
+            DeletePicIcon.Stretch = Stretch.Fill;
+            DeletePicIcon.Width = DeletePicIcon.Height = 12;
+            DeletePicIcon.Fill = scbf;
+            DeletePic.Icon = DeletePicIcon;
+            DeletePic.Click += (s, x) => DeletePermanent();
+            cm.Items.Add(DeletePic);
+
             cm.Items.Add(new Separator());
 
             var unloadcm = new MenuItem
@@ -3529,6 +3562,108 @@ namespace PicView
                 ToolTipStyle("Error, File does not exist, or something went wrong...", true);
             }
         }
+
+
+        private void DeleteToRecycleBin()
+        {
+            try
+            {
+                if (!File.Exists(PicPath))
+                {
+                    return;
+                }
+            }
+            catch { return; }
+
+            //string f = GlobalSetting.ImageList.GetFileName(GlobalSetting.CurrentIndex);
+            string f = Path.GetFullPath(PicPath);
+            try
+            {
+                //in case of GIF file...
+                string ext = Path.GetExtension(Path.GetFileName(PicPath)).ToLower();
+                if (ext == ".gif")
+                {
+                    try
+                    {
+                        //delete thumbnail list
+                        //thumbnailBar.Items.RemoveAt(GlobalSetting.CurrentIndex);
+                    }
+                    catch { }
+
+                    //delete image list
+                    GlobalSetting.ImageList.Remove(GlobalSetting.CurrentIndex);
+                    GlobalSetting.ImageFilenameList.RemoveAt(GlobalSetting.CurrentIndex);
+
+                    Pic(0);
+                }
+
+                if(File.Exists(f))
+                {
+                    ImageInfo.DeleteFile(f, true);
+
+                    PicErrorFix(FolderIndex);
+                }
+                
+
+            }
+            catch (Exception ex)
+            {
+                ToolTipStyle(ex.Message , true);
+            }
+
+        }
+
+
+        private void DeletePermanent()
+        {
+            try
+            {
+                if (!File.Exists(PicPath))
+                {
+                    return;
+                }
+            }
+            catch { return; }
+
+            //string f = GlobalSetting.ImageList.GetFileName(GlobalSetting.CurrentIndex);
+            string f = Path.GetFullPath(PicPath);
+            try
+            {
+                //in case of GIF file...
+                string ext = Path.GetExtension(Path.GetFileName(PicPath)).ToLower();
+                if (ext == ".gif")
+                {
+                    try
+                    {
+                        //delete thumbnail list
+                        //thumbnailBar.Items.RemoveAt(GlobalSetting.CurrentIndex);
+                    }
+                    catch { }
+
+                    //delete image list
+                    GlobalSetting.ImageList.Remove(GlobalSetting.CurrentIndex);
+                    GlobalSetting.ImageFilenameList.RemoveAt(GlobalSetting.CurrentIndex);
+
+                    Pic(0);
+                }
+
+                if (File.Exists(f))
+                {
+                    ImageInfo.DeleteFile(f, false);
+
+                    PicErrorFix(FolderIndex);
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                ToolTipStyle(ex.Message, true);
+            }
+
+        }
+
+
 
         #endregion     
     }

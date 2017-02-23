@@ -84,9 +84,19 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ImageGlass.Core">
+      <HintPath>..\..\..\..\ImageGlass-master\Source\Components\ImageGlass.Services\bin\Release\ImageGlass.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="ImageGlass.Library">
+      <HintPath>..\..\..\..\ImageGlass-master\Source\Components\ImageGlass.Library\bin\Debug\ImageGlass.Library.dll</HintPath>
+    </Reference>
+    <Reference Include="ImageGlass.Services">
+      <HintPath>..\..\..\..\ImageGlass-master\Source\Components\ImageGlass.Services\bin\Release\ImageGlass.Services.dll</HintPath>
+    </Reference>
     <Reference Include="Magick.NET-Q16-HDRI-x64, Version=7.0.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=AMD64">
       <HintPath>..\packages\Magick.NET-Q16-HDRI-x64.7.0.4.701\lib\net40-client\Magick.NET-Q16-HDRI-x64.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.WindowsAPICodePack.Shell">
       <HintPath>..\..\..\..\gDrive\Programming Projects\PicView\PicView\PicView\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
     </Reference>
