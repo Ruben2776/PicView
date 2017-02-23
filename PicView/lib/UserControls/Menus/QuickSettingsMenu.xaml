@@ -39,7 +39,7 @@
                         Margin="0"
                         Padding="0"
                         BorderThickness="0"
-                        ToolTip="All settings [Not implemented]">
+                        ToolTip="All settings">
                         <Button.Background>
                             <SolidColorBrush x:Name="SettingsButtonBrush" Color="Transparent" />
                         </Button.Background>
@@ -175,8 +175,8 @@
                         </RadioButton>
                     </StackPanel>
 
-                    
-                    
+
+
 
                 </StackPanel>
 

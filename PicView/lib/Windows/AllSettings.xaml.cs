@@ -1,5 +1,7 @@
-﻿using System;
+﻿using PicView.lib;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,14 +16,14 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static PicView.lib.Variables;
 
-namespace PicView.lib.UserControls.Menus
+namespace PicView.Windows
 {
     /// <summary>
     /// Interaction logic for QuickSettingsSecondMenu.xaml
     /// </summary>
-    public partial class QuickSettingsSecondMenu : UserControl
+    public partial class AllSettings : Window
     {
-        public QuickSettingsSecondMenu()
+        public AllSettings()
         {
             InitializeComponent();
             
@@ -29,6 +31,7 @@ namespace PicView.lib.UserControls.Menus
             CloseButton.MouseEnter += CloseButtonMouseOver;
             CloseButton.MouseLeave += CloseButtonMouseLeave;
             CloseButton.PreviewMouseLeftButtonDown += CloseButtonMouseButtonDown;
+            CloseButton.Click += (s, x) => Close();
 
             // BlueRadio
             BlueRadio.PreviewMouseLeftButtonDown += BlueRadio_PreviewMouseLeftButtonDown;
@@ -592,9 +595,11 @@ namespace PicView.lib.UserControls.Menus
             Properties.Settings.Default.ColorTheme = 12;
         }
 
-        public static implicit operator Button(QuickSettingsSecondMenu v)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
-            throw new NotImplementedException();
+            Closing -= Window_Closing;
+            e.Cancel = true;
+            AnimationHelper.FadeWindow(this, 0, TimeSpan.FromSeconds(.5));
         }
 
         #endregion

@@ -1,4 +1,5 @@
 ﻿using PicView.lib.UserControls;
+using PicView.lib.UserControls.Menus;
 using System;
 using System.Collections.Generic;
 using System.Timers;
@@ -105,6 +106,7 @@ namespace PicView.lib
         internal static bool imageSettingsMenuOpen;
         internal static bool fileMenuOpen;
         internal static bool quickSettingsMenuOpen;
+        internal static bool ekstraMenuOpen;
         internal static bool FastPicRunning;
         internal static bool isZoomed;
         internal static bool Flipped;
@@ -162,6 +164,7 @@ namespace PicView.lib
         internal static ImageSettings imageSettingsMenu;
         internal static FileMenu fileMenu;
         internal static QuickSettingsMenu quickSettingsMenu;
+        internal static EkstraMenu ekstraMenu;
         internal static AjaxLoading ajaxLoading;
         internal static SexyToolTip sexyToolTip;
         internal static AutoScrollSign autoScrollSign;

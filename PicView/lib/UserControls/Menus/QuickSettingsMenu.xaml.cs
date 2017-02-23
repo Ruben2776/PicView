@@ -1,8 +1,12 @@
-﻿using System.Windows;
+﻿using PicView.Windows;
+using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 using static PicView.lib.Variables;
 using static PicView.lib.Wallpaper;
+using static PicView.MainWindow;
 
 namespace PicView.lib.UserControls
 {
@@ -26,6 +30,7 @@ namespace PicView.lib.UserControls
             SettingsButton.MouseEnter += SettingsButtonMouseOver;
             SettingsButton.MouseLeave += SettingsButtonMouseLeave;
             SettingsButton.PreviewMouseLeftButtonDown += SettingsButtonMouseButtonDown;
+            
 
             // Toggle Scroll
             ToggleScroll.PreviewMouseLeftButtonDown += ToggleScroll_PreviewMouseLeftButtonDown;
@@ -71,6 +76,8 @@ namespace PicView.lib.UserControls
 
             
         }
+
+      
 
         #region Mouseover Events
 
@@ -321,7 +328,7 @@ namespace PicView.lib.UserControls
         #endregion
 
         
-
+        
 
     }
 }
