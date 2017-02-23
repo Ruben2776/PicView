@@ -103,10 +103,11 @@ namespace PicView.lib
             streamWriter.Close();
         }
 
-        internal static void SetZipped(string zipfile)
+        internal static void SetZipped(string zipfile, bool isZipped = true)
         {
-            Add(zipfile);
-            zipped = true;
+            if (!string.IsNullOrWhiteSpace(zipfile))
+                Add(zipfile);
+            zipped = isZipped;
         }
 
     }

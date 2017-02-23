@@ -703,7 +703,16 @@ namespace PicView
                 return;
 
             if (e.ClickCount == 2)
+            {
+                // Prevent method from being called twice
+                var bar = sender as TextBlock;
+                if (bar != null)
+                {
+                    if (bar.Name == "Bar")
+                        return;
+                }
                 Maximize_Restore();
+            }
             else
             {
                 try

@@ -333,6 +333,7 @@
                 <Button
                     x:Name="QuestionButton"
                     Canvas.Left="339"
+                    Canvas.Top="1"
                     Width="45"
                     Height="55"
                     Margin="0"
@@ -340,10 +341,9 @@
                     Focusable="False"
                     ToolTip="Ekstra Menu">
                     <Path
-                        x:Name="QuestionPath1"
-                        Width="28"
-                        Height="28"
-                        Data="M0 0v1h8v-1h-8zm0 2.97v1h8v-1h-8zm0 3v1h8v-1h-8z"
+                        Width="26"
+                        Height="26"
+                        Data="M1664 1344v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45z"
                         Stretch="Fill">
                         <Path.Fill>
                             <SolidColorBrush x:Name="QuestionButtonFill1" Color="{StaticResource MainColor}" />
