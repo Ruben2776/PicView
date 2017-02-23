@@ -3194,7 +3194,7 @@ namespace PicView
                 return;
 
             // If items exist: replace them, else add them 
-            if (RecentFilesMenuItem.Items.Count >= 5)
+            if (RecentFilesMenuItem.Items.Count >= fileNames.Length)
             {
                 for (int i = 0; i < fileNames.Length; i++)
                 {
