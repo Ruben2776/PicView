@@ -122,8 +122,11 @@
     <Compile Include="lib\UserControls\CustomControls\AutoScrollSign.xaml.cs">
       <DependentUpon>AutoScrollSign.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\Menus\QuickSettingsSecondMenu.xaml.cs">
-      <DependentUpon>QuickSettingsSecondMenu.xaml</DependentUpon>
+    <Compile Include="lib\UserControls\Menus\EkstraMenu.xaml.cs">
+      <DependentUpon>EkstraMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="lib\Windows\AllSettings.xaml.cs">
+      <DependentUpon>AllSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="lib\Variables.cs" />
     <Compile Include="lib\Windows\Help.xaml.cs">
@@ -204,7 +207,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\Menus\QuickSettingsSecondMenu.xaml">
+    <Page Include="lib\UserControls\Menus\EkstraMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="lib\Windows\AllSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -92,6 +92,7 @@ namespace PicView
             LoadFileMenu();
             LoadImageSettingsMenu();
             LoadQuickSettingsMenu();
+            LoadEkstraMenu();
             LoadAutoScrollSign();
             LoadClickArrow(true);
             LoadClickArrow(false);
@@ -213,6 +214,19 @@ namespace PicView
                     IsScrollEnabled = false;
                     Close_UserControls();
                 };
+                quickSettingsMenu.SettingsButton.Click += (s, x) => AllsettingsWindow();
+
+                //EkstraMenu
+                QuestionButton.PreviewMouseLeftButtonDown += EkstraMenuButtonButtonMouseButtonDown;
+                QuestionButton.MouseEnter += EkstraMenuButtonButtonMouseOver;
+                QuestionButton.MouseLeave += EkstraMenuButtonButtonMouseLeave;
+                QuestionButton.Click += Toggle_quick_ekstra_menu;
+                ekstraMenu.CloseButton.Click += Toggle_quick_ekstra_menu;
+                ekstraMenu.SettingsButton.Click += (s, x) => AllsettingsWindow();
+                ekstraMenu.Help.Click += (s, x) => HelpWindow();
+                ekstraMenu.About.Click += (s, x) => AboutWindow();
+                
+                
 
                 // FlipButton
                 imageSettingsMenu.FlipButton.Click += (s, x) => Flip();
@@ -2413,20 +2427,22 @@ namespace PicView
             bg.Children.Add(quickSettingsMenu);
         }
 
-        private void LoadQuickSettingsSecondMenu()
+
+        //EkstraMenu
+
+        private void LoadEkstraMenu()
         {
-            
-            SettingsButton = new lib.UserControls.Menus.QuickSettingsSecondMenu
+            ekstraMenu = new lib.UserControls.Menus.EkstraMenu
             {
                 Focusable = false,
                 Opacity = 0,
                 Visibility = Visibility.Hidden,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(17, 0, 0, 0)
+                Margin = new Thickness(125, 0, 0, 0)
             };
 
-            
+            bg.Children.Add(ekstraMenu);
         }
 
         // Tooltip
@@ -2631,6 +2647,25 @@ namespace PicView
             }
         }
 
+        private static bool EkstraMenuOpen
+        {
+            get { return ekstraMenuOpen; }
+            set
+            {
+                ekstraMenuOpen = value;
+                ekstraMenu.Visibility = Visibility.Visible;
+                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
+                if (!value)
+                {
+                    da.To = 0;
+                    da.Completed += delegate { ekstraMenu.Visibility = Visibility.Hidden; };
+                }
+                else
+                    da.To = 1;
+                if (ekstraMenu != null)
+                    ekstraMenu.BeginAnimation(OpacityProperty, da);
+            }
+        }
 
         /// <summary>
         /// Check if any UserControls are open
@@ -2645,6 +2680,9 @@ namespace PicView
                 return true;
 
             if (QuickSettingsMenuOpen)
+                return true;
+
+            if (EkstraMenuOpen)
                 return true;
 
             return false;
@@ -2663,6 +2701,9 @@ namespace PicView
 
             if (QuickSettingsMenuOpen)
                 QuickSettingsMenuOpen = false;
+
+            if (EkstraMenuOpen)
+                EkstraMenuOpen = false;
         }
 
         private void Close_UserControls(object sender, RoutedEventArgs e)
@@ -2679,6 +2720,11 @@ namespace PicView
 
             if (QuickSettingsMenuOpen)
                 QuickSettingsMenuOpen = false;
+
+            if (EkstraMenuOpen)
+                EkstraMenuOpen = false;
+
+
         }
 
         private void Toggle_image_menu(object sender, RoutedEventArgs e)
@@ -2690,6 +2736,9 @@ namespace PicView
 
             if (QuickSettingsMenuOpen)
                 QuickSettingsMenuOpen = false;
+
+            if (EkstraMenuOpen)
+                EkstraMenuOpen = false;
         }
 
         private void Toggle_quick_settings_menu(object sender, RoutedEventArgs e)
@@ -2702,7 +2751,27 @@ namespace PicView
             if (ImageSettingsMenuOpen)
                 ImageSettingsMenuOpen = false;
 
+            if (EkstraMenuOpen)
+                EkstraMenuOpen = false;
+
         }
+
+        private void Toggle_quick_ekstra_menu(object sender, RoutedEventArgs e)
+        {
+            EkstraMenuOpen = !EkstraMenuOpen;
+
+            if (FileMenuOpen)
+                FileMenuOpen = false;
+
+            if (ImageSettingsMenuOpen)
+                ImageSettingsMenuOpen = false;
+
+            if (QuickSettingsMenuOpen)
+                QuickSettingsMenuOpen = false;
+
+        }
+
+
 
         #endregion
 
@@ -2897,6 +2966,21 @@ namespace PicView
             window.Show();
         }
 
+        public void AllsettingsWindow()
+        {
+            Window window = new AllSettings
+            {
+                Width = Width,
+                Height = Height,
+                Opacity = 0,
+                Owner = Application.Current.MainWindow,
+            };
+
+            var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
+            window.BeginAnimation(OpacityProperty, animation);
+
+            window.ShowDialog();
+        }
         #endregion
 
         #region MouseOver Button Events
@@ -3179,6 +3263,7 @@ namespace PicView
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(SettingsButtonFill, false);
         }
 
+        
         private void SettingsButtonButtonMouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
@@ -3187,6 +3272,36 @@ namespace PicView
                 mainColor.G,
                 mainColor.B,
                 SettingsButtonFill,
+                false
+            );
+        }
+        
+        //EkstraMenu
+        private void EkstraMenuButtonButtonMouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                QuestionButtonFill1,
+                false
+            );
+        }
+
+        private void EkstraMenuButtonButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(QuestionButtonFill1, false);
+        }
+
+        private void EkstraMenuButtonButtonMouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                QuestionButtonFill1,
                 false
             );
         }
