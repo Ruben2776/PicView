@@ -36,7 +36,10 @@
                         Canvas.Left="188"
                         Width="51"
                         Height="51"
+                        BorderBrush="{x:Null}"
                         FontWeight="Bold"
+                        Foreground="{x:Null}"
+                        Style="{x:Null}"
                         ToolTip="Flip image">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="FlipButtonBrush" Color="Transparent" />

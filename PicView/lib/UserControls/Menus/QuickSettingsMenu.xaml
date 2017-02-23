@@ -39,7 +39,7 @@
                         Margin="0"
                         Padding="0"
                         BorderThickness="0"
-                        ToolTip="All settings">
+                        ToolTip="All settings [Not implemented]">
                         <Button.Background>
                             <SolidColorBrush x:Name="SettingsButtonBrush" Color="Transparent" />
                         </Button.Background>
@@ -74,7 +74,7 @@
                     </Button>
                 </Canvas>
 
-                <StackPanel Margin="0,51,0,10">
+                <StackPanel Margin="0,51,0,0">
                     <Label
                         Margin="0,2,0,0"
                         HorizontalAlignment="Center"
@@ -144,9 +144,9 @@
                         Foreground="{StaticResource MainColorBrush}" />
                     <StackPanel
                         Width="320"
-                        Margin="0,3,0,0"
+                        Margin="0,3,0,25"
                         Orientation="Horizontal">
-                        <ToggleButton
+                        <CheckBox
                             x:Name="ToggleScroll"
                             Width="100"
                             Height="40"
@@ -155,10 +155,10 @@
                             BorderThickness="1"
                             Content="Scroll"
                             ToolTip="Great for manga/comic reading">
-                            <ToggleButton.Background>
+                            <CheckBox.Background>
                                 <SolidColorBrush x:Name="ToggleScrollBrush" Color="{StaticResource BackgroundColorFade}" />
-                            </ToggleButton.Background>
-                        </ToggleButton>
+                            </CheckBox.Background>
+                        </CheckBox>
                         <RadioButton
                             x:Name="SetFit"
                             Width="100"
@@ -167,17 +167,25 @@
                             BorderBrush="{StaticResource BorderBrushAlt}"
                             BorderThickness="1"
                             Content="Fit"
-                            IsChecked="True"
                             ToolTip="Resize window to image size">
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="SetFitBrush" Color="{StaticResource BackgroundColorFade}" />
                             </RadioButton.Background>
                         </RadioButton>
+                        <RadioButton
+                            x:Name="SetCenter"
+                            Width="100"
+                            Height="40"
+                            Margin="3"
+                            BorderBrush="{StaticResource BorderBrushAlt}"
+                            BorderThickness="1"
+                            Content="Center"
+                            ToolTip="Image will stay centered and window can be resized">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="SetCenterBrush" Color="{StaticResource BackgroundColorFade}" />
+                            </RadioButton.Background>
+                        </RadioButton>
                     </StackPanel>
-
-
-
-
                 </StackPanel>
 
             </Grid>
