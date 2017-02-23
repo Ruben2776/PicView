@@ -1,12 +1,7 @@
-﻿using PicView.Windows;
-using System;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
 using static PicView.lib.Variables;
 using static PicView.lib.Wallpaper;
-using static PicView.MainWindow;
 
 namespace PicView.lib.UserControls
 {
@@ -72,9 +67,12 @@ namespace PicView.lib.UserControls
             Stretch.MouseLeave += Stretch_MouseLeave;
             Stretch.Click += (s, x) => SetWallpaper(PicPath, WallpaperStyle.Stretch);
 
-            #endregion
+            // Set Center
+            SetCenter.PreviewMouseLeftButtonDown += SetCenter_PreviewMouseLeftButtonDown;
+            SetCenter.MouseEnter += SetCenter_MouseEnter;
+            SetCenter.MouseLeave += SetCenter_MouseLeave;
 
-            
+            #endregion
         }
 
         #region Mouseover Events

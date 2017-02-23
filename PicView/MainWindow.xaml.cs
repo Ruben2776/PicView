@@ -836,9 +836,10 @@ namespace PicView
                 else
                 {
                     SizeToContent = SizeToContent.Manual;
+                    
                     Properties.Settings.Default.WindowStyle = 4;
                 }
-
+                ZoomFit(img.Source.Width, img.Source.Height);
             }
         }
 
@@ -910,6 +911,9 @@ namespace PicView
         /// <param name="x"></param>
         private async void Pic(int x)
         {
+            //var stopWatch = new Stopwatch();
+            //stopWatch.Start();
+
             // Error Handling
             if (Pics.Count == 0)
             {
@@ -1008,6 +1012,9 @@ namespace PicView
 
             // Stop AjaxLoading if it's shown
             AjaxLoadingEnd();
+
+            //stopWatch.Stop();
+            //ToolTipStyle(stopWatch.Elapsed);
         }
 
 
@@ -2170,41 +2177,55 @@ namespace PicView
         /// <param name="height">The pixel height of the image</param>
         private void ZoomFit(double width, double height)
         {
-            if (Properties.Settings.Default.WindowStyle == 0 || Properties.Settings.Default.WindowStyle == 2)
+            // Determine whether to center image or fit window to image
+            var windowstyle = Properties.Settings.Default.WindowStyle == 0 || Properties.Settings.Default.WindowStyle == 2;
+
+            double maxWidth, maxHeight;
+
+            if (windowstyle)
             {
                 // Get max width and height, based on user's screen
-                var maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth - ComfySpace, width);
-                var maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 72), height);
+                maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth - ComfySpace, width);
+                maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 93), height);
+            }
+            else
+            {
+                // 93 = interface height
+                maxWidth = Math.Min(Width, width);
+                maxHeight = Math.Min(Height - 93, height);
+            }
 
-                AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));
+            AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));
 
-                if (IsScrollEnabled)
-                {
-                    // Calculate height based on width
-                    img.Width = maxWidth;
-                    img.Height = maxWidth * height / width;
+            if (IsScrollEnabled)
+            {
+                // Calculate height based on width
+                img.Width = maxWidth;
+                img.Height = maxWidth * height / width;
 
-                    // Set scroller height to aspect ratio calculation
-                    Scroller.Height = (height * AspectRatio);
+                // Set scroller height to aspect ratio calculation
+                Scroller.Height = (height * AspectRatio);
 
-                    // Update values
-                    xWidth = img.Width;
-                    xHeight = Scroller.Height;
+                // Update values
+                xWidth = img.Width;
+                xHeight = Scroller.Height;
 
-                }
-                else
-                {
-                    // Reset Scroller's height to auto
-                    Scroller.Height = double.NaN;
+            }
+            else
+            {
+                // Reset Scroller's height to auto
+                Scroller.Height = double.NaN;
 
-                    // Fit image by aspect ratio calculation
-                    // and update values
-                    img.Height = xHeight = (height * AspectRatio);
-                    img.Width = xWidth = (width * AspectRatio);
+                // Fit image by aspect ratio calculation
+                // and update values
+                img.Height = xHeight = (height * AspectRatio);
+                img.Width = xWidth = (width * AspectRatio);
 
-                }
+            }
 
-                // Update TitleBar width to fit new size
+            // Update TitleBar width to fit new size
+            if (windowstyle)
+            {
                 if (xWidth - 220 < 220)
                     Bar.MaxWidth = 220;
                 else
@@ -2213,48 +2234,14 @@ namespace PicView
                 // Loses position gradually if not forced to center       
                 CenterWindowOnScreen();
             }
-
             else
             {
-                // Get max width and height
-                var maxWidth = Math.Min(Width, width);
-                var maxHeight = Math.Min(Height, height);
-
-                AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));
-
-                if (IsScrollEnabled)
-                {
-                    // Calculate height based on width
-                    img.Width = maxWidth;
-                    img.Height = maxWidth * height / width;
-
-                    // Set scroller height to aspect ratio calculation
-                    Scroller.Height = (height * AspectRatio);
-
-                    // Update values
-                    xWidth = img.Width;
-                    xHeight = Scroller.Height;
-
-                }
-                else
-                {
-                    // Reset Scroller's height to auto
-                    Scroller.Height = double.NaN;
-
-                    // Fit image by aspect ratio calculation
-                    // and update values
-                    img.Height = xHeight = (height * AspectRatio);
-                    img.Width = xWidth = (width * AspectRatio);
-
-                }
-
-                // Update TitleBar width to fit new size
                 if (Width - 220 < 220)
                     Bar.MaxWidth = 220;
                 else
                     Bar.MaxWidth = Width - 220;
+            }            
 
-            }
 
             isZoomed = false;
 
