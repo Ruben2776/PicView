@@ -77,8 +77,6 @@ namespace PicView.lib.UserControls
             
         }
 
-      
-
         #region Mouseover Events
 
         // Close Button
@@ -295,6 +293,36 @@ namespace PicView.lib.UserControls
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(SetFitBrush, false);
         }
 
+        // SetCenter Button
+        void SetCenter_MouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                SetCenterBrush,
+                false
+            );
+        }
+
+        void SetCenter_MouseEnter(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                SetCenterBrush,
+                false
+            );
+        }
+
+        void SetCenter_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(SetCenterBrush, false);
+        }
+
         // ToggleScroll
         void ToggleScroll_MouseLeave(object sender, MouseEventArgs e)
         {
@@ -326,9 +354,6 @@ namespace PicView.lib.UserControls
         }
 
         #endregion
-
-        
-        
 
     }
 }
