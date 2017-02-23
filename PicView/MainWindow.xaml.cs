@@ -736,7 +736,16 @@ namespace PicView
                 return;
 
             if (e.ClickCount == 2)
+            {
+                // Prevent method from being called twice
+                var bar = sender as TextBlock;
+                if (bar != null)
+                {
+                    if (bar.Name == "Bar")
+                        return;
+                }
                 Maximize_Restore();
+            }
             else
             {
                 try
@@ -824,20 +833,38 @@ namespace PicView
                 AjaxLoadingStart();
             }
 
-            if (Pics.Count <= FolderIndex || FolderIndex < 0 ||freshStartup)
+            // If count not correct or just started, get values
+            if (Pics.Count <= FolderIndex || FolderIndex < 0 || freshStartup)
+            {
                 await GetValues(path);
+            }
+
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
             else if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(path) != Path.GetDirectoryName(PicPath))
             {
+                // Reset zipped values
+                if (!string.IsNullOrWhiteSpace(TempZipPath))
+                {
+                    DeleteTempFiles();
+                    TempZipPath = string.Empty;
+                    RecentFiles.SetZipped(string.Empty, false);
+                }
+
+                // Reset old values and get new
                 ChangeFolder();
                 await GetValues(path);
             }
-            else
-                FolderIndex = Pics.IndexOf(path);
 
+            // If no need to reset values, get index
+            else
+            {
+                FolderIndex = Pics.IndexOf(path);
+            }
+
+            // Navigate to picture using obtained index
             Pic(FolderIndex);
 
-            // Set freshStartup
+            // No longer fresh startup
             if (freshStartup)
                 freshStartup = false;
 
