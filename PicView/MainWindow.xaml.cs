@@ -229,7 +229,8 @@ namespace PicView
                 functionsMenu.CloseButton.Click += Toggle_Functions_menu;
                 functionsMenu.Help.Click += (s, x) => HelpWindow();
                 functionsMenu.About.Click += (s, x) => AboutWindow();
-                
+                functionsMenu.ClearButton.Click += (s, x) => Unload();
+                functionsMenu.FileDetailsButton.Click += (s, x) => NativeMethods.ShowFileProperties(PicPath);
                 
 
                 // FlipButton
