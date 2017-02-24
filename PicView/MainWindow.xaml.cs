@@ -968,6 +968,13 @@ namespace PicView
             if (Flipped)
                 Flip();
 
+
+            // Prevent next pichure from beting rotated if previous is.
+            if (Rotateint != 0)
+                Rotate(0);
+               
+               
+
             // Fit window to new values
             ZoomFit(pic.PixelWidth, pic.PixelHeight);
 
@@ -1354,17 +1361,27 @@ namespace PicView
             PreloadCount = 0;
         }
 
+
+        /// <summary>
+        /// Refresh the current list of pics and reload them if there is some missing or changes.
+        /// </summary>
         private void Reload()
         {
             if(img.Source == null)
-            {
                 return;
+
+            //If Current Pichure is edited we look for the picpath for the next pic in the same folder and startup with that.
+            foreach (var item in Pics)
+            {
+                if(File.Exists(item))
+                {
+                    //Force to reload fresh start.
+                    freshStartup = true;
+                    Pic(item);
+                    return;
+                }
             }
-            Pic(PicPath);
-            var titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, FolderIndex);
-            Title = titleString[0];
-            Bar.Text = titleString[1];
-            Bar.ToolTip = titleString[0];
+
         }
 
         #endregion
@@ -3659,9 +3676,9 @@ namespace PicView
                 }
                 else
                     return;
-
-                if (Path.GetDirectoryName(Savedlg.FileName) == Path.GetDirectoryName(PicPath))
-                    Pics = FileList(PicPath);
+            
+                //Force freshed the list of pichures.
+                Reload();
 
                 Close_UserControls();
             }
