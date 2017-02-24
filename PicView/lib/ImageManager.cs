@@ -1,5 +1,4 @@
 ﻿using ImageMagick;
-using Microsoft.VisualBasic.FileIO;
 using System;
 using System.IO;
 using System.Windows.Media.Imaging;
@@ -137,31 +136,6 @@ namespace PicView.lib
             }
 
             return true;
-        }
-
-
-        internal static void DeleteFile(string fileName)
-        {
-            FileSystem.DeleteFile(fileName, UIOption.OnlyErrorDialogs, RecycleOption.DeletePermanently);
-        }
-
-
-        /// <summary>
-        /// Delete file
-        /// </summary>
-        /// <param name="fileName">file name</param>
-        /// <param name="isMoveToRecycleBin">True: Move to Recycle bin | False: Delete permanently</param>
-        /// <returns></returns>
-        internal static void DeleteFile(string fileName, bool isMoveToRecycleBin)
-        {
-            if (isMoveToRecycleBin)
-            {
-                FileSystem.DeleteFile(fileName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-            }
-            else
-            {
-                DeleteFile(fileName);
-            }
         }
 
 

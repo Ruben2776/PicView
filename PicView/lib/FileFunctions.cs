@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.FileIO;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,34 @@ namespace PicView.lib
 {
     class FileFunctions
     {
+
+
+        internal static bool DeleteToRecycleBin(string file, bool Recycle)
+        {
+            if (!File.Exists(file))
+            {
+                return false;
+            }
+            try
+            { 
+                if (Recycle)
+                {
+                    FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                }
+                else
+                {
+                    FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.DeletePermanently);
+                }
+                Pics.Remove(file);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+
         /// <summary>
         /// Deletes the temporary files when an archived file has been opened
         /// </summary>
@@ -106,6 +135,7 @@ namespace PicView.lib
         /// </summary>
         internal static List<string> FileList(string path)
         {
+
             var foo = Directory.GetFiles(path)
                 .AsParallel()
                 .Where(file =>
@@ -244,6 +274,33 @@ namespace PicView.lib
             // Needs to support: sort by file size, last modified, as an option
 
             return foo;
+
+            //List<string> List = new List<string>();
+            //switch(sortFilesBy)
+            //{
+            //    case SortFilesBy.Name:
+            //        List.Sort((x, y) => { return NativeMethods.StrCmpLogicalW(x, y); });
+            //        break;
+            //    case SortFilesBy.Lengh:
+
+            //        break;
+            //    case SortFilesBy.Extension:
+
+            //        break;
+            //    case SortFilesBy.Creastiontime:
+
+            //        break;
+            //    case SortFilesBy.Lastaccesstime:
+
+            //        break;
+            //    case SortFilesBy.Lastwritetime:
+
+            //        break;
+            //    case SortFilesBy.Random:
+
+            //        break;
+            //}
+            
         }
 
         /// <summary>
@@ -327,4 +384,16 @@ namespace PicView.lib
             });
         }
     }
+
+    enum SortFilesBy
+    {
+        Name,
+        Lengh,
+        Creastiontime,
+        Extension,
+        Lastaccesstime,
+        Lastwritetime,
+        Random
+    }
+
 }

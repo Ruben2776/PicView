@@ -43,6 +43,7 @@ namespace PicView.lib.UserControls.Menus
             DeleteButton.MouseLeave += DeleteButtonMouseLeave;
             DeleteButton.PreviewMouseLeftButtonDown += DeleteButtonMouseButtonDown;
 
+
             // ReloadButton
             ReloadButton.MouseEnter += ReloadButtonMouseOver;
             ReloadButton.MouseLeave += ReloadButtonMouseLeave;

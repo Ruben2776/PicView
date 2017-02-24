@@ -231,7 +231,9 @@ namespace PicView
                 functionsMenu.About.Click += (s, x) => AboutWindow();
                 functionsMenu.ClearButton.Click += (s, x) => Unload();
                 functionsMenu.FileDetailsButton.Click += (s, x) => NativeMethods.ShowFileProperties(PicPath);
-                
+                functionsMenu.DeleteButton.Click += (s, x) => DeleteFile(true);
+                functionsMenu.ReloadButton.Click += (s, x) => Reload();
+
 
                 // FlipButton
                 imageSettingsMenu.FlipButton.Click += (s, x) => Flip();
@@ -384,7 +386,7 @@ namespace PicView
             recentcmIcon.Width = recentcmIcon.Height = 12;
             recentcmIcon.Fill = scbf;
             recentcm.Icon = recentcmIcon;
-            recentcm.MouseEnter += (xx,xxx) => Recentcm_MouseEnter(recentcm);
+            recentcm.MouseEnter += (xx, xxx) => Recentcm_MouseEnter(recentcm);
             cm.Items.Add(recentcm);
             cm.Items.Add(new Separator());
 
@@ -511,7 +513,7 @@ namespace PicView
             //helpcm.Click += (s, x) => HelpWindow();
             //cm.Items.Add(helpcm);
             //cm.Items.Add(new Separator());
-            
+
             //var mincm = new MenuItem
             //{
             //    Header = "Minimize"
@@ -526,7 +528,7 @@ namespace PicView
             //mincm.Click += (s, x) => SystemCommands.MinimizeWindow(this);
             //cm.Items.Add(mincm);
 
-            
+
             //var maxcm = new MenuItem
             //{
             //    Header = "Maximize"
@@ -825,7 +827,7 @@ namespace PicView
         {
             get
             {
-                return Properties.Settings.Default.WindowStyle == 0; 
+                return Properties.Settings.Default.WindowStyle == 0;
             }
             set
             {
@@ -837,10 +839,11 @@ namespace PicView
                 else
                 {
                     SizeToContent = SizeToContent.Manual;
-                    
+
                     Properties.Settings.Default.WindowStyle = 4;
                 }
-                ZoomFit(img.Source.Width, img.Source.Height);
+                if(img.Source != null)
+                    ZoomFit(img.Source.Width, img.Source.Height);
             }
         }
 
@@ -1269,7 +1272,7 @@ namespace PicView
             FolderIndex = FolderIndex == Pics.Count - 1 ? 0 : FolderIndex + 1;
 
 
-           if (File.Exists(Pics[FolderIndex]))
+            if (File.Exists(Pics[FolderIndex]))
             {
                 Pic(FolderIndex);
                 PreloadCount++;
@@ -1349,6 +1352,19 @@ namespace PicView
             Preloader.Clear();
             DeleteTempFiles();
             PreloadCount = 0;
+        }
+
+        private void Reload()
+        {
+            if(img.Source == null)
+            {
+                return;
+            }
+            Pic(PicPath);
+            var titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, FolderIndex);
+            Title = titleString[0];
+            Bar.Text = titleString[1];
+            Bar.ToolTip = titleString[0];
         }
 
         #endregion
@@ -1557,10 +1573,10 @@ namespace PicView
             // Error handling
             if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-            
+
             // Do nothing for invalid files
             if (!Drag_Drop_Check(files).HasValue)
-                    return;
+                return;
 
             // If no image, fix it to container
             if (img.Source == null)
@@ -2241,7 +2257,7 @@ namespace PicView
                     Bar.MaxWidth = 220;
                 else
                     Bar.MaxWidth = Width - 220;
-            }            
+            }
 
 
             isZoomed = false;
@@ -2494,7 +2510,7 @@ namespace PicView
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(0, 0, 152, 0)
             };
-            
+
             bg.Children.Add(fileMenu);
         }
 
@@ -3370,7 +3386,7 @@ namespace PicView
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(SettingsButtonFill, false);
         }
 
-        
+
         private void SettingsButtonButtonMouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
@@ -3442,7 +3458,7 @@ namespace PicView
                     var item = fileNames[i];
                     if (i != 0 && fileNames[i - 1] == item)
                         break;
-                    
+
                     // Change values
                     var menuItem = (MenuItem)RecentFilesMenuItem.Items[i];
                     menuItem.Header = Path.GetFileName(item);
@@ -3655,106 +3671,24 @@ namespace PicView
             }
         }
 
-
-        private void DeleteToRecycleBin()
+        /// <summary>
+        /// used to Delete the current file permanent or move it to recycle bin.
+        /// </summary>
+        /// <param name="Recyclebin"></param>
+        private void DeleteFile(bool Recyclebin)
         {
-            //try
-            //{
-            //    if (!File.Exists(PicPath))
-            //    {
-            //        return;
-            //    }
-            //}
-            //catch { return; }
 
-            ////string f = GlobalSetting.ImageList.GetFileName(GlobalSetting.CurrentIndex);
-            //string f = Path.GetFullPath(PicPath);
-            //try
-            //{
-            //    //in case of GIF file...
-            //    string ext = Path.GetExtension(Path.GetFileName(PicPath)).ToLower();
-            //    if (ext == ".gif")
-            //    {
-            //        try
-            //        {
-            //            //delete thumbnail list
-            //            //thumbnailBar.Items.RemoveAt(GlobalSetting.CurrentIndex);
-            //        }
-            //        catch { }
-
-            //        //delete image list
-            //        GlobalSetting.ImageList.Remove(GlobalSetting.CurrentIndex);
-            //        GlobalSetting.ImageFilenameList.RemoveAt(GlobalSetting.CurrentIndex);
-
-            //        Pic(0);
-            //    }
-
-            //    if(File.Exists(f))
-            //    {
-            //        ImageInfo.DeleteFile(f, true);
-
-            //        PicErrorFix(FolderIndex);
-            //    }
-                
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    ToolTipStyle(ex.Message , true);
-            //}
+            if (FileFunctions.DeleteToRecycleBin(PicPath, Recyclebin))
+            {
+                Pic();
+                Close_UserControls();
+            }
+            else
+            {
+                ToolTipStyle("Something went wrong under deleting the file.");
+            }
 
         }
-
-
-        private void DeletePermanent()
-        {
-            //try
-            //{
-            //    if (!File.Exists(PicPath))
-            //    {
-            //        return;
-            //    }
-            //}
-            //catch { return; }
-
-            ////string f = GlobalSetting.ImageList.GetFileName(GlobalSetting.CurrentIndex);
-            //string f = Path.GetFullPath(PicPath);
-            //try
-            //{
-            //    //in case of GIF file...
-            //    string ext = Path.GetExtension(Path.GetFileName(PicPath)).ToLower();
-            //    if (ext == ".gif")
-            //    {
-            //        try
-            //        {
-            //            //delete thumbnail list
-            //            //thumbnailBar.Items.RemoveAt(GlobalSetting.CurrentIndex);
-            //        }
-            //        catch { }
-
-            //        //delete image list
-            //        GlobalSetting.ImageList.Remove(GlobalSetting.CurrentIndex);
-            //        GlobalSetting.ImageFilenameList.RemoveAt(GlobalSetting.CurrentIndex);
-
-            //        Pic(0);
-            //    }
-
-            //    if (File.Exists(f))
-            //    {
-            //        ImageInfo.DeleteFile(f, false);
-
-            //        PicErrorFix(FolderIndex);
-            //    }
-
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    ToolTipStyle(ex.Message, true);
-            //}
-
-        }
-
 
 
         #endregion     
