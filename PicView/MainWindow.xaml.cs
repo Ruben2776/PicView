@@ -102,7 +102,10 @@ namespace PicView
             backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorFade"];
             mainColor = (Color)Application.Current.Resources["MainColor"];
             quickSettingsMenu.ToggleScroll.IsChecked = IsScrollEnabled;
-            quickSettingsMenu.SetFit.IsChecked = SizeMode;
+            if (SizeMode)
+                quickSettingsMenu.SetFit.IsChecked = true;
+            else
+                quickSettingsMenu.SetCenter.IsChecked = true;
 
             // Update WindowStyle
             if (Properties.Settings.Default.WindowStyle == 2)
@@ -215,10 +218,8 @@ namespace PicView
                     IsScrollEnabled = false;
                     //Close_UserControls();
                 };
-                quickSettingsMenu.SetFit.Checked += (s, x) => { SizeMode = true; };
-                quickSettingsMenu.SetFit.Unchecked += (s, x) => { SizeMode = false; };
-                quickSettingsMenu.SetCenter.Checked += (s, x) => { SizeMode = false; };
-                quickSettingsMenu.SetFit.Unchecked += (s, x) => { SizeMode = true; };
+                quickSettingsMenu.SetFit.Click += (s, x) => { SizeMode = true; };
+                quickSettingsMenu.SetCenter.Click += (s, x) => { SizeMode = false; };
                 quickSettingsMenu.SettingsButton.Click += (s, x) => AllsettingsWindow();
 
                 //FunctionMenu
@@ -230,9 +231,12 @@ namespace PicView
                 functionsMenu.Help.Click += (s, x) => HelpWindow();
                 functionsMenu.About.Click += (s, x) => AboutWindow();
                 functionsMenu.ClearButton.Click += (s, x) => Unload();
+                functionsMenu.ClearButton.Click += Toggle_Functions_menu;
                 functionsMenu.FileDetailsButton.Click += (s, x) => NativeMethods.ShowFileProperties(PicPath);
-                functionsMenu.DeleteButton.Click += (s, x) => DeleteFile(true);
+                functionsMenu.FileDetailsButton.Click += Toggle_Functions_menu;
+                functionsMenu.DeleteButton.Click += (s, x) => DeleteFile(PicPath, true);
                 functionsMenu.ReloadButton.Click += (s, x) => Reload();
+                functionsMenu.ReloadButton.Click += Toggle_Functions_menu;
 
 
                 // FlipButton
@@ -308,8 +312,7 @@ namespace PicView
 
                 fastPicTimer = new System.Timers.Timer()
                 {
-                    Interval = 85,
-                    AutoReset = true,
+                    Interval = 100,
                     Enabled = false
                 };
                 fastPicTimer.Elapsed += FastPic;
@@ -414,6 +417,7 @@ namespace PicView
             };
             fildecm.Click += (s, x) => NativeMethods.ShowFileProperties(PicPath);
             cm.Items.Add(fildecm);
+            cm.Items.Add(new Separator());
 
             var cppcm = new MenuItem
             {
@@ -443,20 +447,19 @@ namespace PicView
             pastecm.Click += (s, x) => Paste();
             cm.Items.Add(pastecm);
 
-            /*
             var MovetoRecycleBin = new MenuItem
             {
-                Header = "Delete to Bin.",
-                InputGestureText = "Del"
+                Header = "Delete picture",
+                InputGestureText = "Delete"
             };
             var MovetoRecycleBinIcon = new System.Windows.Shapes.Path();
-            MovetoRecycleBinIcon.Data = Geometry.Parse("M2 0l-2 3 2 3h6v-6h-6zm1.5.78l1.5 1.5 1.5-1.5.72.72-1.5 1.5 1.5 1.5-.72.72-1.5-1.5-1.5 1.5-.72-.72 1.5-1.5-1.5-1.5.72-.72z");
+            MovetoRecycleBinIcon.Data = Geometry.Parse("M836 1169l-15 368-2 22-420-29q-36-3-67-31.5t-47-65.5q-11-27-14.5-55t4-65 12-55 21.5-64 19-53q78 12 509 28zm-387-586l180 379-147-92q-63 72-111.5 144.5t-72.5 125-39.5 94.5-18.5 63l-4 21-190-357q-17-26-18-56t6-47l8-18q35-63 114-188l-140-86zm1231 517l-188 359q-12 29-36.5 46.5t-43.5 20.5l-18 4q-71 7-219 12l8 164-230-367 211-362 7 173q170 16 283 5t170-33zm-785-924q-47 63-265 435l-317-187-19-12 225-356q20-31 60-45t80-10q24 2 48.5 12t42 21 41.5 33 36 34.5 36 39.5 32 35zm655 307l212 363q18 37 12.5 76t-27.5 74q-13 20-33 37t-38 28-48.5 22-47 16-51.5 14-46 12q-34-72-265-436l313-195zm-143-226l142-83-220 373-419-20 151-86q-34-89-75-166t-75.5-123.5-64.5-80-47-46.5l-17-13 405 1q31-3 58 10.5t39 28.5l11 15q39 61 112 190z");
             MovetoRecycleBinIcon.Stretch = Stretch.Fill;
             MovetoRecycleBinIcon.Width = MovetoRecycleBinIcon.Height = 12;
             MovetoRecycleBinIcon.Fill = scbf;
             MovetoRecycleBin.Icon = MovetoRecycleBinIcon;
-            MovetoRecycleBin.Click += (s, x) => DeleteToRecycleBin();
-            cm.Items.Add(MovetoRecycleBin);*/
+            MovetoRecycleBin.Click += (s, x) => DeleteFile(PicPath, true);
+            cm.Items.Add(MovetoRecycleBin);
 
             //var DeletePic = new MenuItem
             //{
@@ -767,7 +770,6 @@ namespace PicView
             }
         }
 
-
         /// <summary>
         /// Save settings when closing
         /// </summary>
@@ -775,6 +777,9 @@ namespace PicView
         /// <param name="e"></param>
         private void Window_Closing(object sender, CancelEventArgs e)
         {
+            if (Properties.Settings.Default.WindowStyle == 4)
+                Properties.Settings.Default.WindowStyle = 0;
+
             Properties.Settings.Default.Save();
             DeleteTempFiles();
             RecentFiles.WriteToFile();
@@ -788,8 +793,8 @@ namespace PicView
             // Maximize
             if (WindowState == WindowState.Normal)
             {
-                // Update sizing
-                SizeToContent = SizeToContent.Manual;
+                // Update new setting and sizing
+                SizeMode = false;
 
                 // Tell Windows that it's maximized
                 WindowState = WindowState.Maximized;
@@ -798,16 +803,13 @@ namespace PicView
                 // Update button to reflect change
                 MaxButton.ToolTip = "Restore";
                 MaxButtonPath.Data = Geometry.Parse("M143-7h428v286h-428v-286z m571 286h286v428h-429v-143h54q37 0 63-26t26-63v-196z m429 482v-536q0-37-26-63t-63-26h-340v-197q0-37-26-63t-63-26h-536q-36 0-63 26t-26 63v536q0 37 26 63t63 26h340v197q0 37 26 63t63 26h536q36 0 63-26t26-63z");
-
-                // Update new setting
-                Properties.Settings.Default.WindowStyle = 1;
             }
 
             // Restore
             else if (WindowState == WindowState.Maximized)
             {
-                // Update sizing
-                SizeToContent = SizeToContent.WidthAndHeight;
+                // Update new setting and sizing
+                SizeMode = true;
 
                 // Tell Windows that it's normal
                 WindowState = WindowState.Normal;
@@ -816,31 +818,35 @@ namespace PicView
                 // Update button to reflect change
                 MaxButton.ToolTip = "Maximize";
                 MaxButtonPath.Data = Geometry.Parse("M143 64h714v429h-714v-429z m857 625v-678q0-37-26-63t-63-27h-822q-36 0-63 27t-26 63v678q0 37 26 63t63 27h822q37 0 63-27t26-63z");
-
-                // Update new setting
-                Properties.Settings.Default.WindowStyle = 0;
             }
 
         }
 
+        /// <summary>
+        /// Set whether to fit window to image or image to window
+        /// </summary>
         private bool SizeMode
         {
             get
             {
-                return Properties.Settings.Default.WindowStyle == 0;
+                return Properties.Settings.Default.WindowStyle == 0 || Properties.Settings.Default.WindowStyle == 2;
             }
             set
             {
                 if (value)
                 {
                     SizeToContent = SizeToContent.WidthAndHeight;
-                    Properties.Settings.Default.WindowStyle = 0;
+
+                    if (Properties.Settings.Default.WindowStyle != 2)
+                        Properties.Settings.Default.WindowStyle = 0;
+                    quickSettingsMenu.SetFit.IsChecked = true;
                 }
                 else
                 {
                     SizeToContent = SizeToContent.Manual;
 
                     Properties.Settings.Default.WindowStyle = 4;
+                    quickSettingsMenu.SetCenter.IsChecked = true;
                 }
                 if(img.Source != null)
                     ZoomFit(img.Source.Width, img.Source.Height);
@@ -968,14 +974,7 @@ namespace PicView
             if (Flipped)
                 Flip();
 
-
-            // Prevent next pichure from beting rotated if previous is.
-            if (Rotateint != 0)
-                Rotate(0);
-               
-               
-
-            // Fit window to new values
+            // Fit image to new values
             ZoomFit(pic.PixelWidth, pic.PixelHeight);
 
             // If gif, use XamlAnimatedGif to animate it
@@ -983,8 +982,7 @@ namespace PicView
                 XamlAnimatedGif.AnimationBehavior.SetSourceUri(img, new Uri(Pics[x]));
             else
                 img.Source = pic;
-
-
+            
             // Update Title to reflect new image
             var titleString = TitleString(pic.PixelWidth, pic.PixelHeight, x);
             Title = titleString[0];
@@ -1019,6 +1017,7 @@ namespace PicView
             canNavigate = true;
             Progress(x, Pics.Count);
             FolderIndex = x;
+            if (!freshStartup)
             RecentFiles.Add(Pics[x]);
 
             // Stop AjaxLoading if it's shown
@@ -1045,7 +1044,6 @@ namespace PicView
 
             ZoomFit(pic.PixelWidth, pic.PixelHeight);
             CloseToolTipStyle();
-            canNavigate = true;
 
             var titleString = TitleString(pic.PixelWidth, pic.PixelHeight, imageName);
             Title = titleString[0];
@@ -1054,10 +1052,6 @@ namespace PicView
 
             NoProgress();
             PicPath = string.Empty;
-            xWidth = img.ActualWidth;
-            xHeight = img.ActualHeight;
-            canNavigate = false;
-            CenterWindowOnScreen();
 
             canNavigate = false;
         }
@@ -1124,10 +1118,9 @@ namespace PicView
                 //Height = img.Height = 515;
 
                 img.Source = Preloader.Contains(Pics[FolderIndex]) ? Preloader.Load(Pics[FolderIndex]) : GetWindowsThumbnail(Pics[FolderIndex]);
-                FastPicRunning = true;
-
             }));
             Progress(FolderIndex, Pics.Count);
+            FastPicRunning = true;
         }
 
 
@@ -1184,23 +1177,7 @@ namespace PicView
                 return;
             }
 
-            ZoomFit(pic.PixelWidth, pic.PixelHeight);
-            img.Source = pic;
-
-            if (IsScrollEnabled)
-                Scroller.ScrollToTop();
-
-            var titleString = TitleString(pic.PixelWidth, pic.PixelHeight, path);
-            Title = titleString[0];
-            Bar.Text = titleString[1];
-            Bar.ToolTip = titleString[0];
-            PicPath = path;
-            Pics.Clear();
-            NoProgress();
-            canNavigate = false;
-            AjaxLoadingEnd();
-            if (freshStartup)
-                freshStartup = false;
+            Pic(pic, path);
         }
 
 
@@ -1230,16 +1207,29 @@ namespace PicView
 
 
         /// <summary>
-        /// Attemps to fix list by removing invalid files
+        /// Attemps to fix Pics list by removing invalid files
         /// </summary>
-        /// <param name="x"></param>
+        /// <param name="x">The index to start from</param>
         private bool PicErrorFix(int x)
         {
-            if (Pics.Count < 0 || x >= Pics.Count)
+            if (Pics.Count < 0)
             {
                 ToolTipStyle("Unexpected error", true, TimeSpan.FromSeconds(3));
                 Unload();
                 return false;
+            }
+            else if (x >= Pics.Count)
+            {
+                if (Pics.Count >= 1)
+                {
+                    Pic(Pics[0]);
+                    return true;
+                }
+                else
+                {
+                    Unload();
+                    return false;
+                }
             }
 
             var file = Pics[x];
@@ -1278,12 +1268,31 @@ namespace PicView
             // Go to next image
             FolderIndex = FolderIndex == Pics.Count - 1 ? 0 : FolderIndex + 1;
 
-
-            if (File.Exists(Pics[FolderIndex]))
+            if (FolderIndex < Pics.Count)
             {
-                Pic(FolderIndex);
-                PreloadCount++;
-                return true;
+                if (File.Exists(Pics[FolderIndex]))
+                {
+                    Pic(FolderIndex);
+                    PreloadCount++;
+                    return true;
+                }
+            }
+            try
+            {
+                var dir = Path.GetDirectoryName(PicPath);
+                if (Directory.Exists(dir))
+                {
+                    Pics = FileList(dir);
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            if (Pics.Count < 0)
+            {
+                Unload();
+                return false;
             }
 
             // Repeat process if the next image was not found
@@ -1370,18 +1379,13 @@ namespace PicView
             if(img.Source == null)
                 return;
 
-            //If Current Pichure is edited we look for the picpath for the next pic in the same folder and startup with that.
-            foreach (var item in Pics)
+            if (File.Exists(PicPath))
             {
-                if(File.Exists(item))
-                {
-                    //Force to reload fresh start.
-                    freshStartup = true;
-                    Pic(item);
-                    return;
-                }
+                freshStartup = true;
+                Pic(PicPath);
             }
-
+            else
+                PicErrorFix(FolderIndex);
         }
 
         #endregion
@@ -1708,7 +1712,6 @@ namespace PicView
                             FolderIndex++;
 
                         fastPicTimer.Start();
-                        e.Handled = true;
                     }
                     break;
 
@@ -1723,8 +1726,6 @@ namespace PicView
                             Pic(false, true);
                         else
                             Pic(false);
-
-                        FastPicRunning = false;
                     }
                     else if (canNavigate)
                     {
@@ -1837,10 +1838,11 @@ namespace PicView
                 Flip();
             }
 
-            // Shift + Delete
-            else if (e.Key == Key.Delete && (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            // Delete, Shift + Delete
+            else if (e.Key == Key.Delete)
             {
-                //DeleteFile(PicPath);
+                var x = e.KeyboardDevice.Modifiers == ModifierKeys.Shift;
+                DeleteFile(PicPath, !x);
             }
 
             // Ctrl + C
@@ -1853,7 +1855,6 @@ namespace PicView
             else if (e.Key == Key.V && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
                 Paste();
-
             }
 
             // Ctrl + I
@@ -2243,7 +2244,6 @@ namespace PicView
                 // Update values
                 xWidth = img.Width;
                 xHeight = Scroller.Height;
-
             }
             else
             {
@@ -2911,8 +2911,6 @@ namespace PicView
 
         }
 
-
-
         #endregion
 
         #region Manipulate Interface
@@ -3044,7 +3042,7 @@ namespace PicView
         private static string[] TitleString(int width, int height, string path)
         {
             var s1 = new StringBuilder();
-            s1.Append(AppName).Append(" - ").Append(path).Append(" (").Append(width).Append(" x ").Append(height).Append(", ").Append(StringAspect(width, height)).Append(") ").Append(Zoomed);
+            s1.Append(AppName).Append(" - ").Append(path).Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height)).Append(" ").Append(Zoomed);
 
             var array = new string[2];
             array[0] = s1.ToString();
@@ -3474,7 +3472,7 @@ namespace PicView
                     // Don't add the same item more than once
                     var item = fileNames[i];
                     if (i != 0 && fileNames[i - 1] == item)
-                        break;
+                        continue;
 
                     // Change values
                     var menuItem = (MenuItem)RecentFilesMenuItem.Items[i];
@@ -3489,7 +3487,7 @@ namespace PicView
                 // Don't add the same item more than once
                 var item = fileNames[i];
                 if (i != 0 && fileNames[i - 1] == item)
-                    break;
+                    continue;
 
                 // Add items
                 var menuItem = new MenuItem()
@@ -3692,19 +3690,20 @@ namespace PicView
         /// used to Delete the current file permanent or move it to recycle bin.
         /// </summary>
         /// <param name="Recyclebin"></param>
-        private void DeleteFile(bool Recyclebin)
+        private void DeleteFile(string file, bool Recyclebin)
         {
-
-            if (FileFunctions.DeleteToRecycleBin(PicPath, Recyclebin))
+            if (FileFunctions.DeleteFile(file, Recyclebin))
             {
                 Pic();
                 Close_UserControls();
+                var filename = Path.GetFileName(file);
+                var y = Recyclebin ? "Sent " + filename + "to the recyle bin" : "Deleted " + filename;
+                ToolTipStyle(y);
             }
             else
             {
-                ToolTipStyle("Something went wrong under deleting the file.");
+                ToolTipStyle("An error occured when deleting " + file);
             }
-
         }
 
 

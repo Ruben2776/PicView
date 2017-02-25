@@ -139,18 +139,6 @@
                             VerticalAlignment="Top"
                             Orientation="Horizontal">
                             <RadioButton
-                                x:Name="CyanRadio"
-                                Width="100"
-                                Height="40"
-                                Margin="3"
-                                BorderBrush="{StaticResource BorderBrushAlt}"
-                                BorderThickness="1"
-                                Content="Cyan">
-                                <RadioButton.Background>
-                                    <SolidColorBrush x:Name="CyanBrush" Color="{StaticResource BackgroundColorFade}" />
-                                </RadioButton.Background>
-                            </RadioButton>
-                            <RadioButton
                                 x:Name="BlueRadio"
                                 Width="100"
                                 Height="40"
@@ -163,6 +151,18 @@
                                 </RadioButton.Background>
                             </RadioButton>
                             <RadioButton
+                                x:Name="CyanRadio"
+                                Width="100"
+                                Height="40"
+                                Margin="3"
+                                BorderBrush="{StaticResource BorderBrushAlt}"
+                                BorderThickness="1"
+                                Content="Cyan">
+                                <RadioButton.Background>
+                                    <SolidColorBrush x:Name="CyanBrush" Color="{StaticResource BackgroundColorFade}" />
+                                </RadioButton.Background>
+                            </RadioButton>
+                            <RadioButton
                                 x:Name="AquaRadio"
                                 Width="100"
                                 Height="40"
@@ -172,6 +172,18 @@
                                 Content="Aqua">
                                 <RadioButton.Background>
                                     <SolidColorBrush x:Name="AquaBrush" Color="{StaticResource BackgroundColorFade}" />
+                                </RadioButton.Background>
+                            </RadioButton>
+                            <RadioButton
+                                x:Name="GreenRadio"
+                                Width="100"
+                                Height="40"
+                                Margin="3"
+                                BorderBrush="{StaticResource BorderBrushAlt}"
+                                BorderThickness="1"
+                                Content="Green">
+                                <RadioButton.Background>
+                                    <SolidColorBrush x:Name="GreenBrush" Color="{StaticResource BackgroundColorFade}" />
                                 </RadioButton.Background>
                             </RadioButton>
                             <RadioButton
@@ -211,27 +223,15 @@
                                 </RadioButton.Background>
                             </RadioButton>
                             <RadioButton
-                                x:Name="GreenRadio"
+                                x:Name="VioletRadio"
                                 Width="100"
                                 Height="40"
                                 Margin="3"
                                 BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="1"
-                                Content="Green">
+                                Content="Violet">
                                 <RadioButton.Background>
-                                    <SolidColorBrush x:Name="GreenBrush" Color="{StaticResource BackgroundColorFade}" />
-                                </RadioButton.Background>
-                            </RadioButton>
-                            <RadioButton
-                                x:Name="TealRadio"
-                                Width="100"
-                                Height="40"
-                                Margin="3"
-                                BorderBrush="{StaticResource BorderBrushAlt}"
-                                BorderThickness="1"
-                                Content="Teal">
-                                <RadioButton.Background>
-                                    <SolidColorBrush x:Name="TealBrush" Color="{StaticResource BackgroundColorFade}" />
+                                    <SolidColorBrush x:Name="VioletBrush" Color="{StaticResource BackgroundColorFade}" />
                                 </RadioButton.Background>
                             </RadioButton>
                             <RadioButton
@@ -259,18 +259,6 @@
                                 </RadioButton.Background>
                             </RadioButton>
                             <RadioButton
-                                x:Name="BeigeRadio"
-                                Width="100"
-                                Height="40"
-                                Margin="3"
-                                BorderBrush="{StaticResource BorderBrushAlt}"
-                                BorderThickness="1"
-                                Content="Beige">
-                                <RadioButton.Background>
-                                    <SolidColorBrush x:Name="BeigeBrush" Color="{StaticResource BackgroundColorFade}" />
-                                </RadioButton.Background>
-                            </RadioButton>
-                            <RadioButton
                                 x:Name="YellowRadio"
                                 Width="100"
                                 Height="40"
@@ -280,6 +268,18 @@
                                 Content="Yellow">
                                 <RadioButton.Background>
                                     <SolidColorBrush x:Name="YellowBrush" Color="{StaticResource BackgroundColorFade}" />
+                                </RadioButton.Background>
+                            </RadioButton>
+                            <RadioButton
+                                x:Name="BeigeRadio"
+                                Width="100"
+                                Height="40"
+                                Margin="3"
+                                BorderBrush="{StaticResource BorderBrushAlt}"
+                                BorderThickness="1"
+                                Content="Beige">
+                                <RadioButton.Background>
+                                    <SolidColorBrush x:Name="BeigeBrush" Color="{StaticResource BackgroundColorFade}" />
                                 </RadioButton.Background>
                             </RadioButton>
                         </WrapPanel>

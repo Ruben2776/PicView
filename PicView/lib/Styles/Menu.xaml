@@ -15,7 +15,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Menu}">
-                    <Border BorderThickness="0">
+                    <Border BorderThickness="1">
                         <Border.CornerRadius>
                             <CornerRadius
                                 BottomLeft="12.4"
@@ -368,7 +368,7 @@
         <!--  it is here  -->
         <Border
             x:Name="Border"
-            Padding="0,5"
+            Padding="3"
             Background="{StaticResource BackgroundColorBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>

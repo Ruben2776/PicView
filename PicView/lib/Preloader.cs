@@ -72,13 +72,6 @@ namespace PicView.lib
             var value = Sources[key];
             Sources.TryRemove(key, out value);
             value = null;
-
-            //if (PreloadCount <= 4)
-            //    PreloadCount--;
-            //else
-            //    PreloadCount++;
-
-            //MessageBox.Show(key);
         }
 
         /// <summary>
@@ -172,9 +165,12 @@ namespace PicView.lib
                 //Add two behind
                 i = index - 1 < 0 ? Pics.Count - index : index - 1;
                 Add(i);
-                i = i - 1 < 0 ? Pics.Count - i : i - 1;
-                Add(i);
-
+                if (!freshStartup)
+                {
+                    // Save some cpu, don't add one more if fresh startup
+                    i = i - 1 < 0 ? Pics.Count - i : i - 1;
+                    Add(i);
+                }
                 //Add one more infront
                 i = index + 4 >= Pics.Count ? (index + 4) - Pics.Count : index + 4;
                 Add(i);
@@ -231,7 +227,6 @@ namespace PicView.lib
             }
 
             // Update Pics if needed
-
             // If very large archive being extracted, update Pics
             if (!string.IsNullOrWhiteSpace(TempZipPath) && index >= 5 && Pics.Count > 10)
             {

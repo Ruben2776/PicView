@@ -22,6 +22,29 @@
             </Border.Background>
             <Grid>
                 <Canvas Height="51" VerticalAlignment="Top">
+                    <Rectangle
+                        Canvas.Top="51"
+                        Width="290"
+                        Stroke="{StaticResource BorderBrushAlt}"
+                        StrokeThickness="1" />
+                    <Rectangle
+                        Canvas.Left="238"
+                        Width="1"
+                        Height="51"
+                        Stroke="{StaticResource BorderBrushAlt}"
+                        StrokeThickness="1" />
+                    <Rectangle
+                        Canvas.Left="187"
+                        Width="1"
+                        Height="51"
+                        Stroke="{StaticResource BorderBrushAlt}"
+                        StrokeThickness="1" />
+                    <Rectangle
+                        Canvas.Left="136"
+                        Width="1"
+                        Height="51"
+                        Stroke="{StaticResource BorderBrushAlt}"
+                        StrokeThickness="1" />
                     <TextBlock
                         x:Name="bar"
                         Width="137"
@@ -127,7 +150,7 @@
                             x:Name="Open_File_Location"
                             Width="128"
                             Height="70"
-                            Content="Locate on Disk"
+                            Content="Find on Disk"
                             FocusVisualStyle="{x:Null}"
                             FontSize="14"
                             FontWeight="Bold"

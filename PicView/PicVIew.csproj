@@ -83,6 +83,9 @@
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Brainleaf-Dark-Blog-Reflex.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Magick.NET-Q16-HDRI-x64, Version=7.0.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=AMD64">
       <HintPath>..\packages\Magick.NET-Q16-HDRI-x64.7.0.4.701\lib\net40-client\Magick.NET-Q16-HDRI-x64.dll</HintPath>
@@ -343,6 +346,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Brainleaf-Dark-Blog-Reflex.ico" />
     <Content Include="CORE_RL_jp2_.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -356,6 +360,8 @@
     <Resource Include="lib\img\noisy-texture-200x200-o4-d40-c-121212-t0.png" />
     <Resource Include="lib\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
     <Resource Include="lib\img\noisy-texture-200x200-o4-d30-c-101010-t0.png" />
+    <Resource Include="lib\img\Brainleaf-Dark-Blog-Reflex.ico" />
+    <Resource Include="lib\img\reflex-icon.png" />
     <Content Include="Microsoft.WindowsAPICodePack.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

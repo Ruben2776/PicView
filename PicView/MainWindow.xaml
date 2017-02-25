@@ -9,6 +9,7 @@
     MinHeight="515"
     FontFamily="/PicView;component/lib/fonts/#Aller"
     Foreground="{StaticResource MainColorBrush}"
+    Icon="lib/img/reflex-icon.png"
     SizeToContent="WidthAndHeight"
     Style="{DynamicResource MyWindowStyle}"
     TextOptions.TextFormattingMode="Display"
@@ -138,7 +139,7 @@
                 DockPanel.Dock="Right"
                 FocusVisualStyle="{x:Null}"
                 Focusable="False"
-                ToolTip="Maximize_Restore">
+                ToolTip="Maximize">
                 <Button.Background>
                     <SolidColorBrush x:Name="MaxButtonBrush" />
                 </Button.Background>

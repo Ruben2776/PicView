@@ -81,6 +81,7 @@ namespace PicView.Windows
             Closing -= Window_Closing;
             e.Cancel = true;
             AnimationHelper.FadeWindow(this, 0, TimeSpan.FromSeconds(.5));
+            FocusManager.SetFocusedElement(Application.Current.MainWindow, this);
         }
 
         #endregion

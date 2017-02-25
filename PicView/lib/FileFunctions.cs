@@ -12,24 +12,15 @@ namespace PicView.lib
 {
     class FileFunctions
     {
-
-
-        internal static bool DeleteToRecycleBin(string file, bool Recycle)
+        internal static bool DeleteFile(string file, bool Recycle)
         {
             if (!File.Exists(file))
-            {
                 return false;
-            }
+
             try
-            { 
-                if (Recycle)
-                {
-                    FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-                }
-                else
-                {
-                    FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.DeletePermanently);
-                }
+            {
+                var recycle = Recycle ? RecycleOption.SendToRecycleBin : RecycleOption.DeletePermanently;
+                FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, recycle);
                 Pics.Remove(file);
             }
             catch (Exception)
