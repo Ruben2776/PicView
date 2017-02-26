@@ -12,6 +12,12 @@ namespace PicView.lib
 {
     class FileFunctions
     {
+        /// <summary>
+        /// Deletes file or send it to recycle bin
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="Recycle"></param>
+        /// <returns></returns>
         internal static bool DeleteFile(string file, bool Recycle)
         {
             if (!File.Exists(file))
@@ -126,8 +132,16 @@ namespace PicView.lib
         /// </summary>
         internal static List<string> FileList(string path)
         {
+            // Needs update to handle being configurable
+            return FileList(path, SortFilesBy.Name);
+        }
 
-            var foo = Directory.GetFiles(path)
+        /// <summary>
+        /// Sort and return list of supported files
+        /// </summary>
+        internal static List<string> FileList(string path, SortFilesBy sortFilesBy)
+        {
+            var items = Directory.GetFiles(path)
                 .AsParallel()
                 .Where(file =>
                         file.ToLower().EndsWith("jpg", StringComparison.OrdinalIgnoreCase)
@@ -256,42 +270,35 @@ namespace PicView.lib
                         || file.ToLower().EndsWith("xbm", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("xcf", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("yuv", StringComparison.OrdinalIgnoreCase)
-                    )
-                    .ToList();
+                    );
 
-            // Sort like Windows Explorer sorts file names alphanumerically
-            foo.Sort((x, y) => { return NativeMethods.StrCmpLogicalW(x, y); });
-
-            // Needs to support: sort by file size, last modified, as an option
-
-            return foo;
-
-            //List<string> List = new List<string>();
-            //switch(sortFilesBy)
-            //{
-            //    case SortFilesBy.Name:
-            //        List.Sort((x, y) => { return NativeMethods.StrCmpLogicalW(x, y); });
-            //        break;
-            //    case SortFilesBy.Lengh:
-
-            //        break;
-            //    case SortFilesBy.Extension:
-
-            //        break;
-            //    case SortFilesBy.Creastiontime:
-
-            //        break;
-            //    case SortFilesBy.Lastaccesstime:
-
-            //        break;
-            //    case SortFilesBy.Lastwritetime:
-
-            //        break;
-            //    case SortFilesBy.Random:
-
-            //        break;
-            //}
-            
+            switch (sortFilesBy)
+            {
+                // Alphanumeric sort
+                case SortFilesBy.Name:
+                    var list = items.ToList();
+                    list.Sort((x, y) => { return NativeMethods.StrCmpLogicalW(x, y); });
+                    return list;
+                case SortFilesBy.FileSize:
+                    items = items.OrderBy(f => new FileInfo(f).Length);
+                    break;
+                case SortFilesBy.Extension:
+                    items = items.OrderBy(f => new FileInfo(f).Extension);
+                    break;
+                case SortFilesBy.Creastiontime:
+                    items = items.OrderBy(f => new FileInfo(f).CreationTime);
+                    break;
+                case SortFilesBy.Lastaccesstime:
+                    items = items.OrderBy(f => new FileInfo(f).LastAccessTime);
+                    break;
+                case SortFilesBy.Lastwritetime:
+                    items = items.OrderBy(f => new FileInfo(f).LastWriteTime);
+                    break;
+                case SortFilesBy.Random:
+                    items = items.OrderBy(f => Guid.NewGuid());
+                    break;
+            }
+            return items.ToList();
         }
 
         /// <summary>
@@ -379,12 +386,11 @@ namespace PicView.lib
     enum SortFilesBy
     {
         Name,
-        Lengh,
+        FileSize,
         Creastiontime,
         Extension,
         Lastaccesstime,
         Lastwritetime,
         Random
     }
-
 }

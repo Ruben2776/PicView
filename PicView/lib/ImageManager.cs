@@ -12,9 +12,6 @@ namespace PicView.lib
             if (string.IsNullOrWhiteSpace(file) || file.Length < 2)
                 return null;
 
-            if (extension == ".ico")
-                return GetBitmapImage(new Uri(file));
-
             BitmapSource pic;
 
             using (MagickImage magick = new MagickImage())
@@ -61,32 +58,32 @@ namespace PicView.lib
 
         }
 
-        internal static BitmapImage GetBitmapImage(Uri s)
-        {
-            var pic = new BitmapImage();
-            pic.BeginInit();
-            pic.UriSource = s;
-            pic.CacheOption = BitmapCacheOption.None;
-            try
-            {
-                pic.EndInit();
-            }
-            catch (ArgumentException)
-            {
-                // Some images crash without these settings
-                var failpic = new BitmapImage();
-                failpic.BeginInit();
-                failpic.UriSource = s;
-                failpic.CacheOption = BitmapCacheOption.None;
-                failpic.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
-                failpic.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
-                failpic.EndInit();
-                failpic.Freeze();
-                return failpic;
-            }
-            pic.Freeze();
-            return pic;
-        }
+        //internal static BitmapImage GetBitmapImage(Uri s)
+        //{
+        //    var pic = new BitmapImage();
+        //    pic.BeginInit();
+        //    pic.UriSource = s;
+        //    pic.CacheOption = BitmapCacheOption.None;
+        //    try
+        //    {
+        //        pic.EndInit();
+        //    }
+        //    catch (ArgumentException)
+        //    {
+        //        // Some images crash without these settings
+        //        var failpic = new BitmapImage();
+        //        failpic.BeginInit();
+        //        failpic.UriSource = s;
+        //        failpic.CacheOption = BitmapCacheOption.None;
+        //        failpic.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+        //        failpic.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+        //        failpic.EndInit();
+        //        failpic.Freeze();
+        //        return failpic;
+        //    }
+        //    pic.Freeze();
+        //    return pic;
+        //}
 
         internal static BitmapSource GetMagickImage(Stream s)
         {

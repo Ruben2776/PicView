@@ -84,7 +84,7 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Brainleaf-Dark-Blog-Reflex.ico</ApplicationIcon>
+    <ApplicationIcon>lib\img\Brainleaf-Dark-Blog-Reflex.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Magick.NET-Q16-HDRI-x64, Version=7.0.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=AMD64">
@@ -346,7 +346,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Brainleaf-Dark-Blog-Reflex.ico" />
     <Content Include="CORE_RL_jp2_.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

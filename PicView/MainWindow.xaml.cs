@@ -36,6 +36,7 @@ namespace PicView
             ContentRendered += MainWindow_ContentRendered;
         }
 
+
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             Application.Current.Resources["ChosenColor"] = AnimationHelper.GetPrefferedColorOver();
@@ -55,6 +56,7 @@ namespace PicView
                 = Visibility.Collapsed;
             }
         }
+
 
         private void MainWindow_ContentRendered(object sender, EventArgs e)
         {
@@ -220,7 +222,7 @@ namespace PicView
                 };
                 quickSettingsMenu.SetFit.Click += (s, x) => { SizeMode = true; };
                 quickSettingsMenu.SetCenter.Click += (s, x) => { SizeMode = false; };
-                quickSettingsMenu.SettingsButton.Click += (s, x) => AllsettingsWindow();
+                quickSettingsMenu.SettingsButton.Click += (s, x) => AllSettingsWindow();
 
                 //FunctionMenu
                 FunctionMenuButton.PreviewMouseLeftButtonDown += FunctionMenuButtonButtonMouseButtonDown;
@@ -655,6 +657,7 @@ namespace PicView
             }
         }
 
+
         /// <summary>
         /// Reset to default state
         /// </summary>
@@ -681,6 +684,7 @@ namespace PicView
 
             AjaxLoadingEnd();
         }
+
 
         protected override void OnRenderSizeChanged(SizeChangedInfo size)
         {
@@ -727,6 +731,7 @@ namespace PicView
             }
         }
 
+
         /// <summary>
         /// Centers on the primary monitor.. Needs multi monitor solution....
         /// </summary>
@@ -735,6 +740,7 @@ namespace PicView
             Top = (SystemParameters.WorkArea.Height - Height) / 2;
             Left = (SystemParameters.WorkArea.Width - Width) / 2;
         }
+
 
         /// <summary>
         /// Move window and maximize on double click
@@ -770,6 +776,7 @@ namespace PicView
             }
         }
 
+
         /// <summary>
         /// Save settings when closing
         /// </summary>
@@ -784,6 +791,7 @@ namespace PicView
             DeleteTempFiles();
             RecentFiles.WriteToFile();
         }
+
 
         /// <summary>
         /// Maximizes/restore window
@@ -821,6 +829,7 @@ namespace PicView
             }
 
         }
+
 
         /// <summary>
         /// Set whether to fit window to image or image to window
@@ -899,12 +908,24 @@ namespace PicView
                 FolderIndex = Pics.IndexOf(path);
             }
 
+            // Fix large archive extraction error
+            if (Pics.Count == 0)
+            {
+                bool foo = await RecoverFailedArchiveAsync();
+                if (!foo)
+                    return;
+            }
+
             // Navigate to picture using obtained index
             Pic(FolderIndex);
 
             // No longer fresh startup
             if (freshStartup)
                 freshStartup = false;
+
+            // Save ram
+            if (prevPicResource != null)
+                prevPicResource = null;
 
             // Fix loading bug
             if (ajaxLoading.Opacity != 1 && canNavigate)
@@ -924,13 +945,7 @@ namespace PicView
             //var stopWatch = new Stopwatch();
             //stopWatch.Start();
 
-            // Error Handling
-            if (Pics.Count == 0)
-            {
-                bool foo = await RecoverFailedArchiveAsync();
-                if (!foo)
-                    return;
-            }
+            // If file was removed, fix it
             if (!File.Exists(Pics[x]))
             {
                 PicErrorFix(x);
@@ -942,9 +957,7 @@ namespace PicView
             // if not, it will be null
             BitmapSource pic = Preloader.Load(Pics[x]);
             var Extension = Path.GetExtension(Pics[x]);
-
-            // if (pic == null)  On demand loading
-            // Failed to load image from preloader
+         
             if (pic == null)
             {
                 Title = Bar.Text = Loading;
@@ -959,6 +972,7 @@ namespace PicView
                 // Load new value manually
                 await Task.Run(() => pic = RenderToBitmapSource(Pics[x], Extension));
 
+                // If pic is still null, image can't be rendered
                 if (pic == null)
                 {
                     PicErrorFix(x);
@@ -970,7 +984,7 @@ namespace PicView
             if (IsScrollEnabled)
                 Scroller.ScrollToTop();
 
-            // Prevent next picture from being flipped if previous is.
+            // Prevent picture from being flipped if previous is
             if (Flipped)
                 Flip();
 
@@ -992,6 +1006,8 @@ namespace PicView
             // Preload images           
             bool? reverse;
 
+            // Only preload every second entry
+            // and determine if going backwards or forwards
             if (PreloadCount > 1 || freshStartup)
                 reverse = false;
             else if (PreloadCount < 0)
@@ -1018,7 +1034,7 @@ namespace PicView
             Progress(x, Pics.Count);
             FolderIndex = x;
             if (!freshStartup)
-            RecentFiles.Add(Pics[x]);
+                RecentFiles.Add(Pics[x]);
 
             // Stop AjaxLoading if it's shown
             AjaxLoadingEnd();
@@ -1069,6 +1085,7 @@ namespace PicView
             if (!canNavigate)
                 return;
 
+            // Go to first or last
             if (end)
             {
                 FolderIndex = next ? Pics.Count - 1 : 0;
@@ -1086,6 +1103,7 @@ namespace PicView
                         PreloadCount--;
                 }
             }
+            // Go to next or previous
             else
             {
                 if (next)
@@ -1311,8 +1329,8 @@ namespace PicView
 
             if (string.IsNullOrWhiteSpace(TempZipPath))
             {
-                // Unexped result, return to clear state.
-                Unload();
+                // Unexped result
+                Reload(true);
                 return false;
             }
 
@@ -1335,6 +1353,11 @@ namespace PicView
 
                 if (count > 3)
                 {
+                    if (!string.IsNullOrWhiteSpace(xPicPath))
+                    {
+                        Reload(true);
+                        return false;
+                    }
                     Unload();
                     return false;
                 }
@@ -1374,18 +1397,29 @@ namespace PicView
         /// <summary>
         /// Refresh the current list of pics and reload them if there is some missing or changes.
         /// </summary>
-        private void Reload()
+        private void Reload(bool fromBackup = false)
         {
             if(img.Source == null)
                 return;
 
-            if (File.Exists(PicPath))
+            if (fromBackup && string.IsNullOrWhiteSpace(xPicPath))
+            {
+                Unload();
+                return;
+            }
+
+            var x = fromBackup ? xPicPath : PicPath;            
+
+            if (File.Exists(x))
             {
                 freshStartup = true;
-                Pic(PicPath);
+                Pic(x);
             }
             else
-                PicErrorFix(FolderIndex);
+            {
+                var y = fromBackup ? xFolderIndex : FolderIndex;
+                PicErrorFix(y);
+            }
         }
 
         #endregion
@@ -1564,8 +1598,9 @@ namespace PicView
             }
         }
 
+
         /// <summary>
-        /// Logic for handling DragOver event
+        /// Determine if supported files for drag and drop operation
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1589,6 +1624,12 @@ namespace PicView
             ToolTipStyle(DragOverString);
         }
 
+
+        /// <summary>
+        /// Show image or thumbnail preview on drag enter
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Image_DraEnter(object sender, DragEventArgs e)
         {
             // Error handling
@@ -1615,6 +1656,7 @@ namespace PicView
             img.Source = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : GetWindowsThumbnail(files[0]);
         }
 
+
         /// <summary>
         /// Logic for handling when the cursor leaves drag area
         /// </summary>
@@ -1640,6 +1682,7 @@ namespace PicView
             // Update status
             isDraggedOver = false;
         }
+
 
         /// <summary>
         /// Logic for handling the drop event
@@ -1795,6 +1838,7 @@ namespace PicView
             }
         }
 
+
         private void MainWindow_KeyUp(object sender, KeyEventArgs e)
         {
             // FastPicUpdate()
@@ -1924,6 +1968,7 @@ namespace PicView
             }
         }
 
+
         private void MainWindow_MouseDown(object sender, MouseButtonEventArgs e)
         {
             switch (e.ChangedButton)
@@ -1954,6 +1999,12 @@ namespace PicView
 
         #region Zoom, Scroll, Rotate and Flip
 
+        // Auto scroll
+
+        /// <summary>
+        /// Starts the auto scroll feature and shows the sign on the ui
+        /// </summary>
+        /// <param name="e"></param>
         private void StartAutoScroll(MouseButtonEventArgs e)
         {
             // Don't scroll if not scrollable
@@ -1966,6 +2017,10 @@ namespace PicView
             ShowAutoScrollSign();
         }
 
+
+        /// <summary>
+        /// Stop auto scroll feature and remove sign from the ui
+        /// </summary>
         private void StopAutoScroll()
         {
             autoScrollTimer.Stop();
@@ -1975,6 +2030,7 @@ namespace PicView
             autoScrollOrigin = null;
             HideAutoScrollSign();
         }
+
 
         /// <summary>
         /// Uses timer to scroll vertical up/down every seventh milisecond
@@ -2003,6 +2059,8 @@ namespace PicView
             }));
         }
 
+
+        // Zoom
         /// <summary>
         /// Pan and Zoom, reset zoom and double click to reset
         /// </summary>
@@ -2030,6 +2088,7 @@ namespace PicView
             }
         }
 
+
         /// <summary>
         /// Occurs when the users clicks on the img control
         /// </summary>
@@ -2044,6 +2103,7 @@ namespace PicView
             else
                 img.ReleaseMouseCapture();
         }
+
 
         /// <summary>
         /// Used to drag image
@@ -2068,6 +2128,7 @@ namespace PicView
             e.Handled = true;
         }
 
+
         /// <summary>
         /// Zooms or scrolls with mousewheel
         /// </summary>
@@ -2086,6 +2147,7 @@ namespace PicView
             else if (!autoScrolling)
                 Zoom(e.Delta, false);
         }
+
 
         /// <summary>
         /// Manipulates the required elements to allow zooming
@@ -2107,6 +2169,7 @@ namespace PicView
             st = (ScaleTransform)((TransformGroup)img.RenderTransform).Children.First(tr => tr is ScaleTransform);
             tt = (TranslateTransform)((TransformGroup)img.RenderTransform).Children.First(tr => tr is TranslateTransform);
         }
+
 
         /// <summary>
         /// Resets element values to their loaded values
@@ -2130,6 +2193,7 @@ namespace PicView
             Bar.Text = titleString[1];
             Bar.ToolTip = titleString[2];
         }
+
 
         /// <summary>
         /// Scales or zooms, depending on given values
@@ -2204,6 +2268,7 @@ namespace PicView
             #endregion
 
         }
+
 
         /// <summary>
         /// Fits image size based on users screen resolution
@@ -2307,6 +2372,8 @@ namespace PicView
             */
         }
 
+
+        // Rotate and flip
         /// <summary>
         /// Rotates the image the specified degrees and updates imageSettingsMenu value
         /// </summary>
@@ -2464,6 +2531,8 @@ namespace PicView
 
         #region UserControl Specifics
 
+        // Load controls
+
         /// <summary>
         /// Loads ClickArrow and adds it to the window
         /// </summary>
@@ -2496,6 +2565,7 @@ namespace PicView
 
         }
 
+
         /// <summary>
         /// Loads x2 and adds it to the window
         /// </summary>
@@ -2512,6 +2582,7 @@ namespace PicView
             bg.Children.Add(x2);
 
         }
+
 
         /// <summary>
         /// Loads FileMenu and adds it to the window
@@ -2531,6 +2602,7 @@ namespace PicView
             bg.Children.Add(fileMenu);
         }
 
+
         /// <summary>
         /// Loads ImageSettingsMenu and adds it to the window
         /// </summary>
@@ -2548,6 +2620,7 @@ namespace PicView
 
             bg.Children.Add(imageSettingsMenu);
         }
+
 
         /// <summary>
         /// Loads QuickSettingsMenu and adds it to the window
@@ -2567,6 +2640,9 @@ namespace PicView
             bg.Children.Add(quickSettingsMenu);
         }
 
+        /// <summary>
+        /// Loads FunctionsMenu and adds it to the window
+        /// </summary>
         private void LoadFunctionsMenu()
         {
             functionsMenu = new lib.UserControls.Menus.FunctionsMenu
@@ -2581,6 +2657,7 @@ namespace PicView
 
             bg.Children.Add(functionsMenu);
         }
+
 
         // Tooltip
 
@@ -2598,6 +2675,7 @@ namespace PicView
 
             bg.Children.Add(sexyToolTip);
         }
+
 
         /// <summary>
         /// Shows a black tooltip on screen in a given time
@@ -2627,6 +2705,7 @@ namespace PicView
             sexyToolTip.BeginAnimation(OpacityProperty, anim);
         }
 
+
         /// <summary>
         /// Shows a black tooltip on screen for a small time
         /// </summary>
@@ -2635,6 +2714,7 @@ namespace PicView
         {
             ToolTipStyle(message, center, TimeSpan.FromSeconds(1));
         }
+
 
         private void CloseToolTipStyle()
         {
@@ -2657,6 +2737,8 @@ namespace PicView
 
             bg.Children.Add(ajaxLoading);
         }
+
+
         /// <summary>
         /// Start loading animation
         /// </summary>
@@ -2667,6 +2749,7 @@ namespace PicView
                 AnimationHelper.Fade(ajaxLoading, 1, TimeSpan.FromSeconds(.2));
             }
         }
+
 
         /// <summary>
         /// End loading animation
@@ -2699,11 +2782,13 @@ namespace PicView
             topLayer.Children.Add(autoScrollSign);
         }
 
+
         private void HideAutoScrollSign()
         {
             autoScrollSign.Visibility = Visibility.Collapsed;
             autoScrollSign.Opacity = 0;
         }
+
 
         private void ShowAutoScrollSign()
         {
@@ -2713,6 +2798,8 @@ namespace PicView
             autoScrollSign.Opacity = 1;
         }
 
+
+        // Toggle open close menus
 
         /// <summary>
         /// Toggles whether ImageSettingsMenu is open or not with a fade animation 
@@ -2737,6 +2824,7 @@ namespace PicView
             }
         }
 
+
         /// <summary>
         /// Toggles whether FileMenu is open or not with a fade animation 
         /// </summary>
@@ -2759,6 +2847,7 @@ namespace PicView
                     fileMenu.BeginAnimation(OpacityProperty, da);
             }
         }
+
 
         /// <summary>
         /// Toggles whether QuickSettingsMenu is open or not with a fade animation 
@@ -2784,6 +2873,7 @@ namespace PicView
             }
         }
 
+
         /// <summary>
         /// Toggles whether FunctionsMenu is open or not with a fade animation 
         /// </summary>
@@ -2807,6 +2897,7 @@ namespace PicView
             }
         }
 
+
         /// <summary>
         /// Check if any UserControls are open
         /// </summary>
@@ -2828,6 +2919,7 @@ namespace PicView
             return false;
         }
 
+
         /// <summary>
         /// Closes usercontrol menus
         /// </summary>
@@ -2846,11 +2938,20 @@ namespace PicView
                 FunctionsMenuOpen = false;
         }
 
+
+        /// <summary>
+        /// Closes usercontrol menus
+        /// </summary>
         private void Close_UserControls(object sender, RoutedEventArgs e)
         {
             Close_UserControls();
         }
 
+        /// <summary>
+        /// Toggles whether open menu is open or not
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Toggle_open_menu(object sender, RoutedEventArgs e)
         {
             FileMenuOpen = !FileMenuOpen;
@@ -2863,10 +2964,14 @@ namespace PicView
 
             if (FunctionsMenuOpen)
                 FunctionsMenuOpen = false;
-
-
         }
 
+
+        /// <summary>
+        /// Toggles whether image menu is open or not
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Toggle_image_menu(object sender, RoutedEventArgs e)
         {
             ImageSettingsMenuOpen = !ImageSettingsMenuOpen;
@@ -2881,6 +2986,12 @@ namespace PicView
                 FunctionsMenuOpen = false;
         }
 
+
+        /// <summary>
+        /// Toggles whether quick settings menu is open or not
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Toggle_quick_settings_menu(object sender, RoutedEventArgs e)
         {
             QuickSettingsMenuOpen = !QuickSettingsMenuOpen;
@@ -2896,6 +3007,12 @@ namespace PicView
 
         }
 
+
+        /// <summary>
+        /// Toggles whether functions menu is open or not
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Toggle_Functions_menu(object sender, RoutedEventArgs e)
         {
             FunctionsMenuOpen = !FunctionsMenuOpen;
@@ -2916,7 +3033,7 @@ namespace PicView
         #region Manipulate Interface
 
         /// <summary>
-        /// Toggle between "Alt" interface and default
+        /// Toggle between hidden interface and default
         /// </summary>
         private void HideInterface()
         {
@@ -2957,6 +3074,11 @@ namespace PicView
 
         }
 
+
+        /// <summary>
+        /// Hides/shows interface elements with a fade animation
+        /// </summary>
+        /// <param name="show"></param>
         private async void FadeControlsAsync(bool show)
         {
             var fadeTo = show ? 1 : 0;
@@ -2978,22 +3100,47 @@ namespace PicView
             }));
         }
 
+
+        /// <summary>
+        /// Timer starts FadeControlsAsync
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ActivityTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             FadeControlsAsync(false);
         }
 
+
+        /// <summary>
+        /// Logic for mouse movements on MainWindow
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainWindow_MouseMove(object sender, MouseEventArgs e)
         {
+            // Stop timer if mouse moves on mainwindow and show elements
             activityTimer.Stop();
             FadeControlsAsync(true);
         }
 
+
+        /// <summary>
+        /// Logic for mouse leave mainwindow event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainWindow_MouseLeave(object sender, MouseEventArgs e)
         {
+            // Start timer when mouse leaves mainwindow
             activityTimer.Start();
         }
 
+
+        /// <summary>
+        /// Find scrollbar and start fade animation
+        /// </summary>
+        /// <param name="show"></param>
         private void ScrollbarFade(bool show)
         {
             var s = Scroller.Template.FindName("PART_VerticalScrollBar", Scroller) as System.Windows.Controls.Primitives.ScrollBar;
@@ -3007,6 +3154,7 @@ namespace PicView
                 AnimationHelper.Fade(s, 0, TimeSpan.FromSeconds(1));
             }
         }
+
 
         /// <summary>
         /// Returns string with file name, folder position,
@@ -3031,6 +3179,7 @@ namespace PicView
             return array;
         }
 
+
         /// <summary>
         /// Returns string with file name,
         /// zoom, aspect ratio and resolution
@@ -3050,6 +3199,7 @@ namespace PicView
             array[1] = s1.ToString();
             return array;
         }
+
 
         /// <summary>
         /// Toggles scroll and displays it with TooltipStle
@@ -3073,6 +3223,9 @@ namespace PicView
 
         #region Windows
 
+        /// <summary>
+        /// Show About window in a dialog
+        /// </summary>
         private void AboutWindow()
         {
             Window window = new About
@@ -3089,6 +3242,10 @@ namespace PicView
             window.ShowDialog();
         }
 
+
+        /// <summary>
+        /// Show Help window in a dialog
+        /// </summary>
         private void HelpWindow()
         {
             Window window = new Help
@@ -3104,7 +3261,11 @@ namespace PicView
             window.Show();
         }
 
-        public void AllsettingsWindow()
+        
+        /// <summary>
+        /// Show All Settings window in a dialog
+        /// </summary>
+        public void AllSettingsWindow()
         {
             Window window = new AllSettings
             {
@@ -3119,6 +3280,7 @@ namespace PicView
 
             window.ShowDialog();
         }
+
         #endregion
 
         #region MouseOver Button Events
@@ -3130,40 +3292,41 @@ namespace PicView
         */
 
         // Logo Mouse Over
-        private void LogoMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, pBrush, false);
-            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, iBrush, false);
-            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, cBrush, false);
-            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, vBrush, false);
-            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, iiBrush, false);
-            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, eBrush, false);
-            AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, wBrush, false);
-        }
+        //private void LogoMouseOver(object sender, MouseEventArgs e)
+        //{
+        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, pBrush, false);
+        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, iBrush, false);
+        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, cBrush, false);
+        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, vBrush, false);
+        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, iiBrush, false);
+        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, eBrush, false);
+        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, wBrush, false);
+        //}
 
-        private void LogoMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, pBrush, false);
-            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, iBrush, false);
-            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, cBrush, false);
-            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, vBrush, false);
-            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, iiBrush, false);
-            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, eBrush, false);
-            AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, wBrush, false);
-        }
+        //private void LogoMouseLeave(object sender, MouseEventArgs e)
+        //{
+        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, pBrush, false);
+        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, iBrush, false);
+        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, cBrush, false);
+        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, vBrush, false);
+        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, iiBrush, false);
+        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, eBrush, false);
+        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, wBrush, false);
+        //}
 
-        private void LogoMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(pBrush, false);
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(iBrush, false);
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(cBrush, false);
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(vBrush, false);
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(iiBrush, false);
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(eBrush, false);
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(wBrush, false);
-        }
+        //private void LogoMouseButtonDown(object sender, MouseButtonEventArgs e)
+        //{
+        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(pBrush, false);
+        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(iBrush, false);
+        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(cBrush, false);
+        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(vBrush, false);
+        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(iiBrush, false);
+        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(eBrush, false);
+        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(wBrush, false);
+        //}
 
         // Close Button
+
         private void CloseButtonMouseOver(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
@@ -3501,6 +3664,7 @@ namespace PicView
             }
         }
 
+
         /// <summary>
         /// Copy image location to clipboard
         /// </summary>
@@ -3509,6 +3673,7 @@ namespace PicView
             Clipboard.SetText(PicPath);
             ToolTipStyle(TxtCopy);
         }
+
 
         /// <summary>
         /// Add image to clipboard
@@ -3531,6 +3696,7 @@ namespace PicView
             }
             ToolTipStyle(FileCopy);
         }
+
 
         /// <summary>
         /// Retrieves the data from the clipboard and attemps to load image, if possible
@@ -3610,6 +3776,7 @@ namespace PicView
             #endregion
         }
 
+
         /// <summary>
         /// Opens image in File Explorer
         /// </summary>
@@ -3628,6 +3795,7 @@ namespace PicView
             }
             catch (InvalidCastException) { }
         }
+
 
         /// <summary>
         /// Open a file dialog where user can select a supported file
@@ -3650,6 +3818,7 @@ namespace PicView
 
             Close_UserControls();
         }
+
 
         /// <summary>
         /// Open a File Dialog, where the user can save a supported file type.
@@ -3686,8 +3855,9 @@ namespace PicView
             }
         }
 
+
         /// <summary>
-        /// used to Delete the current file permanent or move it to recycle bin.
+        /// Delete file or move it to recycle bin
         /// </summary>
         /// <param name="Recyclebin"></param>
         private void DeleteFile(string file, bool Recyclebin)

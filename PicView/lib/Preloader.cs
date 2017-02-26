@@ -162,12 +162,11 @@ namespace PicView.lib
                 i = i + 1 >= Pics.Count ? (i + 1) - Pics.Count : i + 1;
                 Add(i);
 
-                //Add two behind
-                i = index - 1 < 0 ? Pics.Count - index : index - 1;
-                Add(i);
+                //Add two behind, but nof if just started
                 if (!freshStartup)
                 {
-                    // Save some cpu, don't add one more if fresh startup
+                    i = index - 1 < 0 ? Pics.Count - index : index - 1;
+                    Add(i);
                     i = i - 1 < 0 ? Pics.Count - i : i - 1;
                     Add(i);
                 }
