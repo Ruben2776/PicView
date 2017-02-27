@@ -237,6 +237,7 @@ namespace PicView
                 functionsMenu.FileDetailsButton.Click += (s, x) => NativeMethods.ShowFileProperties(PicPath);
                 functionsMenu.FileDetailsButton.Click += Toggle_Functions_menu;
                 functionsMenu.DeleteButton.Click += (s, x) => DeleteFile(PicPath, true);
+                functionsMenu.DeletePermButton.Click += (s, x) => DeleteFile(PicPath, false);
                 functionsMenu.ReloadButton.Click += (s, x) => Reload();
                 functionsMenu.ReloadButton.Click += Toggle_Functions_menu;
 
@@ -1965,6 +1966,18 @@ namespace PicView
             else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.Z))
             {
                 HideInterface();
+            }
+
+            // Del
+            else if (e.Key == Key.Delete)
+            {
+                DeleteFile(PicPath, true);
+            }
+
+            // Shift + Del
+            else if(e.KeyboardDevice.Modifiers == ModifierKeys.Shift && (e.SystemKey == Key.Delete))
+            {
+                DeleteFile(PicPath, false);
             }
         }
 

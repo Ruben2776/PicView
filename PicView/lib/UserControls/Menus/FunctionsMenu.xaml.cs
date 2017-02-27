@@ -43,6 +43,10 @@ namespace PicView.lib.UserControls.Menus
             DeleteButton.MouseLeave += DeleteButtonMouseLeave;
             DeleteButton.PreviewMouseLeftButtonDown += DeleteButtonMouseButtonDown;
 
+            //DeletePermButton
+            DeletePermButton.MouseEnter += DeletePermButtonMouseOver;
+            DeletePermButton.MouseLeave += DeleteButtonMousePermLeave;
+            DeletePermButton.PreviewMouseLeftButtonDown += DeleteButtonMousePermButtonDown;
 
             // ReloadButton
             ReloadButton.MouseEnter += ReloadButtonMouseOver;
@@ -185,6 +189,37 @@ namespace PicView.lib.UserControls.Menus
                 mainColor.G,
                 mainColor.B,
                 DeleteBrush,
+                false
+            );
+        }
+
+
+        // Delete Permanent Button
+        private void DeletePermButtonMouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                DeletePermBrush,
+                false
+            );
+        }
+
+        private void DeleteButtonMousePermButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(DeletePermBrush, false);
+        }
+
+        private void DeleteButtonMousePermLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                DeletePermBrush,
                 false
             );
         }
