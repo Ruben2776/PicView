@@ -170,7 +170,7 @@
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
                                 <Bold>Esc</Bold>
-                                to close current window.
+                                to close window.
                             </TextBlock>
                         </BulletDecorator>
 
@@ -247,7 +247,7 @@
                                 <Bold>Ctrl</Bold>
                                 +
                                 <Bold>S</Bold>
-                                to save current image.
+                                to save image.
                             </TextBlock>
                         </BulletDecorator>
                         <BulletDecorator Margin="7,2">
@@ -289,7 +289,7 @@
                                 <Bold>Shift</Bold>
                                 +
                                 <Bold>Del</Bold>
-                                to premanently delete current image.
+                                to premanently delete image.
                             </TextBlock>
                         </BulletDecorator>
                         <BulletDecorator Margin="7,2">
@@ -301,7 +301,7 @@
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
                                 <Bold>Del</Bold>
-                                to move current image to the recycle bin.
+                                to move image to the recycle bin.
                             </TextBlock>
                         </BulletDecorator>
 
@@ -318,7 +318,7 @@
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
                                 <Bold>Right arrow</Bold>
-                                to show next image
+                                to show next image.
                             </TextBlock>
                         </BulletDecorator>
                         <BulletDecorator Margin="7,2">
