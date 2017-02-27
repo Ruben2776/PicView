@@ -159,7 +159,7 @@
                         Height="45"
                         Margin="0,0,4,0"
                         Style="{StaticResource MetroAlphaFlatButton}"
-                        ToolTip="Delete current image Permanent">
+                        ToolTip="Permanently delete current image">
                         <Path
                             Width="30"
                             Height="30"

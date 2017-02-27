@@ -106,8 +106,6 @@
                         SnapsToDevicePixels="True"
                         Stretch="Fill" />
                 </Button>
-
-
             </Canvas>
 
             <Canvas
@@ -291,7 +289,7 @@
                                 <Bold>Shift</Bold>
                                 +
                                 <Bold>Del</Bold>
-                                to delete current image permanent
+                                to premanently delete current image.
                             </TextBlock>
                         </BulletDecorator>
                         <BulletDecorator Margin="7,2">
@@ -303,13 +301,9 @@
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
                                 <Bold>Del</Bold>
-                                to move current image to recyclebin.
+                                to move current image to the recycle bin.
                             </TextBlock>
                         </BulletDecorator>
-
-
-
-
 
                         <Label
                             Margin="0,10,0,0"
