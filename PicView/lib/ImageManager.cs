@@ -25,7 +25,7 @@ namespace PicView.lib
                     CompressionMethod = CompressionMethod.NoCompression
                 };
 
-                if (extension == ".svg")
+                if (extension.ToLower() == ".svg")
                 {
                     // Make background transparent
                     mrs.Format = MagickFormat.Svg;

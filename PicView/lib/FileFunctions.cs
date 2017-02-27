@@ -359,7 +359,7 @@ namespace PicView.lib
                     FolderIndex = 0;
 
                     // Add zipped files as recent file
-                    RecentFiles.SetZipped(PicPath);
+                    RecentFiles.SetZipped(path);
 
                     // Set extracted files to Pics
                     if (Directory.Exists(TempZipPath))

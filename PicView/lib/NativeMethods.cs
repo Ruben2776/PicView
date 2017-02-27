@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace PicView.lib
 {
     //https://msdn.microsoft.com/en-us/library/ms182161.aspx
+    [SuppressUnmanagedCodeSecurity]
     internal static class NativeMethods
     {
 
