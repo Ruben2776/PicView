@@ -262,8 +262,8 @@
                             <TextBlock Margin="5,0,0,0">
                                 <Bold>Ctrl</Bold>
                                 +
-                                <Bold>P</Bold>
-                                to print current image.
+                                <Bold>V</Bold>
+                                to paste image from clipboard.
                             </TextBlock>
                         </BulletDecorator>
                         <BulletDecorator Margin="7,2">
@@ -280,9 +280,35 @@
                                 to show file details.
                             </TextBlock>
                         </BulletDecorator>
-                        
-                        
-                        
+                        <BulletDecorator Margin="7,2">
+                            <BulletDecorator.Bullet>
+                                <Ellipse
+                                    Width="7"
+                                    Height="7"
+                                    Fill="{StaticResource MainColorBrush}" />
+                            </BulletDecorator.Bullet>
+                            <TextBlock Margin="5,0,0,0">
+                                <Bold>Shift</Bold>
+                                +
+                                <Bold>Del</Bold>
+                                to delete current image permanent
+                            </TextBlock>
+                        </BulletDecorator>
+                        <BulletDecorator Margin="7,2">
+                            <BulletDecorator.Bullet>
+                                <Ellipse
+                                    Width="7"
+                                    Height="7"
+                                    Fill="{StaticResource MainColorBrush}" />
+                            </BulletDecorator.Bullet>
+                            <TextBlock Margin="5,0,0,0">
+                                <Bold>Del</Bold>
+                                to move current image to recyclebin.
+                            </TextBlock>
+                        </BulletDecorator>
+
+
+
 
 
                         <Label
