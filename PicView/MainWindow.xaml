@@ -55,6 +55,27 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <!--<ContextMenu x:Key="MainMenu">
+            <MenuItem Header="Open" InputGestureText="Ctrl + O">
+                <MenuItem.Icon>
+                    <Path
+                        Width="12"
+                        Height="12"
+                        Data="M1717 931q0-35-53-35h-1088q-40 0-85.5 21.5t-71.5 52.5l-294 363q-18 24-18 40 0 35 53 35h1088q40 0 86-22t71-53l294-363q18-22 18-39zm-1141-163h768v-160q0-40-28-68t-68-28h-576q-40 0-68-28t-28-68v-64q0-40-28-68t-68-28h-320q-40 0-68 28t-28 68v853l256-315q44-53 116-87.5t140-34.5zm1269 163q0 62-46 120l-295 363q-43 53-116 87.5t-140 34.5h-1088q-92 0-158-66t-66-158v-960q0-92 66-158t158-66h320q92 0 158 66t66 158v32h544q92 0 158 66t66 158v160h192q54 0 99 24.5t67 70.5q15 32 15 68z"
+                        Stretch="Fill"
+                        Fill="{StaticResource MainColorFadedBrush}"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Save" InputGestureText="Ctrl + S">
+                <MenuItem.Icon>
+                    <Path
+                        Width="12"
+                        Height="12"
+                        Data="M512 1536h768v-384h-768v384zm896 0h128v-896q0-14-10-38.5t-20-34.5l-281-281q-10-10-34-20t-39-10v416q0 40-28 68t-68 28h-576q-40 0-68-28t-28-68v-416h-128v1280h128v-416q0-40 28-68t68-28h832q40 0 68 28t28 68v416zm-384-928v-320q0-13-9.5-22.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 22.5v320q0 13 9.5 22.5t22.5 9.5h192q13 0 22.5-9.5t9.5-22.5zm640 32v928q0 40-28 68t-68 28h-1344q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h928q40 0 88 20t76 48l280 280q28 28 48 76t20 88z"
+                        Stretch="Fill" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>-->
     </Window.Resources>
     <DockPanel LastChildFill="True">
         <DockPanel

@@ -147,8 +147,25 @@ namespace PicView.lib
         /// </summary>
         internal static List<string> FileList(string path)
         {
-            // Needs update to handle being configurable
-            return FileList(path, SortFilesBy.Name);
+            switch (Properties.Settings.Default.SortPreference)
+            {
+                case 0:
+                    return FileList(path, SortFilesBy.Name);
+                case 1:
+                    return FileList(path, SortFilesBy.FileSize);
+                case 2:
+                    return FileList(path, SortFilesBy.Creastiontime);
+                case 3:
+                    return FileList(path, SortFilesBy.Extension);
+                case 4:
+                    return FileList(path, SortFilesBy.Lastaccesstime);
+                case 5:
+                    return FileList(path, SortFilesBy.Lastwritetime);
+                case 6:
+                    return FileList(path, SortFilesBy.Random);
+                default:
+                    return FileList(path, SortFilesBy.Name);
+            }
         }
 
         /// <summary>
