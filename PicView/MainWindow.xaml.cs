@@ -691,44 +691,47 @@ namespace PicView
         {
             base.OnRenderSizeChanged(size);
 
-            //Keep position when size has changed
-            if (size.HeightChanged)
+            if (Properties.Settings.Default.WindowStyle == 0 || Properties.Settings.Default.WindowStyle == 2)
             {
-                Top += (size.PreviousSize.Height - size.NewSize.Height) / 2;
-            }
+                //Keep position when size has changed
+                if (size.HeightChanged)
+                {
+                    Top += (size.PreviousSize.Height - size.NewSize.Height) / 2;
+                }
 
-            if (size.WidthChanged)
-            {
-                Left += (size.PreviousSize.Width - size.NewSize.Width) / 2;
-            }
+                if (size.WidthChanged)
+                {
+                    Left += (size.PreviousSize.Width - size.NewSize.Width) / 2;
+                }
 
-            // Move cursor after resize when the button has been pressed
-            if (RightbuttonClicked)
-            {
-                Point p = RightButton.PointToScreen(new Point(50, 30)); //Points cursor to center of RighButton
-                NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
-                RightbuttonClicked = false;
-            }
+                // Move cursor after resize when the button has been pressed
+                if (RightbuttonClicked)
+                {
+                    Point p = RightButton.PointToScreen(new Point(50, 30)); //Points cursor to center of RighButton
+                    NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+                    RightbuttonClicked = false;
+                }
 
-            else if (LeftbuttonClicked)
-            {
-                Point p = LeftButton.PointToScreen(new Point(50, 30));
-                NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
-                LeftbuttonClicked = false;
-            }
+                else if (LeftbuttonClicked)
+                {
+                    Point p = LeftButton.PointToScreen(new Point(50, 30));
+                    NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+                    LeftbuttonClicked = false;
+                }
 
-            else if (clickArrowRightClicked)
-            {
-                Point p = clickArrowRight.PointToScreen(new Point(25, 30));
-                NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
-                clickArrowRightClicked = false;
-            }
+                else if (clickArrowRightClicked)
+                {
+                    Point p = clickArrowRight.PointToScreen(new Point(25, 30));
+                    NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+                    clickArrowRightClicked = false;
+                }
 
-            else if (clickArrowLeftClicked)
-            {
-                Point p = clickArrowLeft.PointToScreen(new Point(25, 30));
-                NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
-                clickArrowLeftClicked = false;
+                else if (clickArrowLeftClicked)
+                {
+                    Point p = clickArrowLeft.PointToScreen(new Point(25, 30));
+                    NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+                    clickArrowLeftClicked = false;
+                }
             }
         }
 
@@ -1968,17 +1971,6 @@ namespace PicView
                 HideInterface();
             }
 
-            // Del
-            else if (e.Key == Key.Delete)
-            {
-                DeleteFile(PicPath, true);
-            }
-
-            // Shift + Del
-            else if(e.KeyboardDevice.Modifiers == ModifierKeys.Shift && (e.SystemKey == Key.Delete))
-            {
-                DeleteFile(PicPath, false);
-            }
         }
 
 
