@@ -396,6 +396,69 @@ namespace PicView
             cm.Items.Add(recentcm);
             cm.Items.Add(new Separator());
 
+            var sortcm = new MenuItem
+            {
+                Header = "Sort files by"
+            };
+            var sortcmChild0 = new MenuItem();
+            sortcmChild0.Header = "File name";
+            sortcmChild0.Click += (s, x) => 
+            {
+                Properties.Settings.Default.SortPreference = 0;
+                Pics = FileList(Path.GetDirectoryName(PicPath));
+            };
+            sortcm.Items.Add(sortcmChild0);
+            var sortcmChild1 = new MenuItem();
+            sortcmChild1.Header = "File Size";
+            sortcmChild1.Click += (s, x) =>
+            {
+                Properties.Settings.Default.SortPreference = 1;
+                Pics = FileList(Path.GetDirectoryName(PicPath));
+            };
+            sortcm.Items.Add(sortcmChild1);
+            var sortcmChild2 = new MenuItem();
+            sortcmChild2.Header = "Creation time";
+            sortcmChild2.Click += (s, x) =>
+            {
+                Properties.Settings.Default.SortPreference = 2;
+                Pics = FileList(Path.GetDirectoryName(PicPath));
+            };
+            sortcm.Items.Add(sortcmChild2);
+            var sortcmChild3 = new MenuItem();
+            sortcmChild3.Header = "File extension";
+            sortcmChild3.Click += (s, x) =>
+            {
+                Properties.Settings.Default.SortPreference = 3;
+                Pics = FileList(Path.GetDirectoryName(PicPath));
+            };
+            sortcm.Items.Add(sortcmChild3);
+            var sortcmChild4 = new MenuItem();
+            sortcmChild4.Header = "Last access time";
+            sortcmChild4.Click += (s, x) =>
+            {
+                Properties.Settings.Default.SortPreference = 4;
+                Pics = FileList(Path.GetDirectoryName(PicPath));
+            };
+            sortcm.Items.Add(sortcmChild4);
+            var sortcmChild5 = new MenuItem();
+            sortcmChild5.Header = "Last write time";
+            sortcmChild5.Click += (s, x) =>
+            {
+                Properties.Settings.Default.SortPreference = 5;
+                Pics = FileList(Path.GetDirectoryName(PicPath));
+            };
+            sortcm.Items.Add(sortcmChild5);
+            var sortcmChild6 = new MenuItem();
+            sortcmChild6.Header = "Random";
+            sortcmChild6.Click += (s, x) =>
+            {
+                Properties.Settings.Default.SortPreference = 6;
+                Pics = FileList(Path.GetDirectoryName(PicPath));
+            };
+            sortcm.Items.Add(sortcmChild6);
+            cm.Items.Add(sortcm);
+            cm.Items.Add(new Separator());
+
             var wallcm = new MenuItem
             {
                 Header = "Set as wallpaper"
@@ -463,90 +526,6 @@ namespace PicView
             MovetoRecycleBin.Icon = MovetoRecycleBinIcon;
             MovetoRecycleBin.Click += (s, x) => DeleteFile(PicPath, true);
             cm.Items.Add(MovetoRecycleBin);
-
-            //var DeletePic = new MenuItem
-            //{
-            //    Header = "Delete Permanent",
-            //    InputGestureText = "Shift + Del"
-            //};
-            //var DeletePicIcon = new System.Windows.Shapes.Path();
-            //DeletePicIcon.Data = Geometry.Parse("M2 0l-2 3 2 3h6v-6h-6zm1.5.78l1.5 1.5 1.5-1.5.72.72-1.5 1.5 1.5 1.5-.72.72-1.5-1.5-1.5 1.5-.72-.72 1.5-1.5-1.5-1.5.72-.72z");
-            //DeletePicIcon.Stretch = Stretch.Fill;
-            //DeletePicIcon.Width = DeletePicIcon.Height = 12;
-            //DeletePicIcon.Fill = scbf;
-            //DeletePic.Icon = DeletePicIcon;
-            //DeletePic.Click += (s, x) => DeletePermanent();
-            //cm.Items.Add(DeletePic);
-
-            //cm.Items.Add(new Separator());
-
-            //var unloadcm = new MenuItem
-            //{
-            //    Header = "Clear picture"
-            //};
-            //unloadcm.Click += (s, x) => Unload();
-            //cm.Items.Add(unloadcm);
-            //cm.Items.Add(new Separator());
-
-            //var abcm = new MenuItem
-            //{
-            //    Header = "About",
-            //    InputGestureText = "F2",
-            //    ToolTip = "Shows version and copyright"
-            //};
-            //var abcmIcon = new System.Windows.Shapes.Path();
-            //abcmIcon.Data = Geometry.Parse("M1216 1344v128q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h64v-384h-64q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h384q26 0 45 19t19 45v576h64q26 0 45 19t19 45zm-128-1152v192q0 26-19 45t-45 19h-256q-26 0-45-19t-19-45v-192q0-26 19-45t45-19h256q26 0 45 19t19 45z");
-            //abcmIcon.Stretch = Stretch.Fill;
-            //abcmIcon.Height = 12;
-            //abcmIcon.Width = 9;
-            //abcmIcon.Fill = scbf;
-            //abcm.Icon = abcmIcon;
-            //abcm.Click += (s, x) => AboutWindow();
-            //cm.Items.Add(abcm);
-
-            //var helpcm = new MenuItem
-            //{
-            //    Header = "Help",
-            //    InputGestureText = "F1",
-            //    ToolTip = "Shows keyboard shortcuts and general help"
-            //};
-            //var helpcmIcon = new System.Windows.Shapes.Path();
-            //helpcmIcon.Data = Geometry.Parse("M1088 1256v240q0 16-12 28t-28 12h-240q-16 0-28-12t-12-28v-240q0-16 12-28t28-12h240q16 0 28 12t12 28zm316-600q0 54-15.5 101t-35 76.5-55 59.5-57.5 43.5-61 35.5q-41 23-68.5 65t-27.5 67q0 17-12 32.5t-28 15.5h-240q-15 0-25.5-18.5t-10.5-37.5v-45q0-83 65-156.5t143-108.5q59-27 84-56t25-76q0-42-46.5-74t-107.5-32q-65 0-108 29-35 25-107 115-13 16-31 16-12 0-25-8l-164-125q-13-10-15.5-25t5.5-28q160-266 464-266 80 0 161 31t146 83 106 127.5 41 158.5z");
-            //helpcmIcon.Stretch = Stretch.Fill;
-            //helpcmIcon.Width = helpcmIcon.Height = 12;
-            //helpcmIcon.Fill = scbf;
-            //helpcm.Icon = helpcmIcon;
-            //helpcm.Click += (s, x) => HelpWindow();
-            //cm.Items.Add(helpcm);
-            //cm.Items.Add(new Separator());
-
-            //var mincm = new MenuItem
-            //{
-            //    Header = "Minimize"
-            //};
-            //var mincmIcon = new System.Windows.Shapes.Path();
-            //mincmIcon.Data = Geometry.Parse("F1M0,6L0,9 9,9 9,6 0,6z");
-            //mincmIcon.Stretch = Stretch.Fill;
-            //mincmIcon.Width = 12;
-            //mincmIcon.Height = 5;
-            //mincmIcon.Fill = scbf;
-            //mincm.Icon = mincmIcon;
-            //mincm.Click += (s, x) => SystemCommands.MinimizeWindow(this);
-            //cm.Items.Add(mincm);
-
-
-            //var maxcm = new MenuItem
-            //{
-            //    Header = "Maximize"
-            //};
-            //var maxcmIcon = new System.Windows.Shapes.Path();
-            //maxcmIcon.Data = Geometry.Parse("F1M0,0L0,9 9,9 9,0 0,0 0,3 8,3 8,8 1,8 1,3z");
-            //maxcmIcon.Stretch = Stretch.Fill;
-            //maxcmIcon.Width = maxcmIcon.Height = 12;
-            //maxcmIcon.Fill = scbf;
-            //maxcm.Icon = maxcmIcon;
-            //maxcm.Click += (s, x) => Maximize_Restore();
-            //cm.Items.Add(maxcm);
 
             cm.Items.Add(new Separator());
             var clcm = new MenuItem
@@ -794,6 +773,7 @@ namespace PicView
             Properties.Settings.Default.Save();
             DeleteTempFiles();
             RecentFiles.WriteToFile();
+            Environment.Exit(0);
         }
 
 
@@ -1739,6 +1719,11 @@ namespace PicView
         {
             switch (e.Key)
             {
+                //case Key.LWin:
+                //case Key.RWin:
+                //    SizeMode = false;
+                //    break;
+
                 // Next             
                 case Key.BrowserForward:
                 case Key.Right:

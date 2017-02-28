@@ -358,5 +358,17 @@ namespace PicView.Properties {
                 this["WindowStyle"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public short SortPreference {
+            get {
+                return ((short)(this["SortPreference"]));
+            }
+            set {
+                this["SortPreference"] = value;
+            }
+        }
     }
 }
