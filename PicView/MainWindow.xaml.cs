@@ -262,6 +262,7 @@ namespace PicView
 
                 // Bar
                 Bar.MouseLeftButtonDown += Move;
+                Bar.MouseDown += (s, x) => RenameFile();
 
                 // img
                 img.MouseLeftButtonDown += Zoom_img_MouseLeftButtonDown;
@@ -858,7 +859,7 @@ namespace PicView
                     Properties.Settings.Default.WindowStyle = 4;
                     quickSettingsMenu.SetCenter.IsChecked = true;
                 }
-                if(img.Source != null)
+                if (img.Source != null)
                     ZoomFit(img.Source.Width, img.Source.Height);
             }
         }
@@ -958,7 +959,7 @@ namespace PicView
             // if not, it will be null
             BitmapSource pic = Preloader.Load(Pics[x]);
             var Extension = Path.GetExtension(Pics[x]);
-         
+
             if (pic == null)
             {
                 Title = Bar.Text = Loading;
@@ -997,7 +998,7 @@ namespace PicView
                 XamlAnimatedGif.AnimationBehavior.SetSourceUri(img, new Uri(Pics[x]));
             else
                 img.Source = pic;
-            
+
             // Update Title to reflect new image
             var titleString = TitleString(pic.PixelWidth, pic.PixelHeight, x);
             Title = titleString[0];
@@ -1400,7 +1401,7 @@ namespace PicView
         /// </summary>
         private void Reload(bool fromBackup = false)
         {
-            if(img.Source == null)
+            if (img.Source == null)
                 return;
 
             if (fromBackup && string.IsNullOrWhiteSpace(xPicPath))
@@ -1409,7 +1410,7 @@ namespace PicView
                 return;
             }
 
-            var x = fromBackup ? xPicPath : PicPath;            
+            var x = fromBackup ? xPicPath : PicPath;
 
             if (File.Exists(x))
             {
@@ -1975,7 +1976,7 @@ namespace PicView
             }
 
             // Shift + Del
-            else if(e.KeyboardDevice.Modifiers == ModifierKeys.Shift && (e.SystemKey == Key.Delete))
+            else if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift && (e.SystemKey == Key.Delete))
             {
                 DeleteFile(PicPath, false);
             }
@@ -3274,7 +3275,7 @@ namespace PicView
             window.Show();
         }
 
-        
+
         /// <summary>
         /// Show All Settings window in a dialog
         /// </summary>
@@ -3292,6 +3293,51 @@ namespace PicView
             window.BeginAnimation(OpacityProperty, animation);
 
             window.ShowDialog();
+        }
+
+        /// <summary>
+        /// Show YesNoDialogBox
+        /// </summary>
+        private void RenameFile()
+        {
+            if (!File.Exists(PicPath))
+                return;
+
+            string Picname = Path.GetFileName(PicPath);
+            string RenamedFilePath = Path.GetDirectoryName(PicPath);
+            string RenamedFileExt = Path.GetExtension(PicPath);
+
+            lib.Windows.YesNoDialogWindow YesNoDialog = new lib.Windows.YesNoDialogWindow("Are you sure you wanna rename \r\n" + Picname + " to ")
+            {
+            };
+
+            var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
+            window.BeginAnimation(OpacityProperty, animation);
+
+            if ((bool)YesNoDialog.ShowDialog())
+            {
+
+                if (!File.Exists(PicPath) || img.Source == null)
+                    return;
+
+                if (string.IsNullOrWhiteSpace(YesNoDialog.NameForRename))
+                    return;
+
+                if (FileFunctions.RenameFile(PicPath, RenamedFilePath + "\\" + YesNoDialog.NameForRename + RenamedFileExt))
+                {
+                    string Fullpath = RenamedFilePath + "\\" + YesNoDialog.NameForRename + RenamedFileExt;
+                    Pics[FolderIndex] = Fullpath;
+
+                    var titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, FolderIndex);
+                    Title = titleString[0];
+                    Bar.Text = titleString[1];
+                    Bar.ToolTip = titleString[2];
+                }
+            }
+            else
+            {
+                ToolTipStyle("Something went wrong under renamening of " + Picname);
+            }
         }
 
         #endregion
@@ -3856,7 +3902,7 @@ namespace PicView
                 }
                 else
                     return;
-            
+
                 //Force freshed the list of pichures.
                 Reload();
 
@@ -3889,6 +3935,8 @@ namespace PicView
             }
         }
 
+
+        
 
         #endregion     
     }

@@ -36,6 +36,21 @@ namespace PicView.lib
             return true;
         }
 
+        internal static bool RenameFile(string PicPath, string PicNewPath)
+        {
+            if (File.Exists(PicNewPath))
+                return false;
+
+            try
+            {
+                File.Move(PicPath, PicNewPath);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
 
         /// <summary>
         /// Deletes the temporary files when an archived file has been opened

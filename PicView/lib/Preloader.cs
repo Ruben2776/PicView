@@ -232,8 +232,12 @@ namespace PicView.lib
                 var getProcesses = Process.GetProcessesByName("7z");
                 if (getProcesses.Length > 0)
                     Pics = FileList(TempZipPath);
+                
 
                 // Need WinRAR support...
+                getProcesses = Process.GetProcessesByName("Zip");
+                if (getProcesses.Length > 0)
+                    Pics = FileList(TempZipPath);
             }
         }
         
