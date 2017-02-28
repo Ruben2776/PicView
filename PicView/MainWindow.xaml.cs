@@ -394,66 +394,72 @@ namespace PicView
             recentcm.Icon = recentcmIcon;
             recentcm.MouseEnter += (xx, xxx) => Recentcm_MouseEnter(recentcm);
             cm.Items.Add(recentcm);
-            cm.Items.Add(new Separator());
 
             var sortcm = new MenuItem
             {
                 Header = "Sort files by"
             };
-            var sortcmChild0 = new MenuItem();
-            sortcmChild0.Header = "File name";
+            var sortcmChild0 = new RadioButton();
+            sortcmChild0.Content = "File name";
             sortcmChild0.Click += (s, x) => 
             {
                 Properties.Settings.Default.SortPreference = 0;
-                Pics = FileList(Path.GetDirectoryName(PicPath));
+                if (!string.IsNullOrWhiteSpace(PicPath))
+                    Pics = FileList(Path.GetDirectoryName(PicPath));
             };
             sortcm.Items.Add(sortcmChild0);
-            var sortcmChild1 = new MenuItem();
-            sortcmChild1.Header = "File Size";
+            var sortcmChild1 = new RadioButton();
+            sortcmChild1.Content = "File Size";
             sortcmChild1.Click += (s, x) =>
             {
                 Properties.Settings.Default.SortPreference = 1;
-                Pics = FileList(Path.GetDirectoryName(PicPath));
+                if (!string.IsNullOrWhiteSpace(PicPath))
+                    Pics = FileList(Path.GetDirectoryName(PicPath));
             };
             sortcm.Items.Add(sortcmChild1);
-            var sortcmChild2 = new MenuItem();
-            sortcmChild2.Header = "Creation time";
+            var sortcmChild2 = new RadioButton();
+            sortcmChild2.Content = "Creation time";
             sortcmChild2.Click += (s, x) =>
             {
                 Properties.Settings.Default.SortPreference = 2;
-                Pics = FileList(Path.GetDirectoryName(PicPath));
+                if (!string.IsNullOrWhiteSpace(PicPath))
+                    Pics = FileList(Path.GetDirectoryName(PicPath));
             };
             sortcm.Items.Add(sortcmChild2);
-            var sortcmChild3 = new MenuItem();
-            sortcmChild3.Header = "File extension";
+            var sortcmChild3 = new RadioButton();
+            sortcmChild3.Content = "File extension";
             sortcmChild3.Click += (s, x) =>
             {
                 Properties.Settings.Default.SortPreference = 3;
-                Pics = FileList(Path.GetDirectoryName(PicPath));
+                if (!string.IsNullOrWhiteSpace(PicPath))
+                    Pics = FileList(Path.GetDirectoryName(PicPath));
             };
             sortcm.Items.Add(sortcmChild3);
-            var sortcmChild4 = new MenuItem();
-            sortcmChild4.Header = "Last access time";
+            var sortcmChild4 = new RadioButton();
+            sortcmChild4.Content = "Last access time";
             sortcmChild4.Click += (s, x) =>
             {
                 Properties.Settings.Default.SortPreference = 4;
-                Pics = FileList(Path.GetDirectoryName(PicPath));
+                if (!string.IsNullOrWhiteSpace(PicPath))
+                    Pics = FileList(Path.GetDirectoryName(PicPath));
             };
             sortcm.Items.Add(sortcmChild4);
-            var sortcmChild5 = new MenuItem();
-            sortcmChild5.Header = "Last write time";
+            var sortcmChild5 = new RadioButton();
+            sortcmChild5.Content = "Last write time";
             sortcmChild5.Click += (s, x) =>
             {
                 Properties.Settings.Default.SortPreference = 5;
-                Pics = FileList(Path.GetDirectoryName(PicPath));
+                if (!string.IsNullOrWhiteSpace(PicPath))
+                    Pics = FileList(Path.GetDirectoryName(PicPath));
             };
             sortcm.Items.Add(sortcmChild5);
-            var sortcmChild6 = new MenuItem();
-            sortcmChild6.Header = "Random";
+            var sortcmChild6 = new RadioButton();
+            sortcmChild6.Content = "Random";
             sortcmChild6.Click += (s, x) =>
             {
                 Properties.Settings.Default.SortPreference = 6;
-                Pics = FileList(Path.GetDirectoryName(PicPath));
+                if (!string.IsNullOrWhiteSpace(PicPath))
+                    Pics = FileList(Path.GetDirectoryName(PicPath));
             };
             sortcm.Items.Add(sortcmChild6);
             cm.Items.Add(sortcm);
@@ -627,6 +633,34 @@ namespace PicView
             closeX2.Items.Add(clX2x);
 
             x2.ContextMenu = closeX2;
+
+            switch (Properties.Settings.Default.SortPreference)
+            {
+                case 0:
+                    sortcmChild0.IsChecked = true;
+                    break;
+                case 1:
+                    sortcmChild1.IsChecked = true;
+                    break;
+                case 2:
+                    sortcmChild2.IsChecked = true;
+                    break;
+                case 3:
+                    sortcmChild3.IsChecked = true;
+                    break;
+                case 4:
+                    sortcmChild4.IsChecked = true;
+                    break;
+                case 5:
+                    sortcmChild5.IsChecked = true;
+                    break;
+                case 6:
+                    sortcmChild6.IsChecked = true;
+                    break;
+                default:
+                    sortcmChild0.IsChecked = true;
+                    break;
+            }
 
             #endregion           
 
