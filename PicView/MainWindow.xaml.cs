@@ -282,6 +282,7 @@ namespace PicView
 
                 // TitleBar
                 TitleBar.MouseLeftButtonDown += Move;
+                TitleBar.MouseLeave += Restore_From_Move;
 
                 // Logobg
                 //Logobg.MouseEnter += LogoMouseOver;
@@ -698,6 +699,7 @@ namespace PicView
                 TempZipPath = string.Empty;
             }
 
+            NoProgress();
             AjaxLoadingEnd();
         }
 
@@ -784,6 +786,27 @@ namespace PicView
             }
             else
             {
+                try
+                {
+                    DragMove();
+                }
+                catch (InvalidOperationException)
+                {
+                    //Supress "Can only call DragMove when primary mouse button is down"
+                }
+            }
+        }
+
+        /// <summary>
+        /// Function made to restore and drag window from maximized windowstate
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Restore_From_Move(object sender, MouseEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized && e.LeftButton == MouseButtonState.Pressed)
+            {
+                Maximize_Restore();
                 try
                 {
                     DragMove();
@@ -1432,8 +1455,17 @@ namespace PicView
 
             if (File.Exists(x))
             {
+                // Force reloading values by setting freshStartup to true
                 freshStartup = true;
                 Pic(x);
+
+                // Reset
+                if (isZoomed)
+                    ResetZoom();
+                if (Flipped)
+                    Flip();
+                if (Rotateint != 0)
+                    Rotate(0);
             }
             else
             {
@@ -1991,18 +2023,6 @@ namespace PicView
             {
                 HideInterface();
             }
-
-            // Del
-            else if (e.Key == Key.Delete)
-            {
-                DeleteFile(PicPath, true);
-            }
-
-            // Shift + Del
-            else if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift && (e.SystemKey == Key.Delete))
-            {
-                DeleteFile(PicPath, false);
-            }
         }
 
 
@@ -2173,10 +2193,23 @@ namespace PicView
         /// <param name="e"></param>
         private void Zoom_img_MouseWheel(object sender, MouseWheelEventArgs e)
         {
+            // Disable normal scroll
+            e.Handled = true;
+
             if (Properties.Settings.Default.ScrollEnabled && !autoScrolling)
             {
-                if (e.Delta > 0) Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 45);
-                else if (e.Delta < 0) Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 45);
+                if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                {
+                    Zoom(e.Delta, true);
+                }
+                else
+                {
+                    if (e.Delta > 0)
+                        Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 45);
+                    else if (e.Delta < 0)
+                        Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 45);
+                }
+
             }
 
             else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !autoScrolling)
@@ -2245,7 +2278,11 @@ namespace PicView
             // Scales the window with img.LayoutTransform
             if (zoomMode)
             {
-                AspectRatio += i > 0 ? .01 : -.01;
+                // Start from zero or zoom value
+                if (isZoomed)
+                    AspectRatio += i > 0 ? .01 : -.01;
+                else
+                    AspectRatio = 1;
 
                 var scaletransform = new ScaleTransform();
 
