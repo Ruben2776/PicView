@@ -3784,7 +3784,7 @@ namespace PicView
         /// </summary>
         private void Paste()
         {
-            #region file
+            // file
 
             if (Clipboard.ContainsFileDropList()) // If Clipboard has one or more files
             {
@@ -3811,19 +3811,14 @@ namespace PicView
                 return;
             }
 
-            #endregion
-
-            #region Clipboard Image
-
+            // Clipboard Image
             if (Clipboard.ContainsImage())
             {
                 Pic(Clipboard.GetImage(), "Clipboard Image");
                 return;
             }
 
-            #endregion
-
-            #region text/string/adddress
+            // text/string/adddress
 
             var s = Clipboard.GetText(TextDataFormat.Text);
 
@@ -3838,23 +3833,24 @@ namespace PicView
 
             if (File.Exists(s))
             {
-                if (Path.GetDirectoryName(s) == Path.GetDirectoryName(PicPath))
-                    Pic(Pics.IndexOf(s));
-                else
-                    Pic(s);
+                Pic(s);
             }
             else if (Directory.Exists(s))
             {
                 ChangeFolder();
                 Pics = FileList(s);
-                Pic(Pics[0]);
+                if (Pics.Count > 0)
+                    Pic(Pics[0]);
+                else if (!string.IsNullOrWhiteSpace(PicPath))
+                    Pic(PicPath);
+                else
+                    Unload();
             }
             else if (Uri.IsWellFormedUriString(s, UriKind.Absolute)) // Check if from web
                 PicWeb(s);
 
-            else ToolTipStyle("An error occured while trying to paste file");
-
-            #endregion
+            else
+                ToolTipStyle("An error occured while trying to paste file");
         }
 
 
