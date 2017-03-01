@@ -150,7 +150,8 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
                         Click="Yes_Click"
-                        Content="Yes" />
+                        Content="Yes"
+                        IsDefault="True" />
 
 
                     <Button

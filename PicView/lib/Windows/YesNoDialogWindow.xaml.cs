@@ -26,9 +26,9 @@ namespace PicView.lib.Windows
         {
             InitializeComponent();
 
-            // CloseButton
 
 
+            TxtNewName.Focus();
             RenameLabel.Content = Message;
         }
 
@@ -38,7 +38,6 @@ namespace PicView.lib.Windows
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             Closing -= Window_Closing;
-            //e.Cancel = true;
             AnimationHelper.FadeWindow(this, 0, TimeSpan.FromSeconds(.5));
             FocusManager.SetFocusedElement(Application.Current.MainWindow, this);
         }

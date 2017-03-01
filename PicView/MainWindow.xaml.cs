@@ -240,6 +240,8 @@ namespace PicView
                 functionsMenu.DeletePermButton.Click += (s, x) => DeleteFile(PicPath, false);
                 functionsMenu.ReloadButton.Click += (s, x) => Reload();
                 functionsMenu.ReloadButton.Click += Toggle_Functions_menu;
+                functionsMenu.RenameFileButton.Click += (s, x) => RenameFile();
+                functionsMenu.RenameFileButton.Click += Toggle_Functions_menu;
 
 
                 // FlipButton
@@ -262,7 +264,6 @@ namespace PicView
 
                 // Bar
                 Bar.MouseLeftButtonDown += Move;
-                Bar.MouseDown += (s, x) => RenameFile();
 
                 // img
                 img.MouseLeftButtonDown += Zoom_img_MouseLeftButtonDown;
@@ -3331,6 +3332,9 @@ namespace PicView
 
             lib.Windows.YesNoDialogWindow YesNoDialog = new lib.Windows.YesNoDialogWindow("Are you sure you wanna rename \r\n" + Picname + " to ")
             {
+                Width = Width,
+                Height = Height,
+                Owner = Application.Current.MainWindow,
             };
 
             var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
@@ -3360,6 +3364,7 @@ namespace PicView
             {
                 ToolTipStyle("Something went wrong under renamening of " + Picname);
             }
+            Reload();
         }
 
         #endregion
