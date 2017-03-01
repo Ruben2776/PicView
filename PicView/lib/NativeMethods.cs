@@ -66,5 +66,8 @@ namespace PicView.lib
             public IntPtr hIcon;
             public IntPtr hProcess;
         }
+
+        [DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern void SHChangeNotify(uint wEventId, uint uFlags, IntPtr dwItem1, IntPtr dwItem2);
     }
 }
