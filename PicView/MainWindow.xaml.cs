@@ -242,6 +242,7 @@ namespace PicView
                 functionsMenu.ReloadButton.Click += Toggle_Functions_menu;
                 functionsMenu.RenameFileButton.Click += (s, x) => RenameFile();
                 functionsMenu.RenameFileButton.Click += Toggle_Functions_menu;
+                functionsMenu.ResetZoomButton.Click += (s, x) => ResetZoom();
 
 
                 // FlipButton
@@ -282,6 +283,7 @@ namespace PicView
 
                 // TitleBar
                 TitleBar.MouseLeftButtonDown += Move;
+                TitleBar.MouseLeave += Restore_From_Move;
 
                 // Logobg
                 //Logobg.MouseEnter += LogoMouseOver;
@@ -295,6 +297,7 @@ namespace PicView
                 Closing += Window_Closing;
                 MouseMove += MainWindow_MouseMove;
                 MouseLeave += MainWindow_MouseLeave;
+                
 
                 #endregion
 
@@ -401,6 +404,12 @@ namespace PicView
             {
                 Header = "Sort files by"
             };
+            var sortcmIcon = new System.Windows.Shapes.Path();
+            sortcmIcon.Data = Geometry.Parse("M666 481q-60 92-137 273-22-45-37-72.5t-40.5-63.5-51-56.5-63-35-81.5-14.5h-224q-14 0-23-9t-9-23v-192q0-14 9-23t23-9h224q250 0 410 225zm1126 799q0 14-9 23l-320 320q-9 9-23 9-13 0-22.5-9.5t-9.5-22.5v-192q-32 0-85 .5t-81 1-73-1-71-5-64-10.5-63-18.5-58-28.5-59-40-55-53.5-56-69.5q59-93 136-273 22 45 37 72.5t40.5 63.5 51 56.5 63 35 81.5 14.5h256v-192q0-14 9-23t23-9q12 0 24 10l319 319q9 9 9 23zm0-896q0 14-9 23l-320 320q-9 9-23 9-13 0-22.5-9.5t-9.5-22.5v-192h-256q-48 0-87 15t-69 45-51 61.5-45 77.5q-32 62-78 171-29 66-49.5 111t-54 105-64 100-74 83-90 68.5-106.5 42-128 16.5h-224q-14 0-23-9t-9-23v-192q0-14 9-23t23-9h224q48 0 87-15t69-45 51-61.5 45-77.5q32-62 78-171 29-66 49.5-111t54-105 64-100 74-83 90-68.5 106.5-42 128-16.5h256v-192q0-14 9-23t23-9q12 0 24 10l319 319q9 9 9 23z");
+            sortcmIcon.Stretch = Stretch.Fill;
+            sortcmIcon.Width = sortcmIcon.Height = 12;
+            sortcmIcon.Fill = scbf;
+            sortcm.Icon = sortcmIcon;
             var sortcmChild0 = new RadioButton();
             sortcmChild0.Content = "File name";
             sortcmChild0.Click += (s, x) => 
@@ -698,6 +707,7 @@ namespace PicView
                 TempZipPath = string.Empty;
             }
 
+            NoProgress();
             AjaxLoadingEnd();
         }
 
@@ -784,6 +794,27 @@ namespace PicView
             }
             else
             {
+                try
+                {
+                    DragMove();
+                }
+                catch (InvalidOperationException)
+                {
+                    //Supress "Can only call DragMove when primary mouse button is down"
+                }
+            }
+        }
+
+        /// <summary>
+        /// Function made to restore and drag window from maximized windowstate
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Restore_From_Move(object sender, MouseEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized && e.LeftButton == MouseButtonState.Pressed)
+            {
+                Maximize_Restore();
                 try
                 {
                     DragMove();
@@ -898,6 +929,14 @@ namespace PicView
             if (img.Source == null)
             {
                 AjaxLoadingStart();
+            }
+
+            // Handle if from web
+            if (!File.Exists(path))
+            {
+                if (Uri.IsWellFormedUriString(path, UriKind.Absolute))
+                    PicWeb(path);
+                return;
             }
 
             // If count not correct or just started, get values
@@ -1198,7 +1237,7 @@ namespace PicView
             {
                 pic = await LoadImageWebAsync(path);
             }
-            catch (WebException)
+            catch (Exception)
             {
                 pic = null;
             }
@@ -1216,6 +1255,8 @@ namespace PicView
             }
 
             Pic(pic, path);
+            PicPath = path;
+            RecentFiles.Add(path);
         }
 
 
@@ -1432,8 +1473,17 @@ namespace PicView
 
             if (File.Exists(x))
             {
+                // Force reloading values by setting freshStartup to true
                 freshStartup = true;
                 Pic(x);
+
+                // Reset
+                if (isZoomed)
+                    ResetZoom();
+                if (Flipped)
+                    Flip();
+                if (Rotateint != 0)
+                    Rotate(0);
             }
             else
             {
@@ -1849,16 +1899,18 @@ namespace PicView
 
                 // Zoom
                 case Key.Add:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                        Zoom(1, false);
-                    else
+                case Key.OemPlus:
+                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control || IsScrollEnabled)
                         Zoom(1, true);
+                    else
+                        Zoom(1, false);
                     break;
                 case Key.Subtract:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                        Zoom(-1, false);
-                    else
+                case Key.OemMinus:
+                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control ||IsScrollEnabled)
                         Zoom(-1, true);
+                    else
+                        Zoom(-1, false);
                     break;
             }
         }
@@ -1990,18 +2042,6 @@ namespace PicView
             else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.Z))
             {
                 HideInterface();
-            }
-
-            // Del
-            else if (e.Key == Key.Delete)
-            {
-                DeleteFile(PicPath, true);
-            }
-
-            // Shift + Del
-            else if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift && (e.SystemKey == Key.Delete))
-            {
-                DeleteFile(PicPath, false);
             }
         }
 
@@ -2173,10 +2213,23 @@ namespace PicView
         /// <param name="e"></param>
         private void Zoom_img_MouseWheel(object sender, MouseWheelEventArgs e)
         {
+            // Disable normal scroll
+            e.Handled = true;
+
             if (Properties.Settings.Default.ScrollEnabled && !autoScrolling)
             {
-                if (e.Delta > 0) Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 45);
-                else if (e.Delta < 0) Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 45);
+                if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                {
+                    Zoom(e.Delta, true);
+                }
+                else
+                {
+                    if (e.Delta > 0)
+                        Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 45);
+                    else if (e.Delta < 0)
+                        Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 45);
+                }
+
             }
 
             else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !autoScrolling)
@@ -2213,6 +2266,9 @@ namespace PicView
         /// </summary>
         private void ResetZoom()
         {
+            if (img.Source == null)
+                return;
+
             var scaletransform = new ScaleTransform();
             scaletransform.ScaleX = scaletransform.ScaleY = 1.0;
             img.LayoutTransform = scaletransform;
@@ -2225,10 +2281,24 @@ namespace PicView
             isZoomed = false;
 
             ZoomFit(img.Source.Width, img.Source.Height);
-            var titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, FolderIndex);
-            Title = titleString[0];
-            Bar.Text = titleString[1];
-            Bar.ToolTip = titleString[2];
+
+            string[] titleString;
+
+            if (canNavigate)
+            {
+                titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, FolderIndex);
+                Title = titleString[0];
+                Bar.Text = titleString[1];
+                Bar.ToolTip = titleString[2];
+            }
+            else
+            {
+                // Display values from web
+                titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, PicPath);
+                Title = titleString[0];
+                Bar.Text = titleString[1];
+                Bar.ToolTip = titleString[1];
+            }
         }
 
 
@@ -2239,13 +2309,14 @@ namespace PicView
         /// <param name="zoomMode"></param>
         private void Zoom(int i, bool zoomMode)
         {
-
-            #region Scale size
-
             // Scales the window with img.LayoutTransform
             if (zoomMode)
             {
-                AspectRatio += i > 0 ? .01 : -.01;
+                // Start from zero or zoom value
+                if (isZoomed)
+                    AspectRatio += i > 0 ? .01 : -.01;
+                else
+                    AspectRatio = 1;
 
                 var scaletransform = new ScaleTransform();
 
@@ -2253,10 +2324,7 @@ namespace PicView
                 img.LayoutTransform = scaletransform;
             }
 
-            #endregion
-
-            #region Pan and zoom
-
+            // Pan and zoom
             else
             {
 
@@ -2288,21 +2356,30 @@ namespace PicView
 
             }
 
-            #endregion
-
             isZoomed = true;
 
-            #region Display updated values
+            // Display updated values
 
             // Displays zoompercentage in the center window
             ToolTipStyle(ZoomPercentage, true);
 
-            var titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, FolderIndex);
-            Title = titleString[0];
-            Bar.Text = titleString[1];
-            Bar.ToolTip = titleString[2];
+            string[] titleString;
 
-            #endregion
+            if (canNavigate)
+            {
+                titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, FolderIndex);
+                Title = titleString[0];
+                Bar.Text = titleString[1];
+                Bar.ToolTip = titleString[2];
+            }
+            else
+            {
+                // Display values from web
+                titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, PicPath);
+                Title = titleString[0];
+                Bar.Text = titleString[1];
+                Bar.ToolTip = titleString[1];
+            }
 
         }
 

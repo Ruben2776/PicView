@@ -27,6 +27,8 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>false</MapFileExtensions>
+    <TargetCulture>en</TargetCulture>
+    <ProductName>PicView</ProductName>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <ApplicationRevision>1</ApplicationRevision>
     <ApplicationVersion>1.0.0.1</ApplicationVersion>
@@ -120,6 +122,7 @@
     </ApplicationDefinition>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="lib\ArchiveExtraction.cs" />
+    <Compile Include="lib\FileAssociation.cs" />
     <Compile Include="lib\FileFunctions.cs" />
     <Compile Include="lib\NativeMethods.cs" />
     <Compile Include="lib\RecentFiles.cs" />
@@ -341,9 +344,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
@@ -375,7 +378,14 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <FileAssociation Include=".jpg">
+      <Visible>False</Visible>
+      <Description>jpg</Description>
+      <Progid>PicView.0.7.1</Progid>
+      <DefaultIcon>lib\img\Brainleaf-Dark-Blog-Reflex.ico</DefaultIcon>
+    </FileAssociation>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Magick.NET-Q16-HDRI-x64.7.0.4.701\build\net40-client\Magick.NET-Q16-HDRI-x64.targets" Condition="Exists('..\packages\Magick.NET-Q16-HDRI-x64.7.0.4.701\build\net40-client\Magick.NET-Q16-HDRI-x64.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
