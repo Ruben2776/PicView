@@ -215,7 +215,7 @@
                         Height="45"
                         Margin="0,0,4,0"
                         Style="{StaticResource MetroAlphaFlatButton}"
-                        ToolTip="Rename Filename.">
+                        ToolTip="Rename filename.">
                         <Canvas>
                             <Path
                                 Canvas.Left="-13"
