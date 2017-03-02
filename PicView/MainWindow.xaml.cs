@@ -242,6 +242,7 @@ namespace PicView
                 functionsMenu.ReloadButton.Click += Toggle_Functions_menu;
                 functionsMenu.RenameFileButton.Click += (s, x) => RenameFile();
                 functionsMenu.RenameFileButton.Click += Toggle_Functions_menu;
+                functionsMenu.ResetZoomButton.Click += (s, x) => ResetZoom();
 
 
                 // FlipButton
@@ -930,6 +931,14 @@ namespace PicView
                 AjaxLoadingStart();
             }
 
+            // Handle if from web
+            if (!File.Exists(path))
+            {
+                if (Uri.IsWellFormedUriString(path, UriKind.Absolute))
+                    PicWeb(path);
+                return;
+            }
+
             // If count not correct or just started, get values
             if (Pics.Count <= FolderIndex || FolderIndex < 0 || freshStartup)
             {
@@ -1228,7 +1237,7 @@ namespace PicView
             {
                 pic = await LoadImageWebAsync(path);
             }
-            catch (WebException)
+            catch (Exception)
             {
                 pic = null;
             }
@@ -1247,6 +1256,7 @@ namespace PicView
 
             Pic(pic, path);
             PicPath = path;
+            RecentFiles.Add(path);
         }
 
 
@@ -1889,16 +1899,18 @@ namespace PicView
 
                 // Zoom
                 case Key.Add:
+                case Key.OemPlus:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                        Zoom(1, false);
-                    else
                         Zoom(1, true);
+                    else
+                        Zoom(1, false);
                     break;
                 case Key.Subtract:
+                case Key.OemMinus:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                        Zoom(-1, false);
-                    else
                         Zoom(-1, true);
+                    else
+                        Zoom(-1, false);
                     break;
             }
         }
@@ -2254,6 +2266,9 @@ namespace PicView
         /// </summary>
         private void ResetZoom()
         {
+            if (img.Source == null)
+                return;
+
             var scaletransform = new ScaleTransform();
             scaletransform.ScaleX = scaletransform.ScaleY = 1.0;
             img.LayoutTransform = scaletransform;
@@ -2266,10 +2281,24 @@ namespace PicView
             isZoomed = false;
 
             ZoomFit(img.Source.Width, img.Source.Height);
-            var titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, FolderIndex);
-            Title = titleString[0];
-            Bar.Text = titleString[1];
-            Bar.ToolTip = titleString[2];
+
+            string[] titleString;
+
+            if (canNavigate)
+            {
+                titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, FolderIndex);
+                Title = titleString[0];
+                Bar.Text = titleString[1];
+                Bar.ToolTip = titleString[2];
+            }
+            else
+            {
+                // Display values from web
+                titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, PicPath);
+                Title = titleString[0];
+                Bar.Text = titleString[1];
+                Bar.ToolTip = titleString[1];
+            }
         }
 
 
@@ -2280,9 +2309,6 @@ namespace PicView
         /// <param name="zoomMode"></param>
         private void Zoom(int i, bool zoomMode)
         {
-
-            #region Scale size
-
             // Scales the window with img.LayoutTransform
             if (zoomMode)
             {
@@ -2298,10 +2324,7 @@ namespace PicView
                 img.LayoutTransform = scaletransform;
             }
 
-            #endregion
-
-            #region Pan and zoom
-
+            // Pan and zoom
             else
             {
 
@@ -2333,21 +2356,30 @@ namespace PicView
 
             }
 
-            #endregion
-
             isZoomed = true;
 
-            #region Display updated values
+            // Display updated values
 
             // Displays zoompercentage in the center window
             ToolTipStyle(ZoomPercentage, true);
 
-            var titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, FolderIndex);
-            Title = titleString[0];
-            Bar.Text = titleString[1];
-            Bar.ToolTip = titleString[2];
+            string[] titleString;
 
-            #endregion
+            if (canNavigate)
+            {
+                titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, FolderIndex);
+                Title = titleString[0];
+                Bar.Text = titleString[1];
+                Bar.ToolTip = titleString[2];
+            }
+            else
+            {
+                // Display values from web
+                titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, PicPath);
+                Title = titleString[0];
+                Bar.Text = titleString[1];
+                Bar.ToolTip = titleString[1];
+            }
 
         }
 

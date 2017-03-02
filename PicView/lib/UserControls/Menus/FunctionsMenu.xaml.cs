@@ -57,6 +57,11 @@ namespace PicView.lib.UserControls.Menus
             ReloadButton.MouseEnter += ReloadButtonMouseOver;
             ReloadButton.MouseLeave += ReloadButtonMouseLeave;
             ReloadButton.PreviewMouseLeftButtonDown += ReloadButtonMouseButtonDown;
+
+            // ResetZoomButton
+            ResetZoomButton.MouseEnter += ResetZoomButtonMouseOver;
+            ResetZoomButton.MouseLeave += ResetZoomButtonMouseLeave;
+            ResetZoomButton.PreviewMouseLeftButtonDown += ResetZoomButtonMouseButtonDown;
         }
 
         #region Mouseover Events
@@ -134,6 +139,36 @@ namespace PicView.lib.UserControls.Menus
                 mainColor.G,
                 mainColor.B,
                 ReloadBrush,
+                false
+            );
+        }
+
+        // ResetZoom Button
+        private void ResetZoomButtonMouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                ResetZoomBrush,
+                false
+            );
+        }
+
+        private void ResetZoomButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ResetZoomBrush, false);
+        }
+
+        private void ResetZoomButtonMouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                ResetZoomBrush,
                 false
             );
         }
