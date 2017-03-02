@@ -1900,14 +1900,14 @@ namespace PicView
                 // Zoom
                 case Key.Add:
                 case Key.OemPlus:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control || IsScrollEnabled)
                         Zoom(1, true);
                     else
                         Zoom(1, false);
                     break;
                 case Key.Subtract:
                 case Key.OemMinus:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control ||IsScrollEnabled)
                         Zoom(-1, true);
                     else
                         Zoom(-1, false);
