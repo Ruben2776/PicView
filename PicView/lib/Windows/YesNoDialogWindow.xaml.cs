@@ -26,8 +26,6 @@ namespace PicView.lib.Windows
         {
             InitializeComponent();
 
-
-
             TxtNewName.Focus();
             RenameLabel.Content = Message;
         }

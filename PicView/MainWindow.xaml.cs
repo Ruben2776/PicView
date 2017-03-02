@@ -3364,7 +3364,6 @@ namespace PicView
             {
                 ToolTipStyle("Something went wrong under renamening of " + Picname);
             }
-            Reload();
         }
 
         #endregion
