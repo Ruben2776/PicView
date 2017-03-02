@@ -154,7 +154,7 @@ namespace PicView.lib
                 case 1:
                     return FileList(path, SortFilesBy.FileSize);
                 case 2:
-                    return FileList(path, SortFilesBy.Creastiontime);
+                    return FileList(path, SortFilesBy.Creationtime);
                 case 3:
                     return FileList(path, SortFilesBy.Extension);
                 case 4:
@@ -317,7 +317,7 @@ namespace PicView.lib
                 case SortFilesBy.Extension:
                     items = items.OrderBy(f => new FileInfo(f).Extension);
                     break;
-                case SortFilesBy.Creastiontime:
+                case SortFilesBy.Creationtime:
                     items = items.OrderBy(f => new FileInfo(f).CreationTime);
                     break;
                 case SortFilesBy.Lastaccesstime:
@@ -419,7 +419,7 @@ namespace PicView.lib
     {
         Name,
         FileSize,
-        Creastiontime,
+        Creationtime,
         Extension,
         Lastaccesstime,
         Lastwritetime,

@@ -17,23 +17,38 @@ namespace PicView.lib
             if (canNavigate)
             {
                 if (File.Exists(path))
-                    Task.Run(() => SetDesktopWallpaper(path, style));
+                {
+                    try
+                    {
+                        Task.Run(() => SetDesktopWallpaper(path, style));
+                    }
+                    catch (Exception)
+                    {
+                        return;
+                    }
+                }
             }
             else
             {
-                if (File.Exists(path))
-                    Task.Run(() =>
+                Task.Run(() =>
                 {
-                    //Handle if file from web, need clipboard image solution
-                    var tempPath = Path.GetTempPath();
-                    var randomName = Path.GetRandomFileName();
-                    var webClient = new System.Net.WebClient();
-                    Directory.CreateDirectory(tempPath);
-                    webClient.DownloadFile(path, tempPath + randomName);
-                    SetDesktopWallpaper(tempPath + randomName, style);
-                    File.Delete(tempPath + randomName);
-                    var timer = new Timer(2000);
-                    timer.Elapsed += (s, x) => Directory.Delete(tempPath);
+                    try
+                    {
+                        //Handle if file from web, need clipboard image solution
+                        var tempPath = Path.GetTempPath();
+                        var randomName = Path.GetRandomFileName();
+                        var webClient = new System.Net.WebClient();
+                        Directory.CreateDirectory(tempPath);
+                        webClient.DownloadFile(path, tempPath + randomName);
+                        SetDesktopWallpaper(tempPath + randomName, style);
+                        File.Delete(tempPath + randomName);
+                        var timer = new Timer(2000);
+                        timer.Elapsed += (s, x) => Directory.Delete(tempPath);
+                    }
+                    catch (Exception)
+                    {
+                        return;
+                    }
                 });
             }
         }

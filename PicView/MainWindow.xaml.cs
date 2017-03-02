@@ -1246,6 +1246,7 @@ namespace PicView
             }
 
             Pic(pic, path);
+            PicPath = path;
         }
 
 
