@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace PicView.lib.UserControls.CustomControls
 {
@@ -20,9 +20,18 @@ namespace PicView.lib.UserControls.CustomControls
     /// </summary>
     public partial class PicGalleryItem : UserControl
     {
-        public PicGalleryItem()
+        public PicGalleryItem(string file)
         {
             InitializeComponent();
+
+            var pic = ImageManager.GetBitmapSourceThumb(file);
+            var x = Path.GetFileName(file);
+
+            img.Source = pic;
+            img.ToolTip += x;
+            txt.MaxWidth = img.Width;
+            txt.ToolTip = file;
+            txt.Text = x;
         }
     }
 }

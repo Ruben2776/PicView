@@ -1,4 +1,5 @@
 ﻿using PicView.lib.UserControls;
+using PicView.lib.UserControls.CustomControls;
 using PicView.lib.UserControls.Menus;
 using System;
 using System.Collections.Generic;
@@ -171,6 +172,7 @@ namespace PicView.lib
         internal static ClickArrow clickArrowLeft;
         internal static ClickArrow clickArrowRight;
         internal static X2 x2;
+        internal static PicGallery picGallery;
 
         internal static Point origin;
         internal static Point start;

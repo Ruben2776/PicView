@@ -370,5 +370,17 @@ namespace PicView.Properties {
                 this["SortPreference"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PicGalleryEnabled {
+            get {
+                return ((bool)(this["PicGalleryEnabled"]));
+            }
+            set {
+                this["PicGalleryEnabled"] = value;
+            }
+        }
     }
 }

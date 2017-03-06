@@ -8,5 +8,8 @@
     d:DesignHeight="300"
     d:DesignWidth="300"
     mc:Ignorable="d">
-    <WrapPanel x:Name="Container" Background="{StaticResource BackgroundColorBrushFade}" />
+    <VirtualizingStackPanel
+        x:Name="Container"
+        Background="{StaticResource BackgroundColorBrushFade}"
+        VirtualizingPanel.VirtualizationMode="Recycling" />
 </UserControl>

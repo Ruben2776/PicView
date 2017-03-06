@@ -100,6 +100,11 @@ namespace PicView
             LoadClickArrow(false);
             Loadx2();
 
+            if (Properties.Settings.Default.PicGalleryEnabled)
+            {
+                LoadPicGallery();
+            }
+
             // Update UserControl values
             backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorFade"];
             mainColor = (Color)Application.Current.Resources["MainColor"];
@@ -936,6 +941,8 @@ namespace PicView
             {
                 if (Uri.IsWellFormedUriString(path, UriKind.Absolute))
                     PicWeb(path);
+                else
+                    Unload();
                 return;
             }
 
@@ -1078,11 +1085,11 @@ namespace PicView
             {
                 var t = new Task(() =>
                 {
-                    if (!Preloader.Contains(Pics[x]))
-                        Preloader.Add(pic, Pics[x]);
-
                     Preloader.PreLoad(x, reverse.Value);
                     PreloadCount = 0;
+
+                    if (!Preloader.Contains(Pics[x]))
+                        Preloader.Add(pic, Pics[x]);
                 });
                 t.Start();
             }
@@ -1187,15 +1194,30 @@ namespace PicView
         {
             await Application.Current.Dispatcher.BeginInvoke((Action)(() =>
             {
-                Bar.ToolTip = Title = Bar.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count;
+                Bar.ToolTip =
+                Title =
+                Bar.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count;
 
                 img.Width = xWidth;
                 img.Height = xHeight;
-                //Width = img.Width = 465;
-                //Height = img.Height = 515;
 
-                img.Source = Preloader.Contains(Pics[FolderIndex]) ? Preloader.Load(Pics[FolderIndex]) : GetWindowsThumbnail(Pics[FolderIndex]);
+                img.Source = GetBitmapSourceThumb(Pics[FolderIndex]);
             }));
+            Progress(FolderIndex, Pics.Count);
+            FastPicRunning = true;
+        }
+
+        private void FastPic()
+        {
+            Bar.ToolTip =
+            Title =
+            Bar.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count;
+
+            img.Width = xWidth;
+            img.Height = xHeight;
+
+            img.Source = GetBitmapSourceThumb(Pics[FolderIndex]);
+
             Progress(FolderIndex, Pics.Count);
             FastPicRunning = true;
         }
@@ -1723,7 +1745,7 @@ namespace PicView
             }
 
             // Load from preloader or Windows thumbnails
-            img.Source = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : GetWindowsThumbnail(files[0]);
+            img.Source = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : GetBitmapSourceThumb(files[0]);
         }
 
 
@@ -1830,6 +1852,7 @@ namespace PicView
                             FolderIndex++;
 
                         fastPicTimer.Start();
+                        //FastPic();
                     }
                     break;
 
@@ -1853,6 +1876,7 @@ namespace PicView
                             FolderIndex--;
 
                         fastPicTimer.Start();
+                        //FastPic();
                     }
                     break;
 
@@ -2770,6 +2794,22 @@ namespace PicView
             };
 
             bg.Children.Add(functionsMenu);
+        }
+
+
+        /// <summary>
+        /// Loads PicGallery and adds it to the window
+        /// </summary>
+        private void LoadPicGallery()
+        {
+            picGallery = new lib.UserControls.CustomControls.PicGallery
+            {
+                Focusable = false,
+                Opacity = 0,
+                Visibility = Visibility.Hidden
+            };
+
+            bg.Children.Add(picGallery);
         }
 
 
@@ -3793,7 +3833,7 @@ namespace PicView
             // If items exist: replace them, else add them 
             if (RecentFilesMenuItem.Items.Count >= fileNames.Length)
             {
-                for (int i = 0; i < fileNames.Length; i++)
+                for (int i = fileNames.Length - 1; i >= 0; i--)
                 {
                     // Don't add the same item more than once
                     var item = fileNames[i];
@@ -3808,7 +3848,7 @@ namespace PicView
                 return;
             }
 
-            for (int i = 0; i < fileNames.Length; i++)
+            for (int i = fileNames.Length - 1; i >= 0; i--)
             {
                 // Don't add the same item more than once
                 var item = fileNames[i];
@@ -4026,7 +4066,12 @@ namespace PicView
                 Pic();
                 Close_UserControls();
                 var filename = Path.GetFileName(file);
-                var y = Recyclebin ? "Sent " + filename + "to the recyle bin" : "Deleted " + filename;
+                if (filename.Length >= 25)
+                {
+                    filename = filename.Substring(0, 21);
+                    filename += "...";
+                }
+                var y = Recyclebin ? "Sent " + filename + " to the recyle bin" : "Deleted " + filename;
                 ToolTipStyle(y);
             }
             else

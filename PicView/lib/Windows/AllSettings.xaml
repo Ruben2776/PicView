@@ -16,8 +16,8 @@
 
 
     <Border
-        Width="350"
-        Height="400"
+        Width="450"
+        Height="490"
         BorderBrush="{StaticResource BorderBrushAlt}"
         BorderThickness="1">
 
@@ -67,7 +67,7 @@
                     </Path>
                 </Canvas>
                 <Label
-                    Canvas.Left="150"
+                    Canvas.Left="198"
                     Canvas.Top="3"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -78,7 +78,7 @@
                     FontWeight="Bold" />
                 <Button
                     x:Name="CloseButton"
-                    Canvas.Left="314"
+                    Canvas.Left="414"
                     Width="34"
                     Height="34"
                     BorderBrush="{x:Null}"
@@ -102,25 +102,23 @@
 
             </Canvas>
 
-            <Canvas
-                Width="348"
-                Height="333"
-                Margin="0,33">
+            <Canvas Width="449" Height="420">
                 <Rectangle
                     x:Name="LeftBorderRectangle"
                     Width="7"
-                    Height="332"
+                    Height="420"
                     Fill="{StaticResource BackgroundColorBrushAltW}" />
                 <Rectangle
                     x:Name="RightBorderRectangle"
-                    Canvas.Left="341"
+                    Canvas.Left="441"
+                    Canvas.Top="-1"
                     Width="7"
-                    Height="332"
+                    Height="421"
                     Fill="{StaticResource BackgroundColorBrushAltW}" />
                 <ScrollViewer
                     x:Name="Scroller"
-                    Width="336"
-                    Height="332"
+                    Width="436"
+                    Height="421"
                     Margin="6,-1,0,0"
                     Background="{StaticResource BackgroundColorBrushAlt}"
                     HorizontalScrollBarVisibility="Disabled"
@@ -133,7 +131,7 @@
                             Content="Color Themes"
                             Foreground="{StaticResource MainColorBrush}" />
                         <WrapPanel
-                            Width="320"
+                            Width="332"
                             Margin="0,3,0,8"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Top"
@@ -142,7 +140,7 @@
                                 x:Name="BlueRadio"
                                 Width="100"
                                 Height="40"
-                                Margin="3"
+                                Margin="5,3"
                                 BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="1"
                                 Content="Blue">
@@ -154,7 +152,7 @@
                                 x:Name="CyanRadio"
                                 Width="100"
                                 Height="40"
-                                Margin="3"
+                                Margin="5,3"
                                 BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="1"
                                 Content="Cyan">
@@ -166,7 +164,7 @@
                                 x:Name="AquaRadio"
                                 Width="100"
                                 Height="40"
-                                Margin="3"
+                                Margin="5,3"
                                 BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="1"
                                 Content="Aqua">
@@ -178,7 +176,7 @@
                                 x:Name="GreenRadio"
                                 Width="100"
                                 Height="40"
-                                Margin="3"
+                                Margin="5"
                                 BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="1"
                                 Content="Green">
@@ -190,7 +188,7 @@
                                 x:Name="MagentaRadio"
                                 Width="100"
                                 Height="40"
-                                Margin="3"
+                                Margin="5"
                                 BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="1"
                                 Content="Magenta">
@@ -202,7 +200,7 @@
                                 x:Name="PinkRadio"
                                 Width="100"
                                 Height="40"
-                                Margin="3"
+                                Margin="5"
                                 BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="1"
                                 Content="Pink">
@@ -214,7 +212,7 @@
                                 x:Name="PurpleRadio"
                                 Width="100"
                                 Height="40"
-                                Margin="3"
+                                Margin="5"
                                 BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="1"
                                 Content="Purple">
@@ -226,7 +224,7 @@
                                 x:Name="VioletRadio"
                                 Width="100"
                                 Height="40"
-                                Margin="3"
+                                Margin="5,3"
                                 BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="1"
                                 Content="Violet">
@@ -238,7 +236,7 @@
                                 x:Name="RedRadio"
                                 Width="100"
                                 Height="40"
-                                Margin="3"
+                                Margin="5,3"
                                 BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="1"
                                 Content="Red">
@@ -250,7 +248,7 @@
                                 x:Name="OrangeRadio"
                                 Width="100"
                                 Height="40"
-                                Margin="3"
+                                Margin="5,3"
                                 BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="1"
                                 Content="Orange">
@@ -262,7 +260,7 @@
                                 x:Name="YellowRadio"
                                 Width="100"
                                 Height="40"
-                                Margin="3"
+                                Margin="5,3"
                                 BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="1"
                                 Content="Yellow">
@@ -274,7 +272,7 @@
                                 x:Name="BeigeRadio"
                                 Width="100"
                                 Height="40"
-                                Margin="3"
+                                Margin="5,3"
                                 BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="1"
                                 Content="Beige">
@@ -282,6 +280,45 @@
                                     <SolidColorBrush x:Name="BeigeBrush" Color="{StaticResource BackgroundColorFade}" />
                                 </RadioButton.Background>
                             </RadioButton>
+                        </WrapPanel>
+                        <Label
+                            Margin="0,3,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="Misc Settings"
+                            Foreground="{StaticResource MainColorBrush}" />
+                        <WrapPanel
+                            Width="332"
+                            Margin="0,3,0,8"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Top"
+                            Orientation="Horizontal">
+                            <CheckBox
+                                x:Name="PicGalleryRadio"
+                                Width="180"
+                                Height="40"
+                                Margin="5,3"
+                                BorderBrush="{StaticResource BorderBrushAlt}"
+                                BorderThickness="1"
+                                Content="Enable Picture Gallery"
+                                Style="{StaticResource Checkstyle}">
+                                <CheckBox.Background>
+                                    <SolidColorBrush x:Name="PicGalleryBrush" Color="{StaticResource BackgroundColorFade}" />
+                                </CheckBox.Background>
+                            </CheckBox>
+                            <CheckBox
+                                x:Name="LoopRadio"
+                                Width="131"
+                                Height="40"
+                                Margin="5,3"
+                                BorderBrush="{StaticResource BorderBrushAlt}"
+                                BorderThickness="1"
+                                Content="Enable Looping"
+                                Style="{StaticResource Checkstyle}">
+                                <CheckBox.Background>
+                                    <SolidColorBrush x:Name="LoopBrush" Color="{StaticResource BackgroundColorFade}" />
+                                </CheckBox.Background>
+                            </CheckBox>
                         </WrapPanel>
                         <TextBlock Margin="0,5" TextAlignment="Center">Some settings may require restart to take effect</TextBlock>
                     </StackPanel>

@@ -129,6 +129,12 @@
     <Compile Include="lib\UserControls\CustomControls\AutoScrollSign.xaml.cs">
       <DependentUpon>AutoScrollSign.xaml</DependentUpon>
     </Compile>
+    <Compile Include="lib\UserControls\CustomControls\PicGallery.xaml.cs">
+      <DependentUpon>PicGallery.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="lib\UserControls\CustomControls\PicGalleryItem.xaml.cs">
+      <DependentUpon>PicGalleryItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="lib\UserControls\Menus\FunctionsMenu.xaml.cs">
       <DependentUpon>FunctionsMenu.xaml</DependentUpon>
     </Compile>
@@ -211,6 +217,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="lib\UserControls\CustomControls\AutoScrollSign.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="lib\UserControls\CustomControls\PicGallery.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="lib\UserControls\CustomControls\PicGalleryItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -365,8 +379,6 @@
     <Content Include="dcraw.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="lib\img\noisy-texture-200x200-o4-d38-c-0c0c0c-t0.png" />
-    <Resource Include="lib\img\noisy-texture-200x200-o4-d40-c-121212-t0.png" />
     <Resource Include="lib\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
     <Resource Include="lib\img\noisy-texture-200x200-o4-d30-c-101010-t0.png" />
     <Resource Include="lib\img\Brainleaf-Dark-Blog-Reflex.ico" />

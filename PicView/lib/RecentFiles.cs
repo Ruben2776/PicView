@@ -23,7 +23,7 @@ namespace PicView.lib
         /// <summary>
         /// How many max recent files
         /// </summary>
-        const int MRUcount = 5;
+        const int MRUcount = 7;
 
         static bool zipped;
 
