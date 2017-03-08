@@ -8,11 +8,13 @@
     d:DesignHeight="300"
     d:DesignWidth="300"
     mc:Ignorable="d">
-    <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
-        <Image
-            x:Name="img"
-            Focusable="False"
-            RenderOptions.BitmapScalingMode="NearestNeighbor"
-            RenderOptions.EdgeMode="Aliased" />
-    </Border>
+    <StackPanel>
+        <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+            <Image x:Name="img" ToolTip="Click to load " />
+        </Border>
+        <TextBlock
+            x:Name="txt"
+            FontFamily="/PicView;component/lib/fonts/#Aller"
+            TextTrimming="CharacterEllipsis" />
+    </StackPanel>
 </UserControl>

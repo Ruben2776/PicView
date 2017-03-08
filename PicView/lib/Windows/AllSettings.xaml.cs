@@ -146,10 +146,24 @@ namespace PicView.Windows
                         YellowRadio.IsChecked = true;
                         break;
                 }
+
+                KeyUp += AllSettings_KeyUp;
             };
             
 
 
+        }
+
+        private void AllSettings_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Escape:
+                    Close();
+                    break;
+                default:
+                    break;
+            }
         }
 
 
@@ -603,10 +617,6 @@ namespace PicView.Windows
         }
 
         #endregion
-
-
-
-
 
     }
 }

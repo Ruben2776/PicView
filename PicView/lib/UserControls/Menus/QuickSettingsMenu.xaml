@@ -37,7 +37,7 @@
                         Height="51"
                         Stroke="{StaticResource BorderBrushAlt}"
                         StrokeThickness="1" />
-                    
+
                     <TextBlock
                         x:Name="bar"
                         Width="256"
@@ -54,10 +54,7 @@
                         Canvas.Left="256"
                         Width="51"
                         Height="51"
-                        Margin="0"
-                        Padding="0"
-                        BorderThickness="0"
-                        ToolTip="All settings [Not implemented]">
+                        ToolTip="View all settings">
                         <Button.Background>
                             <SolidColorBrush x:Name="SettingsButtonBrush" Color="Transparent" />
                         </Button.Background>
@@ -76,7 +73,6 @@
                         Canvas.Left="307"
                         Width="51"
                         Height="51"
-                        BorderThickness="0"
                         FocusVisualStyle="{x:Null}"
                         ToolTip="Close">
                         <Button.Background>

@@ -1,8 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
@@ -141,13 +139,12 @@ namespace PicView.lib
                 (ext.Equals(".jpg", StringComparison.OrdinalIgnoreCase) &&
                 !SupportJpgAsWallpaper))
             {
-                using (Image image = Image.FromFile(path))
-                {
-                    path = String.Format(@"{0}\Microsoft\Windows\Themes\{1}.bmp",
+                var dest = string.Format(@"{0}\Microsoft\Windows\Themes\{1}.jpg",
                         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                         Path.GetFileNameWithoutExtension(path));
-                    image.Save(path, ImageFormat.Bmp);
-                }
+                ImageManager.TrySaveImage(Rotateint, Flipped, path, dest);
+                path = dest;
+
             }
 
             // Set the desktop wallpapaer by calling the Win32 API SystemParametersInfo 

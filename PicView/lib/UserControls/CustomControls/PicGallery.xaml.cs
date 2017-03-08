@@ -25,22 +25,37 @@ namespace PicView.lib.UserControls.CustomControls
             InitializeComponent();
         }
 
-        internal void Add(string item)
+        internal void Add(string file)
+        {
+            var item = new PicGalleryItem(file);
+            Container.Children.Add(item);
+        }
+
+        internal void Add(string[] files)
+        {
+            var index = files.Length / 2;
+            for (int i = index; i < files.Length; i++)
+            {
+                Add(files[i]);
+                for (int x = index - 1; x >= 0; x--)
+                {
+                    Add(files[x]);
+                }
+            }
+
+        }
+
+        internal void Remove(string file)
         {
 
         }
 
-        internal void Add(string[] items)
+        internal void Remove(string[] files)
         {
 
         }
 
-        internal void Remove(string item)
-        {
-
-        }
-
-        internal void Remove(string[] items)
+        internal void Clear()
         {
 
         }

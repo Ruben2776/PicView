@@ -200,10 +200,13 @@
                 FontFamily="/PicView;component/lib/fonts/#Aller"
                 FontSize="15"
                 FontWeight="Bold"
-                Foreground="{StaticResource MainColorBrush}"
                 Text="Loading..."
                 TextAlignment="Center"
-                TextTrimming="CharacterEllipsis" />
+                TextTrimming="CharacterEllipsis" >
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{StaticResource MainColor}"/>
+                </TextBlock.Foreground>
+            </TextBlock>
         </DockPanel>
         <StackPanel
             x:Name="LowerBar"

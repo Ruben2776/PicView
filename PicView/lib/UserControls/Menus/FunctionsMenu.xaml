@@ -136,7 +136,6 @@
                     Canvas.Top="61"
                     Width="375"
                     Height="97"
-                    Margin="0"
                     VerticalAlignment="Top">
                     <Button
                         x:Name="DeleteButton"
@@ -232,6 +231,7 @@
                         Height="42"
                         Margin="0,0,4,0"
                         Style="{StaticResource MetroAlphaFlatButton}"
+                        ToolTip="Rename file name">
                         ToolTip="Rename filename.">
                         <Canvas>
                             <Path
