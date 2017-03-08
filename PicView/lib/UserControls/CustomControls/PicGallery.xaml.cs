@@ -114,11 +114,18 @@ namespace PicView.lib.UserControls
             var img = new Image()
             {
                 Source = GetBitmapSourceThumb(Pics[id]),
-                Stretch = System.Windows.Media.Stretch.Fill,
+                Stretch = Stretch.Fill,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
-            grid.Children.Add(img);
+            var border = new Border()
+            {
+                BorderThickness = new Thickness(1),
+                BorderBrush = (SolidColorBrush)Application.Current.Resources["BorderBrush"],
+                Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"]
+            };
+            border.Child = img;
+            grid.Children.Add(border);
             var y = new double[] { 230, 230};
             var x = new double[] { Width, Height};
             var da = new DoubleAnimation();
@@ -138,7 +145,7 @@ namespace PicView.lib.UserControls
             da.Completed += delegate
             {
                 ItemClick(this, new MyEventArgs(id, img.Source));
-                grid.Children.Remove(img);
+                grid.Children.Remove(border);
                 Visibility = Visibility.Collapsed;
                 picGallery.open = false;
             };
@@ -151,8 +158,7 @@ namespace PicView.lib.UserControls
 
     public delegate void MyEventHandler(object source, MyEventArgs e);
 
-    //This is a class which describes the event to the class that recieves it.
-    //An EventArgs class must always derive from System.EventArgs.
+
     public class MyEventArgs : EventArgs
     {
         private int Id;

@@ -22,6 +22,18 @@
                 Orientation="Vertical"
                 VirtualizingPanel.VirtualizationMode="Recycling" />
         </ScrollViewer>
-
+        <TextBlock
+            Margin="0,0,0,20"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Foreground="{StaticResource MainColorBrush}">
+            <Bold>&lt;</Bold>
+            <Bold>1</Bold>
+            <Bold>2</Bold>
+            <Bold>3</Bold>
+            <Bold>...</Bold>
+            <Bold>144</Bold>
+            <Bold>&gt;</Bold>
+        </TextBlock>
     </Grid>
 </UserControl>

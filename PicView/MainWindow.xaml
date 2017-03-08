@@ -202,9 +202,9 @@
                 FontWeight="Bold"
                 Text="Loading..."
                 TextAlignment="Center"
-                TextTrimming="CharacterEllipsis" >
+                TextTrimming="CharacterEllipsis">
                 <TextBlock.Foreground>
-                    <SolidColorBrush Color="{StaticResource MainColor}"/>
+                    <SolidColorBrush Color="{StaticResource MainColor}" />
                 </TextBlock.Foreground>
             </TextBlock>
         </DockPanel>

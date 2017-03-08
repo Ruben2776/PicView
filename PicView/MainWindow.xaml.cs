@@ -299,8 +299,11 @@ namespace PicView
                 LowerBar.Drop += Image_Drop;
 
                 // PicGallery
-                picGallery.PreviewItemClick += PicGallery_PreviewItemClick;
-                picGallery.ItemClick += PicGallery_ItemClick;
+                if (Properties.Settings.Default.PicGalleryEnabled)
+                {
+                    picGallery.PreviewItemClick += PicGallery_PreviewItemClick;
+                    picGallery.ItemClick += PicGallery_ItemClick;
+                }
 
                 // This
                 Closing += Window_Closing;
@@ -2003,9 +2006,20 @@ namespace PicView
             else if (e.Key == Key.Escape)
             {
                 if (UserControls_Open())
+                {
                     Close_UserControls();
+                }
+                else if (picGallery != null)
+                {
+                    if (picGallery.open)
+                        PicGalleryFade(false);
+                    else
+                        Close();
+                }
                 else
+                {
                     Close();
+                }
             }
 
             // Ctrl + Q
@@ -2035,8 +2049,7 @@ namespace PicView
             // Delete, Shift + Delete
             else if (e.Key == Key.Delete)
             {
-                var x = e.KeyboardDevice.Modifiers == ModifierKeys.Shift;
-                DeleteFile(PicPath, !x);
+                DeleteFile(PicPath, e.KeyboardDevice.Modifiers != ModifierKeys.Shift);
             }
 
             // Ctrl + C
