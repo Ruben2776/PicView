@@ -3426,6 +3426,10 @@ namespace PicView
                 if (string.IsNullOrWhiteSpace(YesNoDialog.NameForRename))
                     return;
 
+                if (File.Exists(RenamedFilePath + "\\" + YesNoDialog.NameForRename + RenamedFileExt))
+                    ToolTipStyle(YesNoDialog.NameForRename + RenamedFileExt + " allready exists");
+                    
+
                 if (FileFunctions.RenameFile(PicPath, RenamedFilePath + "\\" + YesNoDialog.NameForRename + RenamedFileExt))
                 {
                     string Fullpath = RenamedFilePath + "\\" + YesNoDialog.NameForRename + RenamedFileExt;
@@ -3436,6 +3440,7 @@ namespace PicView
                     Bar.Text = titleString[1];
                     Bar.ToolTip = titleString[2];
                 }
+                Reload();
             }
             else
             {
