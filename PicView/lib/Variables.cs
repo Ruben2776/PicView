@@ -1,5 +1,4 @@
 ﻿using PicView.lib.UserControls;
-using PicView.lib.UserControls.CustomControls;
 using PicView.lib.UserControls.Menus;
 using System;
 using System.Collections.Generic;

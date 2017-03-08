@@ -298,6 +298,10 @@ namespace PicView
                 // Lower Bar
                 LowerBar.Drop += Image_Drop;
 
+                // PicGallery
+                picGallery.PreviewItemClick += PicGallery_PreviewItemClick;
+                picGallery.ItemClick += PicGallery_ItemClick;
+
                 // This
                 Closing += Window_Closing;
                 MouseMove += MainWindow_MouseMove;
@@ -985,18 +989,23 @@ namespace PicView
             // Navigate to picture using obtained index
             Pic(FolderIndex);
 
-            // No longer fresh startup
+
             if (freshStartup)
                 freshStartup = false;
-
-            // Save ram
-            if (prevPicResource != null)
-                prevPicResource = null;
 
             // Fix loading bug
             if (ajaxLoading.Opacity != 1 && canNavigate)
             {
                 AjaxLoadingEnd();
+            }
+
+            if (Properties.Settings.Default.PicGalleryEnabled)
+            {
+                if (picGallery == null)
+                    LoadPicGallery();
+
+                if (!picGallery.LoadComplete)
+                    picGallery.Load();
             }
         }
 
@@ -1063,11 +1072,19 @@ namespace PicView
             else
                 img.Source = pic;
 
-            // Update Title to reflect new image
+            // Update values
             var titleString = TitleString(pic.PixelWidth, pic.PixelHeight, x);
             Title = titleString[0];
             Bar.Text = titleString[1];
             Bar.ToolTip = titleString[2];
+
+            
+            PicPath = Pics[x];
+            canNavigate = true;
+            Progress(x, Pics.Count);
+            FolderIndex = x;
+            if (!freshStartup)
+                RecentFiles.Add(Pics[x]);
 
             // Preload images           
             bool? reverse;
@@ -1083,24 +1100,18 @@ namespace PicView
 
             if (reverse.HasValue)
             {
-                var t = new Task(() =>
+                await Task.Run(() =>
                 {
                     Preloader.PreLoad(x, reverse.Value);
                     PreloadCount = 0;
 
-                    if (!Preloader.Contains(Pics[x]))
-                        Preloader.Add(pic, Pics[x]);
+                    if (x < Pics.Count)
+                    {
+                        if (!Preloader.Contains(Pics[x]))
+                            Preloader.Add(pic, Pics[x]);
+                    }
                 });
-                t.Start();
             }
-
-            // Update values
-            PicPath = Pics[x];
-            canNavigate = true;
-            Progress(x, Pics.Count);
-            FolderIndex = x;
-            if (!freshStartup)
-                RecentFiles.Add(Pics[x]);
 
             // Stop AjaxLoading if it's shown
             AjaxLoadingEnd();
@@ -1150,6 +1161,12 @@ namespace PicView
             // Exit if not intended to change picture
             if (!canNavigate)
                 return;
+
+            if (picGallery != null)
+            {
+                if (picGallery.open)
+                    return;
+            }
 
             // Go to first or last
             if (end)
@@ -1882,10 +1899,26 @@ namespace PicView
 
                 // Scroll
                 case Key.PageUp:
+                    if (picGallery != null)
+                    {
+                        if (picGallery.open)
+                        {
+                            picGallery.ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            return;
+                        }
+                    }
                     if (Properties.Settings.Default.ScrollEnabled)
                         Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 30);
                     break;
                 case Key.PageDown:
+                    if (picGallery != null)
+                    {
+                        if (picGallery.open)
+                        {
+                            picGallery.ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            return;
+                        }
+                    }
                     if (Properties.Settings.Default.ScrollEnabled)
                         Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 30);
                     break;
@@ -1893,6 +1926,14 @@ namespace PicView
                 // Rotate or Scroll
                 case Key.Up:
                 case Key.W:
+                    if (picGallery != null)
+                    {
+                        if (picGallery.open)
+                        {
+                            picGallery.ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            return;
+                        }
+                    }
                     if (Properties.Settings.Default.ScrollEnabled)
                     {
                         if (Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed && !e.IsRepeat)
@@ -1908,6 +1949,14 @@ namespace PicView
 
                 case Key.Down:
                 case Key.S:
+                    if (picGallery != null)
+                    {
+                        if (picGallery.open)
+                        {
+                            picGallery.ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            return;
+                        }
+                    }
                     if (Properties.Settings.Default.ScrollEnabled)
                     {
                         if (Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed && !e.IsRepeat)
@@ -2014,6 +2063,13 @@ namespace PicView
                 Print(PicPath);
             }
 
+            // Ctrl + R, F5
+            else if (e.Key == Key.R && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control
+                || e.Key == Key.F5)
+            {
+                Reload();
+            }
+
             // Alt + Enter
             else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.Enter))
             {
@@ -2067,6 +2123,28 @@ namespace PicView
             {
                 HideInterface();
             }
+
+
+
+
+
+            // DEBUG!!!!!
+            // F7
+            else if (e.Key == Key.F7)
+            {
+                var x = Properties.Settings.Default.PicGalleryEnabled ? false : true;
+                Properties.Settings.Default.PicGalleryEnabled = x;
+                ToolTipStyle(x);
+            }
+            // F8
+            else if (e.Key == Key.F8)
+            {
+                if (picGallery != null)
+                    PicGalleryFade(picGallery.Visibility == Visibility.Collapsed);
+                else
+                    ToolTipStyle("null");
+            }
+            // DEBUG!!!!!
         }
 
 
@@ -2333,6 +2411,15 @@ namespace PicView
         /// <param name="zoomMode"></param>
         private void Zoom(int i, bool zoomMode)
         {
+            // Don't zoom when gallery is open
+            if (picGallery != null)
+            {
+                if (picGallery.open)
+                {
+                    return;
+                }
+            }
+
             // Scales the window with img.LayoutTransform
             if (zoomMode)
             {
@@ -2797,19 +2884,77 @@ namespace PicView
         }
 
 
+        // PicGallery
+
         /// <summary>
         /// Loads PicGallery and adds it to the window
         /// </summary>
         private void LoadPicGallery()
         {
-            picGallery = new lib.UserControls.CustomControls.PicGallery
+            picGallery = new PicGallery
             {
-                Focusable = false,
                 Opacity = 0,
-                Visibility = Visibility.Hidden
+                Visibility = Visibility.Collapsed,
+                Width = bg.Width,
+                Height = bg.Height
             };
 
             bg.Children.Add(picGallery);
+            Panel.SetZIndex(picGallery, 999);
+        }
+
+
+        private void PicGalleryFade(bool show = true)
+        {
+            picGallery.Width = Width - 15; // 15 = borders width
+            picGallery.Height = Height - 95; // 95 = top + bottom bar height
+
+            if (!picGallery.LoadComplete)
+                picGallery.Load();
+
+            picGallery.Visibility = Visibility.Visible;
+            var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.5) };
+            if (!show)
+            {
+                da.To = 0;
+                da.Completed += delegate
+                {
+                    picGallery.Visibility = Visibility.Collapsed;
+                    picGallery.open = false;
+                };
+            }
+            else
+            {
+                da.To = 1;
+                picGallery.open = true;
+            }
+
+            if (picGallery != null)
+                picGallery.BeginAnimation(OpacityProperty, da);
+        }
+
+
+        private void PicGallery_PreviewItemClick(object source, MyEventArgs e)
+        {
+            Task.Run(() =>
+            {
+                Preloader.Clear();
+                Preloader.Add(e.GetId());
+            });
+        }
+
+        private async void PicGallery_ItemClick(object source, MyEventArgs e)
+        {
+            while (!Preloader.Contains(Pics[e.GetId()]))
+            {
+                if (Bar.Text != Loading)
+                {
+                    Bar.Text = Loading;
+                    img.Source = e.GetImage();
+                }
+                await Task.Delay(50);
+            }
+            Pic(e.GetId());
         }
 
 

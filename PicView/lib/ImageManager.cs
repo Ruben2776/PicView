@@ -209,9 +209,9 @@ namespace PicView.lib
             {
                 magick.Quality = quality;
                 magick.ColorSpace = ColorSpace.Transparent;
-                magick.AdaptiveResize(size, size);
                 try
                 {
+                    magick.AdaptiveResize(size, size);
                     magick.Read(file);
                 }
                 catch (MagickException)
