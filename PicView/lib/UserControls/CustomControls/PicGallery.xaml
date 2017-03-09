@@ -9,7 +9,10 @@
     d:DesignWidth="300"
     mc:Ignorable="d">
     <Grid x:Name="grid" Background="{StaticResource BackgroundColorBrushFade}">
-        <UserControls:X2 HorizontalAlignment="Right" VerticalAlignment="Top" />
+        <UserControls:X2
+            x:Name="x2"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top" />
         <ScrollViewer
             x:Name="Scroller"
             Margin="0,60,0,25"
@@ -26,7 +29,7 @@
             Margin="0,0,0,20"
             HorizontalAlignment="Center"
             VerticalAlignment="Bottom"
-            Foreground="{StaticResource MainColorBrush}">
+            Foreground="{StaticResource MainColorBrush}" FontFamily="/PicView;component/lib/fonts/#TeX Gyre Heros" FontSize="16">
             <Bold>&lt;</Bold>
             <Bold>1</Bold>
             <Bold>2</Bold>

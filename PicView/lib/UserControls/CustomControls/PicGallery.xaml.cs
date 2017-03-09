@@ -21,10 +21,33 @@ namespace PicView.lib.UserControls
     {
         public bool LoadComplete, open;
         public event MyEventHandler PreviewItemClick, ItemClick;
+
         public PicGallery()
         {
             InitializeComponent();
             Loaded += PicGallery_Loaded;
+            x2.MouseLeftButtonUp += X2_MouseLeftButtonUp;
+        }
+
+        private void X2_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            FadeOut();
+        }
+
+        private void FadeOut()
+        {
+            var da = new DoubleAnimation()
+            {
+                To = 0,
+                From = 1,
+                Duration = TimeSpan.FromSeconds(0.4)
+            };
+            da.Completed += delegate
+            {
+                open = false;
+                Visibility = Visibility.Collapsed;
+            };
+            BeginAnimation(UIElement.OpacityProperty, da);
         }
 
         private void PicGallery_Loaded(object sender, RoutedEventArgs e)
@@ -38,6 +61,12 @@ namespace PicView.lib.UserControls
             ScrollTo(e.Delta > 0);
         }
 
+
+        /// <summary>
+        /// Scrolls a page back or forth
+        /// </summary>
+        /// <param name="next"></param>
+        /// <param name="end"></param>
         internal void ScrollTo(bool next = true, bool end = false)
         {
             if (end)
@@ -49,6 +78,7 @@ namespace PicView.lib.UserControls
             }
             else
             {
+                // 230 = PicGalleryItem size
                 if (next)
                     Scroller.ScrollToHorizontalOffset(Scroller.HorizontalOffset + 230);
                 else
@@ -126,18 +156,18 @@ namespace PicView.lib.UserControls
             };
             border.Child = img;
             grid.Children.Add(border);
-            var y = new double[] { 230, 230};
-            var x = new double[] { Width, Height};
+            var from = 230; // 230 = PicGalleryItem size
+            var to = new double[] { Width, Height};
             var da = new DoubleAnimation();
-            da.From = y[0];
-            da.To = x[0];
+            da.From = from;
+            da.To = to[0]; // Width
             da.Duration = TimeSpan.FromSeconds(.3);
             da.AccelerationRatio = 0.2;
             da.DecelerationRatio = 0.4;
 
             var da0 = new DoubleAnimation();
-            da0.From = y[1];
-            da0.To = x[1];
+            da0.From = from;
+            da0.To = to[1]; // Height
             da0.Duration = TimeSpan.FromSeconds(.3);
             da0.AccelerationRatio = 0.2;
             da0.DecelerationRatio = 0.4;

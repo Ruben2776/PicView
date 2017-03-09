@@ -2561,6 +2561,7 @@ namespace PicView
             }
 
             // Update TitleBar width to fit new size
+            // 220 = logo and buttons width + extra padding
             if (windowstyle)
             {
                 if (xWidth - 220 < 220)
