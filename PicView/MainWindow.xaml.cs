@@ -77,16 +77,8 @@ namespace PicView
             }
             else
             {
-                var file = Application.Current.Properties["ArbitraryArgName"].ToString();
-                if (File.Exists(file))
-                    Pic(file);
-                else if (Uri.IsWellFormedUriString(file, UriKind.Absolute))
-                    PicWeb(file);
-                else
-                {
-                    Unload();
-                    endLoading = true;
-                }
+                var args = Application.Current.Properties["ArbitraryArgName"].ToString();
+                Pic(args);
             }
 
             // Add UserControls :)
@@ -1939,14 +1931,12 @@ namespace PicView
                     }
                     if (Properties.Settings.Default.ScrollEnabled)
                     {
-                        if (Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed && !e.IsRepeat)
-                            Rotate(false);
-                        else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !e.IsRepeat)
-                            Rotate(false);
+                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                            return;
                         else
                             Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 30);
                     }
-                    else if (!e.IsRepeat)
+                    else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
                         Rotate(false);
                     break;
 
@@ -1962,14 +1952,12 @@ namespace PicView
                     }
                     if (Properties.Settings.Default.ScrollEnabled)
                     {
-                        if (Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed && !e.IsRepeat)
-                            Rotate(true);
-                        else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !e.IsRepeat)
-                            Rotate(true);
+                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                            return; // Save Ctrl + S fix
                         else
                             Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 30);
                     }
-                    else if (!e.IsRepeat)
+                    else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
                         Rotate(true);
                     break;
 
@@ -2062,6 +2050,12 @@ namespace PicView
             else if (e.Key == Key.V && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
                 Paste();
+            }
+
+            // Ctrl + S
+            else if (e.Key == Key.S && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                SaveFiles();
             }
 
             // Ctrl + I
@@ -4200,20 +4194,20 @@ namespace PicView
                 {
                     if (TrySaveImage(Rotateint, Flipped, PicPath, Savedlg.FileName) == false)
                     {
-                        ToolTipStyle("Error, File didnt get saved - File not Found.", true);
+                        ToolTipStyle("Error, File didn't get saved - File not Found.");
                     }
                 }
                 else
                     return;
 
-                //Force freshed the list of pichures.
+                //Refresh the list of pictures.
                 Reload();
 
                 Close_UserControls();
             }
-            else
+            else if (img.Source != null)
             {
-                ToolTipStyle("Error, File does not exist, or something went wrong...", true);
+                ToolTipStyle("Error, File does not exist, or something went wrong...");
             }
         }
 
