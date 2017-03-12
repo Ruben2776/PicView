@@ -26,17 +26,12 @@
                 VirtualizingPanel.VirtualizationMode="Recycling" />
         </ScrollViewer>
         <TextBlock
+            x:Name="PagingText"
             Margin="0,0,0,20"
             HorizontalAlignment="Center"
             VerticalAlignment="Bottom"
-            Foreground="{StaticResource MainColorBrush}" FontFamily="/PicView;component/lib/fonts/#TeX Gyre Heros" FontSize="16">
-            <Bold>&lt;</Bold>
-            <Bold>1</Bold>
-            <Bold>2</Bold>
-            <Bold>3</Bold>
-            <Bold>...</Bold>
-            <Bold>144</Bold>
-            <Bold>&gt;</Bold>
-        </TextBlock>
+            FontFamily="/PicView;component/lib/fonts/#TeX Gyre Heros"
+            FontSize="16"
+            Foreground="{DynamicResource ChosenColorBrush}" />
     </Grid>
 </UserControl>

@@ -1488,6 +1488,11 @@ namespace PicView
             Preloader.Clear();
             DeleteTempFiles();
             PreloadCount = 0;
+
+            if (Properties.Settings.Default.PicGalleryEnabled)
+            {
+                picGallery.Clear();
+            }
         }
 
 
@@ -2042,10 +2047,13 @@ namespace PicView
                 DeleteFile(PicPath, e.KeyboardDevice.Modifiers != ModifierKeys.Shift);
             }
 
-            // Ctrl + C
-            else if (e.Key == Key.C && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            // Ctrl + C, Ctrl + Shift + C
+            else if (e.Key == Key.C)
             {
-                CopyPic();
+                if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) == (ModifierKeys.Control | ModifierKeys.Shift))
+                    CopyBitmap();
+                else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    CopyPic();
             }
 
             // Ctrl + V
@@ -2937,8 +2945,10 @@ namespace PicView
         {
             picGallery.Width = Width - 15; // 15 = borders width
             picGallery.Height = Height - 95; // 95 = top + bottom bar height
+            picGallery.Calculate_Paging();
 
             if (!picGallery.LoadComplete)
+                if (!picGallery.isLoading)
                 picGallery.Load();
 
             picGallery.Visibility = Visibility.Visible;
@@ -2956,6 +2966,7 @@ namespace PicView
             {
                 da.To = 1;
                 picGallery.open = true;
+                picGallery.ScrollTo();
             }
 
             if (picGallery != null)
@@ -2971,6 +2982,7 @@ namespace PicView
                 Preloader.Add(e.GetId());
             });
         }
+
 
         private async void PicGallery_ItemClick(object source, MyEventArgs e)
         {
@@ -4064,11 +4076,7 @@ namespace PicView
             // Copy pic if from web
             if (string.IsNullOrWhiteSpace(PicPath) || Uri.IsWellFormedUriString(PicPath, UriKind.Absolute))
             {
-                var source = img.Source as BitmapImage;
-                if (source != null)
-                    Clipboard.SetImage(source);
-                else
-                    return;
+                CopyBitmap();
             }
             else
             {
@@ -4076,6 +4084,21 @@ namespace PicView
                 Clipboard.SetFileDropList(paths);
             }
             ToolTipStyle(FileCopy);
+        }
+
+        private void CopyBitmap()
+        {
+            if (Preloader.Contains(PicPath))
+            {
+                Clipboard.SetImage(Preloader.Load(PicPath));
+            }
+            else if (img.Source != null)
+            {
+                Clipboard.SetImage((BitmapSource)img.Source);
+            }
+            else
+                return;
+            ToolTipStyle(ImageCopy);
         }
 
 

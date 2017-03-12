@@ -19,8 +19,10 @@ namespace PicView.lib.UserControls
     /// </summary>
     public partial class PicGallery : UserControl
     {
-        public bool LoadComplete, open;
+        public bool LoadComplete, isLoading, open;
         public event MyEventHandler PreviewItemClick, ItemClick;
+        int current_page, next_page, prev_page, total_pages, items_per_page;
+        const int picGalleryItem_Size = 230;
 
         public PicGallery()
         {
@@ -61,13 +63,46 @@ namespace PicView.lib.UserControls
             ScrollTo(e.Delta > 0);
         }
 
+        internal void Calculate_Paging()
+        {
+            //int x, y, z,c;
+            //x = y = picGalleryItem_Size;
+            //z = 1;
+            //do
+            //{
+            //    x = x * z;
+            //    z++;
+            //} while (x < Width);
+            //c = 1;
+            //do
+            //{
+            //    y = y * z;
+            //    c++;
+            //} while (y < Height);
+
+            items_per_page = 15;
+            total_pages = (int)Math.Floor((double)Pics.Count / items_per_page);
+            current_page = (FolderIndex - 1) / Pics.Count;
+            next_page = current_page + 1 > total_pages ? total_pages : current_page + 1;
+            prev_page = current_page - 1 < 0 ? 1 : current_page - 1;
+
+            //for (int i = 0; i < total_pages; i++)
+            //{
+            //    if (i > 5 && i < (total_pages - 1))
+            //        continue;
+            //    PagingText.Text += i;
+            //    PagingText.Text += " ";
+            //}
+            ScrollTo();
+        }
+
 
         /// <summary>
         /// Scrolls a page back or forth
         /// </summary>
         /// <param name="next"></param>
         /// <param name="end"></param>
-        internal void ScrollTo(bool next = true, bool end = false)
+        internal void ScrollTo(bool next, bool end = false)
         {
             if (end)
             {
@@ -78,12 +113,20 @@ namespace PicView.lib.UserControls
             }
             else
             {
-                // 230 = PicGalleryItem size
                 if (next)
-                    Scroller.ScrollToHorizontalOffset(Scroller.HorizontalOffset + 230);
+                    Scroller.ScrollToHorizontalOffset(Scroller.HorizontalOffset + picGalleryItem_Size);
                 else
-                    Scroller.ScrollToHorizontalOffset(Scroller.HorizontalOffset - 230);
+                    Scroller.ScrollToHorizontalOffset(Scroller.HorizontalOffset - picGalleryItem_Size);
             }
+        }
+
+        /// <summary>
+        /// Scrolls to center of current item
+        /// </summary>
+        /// <param name="item">The index of picGalleryItem</param>
+        internal void ScrollTo()
+        {
+            Scroller.ScrollToHorizontalOffset(Scroller.HorizontalOffset / (picGalleryItem_Size * current_page));
         }
 
         async void Add(BitmapSource pic, string file, int index)
@@ -98,6 +141,7 @@ namespace PicView.lib.UserControls
 
         internal void Load()
         {
+            isLoading = true;
             var t = new Task(() =>
             {
                 for (int i = 0; i < Pics.Count; i++)
@@ -113,7 +157,6 @@ namespace PicView.lib.UserControls
                     if (i == Pics.Count - 1)
                         LoadComplete = true;
                 }
-
             });
             t.Start();
         }
@@ -130,7 +173,8 @@ namespace PicView.lib.UserControls
 
         internal void Clear()
         {
-
+            LoadComplete = isLoading = open = false;
+            Container.Children.Clear();
         }
 
         internal void Sort()
@@ -185,6 +229,8 @@ namespace PicView.lib.UserControls
             img.BeginAnimation(Rectangle.HeightProperty, da0);
         }
     }
+
+    // Event
 
     public delegate void MyEventHandler(object source, MyEventArgs e);
 

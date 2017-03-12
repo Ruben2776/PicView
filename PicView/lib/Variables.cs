@@ -16,6 +16,7 @@ namespace PicView.lib
         internal const string Loading = "Loading...";
         internal const string TxtCopy = "Filename copied to Clipboard";
         internal const string FileCopy = "File copied to Clipboard";
+        internal const string ImageCopy = "Image copied to Clipboard";
         internal const string ExpFind = "Locating in file explorer";
         internal const string NoImage = "No image loaded";
         internal const string DragOverString = "Drop to load image";
