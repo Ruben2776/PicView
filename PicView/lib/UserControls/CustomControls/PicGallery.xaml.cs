@@ -126,7 +126,7 @@ namespace PicView.lib.UserControls
         /// <param name="item">The index of picGalleryItem</param>
         internal void ScrollTo()
         {
-            Scroller.ScrollToHorizontalOffset(Scroller.HorizontalOffset / (picGalleryItem_Size * current_page));
+            //Scroller.ScrollToHorizontalOffset(Scroller.HorizontalOffset / (picGalleryItem_Size * current_page));
         }
 
         async void Add(BitmapSource pic, string file, int index)
@@ -201,7 +201,9 @@ namespace PicView.lib.UserControls
             border.Child = img;
             grid.Children.Add(border);
             var from = 230; // 230 = PicGalleryItem size
-            var to = new double[] { Width, Height};
+            //var to = new double[] { Width, Height };
+            var to = new double[] { Application.Current.MainWindow.ActualWidth - 15, Application.Current.MainWindow.ActualHeight - 95 };
+            //var to = new double[] { Application.Current.MainWindow.Width, Application.Current.MainWindow.Height};
             var da = new DoubleAnimation();
             da.From = from;
             da.To = to[0]; // Width
@@ -229,6 +231,7 @@ namespace PicView.lib.UserControls
             img.BeginAnimation(Rectangle.HeightProperty, da0);
         }
     }
+
 
     // Event
 

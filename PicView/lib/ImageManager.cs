@@ -1,6 +1,7 @@
 ﻿using ImageMagick;
 using System;
 using System.IO;
+using System.Windows;
 using System.Windows.Media.Imaging;
 
 namespace PicView.lib
@@ -305,6 +306,15 @@ namespace PicView.lib
             }
 
             return true;
+        }
+
+        internal static Size ImageSize (string file)
+        {
+            using (MagickImage magick = new MagickImage())
+            {
+                magick.Read(file);
+                return new Size(magick.Width, magick.Height);
+            }
         }
 
 

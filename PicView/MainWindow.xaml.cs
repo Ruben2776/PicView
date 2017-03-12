@@ -2976,9 +2976,12 @@ namespace PicView
 
         private void PicGallery_PreviewItemClick(object source, MyEventArgs e)
         {
+            var size = ImageSize(Pics[e.GetId()]);
+            ZoomFit(size.Width, size.Height);
+
             Task.Run(() =>
             {
-                Preloader.Clear();
+                //Preloader.Clear();
                 Preloader.Add(e.GetId());
             });
         }
