@@ -6,6 +6,7 @@
     AllowsTransparency="True"
     Background="#99000000"
     Closing="Window_Closing"
+    ContentRendered="Window_ContentRendered"
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
@@ -17,7 +18,7 @@
 
     <Border
         Width="350"
-        Height="200"
+        Height="280"
         BorderBrush="{StaticResource BorderBrushAlt}"
         BorderThickness="1">
 
@@ -104,7 +105,7 @@
 
             <Canvas
                 Width="348"
-                Height="130"
+                Height="245"
                 Margin="0,33">
 
                 <Label
@@ -124,13 +125,13 @@
                 <Rectangle
                     x:Name="LeftBorderRectangle"
                     Width="7"
-                    Height="160"
+                    Height="240"
                     Fill="{StaticResource BackgroundColorBrushAltW}" />
                 <Rectangle
                     x:Name="RightBorderRectangle"
                     Canvas.Left="341"
                     Width="7"
-                    Height="160"
+                    Height="240"
                     Fill="{StaticResource BackgroundColorBrushAltW}" />
 
 
@@ -164,6 +165,46 @@
                         Content="No"
                         IsCancel="True" />
                 </StackPanel>
+
+
+
+
+                <RadioButton
+                    x:Name="rbBulkRename"
+                    Canvas.Left="12"
+                    Canvas.Top="150"
+                    Click="rbRename_Click"
+                    Content="Bulk rename" />
+
+                <RadioButton
+                    x:Name="rbBulkRenameEx"
+                    Canvas.Left="12"
+                    Canvas.Top="171"
+                    Click="rbRename_Click"
+                    Content="Bulk rename extension" />
+
+                <RadioButton
+                    x:Name="rbRename"
+                    Canvas.Left="12"
+                    Canvas.Top="129"
+                    Click="rbRename_Click"
+                    Content="Rename"
+                    IsChecked="True" />
+
+                <TextBox
+                    x:Name="txtcounter"
+                    Canvas.Left="315"
+                    Canvas.Top="142"
+                    Width="21"
+                    Height="20"
+                    Text="1"
+                    Visibility="Collapsed" />
+                <Label
+                    x:Name="lbCounter"
+                    Canvas.Left="235"
+                    Canvas.Top="138"
+                    Content="Counter:"
+                    Visibility="Collapsed" />
 
             </Canvas>
             <Border

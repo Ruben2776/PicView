@@ -202,9 +202,9 @@
                 FontWeight="Bold"
                 Text="Loading..."
                 TextAlignment="Center"
-                TextTrimming="CharacterEllipsis" >
+                TextTrimming="CharacterEllipsis">
                 <TextBlock.Foreground>
-                    <SolidColorBrush Color="{StaticResource MainColor}"/>
+                    <SolidColorBrush Color="{StaticResource MainColor}" />
                 </TextBlock.Foreground>
             </TextBlock>
         </DockPanel>
@@ -452,6 +452,7 @@
                         </Style>
                     </ScrollViewer.Style>
                     <Border x:Name="imgBorder" Focusable="False">
+
                         <Image
                             x:Name="img"
                             AllowDrop="True"
@@ -460,6 +461,9 @@
                             RenderOptions.EdgeMode="Aliased"
                             RenderTransformOrigin="0.5,0.5"
                             Stretch="Fill" />
+
+
+
                     </Border>
                 </ScrollViewer>
                 <Canvas x:Name="topLayer" IsHitTestVisible="False" />

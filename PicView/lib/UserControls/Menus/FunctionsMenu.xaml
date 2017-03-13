@@ -232,7 +232,6 @@
                         Margin="0,0,4,0"
                         Style="{StaticResource MetroAlphaFlatButton}"
                         ToolTip="Rename file name">
-                        ToolTip="Rename filename.">
                         <Canvas>
                             <Path
                                 Canvas.Left="-13"
@@ -275,6 +274,28 @@
                                 Data="M442,386.7l-84.8-85.9c13.8-24.1,21-50.9,21-77.9c0-87.6-71.2-158.9-158.6-158.9C135.2,64,64,135.3,64,222.9  c0,87.6,71.2,158.9,158.6,158.9c27.9,0,55.5-7.7,80.1-22.4l84.4,85.6c1.9,1.9,4.6,3.1,7.3,3.1c2.7,0,5.4-1.1,7.3-3.1l43.3-43.8  C449,397.1,449,390.7,442,386.7z M222.6,125.9c53.4,0,96.8,43.5,96.8,97c0,53.5-43.4,97-96.8,97c-53.4,0-96.8-43.5-96.8-97  C125.8,169.4,169.2,125.9,222.6,125.9z"
                                 Fill="{StaticResource BackgroundColorBrush}"
                                 Stretch="Fill" />
+                        </Canvas>
+                    </Button>
+
+                    <Button
+                        x:Name="SlideshowButton"
+                        Width="42"
+                        Height="42"
+                        Margin="0,0,4,0"
+                        Style="{StaticResource MetroAlphaFlatButton}"
+                        ToolTip="Start Slideshow [F11]">
+                        <Canvas>
+                            <Path
+                                Canvas.Left="-13"
+                                Canvas.Top="-15"
+                                Width="28"
+                                Height="30"
+                                Data="M20 16v16l10-8-10-8zm18-10h-28c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4v-28c0-2.21-1.79-4-4-4zm0 32h-28v-28h28v28z"
+                                Stretch="Fill">
+                                <Path.Fill>
+                                    <SolidColorBrush x:Name="SlideshowsBrush" Color="{StaticResource MainColor}" />
+                                </Path.Fill>
+                            </Path>
                         </Canvas>
                     </Button>
 

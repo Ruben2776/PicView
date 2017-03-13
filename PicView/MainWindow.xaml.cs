@@ -46,7 +46,7 @@ namespace PicView
             };
             bg.Children.Add(ajaxLoading);
             AjaxLoadingStart();
-
+                
             if (Properties.Settings.Default.WindowStyle == 2)
             {
                 TitleBar.Visibility =
@@ -248,6 +248,8 @@ namespace PicView
                 functionsMenu.RenameFileButton.Click += (s, x) => RenameFile();
                 functionsMenu.RenameFileButton.Click += Toggle_Functions_menu;
                 functionsMenu.ResetZoomButton.Click += (s, x) => ResetZoom();
+                functionsMenu.SlideshowButton.Click += (s, x) => LoadSlideshow();
+                functionsMenu.SlideshowButton.Click += Toggle_Functions_menu;
 
 
                 // FlipButton
@@ -302,7 +304,7 @@ namespace PicView
                 Closing += Window_Closing;
                 MouseMove += MainWindow_MouseMove;
                 MouseLeave += MainWindow_MouseLeave;
-                
+
 
                 #endregion
 
@@ -329,6 +331,14 @@ namespace PicView
                     Enabled = false
                 };
                 fastPicTimer.Elapsed += FastPic;
+
+                Slidetimer = new System.Timers.Timer()
+                {
+                    Interval = 2500,
+                    Enabled = false
+                };
+                Slidetimer.Elapsed += SlideTimer_Elapsed;
+
 
                 // Updates settings from older version to newer version
                 if (Properties.Settings.Default.CallUpgrade)
@@ -417,7 +427,7 @@ namespace PicView
             sortcm.Icon = sortcmIcon;
             var sortcmChild0 = new RadioButton();
             sortcmChild0.Content = "File name";
-            sortcmChild0.Click += (s, x) => 
+            sortcmChild0.Click += (s, x) =>
             {
                 Properties.Settings.Default.SortPreference = 0;
                 if (!string.IsNullOrWhiteSpace(PicPath))
@@ -917,6 +927,8 @@ namespace PicView
                     ZoomFit(img.Source.Width, img.Source.Height);
             }
         }
+
+
 
         #endregion
 
@@ -1465,6 +1477,8 @@ namespace PicView
         }
 
 
+
+
         /// <summary>
         /// Clears data, to free objects no longer necessary to store in memory and allow changing folder without error.
         /// </summary>
@@ -1513,6 +1527,7 @@ namespace PicView
                 PicErrorFix(y);
             }
         }
+
 
         #endregion
 
@@ -1931,7 +1946,7 @@ namespace PicView
                     break;
                 case Key.Subtract:
                 case Key.OemMinus:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control ||IsScrollEnabled)
+                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control || IsScrollEnabled)
                         Zoom(-1, true);
                     else
                         Zoom(-1, false);
@@ -2050,6 +2065,12 @@ namespace PicView
                 ResetZoom();
             }
 
+            //F11
+            else if (e.Key == Key.F11)
+            {
+                LoadSlideshow();
+            }
+
             // Home
             else if (e.Key == Key.Home)
             {
@@ -2066,6 +2087,13 @@ namespace PicView
             else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.Z))
             {
                 HideInterface();
+            }
+
+            //Ctrl + R
+            else if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && (e.Key == Key.R)
+                || e.Key == Key.F5)
+            {
+                Reload();
             }
         }
 
@@ -2813,7 +2841,6 @@ namespace PicView
         }
 
 
-        // Tooltip
 
         /// <summary>
         /// Loads TooltipStyle and adds it to the window
@@ -2869,12 +2896,70 @@ namespace PicView
             ToolTipStyle(message, center, TimeSpan.FromSeconds(1));
         }
 
-
+        /// <summary>
+        /// Hides the Messagebox ToolTipStyle
+        /// </summary>
         private void CloseToolTipStyle()
         {
             sexyToolTip.Visibility = Visibility.Hidden;
         }
 
+        /// <summary>
+        /// Maximize and removes Interface and start timer for slideshow.
+        /// </summary>
+        private void LoadSlideshow()
+        {
+            if(this.WindowState == WindowState.Normal)
+            {
+                Maximize_Restore();
+                TitleBar.Visibility =
+                LowerBar.Visibility =
+                LeftBorderRectangle.Visibility =
+                RightBorderRectangle.Visibility =
+                Visibility.Collapsed;
+                Mouse.OverrideCursor = Cursors.None;
+                SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED);
+
+                clickArrowLeft.Visibility =
+                clickArrowRight.Visibility =
+                x2.Visibility =
+                Visibility.Visible;
+                Slidetimer.Start();
+            }
+            else if(this.WindowState == WindowState.Maximized && Slidetimer.Enabled == false)
+            {
+                TitleBar.Visibility =
+                LowerBar.Visibility =
+                LeftBorderRectangle.Visibility =
+                RightBorderRectangle.Visibility =
+                Visibility.Collapsed;
+                Mouse.OverrideCursor = Cursors.None;
+                SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED);
+
+                clickArrowLeft.Visibility =
+                clickArrowRight.Visibility =
+                x2.Visibility =
+                Visibility.Visible;
+                Slidetimer.Start();
+            }else
+            {
+                Maximize_Restore();
+                TitleBar.Visibility =
+                LowerBar.Visibility =
+                LeftBorderRectangle.Visibility =
+                RightBorderRectangle.Visibility
+                = Visibility.Visible;
+                Mouse.OverrideCursor = Cursors.Arrow;
+                SetThreadExecutionState(ES_CONTINUOUS);
+
+                clickArrowLeft.Visibility =
+                clickArrowRight.Visibility =
+                x2.Visibility =
+                Visibility.Collapsed;
+                Slidetimer.Stop();
+            }
+                     
+        }
 
         // AjaxLoading
 
@@ -3182,6 +3267,7 @@ namespace PicView
 
         }
 
+
         #endregion
 
         #region Manipulate Interface
@@ -3265,6 +3351,21 @@ namespace PicView
             FadeControlsAsync(false);
         }
 
+
+        /// <summary>
+        /// Timer starts Slideshow Fade animation.
+        /// </summary>
+        /// <param name="server"></param>
+        /// <param name="e"></param>
+        private async void SlideTimer_Elapsed(object server, System.Timers.ElapsedEventArgs e)
+        {
+            await Application.Current.Dispatcher.BeginInvoke((Action)(() =>
+            {
+                AnimationHelper.Fade(img, 0, TimeSpan.FromSeconds(.5));
+                Pic(true, false);
+                AnimationHelper.Fade(img, 1, TimeSpan.FromSeconds(.5));
+            }));             
+        }
 
         /// <summary>
         /// Logic for mouse movements on MainWindow
@@ -3373,6 +3474,8 @@ namespace PicView
             }
         }
 
+
+
         #endregion
 
         #region Windows
@@ -3452,6 +3555,7 @@ namespace PicView
                 Width = Width,
                 Height = Height,
                 Owner = Application.Current.MainWindow,
+                Picname = Picname,
             };
 
             var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
@@ -3459,28 +3563,75 @@ namespace PicView
 
             if ((bool)YesNoDialog.ShowDialog())
             {
-
-                if (!File.Exists(PicPath) || img.Source == null)
-                    return;
-
-                if (string.IsNullOrWhiteSpace(YesNoDialog.NameForRename))
-                    return;
-
-                if (File.Exists(RenamedFilePath + "\\" + YesNoDialog.NameForRename + RenamedFileExt))
-                    ToolTipStyle(YesNoDialog.NameForRename + RenamedFileExt + " allready exists");
-                    
-
-                if (FileFunctions.RenameFile(PicPath, RenamedFilePath + "\\" + YesNoDialog.NameForRename + RenamedFileExt))
+                if (YesNoDialog.ChosenRbtn.Equals("rbRename"))
                 {
-                    string Fullpath = RenamedFilePath + "\\" + YesNoDialog.NameForRename + RenamedFileExt;
-                    Pics[FolderIndex] = Fullpath;
+                    if (!File.Exists(PicPath) || img.Source == null)
+                        return;
 
-                    var titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, FolderIndex);
-                    Title = titleString[0];
-                    Bar.Text = titleString[1];
-                    Bar.ToolTip = titleString[2];
+                    if (string.IsNullOrWhiteSpace(YesNoDialog.NameForRename))
+                        return;
+
+                    if (File.Exists(RenamedFilePath + "\\" + YesNoDialog.NameForRename + RenamedFileExt))
+                        ToolTipStyle(YesNoDialog.NameForRename + RenamedFileExt + " allready exists");
+
+
+                    if (FileFunctions.RenameFile(PicPath, RenamedFilePath + "\\" + YesNoDialog.NameForRename + RenamedFileExt))
+                    {
+                        string Fullpath = RenamedFilePath + "\\" + YesNoDialog.NameForRename + RenamedFileExt;
+                        Pics[FolderIndex] = Fullpath;
+
+                        var titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, FolderIndex);
+                        Title = titleString[0];
+                        Bar.Text = titleString[1];
+                        Bar.ToolTip = titleString[2];
+                    }
+                    Reload();
                 }
-                Reload();
+                else if (YesNoDialog.ChosenRbtn.Equals("rbBulkRename"))
+                {
+                    int Counteren = int.Parse(YesNoDialog.Counter2);
+                    if (!File.Exists(PicPath) || img.Source == null)
+                        return;
+
+                    if (string.IsNullOrWhiteSpace(YesNoDialog.NameForRename))
+                        return;
+
+                    if (File.Exists(RenamedFilePath + "\\" + YesNoDialog.NameForRename + RenamedFileExt))
+                        ToolTipStyle(YesNoDialog.NameForRename + RenamedFileExt + " allready exists");
+
+
+                    for (int i = 0; i < Pics.Count; i++)
+                    {
+                        FileFunctions.RenameFile(Pics[i], RenamedFilePath + "\\" + YesNoDialog.NameForRename + Counteren + RenamedFileExt);
+                        Counteren++;
+                    }
+
+
+                    Reload();
+                }
+                else if (YesNoDialog.ChosenRbtn.Equals("rbBulkRenameEx"))
+                {
+
+                    if (!File.Exists(PicPath) || img.Source == null)
+                        return;
+
+                    if (string.IsNullOrWhiteSpace(YesNoDialog.NameForRename))
+                        return;
+
+                    if (File.Exists(RenamedFilePath + "\\" + YesNoDialog.NameForRename + RenamedFileExt))
+                        ToolTipStyle(YesNoDialog.NameForRename + RenamedFileExt + " allready exists");
+
+                    for (int i = 0; i < Pics.Count; i++)
+                    {
+                        Picname = Path.GetFileName(Pics[i]);
+                        Picname = Picname.Remove(Picname.IndexOf(".") + 1);
+                        FileFunctions.RenameFile(Pics[i], RenamedFilePath + "\\" + Picname + YesNoDialog.NameForRename);
+
+                    }
+
+
+                    Reload();
+                }
             }
             else
             {
@@ -4085,8 +4236,7 @@ namespace PicView
         }
 
 
-        
 
-        #endregion     
+        #endregion
     }
 }

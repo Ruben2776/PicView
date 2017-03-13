@@ -3,6 +3,7 @@ using PicView.lib.UserControls.CustomControls;
 using PicView.lib.UserControls.Menus;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,6 +29,7 @@ namespace PicView.lib
         + " *.jpm *.jps *.jpt *.kdc *.label *.map *.nrw *.otb *.otf *.pbm *.pcd *.pcds *.pcl *.pct *.pcx *.pfa *.pfb *.pfm *.picon *.pict *.pix *.pjpeg *.png00"
         + " *.png24 *.png32 *.png48 *.png64 *.png8 *.pnm *.ppm *.ps *.radialgradient *.ras *.rgb *.rgba *.rgbo *.rla *.rle *.scr *.screenshot *.sgi *.srf *.sun"
         + " *.svgz *.tiff64 *.ttf *.vda *.vicar *.vid *.viff *.vst *.vmf *.wpg *.xbm *.xcf *.yuv";
+
 
         // May need update to display all files
         internal const string FilterFiles =
@@ -119,6 +121,17 @@ namespace PicView.lib
         internal static bool clickArrowLeftClicked;
 
         /// <summary>
+        /// Used to disable Screensaver and Power options.
+        /// </summary>
+        internal const uint ES_CONTINUOUS = 0x80000000;
+        internal const uint ES_SYSTEM_REQUIRED = 0x00000001;
+        internal const uint ES_DISPLAY_REQUIRED = 0x00000002;
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern uint SetThreadExecutionState([In] uint esFlags);
+
+
+        /// <summary>
         /// Used as comfortable space for standard viewing
         /// </summary>
         internal const int ComfySpace = 350;
@@ -194,6 +207,8 @@ namespace PicView.lib
         /// </summary>
         internal static List<string> Pics { get; set; }
 
+
+        internal static List<ImageSource> Images { get; set; }
         /// <summary>
         /// Timer used to continously scroll with AutoScroll
         /// </summary>
@@ -208,6 +223,11 @@ namespace PicView.lib
         /// Timer used for FastPic()
         /// </summary>
         internal static Timer fastPicTimer;
+
+        /// <summary>
+        /// Timer used for slideshow
+        /// </summary>
+        internal static Timer Slidetimer;
 
         /// <summary>
         /// Backup of image

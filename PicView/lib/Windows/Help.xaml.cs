@@ -20,7 +20,7 @@ namespace PicView.Windows
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            #region Add Events
+            #region Add events
 
             CloseButton.Click += (s, x) => Close();
 
@@ -43,7 +43,23 @@ namespace PicView.Windows
 
             #endregion
         }
-        
+
+        // Close Button
+        private void CloseButtonMouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
+        }
+
+        private void CloseButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(CloseButtonBrush, false);
+        }
+
+        private void CloseButtonMouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
+        }
+
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             Closing -= Window_Closing;
