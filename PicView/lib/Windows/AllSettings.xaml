@@ -319,6 +319,7 @@
                                     <SolidColorBrush x:Name="LoopBrush" Color="{StaticResource BackgroundColorFade}" />
                                 </CheckBox.Background>
                             </CheckBox>
+
                         </WrapPanel>
                         <TextBlock Margin="0,5" TextAlignment="Center">Some settings may require restart to take effect</TextBlock>
                     </StackPanel>

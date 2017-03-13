@@ -333,7 +333,7 @@ namespace PicView
 
                 Slidetimer = new System.Timers.Timer()
                 {
-                    Interval = 2500,
+                    Interval = Properties.Settings.Default.Slidetimer,
                     Enabled = false
                 };
                 Slidetimer.Elapsed += SlideTimer_Elapsed;
@@ -1984,6 +1984,9 @@ namespace PicView
                         Rotate(true);
                     break;
 
+
+
+
                 // Zoom
                 case Key.Add:
                 case Key.OemPlus:
@@ -2026,6 +2029,10 @@ namespace PicView
                         PicGalleryFade(false);
                     else
                         Close();
+                }
+                else if(Slidetimer.Enabled == true)
+                {
+                    UnloadSlideshow();
                 }
                 else
                 {
@@ -2161,13 +2168,6 @@ namespace PicView
             else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.Z))
             {
                 HideInterface();
-            }
-
-            //Ctrl + R
-            else if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && (e.Key == Key.R)
-                || e.Key == Key.F5)
-            {
-                Reload();
             }
 
             // DEBUG!!!!!
@@ -2393,18 +2393,21 @@ namespace PicView
                 }
             }
 
+
+            else if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            {
+                if (e.Delta > 0)
+                    Pic();
+                else if (e.Delta < 0)
+                    Pic(false);
+            }
+
             // Zoom if it's not scroll enabled
             else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !autoScrolling)
                 Zoom(e.Delta, true); // Scale zoom with Ctrl held down
             else if (!autoScrolling)
                 Zoom(e.Delta, false);
-
-
-
-            else if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift && e.Delta > 0)
-                Pic();
-            else if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift && e.Delta < 0)
-                Pic(false);
+                
         }
 
 
@@ -3107,6 +3110,13 @@ namespace PicView
         /// </summary>
         private void LoadSlideshow()
         {
+            if (!File.Exists(PicPath))
+            {
+                ToolTipStyle("There was no image(s) to show.");
+                return;
+            }
+                
+
             if(this.WindowState == WindowState.Normal)
             {
                 Maximize_Restore();
@@ -3139,25 +3149,33 @@ namespace PicView
                 x2.Visibility =
                 Visibility.Visible;
                 Slidetimer.Start();
-            }else
+            }
+            else
             {
-                Maximize_Restore();
-                TitleBar.Visibility =
-                LowerBar.Visibility =
-                LeftBorderRectangle.Visibility =
-                RightBorderRectangle.Visibility
-                = Visibility.Visible;
-                Mouse.OverrideCursor = Cursors.Arrow;
-                NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
-
-                clickArrowLeft.Visibility =
-                clickArrowRight.Visibility =
-                x2.Visibility =
-                Visibility.Collapsed;
-                Slidetimer.Stop();
+                UnloadSlideshow();
             }
                      
         }
+
+        private void UnloadSlideshow()
+        {
+            Maximize_Restore();
+            TitleBar.Visibility =
+            LowerBar.Visibility =
+            LeftBorderRectangle.Visibility =
+            RightBorderRectangle.Visibility
+            = Visibility.Visible;
+            Mouse.OverrideCursor = Cursors.Arrow;
+            NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
+
+            clickArrowLeft.Visibility =
+            clickArrowRight.Visibility =
+            x2.Visibility =
+            Visibility.Collapsed;
+            Slidetimer.Stop();
+        }
+
+       
 
         // AjaxLoading
 

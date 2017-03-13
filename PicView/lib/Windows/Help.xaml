@@ -231,6 +231,22 @@
                             <TextBlock Margin="5,0,0,0">
                                 <Bold>Ctrl</Bold>
                                 +
+                                <Bold>Shift</Bold>
+                                +
+                                <Bold>C</Bold>
+                                to copy bitmap image to clipboard.
+                            </TextBlock>
+                        </BulletDecorator>
+                        <BulletDecorator Margin="7,2">
+                            <BulletDecorator.Bullet>
+                                <Ellipse
+                                    Width="7"
+                                    Height="7"
+                                    Fill="{StaticResource MainColorBrush}" />
+                            </BulletDecorator.Bullet>
+                            <TextBlock Margin="5,0,0,0">
+                                <Bold>Ctrl</Bold>
+                                +
                                 <Bold>C</Bold>
                                 to copy image to clipboard.
                             </TextBlock>
@@ -261,20 +277,6 @@
                                 +
                                 <Bold>S</Bold>
                                 to save image.
-                            </TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Ctrl</Bold>
-                                +
-                                <Bold>V</Bold>
-                                to paste image from clipboard.
                             </TextBlock>
                         </BulletDecorator>
                         <BulletDecorator Margin="7,2">
@@ -354,6 +356,18 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
+                                <Bold>Shift + Mousewheel up</Bold>
+                                to show next image.
+                            </TextBlock>
+                        </BulletDecorator>
+                        <BulletDecorator Margin="7,2">
+                            <BulletDecorator.Bullet>
+                                <Ellipse
+                                    Width="7"
+                                    Height="7"
+                                    Fill="{StaticResource MainColorBrush}" />
+                            </BulletDecorator.Bullet>
+                            <TextBlock Margin="5,0,0,0">
                                 <Bold>Mouse button forward</Bold>
                                 to show next image.
                             </TextBlock>
@@ -380,6 +394,18 @@
                             <TextBlock Margin="5,0,0,0">
                                 <Bold>A</Bold>
                                 to show previous image.
+                            </TextBlock>
+                        </BulletDecorator>
+                        <BulletDecorator Margin="7,2">
+                            <BulletDecorator.Bullet>
+                                <Ellipse
+                                    Width="7"
+                                    Height="7"
+                                    Fill="{StaticResource MainColorBrush}" />
+                            </BulletDecorator.Bullet>
+                            <TextBlock Margin="5,0,0,0">
+                                <Bold>Shift + Mousewheel down</Bold>
+                                to show next image.
                             </TextBlock>
                         </BulletDecorator>
                         <BulletDecorator Margin="7,2">

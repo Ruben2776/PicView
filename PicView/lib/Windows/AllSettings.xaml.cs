@@ -609,6 +609,8 @@ namespace PicView.Windows
             Properties.Settings.Default.ColorTheme = 12;
         }
 
+
+
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             Closing -= Window_Closing;

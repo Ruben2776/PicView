@@ -382,5 +382,17 @@ namespace PicView.Properties {
                 this["PicGalleryEnabled"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
+        public double Slidetimer {
+            get {
+                return ((double)(this["Slidetimer"]));
+            }
+            set {
+                this["Slidetimer"] = value;
+            }
+        }
     }
 }
