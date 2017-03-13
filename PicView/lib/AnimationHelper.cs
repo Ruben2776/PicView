@@ -3,6 +3,7 @@ using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Shapes;
 
 namespace PicView.lib
 {
@@ -463,26 +464,27 @@ namespace PicView.lib
 
         #region Size Animation
 
-        //internal static void HoverSizeAnim(UIElement element, bool unHover)
-        //{
-        //    var da = new DoubleAnimation();
-        //    if (unHover)
-        //    {
-        //        da.From = 95;
-        //        da.To = 65;
-        //        da.Duration = TimeSpan.FromSeconds(.3);
-        //    }
-        //    else
-        //    {
-        //        da.From = 65;
-        //        da.To = 95;
-        //        da.Duration = TimeSpan.FromSeconds(.25);
-        //    }
-        //    da.AccelerationRatio = 0.4;
-        //    da.DecelerationRatio = 0.6;
+        internal static void HoverSizeAnim(UIElement element, bool unHover, double from, double to)
+        {
+            var da = new DoubleAnimation();
+            if (unHover)
+            {
+                da.From = from;
+                da.To = to;
+                da.Duration = TimeSpan.FromSeconds(.3);
+            }
+            else
+            {
+                da.From = from;
+                da.To = to;
+                da.Duration = TimeSpan.FromSeconds(.25);
+            }
+            da.AccelerationRatio = 0.4;
+            da.DecelerationRatio = 0.6;
 
-        //    element.BeginAnimation(Rectangle.HeightProperty, da);
-        //}
+            element.BeginAnimation(Rectangle.WidthProperty, da);
+            element.BeginAnimation(Rectangle.HeightProperty, da);
+        }
 
         #endregion
 

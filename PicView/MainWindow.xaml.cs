@@ -77,16 +77,8 @@ namespace PicView
             }
             else
             {
-                var file = Application.Current.Properties["ArbitraryArgName"].ToString();
-                if (File.Exists(file))
-                    Pic(file);
-                else if (Uri.IsWellFormedUriString(file, UriKind.Absolute))
-                    PicWeb(file);
-                else
-                {
-                    Unload();
-                    endLoading = true;
-                }
+                var args = Application.Current.Properties["ArbitraryArgName"].ToString();
+                Pic(args);
             }
 
             // Add UserControls :)
@@ -299,6 +291,13 @@ namespace PicView
 
                 // Lower Bar
                 LowerBar.Drop += Image_Drop;
+
+                // PicGallery
+                if (Properties.Settings.Default.PicGalleryEnabled)
+                {
+                    picGallery.PreviewItemClick += PicGallery_PreviewItemClick;
+                    picGallery.ItemClick += PicGallery_ItemClick;
+                }
 
                 // This
                 Closing += Window_Closing;
@@ -997,18 +996,24 @@ namespace PicView
             // Navigate to picture using obtained index
             Pic(FolderIndex);
 
-            // No longer fresh startup
+
             if (freshStartup)
                 freshStartup = false;
-
-            // Save ram
-            if (prevPicResource != null)
-                prevPicResource = null;
 
             // Fix loading bug
             if (ajaxLoading.Opacity != 1 && canNavigate)
             {
                 AjaxLoadingEnd();
+            }
+
+            // Load images for PicGallery if enabled
+            if (Properties.Settings.Default.PicGalleryEnabled)
+            {
+                if (picGallery == null)
+                    LoadPicGallery();
+
+                if (!picGallery.LoadComplete)
+                    picGallery.Load();
             }
         }
 
@@ -1075,11 +1080,19 @@ namespace PicView
             else
                 img.Source = pic;
 
-            // Update Title to reflect new image
+            // Update values
             var titleString = TitleString(pic.PixelWidth, pic.PixelHeight, x);
             Title = titleString[0];
             Bar.Text = titleString[1];
             Bar.ToolTip = titleString[2];
+
+            
+            PicPath = Pics[x];
+            canNavigate = true;
+            Progress(x, Pics.Count);
+            FolderIndex = x;
+            if (!freshStartup)
+                RecentFiles.Add(Pics[x]);
 
             // Preload images           
             bool? reverse;
@@ -1095,24 +1108,18 @@ namespace PicView
 
             if (reverse.HasValue)
             {
-                var t = new Task(() =>
+                await Task.Run(() =>
                 {
                     Preloader.PreLoad(x, reverse.Value);
                     PreloadCount = 0;
 
-                    if (!Preloader.Contains(Pics[x]))
-                        Preloader.Add(pic, Pics[x]);
+                    if (x < Pics.Count)
+                    {
+                        if (!Preloader.Contains(Pics[x]))
+                            Preloader.Add(pic, Pics[x]);
+                    }
                 });
-                t.Start();
             }
-
-            // Update values
-            PicPath = Pics[x];
-            canNavigate = true;
-            Progress(x, Pics.Count);
-            FolderIndex = x;
-            if (!freshStartup)
-                RecentFiles.Add(Pics[x]);
 
             // Stop AjaxLoading if it's shown
             AjaxLoadingEnd();
@@ -1162,6 +1169,12 @@ namespace PicView
             // Exit if not intended to change picture
             if (!canNavigate)
                 return;
+
+            if (picGallery != null)
+            {
+                if (picGallery.open)
+                    return;
+            }
 
             // Go to first or last
             if (end)
@@ -1400,6 +1413,7 @@ namespace PicView
             }
             catch (Exception)
             {
+                Unload();
                 return false;
             }
             if (Pics.Count < 0)
@@ -1488,6 +1502,11 @@ namespace PicView
             Preloader.Clear();
             DeleteTempFiles();
             PreloadCount = 0;
+
+            if (Properties.Settings.Default.PicGalleryEnabled)
+            {
+                picGallery.Clear();
+            }
         }
 
 
@@ -1759,7 +1778,7 @@ namespace PicView
                 prevPicResource = img.Source;
             }
 
-            // Load from preloader or Windows thumbnails
+            // Load from preloader or thumbnails
             img.Source = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : GetBitmapSourceThumb(files[0]);
         }
 
@@ -1897,10 +1916,26 @@ namespace PicView
 
                 // Scroll
                 case Key.PageUp:
+                    if (picGallery != null)
+                    {
+                        if (picGallery.open)
+                        {
+                            picGallery.ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            return;
+                        }
+                    }
                     if (Properties.Settings.Default.ScrollEnabled)
                         Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 30);
                     break;
                 case Key.PageDown:
+                    if (picGallery != null)
+                    {
+                        if (picGallery.open)
+                        {
+                            picGallery.ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            return;
+                        }
+                    }
                     if (Properties.Settings.Default.ScrollEnabled)
                         Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 30);
                     break;
@@ -1908,31 +1943,43 @@ namespace PicView
                 // Rotate or Scroll
                 case Key.Up:
                 case Key.W:
+                    if (picGallery != null)
+                    {
+                        if (picGallery.open)
+                        {
+                            picGallery.ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            return;
+                        }
+                    }
                     if (Properties.Settings.Default.ScrollEnabled)
                     {
-                        if (Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed && !e.IsRepeat)
-                            Rotate(false);
-                        else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !e.IsRepeat)
-                            Rotate(false);
+                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                            return;
                         else
                             Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 30);
                     }
-                    else if (!e.IsRepeat)
+                    else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
                         Rotate(false);
                     break;
 
                 case Key.Down:
                 case Key.S:
+                    if (picGallery != null)
+                    {
+                        if (picGallery.open)
+                        {
+                            picGallery.ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            return;
+                        }
+                    }
                     if (Properties.Settings.Default.ScrollEnabled)
                     {
-                        if (Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed && !e.IsRepeat)
-                            Rotate(true);
-                        else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !e.IsRepeat)
-                            Rotate(true);
+                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                            return; // Save Ctrl + S fix
                         else
                             Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 30);
                     }
-                    else if (!e.IsRepeat)
+                    else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
                         Rotate(true);
                     break;
 
@@ -1969,9 +2016,20 @@ namespace PicView
             else if (e.Key == Key.Escape)
             {
                 if (UserControls_Open())
+                {
                     Close_UserControls();
+                }
+                else if (picGallery != null)
+                {
+                    if (picGallery.open)
+                        PicGalleryFade(false);
+                    else
+                        Close();
+                }
                 else
+                {
                     Close();
+                }
             }
 
             // Ctrl + Q
@@ -2001,20 +2059,28 @@ namespace PicView
             // Delete, Shift + Delete
             else if (e.Key == Key.Delete)
             {
-                var x = e.KeyboardDevice.Modifiers == ModifierKeys.Shift;
-                DeleteFile(PicPath, !x);
+                DeleteFile(PicPath, e.KeyboardDevice.Modifiers != ModifierKeys.Shift);
             }
 
-            // Ctrl + C
-            else if (e.Key == Key.C && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            // Ctrl + C, Ctrl + Shift + C
+            else if (e.Key == Key.C)
             {
-                CopyPic();
+                if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) == (ModifierKeys.Control | ModifierKeys.Shift))
+                    CopyBitmap();
+                else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    CopyPic();
             }
 
             // Ctrl + V
             else if (e.Key == Key.V && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
                 Paste();
+            }
+
+            // Ctrl + S
+            else if (e.Key == Key.S && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                SaveFiles();
             }
 
             // Ctrl + I
@@ -2027,6 +2093,13 @@ namespace PicView
             else if (e.Key == Key.P && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
                 Print(PicPath);
+            }
+
+            // Ctrl + R, F5
+            else if (e.Key == Key.R && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control
+                || e.Key == Key.F5)
+            {
+                Reload();
             }
 
             // Alt + Enter
@@ -2093,8 +2166,23 @@ namespace PicView
             else if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && (e.Key == Key.R)
                 || e.Key == Key.F5)
             {
-                Reload();
+            // DEBUG!!!!!
+            // F7
+            else if (e.Key == Key.F7)
+            {
+                var x = Properties.Settings.Default.PicGalleryEnabled ? false : true;
+                Properties.Settings.Default.PicGalleryEnabled = x;
+                ToolTipStyle(x);
             }
+            // F8
+            else if (e.Key == Key.F8)
+            {
+                if (picGallery != null)
+                    PicGalleryFade(picGallery.Visibility == Visibility.Collapsed);
+                else
+                    ToolTipStyle("null");
+            }
+            // DEBUG!!!!!
         }
 
 
@@ -2168,20 +2256,26 @@ namespace PicView
         /// <param name="E"></param>
         private async void AutoScrollTimerEvent(object sender, System.Timers.ElapsedEventArgs E)
         {
+            // Error checking
             if (autoScrollPos == null || autoScrollOrigin == null)
             {
                 return;
             }
+
+            // Start in dispatcher because timer is threaded
             await Application.Current.Dispatcher.BeginInvoke((Action)(() =>
             {
                 if (autoScrollOrigin.HasValue)
                 {
+                    // Calculate offset by Y coordinate
                     var offset = (autoScrollPos.Y - autoScrollOrigin.Value.Y) / 15;
+
                     //ToolTipStyle("pos = " + autoScrollPos.Y.ToString() + " origin = " + autoScrollOrigin.Value.Y.ToString()
                     //    + Environment.NewLine + "offset = " + offset, false);
 
                     if (autoScrolling)
                     {
+                        // Tell the scrollviewer to scroll to calculated offset
                         Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + offset);
                     }
                 }
@@ -2199,7 +2293,7 @@ namespace PicView
         {
             if (autoScrolling)
             {
-                //window.CaptureMouse();
+                // Report position and enable autoscrolltimer
                 autoScrollOrigin = e.GetPosition(this);
                 autoScrollTimer.Enabled = true;
                 return;
@@ -2211,6 +2305,7 @@ namespace PicView
             }
             if (!IsScrollEnabled)
             {
+                // Report position for image drag
                 img.CaptureMouse();
                 start = e.GetPosition(this);
                 origin = new Point(tt.X, tt.Y);
@@ -2225,6 +2320,7 @@ namespace PicView
         /// <param name="e"></param>
         private void Zoom_img_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            // Stop autoscrolling or dragging image
             if (autoScrolling)
             {
                 StopAutoScroll();
@@ -2236,6 +2332,7 @@ namespace PicView
 
         /// <summary>
         /// Used to drag image
+        /// or getting position for autoscrolltimer 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -2243,14 +2340,17 @@ namespace PicView
         {
             if (autoScrolling)
             {
+                // Start autoscroller and report position
                 autoScrollPos = e.GetPosition(Scroller);
                 autoScrollTimer.Start();
             }
 
+            // Don't drag when full scale
+            // and don't drag it if mouse not held down on image
             if (!img.IsMouseCaptured || st.ScaleX == 1)
                 return;
 
-            // Needs solution to not drag image away from visible area
+            // Drag image by modifying X,Y coordinates
             var v = start - e.GetPosition(this);
             tt.X = origin.X - v.X;
             tt.Y = origin.Y - v.Y;
@@ -2265,27 +2365,29 @@ namespace PicView
         /// <param name="e"></param>
         private void Zoom_img_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            // Disable normal scroll
+            // Disable normal scroll, so we can use our own values
             e.Handled = true;
 
             if (Properties.Settings.Default.ScrollEnabled && !autoScrolling)
             {
                 if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                 {
-                    Zoom(e.Delta, true);
+                    Zoom(e.Delta, true); // Scale zoom by holding Ctrl when scroll is enabled
                 }
                 else
                 {
+                    // Scroll vertical when scroll enabled
+                    var zoomSpeed = 45;
                     if (e.Delta > 0)
-                        Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 45);
+                        Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - zoomSpeed);
                     else if (e.Delta < 0)
-                        Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 45);
+                        Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + zoomSpeed);
                 }
-
             }
 
+            // Zoom if it's not scroll enabled
             else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !autoScrolling)
-                Zoom(e.Delta, true);
+                Zoom(e.Delta, true); // Scale zoom with Ctrl held down
             else if (!autoScrolling)
                 Zoom(e.Delta, false);
         }
@@ -2293,10 +2395,14 @@ namespace PicView
 
         /// <summary>
         /// Manipulates the required elements to allow zooming
+        /// by modifying ScaleTransform and TranslateTransform
         /// </summary>
         private void InitializeZoom()
         {
+            // Set center
             img.RenderTransformOrigin = new Point(0.5, 0.5);
+
+            // Add children, which can be manipulated ;)
             img.RenderTransform = new TransformGroup
             {
                 Children = new TransformCollection {
@@ -2308,6 +2414,7 @@ namespace PicView
             imgBorder.IsManipulationEnabled = true;
             Scroller.ClipToBounds = img.ClipToBounds = true;
 
+            // Add children to fields
             st = (ScaleTransform)((TransformGroup)img.RenderTransform).Children.First(tr => tr is ScaleTransform);
             tt = (TranslateTransform)((TransformGroup)img.RenderTransform).Children.First(tr => tr is TranslateTransform);
         }
@@ -2321,6 +2428,7 @@ namespace PicView
             if (img.Source == null)
                 return;
 
+            // Scale to default
             var scaletransform = new ScaleTransform();
             scaletransform.ScaleX = scaletransform.ScaleY = 1.0;
             img.LayoutTransform = scaletransform;
@@ -2332,10 +2440,11 @@ namespace PicView
             CloseToolTipStyle();
             isZoomed = false;
 
+            // Reset size
             ZoomFit(img.Source.Width, img.Source.Height);
 
+            // Display non-zoomed values
             string[] titleString;
-
             if (canNavigate)
             {
                 titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, FolderIndex);
@@ -2361,10 +2470,19 @@ namespace PicView
         /// <param name="zoomMode"></param>
         private void Zoom(int i, bool zoomMode)
         {
+            // Don't zoom when gallery is open
+            if (picGallery != null)
+            {
+                if (picGallery.open)
+                {
+                    return;
+                }
+            }
+
             // Scales the window with img.LayoutTransform
             if (zoomMode)
             {
-                // Start from zero or zoom value
+                // Start from 1 or zoom value
                 if (isZoomed)
                     AspectRatio += i > 0 ? .01 : -.01;
                 else
@@ -2379,7 +2497,6 @@ namespace PicView
             // Pan and zoom
             else
             {
-
                 // Get position where user points cursor
                 var position = Mouse.GetPosition(img);
 
@@ -2387,17 +2504,17 @@ namespace PicView
                 img.RenderTransformOrigin = new Point(position.X / img.ActualWidth, position.Y / img.ActualHeight);
 
                 // Determine zoom speed
-                var x = st.ScaleX > 1.3 ? .04 : .01;
+                var zoomValue = st.ScaleX > 1.3 ? .04 : .01;
                 if (st.ScaleX > 1.5)
-                    x += .007;
+                    zoomValue += .007;
                 if (st.ScaleX > 1.7)
-                    x += .009;
+                    zoomValue += .009;
 
 
-                if (st.ScaleX >= 1.0 && st.ScaleX + x >= 1.0 || st.ScaleX - x >= 1.0)
+                if (st.ScaleX >= 1.0 && st.ScaleX + zoomValue >= 1.0 || st.ScaleX - zoomValue >= 1.0)
                 {
                     // Start zoom
-                    st.ScaleY = st.ScaleX = AspectRatio += i > 0 ? x : -x;
+                    st.ScaleY = st.ScaleX = AspectRatio += i > 0 ? zoomValue : -zoomValue;
                 }
 
                 if (st.ScaleX < 1.0)
@@ -2410,13 +2527,11 @@ namespace PicView
 
             isZoomed = true;
 
-            // Display updated values
-
             // Displays zoompercentage in the center window
             ToolTipStyle(ZoomPercentage, true);
 
+            // Display updated values
             string[] titleString;
-
             if (canNavigate)
             {
                 titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, FolderIndex);
@@ -2438,6 +2553,7 @@ namespace PicView
 
         /// <summary>
         /// Fits image size based on users screen resolution
+        /// or window size
         /// </summary>
         /// <param name="width">The pixel width of the image</param>
         /// <param name="height">The pixel height of the image</param>
@@ -2447,18 +2563,19 @@ namespace PicView
             var windowstyle = Properties.Settings.Default.WindowStyle == 0 || Properties.Settings.Default.WindowStyle == 2;
 
             double maxWidth, maxHeight;
+            var interfaceHeight = 93; // TopBar + LowerBar height
 
             if (windowstyle)
             {
                 // Get max width and height, based on user's screen
                 maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth - ComfySpace, width);
-                maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - 93), height);
+                maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - interfaceHeight), height);
             }
             else
             {
-                // 93 = interface height
+                // Get max width and height, based on window size
                 maxWidth = Math.Min(Width, width);
-                maxHeight = Math.Min(Height - 93, height);
+                maxHeight = Math.Min(Height - interfaceHeight, height);
             }
 
             AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));
@@ -2485,26 +2602,26 @@ namespace PicView
                 // and update values
                 img.Height = xHeight = (height * AspectRatio);
                 img.Width = xWidth = (width * AspectRatio);
-
             }
 
             // Update TitleBar width to fit new size
+            var interfaceSize = 220; // logo and buttons width + extra padding
             if (windowstyle)
             {
-                if (xWidth - 220 < 220)
-                    Bar.MaxWidth = 220;
+                if (xWidth - interfaceSize < interfaceSize)
+                    Bar.MaxWidth = interfaceSize;
                 else
-                    Bar.MaxWidth = xWidth - 220;
+                    Bar.MaxWidth = xWidth - interfaceSize;
 
                 // Loses position gradually if not forced to center       
                 CenterWindowOnScreen();
             }
             else
             {
-                if (Width - 220 < 220)
-                    Bar.MaxWidth = 220;
+                if (Width - interfaceSize < interfaceSize)
+                    Bar.MaxWidth = interfaceSize;
                 else
-                    Bar.MaxWidth = Width - 220;
+                    Bar.MaxWidth = Width - interfaceSize;
             }
 
 
@@ -2825,22 +2942,88 @@ namespace PicView
         }
 
 
+        // PicGallery
+
         /// <summary>
         /// Loads PicGallery and adds it to the window
         /// </summary>
         private void LoadPicGallery()
         {
-            picGallery = new lib.UserControls.CustomControls.PicGallery
+            picGallery = new PicGallery
             {
-                Focusable = false,
                 Opacity = 0,
-                Visibility = Visibility.Hidden
+                Visibility = Visibility.Collapsed,
+                Width = bg.Width,
+                Height = bg.Height
             };
 
             bg.Children.Add(picGallery);
+            Panel.SetZIndex(picGallery, 999);
         }
 
 
+        private void PicGalleryFade(bool show = true)
+        {
+            picGallery.Width = Width - 15; // 15 = borders width
+            picGallery.Height = Height - 95; // 95 = top + bottom bar height
+            picGallery.Calculate_Paging();
+
+            if (!picGallery.LoadComplete)
+                if (!picGallery.isLoading)
+                picGallery.Load();
+
+            picGallery.Visibility = Visibility.Visible;
+            var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.5) };
+            if (!show)
+            {
+                da.To = 0;
+                da.Completed += delegate
+                {
+                    picGallery.Visibility = Visibility.Collapsed;
+                    picGallery.open = false;
+                };
+            }
+            else
+            {
+                da.To = 1;
+                picGallery.open = true;
+                picGallery.ScrollTo();
+            }
+
+            if (picGallery != null)
+                picGallery.BeginAnimation(OpacityProperty, da);
+        }
+
+
+        private void PicGallery_PreviewItemClick(object source, MyEventArgs e)
+        {
+            var size = ImageSize(Pics[e.GetId()]);
+            ZoomFit(size.Width, size.Height);
+
+            Task.Run(() =>
+            {
+                //Preloader.Clear();
+                Preloader.Add(e.GetId());
+            });
+        }
+
+
+        private async void PicGallery_ItemClick(object source, MyEventArgs e)
+        {
+            while (!Preloader.Contains(Pics[e.GetId()]))
+            {
+                if (Bar.Text != Loading)
+                {
+                    Bar.Text = Loading;
+                    img.Source = e.GetImage();
+                }
+                await Task.Delay(50);
+            }
+            Pic(e.GetId());
+        }
+
+
+        // Tooltip
 
         /// <summary>
         /// Loads TooltipStyle and adds it to the window
@@ -4041,11 +4224,7 @@ namespace PicView
             // Copy pic if from web
             if (string.IsNullOrWhiteSpace(PicPath) || Uri.IsWellFormedUriString(PicPath, UriKind.Absolute))
             {
-                var source = img.Source as BitmapImage;
-                if (source != null)
-                    Clipboard.SetImage(source);
-                else
-                    return;
+                CopyBitmap();
             }
             else
             {
@@ -4053,6 +4232,21 @@ namespace PicView
                 Clipboard.SetFileDropList(paths);
             }
             ToolTipStyle(FileCopy);
+        }
+
+        private void CopyBitmap()
+        {
+            if (Preloader.Contains(PicPath))
+            {
+                Clipboard.SetImage(Preloader.Load(PicPath));
+            }
+            else if (img.Source != null)
+            {
+                Clipboard.SetImage((BitmapSource)img.Source);
+            }
+            else
+                return;
+            ToolTipStyle(ImageCopy);
         }
 
 
@@ -4192,20 +4386,20 @@ namespace PicView
                 {
                     if (TrySaveImage(Rotateint, Flipped, PicPath, Savedlg.FileName) == false)
                     {
-                        ToolTipStyle("Error, File didnt get saved - File not Found.", true);
+                        ToolTipStyle("Error, File didn't get saved - File not Found.");
                     }
                 }
                 else
                     return;
 
-                //Force freshed the list of pichures.
+                //Refresh the list of pictures.
                 Reload();
 
                 Close_UserControls();
             }
-            else
+            else if (img.Source != null)
             {
-                ToolTipStyle("Error, File does not exist, or something went wrong...", true);
+                ToolTipStyle("Error, File does not exist, or something went wrong...");
             }
         }
 

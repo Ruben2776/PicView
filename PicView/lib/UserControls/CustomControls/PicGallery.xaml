@@ -1,15 +1,37 @@
 ﻿<UserControl
-    x:Class="PicView.lib.UserControls.CustomControls.PicGallery"
+    x:Class="PicView.lib.UserControls.PicGallery"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:UserControls="clr-namespace:PicView.lib.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:PicView.lib.UserControls.CustomControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="300"
     d:DesignWidth="300"
     mc:Ignorable="d">
-    <VirtualizingStackPanel
-        x:Name="Container"
-        Background="{StaticResource BackgroundColorBrushFade}"
-        VirtualizingPanel.VirtualizationMode="Recycling" />
+    <Grid x:Name="grid" Background="{StaticResource BackgroundColorBrushFade}">
+        <UserControls:X2
+            x:Name="x2"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top" />
+        <ScrollViewer
+            x:Name="Scroller"
+            Margin="0,60,0,25"
+            HorizontalScrollBarVisibility="Hidden"
+            VerticalScrollBarVisibility="Disabled">
+            <WrapPanel
+                x:Name="Container"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                Orientation="Vertical"
+                VirtualizingPanel.VirtualizationMode="Recycling" />
+        </ScrollViewer>
+        <TextBlock
+            x:Name="PagingText"
+            Margin="0,0,0,20"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            FontFamily="/PicView;component/lib/fonts/#TeX Gyre Heros"
+            FontSize="16"
+            Foreground="{DynamicResource ChosenColorBrush}" />
+    </Grid>
 </UserControl>

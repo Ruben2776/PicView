@@ -1,48 +1,164 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+using static PicView.lib.ImageManager;
+using static PicView.lib.Variables;
 
-namespace PicView.lib.UserControls.CustomControls
+namespace PicView.lib.UserControls
 {
     /// <summary>
     /// Interaction logic for PicGallery.xaml
     /// </summary>
     public partial class PicGallery : UserControl
     {
+        public bool LoadComplete, isLoading, open;
+        public event MyEventHandler PreviewItemClick, ItemClick;
+        int current_page, next_page, prev_page, total_pages, items_per_page;
+        const int picGalleryItem_Size = 230;
+
         public PicGallery()
         {
             InitializeComponent();
+            Loaded += PicGallery_Loaded;
+            x2.MouseLeftButtonUp += X2_MouseLeftButtonUp;
         }
 
-        internal void Add(string file)
+        private void X2_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            var item = new PicGalleryItem(file);
-            Container.Children.Add(item);
+            FadeOut();
         }
 
-        internal void Add(string[] files)
+        private void FadeOut()
         {
-            var index = files.Length / 2;
-            for (int i = index; i < files.Length; i++)
+            var da = new DoubleAnimation()
             {
-                Add(files[i]);
-                for (int x = index - 1; x >= 0; x--)
-                {
-                    Add(files[x]);
-                }
-            }
+                To = 0,
+                From = 1,
+                Duration = TimeSpan.FromSeconds(0.4)
+            };
+            da.Completed += delegate
+            {
+                open = false;
+                Visibility = Visibility.Collapsed;
+            };
+            BeginAnimation(UIElement.OpacityProperty, da);
+        }
 
+        private void PicGallery_Loaded(object sender, RoutedEventArgs e)
+        {
+            Scroller.PreviewMouseWheel += Scroller_MouseWheel;
+        }
+
+        private void Scroller_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            e.Handled = true;
+            ScrollTo(e.Delta > 0);
+        }
+
+        internal void Calculate_Paging()
+        {
+            //int x, y, z,c;
+            //x = y = picGalleryItem_Size;
+            //z = 1;
+            //do
+            //{
+            //    x = x * z;
+            //    z++;
+            //} while (x < Width);
+            //c = 1;
+            //do
+            //{
+            //    y = y * z;
+            //    c++;
+            //} while (y < Height);
+
+            items_per_page = 15;
+            total_pages = (int)Math.Floor((double)Pics.Count / items_per_page);
+            current_page = (FolderIndex - 1) / Pics.Count;
+            next_page = current_page + 1 > total_pages ? total_pages : current_page + 1;
+            prev_page = current_page - 1 < 0 ? 1 : current_page - 1;
+
+            //for (int i = 0; i < total_pages; i++)
+            //{
+            //    if (i > 5 && i < (total_pages - 1))
+            //        continue;
+            //    PagingText.Text += i;
+            //    PagingText.Text += " ";
+            //}
+            ScrollTo();
+        }
+
+
+        /// <summary>
+        /// Scrolls a page back or forth
+        /// </summary>
+        /// <param name="next"></param>
+        /// <param name="end"></param>
+        internal void ScrollTo(bool next, bool end = false)
+        {
+            if (end)
+            {
+                if (next)
+                    Scroller.ScrollToRightEnd();
+                else
+                    Scroller.ScrollToLeftEnd();
+            }
+            else
+            {
+                if (next)
+                    Scroller.ScrollToHorizontalOffset(Scroller.HorizontalOffset + picGalleryItem_Size);
+                else
+                    Scroller.ScrollToHorizontalOffset(Scroller.HorizontalOffset - picGalleryItem_Size);
+            }
+        }
+
+        /// <summary>
+        /// Scrolls to center of current item
+        /// </summary>
+        /// <param name="item">The index of picGalleryItem</param>
+        internal void ScrollTo()
+        {
+            //Scroller.ScrollToHorizontalOffset(Scroller.HorizontalOffset / (picGalleryItem_Size * current_page));
+        }
+
+        async void Add(BitmapSource pic, string file, int index)
+        {
+            await Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            {
+                var item = new PicGalleryItem(pic, file);
+                item.MouseLeftButtonUp += (s, x) => Click(index);
+                Container.Children.Add(item);
+            }));
+        }
+
+        internal void Load()
+        {
+            isLoading = true;
+            var t = new Task(() =>
+            {
+                for (int i = 0; i < Pics.Count; i++)
+                {
+                    var file = Pics[i];
+                    var pic = GetBitmapSourceThumb(file);
+                    if (pic != null)
+                    {
+                        pic.Freeze();
+                        Add(pic, file, i);
+                    }
+
+                    if (i == Pics.Count - 1)
+                        LoadComplete = true;
+                }
+            });
+            t.Start();
         }
 
         internal void Remove(string file)
@@ -57,9 +173,89 @@ namespace PicView.lib.UserControls.CustomControls
 
         internal void Clear()
         {
-
+            LoadComplete = isLoading = open = false;
+            Container.Children.Clear();
         }
 
+        internal void Sort()
+        {
+            var x = Container.Children.Cast<PicGalleryItem>();
+        }
 
+        internal void Click(int id)
+        {
+            PreviewItemClick(this, new MyEventArgs(id, null));
+            var img = new Image()
+            {
+                Source = GetBitmapSourceThumb(Pics[id]),
+                Stretch = Stretch.Fill,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            var border = new Border()
+            {
+                BorderThickness = new Thickness(1),
+                BorderBrush = (SolidColorBrush)Application.Current.Resources["BorderBrush"],
+                Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"]
+            };
+            border.Child = img;
+            grid.Children.Add(border);
+            var from = 230; // 230 = PicGalleryItem size
+            //var to = new double[] { Width, Height };
+            var to = new double[] { Application.Current.MainWindow.ActualWidth - 15, Application.Current.MainWindow.ActualHeight - 95 };
+            //var to = new double[] { Application.Current.MainWindow.Width, Application.Current.MainWindow.Height};
+            var da = new DoubleAnimation();
+            da.From = from;
+            da.To = to[0]; // Width
+            da.Duration = TimeSpan.FromSeconds(.3);
+            da.AccelerationRatio = 0.2;
+            da.DecelerationRatio = 0.4;
+
+            var da0 = new DoubleAnimation();
+            da0.From = from;
+            da0.To = to[1]; // Height
+            da0.Duration = TimeSpan.FromSeconds(.3);
+            da0.AccelerationRatio = 0.2;
+            da0.DecelerationRatio = 0.4;
+
+            da.Completed += delegate
+            {
+                ItemClick(this, new MyEventArgs(id, img.Source));
+                grid.Children.Remove(border);
+                Visibility = Visibility.Collapsed;
+                picGallery.open = false;
+            };
+
+
+            img.BeginAnimation(Rectangle.WidthProperty, da);
+            img.BeginAnimation(Rectangle.HeightProperty, da0);
+        }
     }
+
+
+    // Event
+
+    public delegate void MyEventHandler(object source, MyEventArgs e);
+
+
+    public class MyEventArgs : EventArgs
+    {
+        private int Id;
+        private ImageSource img;
+        public MyEventArgs(int Id, ImageSource img)
+        {
+            this.Id = Id;
+            this.img = img;
+        }
+        public int GetId()
+        {
+            return Id;
+        }
+
+        public ImageSource GetImage()
+        {
+            return img;
+        }
+    }
+
 }

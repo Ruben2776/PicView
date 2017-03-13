@@ -1,5 +1,4 @@
 ﻿using PicView.lib.UserControls;
-using PicView.lib.UserControls.CustomControls;
 using PicView.lib.UserControls.Menus;
 using System;
 using System.Collections.Generic;
@@ -18,6 +17,7 @@ namespace PicView.lib
         internal const string Loading = "Loading...";
         internal const string TxtCopy = "Filename copied to Clipboard";
         internal const string FileCopy = "File copied to Clipboard";
+        internal const string ImageCopy = "Image copied to Clipboard";
         internal const string ExpFind = "Locating in file explorer";
         internal const string NoImage = "No image loaded";
         internal const string DragOverString = "Drop to load image";

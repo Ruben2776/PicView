@@ -13,25 +13,40 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 
-namespace PicView.lib.UserControls.CustomControls
+namespace PicView.lib.UserControls
 {
     /// <summary>
     /// Interaction logic for PicGalleryItem.xaml
     /// </summary>
     public partial class PicGalleryItem : UserControl
     {
-        public PicGalleryItem(string file)
+        public PicGalleryItem(BitmapSource pic, string file)
         {
             InitializeComponent();
-
-            var pic = ImageManager.GetBitmapSourceThumb(file);
             var x = Path.GetFileName(file);
 
             img.Source = pic;
-            img.ToolTip += x;
-            txt.MaxWidth = img.Width;
-            txt.ToolTip = file;
-            txt.Text = x;
+
+            img.MouseEnter += (s, y) => AnimationHelper.HoverSizeAnim(
+                border,
+                false,
+                200,
+                230
+            );
+            img.MouseLeave += (s, y) => AnimationHelper.HoverSizeAnim(
+                border,
+                true,
+                230,
+                200
+            );
+
+            img.MouseLeftButtonUp += Img_MouseLeftButtonUp;
+
+        }
+
+        private void Img_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.HoverSizeAnim(border, false, 230, 1000);
         }
     }
 }

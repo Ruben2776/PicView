@@ -1,12 +1,19 @@
 ﻿using ImageMagick;
 using System;
 using System.IO;
+using System.Windows;
 using System.Windows.Media.Imaging;
 
 namespace PicView.lib
 {
     internal static class ImageManager
     {
+        /// <summary>
+        /// Decodes image from file to BitMapSource
+        /// </summary>
+        /// <param name="file">Full path of the file</param>
+        /// <param name="extension">file extension beggining with dot</param>
+        /// <returns></returns>
         internal static BitmapSource RenderToBitmapSource(string file, string extension)
         {
             if (string.IsNullOrWhiteSpace(file) || file.Length < 2)
@@ -16,6 +23,7 @@ namespace PicView.lib
 
             using (MagickImage magick = new MagickImage())
             {
+                // Set values for maximum quality
                 magick.Quality = 100;
                 magick.ColorSpace = ColorSpace.Transparent;
 
@@ -201,6 +209,13 @@ namespace PicView.lib
             }
         }
 
+        /// <summary>
+        /// Returns BitmapSource at specified quality and pixel size
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="quality"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
         internal static BitmapSource GetMagickImage(string file, byte quality, short size)
         {
             BitmapSource pic;
@@ -209,9 +224,9 @@ namespace PicView.lib
             {
                 magick.Quality = quality;
                 magick.ColorSpace = ColorSpace.Transparent;
-                magick.AdaptiveResize(size, size);
                 try
                 {
+                    magick.AdaptiveResize(size, size);
                     magick.Read(file);
                 }
                 catch (MagickException)
@@ -245,6 +260,15 @@ namespace PicView.lib
             }
         }
 
+        /// <summary>
+        /// Tries to save image to the specified destination,
+        /// returns false if unsuccesful
+        /// </summary>
+        /// <param name="rotate">Degrees image is rotated by</param>
+        /// <param name="flipped">Whether to flip image or not</param>
+        /// <param name="path">The path of the source file</param>
+        /// <param name="destination">Where to save image to</param>
+        /// <returns></returns>
         internal static bool TrySaveImage(int rotate, bool flipped, string path, string destination)
         {
             if (File.Exists(path))
@@ -253,23 +277,23 @@ namespace PicView.lib
                 {
                     using (var SaveImage = new MagickImage())
                     {
+                        // Set maximum quality
                         var mrs = new MagickReadSettings()
                         {
                             Density = new Density(300, 300),
                             CompressionMethod = CompressionMethod.NoCompression
                         };
                         SaveImage.Quality = 100;
-                        SaveImage.Read(path, mrs);
-                        if (flipped)
-                        {
-                            SaveImage.Flop();
-                        }
 
+                        SaveImage.Read(path, mrs);
+
+                        // Apply transformation values
+                        if (flipped)
+                            SaveImage.Flop();
                         SaveImage.Rotate(rotate);
+
                         SaveImage.Write(destination);
                     }
-
-
                 }
                 catch (Exception)
                 {
@@ -282,6 +306,15 @@ namespace PicView.lib
             }
 
             return true;
+        }
+
+        internal static Size ImageSize (string file)
+        {
+            using (MagickImage magick = new MagickImage())
+            {
+                magick.Read(file);
+                return new Size(magick.Width, magick.Height);
+            }
         }
 
 

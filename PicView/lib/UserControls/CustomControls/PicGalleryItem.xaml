@@ -1,20 +1,25 @@
 ﻿<UserControl
-    x:Class="PicView.lib.UserControls.CustomControls.PicGalleryItem"
+    x:Class="PicView.lib.UserControls.PicGalleryItem"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:PicView.lib.UserControls.CustomControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="300"
     d:DesignWidth="300"
     mc:Ignorable="d">
-    <StackPanel>
-        <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
-            <Image x:Name="img" ToolTip="Click to load " />
+    <Border Width="230" Height="230">
+        <Border
+            x:Name="border"
+            Width="200"
+            Height="200"
+            Background="{StaticResource BackgroundColorBrushAlt}"
+            BorderBrush="{StaticResource BorderBrush}"
+            BorderThickness="1">
+            <Image
+                x:Name="img"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Stretch="UniformToFill" />
         </Border>
-        <TextBlock
-            x:Name="txt"
-            FontFamily="/PicView;component/lib/fonts/#Aller"
-            TextTrimming="CharacterEllipsis" />
-    </StackPanel>
+    </Border>
 </UserControl>
