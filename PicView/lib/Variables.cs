@@ -121,17 +121,6 @@ namespace PicView.lib
         internal static bool clickArrowLeftClicked;
 
         /// <summary>
-        /// Used to disable Screensaver and Power options.
-        /// </summary>
-        internal const uint ES_CONTINUOUS = 0x80000000;
-        internal const uint ES_SYSTEM_REQUIRED = 0x00000001;
-        internal const uint ES_DISPLAY_REQUIRED = 0x00000002;
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern uint SetThreadExecutionState([In] uint esFlags);
-
-
-        /// <summary>
         /// Used as comfortable space for standard viewing
         /// </summary>
         internal const int ComfySpace = 350;

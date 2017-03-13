@@ -929,6 +929,7 @@ namespace PicView
 
 
 
+
         #endregion
 
         #region Image Logic
@@ -2166,6 +2167,9 @@ namespace PicView
             else if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && (e.Key == Key.R)
                 || e.Key == Key.F5)
             {
+                Reload();
+            }
+
             // DEBUG!!!!!
             // F7
             else if (e.Key == Key.F7)
@@ -2174,6 +2178,7 @@ namespace PicView
                 Properties.Settings.Default.PicGalleryEnabled = x;
                 ToolTipStyle(x);
             }
+
             // F8
             else if (e.Key == Key.F8)
             {
@@ -2211,6 +2216,9 @@ namespace PicView
                     break;
             }
         }
+
+        
+
 
         #endregion
 
@@ -2390,6 +2398,13 @@ namespace PicView
                 Zoom(e.Delta, true); // Scale zoom with Ctrl held down
             else if (!autoScrolling)
                 Zoom(e.Delta, false);
+
+
+
+            else if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift && e.Delta > 0)
+                Pic();
+            else if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift && e.Delta < 0)
+                Pic(false);
         }
 
 
@@ -3101,7 +3116,7 @@ namespace PicView
                 RightBorderRectangle.Visibility =
                 Visibility.Collapsed;
                 Mouse.OverrideCursor = Cursors.None;
-                SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED);
+                NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
 
                 clickArrowLeft.Visibility =
                 clickArrowRight.Visibility =
@@ -3117,7 +3132,7 @@ namespace PicView
                 RightBorderRectangle.Visibility =
                 Visibility.Collapsed;
                 Mouse.OverrideCursor = Cursors.None;
-                SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED);
+                NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
 
                 clickArrowLeft.Visibility =
                 clickArrowRight.Visibility =
@@ -3133,7 +3148,7 @@ namespace PicView
                 RightBorderRectangle.Visibility
                 = Visibility.Visible;
                 Mouse.OverrideCursor = Cursors.Arrow;
-                SetThreadExecutionState(ES_CONTINUOUS);
+                NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
 
                 clickArrowLeft.Visibility =
                 clickArrowRight.Visibility =
@@ -4431,6 +4446,9 @@ namespace PicView
 
 
 
+
         #endregion
+
+       
     }
 }

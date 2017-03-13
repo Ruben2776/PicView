@@ -187,6 +187,19 @@
                             </TextBlock>
                         </BulletDecorator>
 
+                        <BulletDecorator Margin="7,2">
+                            <BulletDecorator.Bullet>
+                                <Ellipse
+                                    Width="7"
+                                    Height="7"
+                                    Fill="{StaticResource MainColorBrush}" />
+                            </BulletDecorator.Bullet>
+                            <TextBlock Margin="5,0,0,0">
+                                <Bold>F11</Bold>
+                                to show/hide slideshow.
+                            </TextBlock>
+                        </BulletDecorator>
+
                         <Label
                             Margin="0,10,0,0"
                             Content="File functions:"

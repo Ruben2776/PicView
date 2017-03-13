@@ -69,5 +69,17 @@ namespace PicView.lib
 
         [DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern void SHChangeNotify(uint wEventId, uint uFlags, IntPtr dwItem1, IntPtr dwItem2);
+
+
+        /// <summary>
+        /// Used to disable Screensaver and Power options.
+        /// </summary>
+        internal const uint ES_CONTINUOUS = 0x80000000;
+        internal const uint ES_SYSTEM_REQUIRED = 0x00000001;
+        internal const uint ES_DISPLAY_REQUIRED = 0x00000002;
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern uint SetThreadExecutionState([In] uint esFlags);
+
     }
 }
