@@ -2984,7 +2984,6 @@ namespace PicView
         {
             picGallery.Width = Width - 15; // 15 = borders width
             picGallery.Height = Height - 95; // 95 = top + bottom bar height
-            picGallery.Calculate_Paging();
 
             if (!picGallery.LoadComplete)
                 if (!picGallery.isLoading)
@@ -3005,6 +3004,7 @@ namespace PicView
             {
                 da.To = 1;
                 picGallery.open = true;
+                picGallery.Calculate_Paging();
                 picGallery.ScrollTo();
             }
 
