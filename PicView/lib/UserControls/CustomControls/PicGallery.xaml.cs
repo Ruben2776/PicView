@@ -21,8 +21,23 @@ namespace PicView.lib.UserControls
     {
         public bool LoadComplete, isLoading, open;
         public event MyEventHandler PreviewItemClick, ItemClick;
-        int current_page, next_page, prev_page, total_pages, items_per_page;
+        int current_page, total_pages, items_per_page, horizontal_items, vertical_items;
         const int picGalleryItem_Size = 230;
+
+        //int next_page
+        //{
+        //    get {
+        //        return current_page + 1 > total_pages ? total_pages : current_page + 1;
+        //    }
+        //}
+
+        //int prev_page
+        //{
+        //    get
+        //    {
+        //        return current_page - 1 < 0 ? 1 : current_page - 1;
+        //    }
+        //}
 
         public PicGallery()
         {
@@ -65,26 +80,14 @@ namespace PicView.lib.UserControls
 
         internal void Calculate_Paging()
         {
-            //int x, y, z,c;
-            //x = y = picGalleryItem_Size;
-            //z = 1;
-            //do
-            //{
-            //    x = x * z;
-            //    z++;
-            //} while (x < Width);
-            //c = 1;
-            //do
-            //{
-            //    y = y * z;
-            //    c++;
-            //} while (y < Height);
-
-            items_per_page = 15;
+            horizontal_items = (int)Math.Ceiling(Width / picGalleryItem_Size);
+            vertical_items = (int)Math.Ceiling(Container.ActualHeight / picGalleryItem_Size);
+            items_per_page = horizontal_items * vertical_items;
             total_pages = (int)Math.Floor((double)Pics.Count / items_per_page);
-            current_page = (FolderIndex - 1) / Pics.Count;
-            next_page = current_page + 1 > total_pages ? total_pages : current_page + 1;
-            prev_page = current_page - 1 < 0 ? 1 : current_page - 1;
+            current_page = (int)Math.Floor((double)FolderIndex / items_per_page);
+
+            //if (!string.IsNullOrWhiteSpace(PagingText.Text))
+            //    PagingText.Text = "";
 
             //for (int i = 0; i < total_pages; i++)
             //{
@@ -93,7 +96,7 @@ namespace PicView.lib.UserControls
             //    PagingText.Text += i;
             //    PagingText.Text += " ";
             //}
-            ScrollTo();
+            //ScrollTo();
         }
 
 
@@ -126,7 +129,8 @@ namespace PicView.lib.UserControls
         /// <param name="item">The index of picGalleryItem</param>
         internal void ScrollTo()
         {
-            //Scroller.ScrollToHorizontalOffset(Scroller.HorizontalOffset / (picGalleryItem_Size * current_page));
+            var x = (picGalleryItem_Size * horizontal_items) * current_page;
+            Scroller.ScrollToHorizontalOffset(x);
         }
 
         async void Add(BitmapSource pic, string file, int index)
@@ -159,16 +163,6 @@ namespace PicView.lib.UserControls
                 }
             });
             t.Start();
-        }
-
-        internal void Remove(string file)
-        {
-
-        }
-
-        internal void Remove(string[] files)
-        {
-
         }
 
         internal void Clear()

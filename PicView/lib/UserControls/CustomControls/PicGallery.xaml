@@ -15,8 +15,8 @@
             VerticalAlignment="Top" />
         <ScrollViewer
             x:Name="Scroller"
-            Margin="0,60,0,25"
-            HorizontalScrollBarVisibility="Hidden"
+            Margin="0,60,0,0"
+            HorizontalScrollBarVisibility="Visible"
             VerticalScrollBarVisibility="Disabled">
             <WrapPanel
                 x:Name="Container"
@@ -25,13 +25,5 @@
                 Orientation="Vertical"
                 VirtualizingPanel.VirtualizationMode="Recycling" />
         </ScrollViewer>
-        <TextBlock
-            x:Name="PagingText"
-            Margin="0,0,0,20"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Bottom"
-            FontFamily="/PicView;component/lib/fonts/#TeX Gyre Heros"
-            FontSize="16"
-            Foreground="{DynamicResource ChosenColorBrush}" />
     </Grid>
 </UserControl>
