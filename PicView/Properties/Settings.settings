@@ -92,8 +92,8 @@
     <Setting Name="PicGalleryEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="Slidetimer" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">1000</Value>
+    <Setting Name="Slidetimeren" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">10000</Value>
     </Setting>
   </Settings>
 </SettingsFile>

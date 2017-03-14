@@ -23,10 +23,12 @@ namespace PicView.Windows
     /// </summary>
     public partial class AllSettings : Window
     {
+        double value = Properties.Settings.Default.Slidetimeren;
+
         public AllSettings()
         {
             InitializeComponent();
-            
+
             // CloseButton
             CloseButton.MouseEnter += CloseButtonMouseOver;
             CloseButton.MouseLeave += CloseButtonMouseLeave;
@@ -149,8 +151,11 @@ namespace PicView.Windows
 
                 KeyUp += AllSettings_KeyUp;
             };
-            
 
+            //Slidebar
+            txtSlide.Text = value.ToString().Replace("000", string.Empty);
+            SlideSlider.Value = double.Parse(value.ToString().Replace("000", string.Empty));
+            SlideSlider.ValueChanged += SlideSlider_ValueChanged;
 
         }
 
@@ -545,9 +550,19 @@ namespace PicView.Windows
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(YellowBrush, 12);
         }
 
+
+        //Slideslider
+        private void SlideSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            var slider = sender as Slider;
+            value = slider.Value;
+
+            txtSlide.Text = value.ToString("0");
+        }
+
         #endregion
 
-        #region Set ColorTheme
+            #region Set ColorTheme
 
         private static void Blue(object sender, RoutedEventArgs e)
         {
@@ -609,10 +624,97 @@ namespace PicView.Windows
             Properties.Settings.Default.ColorTheme = 12;
         }
 
+        private void SetSlidetimer()
+        {
+            switch (value.ToString("0"))
+            {
+                case "0":
+                    Properties.Settings.Default.Slidetimeren = 500;
+                    Properties.Settings.Default.Save();
+                    break;
 
+                case "1":
+                    Properties.Settings.Default.Slidetimeren = 1000;
+                    Properties.Settings.Default.Save();
+                    break;
+
+                case "2":
+                    Properties.Settings.Default.Slidetimeren = 2000;
+                    Properties.Settings.Default.Save();
+                    break;
+
+                case "3":
+                    Properties.Settings.Default.Slidetimeren = 3000;
+                    Properties.Settings.Default.Save();
+                    break;
+
+                case "4":
+                    Properties.Settings.Default.Slidetimeren = 4000;
+                    Properties.Settings.Default.Save();
+                    break;
+
+                case "5":
+                    Properties.Settings.Default.Slidetimeren = 5000;
+                    Properties.Settings.Default.Save();
+                    break;
+
+                case "6":
+                    Properties.Settings.Default.Slidetimeren = 6000;
+                    Properties.Settings.Default.Save();
+                    break;
+
+                case "7":
+                    Properties.Settings.Default.Slidetimeren = 7000;
+                    Properties.Settings.Default.Save();
+                    break;
+
+                case "8":
+                    Properties.Settings.Default.Slidetimeren = 8000;
+                    Properties.Settings.Default.Save();
+                    break;
+
+                case "9":
+                    Properties.Settings.Default.Slidetimeren = 9000;
+                    Properties.Settings.Default.Save();
+                    break;
+
+                case "10":
+                    Properties.Settings.Default.Slidetimeren = 10000;
+                    Properties.Settings.Default.Save();
+                    break;
+
+                case "11":
+                    Properties.Settings.Default.Slidetimeren = 11000;
+                    Properties.Settings.Default.Save();
+                    break;
+
+                case "12":
+                    Properties.Settings.Default.Slidetimeren = 12000;
+                    Properties.Settings.Default.Save();
+                    break;
+
+                case "13":
+                    Properties.Settings.Default.Slidetimeren = 13000;
+                    Properties.Settings.Default.Save();
+                    break;
+
+                case "14":
+                    Properties.Settings.Default.Slidetimeren = 140000;
+                    Properties.Settings.Default.Save();
+                    break;
+
+                case "15":
+                    Properties.Settings.Default.Slidetimeren = 15000;
+                    Properties.Settings.Default.Save();
+                    break;
+            }
+
+            Properties.Settings.Default.Upgrade();
+        }
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
+            SetSlidetimer();
             Closing -= Window_Closing;
             e.Cancel = true;
             AnimationHelper.FadeWindow(this, 0, TimeSpan.FromSeconds(.5));

@@ -333,7 +333,7 @@ namespace PicView
 
                 Slidetimer = new System.Timers.Timer()
                 {
-                    Interval = Properties.Settings.Default.Slidetimer,
+                    Interval = Properties.Settings.Default.Slidetimeren,
                     Enabled = false
                 };
                 Slidetimer.Elapsed += SlideTimer_Elapsed;
@@ -3110,6 +3110,7 @@ namespace PicView
         /// </summary>
         private void LoadSlideshow()
         {
+            Slidetimer.Interval = Properties.Settings.Default.Slidetimeren;
             if (!File.Exists(PicPath))
             {
                 ToolTipStyle("There was no image(s) to show.");
@@ -3580,7 +3581,7 @@ namespace PicView
                 AnimationHelper.Fade(img, 0, TimeSpan.FromSeconds(.5));
                 Pic(true, false);
                 AnimationHelper.Fade(img, 1, TimeSpan.FromSeconds(.5));
-            }));             
+            }));          
         }
 
         /// <summary>
