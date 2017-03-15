@@ -92,7 +92,7 @@ namespace PicView
             LoadClickArrow(false);
             Loadx2();
 
-            if (Properties.Settings.Default.PicGalleryEnabled)
+            if (Properties.Settings.Default.PicGallery > 0)
             {
                 LoadPicGallery();
             }
@@ -293,7 +293,7 @@ namespace PicView
                 LowerBar.Drop += Image_Drop;
 
                 // PicGallery
-                if (Properties.Settings.Default.PicGalleryEnabled)
+                if (Properties.Settings.Default.PicGallery > 0)
                 {
                     picGallery.PreviewItemClick += PicGallery_PreviewItemClick;
                     picGallery.ItemClick += PicGallery_ItemClick;
@@ -1008,7 +1008,7 @@ namespace PicView
             }
 
             // Load images for PicGallery if enabled
-            if (Properties.Settings.Default.PicGalleryEnabled)
+            if (Properties.Settings.Default.PicGallery > 0)
             {
                 if (picGallery == null)
                     LoadPicGallery();
@@ -1530,7 +1530,7 @@ namespace PicView
             DeleteTempFiles();
             PreloadCount = 0;
 
-            if (Properties.Settings.Default.PicGalleryEnabled)
+            if (Properties.Settings.Default.PicGallery > 0)
             {
                 picGallery.Clear();
             }
@@ -2177,6 +2177,14 @@ namespace PicView
                 Open_In_Explorer();
             }
 
+            // F4
+            else if (e.Key == Key.F4)
+            {
+                Properties.Settings.Default.PicGallery = 1;
+                if (picGallery != null)
+                    PicGalleryFade(picGallery.Visibility == Visibility.Collapsed);
+            }
+
             // F6
             else if (e.Key == Key.F6)
             {
@@ -2207,24 +2215,14 @@ namespace PicView
                 HideInterface();
             }
 
-            // DEBUG!!!!!
-            // F7
-            else if (e.Key == Key.F7)
+            // Alt + X
+            else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.X))
             {
-                var x = Properties.Settings.Default.PicGalleryEnabled ? false : true;
-                Properties.Settings.Default.PicGalleryEnabled = x;
-                ToolTipStyle(x);
-            }
-
-            // F8
-            else if (e.Key == Key.F8)
-            {
+                Properties.Settings.Default.PicGallery = 2;
                 if (picGallery != null)
                     PicGalleryFade(picGallery.Visibility == Visibility.Collapsed);
-                else
-                    ToolTipStyle("null");
             }
-            // DEBUG!!!!!
+
         }
 
 
@@ -3013,7 +3011,6 @@ namespace PicView
             Panel.SetZIndex(picGallery, 999);
         }
 
-
         // Tooltip
 
         /// <summary>
@@ -3540,34 +3537,62 @@ namespace PicView
 
         private void PicGalleryFade(bool show = true)
         {
-            picGallery.Width = Width - 15; // 15 = borders width
-            picGallery.Height = Height - 95; // 95 = top + bottom bar height
-
-            if (!picGallery.LoadComplete)
-                if (!picGallery.isLoading)
-                    picGallery.Load();
-
-            picGallery.Visibility = Visibility.Visible;
-            var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.5) };
-            if (!show)
+            if (Properties.Settings.Default.PicGallery == 1)
             {
-                da.To = 0;
-                da.Completed += delegate
+                picGallery.Width = Width - 15; // 15 = borders width
+                picGallery.Height = Height - 95; // 95 = top + bottom bar height
+
+                if (!picGallery.LoadComplete)
+                    if (!picGallery.isLoading)
+                        picGallery.Load();
+
+                picGallery.Visibility = Visibility.Visible;
+                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.5) };
+                if (!show)
                 {
-                    picGallery.Visibility = Visibility.Collapsed;
-                    picGallery.open = false;
-                };
+                    da.To = 0;
+                    da.Completed += delegate
+                    {
+                        picGallery.Visibility = Visibility.Collapsed;
+                        picGallery.open = false;
+                    };
+                }
+                else
+                {
+                    da.To = 1;
+                    picGallery.open = true;
+                    picGallery.Calculate_Paging();
+                    picGallery.ScrollTo();
+                }
+
+                if (picGallery != null)
+                    picGallery.BeginAnimation(OpacityProperty, da);
             }
-            else
+            else if (Properties.Settings.Default.PicGallery == 2)
             {
-                da.To = 1;
-                picGallery.open = true;
-                picGallery.Calculate_Paging();
-                picGallery.ScrollTo();
+                var fake = new FakeWindow();
+                fake.Show();
+                Focus();
+                if (Properties.Settings.Default.WindowStyle == 0)
+                {
+                    HideInterface();
+                }
+                picGallery.Width = 230;
+                picGallery.Height = SystemParameters.WorkArea.Height;
+                Width = SystemParameters.PrimaryScreenWidth;
+                Height = SystemParameters.WorkArea.Height;
+                picGallery.HorizontalAlignment = HorizontalAlignment.Right;
+                picGallery.Visibility = Visibility.Visible;
+                picGallery.Opacity = 1;
+                picGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+                picGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+                picGallery.Container.Orientation = Orientation.Vertical;
+                picGallery.x2.Visibility = Visibility.Collapsed;
+                picGallery.Scroller.Margin = new Thickness(0);
+                bg.Children.Remove(picGallery);
+                fake.grid.Children.Add(picGallery);
             }
 
-            if (picGallery != null)
-                picGallery.BeginAnimation(OpacityProperty, da);
         }
 
 
@@ -4353,7 +4378,7 @@ namespace PicView
         {
             if (!File.Exists(PicPath) || img.Source == null)
             {
-                ToolTipStyle("Error, File does not exist, or something went wrong...", true);
+                ToolTipStyle("Error, File does not exist, or something went wrong...");
                 return;
             }
             try

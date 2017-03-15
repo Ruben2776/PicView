@@ -142,6 +142,9 @@
       <DependentUpon>AllSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="lib\Variables.cs" />
+    <Compile Include="lib\Windows\FakeWindow.xaml.cs">
+      <DependentUpon>FakeWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="lib\Windows\Help.xaml.cs">
       <DependentUpon>Help.xaml</DependentUpon>
     </Compile>
@@ -233,6 +236,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="lib\Windows\AllSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="lib\Windows\FakeWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

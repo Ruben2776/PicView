@@ -89,8 +89,8 @@
     <Setting Name="SortPreference" Type="System.Int16" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="PicGalleryEnabled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+    <Setting Name="PicGallery" Type="System.Byte" Scope="User">
+      <Value Profile="(Default)">2</Value>
     </Setting>
     <Setting Name="Slidetimeren" Type="System.Double" Scope="User">
       <Value Profile="(Default)">10000</Value>
