@@ -46,7 +46,7 @@ namespace PicView
             };
             bg.Children.Add(ajaxLoading);
             AjaxLoadingStart();
-                
+
             if (Properties.Settings.Default.WindowStyle == 2)
             {
                 TitleBar.Visibility =
@@ -828,7 +828,7 @@ namespace PicView
         {
             if (WindowState == WindowState.Maximized && e.LeftButton == MouseButtonState.Pressed)
             {
-                Maximize_Restore();
+                //Maximize_Restore();
                 try
                 {
                     DragMove();
@@ -1087,7 +1087,7 @@ namespace PicView
             Bar.Text = titleString[1];
             Bar.ToolTip = titleString[2];
 
-            
+
             PicPath = Pics[x];
             canNavigate = true;
             Progress(x, Pics.Count);
@@ -1233,19 +1233,20 @@ namespace PicView
             FastPicRunning = true;
         }
 
-        private void FastPic()
+
+        /// <summary>
+        /// Timer starts Slideshow Fade animation.
+        /// </summary>
+        /// <param name="server"></param>
+        /// <param name="e"></param>
+        private async void SlideTimer_Elapsed(object server, System.Timers.ElapsedEventArgs e)
         {
-            Bar.ToolTip =
-            Title =
-            Bar.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count;
-
-            img.Width = xWidth;
-            img.Height = xHeight;
-
-            img.Source = GetBitmapSourceThumb(Pics[FolderIndex]);
-
-            Progress(FolderIndex, Pics.Count);
-            FastPicRunning = true;
+            await Application.Current.Dispatcher.BeginInvoke((Action)(() =>
+            {
+                AnimationHelper.Fade(img, 0, TimeSpan.FromSeconds(.5));
+                Pic(true, false);
+                AnimationHelper.Fade(img, 1, TimeSpan.FromSeconds(.5));
+            }));
         }
 
 
@@ -1491,7 +1492,32 @@ namespace PicView
             return true;
         }
 
+        private void PicGallery_PreviewItemClick(object source, MyEventArgs e)
+        {
+            var size = ImageSize(Pics[e.GetId()]);
+            ZoomFit(size.Width, size.Height);
 
+            Task.Run(() =>
+            {
+                //Preloader.Clear();
+                Preloader.Add(e.GetId());
+            });
+        }
+
+
+        private async void PicGallery_ItemClick(object source, MyEventArgs e)
+        {
+            while (!Preloader.Contains(Pics[e.GetId()]))
+            {
+                if (Bar.Text != Loading)
+                {
+                    Bar.Text = Loading;
+                    img.Source = e.GetImage();
+                }
+                await Task.Delay(50);
+            }
+            Pic(e.GetId());
+        }
 
 
         /// <summary>
@@ -1841,7 +1867,10 @@ namespace PicView
                 {
                     var myProcess = new Process
                     {
-                        StartInfo = { FileName = Assembly.GetExecutingAssembly().Location, Arguments = files[x] }
+                        StartInfo = {
+                            FileName = Assembly.GetExecutingAssembly().Location,
+                            Arguments = files[x]
+                        }
                     };
                     myProcess.Start();
                 });
@@ -2030,7 +2059,7 @@ namespace PicView
                     else
                         Close();
                 }
-                else if(Slidetimer.Enabled == true)
+                else if (Slidetimer.Enabled == true)
                 {
                     UnloadSlideshow();
                 }
@@ -2119,6 +2148,14 @@ namespace PicView
             // Space
             else if (e.Key == Key.Space)
             {
+                if (picGallery != null)
+                {
+                    if (picGallery.open)
+                    {
+                        picGallery.ScrollTo();
+                        return;
+                    }
+                }
                 CenterWindowOnScreen();
             }
 
@@ -2216,9 +2253,6 @@ namespace PicView
                     break;
             }
         }
-
-        
-
 
         #endregion
 
@@ -2407,7 +2441,7 @@ namespace PicView
                 Zoom(e.Delta, true); // Scale zoom with Ctrl held down
             else if (!autoScrolling)
                 Zoom(e.Delta, false);
-                
+
         }
 
 
@@ -2980,67 +3014,6 @@ namespace PicView
         }
 
 
-        private void PicGalleryFade(bool show = true)
-        {
-            picGallery.Width = Width - 15; // 15 = borders width
-            picGallery.Height = Height - 95; // 95 = top + bottom bar height
-
-            if (!picGallery.LoadComplete)
-                if (!picGallery.isLoading)
-                picGallery.Load();
-
-            picGallery.Visibility = Visibility.Visible;
-            var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.5) };
-            if (!show)
-            {
-                da.To = 0;
-                da.Completed += delegate
-                {
-                    picGallery.Visibility = Visibility.Collapsed;
-                    picGallery.open = false;
-                };
-            }
-            else
-            {
-                da.To = 1;
-                picGallery.open = true;
-                picGallery.Calculate_Paging();
-                picGallery.ScrollTo();
-            }
-
-            if (picGallery != null)
-                picGallery.BeginAnimation(OpacityProperty, da);
-        }
-
-
-        private void PicGallery_PreviewItemClick(object source, MyEventArgs e)
-        {
-            var size = ImageSize(Pics[e.GetId()]);
-            ZoomFit(size.Width, size.Height);
-
-            Task.Run(() =>
-            {
-                //Preloader.Clear();
-                Preloader.Add(e.GetId());
-            });
-        }
-
-
-        private async void PicGallery_ItemClick(object source, MyEventArgs e)
-        {
-            while (!Preloader.Contains(Pics[e.GetId()]))
-            {
-                if (Bar.Text != Loading)
-                {
-                    Bar.Text = Loading;
-                    img.Source = e.GetImage();
-                }
-                await Task.Delay(50);
-            }
-            Pic(e.GetId());
-        }
-
-
         // Tooltip
 
         /// <summary>
@@ -3105,78 +3078,6 @@ namespace PicView
             sexyToolTip.Visibility = Visibility.Hidden;
         }
 
-        /// <summary>
-        /// Maximize and removes Interface and start timer for slideshow.
-        /// </summary>
-        private void LoadSlideshow()
-        {
-            Slidetimer.Interval = Properties.Settings.Default.Slidetimeren;
-            if (!File.Exists(PicPath))
-            {
-                ToolTipStyle("There was no image(s) to show.");
-                return;
-            }
-                
-
-            if(this.WindowState == WindowState.Normal)
-            {
-                Maximize_Restore();
-                TitleBar.Visibility =
-                LowerBar.Visibility =
-                LeftBorderRectangle.Visibility =
-                RightBorderRectangle.Visibility =
-                Visibility.Collapsed;
-                Mouse.OverrideCursor = Cursors.None;
-                NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
-
-                clickArrowLeft.Visibility =
-                clickArrowRight.Visibility =
-                x2.Visibility =
-                Visibility.Visible;
-                Slidetimer.Start();
-            }
-            else if(this.WindowState == WindowState.Maximized && Slidetimer.Enabled == false)
-            {
-                TitleBar.Visibility =
-                LowerBar.Visibility =
-                LeftBorderRectangle.Visibility =
-                RightBorderRectangle.Visibility =
-                Visibility.Collapsed;
-                Mouse.OverrideCursor = Cursors.None;
-                NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
-
-                clickArrowLeft.Visibility =
-                clickArrowRight.Visibility =
-                x2.Visibility =
-                Visibility.Visible;
-                Slidetimer.Start();
-            }
-            else
-            {
-                UnloadSlideshow();
-            }
-                     
-        }
-
-        private void UnloadSlideshow()
-        {
-            Maximize_Restore();
-            TitleBar.Visibility =
-            LowerBar.Visibility =
-            LeftBorderRectangle.Visibility =
-            RightBorderRectangle.Visibility
-            = Visibility.Visible;
-            Mouse.OverrideCursor = Cursors.Arrow;
-            NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
-
-            clickArrowLeft.Visibility =
-            clickArrowRight.Visibility =
-            x2.Visibility =
-            Visibility.Collapsed;
-            Slidetimer.Stop();
-        }
-
-       
 
         // AjaxLoading
 
@@ -3531,6 +3432,75 @@ namespace PicView
 
         }
 
+        /// <summary>
+        /// Maximize and removes Interface and start timer for slideshow.
+        /// </summary>
+        private void LoadSlideshow()
+        {
+            if (!File.Exists(PicPath))
+            {
+                ToolTipStyle("There was no image(s) to show.");
+                return;
+            }
+
+            if (WindowState == WindowState.Normal)
+            {
+                Maximize_Restore();
+                TitleBar.Visibility =
+                LowerBar.Visibility =
+                LeftBorderRectangle.Visibility =
+                RightBorderRectangle.Visibility =
+                Visibility.Collapsed;
+                Mouse.OverrideCursor = Cursors.None;
+                NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
+
+                clickArrowLeft.Visibility =
+                clickArrowRight.Visibility =
+                x2.Visibility =
+                Visibility.Visible;
+                Slidetimer.Start();
+            }
+            else if (WindowState == WindowState.Maximized && Slidetimer.Enabled == false)
+            {
+                TitleBar.Visibility =
+                LowerBar.Visibility =
+                LeftBorderRectangle.Visibility =
+                RightBorderRectangle.Visibility =
+                Visibility.Collapsed;
+                Mouse.OverrideCursor = Cursors.None;
+                NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
+
+                clickArrowLeft.Visibility =
+                clickArrowRight.Visibility =
+                x2.Visibility =
+                Visibility.Visible;
+                Slidetimer.Start();
+            }
+            else
+            {
+                UnloadSlideshow();
+            }
+
+        }
+
+        private void UnloadSlideshow()
+        {
+            Maximize_Restore();
+            TitleBar.Visibility =
+            LowerBar.Visibility =
+            LeftBorderRectangle.Visibility =
+            RightBorderRectangle.Visibility
+            = Visibility.Visible;
+            Mouse.OverrideCursor = Cursors.Arrow;
+            NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
+
+            clickArrowLeft.Visibility =
+            clickArrowRight.Visibility =
+            x2.Visibility =
+            Visibility.Collapsed;
+            Slidetimer.Stop();
+        }
+
 
         /// <summary>
         /// Hides/shows interface elements with a fade animation
@@ -3568,21 +3538,38 @@ namespace PicView
             FadeControlsAsync(false);
         }
 
-
-        /// <summary>
-        /// Timer starts Slideshow Fade animation.
-        /// </summary>
-        /// <param name="server"></param>
-        /// <param name="e"></param>
-        private async void SlideTimer_Elapsed(object server, System.Timers.ElapsedEventArgs e)
+        private void PicGalleryFade(bool show = true)
         {
-            await Application.Current.Dispatcher.BeginInvoke((Action)(() =>
+            picGallery.Width = Width - 15; // 15 = borders width
+            picGallery.Height = Height - 95; // 95 = top + bottom bar height
+
+            if (!picGallery.LoadComplete)
+                if (!picGallery.isLoading)
+                    picGallery.Load();
+
+            picGallery.Visibility = Visibility.Visible;
+            var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.5) };
+            if (!show)
             {
-                AnimationHelper.Fade(img, 0, TimeSpan.FromSeconds(.5));
-                Pic(true, false);
-                AnimationHelper.Fade(img, 1, TimeSpan.FromSeconds(.5));
-            }));          
+                da.To = 0;
+                da.Completed += delegate
+                {
+                    picGallery.Visibility = Visibility.Collapsed;
+                    picGallery.open = false;
+                };
+            }
+            else
+            {
+                da.To = 1;
+                picGallery.open = true;
+                picGallery.Calculate_Paging();
+                picGallery.ScrollTo();
+            }
+
+            if (picGallery != null)
+                picGallery.BeginAnimation(OpacityProperty, da);
         }
+
 
         /// <summary>
         /// Logic for mouse movements on MainWindow
@@ -4468,6 +4455,5 @@ namespace PicView
 
         #endregion
 
-       
     }
 }
