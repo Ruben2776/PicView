@@ -1,0 +1,18 @@
+﻿<Window
+    x:Class="PicView.Windows.FakeWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Fake Window"
+    AllowsTransparency="True"
+    Background="#72000000"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    ShowInTaskbar="False"
+    WindowStyle="None">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
+    <Grid x:Name="grid" />
+</Window>

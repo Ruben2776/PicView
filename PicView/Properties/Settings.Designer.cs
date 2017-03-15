@@ -373,13 +373,13 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool PicGalleryEnabled {
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public byte PicGallery {
             get {
-                return ((bool)(this["PicGalleryEnabled"]));
+                return ((byte)(this["PicGallery"]));
             }
             set {
-                this["PicGalleryEnabled"] = value;
+                this["PicGallery"] = value;
             }
         }
         
