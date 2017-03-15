@@ -346,7 +346,8 @@
                                 Width="30"
                                 Margin="5,3"
                                 HorizontalAlignment="Right"
-                                IsReadOnly="True" />
+                                IsReadOnly="True"
+                                ToolTip="0 = 0.5 Sec - 15 = 15 Sec." />
 
                             <Label Content="Sec." />
 
