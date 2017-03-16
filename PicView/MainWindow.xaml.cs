@@ -3089,64 +3089,7 @@ namespace PicView
             sexyToolTip.Visibility = Visibility.Hidden;
         }
 
-        /// <summary>
-        /// Maximize and removes Interface and start timer for slideshow.
-        /// </summary>
-        private void LoadSlideshow()
-        {
-            Slidetimer.Interval = Properties.Settings.Default.Slidetimeren;
-            if (!File.Exists(PicPath))
-            {
-                ToolTipStyle("There was no image(s) to show.");
-                return;
-            }
-
-
-            if (this.WindowState == WindowState.Normal)
-            {       
-                HideInterface();
-                Maximize_Restore();
-                Mouse.OverrideCursor = Cursors.None;
-                NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
-                activityTimer.Start();
-                Slidetimer.Start();
-            }
-            else if (this.WindowState == WindowState.Maximized && Slidetimer.Enabled == false)
-            {               
-                TitleBar.Visibility =
-                LowerBar.Visibility =
-                LeftBorderRectangle.Visibility =
-                RightBorderRectangle.Visibility =
-                Visibility.Collapsed;
-                Mouse.OverrideCursor = Cursors.None;
-                NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);               
-                clickArrowLeft.Visibility =
-                clickArrowRight.Visibility =
-                x2.Visibility =
-                Visibility.Visible;
-                activityTimer.Start();
-                Slidetimer.Start();
-            }
-            else
-            {
-                UnloadSlideshow();
-            }
-
-        }
-
-        private void UnloadSlideshow()
-        {
-            
-            HideInterface();
-            Maximize_Restore();
-            Mouse.OverrideCursor = null;
-            NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
-            activityTimer.Stop();
-            Slidetimer.Stop();
-        }
-
-
-
+   
         // AjaxLoading
 
         /// <summary>
@@ -3499,76 +3442,7 @@ namespace PicView
             }
 
         }
-
-        /// <summary>
-        /// Maximize and removes Interface and start timer for slideshow.
-        /// </summary>
-        private void LoadSlideshow()
-        {
-            if (!File.Exists(PicPath))
-            {
-                ToolTipStyle("There was no image(s) to show.");
-                return;
-            }
-
-            if (WindowState == WindowState.Normal)
-            {
-                Maximize_Restore();
-                TitleBar.Visibility =
-                LowerBar.Visibility =
-                LeftBorderRectangle.Visibility =
-                RightBorderRectangle.Visibility =
-                Visibility.Collapsed;
-                Mouse.OverrideCursor = Cursors.None;
-                NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
-
-                clickArrowLeft.Visibility =
-                clickArrowRight.Visibility =
-                x2.Visibility =
-                Visibility.Visible;
-                Slidetimer.Start();
-            }
-            else if (WindowState == WindowState.Maximized && Slidetimer.Enabled == false)
-            {
-                TitleBar.Visibility =
-                LowerBar.Visibility =
-                LeftBorderRectangle.Visibility =
-                RightBorderRectangle.Visibility =
-                Visibility.Collapsed;
-                Mouse.OverrideCursor = Cursors.None;
-                NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
-
-                clickArrowLeft.Visibility =
-                clickArrowRight.Visibility =
-                x2.Visibility =
-                Visibility.Visible;
-                Slidetimer.Start();
-            }
-            else
-            {
-                UnloadSlideshow();
-            }
-
-        }
-
-        private void UnloadSlideshow()
-        {
-            Maximize_Restore();
-            TitleBar.Visibility =
-            LowerBar.Visibility =
-            LeftBorderRectangle.Visibility =
-            RightBorderRectangle.Visibility
-            = Visibility.Visible;
-            Mouse.OverrideCursor = Cursors.Arrow;
-            NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
-
-            clickArrowLeft.Visibility =
-            clickArrowRight.Visibility =
-            x2.Visibility =
-            Visibility.Collapsed;
-            Slidetimer.Stop();
-        }
-
+        
 
         /// <summary>
         /// Hides/shows interface elements with a fade animation
@@ -3819,7 +3693,61 @@ namespace PicView
             }
         }
 
+        /// <summary>
+        /// Maximize and removes Interface and start timer for slideshow.
+        /// </summary>
+        private void LoadSlideshow()
+        {
+            Slidetimer.Interval = Properties.Settings.Default.Slidetimeren;
+            if (!File.Exists(PicPath))
+            {
+                ToolTipStyle("There was no image(s) to show.");
+                return;
+            }
 
+
+            if (this.WindowState == WindowState.Normal)
+            {
+                HideInterface();
+                Maximize_Restore();
+                Mouse.OverrideCursor = Cursors.None;
+                NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
+                activityTimer.Start();
+                Slidetimer.Start();
+            }
+            else if (this.WindowState == WindowState.Maximized && Slidetimer.Enabled == false)
+            {
+                TitleBar.Visibility =
+                LowerBar.Visibility =
+                LeftBorderRectangle.Visibility =
+                RightBorderRectangle.Visibility =
+                Visibility.Collapsed;
+                Mouse.OverrideCursor = Cursors.None;
+                NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
+                clickArrowLeft.Visibility =
+                clickArrowRight.Visibility =
+                x2.Visibility =
+                Visibility.Visible;
+                activityTimer.Start();
+                Slidetimer.Start();
+            }
+            else
+            {
+                UnloadSlideshow();
+            }
+
+        }
+
+        private void UnloadSlideshow()
+        {
+
+            HideInterface();
+            Maximize_Restore();
+            Mouse.OverrideCursor = null;
+            NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
+            activityTimer.Stop();
+            Slidetimer.Stop();
+        }
 
         #endregion
 
