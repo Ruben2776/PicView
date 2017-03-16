@@ -24,6 +24,12 @@ namespace PicView.Windows
             InitializeComponent();
             Width = SystemParameters.FullPrimaryScreenWidth;
             Height = SystemParameters.WorkArea.Height;
+            GotFocus += FakeWindow_GotFocus;
+        }
+
+        private void FakeWindow_GotFocus(object sender, RoutedEventArgs e)
+        {
+            Application.Current.MainWindow.Focus();
         }
     }
 }
