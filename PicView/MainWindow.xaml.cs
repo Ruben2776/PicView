@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -46,7 +47,7 @@ namespace PicView
             };
             bg.Children.Add(ajaxLoading);
             AjaxLoadingStart();
-                
+
             if (Properties.Settings.Default.WindowStyle == 2)
             {
                 TitleBar.Visibility =
@@ -338,6 +339,20 @@ namespace PicView
                 };
                 Slidetimer.Elapsed += SlideTimer_Elapsed;
 
+                HideCursorTimer = new System.Timers.Timer()
+                {
+                    Interval = 2500,
+                    Enabled = false
+                };
+                HideCursorTimer.Elapsed += HideCursorTimer_Elapsed;
+
+                MouseIdleTimer = new System.Timers.Timer()
+                {
+                    Interval = 2500,
+                    Enabled = false
+                };
+                MouseIdleTimer.Elapsed += MouseIdleTimer_Elapsed;
+            
 
                 // Updates settings from older version to newer version
                 if (Properties.Settings.Default.CallUpgrade)
@@ -695,7 +710,6 @@ namespace PicView
                 AjaxLoadingEnd();
             }
         }
-
 
         /// <summary>
         /// Reset to default state
@@ -1087,7 +1101,7 @@ namespace PicView
             Bar.Text = titleString[1];
             Bar.ToolTip = titleString[2];
 
-            
+
             PicPath = Pics[x];
             canNavigate = true;
             Progress(x, Pics.Count);
@@ -2023,16 +2037,16 @@ namespace PicView
                 {
                     Close_UserControls();
                 }
+                else if (Slidetimer.Enabled == true)
+                {
+                    UnloadSlideshow();
+                }
                 else if (picGallery != null)
                 {
                     if (picGallery.open)
                         PicGalleryFade(false);
                     else
                         Close();
-                }
-                else if(Slidetimer.Enabled == true)
-                {
-                    UnloadSlideshow();
                 }
                 else
                 {
@@ -2401,7 +2415,7 @@ namespace PicView
                 Zoom(e.Delta, true); // Scale zoom with Ctrl held down
             else if (!autoScrolling)
                 Zoom(e.Delta, false);
-                
+
         }
 
 
@@ -3133,67 +3147,52 @@ namespace PicView
                 ToolTipStyle("There was no image(s) to show.");
                 return;
             }
-                
 
-            if(this.WindowState == WindowState.Normal)
-            {
+
+            if (this.WindowState == WindowState.Normal)
+            {       
+                HideInterface();
                 Maximize_Restore();
-                TitleBar.Visibility =
-                LowerBar.Visibility =
-                LeftBorderRectangle.Visibility =
-                RightBorderRectangle.Visibility =
-                Visibility.Collapsed;
                 Mouse.OverrideCursor = Cursors.None;
                 NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
-
-                clickArrowLeft.Visibility =
-                clickArrowRight.Visibility =
-                x2.Visibility =
-                Visibility.Visible;
+                activityTimer.Start();
                 Slidetimer.Start();
             }
-            else if(this.WindowState == WindowState.Maximized && Slidetimer.Enabled == false)
-            {
+            else if (this.WindowState == WindowState.Maximized && Slidetimer.Enabled == false)
+            {               
                 TitleBar.Visibility =
                 LowerBar.Visibility =
                 LeftBorderRectangle.Visibility =
                 RightBorderRectangle.Visibility =
                 Visibility.Collapsed;
                 Mouse.OverrideCursor = Cursors.None;
-                NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
-
+                NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);               
                 clickArrowLeft.Visibility =
                 clickArrowRight.Visibility =
                 x2.Visibility =
                 Visibility.Visible;
+                activityTimer.Start();
                 Slidetimer.Start();
             }
             else
             {
                 UnloadSlideshow();
             }
-                     
+
         }
 
         private void UnloadSlideshow()
         {
+            
+            HideInterface();
             Maximize_Restore();
-            TitleBar.Visibility =
-            LowerBar.Visibility =
-            LeftBorderRectangle.Visibility =
-            RightBorderRectangle.Visibility
-            = Visibility.Visible;
-            Mouse.OverrideCursor = Cursors.Arrow;
+            Mouse.OverrideCursor = null;
             NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
-
-            clickArrowLeft.Visibility =
-            clickArrowRight.Visibility =
-            x2.Visibility =
-            Visibility.Collapsed;
+            activityTimer.Stop();
             Slidetimer.Stop();
         }
 
-       
+
 
         // AjaxLoading
 
@@ -3559,7 +3558,7 @@ namespace PicView
 
             await Application.Current.Dispatcher.BeginInvoke((Action)(() =>
             {
-                if (Properties.Settings.Default.WindowStyle == 2)
+                if (Properties.Settings.Default.WindowStyle == 2 | Slidetimer.Enabled == true)
                 {
                     if (clickArrowRight != null && clickArrowLeft != null && x2 != null)
                     {
@@ -3598,8 +3597,37 @@ namespace PicView
                 AnimationHelper.Fade(img, 0, TimeSpan.FromSeconds(.5));
                 Pic(true, false);
                 AnimationHelper.Fade(img, 1, TimeSpan.FromSeconds(.5));
-            }));          
+            }));
         }
+
+
+        /// <summary>
+        /// Timer to show/hide cursor.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HideCursorTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            Dispatcher.BeginInvoke(DispatcherPriority.Normal, new ThreadStart(() =>
+            {
+                AnimationHelper.Fade(clickArrowLeft, 0, TimeSpan.FromSeconds(.5));
+                AnimationHelper.Fade(clickArrowRight, 0, TimeSpan.FromSeconds(.5));
+                AnimationHelper.Fade(x2, 0, TimeSpan.FromSeconds(.5));
+                Mouse.OverrideCursor = Cursors.None;
+            }));
+            MouseIdleTimer.Stop();
+        }
+
+        /// <summary>
+        /// Timer to check if Mouse is idle in Slideshow.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MouseIdleTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            HideCursorTimer.Start();
+        }
+
 
         /// <summary>
         /// Logic for mouse movements on MainWindow
@@ -3608,9 +3636,26 @@ namespace PicView
         /// <param name="e"></param>
         private void MainWindow_MouseMove(object sender, MouseEventArgs e)
         {
+            //If Mouse is hidden, show it and interface elements.
+            if (e.MouseDevice.OverrideCursor == Cursors.None)
+            {
+                Mouse.OverrideCursor = null; 
+                HideCursorTimer.Stop();
+            }
+
             // Stop timer if mouse moves on mainwindow and show elements
             activityTimer.Stop();
             FadeControlsAsync(true);
+
+
+            // If Slideshow is running the interface will hide after 2,5 sec.
+            if(Slidetimer.Enabled == true)
+            {
+                MouseIdleTimer.Start();
+            }else
+            {
+                MouseIdleTimer.Stop();
+            }          
         }
 
 
@@ -4485,6 +4530,6 @@ namespace PicView
 
         #endregion
 
-       
+
     }
 }

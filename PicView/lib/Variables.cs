@@ -214,6 +214,16 @@ namespace PicView.lib
         internal static Timer fastPicTimer;
 
         /// <summary>
+        /// Timer used for hide/show cursor.
+        /// </summary>
+        internal static Timer HideCursorTimer;
+
+        /// <summary>
+        /// Timer used to check if mouse is idle.
+        /// </summary>
+        internal static Timer MouseIdleTimer;
+
+        /// <summary>
         /// Timer used for slideshow
         /// </summary>
         internal static Timer Slidetimer;

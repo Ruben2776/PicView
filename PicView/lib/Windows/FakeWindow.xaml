@@ -8,8 +8,9 @@
     AllowsTransparency="True"
     Background="#72000000"
     ResizeMode="NoResize"
-    WindowStartupLocation="CenterScreen"
     ShowInTaskbar="False"
+    Topmost="False"
+    WindowStartupLocation="CenterScreen"
     WindowStyle="None">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" UseAeroCaptionButtons="False" />
