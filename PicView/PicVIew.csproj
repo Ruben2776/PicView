@@ -353,6 +353,8 @@
     <Resource Include="lib\fonts\Aller_It.ttf" />
     <Resource Include="lib\fonts\Aller_Lt.ttf" />
     <Resource Include="lib\fonts\Aller_LtIt.ttf" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">

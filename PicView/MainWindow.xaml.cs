@@ -941,9 +941,6 @@ namespace PicView
             }
         }
 
-
-
-
         #endregion
 
         #region Image Logic
@@ -1608,7 +1605,7 @@ namespace PicView
             if (files[0] == null) return true;
 
             // Return status of useable file
-            switch (Path.GetExtension(files[0]))
+            switch (Path.GetExtension(files[0]).ToLower())
             {
                 // Archives
                 case ".zip":
@@ -2428,6 +2425,10 @@ namespace PicView
                 {
                     Zoom(e.Delta, true); // Scale zoom by holding Ctrl when scroll is enabled
                 }
+                else if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+                {
+                    Pic(e.Delta > 0);
+                }
                 else
                 {
                     // Scroll vertical when scroll enabled
@@ -2439,13 +2440,9 @@ namespace PicView
                 }
             }
 
-
             else if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
             {
-                if (e.Delta > 0)
-                    Pic();
-                else if (e.Delta < 0)
-                    Pic(false);
+                Pic(e.Delta > 0);
             }
 
             // Zoom if it's not scroll enabled
@@ -3422,7 +3419,6 @@ namespace PicView
                 Properties.Settings.Default.WindowStyle = 2;
 
                 activityTimer.Start();
-
             }
             else
             {
@@ -3823,7 +3819,7 @@ namespace PicView
             string RenamedFilePath = Path.GetDirectoryName(PicPath);
             string RenamedFileExt = Path.GetExtension(PicPath);
 
-            lib.Windows.YesNoDialogWindow YesNoDialog = new lib.Windows.YesNoDialogWindow("Are you sure you wanna rename \r\n" + Picname + " to ")
+            var YesNoDialog = new YesNoDialogWindow("Are you sure you wanna rename \r\n" + Picname + " to ")
             {
                 Width = Width,
                 Height = Height,
