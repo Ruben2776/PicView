@@ -338,7 +338,7 @@
                                 Width="200"
                                 Height="30"
                                 Maximum="15"
-                                SmallChange="1"
+                                Minimum="1"
                                 TickPlacement="BottomRight" />
 
                             <TextBox

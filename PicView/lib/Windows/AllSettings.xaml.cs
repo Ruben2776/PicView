@@ -556,13 +556,13 @@ namespace PicView.Windows
         {
             var slider = sender as Slider;
             value = slider.Value;
-
             txtSlide.Text = value.ToString("0");
+
         }
 
         #endregion
 
-            #region Set ColorTheme
+        #region Set ColorTheme
 
         private static void Blue(object sender, RoutedEventArgs e)
         {
@@ -628,11 +628,6 @@ namespace PicView.Windows
         {
             switch (value.ToString("0"))
             {
-                case "0":
-                    Properties.Settings.Default.Slidetimeren = 500;
-                    Properties.Settings.Default.Save();
-                    break;
-
                 case "1":
                     Properties.Settings.Default.Slidetimeren = 1000;
                     Properties.Settings.Default.Save();

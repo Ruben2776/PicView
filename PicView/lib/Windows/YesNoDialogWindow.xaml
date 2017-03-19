@@ -106,7 +106,8 @@
             <Canvas
                 Width="348"
                 Height="245"
-                Margin="0,33">
+                Margin="0,33"
+                Background="{StaticResource BackgroundColorBrushAlt}">
 
                 <Label
                     x:Name="RenameLabel"

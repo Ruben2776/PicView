@@ -3091,7 +3091,6 @@ namespace PicView
 
    
         // AjaxLoading
-
         /// <summary>
         /// Loads AjaxLoading and adds it to the window
         /// </summary>
