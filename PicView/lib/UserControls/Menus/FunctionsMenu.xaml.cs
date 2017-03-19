@@ -338,14 +338,14 @@ namespace PicView.lib.UserControls.Menus
                 mainColor.R,
                 mainColor.G,
                 mainColor.B,
-                FileDetailsBrush,
+                SlideshowsBrush,
                 false
             );
         }
 
         private void SlideshowButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(FileDetailsBrush, false);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(SlideshowsBrush, false);
         }
 
         private void SlideshowButtonMouseLeave(object sender, MouseEventArgs e)
@@ -355,7 +355,7 @@ namespace PicView.lib.UserControls.Menus
                 mainColor.R,
                 mainColor.G,
                 mainColor.B,
-                FileDetailsBrush,
+                SlideshowsBrush,
                 false
             );
         }

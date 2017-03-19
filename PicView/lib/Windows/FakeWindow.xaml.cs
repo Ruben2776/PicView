@@ -1,16 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace PicView.Windows
 {
@@ -24,10 +14,28 @@ namespace PicView.Windows
             InitializeComponent();
             Width = SystemParameters.FullPrimaryScreenWidth;
             Height = SystemParameters.WorkArea.Height;
-            GotFocus += FakeWindow_GotFocus;
+            MouseLeftButtonDown += FakeWindow_MouseLeftButtonDown;
+            Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
         }
 
-        private void FakeWindow_GotFocus(object sender, RoutedEventArgs e)
+        private void MainWindow_StateChanged(object sender, EventArgs e)
+        {
+            switch (Application.Current.MainWindow.WindowState)
+            {
+                case WindowState.Normal:
+                    Show();
+                    break;
+                case WindowState.Minimized:
+                    Hide();
+                    break;
+                case WindowState.Maximized:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void FakeWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Application.Current.MainWindow.Focus();
         }

@@ -1836,7 +1836,6 @@ namespace PicView
             if (prevPicResource != null)
             {
                 img.Source = prevPicResource;
-                prevPicResource = null;
             }
             else if (!canNavigate && !Uri.IsWellFormedUriString(PicPath, UriKind.Absolute))
             {
@@ -1901,13 +1900,7 @@ namespace PicView
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.Key)
-            {
-                //case Key.LWin:
-                //case Key.RWin:
-                //    SizeMode = false;
-                //    break;
-
-                // Next             
+            {    
                 case Key.BrowserForward:
                 case Key.Right:
                 case Key.D:
@@ -2023,9 +2016,6 @@ namespace PicView
                     else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
                         Rotate(true);
                     break;
-
-
-
 
                 // Zoom
                 case Key.Add:
@@ -2233,6 +2223,17 @@ namespace PicView
                 if (picGallery != null)
                     PicGalleryFade(picGallery.Visibility == Visibility.Collapsed);
             }
+
+            // Alt + C
+            else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.C))
+            {
+                if (!Application.Current.Windows.OfType<FakeWindow>().Any())
+                {
+                    new FakeWindow().Show();
+                    Focus();
+                }
+            }
+
 
         }
 
@@ -3435,7 +3436,6 @@ namespace PicView
                 Properties.Settings.Default.WindowStyle = 0;
                 activityTimer.Stop();
             }
-
         }
         
 
