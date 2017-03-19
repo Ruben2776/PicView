@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PicView", "PicView\PicView.csproj", "{9B5425DC-4329-4A7A-A0C5-F93161F77245}"
 EndProject
+Project("{F088123C-0E9E-452A-89E6-6BA2F21D5CAC}") = "ModelingProject1", "ModelingProject1\ModelingProject1.modelproj", "{EFC80610-7442-484D-979F-AFF18D390222}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{9B5425DC-4329-4A7A-A0C5-F93161F77245}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B5425DC-4329-4A7A-A0C5-F93161F77245}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B5425DC-4329-4A7A-A0C5-F93161F77245}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFC80610-7442-484D-979F-AFF18D390222}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFC80610-7442-484D-979F-AFF18D390222}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFC80610-7442-484D-979F-AFF18D390222}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFC80610-7442-484D-979F-AFF18D390222}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
