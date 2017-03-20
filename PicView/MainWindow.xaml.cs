@@ -1604,8 +1604,9 @@ namespace PicView
             if (files == null) return true;
             if (files[0] == null) return true;
 
+            var x = Path.GetExtension(files[0]).ToLowerInvariant();
             // Return status of useable file
-            switch (Path.GetExtension(files[0]).ToLower())
+            switch (x)
             {
                 // Archives
                 case ".zip":
@@ -1833,13 +1834,13 @@ namespace PicView
                 return;
 
             // Switch to previous image if available
-            if (prevPicResource != null)
-            {
-                img.Source = prevPicResource;
-            }
-            else if (!canNavigate && !Uri.IsWellFormedUriString(PicPath, UriKind.Absolute))
+            if (!canNavigate) 
             {
                 img.Source = null;
+            }
+            else if (prevPicResource != null)
+            {
+                img.Source = prevPicResource;
             }
 
             // Update status
