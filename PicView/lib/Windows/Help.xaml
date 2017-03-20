@@ -301,6 +301,20 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
+                                <Bold>Ctrl</Bold>
+                                +
+                                <Bold>R</Bold>
+                                to reload.
+                            </TextBlock>
+                        </BulletDecorator>
+                        <BulletDecorator Margin="7,2">
+                            <BulletDecorator.Bullet>
+                                <Ellipse
+                                    Width="7"
+                                    Height="7"
+                                    Fill="{StaticResource MainColorBrush}" />
+                            </BulletDecorator.Bullet>
+                            <TextBlock Margin="5,0,0,0">
                                 <Bold>Shift</Bold>
                                 +
                                 <Bold>Del</Bold>
@@ -405,7 +419,7 @@
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
                                 <Bold>Shift + Mousewheel down</Bold>
-                                to show next image.
+                                to show previous image.
                             </TextBlock>
                         </BulletDecorator>
                         <BulletDecorator Margin="7,2">

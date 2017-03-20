@@ -1604,8 +1604,9 @@ namespace PicView
             if (files == null) return true;
             if (files[0] == null) return true;
 
+            var x = Path.GetExtension(files[0]).ToLowerInvariant();
             // Return status of useable file
-            switch (Path.GetExtension(files[0]).ToLower())
+            switch (x)
             {
                 // Archives
                 case ".zip":
@@ -1833,14 +1834,13 @@ namespace PicView
                 return;
 
             // Switch to previous image if available
-            if (prevPicResource != null)
-            {
-                img.Source = prevPicResource;
-                prevPicResource = null;
-            }
-            else if (!canNavigate && !Uri.IsWellFormedUriString(PicPath, UriKind.Absolute))
+            if (!canNavigate) 
             {
                 img.Source = null;
+            }
+            else if (prevPicResource != null)
+            {
+                img.Source = prevPicResource;
             }
 
             // Update status
@@ -1901,13 +1901,7 @@ namespace PicView
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.Key)
-            {
-                //case Key.LWin:
-                //case Key.RWin:
-                //    SizeMode = false;
-                //    break;
-
-                // Next             
+            {    
                 case Key.BrowserForward:
                 case Key.Right:
                 case Key.D:
@@ -2023,9 +2017,6 @@ namespace PicView
                     else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
                         Rotate(true);
                     break;
-
-
-
 
                 // Zoom
                 case Key.Add:
@@ -2233,6 +2224,17 @@ namespace PicView
                 if (picGallery != null)
                     PicGalleryFade(picGallery.Visibility == Visibility.Collapsed);
             }
+
+            // Alt + C
+            else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.C))
+            {
+                if (!Application.Current.Windows.OfType<FakeWindow>().Any())
+                {
+                    new FakeWindow().Show();
+                    Focus();
+                }
+            }
+
 
         }
 
@@ -3435,7 +3437,6 @@ namespace PicView
                 Properties.Settings.Default.WindowStyle = 0;
                 activityTimer.Stop();
             }
-
         }
         
 

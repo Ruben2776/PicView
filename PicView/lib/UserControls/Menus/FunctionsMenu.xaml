@@ -143,7 +143,7 @@
                         Height="42"
                         Margin="0,0,4,0"
                         Style="{StaticResource MetroAlphaFlatButton}"
-                        ToolTip="Send image to the recycle bin">
+                        ToolTip="Send image to the recycle bin [Delete]">
                         <Path
                             Width="30"
                             Height="30"
@@ -160,7 +160,7 @@
                         Height="42"
                         Margin="0,0,4,0"
                         Style="{StaticResource MetroAlphaFlatButton}"
-                        ToolTip="Permanently delete image">
+                        ToolTip="Permanently delete image [Shift + Delete]">
                         <Path
                             Width="30"
                             Height="30"
@@ -213,7 +213,7 @@
                         Height="42"
                         Margin="0,0,4,0"
                         Style="{StaticResource MetroAlphaFlatButton}"
-                        ToolTip="Reload image">
+                        ToolTip="Reload image [Ctrl + R]">
                         <Path
                             Width="30"
                             Height="30"
