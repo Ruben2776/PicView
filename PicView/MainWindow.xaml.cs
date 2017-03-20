@@ -3896,8 +3896,27 @@ namespace PicView
                         FileFunctions.RenameFile(Pics[i], RenamedFilePath + "\\" + Picname + YesNoDialog.NameForRename);
 
                     }
+                    
 
+                    Reload();
+                }
+                else if (YesNoDialog.ChosenRbtn.Equals("rbBulkResize"))
+                {
+                    if (!File.Exists(PicPath) || img.Source == null)
+                        return;
 
+                   
+
+                    for (int i = 0; i < Pics.Count; i++)
+                    {
+                        if(File.Exists(Pics[i]))
+                        {
+                            Picname = Path.GetFullPath(Pics[i]);
+                            ResizeImage(Picname, YesNoDialog.NewPicWidth, YesNoDialog.NewPicHeight);
+                        }
+                    }
+
+                    ToolTipStyle("Pichures has been resized.");
                     Reload();
                 }
             }
@@ -4514,7 +4533,7 @@ namespace PicView
             }
         }
 
-
+       
 
 
         #endregion

@@ -15,6 +15,8 @@ namespace PicView.Windows
         string RbtnName;
         public string NameForRename { get { return TxtNewName.Text; } }
         public string Counter2 { get; set; }
+        public int NewPicWidth { get; set; }
+        public int NewPicHeight { get; set; }
         public string ChosenRbtn { get { return RbtnName; } }
         public string Picname { get; set; }
 
@@ -79,14 +81,20 @@ namespace PicView.Windows
                 RbtnName = "rbBulkRenameEx";
                 this.Close();
             }
+            else if(rbBulkResize.IsChecked == true)
+            {
+                DialogResult = true;
+                RbtnName = "rbBulkResize";
+                NewPicHeight = int.Parse(txtHeight.Text);
+                NewPicWidth = int.Parse(txtWidth.Text);
+                this.Close();
+            }
            
          
         }
 
         private void No_Click(object sender, RoutedEventArgs e)
         {
-            
-
             DialogResult = false;
             this.Close();
         }
@@ -105,23 +113,50 @@ namespace PicView.Windows
                     case "rbRename":
                         RenameLabel.Content = "Are you sure you wanna rename \r\n" + Picname + " to ";
                         TxtNewName.ToolTip = "Write what you wanna rename the file to.";
+                        TxtNewName.Visibility = Visibility.Visible;
                         txtcounter.Visibility = Visibility.Collapsed;
                         lbCounter.Visibility = Visibility.Collapsed;
+                        lbHeight.Visibility = Visibility.Collapsed;
+                        lbWidth.Visibility = Visibility.Collapsed;
+                        txtHeight.Visibility = Visibility.Collapsed;
+                        txtWidth.Visibility = Visibility.Collapsed;
                         break;
 
                     case "rbBulkRename":
                         RenameLabel.Content = "Are you sure you wanna rename all \r\n" + " files in the folder.";
                         TxtNewName.ToolTip = "Write what you wanna call all files in the folder with extension.";
                         txtcounter.ToolTip = "Write where you wanna start the count from (Default: 1)";
+                        TxtNewName.Visibility = Visibility.Visible;
                         txtcounter.Visibility = Visibility.Visible;
                         lbCounter.Visibility = Visibility.Visible;
+                        lbHeight.Visibility = Visibility.Collapsed;
+                        lbWidth.Visibility = Visibility.Collapsed;
+                        txtHeight.Visibility = Visibility.Collapsed;
+                        txtWidth.Visibility = Visibility.Collapsed;
                         break;
 
                     case "rbBulkRenameEx":
                         RenameLabel.Content = "Are you sure you wanna change all \r\n" + " extension in the folder.";
                         TxtNewName.ToolTip = "Write the extension you wanna convert all files in folder to";
+                        TxtNewName.Visibility = Visibility.Visible;
                         txtcounter.Visibility = Visibility.Collapsed;
                         lbCounter.Visibility = Visibility.Collapsed;
+                        lbHeight.Visibility = Visibility.Collapsed;
+                        lbWidth.Visibility = Visibility.Collapsed;
+                        txtHeight.Visibility = Visibility.Collapsed;
+                        txtWidth.Visibility = Visibility.Collapsed;
+                        break;
+
+                    case "rbBulkResize":
+                        RenameLabel.Content = "Are you sure you wanna resize all \r\n" + " pictures in the folder.";
+                        TxtNewName.ToolTip = "Write the size you wanna resize all images in folder to";
+                        txtcounter.Visibility = Visibility.Collapsed;
+                        lbCounter.Visibility = Visibility.Collapsed;
+                        TxtNewName.Visibility = Visibility.Collapsed;
+                        lbHeight.Visibility = Visibility.Visible;
+                        lbWidth.Visibility = Visibility.Visible;
+                        txtHeight.Visibility = Visibility.Visible;
+                        txtWidth.Visibility = Visibility.Visible;
                         break;
                 }
 

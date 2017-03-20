@@ -317,6 +317,23 @@ namespace PicView.lib
             }
         }
 
-
+        internal static void ResizeImage(string Pic, int NewWidth, int NewHeight)
+        {
+            try
+            {
+                using (MagickImage magick = new MagickImage(Pic))
+                {
+                    MagickGeometry size = new MagickGeometry(NewWidth, NewHeight);
+                    size.IgnoreAspectRatio = true;
+                    magick.Resize(size);
+                    magick.Quality = 100;
+                    magick.Write(Pic);
+                }
+            }
+            catch (MagickException)
+            {
+                return;
+            }          
+        }
     }
 }

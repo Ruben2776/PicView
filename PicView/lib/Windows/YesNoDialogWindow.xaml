@@ -105,8 +105,7 @@
 
             <Canvas
                 Width="348"
-                Height="245"
-                Margin="0,33"
+                Margin="0,33,0,0"
                 Background="{StaticResource BackgroundColorBrushAlt}">
 
                 <Label
@@ -185,12 +184,48 @@
                     Content="Bulk rename extension" />
 
                 <RadioButton
+                    x:Name="rbBulkResize"
+                    Canvas.Left="12"
+                    Canvas.Top="192"
+                    Click="rbRename_Click"
+                    Content="Bulk resize images" />
+
+                <RadioButton
                     x:Name="rbRename"
                     Canvas.Left="12"
                     Canvas.Top="129"
                     Click="rbRename_Click"
                     Content="Rename"
                     IsChecked="True" />
+
+                <Label
+                    x:Name="lbWidth"
+                    Canvas.Left="199"
+                    Canvas.Top="137"
+                    Content="Width:"
+                    Visibility="Collapsed" />
+
+                <TextBox
+                    x:Name="txtWidth"
+                    Canvas.Left="265"
+                    Canvas.Top="141"
+                    Width="50"
+                    Visibility="Collapsed" />
+
+                <TextBox
+                    x:Name="txtHeight"
+                    Canvas.Left="265"
+                    Canvas.Top="171"
+                    Width="50"
+                    Visibility="Collapsed" />
+
+                <Label
+                    x:Name="lbHeight"
+                    Canvas.Left="199"
+                    Canvas.Top="165"
+                    Content="Height:"
+                    Visibility="Collapsed" />
+
 
                 <TextBox
                     x:Name="txtcounter"
