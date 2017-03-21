@@ -2233,9 +2233,11 @@ namespace PicView
                     new FakeWindow().Show();
                     Focus();
                 }
+                else
+                {
+                    Application.Current.Windows[1].Close();
+                }
             }
-
-
         }
 
 
