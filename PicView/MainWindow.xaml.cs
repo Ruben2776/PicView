@@ -3402,7 +3402,7 @@ namespace PicView
         /// <summary>
         /// Toggle between hidden interface and default
         /// </summary>
-        private void HideInterface()
+        private void HideInterface(bool slideshow = false)
         {
             if (Properties.Settings.Default.WindowStyle == 0)
             {
@@ -3417,7 +3417,8 @@ namespace PicView
                 x2.Visibility =
                 Visibility.Visible;
 
-                Properties.Settings.Default.WindowStyle = 2;
+                if (!slideshow)
+                    Properties.Settings.Default.WindowStyle = 2;
 
                 activityTimer.Start();
             }
@@ -3700,38 +3701,17 @@ namespace PicView
                 ToolTipStyle("There was no image(s) to show.");
                 return;
             }
+            HideInterface(true);
+            SizeMode = false;
+            Topmost = true;
+            Width = bg.Width = SystemParameters.PrimaryScreenWidth;
+            Height = bg.Height = SystemParameters.PrimaryScreenHeight;
+            Top = 0;
+            Left = 0;
 
-
-            if (this.WindowState == WindowState.Normal)
-            {
-                HideInterface();
-                Maximize_Restore();
-                Mouse.OverrideCursor = Cursors.None;
-                NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
-                activityTimer.Start();
-                Slidetimer.Start();
-            }
-            else if (this.WindowState == WindowState.Maximized && Slidetimer.Enabled == false)
-            {
-                TitleBar.Visibility =
-                LowerBar.Visibility =
-                LeftBorderRectangle.Visibility =
-                RightBorderRectangle.Visibility =
-                Visibility.Collapsed;
-                Mouse.OverrideCursor = Cursors.None;
-                NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
-                clickArrowLeft.Visibility =
-                clickArrowRight.Visibility =
-                x2.Visibility =
-                Visibility.Visible;
-                activityTimer.Start();
-                Slidetimer.Start();
-            }
-            else
-            {
-                UnloadSlideshow();
-            }
-
+            Cursor = Cursors.None;
+            NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
+            Slidetimer.Start();
         }
 
         private void UnloadSlideshow()
