@@ -1,19 +1,9 @@
 ﻿using PicView.lib;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using static PicView.lib.Variables;
 
 namespace PicView.Windows
@@ -23,92 +13,110 @@ namespace PicView.Windows
     /// </summary>
     public partial class AllSettings : Window
     {
-        double value = Properties.Settings.Default.Slidetimeren;
-
         public AllSettings()
         {
             InitializeComponent();
 
-            // CloseButton
-            CloseButton.MouseEnter += CloseButtonMouseOver;
-            CloseButton.MouseLeave += CloseButtonMouseLeave;
-            CloseButton.PreviewMouseLeftButtonDown += CloseButtonMouseButtonDown;
-            CloseButton.Click += (s, x) => Close();
-
-            // BlueRadio
-            BlueRadio.PreviewMouseLeftButtonDown += BlueRadio_PreviewMouseLeftButtonDown;
-            BlueRadio.MouseEnter += BlueRadio_MouseEnter;
-            BlueRadio.MouseLeave += BlueRadio_MouseLeave;
-            BlueRadio.Click += Blue;
-
-            // PinkRadio
-            PinkRadio.PreviewMouseLeftButtonDown += PinkRadio_PreviewMouseLeftButtonDown;
-            PinkRadio.MouseEnter += PinkRadio_MouseEnter;
-            PinkRadio.MouseLeave += PinkRadio_MouseLeave;
-            PinkRadio.Click += Pink;
-
-            // OrangeRadio
-            OrangeRadio.PreviewMouseLeftButtonDown += OrangeRadio_PreviewMouseLeftButtonDown;
-            OrangeRadio.MouseEnter += OrangeRadio_MouseEnter;
-            OrangeRadio.MouseLeave += OrangeRadio_MouseLeave;
-            OrangeRadio.Click += Orange;
-
-            // GreenRadio
-            GreenRadio.PreviewMouseLeftButtonDown += GreenRadio_PreviewMouseLeftButtonDown;
-            GreenRadio.MouseEnter += GreenRadio_MouseEnter;
-            GreenRadio.MouseLeave += GreenRadio_MouseLeave;
-            GreenRadio.Click += Green;
-
-            // RedRadio
-            RedRadio.PreviewMouseLeftButtonDown += RedRadio_PreviewMouseLeftButtonDown;
-            RedRadio.MouseEnter += RedRadio_MouseEnter;
-            RedRadio.MouseLeave += RedRadio_MouseLeave;
-            RedRadio.Click += Red;
-
-            // VioletRadio
-            VioletRadio.PreviewMouseLeftButtonDown += VioletRadio_PreviewMouseLeftButtonDown;
-            VioletRadio.MouseEnter += VioletRadio_MouseEnter;
-            VioletRadio.MouseLeave += VioletRadio_MouseLeave;
-            VioletRadio.Click += Violet;
-
-            // AquaRadio
-            AquaRadio.PreviewMouseLeftButtonDown += AquaRadio_PreviewMouseLeftButtonDown;
-            AquaRadio.MouseEnter += AquaRadio_MouseEnter;
-            AquaRadio.MouseLeave += AquaRadio_MouseLeave;
-            AquaRadio.Click += Aqua;
-
-            // BeigeRadio
-            BeigeRadio.PreviewMouseLeftButtonDown += BeigeRadio_PreviewMouseLeftButtonDown;
-            BeigeRadio.MouseEnter += BeigeRadio_MouseEnter;
-            BeigeRadio.MouseLeave += BeigeRadio_MouseLeave;
-            BeigeRadio.Click += Beige;
-
-            // PurpleRadio
-            PurpleRadio.PreviewMouseLeftButtonDown += PurpleRadio_PreviewMouseLeftButtonDown;
-            PurpleRadio.MouseEnter += PurpleRadio_MouseEnter;
-            PurpleRadio.MouseLeave += PurpleRadio_MouseLeave;
-            PurpleRadio.Click += Purple;
-
-            // CyanRadio
-            CyanRadio.PreviewMouseLeftButtonDown += CyanRadio_PreviewMouseLeftButtonDown;
-            CyanRadio.MouseEnter += CyanRadio_MouseEnter;
-            CyanRadio.MouseLeave += CyanRadio_MouseLeave;
-            CyanRadio.Click += Cyan;
-
-            // MagentaRadio
-            MagentaRadio.PreviewMouseLeftButtonDown += MagentaRadio_PreviewMouseLeftButtonDown;
-            MagentaRadio.MouseEnter += MagentaRadio_MouseEnter;
-            MagentaRadio.MouseLeave += MagentaRadio_MouseLeave;
-            MagentaRadio.Click += Magenta;
-
-            // YellowRadio
-            YellowRadio.PreviewMouseLeftButtonDown += YellowRadio_PreviewMouseLeftButtonDown;
-            YellowRadio.MouseEnter += YellowRadio_MouseEnter;
-            YellowRadio.MouseLeave += YellowRadio_MouseLeave;
-            YellowRadio.Click += Yellow;
-
-            Loaded += (s, x) =>
+            ContentRendered += (s, x) =>
             {
+                // CloseButton
+                CloseButton.MouseEnter += CloseButtonMouseOver;
+                CloseButton.MouseLeave += CloseButtonMouseLeave;
+                CloseButton.PreviewMouseLeftButtonDown += CloseButtonMouseButtonDown;
+                CloseButton.Click += delegate { Close(); };
+
+                // BlueRadio
+                BlueRadio.PreviewMouseLeftButtonDown += BlueRadio_PreviewMouseLeftButtonDown;
+                BlueRadio.MouseEnter += BlueRadio_MouseEnter;
+                BlueRadio.MouseLeave += BlueRadio_MouseLeave;
+                BlueRadio.Click += Blue;
+
+                // PinkRadio
+                PinkRadio.PreviewMouseLeftButtonDown += PinkRadio_PreviewMouseLeftButtonDown;
+                PinkRadio.MouseEnter += PinkRadio_MouseEnter;
+                PinkRadio.MouseLeave += PinkRadio_MouseLeave;
+                PinkRadio.Click += Pink;
+
+                // OrangeRadio
+                OrangeRadio.PreviewMouseLeftButtonDown += OrangeRadio_PreviewMouseLeftButtonDown;
+                OrangeRadio.MouseEnter += OrangeRadio_MouseEnter;
+                OrangeRadio.MouseLeave += OrangeRadio_MouseLeave;
+                OrangeRadio.Click += Orange;
+
+                // GreenRadio
+                GreenRadio.PreviewMouseLeftButtonDown += GreenRadio_PreviewMouseLeftButtonDown;
+                GreenRadio.MouseEnter += GreenRadio_MouseEnter;
+                GreenRadio.MouseLeave += GreenRadio_MouseLeave;
+                GreenRadio.Click += Green;
+
+                // RedRadio
+                RedRadio.PreviewMouseLeftButtonDown += RedRadio_PreviewMouseLeftButtonDown;
+                RedRadio.MouseEnter += RedRadio_MouseEnter;
+                RedRadio.MouseLeave += RedRadio_MouseLeave;
+                RedRadio.Click += Red;
+
+                // VioletRadio
+                VioletRadio.PreviewMouseLeftButtonDown += VioletRadio_PreviewMouseLeftButtonDown;
+                VioletRadio.MouseEnter += VioletRadio_MouseEnter;
+                VioletRadio.MouseLeave += VioletRadio_MouseLeave;
+                VioletRadio.Click += Violet;
+
+                // AquaRadio
+                AquaRadio.PreviewMouseLeftButtonDown += AquaRadio_PreviewMouseLeftButtonDown;
+                AquaRadio.MouseEnter += AquaRadio_MouseEnter;
+                AquaRadio.MouseLeave += AquaRadio_MouseLeave;
+                AquaRadio.Click += Aqua;
+
+                // BeigeRadio
+                BeigeRadio.PreviewMouseLeftButtonDown += BeigeRadio_PreviewMouseLeftButtonDown;
+                BeigeRadio.MouseEnter += BeigeRadio_MouseEnter;
+                BeigeRadio.MouseLeave += BeigeRadio_MouseLeave;
+                BeigeRadio.Click += Beige;
+
+                // PurpleRadio
+                PurpleRadio.PreviewMouseLeftButtonDown += PurpleRadio_PreviewMouseLeftButtonDown;
+                PurpleRadio.MouseEnter += PurpleRadio_MouseEnter;
+                PurpleRadio.MouseLeave += PurpleRadio_MouseLeave;
+                PurpleRadio.Click += Purple;
+
+                // CyanRadio
+                CyanRadio.PreviewMouseLeftButtonDown += CyanRadio_PreviewMouseLeftButtonDown;
+                CyanRadio.MouseEnter += CyanRadio_MouseEnter;
+                CyanRadio.MouseLeave += CyanRadio_MouseLeave;
+                CyanRadio.Click += Cyan;
+
+                // MagentaRadio
+                MagentaRadio.PreviewMouseLeftButtonDown += MagentaRadio_PreviewMouseLeftButtonDown;
+                MagentaRadio.MouseEnter += MagentaRadio_MouseEnter;
+                MagentaRadio.MouseLeave += MagentaRadio_MouseLeave;
+                MagentaRadio.Click += Magenta;
+
+                // YellowRadio
+                YellowRadio.PreviewMouseLeftButtonDown += YellowRadio_PreviewMouseLeftButtonDown;
+                YellowRadio.MouseEnter += YellowRadio_MouseEnter;
+                YellowRadio.MouseLeave += YellowRadio_MouseLeave;
+                YellowRadio.Click += Yellow;
+
+                // LoopRadio
+                LoopRadio.PreviewMouseLeftButtonDown += LoopRadio_PreviewMouseLeftButtonDown;
+                LoopRadio.MouseEnter += LoopRadio_MouseEnter;
+                LoopRadio.MouseLeave += LoopRadio_MouseLeave;
+                LoopRadio.IsChecked = Properties.Settings.Default.Looping;
+                LoopRadio.Checked += SetLooping;
+
+                // PicGalleryRadio
+                PicGalleryRadio.PreviewMouseLeftButtonDown += PicGalleryRadio_PreviewMouseLeftButtonDown;
+                PicGalleryRadio.MouseEnter += PicGalleryRadio_MouseEnter;
+                PicGalleryRadio.MouseLeave += PicGalleryRadio_MouseLeave;
+                PicGalleryRadio.IsChecked = Properties.Settings.Default.PicGallery > 0;
+                PicGalleryRadio.Checked += SetPicGallery;
+
+                //Slidebar
+                double value = Properties.Settings.Default.Slidetimeren;
+                txtSlide.Text = value.ToString().Replace("000", string.Empty);
+                SlideSlider.Value = double.Parse(value.ToString().Replace("000", string.Empty));
+                SlideSlider.ValueChanged += SlideSlider_ValueChanged;
+
                 switch (Properties.Settings.Default.ColorTheme)
                 {
                     case 1:
@@ -151,12 +159,6 @@ namespace PicView.Windows
 
                 KeyUp += AllSettings_KeyUp;
             };
-
-            //Slidebar
-            txtSlide.Text = value.ToString().Replace("000", string.Empty);
-            SlideSlider.Value = double.Parse(value.ToString().Replace("000", string.Empty));
-            SlideSlider.ValueChanged += SlideSlider_ValueChanged;
-
         }
 
         private void AllSettings_KeyUp(object sender, KeyEventArgs e)
@@ -165,6 +167,10 @@ namespace PicView.Windows
             {
                 case Key.Escape:
                     Close();
+                    break;
+                case Key.Q:
+                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        Environment.Exit(0);
                     break;
                 default:
                     break;
@@ -550,14 +556,64 @@ namespace PicView.Windows
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(YellowBrush, 12);
         }
 
-
-        //Slideslider
-        private void SlideSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        // Loop
+        void LoopRadio_MouseLeave(object sender, MouseEventArgs e)
         {
-            var slider = sender as Slider;
-            value = slider.Value;
-            txtSlide.Text = value.ToString("0");
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                LoopBrush,
+                false
+            );
+        }
 
+        void LoopRadio_MouseEnter(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                LoopBrush,
+                false
+            );
+        }
+
+        void LoopRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, LoopBrush, false);
+        }
+
+        // PicGallery
+        void PicGalleryRadio_MouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                PicGalleryBrush,
+                false
+            );
+        }
+
+        void PicGalleryRadio_MouseEnter(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                PicGalleryBrush,
+                false
+            );
+        }
+
+        void PicGalleryRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, PicGalleryBrush, false);
         }
 
         #endregion
@@ -624,87 +680,106 @@ namespace PicView.Windows
             Properties.Settings.Default.ColorTheme = 12;
         }
 
+        #endregion
+
+        //Slideslider
+        private void SlideSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double value = Properties.Settings.Default.Slidetimeren;
+            var slider = sender as Slider;
+            value = slider.Value;
+            txtSlide.Text = value.ToString("0");
+        }
+
         private void SetSlidetimer()
         {
-            switch (value.ToString("0"))
+            switch (Properties.Settings.Default.Slidetimeren.ToString("0"))
             {
                 case "1":
                     Properties.Settings.Default.Slidetimeren = 1000;
-                    Properties.Settings.Default.Save();
                     break;
 
                 case "2":
                     Properties.Settings.Default.Slidetimeren = 2000;
-                    Properties.Settings.Default.Save();
                     break;
 
                 case "3":
                     Properties.Settings.Default.Slidetimeren = 3000;
-                    Properties.Settings.Default.Save();
                     break;
 
                 case "4":
                     Properties.Settings.Default.Slidetimeren = 4000;
-                    Properties.Settings.Default.Save();
                     break;
 
                 case "5":
                     Properties.Settings.Default.Slidetimeren = 5000;
-                    Properties.Settings.Default.Save();
                     break;
 
                 case "6":
                     Properties.Settings.Default.Slidetimeren = 6000;
-                    Properties.Settings.Default.Save();
                     break;
 
                 case "7":
                     Properties.Settings.Default.Slidetimeren = 7000;
-                    Properties.Settings.Default.Save();
                     break;
 
                 case "8":
                     Properties.Settings.Default.Slidetimeren = 8000;
-                    Properties.Settings.Default.Save();
                     break;
 
                 case "9":
                     Properties.Settings.Default.Slidetimeren = 9000;
-                    Properties.Settings.Default.Save();
                     break;
 
                 case "10":
                     Properties.Settings.Default.Slidetimeren = 10000;
-                    Properties.Settings.Default.Save();
                     break;
 
                 case "11":
                     Properties.Settings.Default.Slidetimeren = 11000;
-                    Properties.Settings.Default.Save();
                     break;
 
                 case "12":
                     Properties.Settings.Default.Slidetimeren = 12000;
-                    Properties.Settings.Default.Save();
                     break;
 
                 case "13":
                     Properties.Settings.Default.Slidetimeren = 13000;
-                    Properties.Settings.Default.Save();
                     break;
 
                 case "14":
                     Properties.Settings.Default.Slidetimeren = 140000;
-                    Properties.Settings.Default.Save();
                     break;
 
                 case "15":
                     Properties.Settings.Default.Slidetimeren = 15000;
-                    Properties.Settings.Default.Save();
                     break;
             }
+        }
 
-            Properties.Settings.Default.Upgrade();
+
+        private void SetLooping(object sender, RoutedEventArgs e)
+        {
+            if (Properties.Settings.Default.Looping)
+            {
+                Properties.Settings.Default.Looping = false;
+            }
+            else
+            {
+                Properties.Settings.Default.Looping = true;
+            }
+        }
+
+        private void SetPicGallery(object sender, RoutedEventArgs e)
+        {
+            if (PicGalleryRadio.IsChecked.Value)
+            {
+                Properties.Settings.Default.PicGallery = 0;
+            }
+            else
+            {
+                Properties.Settings.Default.PicGallery = 1;
+            }
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -714,8 +789,6 @@ namespace PicView.Windows
             e.Cancel = true;
             AnimationHelper.FadeWindow(this, 0, TimeSpan.FromSeconds(.5));
         }
-
-        #endregion
 
     }
 }
