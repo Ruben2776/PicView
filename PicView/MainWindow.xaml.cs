@@ -426,7 +426,6 @@ namespace PicView
             recentcmIcon.Width = recentcmIcon.Height = 12;
             recentcmIcon.Fill = scbf;
             recentcm.Icon = recentcmIcon;
-            recentcm.MouseEnter += (xx, xxx) => Recentcm_MouseEnter(recentcm);
             cm.Items.Add(recentcm);
 
             var sortcm = new MenuItem
@@ -703,8 +702,8 @@ namespace PicView
             }
 
             #endregion           
-
-            Recentcm_MouseEnter(recentcm);
+            
+            cm.Opened += (tt,yy) => Recentcm_MouseEnter(recentcm);
             if (endLoading)
             {
                 AjaxLoadingEnd();
@@ -736,7 +735,7 @@ namespace PicView
             }
 
             NoProgress();
-            AjaxLoadingEnd();
+            AnimationHelper.Fade(ajaxLoading, 0, TimeSpan.FromSeconds(.2));
         }
 
 
