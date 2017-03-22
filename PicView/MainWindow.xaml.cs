@@ -1211,13 +1211,40 @@ namespace PicView
             {
                 if (next)
                 {
-                    FolderIndex = FolderIndex == Pics.Count - 1 ? 0 : FolderIndex + 1;
-                    PreloadCount++;
+                    if (Properties.Settings.Default.Looping)
+                    {
+                        FolderIndex = FolderIndex == Pics.Count - 1 ? 0 : FolderIndex + 1;
+                        PreloadCount++;
+                    }
+                    else
+                    {
+                        if (FolderIndex + 1 == Pics.Count)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            FolderIndex = FolderIndex == Pics.Count - 1 ? 0 : FolderIndex + 1;
+                            PreloadCount++;
+                        }
+                    }
                 }
                 else
                 {
-                    FolderIndex = FolderIndex == 0 ? Pics.Count - 1 : FolderIndex - 1;
-                    PreloadCount--;
+                    if (Properties.Settings.Default.Looping)
+                    {
+                        FolderIndex = FolderIndex == 0 ? Pics.Count - 1 : FolderIndex - 1;
+                        PreloadCount--;
+                    }
+                    if (FolderIndex - 1  < 0)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        FolderIndex--;
+                        PreloadCount--;
+                    }
                 }
             }
             Pic(FolderIndex);
@@ -2240,9 +2267,11 @@ namespace PicView
                     new FakeWindow().Show();
                     Focus();
                 }
+                else
+                {
+                    Application.Current.Windows[1].Close();
+                }
             }
-
-
         }
 
 

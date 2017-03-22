@@ -95,5 +95,8 @@
     <Setting Name="Slidetimeren" Type="System.Double" Scope="User">
       <Value Profile="(Default)">10000</Value>
     </Setting>
+    <Setting Name="Looping" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
