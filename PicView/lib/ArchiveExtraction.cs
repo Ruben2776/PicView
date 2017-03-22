@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 using static PicView.lib.FileFunctions;
 using static PicView.lib.Variables;
-using PicView;
 
 namespace PicView.lib
 {

@@ -186,10 +186,10 @@
         <Grid Width="23">
             <Grid.Background>
                 <ImageBrush
-                        ImageSource="/PicView;component/lib/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
-                        TileMode="FlipXY"
-                        Viewport="0,0,100,100"
-                        ViewportUnits="Absolute" />
+                    ImageSource="/PicView;component/lib/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
+                    TileMode="FlipXY"
+                    Viewport="0,0,100,100"
+                    ViewportUnits="Absolute" />
             </Grid.Background>
             <Grid.RowDefinitions>
                 <RowDefinition MaxHeight="18" />

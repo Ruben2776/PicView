@@ -2,7 +2,6 @@
 using PicView.lib.UserControls.Menus;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
