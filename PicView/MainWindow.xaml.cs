@@ -1211,40 +1211,37 @@ namespace PicView
             {
                 if (next)
                 {
+                    // loop next
                     if (Properties.Settings.Default.Looping)
                     {
                         FolderIndex = FolderIndex == Pics.Count - 1 ? 0 : FolderIndex + 1;
-                        PreloadCount++;
                     }
                     else
                     {
+                        // Go to next if able
                         if (FolderIndex + 1 == Pics.Count)
-                        {
                             return;
-                        }
-                        else
-                        {
-                            FolderIndex = FolderIndex == Pics.Count - 1 ? 0 : FolderIndex + 1;
-                            PreloadCount++;
-                        }
+                        FolderIndex++;
                     }
+
+                    PreloadCount++;
                 }
                 else
                 {
+                    // Loop prev
                     if (Properties.Settings.Default.Looping)
                     {
                         FolderIndex = FolderIndex == 0 ? Pics.Count - 1 : FolderIndex - 1;
-                        PreloadCount--;
-                    }
-                    if (FolderIndex - 1 < 0)
-                    {
-                        return;
                     }
                     else
                     {
+                        // Go to prev if able
+                        if (FolderIndex - 1 < 0)
+                            return;
                         FolderIndex--;
-                        PreloadCount--;
                     }
+
+                    PreloadCount--;
                 }
             }
             Pic(FolderIndex);
