@@ -2054,7 +2054,7 @@ namespace PicView
                 {
                     Close_UserControls();
                 }
-                else if (Slidetimer.Enabled == true)
+                else if (SlideshowActive == true)
                 {
                     UnloadSlideshow();
                 }
@@ -2196,7 +2196,14 @@ namespace PicView
             //F11
             else if (e.Key == Key.F11)
             {
-                LoadSlideshow();
+                if(SlideshowActive == false)
+                {
+                    LoadSlideshow();
+                }
+                else
+                {
+                    UnloadSlideshow();
+                }
             }
 
             // Home
@@ -3701,27 +3708,37 @@ namespace PicView
                 ToolTipStyle("There was no image(s) to show.");
                 return;
             }
-            HideInterface(true);
-            SizeMode = false;
-            Topmost = true;
-            Width = bg.Width = SystemParameters.PrimaryScreenWidth;
-            Height = bg.Height = SystemParameters.PrimaryScreenHeight;
-            Top = 0;
-            Left = 0;
 
-            Cursor = Cursors.None;
+
+                HideInterface(false);
+                Topmost = true;
+                SizeMode = false;
+                Width = bg.Width = SystemParameters.PrimaryScreenWidth;
+                Height = bg.Height = SystemParameters.PrimaryScreenHeight;
+                Top = 0;
+                Left = 0;
+
+
+
+            Mouse.OverrideCursor = Cursors.None;
             NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
+            SlideshowActive = true;
             Slidetimer.Start();
         }
 
         private void UnloadSlideshow()
         {
 
+
             HideInterface();
-            Maximize_Restore();
+            Topmost = false;
+            SizeMode = true;
+            bg.Width = double.NaN;
+            bg.Height = double.NaN;
+
             Mouse.OverrideCursor = null;
             NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
-            activityTimer.Stop();
+            SlideshowActive = false;
             Slidetimer.Stop();
         }
 
@@ -3886,17 +3903,17 @@ namespace PicView
                     if (!File.Exists(PicPath) || img.Source == null)
                         return;
 
-                   
-
+                    
                     for (int i = 0; i < Pics.Count; i++)
                     {
                         if(File.Exists(Pics[i]))
                         {
                             Picname = Path.GetFullPath(Pics[i]);
+                         
                             ResizeImage(Picname, YesNoDialog.NewPicWidth, YesNoDialog.NewPicHeight);
+                            
                         }
                     }
-
                     ToolTipStyle("Pichures has been resized.");
                     Reload();
                 }

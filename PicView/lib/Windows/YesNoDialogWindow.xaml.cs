@@ -148,8 +148,9 @@ namespace PicView.Windows
                         break;
 
                     case "rbBulkResize":
-                        RenameLabel.Content = "Are you sure you wanna resize all \r\n" + " pictures in the folder.";
-                        TxtNewName.ToolTip = "Write the size you wanna resize all images in folder to";
+                        RenameLabel.Content = "Are you sure you wanna resize all \r\n" + " pictures in the folder. (This may take time.)";
+                        txtWidth.ToolTip = "Write the width you wanna resize all images in folder to";
+                        txtHeight.ToolTip = "Write the height you wanna resize all images in folder to";
                         txtcounter.Visibility = Visibility.Collapsed;
                         lbCounter.Visibility = Visibility.Collapsed;
                         TxtNewName.Visibility = Visibility.Collapsed;
