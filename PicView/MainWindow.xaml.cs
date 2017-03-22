@@ -352,7 +352,7 @@ namespace PicView
                     Enabled = false
                 };
                 MouseIdleTimer.Elapsed += MouseIdleTimer_Elapsed;
-            
+
 
                 // Updates settings from older version to newer version
                 if (Properties.Settings.Default.CallUpgrade)
@@ -1236,7 +1236,7 @@ namespace PicView
                         FolderIndex = FolderIndex == 0 ? Pics.Count - 1 : FolderIndex - 1;
                         PreloadCount--;
                     }
-                    if (FolderIndex - 1  < 0)
+                    if (FolderIndex - 1 < 0)
                     {
                         return;
                     }
@@ -1861,7 +1861,7 @@ namespace PicView
                 return;
 
             // Switch to previous image if available
-            if (!canNavigate) 
+            if (!canNavigate)
             {
                 img.Source = null;
             }
@@ -1928,7 +1928,7 @@ namespace PicView
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.Key)
-            {    
+            {
                 case Key.BrowserForward:
                 case Key.Right:
                 case Key.D:
@@ -2223,7 +2223,7 @@ namespace PicView
             //F11
             else if (e.Key == Key.F11)
             {
-                if(SlideshowActive == false)
+                if (SlideshowActive == false)
                 {
                     LoadSlideshow();
                 }
@@ -3124,7 +3124,7 @@ namespace PicView
             sexyToolTip.Visibility = Visibility.Hidden;
         }
 
-   
+
         // AjaxLoading
         /// <summary>
         /// Loads AjaxLoading and adds it to the window
@@ -3475,7 +3475,7 @@ namespace PicView
                 activityTimer.Stop();
             }
         }
-        
+
 
         /// <summary>
         /// Hides/shows interface elements with a fade animation
@@ -3612,7 +3612,7 @@ namespace PicView
             //If Mouse is hidden, show it and interface elements.
             if (e.MouseDevice.OverrideCursor == Cursors.None)
             {
-                Mouse.OverrideCursor = null; 
+                Mouse.OverrideCursor = null;
                 HideCursorTimer.Stop();
             }
 
@@ -3622,13 +3622,14 @@ namespace PicView
 
 
             // If Slideshow is running the interface will hide after 2,5 sec.
-            if(Slidetimer.Enabled == true)
+            if (Slidetimer.Enabled == true)
             {
                 MouseIdleTimer.Start();
-            }else
+            }
+            else
             {
                 MouseIdleTimer.Stop();
-            }          
+            }
         }
 
 
@@ -3738,16 +3739,16 @@ namespace PicView
                 return;
             }
 
+            if (WindowState == WindowState.Maximized)
+                Maximize_Restore();
 
-                HideInterface(false);
-                Topmost = true;
-                SizeMode = false;
-                Width = bg.Width = SystemParameters.PrimaryScreenWidth;
-                Height = bg.Height = SystemParameters.PrimaryScreenHeight;
-                Top = 0;
-                Left = 0;
-
-
+            HideInterface(false);
+            Topmost = true;
+            SizeMode = false;
+            Width = bg.Width = SystemParameters.PrimaryScreenWidth;
+            Height = bg.Height = SystemParameters.PrimaryScreenHeight;
+            Top = 0;
+            Left = 0;
 
             Mouse.OverrideCursor = Cursors.None;
             NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
@@ -3757,8 +3758,6 @@ namespace PicView
 
         private void UnloadSlideshow()
         {
-
-
             HideInterface();
             Topmost = false;
             SizeMode = true;
@@ -3923,7 +3922,7 @@ namespace PicView
                         FileFunctions.RenameFile(Pics[i], RenamedFilePath + "\\" + Picname + YesNoDialog.NameForRename);
 
                     }
-                    
+
 
                     Reload();
                 }
@@ -3932,15 +3931,15 @@ namespace PicView
                     if (!File.Exists(PicPath) || img.Source == null)
                         return;
 
-                    
+
                     for (int i = 0; i < Pics.Count; i++)
                     {
-                        if(File.Exists(Pics[i]))
+                        if (File.Exists(Pics[i]))
                         {
                             Picname = Path.GetFullPath(Pics[i]);
-                         
+
                             ResizeImage(Picname, YesNoDialog.NewPicWidth, YesNoDialog.NewPicHeight);
-                            
+
                         }
                     }
                     ToolTipStyle("Pichures has been resized.");
@@ -4560,7 +4559,7 @@ namespace PicView
             }
         }
 
-       
+
 
 
         #endregion
