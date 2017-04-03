@@ -2,8 +2,6 @@
     x:Class="PicView.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:PicView"
-    x:Name="window"
     Title="Loading..."
     MinWidth="465"
     MinHeight="515"
@@ -15,47 +13,6 @@
     TextOptions.TextFormattingMode="Display"
     TextOptions.TextRenderingMode="ClearType"
     WindowStartupLocation="CenterScreen">
-    <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="bool2VisibilityConverter" />
-        <Style x:Key="MyWindowStyle" TargetType="local:MainWindow">
-            <Setter Property="UseLayoutRounding" Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="local:MainWindow">
-                        <Border
-                            x:Name="WindowBorder"
-                            Margin="0"
-                            Background="{StaticResource WindowBackgroundColorBrush}">
-                            <Grid>
-                                <Border BorderThickness="1">
-                                    <AdornerDecorator>
-                                        <Grid x:Name="LayoutRoot">
-                                            <ContentPresenter />
-                                        </Grid>
-                                    </AdornerDecorator>
-                                </Border>
-                                <Border
-                                    BorderBrush="{StaticResource BorderBrush}"
-                                    BorderThickness="1"
-                                    Opacity=".4"
-                                    Visibility="{Binding IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource bool2VisibilityConverter}}" />
-                            </Grid>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="WindowChrome.WindowChrome">
-                <Setter.Value>
-                    <WindowChrome
-                        CaptionHeight="0"
-                        CornerRadius="0"
-                        GlassFrameThickness="1"
-                        ResizeBorderThickness="5"
-                        UseAeroCaptionButtons="False" />
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
     <DockPanel LastChildFill="True">
         <DockPanel
             x:Name="TitleBar"

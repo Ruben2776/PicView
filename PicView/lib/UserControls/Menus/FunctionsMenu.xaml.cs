@@ -270,7 +270,7 @@ namespace PicView.lib.UserControls.Menus
             );
         }
 
-        //RenameFile Button
+        //ToolsWindow Button
         private void RenameFileButtonMouseOver(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(

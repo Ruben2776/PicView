@@ -231,7 +231,7 @@
                         Height="42"
                         Margin="0,0,4,0"
                         Style="{StaticResource MetroAlphaFlatButton}"
-                        ToolTip="Rename file name(s)/extension(s) or Resize images.">
+                        ToolTip="Rename file [Not implemented]">
                         <Canvas>
                             <Path
                                 Canvas.Left="-13"

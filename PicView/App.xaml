@@ -17,6 +17,46 @@
                 <ResourceDictionary Source="lib\Styles\RadioButton.xaml" />
                 <ResourceDictionary Source="lib\Styles\Label.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <BooleanToVisibilityConverter x:Key="bool2VisibilityConverter" />
+            <Style x:Key="MyWindowStyle" TargetType="Window">
+                <Setter Property="UseLayoutRounding" Value="True" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Window">
+                            <Border
+                            x:Name="WindowBorder"
+                            Margin="0"
+                            Background="{StaticResource WindowBackgroundColorBrush}">
+                                <Grid>
+                                    <Border BorderThickness="1">
+                                        <AdornerDecorator>
+                                            <Grid x:Name="LayoutRoot">
+                                                <ContentPresenter />
+                                            </Grid>
+                                        </AdornerDecorator>
+                                    </Border>
+                                    <Border
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    Opacity=".4"
+                                    Visibility="{Binding IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource bool2VisibilityConverter}}" />
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="WindowChrome.WindowChrome">
+                    <Setter.Value>
+                        <WindowChrome
+                        CaptionHeight="0"
+                        CornerRadius="0"
+                        GlassFrameThickness="1"
+                        ResizeBorderThickness="5"
+                        UseAeroCaptionButtons="False" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
     <JumpList.JumpList>

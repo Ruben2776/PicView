@@ -238,7 +238,7 @@ namespace PicView
                 functionsMenu.DeletePermButton.Click += (s, x) => DeleteFile(PicPath, false);
                 functionsMenu.ReloadButton.Click += (s, x) => Reload();
                 functionsMenu.ReloadButton.Click += Toggle_Functions_menu;
-                functionsMenu.RenameFileButton.Click += (s, x) => RenameFile();
+                functionsMenu.RenameFileButton.Click += (s, x) => ToolsWindow();
                 functionsMenu.RenameFileButton.Click += Toggle_Functions_menu;
                 functionsMenu.ResetZoomButton.Click += (s, x) => ResetZoom();
                 functionsMenu.SlideshowButton.Click += (s, x) => LoadSlideshow();
@@ -3829,123 +3829,11 @@ namespace PicView
         }
 
         /// <summary>
-        /// Show YesNoDialogBox
+        /// Show Tools window
         /// </summary>
-        private void RenameFile()
+        private void ToolsWindow()
         {
-            if (!File.Exists(PicPath))
-                return;
-
-            string Picname = Path.GetFileName(PicPath);
-            string RenamedFilePath = Path.GetDirectoryName(PicPath);
-            string RenamedFileExt = Path.GetExtension(PicPath);
-
-            var YesNoDialog = new YesNoDialogWindow("Are you sure you wanna rename \r\n" + Picname + " to ")
-            {
-                Width = Width,
-                Height = Height,
-                Owner = Application.Current.MainWindow,
-                Picname = Picname,
-            };
-
-            var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
-            window.BeginAnimation(OpacityProperty, animation);
-
-            if ((bool)YesNoDialog.ShowDialog())
-            {
-                if (YesNoDialog.ChosenRbtn.Equals("rbRename"))
-                {
-                    if (!File.Exists(PicPath) || img.Source == null)
-                        return;
-
-                    if (string.IsNullOrWhiteSpace(YesNoDialog.NameForRename))
-                        return;
-
-                    if (File.Exists(RenamedFilePath + "\\" + YesNoDialog.NameForRename + RenamedFileExt))
-                        ToolTipStyle(YesNoDialog.NameForRename + RenamedFileExt + " allready exists");
-
-
-                    if (FileFunctions.RenameFile(PicPath, RenamedFilePath + "\\" + YesNoDialog.NameForRename + RenamedFileExt))
-                    {
-                        string Fullpath = RenamedFilePath + "\\" + YesNoDialog.NameForRename + RenamedFileExt;
-                        Pics[FolderIndex] = Fullpath;
-
-                        var titleString = TitleString((int)img.Source.Width, (int)img.Source.Height, FolderIndex);
-                        Title = titleString[0];
-                        Bar.Text = titleString[1];
-                        Bar.ToolTip = titleString[2];
-                    }
-                    Reload();
-                }
-                else if (YesNoDialog.ChosenRbtn.Equals("rbBulkRename"))
-                {
-                    int Counteren = int.Parse(YesNoDialog.Counter2);
-                    if (!File.Exists(PicPath) || img.Source == null)
-                        return;
-
-                    if (string.IsNullOrWhiteSpace(YesNoDialog.NameForRename))
-                        return;
-
-                    if (File.Exists(RenamedFilePath + "\\" + YesNoDialog.NameForRename + RenamedFileExt))
-                        ToolTipStyle(YesNoDialog.NameForRename + RenamedFileExt + " allready exists");
-
-
-                    for (int i = 0; i < Pics.Count; i++)
-                    {
-                        FileFunctions.RenameFile(Pics[i], RenamedFilePath + "\\" + YesNoDialog.NameForRename + Counteren + RenamedFileExt);
-                        Counteren++;
-                    }
-
-
-                    Reload();
-                }
-                else if (YesNoDialog.ChosenRbtn.Equals("rbBulkRenameEx"))
-                {
-
-                    if (!File.Exists(PicPath) || img.Source == null)
-                        return;
-
-                    if (string.IsNullOrWhiteSpace(YesNoDialog.NameForRename))
-                        return;
-
-                    if (File.Exists(RenamedFilePath + "\\" + YesNoDialog.NameForRename + RenamedFileExt))
-                        ToolTipStyle(YesNoDialog.NameForRename + RenamedFileExt + " allready exists");
-
-                    for (int i = 0; i < Pics.Count; i++)
-                    {
-                        Picname = Path.GetFileName(Pics[i]);
-                        Picname = Picname.Remove(Picname.IndexOf(".") + 1);
-                        FileFunctions.RenameFile(Pics[i], RenamedFilePath + "\\" + Picname + YesNoDialog.NameForRename);
-
-                    }
-
-
-                    Reload();
-                }
-                else if (YesNoDialog.ChosenRbtn.Equals("rbBulkResize"))
-                {
-                    if (!File.Exists(PicPath) || img.Source == null)
-                        return;
-
-
-                    for (int i = 0; i < Pics.Count; i++)
-                    {
-                        if (File.Exists(Pics[i]))
-                        {
-                            Picname = Path.GetFullPath(Pics[i]);
-
-                            ResizeImage(Picname, YesNoDialog.NewPicWidth, YesNoDialog.NewPicHeight);
-
-                        }
-                    }
-                    ToolTipStyle("Pichures has been resized.");
-                    Reload();
-                }
-            }
-            else
-            {
-                ToolTipStyle("Something went wrong under renamening of " + Picname);
-            }
+            new Tools().Show();
         }
 
         #endregion
