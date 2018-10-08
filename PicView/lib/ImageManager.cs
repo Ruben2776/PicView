@@ -30,7 +30,6 @@ namespace PicView.lib
                 var mrs = new MagickReadSettings()
                 {
                     Density = new Density(300, 300),
-                    CompressionMethod = CompressionMethod.NoCompression
                 };
 
                 if (extension.ToLower() == ".svg")
@@ -281,7 +280,6 @@ namespace PicView.lib
                         var mrs = new MagickReadSettings()
                         {
                             Density = new Density(300, 300),
-                            CompressionMethod = CompressionMethod.NoCompression
                         };
                         SaveImage.Quality = 100;
 

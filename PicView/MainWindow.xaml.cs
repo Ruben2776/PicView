@@ -37,16 +37,9 @@ namespace PicView
             ContentRendered += MainWindow_ContentRendered;
         }
 
-
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             Application.Current.Resources["ChosenColor"] = AnimationHelper.GetPrefferedColorOver();
-            ajaxLoading = new AjaxLoading
-            {
-                Opacity = 0
-            };
-            bg.Children.Add(ajaxLoading);
-            AjaxLoadingStart();
 
             if (Properties.Settings.Default.WindowStyle == 2)
             {
@@ -58,9 +51,14 @@ namespace PicView
             }
         }
 
-
         private void MainWindow_ContentRendered(object sender, EventArgs e)
         {
+            ajaxLoading = new AjaxLoading
+            {
+                Opacity = 0
+            };
+            bg.Children.Add(ajaxLoading);
+            AjaxLoadingStart();
             var endLoading = false;
 
             // Update values
@@ -121,248 +119,240 @@ namespace PicView
                 Visibility.Visible;
             }
 
-            // Do updates in seperate task
-            var task = new Task(() =>
+
+            // Initilize Most Recently used
+            RecentFiles.Initialize();
+
+            #region Add events
+
+            // keyboard and Mouse_Keys Keys
+            //PreviewKeyDown += previewKeys;
+            KeyDown += MainWindow_KeyDown;
+            KeyUp += MainWindow_KeyUp;
+            MouseDown += MainWindow_MouseDown;
+
+            // Close Button
+            CloseButton.PreviewMouseLeftButtonDown += CloseButtonMouseButtonDown;
+            CloseButton.MouseEnter += CloseButtonMouseOver;
+            CloseButton.MouseLeave += CloseButtonMouseLeave;
+            CloseButton.Click += (s, x) => Close();
+
+            // MinButton
+            MinButton.PreviewMouseLeftButtonDown += MinButtonMouseButtonDown;
+            MinButton.MouseEnter += MinButtonMouseOver;
+            MinButton.MouseLeave += MinButtonMouseLeave;
+            MinButton.Click += (s, x) => SystemCommands.MinimizeWindow(this);
+
+            // MaxButton
+            MaxButton.PreviewMouseLeftButtonDown += MaxButtonMouseButtonDown;
+            MaxButton.MouseEnter += MaxButtonMouseOver;
+            MaxButton.MouseLeave += MaxButtonMouseLeave;
+            MaxButton.Click += (s, x) => Maximize_Restore();
+
+            // FileMenuButton
+            FileMenuButton.PreviewMouseLeftButtonDown += OpenMenuButtonMouseButtonDown;
+            FileMenuButton.MouseEnter += OpenMenuButtonMouseOver;
+            FileMenuButton.MouseLeave += OpenMenuButtonMouseLeave;
+            FileMenuButton.Click += Toggle_open_menu;
+
+            fileMenu.Open.Click += (s, x) => Open();
+            fileMenu.Open_File_Location.Click += (s, x) => Open_In_Explorer();
+            fileMenu.Print.Click += (s, x) => Print(PicPath);
+            fileMenu.Save_File.Click += (s, x) => SaveFiles();
+
+            fileMenu.Open_Border.MouseLeftButtonUp += (s, x) => Open();
+            fileMenu.Open_File_Location_Border.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
+            fileMenu.Print_Border.MouseLeftButtonUp += (s, x) => Print(PicPath);
+            fileMenu.Save_File_Location_Border.MouseLeftButtonUp += (s, x) => SaveFiles();
+
+            fileMenu.CloseButton.Click += Close_UserControls;
+            fileMenu.PasteButton.Click += (s, x) => Paste();
+            fileMenu.CopyButton.Click += (s, x) => CopyPic();
+
+            // image_button
+            image_button.PreviewMouseLeftButtonDown += ImageButtonMouseButtonDown;
+            image_button.MouseEnter += ImageButtonMouseOver;
+            image_button.MouseLeave += ImageButtonMouseLeave;
+            image_button.Click += Toggle_image_menu;
+
+            // imageSettingsMenu Buttons
+            imageSettingsMenu.CloseButton.Click += Close_UserControls;
+            imageSettingsMenu.Rotation0Button.Click += (s, x) => Rotate(0);
+            imageSettingsMenu.Rotation90Button.Click += (s, x) => Rotate(90);
+            imageSettingsMenu.Rotation180Button.Click += (s, x) => Rotate(180);
+            imageSettingsMenu.Rotation270Button.Click += (s, x) => Rotate(270);
+            imageSettingsMenu.Rotation0Border.MouseLeftButtonDown += (s, x) => Rotate(0);
+            imageSettingsMenu.Rotation90Border.MouseLeftButtonDown += (s, x) => Rotate(90);
+            imageSettingsMenu.Rotation180Border.MouseLeftButtonDown += (s, x) => Rotate(180);
+            imageSettingsMenu.Rotation270Border.MouseLeftButtonDown += (s, x) => Rotate(270);
+
+            // LeftButton
+            LeftButton.PreviewMouseLeftButtonDown += LeftButtonMouseButtonDown;
+            LeftButton.MouseEnter += LeftButtonMouseOver;
+            LeftButton.MouseLeave += LeftButtonMouseLeave;
+            LeftButton.Click += (s, x) => { LeftbuttonClicked = true; Pic(false, false); };
+
+            // RightButton
+            RightButton.PreviewMouseLeftButtonDown += RightButtonMouseButtonDown;
+            RightButton.MouseEnter += RightButtonMouseOver;
+            RightButton.MouseLeave += RightButtonMouseLeave;
+            RightButton.Click += (s, x) => { RightbuttonClicked = true; Pic(); };
+
+            // Settings and QuickSettingsMenu
+            SettingsButton.PreviewMouseLeftButtonDown += SettingsButtonButtonMouseButtonDown;
+            SettingsButton.MouseEnter += SettingsButtonButtonMouseOver;
+            SettingsButton.MouseLeave += SettingsButtonButtonMouseLeave;
+            SettingsButton.Click += Toggle_quick_settings_menu;
+            quickSettingsMenu.CloseButton.Click += Toggle_quick_settings_menu;
+            quickSettingsMenu.ToggleScroll.Checked += (s, x) =>
             {
-                // Initilize Most Recently used
-                RecentFiles.Initialize();
+                IsScrollEnabled = true;
+                //Close_UserControls();
+            };
+            quickSettingsMenu.ToggleScroll.Unchecked += (s, x) =>
+            {
+                IsScrollEnabled = false;
+                //Close_UserControls();
+            };
+            quickSettingsMenu.SetFit.Click += (s, x) => { SizeMode = true; };
+            quickSettingsMenu.SetCenter.Click += (s, x) => { SizeMode = false; };
+            quickSettingsMenu.SettingsButton.Click += (s, x) => AllSettingsWindow();
 
-                #region Add events
+            //FunctionMenu
+            FunctionMenuButton.PreviewMouseLeftButtonDown += FunctionMenuButtonButtonMouseButtonDown;
+            FunctionMenuButton.MouseEnter += FunctionMenuButtonButtonMouseOver;
+            FunctionMenuButton.MouseLeave += FunctionMenuButtonButtonMouseLeave;
+            FunctionMenuButton.Click += Toggle_Functions_menu;
+            functionsMenu.CloseButton.Click += Toggle_Functions_menu;
+            functionsMenu.Help.Click += (s, x) => HelpWindow();
+            functionsMenu.About.Click += (s, x) => AboutWindow();
+            functionsMenu.ClearButton.Click += (s, x) => Unload();
+            functionsMenu.ClearButton.Click += Toggle_Functions_menu;
+            functionsMenu.FileDetailsButton.Click += (s, x) => NativeMethods.ShowFileProperties(PicPath);
+            functionsMenu.FileDetailsButton.Click += Toggle_Functions_menu;
+            functionsMenu.DeleteButton.Click += (s, x) => DeleteFile(PicPath, true);
+            functionsMenu.DeletePermButton.Click += (s, x) => DeleteFile(PicPath, false);
+            functionsMenu.ReloadButton.Click += (s, x) => Reload();
+            functionsMenu.ReloadButton.Click += Toggle_Functions_menu;
+            functionsMenu.RenameFileButton.Click += (s, x) => ToolsWindow();
+            functionsMenu.RenameFileButton.Click += Toggle_Functions_menu;
+            functionsMenu.ResetZoomButton.Click += (s, x) => ResetZoom();
+            functionsMenu.SlideshowButton.Click += (s, x) => LoadSlideshow();
+            functionsMenu.SlideshowButton.Click += Toggle_Functions_menu;
 
-                // keyboard and Mouse_Keys Keys
-                //PreviewKeyDown += previewKeys;
-                KeyDown += MainWindow_KeyDown;
-                KeyUp += MainWindow_KeyUp;
-                MouseDown += MainWindow_MouseDown;
+            // FlipButton
+            imageSettingsMenu.FlipButton.Click += (s, x) => Flip();
 
-                // Close Button
-                CloseButton.PreviewMouseLeftButtonDown += CloseButtonMouseButtonDown;
-                CloseButton.MouseEnter += CloseButtonMouseOver;
-                CloseButton.MouseLeave += CloseButtonMouseLeave;
-                CloseButton.Click += (s, x) => Close();
+            // ClickArrows
+            clickArrowLeft.MouseLeftButtonUp += (s, x) =>
+            {
+                clickArrowLeftClicked = true;
+                Pic(false, false);
+            };
+            clickArrowRight.MouseLeftButtonUp += (s, x) =>
+            {
+                clickArrowRightClicked = true;
+                Pic();
+            };
 
-                // MinButton
-                MinButton.PreviewMouseLeftButtonDown += MinButtonMouseButtonDown;
-                MinButton.MouseEnter += MinButtonMouseOver;
-                MinButton.MouseLeave += MinButtonMouseLeave;
-                MinButton.Click += (s, x) => SystemCommands.MinimizeWindow(this);
+            // x2
+            x2.MouseLeftButtonUp += (x, xx) => Close();
 
-                // MaxButton
-                MaxButton.PreviewMouseLeftButtonDown += MaxButtonMouseButtonDown;
-                MaxButton.MouseEnter += MaxButtonMouseOver;
-                MaxButton.MouseLeave += MaxButtonMouseLeave;
-                MaxButton.Click += (s, x) => Maximize_Restore();
+            // Bar
+            Bar.MouseLeftButtonDown += Move;
 
-                // FileMenuButton
-                FileMenuButton.PreviewMouseLeftButtonDown += OpenMenuButtonMouseButtonDown;
-                FileMenuButton.MouseEnter += OpenMenuButtonMouseOver;
-                FileMenuButton.MouseLeave += OpenMenuButtonMouseLeave;
-                FileMenuButton.Click += Toggle_open_menu;
+            // img
+            img.MouseLeftButtonDown += Zoom_img_MouseLeftButtonDown;
+            img.MouseLeftButtonUp += Zoom_img_MouseLeftButtonUp;
+            img.MouseMove += Zoom_img_MouseMove;
+            img.MouseWheel += Zoom_img_MouseWheel;
 
-                fileMenu.Open.Click += (s, x) => Open();
-                fileMenu.Open_File_Location.Click += (s, x) => Open_In_Explorer();
-                fileMenu.Print.Click += (s, x) => Print(PicPath);
-                fileMenu.Save_File.Click += (s, x) => SaveFiles();
+            // bg
+            bg.Drop += Image_Drop;
+            bg.DragOver += Image_DraOver;
+            bg.DragEnter += Image_DraEnter;
+            bg.DragLeave += Image_DragLeave;
 
-                fileMenu.Open_Border.MouseLeftButtonUp += (s, x) => Open();
-                fileMenu.Open_File_Location_Border.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
-                fileMenu.Print_Border.MouseLeftButtonUp += (s, x) => Print(PicPath);
-                fileMenu.Save_File_Location_Border.MouseLeftButtonUp += (s, x) => SaveFiles();
+            // TooltipStyle
+            sexyToolTip.MouseWheel += Zoom_img_MouseWheel;
 
-                fileMenu.CloseButton.Click += Close_UserControls;
-                fileMenu.PasteButton.Click += (s, x) => Paste();
-                fileMenu.CopyButton.Click += (s, x) => CopyPic();
+            // TitleBar
+            TitleBar.MouseLeftButtonDown += Move;
+            TitleBar.MouseLeave += Restore_From_Move;
 
-                // image_button
-                image_button.PreviewMouseLeftButtonDown += ImageButtonMouseButtonDown;
-                image_button.MouseEnter += ImageButtonMouseOver;
-                image_button.MouseLeave += ImageButtonMouseLeave;
-                image_button.Click += Toggle_image_menu;
+            // Logobg
+            //Logobg.MouseEnter += LogoMouseOver;
+            //Logobg.MouseLeave += LogoMouseLeave;
+            //Logobg.PreviewMouseLeftButtonDown += LogoMouseButtonDown;
 
-                // imageSettingsMenu Buttons
-                imageSettingsMenu.CloseButton.Click += Close_UserControls;
-                imageSettingsMenu.Rotation0Button.Click += (s, x) => Rotate(0);
-                imageSettingsMenu.Rotation90Button.Click += (s, x) => Rotate(90);
-                imageSettingsMenu.Rotation180Button.Click += (s, x) => Rotate(180);
-                imageSettingsMenu.Rotation270Button.Click += (s, x) => Rotate(270);
-                imageSettingsMenu.Rotation0Border.MouseLeftButtonDown += (s, x) => Rotate(0);
-                imageSettingsMenu.Rotation90Border.MouseLeftButtonDown += (s, x) => Rotate(90);
-                imageSettingsMenu.Rotation180Border.MouseLeftButtonDown += (s, x) => Rotate(180);
-                imageSettingsMenu.Rotation270Border.MouseLeftButtonDown += (s, x) => Rotate(270);
+            // Lower Bar
+            LowerBar.Drop += Image_Drop;
 
-                // LeftButton
-                LeftButton.PreviewMouseLeftButtonDown += LeftButtonMouseButtonDown;
-                LeftButton.MouseEnter += LeftButtonMouseOver;
-                LeftButton.MouseLeave += LeftButtonMouseLeave;
-                LeftButton.Click += (s, x) => { LeftbuttonClicked = true; Pic(false, false); };
+            // PicGallery
+            if (Properties.Settings.Default.PicGallery > 0)
+            {
+                picGallery.PreviewItemClick += PicGallery_PreviewItemClick;
+                picGallery.ItemClick += PicGallery_ItemClick;
+            }
 
-                // RightButton
-                RightButton.PreviewMouseLeftButtonDown += RightButtonMouseButtonDown;
-                RightButton.MouseEnter += RightButtonMouseOver;
-                RightButton.MouseLeave += RightButtonMouseLeave;
-                RightButton.Click += (s, x) => { RightbuttonClicked = true; Pic(); };
+            // This
+            Closing += Window_Closing;
+            MouseMove += MainWindow_MouseMove;
+            MouseLeave += MainWindow_MouseLeave;
 
-                // Settings and QuickSettingsMenu
-                SettingsButton.PreviewMouseLeftButtonDown += SettingsButtonButtonMouseButtonDown;
-                SettingsButton.MouseEnter += SettingsButtonButtonMouseOver;
-                SettingsButton.MouseLeave += SettingsButtonButtonMouseLeave;
-                SettingsButton.Click += Toggle_quick_settings_menu;
-                quickSettingsMenu.CloseButton.Click += Toggle_quick_settings_menu;
-                quickSettingsMenu.ToggleScroll.Checked += (s, x) =>
-                {
-                    IsScrollEnabled = true;
-                    //Close_UserControls();
-                };
-                quickSettingsMenu.ToggleScroll.Unchecked += (s, x) =>
-                {
-                    IsScrollEnabled = false;
-                    //Close_UserControls();
-                };
-                quickSettingsMenu.SetFit.Click += (s, x) => { SizeMode = true; };
-                quickSettingsMenu.SetCenter.Click += (s, x) => { SizeMode = false; };
-                quickSettingsMenu.SettingsButton.Click += (s, x) => AllSettingsWindow();
+            #endregion Add events
 
-                //FunctionMenu
-                FunctionMenuButton.PreviewMouseLeftButtonDown += FunctionMenuButtonButtonMouseButtonDown;
-                FunctionMenuButton.MouseEnter += FunctionMenuButtonButtonMouseOver;
-                FunctionMenuButton.MouseLeave += FunctionMenuButtonButtonMouseLeave;
-                FunctionMenuButton.Click += Toggle_Functions_menu;
-                functionsMenu.CloseButton.Click += Toggle_Functions_menu;
-                functionsMenu.Help.Click += (s, x) => HelpWindow();
-                functionsMenu.About.Click += (s, x) => AboutWindow();
-                functionsMenu.ClearButton.Click += (s, x) => Unload();
-                functionsMenu.ClearButton.Click += Toggle_Functions_menu;
-                functionsMenu.FileDetailsButton.Click += (s, x) => NativeMethods.ShowFileProperties(PicPath);
-                functionsMenu.FileDetailsButton.Click += Toggle_Functions_menu;
-                functionsMenu.DeleteButton.Click += (s, x) => DeleteFile(PicPath, true);
-                functionsMenu.DeletePermButton.Click += (s, x) => DeleteFile(PicPath, false);
-                functionsMenu.ReloadButton.Click += (s, x) => Reload();
-                functionsMenu.ReloadButton.Click += Toggle_Functions_menu;
-                functionsMenu.RenameFileButton.Click += (s, x) => ToolsWindow();
-                functionsMenu.RenameFileButton.Click += Toggle_Functions_menu;
-                functionsMenu.ResetZoomButton.Click += (s, x) => ResetZoom();
-                functionsMenu.SlideshowButton.Click += (s, x) => LoadSlideshow();
-                functionsMenu.SlideshowButton.Click += Toggle_Functions_menu;
+            // Add Timers
+            autoScrollTimer = new System.Timers.Timer()
+            {
+                Interval = 7,
+                AutoReset = true,
+                Enabled = false
+            };
+            autoScrollTimer.Elapsed += AutoScrollTimerEvent;
 
+            activityTimer = new System.Timers.Timer()
+            {
+                Interval = 2500,
+                AutoReset = true,
+                Enabled = false
+            };
+            activityTimer.Elapsed += ActivityTimer_Elapsed;
 
-                // FlipButton
-                imageSettingsMenu.FlipButton.Click += (s, x) => Flip();
+            fastPicTimer = new System.Timers.Timer()
+            {
+                Interval = 100,
+                Enabled = false
+            };
+            fastPicTimer.Elapsed += FastPic;
 
-                // ClickArrows
-                clickArrowLeft.MouseLeftButtonUp += (s, x) =>
-                {
-                    clickArrowLeftClicked = true;
-                    Pic(false, false);
-                };
-                clickArrowRight.MouseLeftButtonUp += (s, x) =>
-                {
-                    clickArrowRightClicked = true;
-                    Pic();
-                };
+            Slidetimer = new System.Timers.Timer()
+            {
+                Interval = Properties.Settings.Default.Slidetimeren,
+                Enabled = false
+            };
+            Slidetimer.Elapsed += SlideTimer_Elapsed;
 
-                // x2
-                x2.MouseLeftButtonUp += (x, xx) => Close();
+            HideCursorTimer = new System.Timers.Timer()
+            {
+                Interval = 2500,
+                Enabled = false
+            };
+            HideCursorTimer.Elapsed += HideCursorTimer_Elapsed;
 
-                // Bar
-                Bar.MouseLeftButtonDown += Move;
+            MouseIdleTimer = new System.Timers.Timer()
+            {
+                Interval = 2500,
+                Enabled = false
+            };
+            MouseIdleTimer.Elapsed += MouseIdleTimer_Elapsed;
 
-                // img
-                img.MouseLeftButtonDown += Zoom_img_MouseLeftButtonDown;
-                img.MouseLeftButtonUp += Zoom_img_MouseLeftButtonUp;
-                img.MouseMove += Zoom_img_MouseMove;
-                img.MouseWheel += Zoom_img_MouseWheel;
-
-                // bg
-                bg.Drop += Image_Drop;
-                bg.DragOver += Image_DraOver;
-                bg.DragEnter += Image_DraEnter;
-                bg.DragLeave += Image_DragLeave;
-
-                // TooltipStyle
-                sexyToolTip.MouseWheel += Zoom_img_MouseWheel;
-
-                // TitleBar
-                TitleBar.MouseLeftButtonDown += Move;
-                TitleBar.MouseLeave += Restore_From_Move;
-
-                // Logobg
-                //Logobg.MouseEnter += LogoMouseOver;
-                //Logobg.MouseLeave += LogoMouseLeave;
-                //Logobg.PreviewMouseLeftButtonDown += LogoMouseButtonDown;
-
-                // Lower Bar
-                LowerBar.Drop += Image_Drop;
-
-                // PicGallery
-                if (Properties.Settings.Default.PicGallery > 0)
-                {
-                    picGallery.PreviewItemClick += PicGallery_PreviewItemClick;
-                    picGallery.ItemClick += PicGallery_ItemClick;
-                }
-
-                // This
-                Closing += Window_Closing;
-                MouseMove += MainWindow_MouseMove;
-                MouseLeave += MainWindow_MouseLeave;
-
-
-                #endregion
-
-                // Add Timers
-                autoScrollTimer = new System.Timers.Timer()
-                {
-                    Interval = 7,
-                    AutoReset = true,
-                    Enabled = false
-                };
-                autoScrollTimer.Elapsed += AutoScrollTimerEvent;
-
-                activityTimer = new System.Timers.Timer()
-                {
-                    Interval = 2500,
-                    AutoReset = true,
-                    Enabled = false
-                };
-                activityTimer.Elapsed += ActivityTimer_Elapsed;
-
-                fastPicTimer = new System.Timers.Timer()
-                {
-                    Interval = 100,
-                    Enabled = false
-                };
-                fastPicTimer.Elapsed += FastPic;
-
-                Slidetimer = new System.Timers.Timer()
-                {
-                    Interval = Properties.Settings.Default.Slidetimeren,
-                    Enabled = false
-                };
-                Slidetimer.Elapsed += SlideTimer_Elapsed;
-
-                HideCursorTimer = new System.Timers.Timer()
-                {
-                    Interval = 2500,
-                    Enabled = false
-                };
-                HideCursorTimer.Elapsed += HideCursorTimer_Elapsed;
-
-                MouseIdleTimer = new System.Timers.Timer()
-                {
-                    Interval = 2500,
-                    Enabled = false
-                };
-                MouseIdleTimer.Elapsed += MouseIdleTimer_Elapsed;
-
-
-                // Updates settings from older version to newer version
-                if (Properties.Settings.Default.CallUpgrade)
-                {
-                    Properties.Settings.Default.Upgrade();
-                    Properties.Settings.Default.CallUpgrade = false;
-                }
-
-            });
-            task.Start();
+            // Updates settings from older version to newer version
+            if (Properties.Settings.Default.CallUpgrade)
+            {
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.CallUpgrade = false;
+            }
 
             InitializeZoom();
 
@@ -413,7 +403,6 @@ namespace PicView
             printcm.Icon = printcmIcon;
             printcm.Click += (s, x) => Print(PicPath);
             cm.Items.Add(printcm);
-
 
             cm.Items.Add(new Separator());
             var recentcm = new MenuItem
@@ -590,7 +579,6 @@ namespace PicView
             // Add to elements
             img.ContextMenu = bg.ContextMenu = cm;
 
-
             // Add left and right ContextMenus
             var cmLeft = new ContextMenu();
             var cmRight = new ContextMenu();
@@ -640,7 +628,6 @@ namespace PicView
             clickArrowRight.ContextMenu = cmRight;
             clickArrowLeft.ContextMenu = cmLeft;
 
-
             // Add Title contextMenu
             var cmTitle = new ContextMenu();
 
@@ -678,32 +665,39 @@ namespace PicView
                 case 0:
                     sortcmChild0.IsChecked = true;
                     break;
+
                 case 1:
                     sortcmChild1.IsChecked = true;
                     break;
+
                 case 2:
                     sortcmChild2.IsChecked = true;
                     break;
+
                 case 3:
                     sortcmChild3.IsChecked = true;
                     break;
+
                 case 4:
                     sortcmChild4.IsChecked = true;
                     break;
+
                 case 5:
                     sortcmChild5.IsChecked = true;
                     break;
+
                 case 6:
                     sortcmChild6.IsChecked = true;
                     break;
+
                 default:
                     sortcmChild0.IsChecked = true;
                     break;
             }
 
-            #endregion           
-            
-            cm.Opened += (tt,yy) => Recentcm_MouseEnter(recentcm);
+            #endregion Add ContextMenus
+
+            cm.Opened += (tt, yy) => Recentcm_MouseEnter(recentcm);
             if (endLoading)
             {
                 AjaxLoadingEnd();
@@ -738,7 +732,6 @@ namespace PicView
             AnimationHelper.Fade(ajaxLoading, 0, TimeSpan.FromSeconds(.2));
         }
 
-
         protected override void OnRenderSizeChanged(SizeChangedInfo size)
         {
             base.OnRenderSizeChanged(size);
@@ -763,21 +756,18 @@ namespace PicView
                     NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                     RightbuttonClicked = false;
                 }
-
                 else if (LeftbuttonClicked)
                 {
                     Point p = LeftButton.PointToScreen(new Point(50, 30));
                     NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                     LeftbuttonClicked = false;
                 }
-
                 else if (clickArrowRightClicked)
                 {
                     Point p = clickArrowRight.PointToScreen(new Point(25, 30));
                     NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                     clickArrowRightClicked = false;
                 }
-
                 else if (clickArrowLeftClicked)
                 {
                     Point p = clickArrowLeft.PointToScreen(new Point(25, 30));
@@ -787,7 +777,6 @@ namespace PicView
             }
         }
 
-
         /// <summary>
         /// Centers on the primary monitor.. Needs multi monitor solution....
         /// </summary>
@@ -796,7 +785,6 @@ namespace PicView
             Top = (SystemParameters.WorkArea.Height - Height) / 2;
             Left = (SystemParameters.WorkArea.Width - Width) / 2;
         }
-
 
         /// <summary>
         /// Move window and maximize on double click
@@ -853,7 +841,6 @@ namespace PicView
             }
         }
 
-
         /// <summary>
         /// Save settings when closing
         /// </summary>
@@ -869,7 +856,6 @@ namespace PicView
             RecentFiles.WriteToFile();
             Environment.Exit(0);
         }
-
 
         /// <summary>
         /// Maximizes/restore window
@@ -905,9 +891,7 @@ namespace PicView
                 MaxButton.ToolTip = "Maximize";
                 MaxButtonPath.Data = Geometry.Parse("M143 64h714v429h-714v-429z m857 625v-678q0-37-26-63t-63-27h-822q-36 0-63 27t-26 63v678q0 37 26 63t63 27h822q37 0 63-27t26-63z");
             }
-
         }
-
 
         /// <summary>
         /// Set whether to fit window to image or image to window
@@ -940,7 +924,7 @@ namespace PicView
             }
         }
 
-        #endregion
+        #endregion Window Logic
 
         #region Image Logic
 
@@ -1007,7 +991,6 @@ namespace PicView
             // Navigate to picture using obtained index
             Pic(FolderIndex);
 
-
             if (freshStartup)
                 freshStartup = false;
 
@@ -1027,7 +1010,6 @@ namespace PicView
                     picGallery.Load();
             }
         }
-
 
         /// <summary>
         /// Loads image based on overloaded int.
@@ -1097,7 +1079,6 @@ namespace PicView
             Bar.Text = titleString[1];
             Bar.ToolTip = titleString[2];
 
-
             PicPath = Pics[x];
             canNavigate = true;
             Progress(x, Pics.Count);
@@ -1105,7 +1086,7 @@ namespace PicView
             if (!freshStartup)
                 RecentFiles.Add(Pics[x]);
 
-            // Preload images           
+            // Preload images
             bool? reverse;
 
             // Only preload every second entry
@@ -1139,7 +1120,6 @@ namespace PicView
             //ToolTipStyle(stopWatch.Elapsed);
         }
 
-
         /// <summary>
         /// Load a picture from a prepared bitmap
         /// </summary>
@@ -1167,7 +1147,6 @@ namespace PicView
 
             canNavigate = false;
         }
-
 
         /// <summary>
         /// Goes to next, previous, first or last file in folder
@@ -1246,7 +1225,6 @@ namespace PicView
             Pic(FolderIndex);
         }
 
-
         /// <summary>
         /// Only load image from preload or thumbnail without resizing
         /// </summary>
@@ -1267,7 +1245,6 @@ namespace PicView
             FastPicRunning = true;
         }
 
-
         /// <summary>
         /// Timer starts Slideshow Fade animation.
         /// </summary>
@@ -1282,7 +1259,6 @@ namespace PicView
                 AnimationHelper.Fade(img, 1, TimeSpan.FromSeconds(.5));
             }));
         }
-
 
         /// <summary>
         /// Update after FastPic() was used
@@ -1300,7 +1276,6 @@ namespace PicView
 
             Pic(FolderIndex);
         }
-
 
         /// <summary>
         /// Attemps to download image and display it
@@ -1342,7 +1317,6 @@ namespace PicView
             RecentFiles.Add(path);
         }
 
-
         /// <summary>
         /// Downloads image from web and returns as BitmapSource
         /// </summary>
@@ -1366,7 +1340,6 @@ namespace PicView
             });
             return pic;
         }
-
 
         /// <summary>
         /// Attemps to fix Pics list by removing invalid files
@@ -1463,7 +1436,6 @@ namespace PicView
             return false;
         }
 
-
         /// <summary>
         /// Attemps to recover from failed archive extraction
         /// </summary>
@@ -1510,18 +1482,20 @@ namespace PicView
                 {
                     case 0:
                         break;
+
                     case 1:
                         await Task.Delay(700);
                         break;
+
                     case 2:
                         await Task.Delay(1500);
                         break;
+
                     default:
                         await Task.Delay(3000);
                         break;
                 }
                 count++;
-
             } while (Pics.Count < 1);
             return true;
         }
@@ -1538,7 +1512,6 @@ namespace PicView
             });
         }
 
-
         private async void PicGallery_ItemClick(object source, MyEventArgs e)
         {
             while (!Preloader.Contains(Pics[e.GetId()]))
@@ -1552,7 +1525,6 @@ namespace PicView
             }
             Pic(e.GetId());
         }
-
 
         /// <summary>
         /// Clears data, to free objects no longer necessary to store in memory and allow changing folder without error.
@@ -1569,7 +1541,6 @@ namespace PicView
                 picGallery.Clear();
             }
         }
-
 
         /// <summary>
         /// Refresh the current list of pics and reload them if there is some missing or changes.
@@ -1608,8 +1579,7 @@ namespace PicView
             }
         }
 
-
-        #endregion
+        #endregion Image Logic
 
         #region Drag and Drop
 
@@ -1621,7 +1591,7 @@ namespace PicView
         /// </summary>
         /// <param name="files"></param>
         /// <returns></returns>
-        bool? Drag_Drop_Check(string[] files)
+        private bool? Drag_Drop_Check(string[] files)
         {
             // Return if file strings are null
             if (files == null) return true;
@@ -1786,7 +1756,6 @@ namespace PicView
             }
         }
 
-
         /// <summary>
         /// Determine if supported files for drag and drop operation
         /// </summary>
@@ -1811,7 +1780,6 @@ namespace PicView
             isDraggedOver = e.Handled = true;
             ToolTipStyle(DragOverString);
         }
-
 
         /// <summary>
         /// Show image or thumbnail preview on drag enter
@@ -1844,13 +1812,12 @@ namespace PicView
             img.Source = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : GetBitmapSourceThumb(files[0]);
         }
 
-
         /// <summary>
         /// Logic for handling when the cursor leaves drag area
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void Image_DragLeave(object sender, DragEventArgs e)
+        private void Image_DragLeave(object sender, DragEventArgs e)
         {
             // Error handling
             if (!isDraggedOver)
@@ -1869,7 +1836,6 @@ namespace PicView
             // Update status
             isDraggedOver = false;
         }
-
 
         /// <summary>
         /// Logic for handling the drop event
@@ -1917,7 +1883,7 @@ namespace PicView
             }
         }
 
-        #endregion
+        #endregion Drag and Drop
 
         #region Keyboard & Mouse Shortcuts
 
@@ -1985,6 +1951,7 @@ namespace PicView
                     if (Properties.Settings.Default.ScrollEnabled)
                         Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 30);
                     break;
+
                 case Key.PageDown:
                     if (picGallery != null)
                     {
@@ -2049,6 +2016,7 @@ namespace PicView
                     else
                         Zoom(1, false);
                     break;
+
                 case Key.Subtract:
                 case Key.OemMinus:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control || IsScrollEnabled)
@@ -2058,7 +2026,6 @@ namespace PicView
                     break;
             }
         }
-
 
         private void MainWindow_KeyUp(object sender, KeyEventArgs e)
         {
@@ -2270,7 +2237,6 @@ namespace PicView
             }
         }
 
-
         private void MainWindow_MouseDown(object sender, MouseButtonEventArgs e)
         {
             switch (e.ChangedButton)
@@ -2280,24 +2246,28 @@ namespace PicView
                     if (autoScrolling)
                         StopAutoScroll();
                     break;
+
                 case MouseButton.Middle:
                     if (!autoScrolling)
                         StartAutoScroll(e);
                     else
                         StopAutoScroll();
                     break;
+
                 case MouseButton.XButton1:
                     Pic(false);
                     break;
+
                 case MouseButton.XButton2:
                     Pic();
                     break;
+
                 default:
                     break;
             }
         }
 
-        #endregion
+        #endregion Keyboard & Mouse Shortcuts
 
         #region Zoom, Scroll, Rotate and Flip
 
@@ -2319,7 +2289,6 @@ namespace PicView
             ShowAutoScrollSign();
         }
 
-
         /// <summary>
         /// Stop auto scroll feature and remove sign from the ui
         /// </summary>
@@ -2332,7 +2301,6 @@ namespace PicView
             autoScrollOrigin = null;
             HideAutoScrollSign();
         }
-
 
         /// <summary>
         /// Uses timer to scroll vertical up/down every seventh milisecond
@@ -2367,7 +2335,6 @@ namespace PicView
             }));
         }
 
-
         // Zoom
         /// <summary>
         /// Pan and Zoom, reset zoom and double click to reset
@@ -2397,7 +2364,6 @@ namespace PicView
             }
         }
 
-
         /// <summary>
         /// Occurs when the users clicks on the img control
         /// </summary>
@@ -2414,10 +2380,9 @@ namespace PicView
                 img.ReleaseMouseCapture();
         }
 
-
         /// <summary>
         /// Used to drag image
-        /// or getting position for autoscrolltimer 
+        /// or getting position for autoscrolltimer
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -2442,9 +2407,8 @@ namespace PicView
             e.Handled = true;
         }
 
-
         /// <summary>
-        /// Zooms or scrolls with mousewheel
+        /// Zooms, scrolls or changes image with mousewheel
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -2473,20 +2437,19 @@ namespace PicView
                         Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + zoomSpeed);
                 }
             }
-
             else if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            {
+                Zoom(e.Delta, true);
+            }
+            else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !autoScrolling)
+            {
+                Zoom(e.Delta, false);
+            }
+            else
             {
                 Pic(e.Delta > 0);
             }
-
-            // Zoom if it's not scroll enabled
-            else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !autoScrolling)
-                Zoom(e.Delta, true); // Scale zoom with Ctrl held down
-            else if (!autoScrolling)
-                Zoom(e.Delta, false);
-
         }
-
 
         /// <summary>
         /// Manipulates the required elements to allow zooming
@@ -2513,7 +2476,6 @@ namespace PicView
             st = (ScaleTransform)((TransformGroup)img.RenderTransform).Children.First(tr => tr is ScaleTransform);
             tt = (TranslateTransform)((TransformGroup)img.RenderTransform).Children.First(tr => tr is TranslateTransform);
         }
-
 
         /// <summary>
         /// Resets element values to their loaded values
@@ -2556,7 +2518,6 @@ namespace PicView
                 Bar.ToolTip = titleString[1];
             }
         }
-
 
         /// <summary>
         /// Scales or zooms, depending on given values
@@ -2605,7 +2566,6 @@ namespace PicView
                 if (st.ScaleX > 1.7)
                     zoomValue += .009;
 
-
                 if (st.ScaleX >= 1.0 && st.ScaleX + zoomValue >= 1.0 || st.ScaleX - zoomValue >= 1.0)
                 {
                     // Start zoom
@@ -2617,7 +2577,6 @@ namespace PicView
                     // Don't zoom less than 1.0, does not work so good...
                     st.ScaleX = st.ScaleY = AspectRatio = 1.0;
                 }
-
             }
 
             isZoomed = true;
@@ -2642,9 +2601,7 @@ namespace PicView
                 Bar.Text = titleString[1];
                 Bar.ToolTip = titleString[1];
             }
-
         }
-
 
         /// <summary>
         /// Fits image size based on users screen resolution
@@ -2708,7 +2665,7 @@ namespace PicView
                 else
                     Bar.MaxWidth = xWidth - interfaceSize;
 
-                // Loses position gradually if not forced to center       
+                // Loses position gradually if not forced to center
                 CenterWindowOnScreen();
             }
             else
@@ -2719,10 +2676,7 @@ namespace PicView
                     Bar.MaxWidth = Width - interfaceSize;
             }
 
-
             isZoomed = false;
-
-
 
             /*
 
@@ -2745,11 +2699,9 @@ namespace PicView
                             `-._    _.'\        \
                    jgs          `""`    \        \
 
-
                    So much math!
             */
         }
-
 
         // Rotate and flip
         /// <summary>
@@ -2805,6 +2757,7 @@ namespace PicView
                     imageSettingsMenu.Rotation180Button.IsChecked = false;
                     imageSettingsMenu.Rotation0Button.IsChecked = false;
                     break;
+
                 default:
                     imageSettingsMenu.Rotation0Button.IsChecked = true;
                     break;
@@ -2903,7 +2856,7 @@ namespace PicView
             img.LayoutTransform = tg;
         }
 
-        #endregion
+        #endregion Zoom, Scroll, Rotate and Flip
 
         #region Interface logic
 
@@ -2940,9 +2893,7 @@ namespace PicView
 
                 bg.Children.Add(clickArrowLeft);
             }
-
         }
-
 
         /// <summary>
         /// Loads x2 and adds it to the window
@@ -2958,9 +2909,7 @@ namespace PicView
             };
 
             bg.Children.Add(x2);
-
         }
-
 
         /// <summary>
         /// Loads FileMenu and adds it to the window
@@ -2980,7 +2929,6 @@ namespace PicView
             bg.Children.Add(fileMenu);
         }
 
-
         /// <summary>
         /// Loads ImageSettingsMenu and adds it to the window
         /// </summary>
@@ -2998,7 +2946,6 @@ namespace PicView
 
             bg.Children.Add(imageSettingsMenu);
         }
-
 
         /// <summary>
         /// Loads QuickSettingsMenu and adds it to the window
@@ -3036,7 +2983,6 @@ namespace PicView
             bg.Children.Add(functionsMenu);
         }
 
-
         // PicGallery
 
         /// <summary>
@@ -3073,7 +3019,6 @@ namespace PicView
             bg.Children.Add(sexyToolTip);
         }
 
-
         /// <summary>
         /// Shows a black tooltip on screen in a given time
         /// </summary>
@@ -3102,7 +3047,6 @@ namespace PicView
             sexyToolTip.BeginAnimation(OpacityProperty, anim);
         }
 
-
         /// <summary>
         /// Shows a black tooltip on screen for a small time
         /// </summary>
@@ -3120,7 +3064,6 @@ namespace PicView
             sexyToolTip.Visibility = Visibility.Hidden;
         }
 
-
         // AjaxLoading
         /// <summary>
         /// Loads AjaxLoading and adds it to the window
@@ -3136,7 +3079,6 @@ namespace PicView
             bg.Children.Add(ajaxLoading);
         }
 
-
         /// <summary>
         /// Start loading animation
         /// </summary>
@@ -3148,7 +3090,6 @@ namespace PicView
             }
         }
 
-
         /// <summary>
         /// End loading animation
         /// </summary>
@@ -3159,7 +3100,6 @@ namespace PicView
                 AnimationHelper.Fade(ajaxLoading, 0, TimeSpan.FromSeconds(.2));
             }
         }
-
 
         // AutoScrollSign
 
@@ -3180,13 +3120,11 @@ namespace PicView
             topLayer.Children.Add(autoScrollSign);
         }
 
-
         private void HideAutoScrollSign()
         {
             autoScrollSign.Visibility = Visibility.Collapsed;
             autoScrollSign.Opacity = 0;
         }
-
 
         private void ShowAutoScrollSign()
         {
@@ -3196,11 +3134,10 @@ namespace PicView
             autoScrollSign.Opacity = 1;
         }
 
-
         // Toggle open close menus
 
         /// <summary>
-        /// Toggles whether ImageSettingsMenu is open or not with a fade animation 
+        /// Toggles whether ImageSettingsMenu is open or not with a fade animation
         /// </summary>
         private static bool ImageSettingsMenuOpen
         {
@@ -3222,9 +3159,8 @@ namespace PicView
             }
         }
 
-
         /// <summary>
-        /// Toggles whether FileMenu is open or not with a fade animation 
+        /// Toggles whether FileMenu is open or not with a fade animation
         /// </summary>
         private static bool FileMenuOpen
         {
@@ -3246,9 +3182,8 @@ namespace PicView
             }
         }
 
-
         /// <summary>
-        /// Toggles whether QuickSettingsMenu is open or not with a fade animation 
+        /// Toggles whether QuickSettingsMenu is open or not with a fade animation
         /// </summary>
         private static bool QuickSettingsMenuOpen
         {
@@ -3271,9 +3206,8 @@ namespace PicView
             }
         }
 
-
         /// <summary>
-        /// Toggles whether FunctionsMenu is open or not with a fade animation 
+        /// Toggles whether FunctionsMenu is open or not with a fade animation
         /// </summary>
         private static bool FunctionsMenuOpen
         {
@@ -3294,7 +3228,6 @@ namespace PicView
                     functionsMenu.BeginAnimation(OpacityProperty, da);
             }
         }
-
 
         /// <summary>
         /// Check if any UserControls are open
@@ -3317,7 +3250,6 @@ namespace PicView
             return false;
         }
 
-
         /// <summary>
         /// Closes usercontrol menus
         /// </summary>
@@ -3335,7 +3267,6 @@ namespace PicView
             if (FunctionsMenuOpen)
                 FunctionsMenuOpen = false;
         }
-
 
         /// <summary>
         /// Closes usercontrol menus
@@ -3364,7 +3295,6 @@ namespace PicView
                 FunctionsMenuOpen = false;
         }
 
-
         /// <summary>
         /// Toggles whether image menu is open or not
         /// </summary>
@@ -3384,7 +3314,6 @@ namespace PicView
                 FunctionsMenuOpen = false;
         }
 
-
         /// <summary>
         /// Toggles whether quick settings menu is open or not
         /// </summary>
@@ -3402,9 +3331,7 @@ namespace PicView
 
             if (FunctionsMenuOpen)
                 FunctionsMenuOpen = false;
-
         }
-
 
         /// <summary>
         /// Toggles whether functions menu is open or not
@@ -3423,11 +3350,9 @@ namespace PicView
 
             if (QuickSettingsMenuOpen)
                 QuickSettingsMenuOpen = false;
-
         }
 
-
-        #endregion
+        #endregion UserControl Specifics
 
         #region Manipulate Interface
 
@@ -3472,13 +3397,13 @@ namespace PicView
             }
         }
 
-
         /// <summary>
         /// Hides/shows interface elements with a fade animation
         /// </summary>
         /// <param name="show"></param>
         private async void FadeControlsAsync(bool show)
         {
+            // Hide/show Scrollbar
             var fadeTo = show ? 1 : 0;
 
             await Application.Current.Dispatcher.BeginInvoke((Action)(() =>
@@ -3493,11 +3418,9 @@ namespace PicView
                     }
                 }
 
-                // Hide/show Scrollbar
                 ScrollbarFade(show);
             }));
         }
-
 
         /// <summary>
         /// Timer starts FadeControlsAsync
@@ -3551,24 +3474,10 @@ namespace PicView
                 {
                     HideInterface();
                 }
-                picGallery.Width = 230;
-                picGallery.Height = SystemParameters.WorkArea.Height;
-                Width = SystemParameters.PrimaryScreenWidth;
-                Height = SystemParameters.WorkArea.Height;
-                picGallery.HorizontalAlignment = HorizontalAlignment.Right;
-                picGallery.Visibility = Visibility.Visible;
-                picGallery.Opacity = 1;
-                picGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
-                picGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-                picGallery.Container.Orientation = Orientation.Vertical;
-                picGallery.x2.Visibility = Visibility.Collapsed;
-                picGallery.Scroller.Margin = new Thickness(0);
                 bg.Children.Remove(picGallery);
-                fake.grid.Children.Add(picGallery);
+                fake.AddGallery();
             }
-
         }
-
 
         /// <summary>
         /// Timer to show/hide cursor.
@@ -3597,7 +3506,6 @@ namespace PicView
             HideCursorTimer.Start();
         }
 
-
         /// <summary>
         /// Logic for mouse movements on MainWindow
         /// </summary>
@@ -3616,7 +3524,6 @@ namespace PicView
             activityTimer.Stop();
             FadeControlsAsync(true);
 
-
             // If Slideshow is running the interface will hide after 2,5 sec.
             if (Slidetimer.Enabled == true)
             {
@@ -3628,7 +3535,6 @@ namespace PicView
             }
         }
 
-
         /// <summary>
         /// Logic for mouse leave mainwindow event
         /// </summary>
@@ -3639,7 +3545,6 @@ namespace PicView
             // Start timer when mouse leaves mainwindow
             activityTimer.Start();
         }
-
 
         /// <summary>
         /// Find scrollbar and start fade animation
@@ -3658,7 +3563,6 @@ namespace PicView
                 AnimationHelper.Fade(s, 0, TimeSpan.FromSeconds(1));
             }
         }
-
 
         /// <summary>
         /// Returns string with file name, folder position,
@@ -3683,7 +3587,6 @@ namespace PicView
             return array;
         }
 
-
         /// <summary>
         /// Returns string with file name,
         /// zoom, aspect ratio and resolution
@@ -3703,7 +3606,6 @@ namespace PicView
             array[1] = s1.ToString();
             return array;
         }
-
 
         /// <summary>
         /// Toggles scroll and displays it with TooltipStle
@@ -3766,7 +3668,7 @@ namespace PicView
             Slidetimer.Stop();
         }
 
-        #endregion
+        #endregion Manipulate Interface
 
         #region Windows
 
@@ -3789,7 +3691,6 @@ namespace PicView
             window.ShowDialog();
         }
 
-
         /// <summary>
         /// Show Help window in a dialog
         /// </summary>
@@ -3807,7 +3708,6 @@ namespace PicView
             window.BeginAnimation(OpacityProperty, animation);
             window.Show();
         }
-
 
         /// <summary>
         /// Show All Settings window in a dialog
@@ -3836,11 +3736,12 @@ namespace PicView
             new Tools().Show();
         }
 
-        #endregion
+        #endregion Windows
 
         #region MouseOver Button Events
+
         /*
-        
+
             Adds MouseOver events for the given elements with the AnimationHelper.
             Changes color depending on the users settings.
 
@@ -3976,7 +3877,6 @@ namespace PicView
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(RightArrowFill, false);
         }
-
 
         private void RightButtonMouseLeave(object sender, MouseEventArgs e)
         {
@@ -4119,7 +4019,6 @@ namespace PicView
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(SettingsButtonFill, false);
         }
 
-
         private void SettingsButtonButtonMouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
@@ -4162,9 +4061,9 @@ namespace PicView
             );
         }
 
-        #endregion
+        #endregion MouseOver Button Events
 
-        #endregion
+        #endregion Interface logic
 
         #region File Methods
 
@@ -4182,7 +4081,7 @@ namespace PicView
             if (fileNames == null)
                 return;
 
-            // If items exist: replace them, else add them 
+            // If items exist: replace them, else add them
             if (RecentFilesMenuItem.Items.Count >= fileNames.Length)
             {
                 for (int i = fileNames.Length - 1; i >= 0; i--)
@@ -4219,7 +4118,6 @@ namespace PicView
             }
         }
 
-
         /// <summary>
         /// Copy image location to clipboard
         /// </summary>
@@ -4228,7 +4126,6 @@ namespace PicView
             Clipboard.SetText(PicPath);
             ToolTipStyle(TxtCopy);
         }
-
 
         /// <summary>
         /// Add image to clipboard
@@ -4262,7 +4159,6 @@ namespace PicView
                 return;
             ToolTipStyle(ImageCopy);
         }
-
 
         /// <summary>
         /// Retrieves the data from the clipboard and attemps to load image, if possible
@@ -4333,11 +4229,9 @@ namespace PicView
             }
             else if (Uri.IsWellFormedUriString(s, UriKind.Absolute)) // Check if from web
                 PicWeb(s);
-
             else
                 ToolTipStyle("An error occured while trying to paste file");
         }
-
 
         /// <summary>
         /// Opens image in File Explorer
@@ -4357,7 +4251,6 @@ namespace PicView
             }
             catch (InvalidCastException) { }
         }
-
 
         /// <summary>
         /// Open a file dialog where user can select a supported file
@@ -4380,7 +4273,6 @@ namespace PicView
 
             Close_UserControls();
         }
-
 
         /// <summary>
         /// Open a File Dialog, where the user can save a supported file type.
@@ -4417,7 +4309,6 @@ namespace PicView
             }
         }
 
-
         /// <summary>
         /// Delete file or move it to recycle bin
         /// </summary>
@@ -4443,10 +4334,6 @@ namespace PicView
             }
         }
 
-
-
-
-        #endregion
-
+        #endregion File Methods
     }
 }

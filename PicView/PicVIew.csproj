@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PicView</RootNamespace>
     <AssemblyName>PicView</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -53,7 +53,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>
     </DefineConstants>
@@ -63,6 +63,7 @@
     <DocumentationFile>
     </DocumentationFile>
     <FileAlignment>1024</FileAlignment>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>PicView.App</StartupObject>
@@ -89,9 +90,8 @@
     <ApplicationIcon>lib\img\Brainleaf-Dark-Blog-Reflex.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Magick.NET-Q16-HDRI-x64, Version=7.0.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=AMD64">
-      <HintPath>..\packages\Magick.NET-Q16-HDRI-x64.7.0.5.500\lib\net40-client\Magick.NET-Q16-HDRI-x64.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Magick.NET-Q16-HDRI-x64, Version=7.8.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=AMD64">
+      <HintPath>..\packages\Magick.NET-Q16-HDRI-x64.7.8.0\lib\net40\Magick.NET-Q16-HDRI-x64.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.WindowsAPICodePack.Shell">
@@ -111,8 +111,8 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="XamlAnimatedGif, Version=1.1.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\XamlAnimatedGif.1.1.6\lib\net45\XamlAnimatedGif.dll</HintPath>
+    <Reference Include="XamlAnimatedGif, Version=1.1.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\XamlAnimatedGif.1.1.10\lib\net45\XamlAnimatedGif.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -403,12 +403,12 @@
     </FileAssociation>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\Magick.NET-Q16-HDRI-x64.7.0.5.500\build\net40-client\Magick.NET-Q16-HDRI-x64.targets" Condition="Exists('..\packages\Magick.NET-Q16-HDRI-x64.7.0.5.500\build\net40-client\Magick.NET-Q16-HDRI-x64.targets')" />
+  <Import Project="..\packages\Magick.NET-Q16-HDRI-x64.7.8.0\build\net40\Magick.NET-Q16-HDRI-x64.targets" Condition="Exists('..\packages\Magick.NET-Q16-HDRI-x64.7.8.0\build\net40\Magick.NET-Q16-HDRI-x64.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Magick.NET-Q16-HDRI-x64.7.0.5.500\build\net40-client\Magick.NET-Q16-HDRI-x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Magick.NET-Q16-HDRI-x64.7.0.5.500\build\net40-client\Magick.NET-Q16-HDRI-x64.targets'))" />
+    <Error Condition="!Exists('..\packages\Magick.NET-Q16-HDRI-x64.7.8.0\build\net40\Magick.NET-Q16-HDRI-x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Magick.NET-Q16-HDRI-x64.7.8.0\build\net40\Magick.NET-Q16-HDRI-x64.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

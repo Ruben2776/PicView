@@ -239,7 +239,7 @@
                         </TextBlock>
                     </StackPanel>
 
-                    <StackPanel Margin="0,55,0,0">
+                    <StackPanel Margin="0,70,0,0">
                         <TextBlock
                             Margin="0,2"
                             HorizontalAlignment="Center"
@@ -247,13 +247,7 @@
                             FontFamily="/PicView;component/lib/fonts/#Aller"
                             FontSize="12"
                             Text="Made by Ruben Hyldgaard Negendahl" />
-                        <TextBlock
-                            Margin="0,2"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Bottom"
-                            FontFamily="/PicView;component/lib/fonts/#Aller"
-                            FontSize="12"
-                            Text="Special thanks to Mathias Nielsen" />
+                        
                         <Label
                             x:Name="appVersion"
                             Margin="0,2"
