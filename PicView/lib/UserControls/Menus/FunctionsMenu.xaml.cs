@@ -23,11 +23,6 @@ namespace PicView.lib.UserControls.Menus
             FileDetailsButton.MouseLeave += FileDetailsButtonMouseLeave;
             FileDetailsButton.PreviewMouseLeftButtonDown += FileDetailsButtonMouseButtonDown;
 
-            //RenameFileButton
-            RenameFileButton.MouseEnter += RenameFileButtonMouseOver;
-            RenameFileButton.MouseLeave += RenameFileButtonMouseLeave;
-            RenameFileButton.PreviewMouseLeftButtonDown += RenameFileButtonMouseButtonDown;
-
             //HelpButton
             Help.MouseEnter += HelpButtonMouseOver;
             Help.MouseLeave += HelpButtonMouseLeave;
@@ -271,34 +266,6 @@ namespace PicView.lib.UserControls.Menus
         }
 
         //ToolsWindow Button
-        private void RenameFileButtonMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseEnterColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                RenameFileBrush,
-                false
-            );
-        }
-
-        private void RenameFileButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(RenameFileBrush, false);
-        }
-
-        private void RenameFileButtonMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                RenameFileBrush,
-                false
-            );
-        }
 
         // File Details Button
         private void FileDetailsButtonMouseOver(object sender, MouseEventArgs e)

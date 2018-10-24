@@ -27,13 +27,13 @@ namespace PicView.lib
                 magick.Quality = 100;
                 magick.ColorSpace = ColorSpace.Transparent;
 
-                var mrs = new MagickReadSettings()
-                {
-                    Density = new Density(300, 300),
-                };
-
                 if (extension.ToLower() == ".svg")
                 {
+                    var mrs = new MagickReadSettings()
+                    {
+                        Density = new Density(300, 300),
+                    };
+
                     // Make background transparent
                     mrs.Format = MagickFormat.Svg;
                     mrs.BackgroundColor = MagickColors.Transparent;
@@ -70,6 +70,19 @@ namespace PicView.lib
             var ext = Path.GetExtension(path).ToLower();
             switch (ext)
             {
+                // Standards
+                case ".jpg":
+                case ".jpeg":
+                case ".jpe":
+                case ".png":
+                case ".bmp":
+                case ".tif":
+                case ".tiff":
+                case ".gif":
+                case ".ico":
+                case ".wdp":
+                    return Helper.GetWindowsThumbnail(path);
+
                 // Non-standards
                 case ".svg":
                 case ".psd":
@@ -188,19 +201,6 @@ namespace PicView.lib
                 case ".xcf":
                 case ".yuv":
                     return GetMagickImage(path, 60, 55);
-
-                // Standards
-                case ".jpg":
-                case ".jpeg":
-                case ".jpe":
-                case ".png":
-                case ".bmp":
-                case ".tif":
-                case ".tiff":
-                case ".gif":
-                case ".ico":
-                case ".wdp":
-                    return Helper.GetWindowsThumbnail(path);
 
                 // Non supported
                 default:

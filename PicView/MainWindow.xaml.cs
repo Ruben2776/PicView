@@ -234,8 +234,6 @@ namespace PicView
             functionsMenu.DeletePermButton.Click += (s, x) => DeleteFile(PicPath, false);
             functionsMenu.ReloadButton.Click += (s, x) => Reload();
             functionsMenu.ReloadButton.Click += Toggle_Functions_menu;
-            functionsMenu.RenameFileButton.Click += (s, x) => ToolsWindow();
-            functionsMenu.RenameFileButton.Click += Toggle_Functions_menu;
             functionsMenu.ResetZoomButton.Click += (s, x) => ResetZoom();
             functionsMenu.SlideshowButton.Click += (s, x) => LoadSlideshow();
             functionsMenu.SlideshowButton.Click += Toggle_Functions_menu;
@@ -782,8 +780,24 @@ namespace PicView
         /// </summary>
         private void CenterWindowOnScreen()
         {
-            Top = (SystemParameters.WorkArea.Height - Height) / 2;
-            Left = (SystemParameters.WorkArea.Width - Width) / 2;
+            // https://stackoverflow.com/a/32599760
+
+            //get the current monitor
+            var currentMonitor = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow).Handle);
+
+            //find out if our app is being scaled by the monitor
+            PresentationSource source = PresentationSource.FromVisual(Application.Current.MainWindow);
+            double dpiScaling = (source != null && source.CompositionTarget != null ? source.CompositionTarget.TransformFromDevice.M11 : 1);
+
+            //get the available area of the monitor
+            System.Drawing.Rectangle workArea = currentMonitor.WorkingArea;
+            var workAreaWidth = (int)Math.Floor(workArea.Width * dpiScaling);
+            var workAreaHeight = (int)Math.Floor(workArea.Height * dpiScaling);
+
+            //move to the centre
+            Application.Current.MainWindow.Left = (((workAreaWidth - (Width * dpiScaling)) / 2) + (workArea.Left * dpiScaling));
+            Application.Current.MainWindow.Top = (((workAreaHeight - (Height * dpiScaling)) / 2) + (workArea.Top * dpiScaling));
+            
         }
 
         /// <summary>
@@ -1239,7 +1253,7 @@ namespace PicView
                 img.Width = xWidth;
                 img.Height = xHeight;
 
-                img.Source = GetBitmapSourceThumb(Pics[FolderIndex]);
+                img.Source = Preloader.Contains(Pics[FolderIndex])? Preloader.Load(Pics[FolderIndex]) : GetBitmapSourceThumb(Pics[FolderIndex]);
             }));
             Progress(FolderIndex, Pics.Count);
             FastPicRunning = true;

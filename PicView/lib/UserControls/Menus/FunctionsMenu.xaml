@@ -226,28 +226,6 @@
                     </Button>
 
                     <Button
-                        x:Name="RenameFileButton"
-                        Width="42"
-                        Height="42"
-                        Margin="0,0,4,0"
-                        Style="{StaticResource MetroAlphaFlatButton}"
-                        ToolTip="Rename file [Not implemented]">
-                        <Canvas>
-                            <Path
-                                Canvas.Left="-13"
-                                Canvas.Top="-15"
-                                Width="28"
-                                Height="30"
-                                Data="M6 0l-1 1 2 2 1-1-2-2zm-2 2l-4 4v2h2l4-4-2-2z"
-                                Stretch="Fill">
-                                <Path.Fill>
-                                    <SolidColorBrush x:Name="RenameFileBrush" Color="{StaticResource MainColor}" />
-                                </Path.Fill>
-                            </Path>
-                        </Canvas>
-                    </Button>
-
-                    <Button
                         x:Name="FileDetailsButton"
                         Width="42"
                         Height="42"

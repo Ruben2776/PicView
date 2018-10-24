@@ -79,32 +79,34 @@ namespace PicView.lib
         /// </summary>
         internal static void Clear()
         {
-            var array = Sources.Keys.ToArray();
-
-            var timer = new DispatcherTimer
-            (
-                TimeSpan.FromSeconds(20), DispatcherPriority.Loaded, (s, e) => {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        Remove(array[i]);
-                    }
-                    GC.Collect();
-                },
-                Application.Current.Dispatcher
-            );
-            timer.Start();
+            // Add elemnts to Clear method and set timer to fast
+            Clear(Sources.Keys.ToArray(), true);
         }
 
         /// <summary>
         /// Removes specific keys and clears them when app is idle
         /// </summary>
         /// <param name="array"></param>
-        internal static void Clear(string[] array)
+        internal static void Clear(string[] array, bool fast = false)
         {
+            // Set time to clear the images
+            var timeInSeconds = 420; // 7 min
+            
+            // clear faster if it contains a lot of images or if fast == true
+            if (Sources.Count > 100)
+            {
+                timeInSeconds = 60;
+            }
+            else if (fast)
+            {
+                timeInSeconds = 20;
+            }
+
             var timer = new DispatcherTimer
             (
-                TimeSpan.FromSeconds(25), DispatcherPriority.Loaded, (s, e) =>
+                TimeSpan.FromSeconds(timeInSeconds), DispatcherPriority.Background, (s, e) =>
                 {
+                    // Remove elements
                     for (int i = 0; i < array.Length; i++)
                     {
                         Remove(array[i]);
