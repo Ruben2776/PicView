@@ -117,9 +117,9 @@ namespace PicView.lib.UserControls
             else
             {
                 if (next)
-                    Scroller.ScrollToHorizontalOffset(Scroller.HorizontalOffset + picGalleryItem_Size);
-                else
                     Scroller.ScrollToHorizontalOffset(Scroller.HorizontalOffset - picGalleryItem_Size);
+                else
+                    Scroller.ScrollToHorizontalOffset(Scroller.HorizontalOffset + picGalleryItem_Size);
             }
         }
 

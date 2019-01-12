@@ -95,7 +95,7 @@ namespace PicView.lib
             // clear faster if it contains a lot of images or if fast == true
             if (Sources.Count > 100)
             {
-                timeInSeconds = 60;
+                timeInSeconds = 45;
             }
             else if (fast)
             {

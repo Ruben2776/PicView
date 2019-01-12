@@ -174,6 +174,7 @@ namespace PicView.lib
         internal static ClickArrow clickArrowLeft;
         internal static ClickArrow clickArrowRight;
         internal static X2 x2;
+        internal static Minus minus;
         internal static PicGallery picGallery;
 
         internal static Point origin;

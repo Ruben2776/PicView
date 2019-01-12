@@ -90,6 +90,7 @@ namespace PicView
             LoadClickArrow(true);
             LoadClickArrow(false);
             Loadx2();
+            LoadMinus();
 
             if (Properties.Settings.Default.PicGallery > 0)
             {
@@ -111,11 +112,13 @@ namespace PicView
                 clickArrowLeft.Opacity =
                 clickArrowRight.Opacity =
                 x2.Opacity =
+                minus.Opacity =
                 0;
 
                 clickArrowLeft.Visibility =
                 clickArrowRight.Visibility =
                 x2.Visibility =
+                minus.Visibility =
                 Visibility.Visible;
             }
 
@@ -256,6 +259,9 @@ namespace PicView
             // x2
             x2.MouseLeftButtonUp += (x, xx) => Close();
 
+            // Minus
+            minus.MouseLeftButtonUp += (s, x) => SystemCommands.MinimizeWindow(this);
+
             // Bar
             Bar.MouseLeftButtonDown += Move;
 
@@ -311,7 +317,7 @@ namespace PicView
 
             activityTimer = new System.Timers.Timer()
             {
-                Interval = 2500,
+                Interval = 1500,
                 AutoReset = true,
                 Enabled = false
             };
@@ -862,6 +868,8 @@ namespace PicView
         /// <param name="e"></param>
         private void Window_Closing(object sender, CancelEventArgs e)
         {
+            Hide(); // Make it feel faster
+
             if (Properties.Settings.Default.WindowStyle == 4)
                 Properties.Settings.Default.WindowStyle = 0;
 
@@ -905,6 +913,38 @@ namespace PicView
                 MaxButton.ToolTip = "Maximize";
                 MaxButtonPath.Data = Geometry.Parse("M143 64h714v429h-714v-429z m857 625v-678q0-37-26-63t-63-27h-822q-36 0-63 27t-26 63v678q0 37 26 63t63 27h822q37 0 63-27t26-63z");
             }
+        }
+
+        /// <summary>
+        /// Fullscreen/restore window
+        /// </summary>
+        private void Fullscreen_Restore()
+        {
+            //HideInterface(false);
+
+            // Update new setting and sizing
+            //SizeMode = false;
+
+            // https://stackoverflow.com/a/32599760
+
+            //get the current monitor
+            var currentMonitor = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow).Handle);
+
+            //find out if our app is being scaled by the monitor
+            PresentationSource source = PresentationSource.FromVisual(Application.Current.MainWindow);
+            double dpiScaling = (source != null && source.CompositionTarget != null ? source.CompositionTarget.TransformFromDevice.M11 : 1);
+
+            //get the available area of the monitor
+            System.Drawing.Rectangle workArea = currentMonitor.WorkingArea;
+            var workAreaWidth = (int)Math.Floor(workArea.Width * dpiScaling);
+            var workAreaHeight = (int)Math.Floor(workArea.Height * dpiScaling);
+
+            //move to the centre
+            Application.Current.MainWindow.Left = (((workAreaWidth - (Width * dpiScaling)) / 2) + (workArea.Left * dpiScaling));
+            Application.Current.MainWindow.Top = (((workAreaHeight - (Height * dpiScaling)) / 2) + (workArea.Top * dpiScaling));
+
+            Application.Current.MainWindow.Width = workAreaWidth;
+            Application.Current.MainWindow.Height = workAreaHeight;
         }
 
         /// <summary>
@@ -1074,9 +1114,9 @@ namespace PicView
             if (IsScrollEnabled)
                 Scroller.ScrollToTop();
 
-            // Prevent picture from being flipped if previous is
-            if (Flipped)
-                Flip();
+            //// Prevent picture from being flipped if previous is
+            //if (Flipped)
+            //    Flip();
 
             // Fit image to new values
             ZoomFit(pic.PixelWidth, pic.PixelHeight);
@@ -1282,11 +1322,11 @@ namespace PicView
             fastPicTimer.Stop();
             FastPicRunning = false;
 
-            if (!Preloader.Contains(Pics[FolderIndex]))
-            {
-                PreloadCount = 0;
-                Preloader.Clear();
-            }
+            //if (!Preloader.Contains(Pics[FolderIndex]))
+            //{
+            //    PreloadCount = 0;
+            //    Preloader.Clear();
+            //}
 
             Pic(FolderIndex);
         }
@@ -1578,13 +1618,13 @@ namespace PicView
                 freshStartup = true;
                 Pic(x);
 
-                // Reset
-                if (isZoomed)
-                    ResetZoom();
-                if (Flipped)
-                    Flip();
-                if (Rotateint != 0)
-                    Rotate(0);
+                //// Reset
+                //if (isZoomed)
+                //    ResetZoom();
+                //if (Flipped)
+                //    Flip();
+                //if (Rotateint != 0)
+                //    Rotate(0);
             }
             else
             {
@@ -2148,7 +2188,7 @@ namespace PicView
             // Alt + Enter
             else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.Enter))
             {
-                //FullScreen();
+                Fullscreen_Restore();
             }
 
             // Space
@@ -2197,8 +2237,14 @@ namespace PicView
                 ResetZoom();
             }
 
-            //F11
-            else if (e.Key == Key.F11)
+            //F10
+            else if (e.Key == Key.F10)
+            {
+                Fullscreen_Restore();
+            }
+
+            //F12
+            else if (e.Key == Key.F12)
             {
                 if (SlideshowActive == false)
                 {
@@ -2357,6 +2403,11 @@ namespace PicView
         /// <param name="e"></param>
         private void Zoom_img_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                Move(sender, e);
+                return;
+            }
             if (autoScrolling)
             {
                 // Report position and enable autoscrolltimer
@@ -2453,15 +2504,15 @@ namespace PicView
             }
             else if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
             {
-                Zoom(e.Delta, true);
+                Pic(e.Delta > 0);
             }
             else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !autoScrolling)
             {
-                Zoom(e.Delta, false);
+                Zoom(e.Delta, true); 
             }
             else
             {
-                Pic(e.Delta > 0);
+                Zoom(e.Delta, false);
             }
         }
 
@@ -2926,6 +2977,23 @@ namespace PicView
         }
 
         /// <summary>
+        /// Loads Minus and adds it to the window
+        /// </summary>
+        private void LoadMinus()
+        {
+            minus = new Minus()
+            {
+                Focusable = false,
+                VerticalAlignment = VerticalAlignment.Top,
+                Visibility = Visibility.Collapsed,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Margin = new Thickness(0,0,50,0)
+            };
+
+            bg.Children.Add(minus);
+        }
+
+        /// <summary>
         /// Loads FileMenu and adds it to the window
         /// </summary>
         private void LoadFileMenu()
@@ -3386,6 +3454,7 @@ namespace PicView
                 clickArrowLeft.Visibility =
                 clickArrowRight.Visibility =
                 x2.Visibility =
+                minus.Visibility =
                 Visibility.Visible;
 
                 if (!slideshow)
@@ -3404,6 +3473,7 @@ namespace PicView
                 clickArrowLeft.Visibility =
                 clickArrowRight.Visibility =
                 x2.Visibility =
+                minus.Visibility =
                 Visibility.Collapsed;
 
                 Properties.Settings.Default.WindowStyle = 0;
@@ -3429,6 +3499,7 @@ namespace PicView
                         AnimationHelper.Fade(clickArrowLeft, fadeTo, TimeSpan.FromSeconds(.5));
                         AnimationHelper.Fade(clickArrowRight, fadeTo, TimeSpan.FromSeconds(.5));
                         AnimationHelper.Fade(x2, fadeTo, TimeSpan.FromSeconds(.5));
+                        AnimationHelper.Fade(minus, fadeTo, TimeSpan.FromSeconds(.5));
                     }
                 }
 
