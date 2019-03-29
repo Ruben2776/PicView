@@ -18,7 +18,7 @@
     <Border
         Width="450"
         Height="490"
-        BorderBrush="{StaticResource BorderBrushAlt}"
+        BorderBrush="{StaticResource ChosenColorBrush}"
         BorderThickness="1">
 
         <Grid>

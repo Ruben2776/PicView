@@ -103,22 +103,7 @@ namespace PicView.lib
             double readable = (i < 0 ? -i : i);
             char suffix;
 
-            if (i >= 0x1000000000000000) // Exabyte
-            {
-                suffix = 'E';
-                readable = (i >> 50);
-            }
-            else if (i >= 0x4000000000000) // Petabyte
-            {
-                suffix = 'P';
-                readable = (i >> 40);
-            }
-            else if (i >= 0x10000000000) // Terabyte
-            {
-                suffix = 'T';
-                readable = (i >> 30);
-            }
-            else if (i >= 0x40000000) // Gigabyte
+            if (i >= 0x40000000) // Gigabyte
             {
                 suffix = 'G';
                 readable = (i >> 20);
