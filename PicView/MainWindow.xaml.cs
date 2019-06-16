@@ -304,6 +304,8 @@ namespace PicView
             MouseMove += MainWindow_MouseMove;
             MouseLeave += MainWindow_MouseLeave;
 
+            Microsoft.Win32.SystemEvents.DisplaySettingsChanged += (x, y) => Pic(FolderIndex);
+
             #endregion Add events
 
             // Add Timers
@@ -839,6 +841,7 @@ namespace PicView
                 }
             }
         }
+
 
         /// <summary>
         /// Function made to restore and drag window from maximized windowstate
@@ -2430,7 +2433,6 @@ namespace PicView
         }
 
         /// <summary>
-        /// Occurs when the users clicks on the img control
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -2682,17 +2684,28 @@ namespace PicView
             double maxWidth, maxHeight;
             var interfaceHeight = 93; // TopBar + LowerBar height
 
+            var currentMonitor = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow).Handle);
+
+            //find out if our app is being scaled by the monitor
+            PresentationSource source = PresentationSource.FromVisual(Application.Current.MainWindow);
+            double dpiScaling = (source != null && source.CompositionTarget != null ? source.CompositionTarget.TransformFromDevice.M11 : 1);
+
+            //get the available area of the monitor
+            System.Drawing.Rectangle workArea = currentMonitor.WorkingArea;
+            var workAreaWidth = (int)Math.Floor(workArea.Width * dpiScaling);
+            var workAreaHeight = (int)Math.Floor(workArea.Height * dpiScaling);
+
             if (windowstyle)
             {
                 // Get max width and height, based on user's screen
-                maxWidth = Math.Min(SystemParameters.PrimaryScreenWidth - ComfySpace, width);
-                maxHeight = Math.Min((SystemParameters.FullPrimaryScreenHeight - interfaceHeight), height);
+                maxWidth = Math.Min(workAreaWidth - ComfySpace, width);
+                maxHeight = Math.Min((workAreaHeight - interfaceHeight), height);
             }
             else
             {
                 // Get max width and height, based on window size
-                maxWidth = Math.Min(Width, width);
-                maxHeight = Math.Min(Height - interfaceHeight, height);
+                maxWidth = Math.Min(workAreaWidth, width);
+                maxHeight = Math.Min(workAreaHeight - interfaceHeight, height);
             }
 
             AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));
@@ -2735,7 +2748,7 @@ namespace PicView
             }
             else
             {
-                if (Width - interfaceSize < interfaceSize)
+                if (workAreaWidth - interfaceSize < interfaceSize)
                     Bar.MaxWidth = interfaceSize;
                 else
                     Bar.MaxWidth = Width - interfaceSize;
