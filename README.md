@@ -26,7 +26,6 @@ Scrollable Image Viewer, optimised for manga and comic book reading.
 <i>Alternative minimal interface style</i>
 
 <img src="https://raw.githubusercontent.com/Ruben2776/PicView/master/Extra/gnosis.PNG" alt="PicView" width="698" height="1166">
-
 <i>Art is <a href="https://www.deviantart.com/noiprox/art/Gnosis-Lena-441483744">Gnosis</a> - Lena by noiprox</i>
 
 Built with C# WPF, using ImageMagick and XamlAnimatedGif.
