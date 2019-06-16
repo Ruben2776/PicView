@@ -2,9 +2,13 @@
 
 Scrollable Image Viewer, optimised for manga and comic book reading.
 
-![Alt text](/Extra/Screenshot1.png?raw=true "PicView")
+<img src="https://raw.githubusercontent.com/Ruben2776/PicView/master/Extra/gnosis.PNG" alt="PicView" width="698" height="1166">
+
+Art is <a href="https://www.deviantart.com/noiprox/art/Gnosis-Lena-441483744">Gnosis</a> - Lena by noiprox
 
 [Download](https://github.com/Ruben2776/PicView/releases/download/0.8.0/PicView.zip)
+
+
 
 # Features:
 * extracting archives, if you have 7-Zip or WinRAR installed, comic book archives (.cbr, .cb7, .cbt, .cbz, .cba) and common archives with images inside can be extracted
