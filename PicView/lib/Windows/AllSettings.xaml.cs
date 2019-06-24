@@ -102,7 +102,7 @@ namespace PicView.Windows
                 LoopRadio.MouseEnter += LoopRadio_MouseEnter;
                 LoopRadio.MouseLeave += LoopRadio_MouseLeave;
                 LoopRadio.IsChecked = Properties.Settings.Default.Looping;
-                LoopRadio.Checked += SetLooping;
+                LoopRadio.Click += SetLooping;
 
                 // PicGalleryRadio
                 PicGalleryRadio.PreviewMouseLeftButtonDown += PicGalleryRadio_PreviewMouseLeftButtonDown;

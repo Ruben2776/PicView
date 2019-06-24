@@ -1,5 +1,8 @@
 ﻿using Microsoft.WindowsAPICodePack.Taskbar;
+using System;
 using System.Diagnostics;
+using System.IO;
+using System.Windows;
 
 namespace PicView.lib
 {
@@ -44,6 +47,9 @@ namespace PicView.lib
         /// <returns></returns>
         internal static System.Windows.Media.Imaging.BitmapSource GetWindowsThumbnail(string path, bool extralarge = false)
         {
+            if (!File.Exists(path))
+                return null;
+
             if (extralarge)
                 return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.ExtraLargeBitmapSource;
 
@@ -65,6 +71,21 @@ namespace PicView.lib
             p.Start();
         }
 
+        internal static Size GetMonitorSize()
+        {
+            var currentMonitor = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow).Handle);
+
+            //find out if our app is being scaled by the monitor
+            PresentationSource source = PresentationSource.FromVisual(Application.Current.MainWindow);
+            double dpiScaling = (source != null && source.CompositionTarget != null ? source.CompositionTarget.TransformFromDevice.M11 : 1);
+
+            //get the available area of the monitor
+            System.Drawing.Rectangle workArea = currentMonitor.WorkingArea;
+            var workAreaWidth = (int)Math.Floor(workArea.Width * dpiScaling);
+            var workAreaHeight = (int)Math.Floor(workArea.Height * dpiScaling);
+
+            return new Size(workAreaWidth, workAreaHeight);
+        }
      
 
     }

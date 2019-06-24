@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Windows;
+using System.Windows.Threading;
 using static PicView.lib.FileFunctions;
 using static PicView.lib.Variables;
 
@@ -60,13 +62,56 @@ namespace PicView.lib
             {
                 FileName = exe,
                 Arguments = arguments,
+
+                #if DEBUG
+                WindowStyle = ProcessWindowStyle.Normal
+                #else
                 WindowStyle = ProcessWindowStyle.Hidden
+                #endif
             });
 
             if (x == null) return;
             x.EnableRaisingEvents = true;
-            x.Exited += (s, e) => Pics = FileList(TempZipPath);
-            x.WaitForExit(200);
+            x.Exited += (s, e) => 
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var mainWindow = Application.Current.MainWindow as MainWindow;
+                    if (!string.IsNullOrWhiteSpace(TempZipPath))
+                    {
+                        if (Directory.Exists(TempZipPath))
+                        {
+                            try
+                            {
+                                if (FolderIndex > 0)
+                                {
+                                    //Pics = FileList(TempZipPath);
+                                    //mainWindow.Focus();
+                                }
+                                else
+                                {
+                                    // If there are no pictures, but a folder when TempZipPath has a value,
+                                    // we should open the folder
+                                    var directory = Directory.GetDirectories(TempZipPath);
+                                    if (directory.Length > 0)
+                                        TempZipPath = directory[0];
+
+                                    Pics = FileList(TempZipPath);
+                                    mainWindow.Pic(Pics[0]);
+                                    mainWindow.Focus();
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                mainWindow.Reload(true);
+                            }
+                        }
+                    }
+                    else
+                        mainWindow.Reload(true);
+                });
+            };
+            x.WaitForExit(750);
         }
     }
 }

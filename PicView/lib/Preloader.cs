@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using System.Threading.Tasks;
 using static PicView.lib.FileFunctions;
 using static PicView.lib.Variables;
 
@@ -87,10 +88,10 @@ namespace PicView.lib
         /// Removes specific keys and clears them when app is idle
         /// </summary>
         /// <param name="array"></param>
-        internal static void Clear(string[] array, bool fast = false)
+        internal static async void Clear(string[] array, bool fast = false)
         {
             // Set time to clear the images
-            var timeInSeconds = 420; // 7 min
+            var timeInSeconds = 120;
             
             // clear faster if it contains a lot of images or if fast == true
             if (Sources.Count > 100)
@@ -102,20 +103,31 @@ namespace PicView.lib
                 timeInSeconds = 20;
             }
 
-            var timer = new DispatcherTimer
-            (
-                TimeSpan.FromSeconds(timeInSeconds), DispatcherPriority.Background, (s, e) =>
+            await Task.Run(() =>
+            {
+                Task.Delay(TimeSpan.FromSeconds(timeInSeconds));
+
+                // Remove elements
+                for (int i = 0; i < array.Length; i++)
                 {
-                    // Remove elements
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        Remove(array[i]);
-                    }
-                    GC.Collect();
-                },
-                Application.Current.Dispatcher
-            );
-            timer.Start();
+                    Remove(array[i]);
+                }
+                GC.Collect();
+
+                if (!fast)
+                {
+                    var timer = new DispatcherTimer
+                    (
+                        TimeSpan.FromSeconds(timeInSeconds), DispatcherPriority.Background, (s, e) =>
+                        {
+                            var window = Application.Current.MainWindow as MainWindow;
+                            window.Reload();
+                        },
+                        Application.Current.Dispatcher
+                    );
+                    timer.Start();
+                }
+            });
         }
 
         /// <summary>
@@ -231,6 +243,9 @@ namespace PicView.lib
             // If very large archive being extracted, update Pics
             if (!string.IsNullOrWhiteSpace(TempZipPath) && index >= 5 && Pics.Count > 10)
             {
+                if (!Directory.Exists(TempZipPath))
+                    return;
+
                 var getProcesses = Process.GetProcessesByName("7z");
                 if (getProcesses.Length > 0)
                     Pics = FileList(TempZipPath);

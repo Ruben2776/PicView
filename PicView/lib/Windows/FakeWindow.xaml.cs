@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using static PicView.lib.Variables;
+using static PicView.lib.Helper;
 
 namespace PicView.Windows
 {
@@ -15,10 +16,19 @@ namespace PicView.Windows
         public FakeWindow()
         {
             InitializeComponent();
-            Width = SystemParameters.FullPrimaryScreenWidth;
-            Height = SystemParameters.WorkArea.Height;
+            var monitorSize = GetMonitorSize();
+            Width = monitorSize.Width;
+            Height = monitorSize.Height;
+            Width = monitorSize.Width;
+            Height = monitorSize.Height;
             MouseLeftButtonDown += FakeWindow_MouseLeftButtonDown;
             Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
+            MouseWheel += FakeWindow_MouseWheel;
+        }
+
+        private void FakeWindow_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            
         }
 
         private void MainWindow_StateChanged(object sender, EventArgs e)

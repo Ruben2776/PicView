@@ -713,7 +713,7 @@ namespace PicView
         /// <summary>
         /// Reset to default state
         /// </summary>
-        private void Unload()
+        internal void Unload()
         {
             Bar.ToolTip = Bar.Text = NoImage;
             Title = NoImage + " - " + AppName;
@@ -989,7 +989,7 @@ namespace PicView
         /// Loads a picture from a given file path and does extra error checking
         /// </summary>
         /// <param name="path"></param>
-        private async void Pic(string path)
+        internal async void Pic(string path)
         {
             // Set Loading
             Title = Bar.Text = Loading;
@@ -1075,15 +1075,23 @@ namespace PicView
         /// <param name="x"></param>
         private async void Pic(int x)
         {
-            //var stopWatch = new Stopwatch();
-            //stopWatch.Start();
+            #if DEBUG
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            #endif
 
-            // If file was removed, fix it
-            if (!File.Exists(Pics[x]))
+            // Additional error checking
+            if (Pics.Count < x)
             {
-                PicErrorFix(x);
+                if (x == 0)
+                   await RecoverFailedArchiveAsync();
+                else if (!File.Exists(Pics[x]))
+                    PicErrorFix(x);
+                else
+                    Reload(true);
                 return;
             }
+
 
             // Add "pic" as local variable used for the image.
             // Use the Load() function load image from memory if available
@@ -1173,8 +1181,11 @@ namespace PicView
             // Stop AjaxLoading if it's shown
             AjaxLoadingEnd();
 
-            //stopWatch.Stop();
-            //ToolTipStyle(stopWatch.Elapsed);
+            #if DEBUG
+            stopWatch.Stop();
+            ToolTipStyle(stopWatch.Elapsed);
+            #endif
+
         }
 
         /// <summary>
@@ -1501,12 +1512,12 @@ namespace PicView
             if (Pics.Count > 0)
                 return true;
 
-            if (string.IsNullOrWhiteSpace(TempZipPath))
-            {
-                // Unexped result
-                Reload(true);
-                return false;
-            }
+            //if (string.IsNullOrWhiteSpace(TempZipPath))
+            //{
+            //    // Unexped result
+            //    Reload(true);
+            //    return false;
+            //}
 
             // TempZipPath is not null = images being extracted
             short count = 0;
@@ -1527,13 +1538,36 @@ namespace PicView
 
                 if (count > 3)
                 {
-                    if (!string.IsNullOrWhiteSpace(xPicPath))
+                    var processed = false;
+                    var getProcesses = Process.GetProcessesByName("7z");
+                    if (getProcesses.Length > 0)
+                        processed = true;
+
+                    //getProcesses = Process.GetProcessesByName("Zip");
+                    //if (getProcesses.Length > 0)
+                    //    processed = true;
+
+                    if (!processed)
                     {
                         Reload(true);
                         return false;
                     }
-                    Unload();
-                    return false;
+                    
+                    if (getProcesses.Length == 0)
+                    {
+                        Reload(true);
+                        return false;
+                    }
+
+                    // Kill it if it's asking for password
+                    if (!getProcesses[0].HasExited)
+                        if (getProcesses[0].Threads[0].ThreadState == System.Diagnostics.ThreadState.Wait)
+                        {
+                            Reload(true);
+                            ToolTipStyle("Password protected archive not supported");
+                            getProcesses[0].Kill();                            
+                            return false;
+                        }
                 }
                 switch (count)
                 {
@@ -1541,15 +1575,15 @@ namespace PicView
                         break;
 
                     case 1:
-                        await Task.Delay(700);
+                        await Task.Delay(100);
                         break;
 
                     case 2:
-                        await Task.Delay(1500);
+                        await Task.Delay(500);
                         break;
 
                     default:
-                        await Task.Delay(3000);
+                        await Task.Delay(2500);
                         break;
                 }
                 count++;
@@ -1602,11 +1636,8 @@ namespace PicView
         /// <summary>
         /// Refresh the current list of pics and reload them if there is some missing or changes.
         /// </summary>
-        private void Reload(bool fromBackup = false)
+        internal void Reload(bool fromBackup = false)
         {
-            if (img.Source == null)
-                return;
-
             if (fromBackup && string.IsNullOrWhiteSpace(xPicPath))
             {
                 Unload();
@@ -1621,13 +1652,13 @@ namespace PicView
                 freshStartup = true;
                 Pic(x);
 
-                //// Reset
-                //if (isZoomed)
-                //    ResetZoom();
-                //if (Flipped)
-                //    Flip();
-                //if (Rotateint != 0)
-                //    Rotate(0);
+                // Reset
+                if (isZoomed)
+                    ResetZoom();
+                if (Flipped)
+                    Flip();
+                if (Rotateint != 0)
+                    Rotate(0);
             }
             else
             {
@@ -2286,18 +2317,18 @@ namespace PicView
             }
 
             // Alt + C
-            else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.C))
-            {
-                if (!Application.Current.Windows.OfType<FakeWindow>().Any())
-                {
-                    new FakeWindow().Show();
-                    Focus();
-                }
-                else
-                {
-                    Application.Current.Windows[1].Close();
-                }
-            }
+            //else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.C))
+            //{
+            //    if (!Application.Current.Windows.OfType<FakeWindow>().Any())
+            //    {
+            //        new FakeWindow().Show();
+            //        Focus();
+            //    }
+            //    else
+            //    {
+            //        Application.Current.Windows[1].Close();
+            //    }
+            //}
         }
 
         private void MainWindow_MouseDown(object sender, MouseButtonEventArgs e)
@@ -2684,28 +2715,19 @@ namespace PicView
             double maxWidth, maxHeight;
             var interfaceHeight = 93; // TopBar + LowerBar height
 
-            var currentMonitor = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow).Handle);
-
-            //find out if our app is being scaled by the monitor
-            PresentationSource source = PresentationSource.FromVisual(Application.Current.MainWindow);
-            double dpiScaling = (source != null && source.CompositionTarget != null ? source.CompositionTarget.TransformFromDevice.M11 : 1);
-
-            //get the available area of the monitor
-            System.Drawing.Rectangle workArea = currentMonitor.WorkingArea;
-            var workAreaWidth = (int)Math.Floor(workArea.Width * dpiScaling);
-            var workAreaHeight = (int)Math.Floor(workArea.Height * dpiScaling);
+            var monitorSize = GetMonitorSize();
 
             if (windowstyle)
             {
                 // Get max width and height, based on user's screen
-                maxWidth = Math.Min(workAreaWidth - ComfySpace, width);
-                maxHeight = Math.Min((workAreaHeight - interfaceHeight), height);
+                maxWidth = Math.Min(monitorSize.Width - ComfySpace, width);
+                maxHeight = Math.Min((monitorSize.Height - interfaceHeight), height);
             }
             else
             {
                 // Get max width and height, based on window size
-                maxWidth = Math.Min(workAreaWidth, width);
-                maxHeight = Math.Min(workAreaHeight - interfaceHeight, height);
+                maxWidth = Math.Min(monitorSize.Width, width);
+                maxHeight = Math.Min(monitorSize.Height - interfaceHeight, height);
             }
 
             AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));
@@ -2748,7 +2770,7 @@ namespace PicView
             }
             else
             {
-                if (workAreaWidth - interfaceSize < interfaceSize)
+                if (monitorSize.Width - interfaceSize < interfaceSize)
                     Bar.MaxWidth = interfaceSize;
                 else
                     Bar.MaxWidth = Width - interfaceSize;
@@ -3534,8 +3556,8 @@ namespace PicView
         {
             if (Properties.Settings.Default.PicGallery == 1)
             {
-                picGallery.Width = Width - 15; // 15 = borders width
-                picGallery.Height = Height - 95; // 95 = top + bottom bar height
+                picGallery.Width = Width; // 15 = borders width
+                picGallery.Height = Height; // 95 = top + bottom bar height
 
                 if (!picGallery.LoadComplete)
                     if (!picGallery.isLoading)
