@@ -114,19 +114,19 @@ namespace PicView.lib
                 }
                 GC.Collect();
 
-                if (!fast)
-                {
-                    var timer = new DispatcherTimer
-                    (
-                        TimeSpan.FromSeconds(timeInSeconds), DispatcherPriority.Background, (s, e) =>
-                        {
-                            var window = Application.Current.MainWindow as MainWindow;
-                            window.Reload();
-                        },
-                        Application.Current.Dispatcher
-                    );
-                    timer.Start();
-                }
+                //if (!fast)
+                //{
+                //    var timer = new DispatcherTimer
+                //    (
+                //        TimeSpan.FromSeconds(timeInSeconds), DispatcherPriority.Background, (s, e) =>
+                //        {
+                //            var window = Application.Current.MainWindow as MainWindow;
+                //            window.Reload();
+                //        },
+                //        Application.Current.Dispatcher
+                //    );
+                //    timer.Start();
+                //}
             });
         }
 
