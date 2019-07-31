@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static PicView.lib.Variables;
+using static PicView.lib.Helper;
 
 namespace PicView.Windows
 {
@@ -110,6 +111,14 @@ namespace PicView.Windows
                 PicGalleryRadio.MouseLeave += PicGalleryRadio_MouseLeave;
                 PicGalleryRadio.IsChecked = Properties.Settings.Default.PicGallery > 0;
                 PicGalleryRadio.Checked += SetPicGallery;
+
+                // BorderColorRadio
+                BorderRadio.PreviewMouseLeftButtonDown += BorderRadio_PreviewMouseLeftButtonDown;
+                BorderRadio.MouseEnter += BorderRadio_MouseEnter;
+                BorderRadio.MouseLeave += BorderRadio_MouseLeave;
+                BorderRadio.Click += SetBgColorEnabled;
+                if (Properties.Settings.Default.WindowBorderColorEnabled)
+                    BorderRadio.IsChecked = true;
 
                 //Slidebar
                 double value = Properties.Settings.Default.Slidetimeren;
@@ -616,6 +625,36 @@ namespace PicView.Windows
             AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, PicGalleryBrush, false);
         }
 
+        // BorderColor
+        void BorderRadio_MouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                BorderBrush,
+                false
+            );
+        }
+
+        void BorderRadio_MouseEnter(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                BorderBrush,
+                false
+            );
+        }
+
+        void BorderRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, BorderBrush, false);
+        }
+
         #endregion
 
         #region Set ColorTheme
@@ -782,9 +821,15 @@ namespace PicView.Windows
             }
         }
 
+        private void SetBgColorEnabled(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.WindowBorderColorEnabled = Properties.Settings.Default.WindowBorderColorEnabled ? false : true;
+        }
+
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             SetSlidetimer();
+            SetWindowBorderColor();
             Closing -= Window_Closing;
             e.Cancel = true;
             AnimationHelper.FadeWindow(this, 0, TimeSpan.FromSeconds(.5));

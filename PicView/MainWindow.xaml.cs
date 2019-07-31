@@ -39,7 +39,7 @@ namespace PicView
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            Application.Current.Resources["ChosenColor"] = AnimationHelper.GetPrefferedColorOver();
+            SetWindowBorderColor();
 
             if (Properties.Settings.Default.WindowStyle == 2)
             {

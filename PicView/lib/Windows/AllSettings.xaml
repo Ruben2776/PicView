@@ -319,6 +319,19 @@
                                     <SolidColorBrush x:Name="LoopBrush" Color="{StaticResource BackgroundColorFade}" />
                                 </CheckBox.Background>
                             </CheckBox>
+                            <CheckBox
+                                x:Name="BorderRadio"
+                                Width="205"
+                                Height="40"
+                                Margin="5,3"
+                                BorderBrush="{StaticResource BorderBrushAlt}"
+                                BorderThickness="1"
+                                Content="Enable Window Color Brush"
+                                Style="{StaticResource Checkstyle}">
+                                <CheckBox.Background>
+                                    <SolidColorBrush x:Name="BorderBrush" Color="{StaticResource BackgroundColorFade}" />
+                                </CheckBox.Background>
+                            </CheckBox>
                         </WrapPanel>
                         <Label
                             Margin="0,3,0,0"

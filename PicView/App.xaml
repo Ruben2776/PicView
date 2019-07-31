@@ -27,7 +27,7 @@
                             <Border
                             x:Name="WindowBorder"
                             Margin="0"
-                            Background="{StaticResource WindowBackgroundColorBrush}">
+                            Background="{StaticResource WindowBackgroundColorBrushDefault}">
                                 <Grid>
                                     <Border BorderThickness="1">
                                         <AdornerDecorator>
@@ -37,7 +37,7 @@
                                         </AdornerDecorator>
                                     </Border>
                                     <Border
-                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderBrush="{DynamicResource WindowBackgroundColorBrush}"
                                     BorderThickness="1"
                                     Opacity=".4"
                                     Visibility="{Binding IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource bool2VisibilityConverter}}" />
@@ -52,7 +52,7 @@
                         CaptionHeight="0"
                         CornerRadius="0"
                         GlassFrameThickness="1"
-                        ResizeBorderThickness="5"
+                        ResizeBorderThickness="1"
                         UseAeroCaptionButtons="False" />
                     </Setter.Value>
                 </Setter>

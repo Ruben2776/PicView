@@ -86,6 +86,16 @@ namespace PicView.lib
 
             return new Size(workAreaWidth, workAreaHeight);
         }
+
+        internal static void SetWindowBorderColor()
+        {
+            if (Properties.Settings.Default.WindowBorderColorEnabled)
+            {
+                Application.Current.Resources["ChosenColor"] = AnimationHelper.GetPrefferedColorOver();
+                var bgBrush = Application.Current.Resources["WindowBackgroundColorBrush"] as System.Windows.Media.SolidColorBrush;
+                bgBrush.Color = AnimationHelper.GetPrefferedColorOver();
+            }
+        }
      
 
     }
