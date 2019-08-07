@@ -63,6 +63,11 @@ namespace PicView.lib.UserControls.Menus
             SlideshowButton.MouseLeave += SlideshowButtonMouseLeave;
             SlideshowButton.PreviewMouseLeftButtonDown += SlideshowButtonMouseButtonDown;
 
+            //SlideshowButton
+            BgButton.MouseEnter += BgButtonMouseOver;
+            BgButton.MouseLeave += BgButtonMouseLeave;
+            BgButton.PreviewMouseLeftButtonDown += BgButtonMouseButtonDown;
+
         }
 
         #region Mouseover Events
@@ -323,6 +328,36 @@ namespace PicView.lib.UserControls.Menus
                 mainColor.G,
                 mainColor.B,
                 SlideshowsBrush,
+                false
+            );
+        }
+
+        //Bg Button
+        private void BgButtonMouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                BgBrush,
+                false
+            );
+        }
+
+        private void BgButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(BgBrush, false);
+        }
+
+        private void BgButtonMouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                mainColor.A,
+                mainColor.R,
+                mainColor.G,
+                mainColor.B,
+                BgBrush,
                 false
             );
         }

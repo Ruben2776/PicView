@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using static PicView.lib.Variables;
 
 namespace PicView.lib
 {
@@ -18,6 +19,27 @@ namespace PicView.lib
         {
             return y == 0 ? x : GCD(y, x % y);
         }
+
+        internal static double GetAspectRatio(bool windowstyle, double width, double height, double monitorSizeWidth, double monitorSizeHeight)
+        {
+            double maxWidth, maxHeight;
+            var interfaceHeight = 93; // TopBar + LowerBar height
+
+            if (windowstyle)
+            {
+                // Get max width and height, based on user's screen
+                maxWidth = Math.Min(monitorSizeWidth - ComfySpace, width);
+                maxHeight = Math.Min((monitorSizeHeight - interfaceHeight), height);
+            }
+            else
+            {
+                // Get max width and height, based on window size
+                maxWidth = Math.Min(monitorSizeWidth, width);
+                maxHeight = Math.Min(monitorSizeHeight - interfaceHeight, height);
+            }
+
+            return Math.Min((maxWidth / width), (maxHeight / height));
+        } 
 
         /// <summary>
         /// Show progress on taskbar
@@ -69,22 +91,6 @@ namespace PicView.lib
             p.StartInfo.FileName = path;
             p.StartInfo.Verb = "print";
             p.Start();
-        }
-
-        internal static Size GetMonitorSize()
-        {
-            var currentMonitor = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow).Handle);
-
-            //find out if our app is being scaled by the monitor
-            PresentationSource source = PresentationSource.FromVisual(Application.Current.MainWindow);
-            double dpiScaling = (source != null && source.CompositionTarget != null ? source.CompositionTarget.TransformFromDevice.M11 : 1);
-
-            //get the available area of the monitor
-            System.Drawing.Rectangle workArea = currentMonitor.WorkingArea;
-            var workAreaWidth = (int)Math.Floor(workArea.Width * dpiScaling);
-            var workAreaHeight = (int)Math.Floor(workArea.Height * dpiScaling);
-
-            return new Size(workAreaWidth, workAreaHeight);
         }
 
         internal static void SetWindowBorderColor()

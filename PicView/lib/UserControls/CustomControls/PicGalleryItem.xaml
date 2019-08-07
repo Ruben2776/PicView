@@ -6,19 +6,29 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="300"
     d:DesignWidth="300"
+    FocusVisualStyle="{x:Null}"
+    Focusable="False"
     mc:Ignorable="d">
-    <Border Width="230" Height="230">
+    <Border
+        Width="230"
+        Height="230"
+        FocusVisualStyle="{x:Null}"
+        Focusable="False">
         <Border
             x:Name="border"
             Width="200"
             Height="200"
             Background="{StaticResource BackgroundColorBrushAlt}"
             BorderBrush="{StaticResource BorderBrush}"
-            BorderThickness="1">
+            BorderThickness="1"
+            FocusVisualStyle="{x:Null}"
+            Focusable="False">
             <Image
                 x:Name="img"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
+                FocusVisualStyle="{x:Null}"
+                Focusable="False"
                 Stretch="UniformToFill" />
         </Border>
     </Border>

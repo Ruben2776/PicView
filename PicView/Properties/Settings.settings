@@ -45,10 +45,10 @@
       <Value Profile="(Default)">#F209A68E</Value>
     </Setting>
     <Setting Name="Beige" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#FFEAD393</Value>
+      <Value Profile="(Default)">#FFE2C290</Value>
     </Setting>
     <Setting Name="BeigeMouse" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#F2BAAB7E</Value>
+      <Value Profile="(Default)">#F2E2C290</Value>
     </Setting>
     <Setting Name="Teal" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#FF931AF7</Value>
@@ -65,11 +65,11 @@
     <Setting Name="CyanMouse" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#F236BBFF</Value>
     </Setting>
-    <Setting Name="Yellow" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#FFFEFE0F</Value>
+    <Setting Name="Grey" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#FF5F5449</Value>
     </Setting>
-    <Setting Name="YellowMouse" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#F2FFFF43</Value>
+    <Setting Name="GreyMouse" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#F25F5449</Value>
     </Setting>
     <Setting Name="CallUpgrade" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -83,23 +83,29 @@
     <Setting Name="ScrollEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="WindowStyle" Type="System.Int16" Scope="User">
-      <Value Profile="(Default)">0</Value>
+    <Setting Name="ShowInterface" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="SortPreference" Type="System.Int16" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="PicGallery" Type="System.Byte" Scope="User">
-      <Value Profile="(Default)">2</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="Slidetimeren" Type="System.Double" Scope="User">
       <Value Profile="(Default)">10000</Value>
     </Setting>
     <Setting Name="Looping" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="WindowBorderColorEnabled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="BgColorWhite" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="FitToWindow" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

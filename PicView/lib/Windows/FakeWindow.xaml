@@ -5,14 +5,17 @@
     Title="FakeWindow"
     AllowsTransparency="True"
     Background="#72000000"
+    Focusable="False"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     Topmost="False"
     WindowStartupLocation="CenterScreen"
-    WindowStyle="None"
-    Width="{DynamicResource {x:Static SystemParameters.MaximizedPrimaryScreenWidthKey}}" Height="{DynamicResource {x:Static SystemParameters.MaximizedPrimaryScreenHeightKey}}">
+    WindowStyle="None">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>
-    <Grid x:Name="grid" />
+    <Grid
+        x:Name="grid"
+        FocusVisualStyle="{x:Null}"
+        Focusable="False" />
 </Window>

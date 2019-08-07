@@ -163,6 +163,11 @@ namespace PicView.lib
         /// </summary>
         internal static int Rotateint { get; set; }
 
+        /// <summary>
+        /// Used to get and set monitor size
+        /// </summary>
+        internal static MonitorSize MonitorInfo { get; set; }
+
         // UserControls
         internal static ImageSettings imageSettingsMenu;
         internal static FileMenu fileMenu;

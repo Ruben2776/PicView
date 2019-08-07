@@ -40,10 +40,8 @@ namespace PicView.lib
                 return;
 
             if (File.Exists(Pics[i]))
-            {
                 if (!Contains(Pics[i]))
                     Add(Pics[i]);
-            }
             else
                 Pics.Remove(Pics[i]);
         }
@@ -72,7 +70,6 @@ namespace PicView.lib
 
             var value = Sources[key];
             Sources.TryRemove(key, out value);
-            value = null;
         }
 
         /// <summary>

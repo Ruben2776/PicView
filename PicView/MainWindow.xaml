@@ -228,6 +228,18 @@
                         Width="1"
                         Height="55"
                         Fill="{StaticResource BorderBrushAlt}" />
+                    <Rectangle
+                        Canvas.Left="0"
+                        Canvas.Top="0"
+                        Width="1"
+                        Height="55"
+                        Fill="{StaticResource BorderBrushAlt}" />
+                    <Rectangle
+                        Canvas.Left="205"
+                        Canvas.Top="0"
+                        Width="1"
+                        Height="55"
+                        Fill="{StaticResource BorderBrushAlt}" />
                     <Button
                         x:Name="LeftButton"
                         Width="100"
@@ -384,7 +396,7 @@
                             </Setter>
                         </Style>
                     </ScrollViewer.Style>
-                    <Border x:Name="imgBorder" Focusable="False">
+                    <Border x:Name="imgBorder" Focusable="False" Background="White" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Image
                             x:Name="img"
                             AllowDrop="True"

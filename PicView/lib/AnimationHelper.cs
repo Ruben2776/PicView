@@ -113,7 +113,7 @@ namespace PicView.lib
                     ccAnim.From = Settings.Default.Magenta;
                     break;
                 case 12:
-                    ccAnim.From = Settings.Default.Yellow;
+                    ccAnim.From = Settings.Default.Grey;
                     break;
             }
             ccAnim.To = Color.FromArgb(a, r, g, b);
@@ -160,7 +160,7 @@ namespace PicView.lib
                     ccAnim.To = Settings.Default.Magenta;
                     break;
                 case 12:
-                    ccAnim.To = Settings.Default.Yellow;
+                    ccAnim.To = Settings.Default.Grey;
                     break;
             }
             brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
@@ -216,8 +216,8 @@ namespace PicView.lib
                     ccAnim.To = Settings.Default.MagentaMouse;
                     break;
                 case 12:
-                    ccAnim.From = Settings.Default.Yellow;
-                    ccAnim.To = Settings.Default.YellowMouse;
+                    ccAnim.From = Settings.Default.Grey;
+                    ccAnim.To = Settings.Default.GreyMouse;
                     break;
             }
             brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
@@ -257,7 +257,7 @@ namespace PicView.lib
                 case 11:
                     return Settings.Default.Magenta;
                 case 12:
-                    return Settings.Default.Yellow;
+                    return Settings.Default.Grey;
 
             }
         }
@@ -290,7 +290,7 @@ namespace PicView.lib
                 case 11:
                     return Settings.Default.MagentaMouse;
                 case 12:
-                    return Settings.Default.YellowMouse;
+                    return Settings.Default.GreyMouse;
             }
         }
 
@@ -370,9 +370,9 @@ namespace PicView.lib
                 case 12:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.YellowMouse.R,
-                        Settings.Default.YellowMouse.G,
-                        Settings.Default.YellowMouse.B);
+                        Settings.Default.GreyMouse.R,
+                        Settings.Default.GreyMouse.G,
+                        Settings.Default.GreyMouse.B);
             }
         }
 
@@ -450,9 +450,9 @@ namespace PicView.lib
                 case 12:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.Yellow.R,
-                        Settings.Default.Yellow.G,
-                        Settings.Default.Yellow.B);
+                        Settings.Default.Grey.R,
+                        Settings.Default.Grey.G,
+                        Settings.Default.Grey.B);
             }
         }
 

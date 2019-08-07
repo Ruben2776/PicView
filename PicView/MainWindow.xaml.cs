@@ -39,9 +39,7 @@ namespace PicView
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            SetWindowBorderColor();
-
-            if (Properties.Settings.Default.WindowStyle == 2)
+            if (!Properties.Settings.Default.ShowInterface)
             {
                 TitleBar.Visibility =
                 LowerBar.Visibility =
@@ -58,15 +56,19 @@ namespace PicView
                 Opacity = 0
             };
             bg.Children.Add(ajaxLoading);
-            AjaxLoadingStart();
-            var endLoading = false;
+            AjaxLoadingStart();           
 
             // Update values
+            var endLoading = false;
             AllowDrop = true;
             IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
             Pics = new List<string>();
             freshStartup = true;
             DataContext = this;
+            MonitorInfo = MonitorSize.GetMonitorSize();
+
+            if (!Properties.Settings.Default.BgColorWhite)
+                imgBorder.Background = new SolidColorBrush(Colors.Transparent);
 
             // Load image if possible
             if (Application.Current.Properties["ArbitraryArgName"] == null)
@@ -80,6 +82,8 @@ namespace PicView
                 Pic(args);
             }
 
+            SetWindowBorderColor();
+
             // Add UserControls :)
             LoadTooltipStyle();
             LoadFileMenu();
@@ -92,22 +96,8 @@ namespace PicView
             Loadx2();
             LoadMinus();
 
-            if (Properties.Settings.Default.PicGallery > 0)
-            {
-                LoadPicGallery();
-            }
-
-            // Update UserControl values
-            backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorFade"];
-            mainColor = (Color)Application.Current.Resources["MainColor"];
-            quickSettingsMenu.ToggleScroll.IsChecked = IsScrollEnabled;
-            if (SizeMode)
-                quickSettingsMenu.SetFit.IsChecked = true;
-            else
-                quickSettingsMenu.SetCenter.IsChecked = true;
-
             // Update WindowStyle
-            if (Properties.Settings.Default.WindowStyle == 2)
+            if (!Properties.Settings.Default.ShowInterface)
             {
                 clickArrowLeft.Opacity =
                 clickArrowRight.Opacity =
@@ -122,10 +112,46 @@ namespace PicView
                 Visibility.Visible;
             }
 
+            // Update UserControl values
+            backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorFade"];
+            mainColor = (Color)Application.Current.Resources["MainColor"];
+            quickSettingsMenu.ToggleScroll.IsChecked = IsScrollEnabled;
+            if (SizeMode)
+                quickSettingsMenu.SetFit.IsChecked = true;
+            else
+                quickSettingsMenu.SetCenter.IsChecked = true;
 
-            // Initilize Most Recently used
+            // Load PicGallery, if needed
+            if (Properties.Settings.Default.PicGallery > 0)
+            {
+                LoadPicGallery();
+
+                if (Properties.Settings.Default.PicGallery == 2)
+                    PicGalleryFade();
+            }
+
+            // Initilize Things!
             RecentFiles.Initialize();
+            InitializeZoom();
 
+            // Add things!
+            AddEvents();
+            AddTimers();
+            AddContextMenus();        
+
+            // Updates settings from older version to newer version
+            if (Properties.Settings.Default.CallUpgrade)
+            {
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.CallUpgrade = false;
+            }
+
+            if (endLoading)
+                AjaxLoadingEnd();
+        }
+
+        private void AddEvents()
+        {
             #region Add events
 
             // keyboard and Mouse_Keys Keys
@@ -207,16 +233,11 @@ namespace PicView
             SettingsButton.MouseLeave += SettingsButtonButtonMouseLeave;
             SettingsButton.Click += Toggle_quick_settings_menu;
             quickSettingsMenu.CloseButton.Click += Toggle_quick_settings_menu;
-            quickSettingsMenu.ToggleScroll.Checked += (s, x) =>
-            {
-                IsScrollEnabled = true;
-                //Close_UserControls();
-            };
-            quickSettingsMenu.ToggleScroll.Unchecked += (s, x) =>
-            {
-                IsScrollEnabled = false;
-                //Close_UserControls();
-            };
+
+            quickSettingsMenu.ToggleScroll.Checked += (s, x) => IsScrollEnabled = true;
+            quickSettingsMenu.ToggleScroll.Unchecked += (s, x) => IsScrollEnabled = false;
+            quickSettingsMenu.ToggleScroll.Click += Toggle_quick_settings_menu;
+
             quickSettingsMenu.SetFit.Click += (s, x) => { SizeMode = true; };
             quickSettingsMenu.SetCenter.Click += (s, x) => { SizeMode = false; };
             quickSettingsMenu.SettingsButton.Click += (s, x) => AllSettingsWindow();
@@ -227,19 +248,46 @@ namespace PicView
             FunctionMenuButton.MouseLeave += FunctionMenuButtonButtonMouseLeave;
             FunctionMenuButton.Click += Toggle_Functions_menu;
             functionsMenu.CloseButton.Click += Toggle_Functions_menu;
+
+            functionsMenu.Help.Click += Toggle_Functions_menu;
             functionsMenu.Help.Click += (s, x) => HelpWindow();
+
+            functionsMenu.About.Click += Toggle_Functions_menu;
             functionsMenu.About.Click += (s, x) => AboutWindow();
+
             functionsMenu.ClearButton.Click += (s, x) => Unload();
             functionsMenu.ClearButton.Click += Toggle_Functions_menu;
+
             functionsMenu.FileDetailsButton.Click += (s, x) => NativeMethods.ShowFileProperties(PicPath);
             functionsMenu.FileDetailsButton.Click += Toggle_Functions_menu;
+
             functionsMenu.DeleteButton.Click += (s, x) => DeleteFile(PicPath, true);
             functionsMenu.DeletePermButton.Click += (s, x) => DeleteFile(PicPath, false);
+
             functionsMenu.ReloadButton.Click += (s, x) => Reload();
             functionsMenu.ReloadButton.Click += Toggle_Functions_menu;
+
             functionsMenu.ResetZoomButton.Click += (s, x) => ResetZoom();
+            functionsMenu.ResetZoomButton.Click += Toggle_Functions_menu;
+
             functionsMenu.SlideshowButton.Click += (s, x) => LoadSlideshow();
             functionsMenu.SlideshowButton.Click += Toggle_Functions_menu;
+
+            functionsMenu.BgButton.Click += (s, x) =>
+            {
+                if (imgBorder == null)
+                    return;
+
+                var cc = imgBorder.Background as SolidColorBrush;
+                if (cc == null)
+                    return;
+
+                if (cc.Color == Colors.White)
+                    imgBorder.Background = new SolidColorBrush(Colors.Transparent);
+                else
+                    imgBorder.Background = new SolidColorBrush(Colors.White);
+            };
+            functionsMenu.BgButton.Click += Toggle_Functions_menu;
 
             // FlipButton
             imageSettingsMenu.FlipButton.Click += (s, x) => Flip();
@@ -272,6 +320,7 @@ namespace PicView
             img.MouseWheel += Zoom_img_MouseWheel;
 
             // bg
+            bg.MouseLeftButtonDown += Bg_MouseLeftButtonDown;
             bg.Drop += Image_Drop;
             bg.DragOver += Image_DraOver;
             bg.DragEnter += Image_DraEnter;
@@ -304,411 +353,27 @@ namespace PicView
             MouseMove += MainWindow_MouseMove;
             MouseLeave += MainWindow_MouseLeave;
 
-            Microsoft.Win32.SystemEvents.DisplaySettingsChanged += (x, y) => Pic(FolderIndex);
+            //LocationChanged += MainWindow_LocationChanged;
+            Microsoft.Win32.SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
 
             #endregion Add events
-
-            // Add Timers
-            autoScrollTimer = new System.Timers.Timer()
-            {
-                Interval = 7,
-                AutoReset = true,
-                Enabled = false
-            };
-            autoScrollTimer.Elapsed += AutoScrollTimerEvent;
-
-            activityTimer = new System.Timers.Timer()
-            {
-                Interval = 1500,
-                AutoReset = true,
-                Enabled = false
-            };
-            activityTimer.Elapsed += ActivityTimer_Elapsed;
-
-            fastPicTimer = new System.Timers.Timer()
-            {
-                Interval = 100,
-                Enabled = false
-            };
-            fastPicTimer.Elapsed += FastPic;
-
-            Slidetimer = new System.Timers.Timer()
-            {
-                Interval = Properties.Settings.Default.Slidetimeren,
-                Enabled = false
-            };
-            Slidetimer.Elapsed += SlideTimer_Elapsed;
-
-            HideCursorTimer = new System.Timers.Timer()
-            {
-                Interval = 2500,
-                Enabled = false
-            };
-            HideCursorTimer.Elapsed += HideCursorTimer_Elapsed;
-
-            MouseIdleTimer = new System.Timers.Timer()
-            {
-                Interval = 2500,
-                Enabled = false
-            };
-            MouseIdleTimer.Elapsed += MouseIdleTimer_Elapsed;
-
-            // Updates settings from older version to newer version
-            if (Properties.Settings.Default.CallUpgrade)
-            {
-                Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.CallUpgrade = false;
-            }
-
-            InitializeZoom();
-
-            #region Add ContextMenus
-
-            // Add main contextmenu
-            cm = new ContextMenu();
-            var scbf = (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"];
-
-            var opencm = new MenuItem
-            {
-                Header = "Open",
-                InputGestureText = "Ctrl + O"
-            };
-            var opencmIcon = new System.Windows.Shapes.Path();
-            opencmIcon.Data = Geometry.Parse("M1717 931q0-35-53-35h-1088q-40 0-85.5 21.5t-71.5 52.5l-294 363q-18 24-18 40 0 35 53 35h1088q40 0 86-22t71-53l294-363q18-22 18-39zm-1141-163h768v-160q0-40-28-68t-68-28h-576q-40 0-68-28t-28-68v-64q0-40-28-68t-68-28h-320q-40 0-68 28t-28 68v853l256-315q44-53 116-87.5t140-34.5zm1269 163q0 62-46 120l-295 363q-43 53-116 87.5t-140 34.5h-1088q-92 0-158-66t-66-158v-960q0-92 66-158t158-66h320q92 0 158 66t66 158v32h544q92 0 158 66t66 158v160h192q54 0 99 24.5t67 70.5q15 32 15 68z");
-            opencmIcon.Stretch = Stretch.Fill;
-            opencmIcon.Width = opencmIcon.Height = 12;
-            opencmIcon.Fill = scbf;
-            opencm.Icon = opencmIcon;
-            opencm.Click += (s, x) => Open();
-            cm.Items.Add(opencm);
-
-            var savecm = new MenuItem()
-            {
-                Header = "Save",
-                InputGestureText = "Ctrl + S"
-            };
-            var savecmIcon = new System.Windows.Shapes.Path();
-            savecmIcon.Data = Geometry.Parse("M512 1536h768v-384h-768v384zm896 0h128v-896q0-14-10-38.5t-20-34.5l-281-281q-10-10-34-20t-39-10v416q0 40-28 68t-68 28h-576q-40 0-68-28t-28-68v-416h-128v1280h128v-416q0-40 28-68t68-28h832q40 0 68 28t28 68v416zm-384-928v-320q0-13-9.5-22.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 22.5v320q0 13 9.5 22.5t22.5 9.5h192q13 0 22.5-9.5t9.5-22.5zm640 32v928q0 40-28 68t-68 28h-1344q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h928q40 0 88 20t76 48l280 280q28 28 48 76t20 88z");
-            savecmIcon.Stretch = Stretch.Fill;
-            savecmIcon.Width = savecmIcon.Height = 12;
-            savecmIcon.Fill = scbf;
-            savecm.Icon = savecmIcon;
-            savecm.Click += (s, x) => SaveFiles();
-            cm.Items.Add(savecm);
-
-            var printcm = new MenuItem
-            {
-                Header = "Print",
-                InputGestureText = "Ctrl + P"
-            };
-            var printcmIcon = new System.Windows.Shapes.Path();
-            printcmIcon.Data = Geometry.Parse("M448 1536h896v-256h-896v256zm0-640h896v-384h-160q-40 0-68-28t-28-68v-160h-640v640zm1152 64q0-26-19-45t-45-19-45 19-19 45 19 45 45 19 45-19 19-45zm128 0v416q0 13-9.5 22.5t-22.5 9.5h-224v160q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-224q-13 0-22.5-9.5t-9.5-22.5v-416q0-79 56.5-135.5t135.5-56.5h64v-544q0-40 28-68t68-28h672q40 0 88 20t76 48l152 152q28 28 48 76t20 88v256h64q79 0 135.5 56.5t56.5 135.5z");
-            printcmIcon.Stretch = Stretch.Fill;
-            printcmIcon.Width = printcmIcon.Height = 12;
-            printcmIcon.Fill = scbf;
-            printcm.Icon = printcmIcon;
-            printcm.Click += (s, x) => Print(PicPath);
-            cm.Items.Add(printcm);
-
-            cm.Items.Add(new Separator());
-            var recentcm = new MenuItem
-            {
-                Header = "Recent files"
-            };
-            var recentcmIcon = new System.Windows.Shapes.Path();
-            recentcmIcon.Data = Geometry.Parse("M288,48H136c-22.092,0-40,17.908-40,40v336c0,22.092,17.908,40,40,40h240c22.092,0,40-17.908,40-40V176L288,48z M272,192 V80l112, 112H272z");
-            recentcmIcon.Stretch = Stretch.Fill;
-            recentcmIcon.Width = recentcmIcon.Height = 12;
-            recentcmIcon.Fill = scbf;
-            recentcm.Icon = recentcmIcon;
-            cm.Items.Add(recentcm);
-
-            var sortcm = new MenuItem
-            {
-                Header = "Sort files by"
-            };
-            var sortcmIcon = new System.Windows.Shapes.Path();
-            sortcmIcon.Data = Geometry.Parse("M666 481q-60 92-137 273-22-45-37-72.5t-40.5-63.5-51-56.5-63-35-81.5-14.5h-224q-14 0-23-9t-9-23v-192q0-14 9-23t23-9h224q250 0 410 225zm1126 799q0 14-9 23l-320 320q-9 9-23 9-13 0-22.5-9.5t-9.5-22.5v-192q-32 0-85 .5t-81 1-73-1-71-5-64-10.5-63-18.5-58-28.5-59-40-55-53.5-56-69.5q59-93 136-273 22 45 37 72.5t40.5 63.5 51 56.5 63 35 81.5 14.5h256v-192q0-14 9-23t23-9q12 0 24 10l319 319q9 9 9 23zm0-896q0 14-9 23l-320 320q-9 9-23 9-13 0-22.5-9.5t-9.5-22.5v-192h-256q-48 0-87 15t-69 45-51 61.5-45 77.5q-32 62-78 171-29 66-49.5 111t-54 105-64 100-74 83-90 68.5-106.5 42-128 16.5h-224q-14 0-23-9t-9-23v-192q0-14 9-23t23-9h224q48 0 87-15t69-45 51-61.5 45-77.5q32-62 78-171 29-66 49.5-111t54-105 64-100 74-83 90-68.5 106.5-42 128-16.5h256v-192q0-14 9-23t23-9q12 0 24 10l319 319q9 9 9 23z");
-            sortcmIcon.Stretch = Stretch.Fill;
-            sortcmIcon.Width = sortcmIcon.Height = 12;
-            sortcmIcon.Fill = scbf;
-            sortcm.Icon = sortcmIcon;
-            var sortcmChild0 = new RadioButton();
-            sortcmChild0.Content = "File name";
-            sortcmChild0.Click += (s, x) =>
-            {
-                Properties.Settings.Default.SortPreference = 0;
-                if (!string.IsNullOrWhiteSpace(PicPath))
-                    Pics = FileList(Path.GetDirectoryName(PicPath));
-            };
-            sortcm.Items.Add(sortcmChild0);
-            var sortcmChild1 = new RadioButton();
-            sortcmChild1.Content = "File Size";
-            sortcmChild1.Click += (s, x) =>
-            {
-                Properties.Settings.Default.SortPreference = 1;
-                if (!string.IsNullOrWhiteSpace(PicPath))
-                    Pics = FileList(Path.GetDirectoryName(PicPath));
-            };
-            sortcm.Items.Add(sortcmChild1);
-            var sortcmChild2 = new RadioButton();
-            sortcmChild2.Content = "Creation time";
-            sortcmChild2.Click += (s, x) =>
-            {
-                Properties.Settings.Default.SortPreference = 2;
-                if (!string.IsNullOrWhiteSpace(PicPath))
-                    Pics = FileList(Path.GetDirectoryName(PicPath));
-            };
-            sortcm.Items.Add(sortcmChild2);
-            var sortcmChild3 = new RadioButton();
-            sortcmChild3.Content = "File extension";
-            sortcmChild3.Click += (s, x) =>
-            {
-                Properties.Settings.Default.SortPreference = 3;
-                if (!string.IsNullOrWhiteSpace(PicPath))
-                    Pics = FileList(Path.GetDirectoryName(PicPath));
-            };
-            sortcm.Items.Add(sortcmChild3);
-            var sortcmChild4 = new RadioButton();
-            sortcmChild4.Content = "Last access time";
-            sortcmChild4.Click += (s, x) =>
-            {
-                Properties.Settings.Default.SortPreference = 4;
-                if (!string.IsNullOrWhiteSpace(PicPath))
-                    Pics = FileList(Path.GetDirectoryName(PicPath));
-            };
-            sortcm.Items.Add(sortcmChild4);
-            var sortcmChild5 = new RadioButton();
-            sortcmChild5.Content = "Last write time";
-            sortcmChild5.Click += (s, x) =>
-            {
-                Properties.Settings.Default.SortPreference = 5;
-                if (!string.IsNullOrWhiteSpace(PicPath))
-                    Pics = FileList(Path.GetDirectoryName(PicPath));
-            };
-            sortcm.Items.Add(sortcmChild5);
-            var sortcmChild6 = new RadioButton();
-            sortcmChild6.Content = "Random";
-            sortcmChild6.Click += (s, x) =>
-            {
-                Properties.Settings.Default.SortPreference = 6;
-                if (!string.IsNullOrWhiteSpace(PicPath))
-                    Pics = FileList(Path.GetDirectoryName(PicPath));
-            };
-            sortcm.Items.Add(sortcmChild6);
-            cm.Items.Add(sortcm);
-            cm.Items.Add(new Separator());
-
-            var wallcm = new MenuItem
-            {
-                Header = "Set as wallpaper"
-            };
-            wallcm.Click += (s, x) => Wallpaper.SetWallpaper(PicPath, WallpaperStyle.Fill);
-            cm.Items.Add(wallcm);
-            cm.Items.Add(new Separator());
-
-            var lcdcm = new MenuItem
-            {
-                Header = "Locate on disk",
-                InputGestureText = "F3",
-                ToolTip = "Opens the current image on your drive"
-            };
-            lcdcm.Click += (s, x) => Open_In_Explorer();
-            cm.Items.Add(lcdcm);
-
-            var fildecm = new MenuItem
-            {
-                Header = "File Details",
-                InputGestureText = "Ctrl + I"
-            };
-            fildecm.Click += (s, x) => NativeMethods.ShowFileProperties(PicPath);
-            cm.Items.Add(fildecm);
-            cm.Items.Add(new Separator());
-
-            var cppcm = new MenuItem
-            {
-                Header = "Copy picture",
-                InputGestureText = "Ctrl + C"
-            };
-            var cppcmIcon = new System.Windows.Shapes.Path();
-            cppcmIcon.Data = Geometry.Parse("M1696 384q40 0 68 28t28 68v1216q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-288h-544q-40 0-68-28t-28-68v-672q0-40 20-88t48-76l408-408q28-28 76-48t88-20h416q40 0 68 28t28 68v328q68-40 128-40h416zm-544 213l-299 299h299v-299zm-640-384l-299 299h299v-299zm196 647l316-316v-416h-384v416q0 40-28 68t-68 28h-416v640h512v-256q0-40 20-88t48-76zm956 804v-1152h-384v416q0 40-28 68t-68 28h-416v640h896z");
-            cppcmIcon.Stretch = Stretch.Fill;
-            cppcmIcon.Width = cppcmIcon.Height = 12;
-            cppcmIcon.Fill = scbf;
-            cppcm.Icon = cppcmIcon;
-            cppcm.Click += (s, x) => CopyPic();
-            cm.Items.Add(cppcm);
-
-            var pastecm = new MenuItem
-            {
-                Header = "Paste picture",
-                InputGestureText = "Ctrl + V"
-            };
-            var pastecmIcon = new System.Windows.Shapes.Path();
-            pastecmIcon.Data = Geometry.Parse("M768 1664h896v-640h-416q-40 0-68-28t-28-68v-416h-384v1152zm256-1440v-64q0-13-9.5-22.5t-22.5-9.5h-704q-13 0-22.5 9.5t-9.5 22.5v64q0 13 9.5 22.5t22.5 9.5h704q13 0 22.5-9.5t9.5-22.5zm256 672h299l-299-299v299zm512 128v672q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-544q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h1088q40 0 68 28t28 68v328q21 13 36 28l408 408q28 28 48 76t20 88z");
-            pastecmIcon.Stretch = Stretch.Fill;
-            pastecmIcon.Width = pastecmIcon.Height = 12;
-            pastecmIcon.Fill = scbf;
-            pastecm.Icon = pastecmIcon;
-            pastecm.Click += (s, x) => Paste();
-            cm.Items.Add(pastecm);
-
-            var MovetoRecycleBin = new MenuItem
-            {
-                Header = "Delete picture",
-                InputGestureText = "Delete"
-            };
-            var MovetoRecycleBinIcon = new System.Windows.Shapes.Path();
-            MovetoRecycleBinIcon.Data = Geometry.Parse("M836 1169l-15 368-2 22-420-29q-36-3-67-31.5t-47-65.5q-11-27-14.5-55t4-65 12-55 21.5-64 19-53q78 12 509 28zm-387-586l180 379-147-92q-63 72-111.5 144.5t-72.5 125-39.5 94.5-18.5 63l-4 21-190-357q-17-26-18-56t6-47l8-18q35-63 114-188l-140-86zm1231 517l-188 359q-12 29-36.5 46.5t-43.5 20.5l-18 4q-71 7-219 12l8 164-230-367 211-362 7 173q170 16 283 5t170-33zm-785-924q-47 63-265 435l-317-187-19-12 225-356q20-31 60-45t80-10q24 2 48.5 12t42 21 41.5 33 36 34.5 36 39.5 32 35zm655 307l212 363q18 37 12.5 76t-27.5 74q-13 20-33 37t-38 28-48.5 22-47 16-51.5 14-46 12q-34-72-265-436l313-195zm-143-226l142-83-220 373-419-20 151-86q-34-89-75-166t-75.5-123.5-64.5-80-47-46.5l-17-13 405 1q31-3 58 10.5t39 28.5l11 15q39 61 112 190z");
-            MovetoRecycleBinIcon.Stretch = Stretch.Fill;
-            MovetoRecycleBinIcon.Width = MovetoRecycleBinIcon.Height = 12;
-            MovetoRecycleBinIcon.Fill = scbf;
-            MovetoRecycleBin.Icon = MovetoRecycleBinIcon;
-            MovetoRecycleBin.Click += (s, x) => DeleteFile(PicPath, true);
-            cm.Items.Add(MovetoRecycleBin);
-
-            cm.Items.Add(new Separator());
-            var clcm = new MenuItem
-            {
-                Header = "Close",
-                InputGestureText = "Esc"
-            };
-            var mclcmIcon = new System.Windows.Shapes.Path();
-            mclcmIcon.Data = Geometry.Parse("M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z");
-            mclcmIcon.Stretch = Stretch.Fill;
-            mclcmIcon.Width = mclcmIcon.Height = 12;
-            mclcmIcon.Fill = scbf;
-            clcm.Icon = mclcmIcon;
-            clcm.Click += (s, x) => Close();
-            cm.Items.Add(clcm);
-
-            // Add to elements
-            img.ContextMenu = bg.ContextMenu = cm;
-
-            // Add left and right ContextMenus
-            var cmLeft = new ContextMenu();
-            var cmRight = new ContextMenu();
-
-            var nextcm = new MenuItem
-            {
-                Header = "Next picture",
-                InputGestureText = "ᗌ or D",
-                ToolTip = "Go to Next image in folder",
-                StaysOpenOnClick = true
-            };
-            nextcm.Click += (s, x) => Pic();
-            cmRight.Items.Add(nextcm);
-
-            var prevcm = new MenuItem
-            {
-                Header = "Previous picture",
-                InputGestureText = "ᗏ or A",
-                ToolTip = "Go to previous image in folder",
-                StaysOpenOnClick = true
-            };
-            prevcm.Click += (s, x) => Pic(false);
-            cmLeft.Items.Add(prevcm);
-
-            var firstcm = new MenuItem
-            {
-                Header = "First picture",
-                InputGestureText = "Ctrl + D or Ctrl + ᗌ",
-                ToolTip = "Go to first image in folder"
-            };
-            firstcm.Click += (s, x) => Pic(false, true);
-            cmLeft.Items.Add(firstcm);
-
-            var lastcm = new MenuItem
-            {
-                Header = "Last picture",
-                InputGestureText = "Ctrl + A or Ctrl + ᗏ",
-                ToolTip = "Go to last image in folder"
-            };
-            lastcm.Click += (s, x) => Pic(true, true);
-            cmRight.Items.Add(lastcm);
-
-            // Add to elements
-            RightButton.ContextMenu = cmRight;
-            LeftButton.ContextMenu = cmLeft;
-
-            clickArrowRight.ContextMenu = cmRight;
-            clickArrowLeft.ContextMenu = cmLeft;
-
-            // Add Title contextMenu
-            var cmTitle = new ContextMenu();
-
-            var clTc = new MenuItem
-            {
-                Header = "Copy path to clipboard"
-            };
-            clTc.Click += (s, x) => CopyText();
-            cmTitle.Items.Add(clTc);
-
-            Bar.ContextMenu = cmTitle;
-
-            // Add Close x2 contextMenu
-            var closeX2 = new ContextMenu();
-
-            var clX2z = new MenuItem
-            {
-                Header = "Return to normal interface"
-            };
-            clX2z.Click += (s, x) => HideInterface();
-            closeX2.Items.Add(clX2z);
-
-            var clX2x = new MenuItem
-            {
-                Header = "Close",
-                InputGestureText = "Esc"
-            };
-            clX2x.Click += (s, x) => Close();
-            closeX2.Items.Add(clX2x);
-
-            x2.ContextMenu = closeX2;
-
-            switch (Properties.Settings.Default.SortPreference)
-            {
-                case 0:
-                    sortcmChild0.IsChecked = true;
-                    break;
-
-                case 1:
-                    sortcmChild1.IsChecked = true;
-                    break;
-
-                case 2:
-                    sortcmChild2.IsChecked = true;
-                    break;
-
-                case 3:
-                    sortcmChild3.IsChecked = true;
-                    break;
-
-                case 4:
-                    sortcmChild4.IsChecked = true;
-                    break;
-
-                case 5:
-                    sortcmChild5.IsChecked = true;
-                    break;
-
-                case 6:
-                    sortcmChild6.IsChecked = true;
-                    break;
-
-                default:
-                    sortcmChild0.IsChecked = true;
-                    break;
-            }
-
-            #endregion Add ContextMenus
-
-            cm.Opened += (tt, yy) => Recentcm_MouseEnter(recentcm);
-            if (endLoading)
-            {
-                AjaxLoadingEnd();
-            }
         }
+
+        private void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
+        {
+            // Update size when screen resulution changes
+
+            MonitorInfo = MonitorSize.GetMonitorSize();
+            ZoomFit(img.Width, img.Height);
+        }
+
+        //private void MainWindow_LocationChanged(object sender, EventArgs e)
+        //{
+        //    // Need to figure out a way to handle user dragging app to a monitor, with different resolution.
+
+        //    //MonitorInfo = MonitorSize.GetMonitorSize();
+        //    //ZoomFit(img.Width, img.Height);
+        //}
 
         /// <summary>
         /// Reset to default state
@@ -742,70 +407,53 @@ namespace PicView
         {
             base.OnRenderSizeChanged(size);
 
-            if (Properties.Settings.Default.WindowStyle == 0 || Properties.Settings.Default.WindowStyle == 2)
+            //Keep position when size has changed
+            if (size.HeightChanged)
             {
-                //Keep position when size has changed
-                if (size.HeightChanged)
-                {
-                    Top += (size.PreviousSize.Height - size.NewSize.Height) / 2;
-                }
+                Top += (size.PreviousSize.Height - size.NewSize.Height) / 2;
+            }
 
-                if (size.WidthChanged)
-                {
-                    Left += (size.PreviousSize.Width - size.NewSize.Width) / 2;
-                }
+            if (size.WidthChanged)
+            {
+                Left += (size.PreviousSize.Width - size.NewSize.Width) / 2;
+            }
 
-                // Move cursor after resize when the button has been pressed
-                if (RightbuttonClicked)
-                {
-                    Point p = RightButton.PointToScreen(new Point(50, 30)); //Points cursor to center of RighButton
-                    NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
-                    RightbuttonClicked = false;
-                }
-                else if (LeftbuttonClicked)
-                {
-                    Point p = LeftButton.PointToScreen(new Point(50, 30));
-                    NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
-                    LeftbuttonClicked = false;
-                }
-                else if (clickArrowRightClicked)
-                {
-                    Point p = clickArrowRight.PointToScreen(new Point(25, 30));
-                    NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
-                    clickArrowRightClicked = false;
-                }
-                else if (clickArrowLeftClicked)
-                {
-                    Point p = clickArrowLeft.PointToScreen(new Point(25, 30));
-                    NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
-                    clickArrowLeftClicked = false;
-                }
+            // Move cursor after resize when the button has been pressed
+            if (RightbuttonClicked)
+            {
+                Point p = RightButton.PointToScreen(new Point(50, 30)); //Points cursor to center of RighButton
+                NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+                RightbuttonClicked = false;
+            }
+            else if (LeftbuttonClicked)
+            {
+                Point p = LeftButton.PointToScreen(new Point(50, 30));
+                NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+                LeftbuttonClicked = false;
+            }
+            else if (clickArrowRightClicked)
+            {
+                Point p = clickArrowRight.PointToScreen(new Point(25, 30));
+                NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+                clickArrowRightClicked = false;
+            }
+            else if (clickArrowLeftClicked)
+            {
+                Point p = clickArrowLeft.PointToScreen(new Point(25, 30));
+                NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+                clickArrowLeftClicked = false;
             }
         }
 
         /// <summary>
-        /// Centers on the primary monitor.. Needs multi monitor solution....
+        /// Centers on the current monitor
         /// </summary>
         private void CenterWindowOnScreen()
         {
-            // https://stackoverflow.com/a/32599760
-
-            //get the current monitor
-            var currentMonitor = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow).Handle);
-
-            //find out if our app is being scaled by the monitor
-            PresentationSource source = PresentationSource.FromVisual(Application.Current.MainWindow);
-            double dpiScaling = (source != null && source.CompositionTarget != null ? source.CompositionTarget.TransformFromDevice.M11 : 1);
-
-            //get the available area of the monitor
-            System.Drawing.Rectangle workArea = currentMonitor.WorkingArea;
-            var workAreaWidth = (int)Math.Floor(workArea.Width * dpiScaling);
-            var workAreaHeight = (int)Math.Floor(workArea.Height * dpiScaling);
-
             //move to the centre
-            Application.Current.MainWindow.Left = (((workAreaWidth - (Width * dpiScaling)) / 2) + (workArea.Left * dpiScaling));
-            Application.Current.MainWindow.Top = (((workAreaHeight - (Height * dpiScaling)) / 2) + (workArea.Top * dpiScaling));
-            
+            Application.Current.MainWindow.Left = (((MonitorInfo.WorkArea.Width - (Width * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling));
+            Application.Current.MainWindow.Top = (((MonitorInfo.WorkArea.Height - (Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling));
+
         }
 
         /// <summary>
@@ -834,6 +482,9 @@ namespace PicView
                 try
                 {
                     DragMove();
+
+                    // Update info for possible new screen, needs more engineering
+                    MonitorInfo = MonitorSize.GetMonitorSize();
                 }
                 catch (InvalidOperationException)
                 {
@@ -871,10 +522,20 @@ namespace PicView
         /// <param name="e"></param>
         private void Window_Closing(object sender, CancelEventArgs e)
         {
+            // Close Extra windows when closing
+            if (Application.Current.Windows.OfType<FakeWindow>().Any())
+                Application.Current.Windows[1].Close();
+
             Hide(); // Make it feel faster
 
-            if (Properties.Settings.Default.WindowStyle == 4)
-                Properties.Settings.Default.WindowStyle = 0;
+            // Update user preference for white or transparent image border
+            if (imgBorder != null && bg != null)
+            {
+                var cc = imgBorder.Background as SolidColorBrush;
+
+                if (cc.Color != Colors.White)
+                    Properties.Settings.Default.BgColorWhite = false;
+            }
 
             Properties.Settings.Default.Save();
             DeleteTempFiles();
@@ -957,7 +618,7 @@ namespace PicView
         {
             get
             {
-                return Properties.Settings.Default.WindowStyle == 0 || Properties.Settings.Default.WindowStyle == 2;
+                return Properties.Settings.Default.FitToWindow || !Properties.Settings.Default.FitToWindow;
             }
             set
             {
@@ -965,15 +626,14 @@ namespace PicView
                 {
                     SizeToContent = SizeToContent.WidthAndHeight;
 
-                    if (Properties.Settings.Default.WindowStyle != 2)
-                        Properties.Settings.Default.WindowStyle = 0;
+                    Properties.Settings.Default.FitToWindow = true;
                     quickSettingsMenu.SetFit.IsChecked = true;
                 }
                 else
                 {
                     SizeToContent = SizeToContent.Manual;
 
-                    Properties.Settings.Default.WindowStyle = 4;
+                    Properties.Settings.Default.FitToWindow = false;
                     quickSettingsMenu.SetCenter.IsChecked = true;
                 }
                 if (img.Source != null)
@@ -1064,7 +724,8 @@ namespace PicView
                     LoadPicGallery();
 
                 if (!picGallery.LoadComplete)
-                    picGallery.Load();
+                    if (!picGallery.isLoading)
+                        picGallery.Load();
             }
         }
 
@@ -1075,16 +736,16 @@ namespace PicView
         /// <param name="x"></param>
         private async void Pic(int x)
         {
-            #if DEBUG
+#if DEBUG
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-            #endif
+#endif
 
             // Additional error checking
             if (Pics.Count < x)
             {
                 if (x == 0)
-                   await RecoverFailedArchiveAsync();
+                    await RecoverFailedArchiveAsync();
                 else if (!File.Exists(Pics[x]))
                     PicErrorFix(x);
                 else
@@ -1104,7 +765,7 @@ namespace PicView
                 Title = Bar.Text = Loading;
                 Bar.ToolTip = Loading;
 
-                if (Properties.Settings.Default.WindowStyle == 2)
+                if (!Properties.Settings.Default.ShowInterface)
                     AjaxLoadingStart();
 
                 // Dissallow changing image while loading
@@ -1151,11 +812,10 @@ namespace PicView
             if (!freshStartup)
                 RecentFiles.Add(Pics[x]);
 
-            // Preload images
-            bool? reverse;
-
+            // Preload images \\
             // Only preload every second entry
             // and determine if going backwards or forwards
+            bool? reverse;
             if (PreloadCount > 1 || freshStartup)
                 reverse = false;
             else if (PreloadCount < 0)
@@ -1181,10 +841,10 @@ namespace PicView
             // Stop AjaxLoading if it's shown
             AjaxLoadingEnd();
 
-            #if DEBUG
+#if DEBUG
             stopWatch.Stop();
             ToolTipStyle(stopWatch.Elapsed);
-            #endif
+#endif
 
         }
 
@@ -1307,7 +967,7 @@ namespace PicView
                 img.Width = xWidth;
                 img.Height = xHeight;
 
-                img.Source = Preloader.Contains(Pics[FolderIndex])? Preloader.Load(Pics[FolderIndex]) : GetBitmapSourceThumb(Pics[FolderIndex]);
+                img.Source = Preloader.Contains(Pics[FolderIndex]) ? Preloader.Load(Pics[FolderIndex]) : GetBitmapSourceThumb(Pics[FolderIndex]);
             }));
             Progress(FolderIndex, Pics.Count);
             FastPicRunning = true;
@@ -1423,7 +1083,7 @@ namespace PicView
             }
             else if (x >= Pics.Count)
             {
-                if (Pics.Count >= 1)
+                if (Pics.Count > 0)
                 {
                     Pic(Pics[0]);
                     return true;
@@ -1459,6 +1119,7 @@ namespace PicView
             // Continue to remove file if can't be rendered
             Pics.Remove(file);
 
+            // Check if there's still images in folder
             if (Pics.Count < 0)
             {
                 ToolTipStyle("No images in folder", true, TimeSpan.FromSeconds(3));
@@ -1466,37 +1127,17 @@ namespace PicView
                 return false;
             }
 
-            ToolTipStyle("File not found or unable to render, " + file, false, TimeSpan.FromSeconds(2.5));
-
             // Go to next image
-            FolderIndex = FolderIndex == Pics.Count - 1 ? 0 : FolderIndex + 1;
+            if (Properties.Settings.Default.Looping)
+                FolderIndex = FolderIndex == Pics.Count - 1 ? 0 : FolderIndex++;
+            else
+                FolderIndex = FolderIndex == Pics.Count - 1 ? Pics.Count - 2 : FolderIndex + 1;
 
-            if (FolderIndex < Pics.Count)
+            if (File.Exists(file))
             {
-                if (File.Exists(Pics[FolderIndex]))
-                {
-                    Pic(FolderIndex);
-                    PreloadCount++;
-                    return true;
-                }
-            }
-            try
-            {
-                var dir = Path.GetDirectoryName(PicPath);
-                if (Directory.Exists(dir))
-                {
-                    Pics = FileList(dir);
-                }
-            }
-            catch (Exception)
-            {
-                Unload();
-                return false;
-            }
-            if (Pics.Count < 0)
-            {
-                Unload();
-                return false;
+                Pic(file);
+                ToolTipStyle("File not found or unable to render, " + file, false, TimeSpan.FromSeconds(2.5));
+                return true;
             }
 
             // Repeat process if the next image was not found
@@ -1512,12 +1153,12 @@ namespace PicView
             if (Pics.Count > 0)
                 return true;
 
-            //if (string.IsNullOrWhiteSpace(TempZipPath))
-            //{
-            //    // Unexped result
-            //    Reload(true);
-            //    return false;
-            //}
+            if (string.IsNullOrWhiteSpace(TempZipPath))
+            {
+                // Unexped result
+                Reload(true);
+                return false;
+            }
 
             // TempZipPath is not null = images being extracted
             short count = 0;
@@ -1552,7 +1193,7 @@ namespace PicView
                         Reload(true);
                         return false;
                     }
-                    
+
                     if (getProcesses.Length == 0)
                     {
                         Reload(true);
@@ -1565,7 +1206,7 @@ namespace PicView
                         {
                             Reload(true);
                             ToolTipStyle("Password protected archive not supported");
-                            getProcesses[0].Kill();                            
+                            getProcesses[0].Kill();
                             return false;
                         }
                 }
@@ -1589,32 +1230,6 @@ namespace PicView
                 count++;
             } while (Pics.Count < 1);
             return true;
-        }
-
-        private void PicGallery_PreviewItemClick(object source, MyEventArgs e)
-        {
-            var size = ImageSize(Pics[e.GetId()]);
-            ZoomFit(size.Width, size.Height);
-
-            Task.Run(() =>
-            {
-                //Preloader.Clear();
-                Preloader.Add(e.GetId());
-            });
-        }
-
-        private async void PicGallery_ItemClick(object source, MyEventArgs e)
-        {
-            while (!Preloader.Contains(Pics[e.GetId()]))
-            {
-                if (Bar.Text != Loading)
-                {
-                    Bar.Text = Loading;
-                    img.Source = e.GetImage();
-                }
-                await Task.Delay(50);
-            }
-            Pic(e.GetId());
         }
 
         /// <summary>
@@ -1982,6 +1597,14 @@ namespace PicView
                 case Key.BrowserForward:
                 case Key.Right:
                 case Key.D:
+                    if (picGallery != null)
+                    {
+                        if (picGallery.open)
+                        {
+                            picGallery.ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            return;
+                        }
+                    }
                     if (!e.IsRepeat)
                     {
                         // Go to first if Ctrl held down
@@ -2006,6 +1629,14 @@ namespace PicView
                 case Key.BrowserBack:
                 case Key.Left:
                 case Key.A:
+                    if (picGallery != null)
+                    {
+                        if (picGallery.open)
+                        {
+                            picGallery.ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            return;
+                        }
+                    }
                     if (!e.IsRepeat)
                     {
                         // Go to first if Ctrl held down
@@ -2056,14 +1687,6 @@ namespace PicView
                 // Rotate or Scroll
                 case Key.Up:
                 case Key.W:
-                    if (picGallery != null)
-                    {
-                        if (picGallery.open)
-                        {
-                            picGallery.ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
-                            return;
-                        }
-                    }
                     if (Properties.Settings.Default.ScrollEnabled)
                     {
                         if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
@@ -2077,14 +1700,6 @@ namespace PicView
 
                 case Key.Down:
                 case Key.S:
-                    if (picGallery != null)
-                    {
-                        if (picGallery.open)
-                        {
-                            picGallery.ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
-                            return;
-                        }
-                    }
                     if (Properties.Settings.Default.ScrollEnabled)
                     {
                         if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
@@ -2132,13 +1747,13 @@ namespace PicView
                 {
                     Close_UserControls();
                 }
-                else if (SlideshowActive == true)
+                else if (SlideshowActive)
                 {
                     UnloadSlideshow();
                 }
                 else if (picGallery != null)
                 {
-                    if (picGallery.open)
+                    if (Properties.Settings.Default.PicGallery != 2 && picGallery.open)
                         PicGalleryFade(false);
                     else
                         Close();
@@ -2260,6 +1875,9 @@ namespace PicView
             // F4
             else if (e.Key == Key.F4)
             {
+                if (Properties.Settings.Default.PicGallery == 0)
+                    return;
+
                 Properties.Settings.Default.PicGallery = 1;
                 if (picGallery != null)
                     PicGalleryFade(picGallery.Visibility == Visibility.Collapsed);
@@ -2269,6 +1887,13 @@ namespace PicView
             else if (e.Key == Key.F6)
             {
                 ResetZoom();
+            }
+
+            // F7
+            else if (e.Key == Key.F7)
+            {
+                picGallery.Calculate_Paging();
+                picGallery.ScrollTo();
             }
 
             //F10
@@ -2311,9 +1936,18 @@ namespace PicView
             // Alt + X
             else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.X))
             {
+                if (Properties.Settings.Default.PicGallery == 0)
+                    return;
+
+                var change = Properties.Settings.Default.PicGallery == 2;
+
                 Properties.Settings.Default.PicGallery = 2;
+
                 if (picGallery != null)
                     PicGalleryFade(picGallery.Visibility == Visibility.Collapsed);
+
+                if (change)
+                    Properties.Settings.Default.PicGallery = 1;
             }
 
             // Alt + C
@@ -2463,6 +2097,12 @@ namespace PicView
             }
         }
 
+        private void Bg_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                Move(sender, e);
+        }
+
         /// <summary>
         /// </summary>
         /// <param name="sender"></param>
@@ -2471,9 +2111,7 @@ namespace PicView
         {
             // Stop autoscrolling or dragging image
             if (autoScrolling)
-            {
                 StopAutoScroll();
-            }
             else
                 img.ReleaseMouseCapture();
         }
@@ -2541,7 +2179,7 @@ namespace PicView
             }
             else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !autoScrolling)
             {
-                Zoom(e.Delta, true); 
+                Zoom(e.Delta, true);
             }
             else
             {
@@ -2709,25 +2347,20 @@ namespace PicView
         /// <param name="height">The pixel height of the image</param>
         private void ZoomFit(double width, double height)
         {
-            // Determine whether to center image or fit window to image
-            var windowstyle = Properties.Settings.Default.WindowStyle == 0 || Properties.Settings.Default.WindowStyle == 2;
-
             double maxWidth, maxHeight;
             var interfaceHeight = 93; // TopBar + LowerBar height
 
-            var monitorSize = GetMonitorSize();
-
-            if (windowstyle)
+            if (Properties.Settings.Default.ShowInterface)
             {
                 // Get max width and height, based on user's screen
-                maxWidth = Math.Min(monitorSize.Width - ComfySpace, width);
-                maxHeight = Math.Min((monitorSize.Height - interfaceHeight), height);
+                maxWidth = Math.Min(MonitorInfo.Width - ComfySpace, width);
+                maxHeight = Math.Min((MonitorInfo.Height - interfaceHeight), height);
             }
             else
             {
                 // Get max width and height, based on window size
-                maxWidth = Math.Min(monitorSize.Width, width);
-                maxHeight = Math.Min(monitorSize.Height - interfaceHeight, height);
+                maxWidth = Math.Min(MonitorInfo.Width, width);
+                maxHeight = Math.Min(MonitorInfo.Height - interfaceHeight, height);
             }
 
             AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));
@@ -2758,7 +2391,7 @@ namespace PicView
 
             // Update TitleBar width to fit new size
             var interfaceSize = 220; // logo and buttons width + extra padding
-            if (windowstyle)
+            if (Properties.Settings.Default.ShowInterface)
             {
                 if (xWidth - interfaceSize < interfaceSize)
                     Bar.MaxWidth = interfaceSize;
@@ -2770,7 +2403,7 @@ namespace PicView
             }
             else
             {
-                if (monitorSize.Width - interfaceSize < interfaceSize)
+                if (MonitorInfo.Width - interfaceSize < interfaceSize)
                     Bar.MaxWidth = interfaceSize;
                 else
                     Bar.MaxWidth = Width - interfaceSize;
@@ -2932,25 +2565,7 @@ namespace PicView
                 Flipped = false;
             }
 
-            switch (Rotateint)
-            {
-                case 0:
-                    rt.Angle = 0;
-                    break;
-
-                case 90:
-                    rt.Angle = 90;
-                    break;
-
-                case 180:
-                    rt.Angle = 180;
-                    break;
-
-                case 270:
-                    rt.Angle = 270;
-                    break;
-            }
-
+            rt.Angle = Rotateint;
             tg.Children.Add(flip);
             tg.Children.Add(rt);
             img.LayoutTransform = tg;
@@ -2961,6 +2576,381 @@ namespace PicView
         #region Interface logic
 
         #region UserControl Specifics
+
+        private void AddContextMenus()
+        {
+            #region Add ContextMenus
+
+            // Add main contextmenu
+            cm = new ContextMenu();
+            var scbf = (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"];
+
+            var opencm = new MenuItem
+            {
+                Header = "Open",
+                InputGestureText = "Ctrl + O"
+            };
+            var opencmIcon = new System.Windows.Shapes.Path();
+            opencmIcon.Data = Geometry.Parse("M1717 931q0-35-53-35h-1088q-40 0-85.5 21.5t-71.5 52.5l-294 363q-18 24-18 40 0 35 53 35h1088q40 0 86-22t71-53l294-363q18-22 18-39zm-1141-163h768v-160q0-40-28-68t-68-28h-576q-40 0-68-28t-28-68v-64q0-40-28-68t-68-28h-320q-40 0-68 28t-28 68v853l256-315q44-53 116-87.5t140-34.5zm1269 163q0 62-46 120l-295 363q-43 53-116 87.5t-140 34.5h-1088q-92 0-158-66t-66-158v-960q0-92 66-158t158-66h320q92 0 158 66t66 158v32h544q92 0 158 66t66 158v160h192q54 0 99 24.5t67 70.5q15 32 15 68z");
+            opencmIcon.Stretch = Stretch.Fill;
+            opencmIcon.Width = opencmIcon.Height = 12;
+            opencmIcon.Fill = scbf;
+            opencm.Icon = opencmIcon;
+            opencm.Click += (s, x) => Open();
+            cm.Items.Add(opencm);
+
+            var savecm = new MenuItem()
+            {
+                Header = "Save",
+                InputGestureText = "Ctrl + S"
+            };
+            var savecmIcon = new System.Windows.Shapes.Path();
+            savecmIcon.Data = Geometry.Parse("M512 1536h768v-384h-768v384zm896 0h128v-896q0-14-10-38.5t-20-34.5l-281-281q-10-10-34-20t-39-10v416q0 40-28 68t-68 28h-576q-40 0-68-28t-28-68v-416h-128v1280h128v-416q0-40 28-68t68-28h832q40 0 68 28t28 68v416zm-384-928v-320q0-13-9.5-22.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 22.5v320q0 13 9.5 22.5t22.5 9.5h192q13 0 22.5-9.5t9.5-22.5zm640 32v928q0 40-28 68t-68 28h-1344q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h928q40 0 88 20t76 48l280 280q28 28 48 76t20 88z");
+            savecmIcon.Stretch = Stretch.Fill;
+            savecmIcon.Width = savecmIcon.Height = 12;
+            savecmIcon.Fill = scbf;
+            savecm.Icon = savecmIcon;
+            savecm.Click += (s, x) => SaveFiles();
+            cm.Items.Add(savecm);
+
+            var printcm = new MenuItem
+            {
+                Header = "Print",
+                InputGestureText = "Ctrl + P"
+            };
+            var printcmIcon = new System.Windows.Shapes.Path();
+            printcmIcon.Data = Geometry.Parse("M448 1536h896v-256h-896v256zm0-640h896v-384h-160q-40 0-68-28t-28-68v-160h-640v640zm1152 64q0-26-19-45t-45-19-45 19-19 45 19 45 45 19 45-19 19-45zm128 0v416q0 13-9.5 22.5t-22.5 9.5h-224v160q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-224q-13 0-22.5-9.5t-9.5-22.5v-416q0-79 56.5-135.5t135.5-56.5h64v-544q0-40 28-68t68-28h672q40 0 88 20t76 48l152 152q28 28 48 76t20 88v256h64q79 0 135.5 56.5t56.5 135.5z");
+            printcmIcon.Stretch = Stretch.Fill;
+            printcmIcon.Width = printcmIcon.Height = 12;
+            printcmIcon.Fill = scbf;
+            printcm.Icon = printcmIcon;
+            printcm.Click += (s, x) => Print(PicPath);
+            cm.Items.Add(printcm);
+
+            cm.Items.Add(new Separator());
+            var recentcm = new MenuItem
+            {
+                Header = "Recent files"
+            };
+            var recentcmIcon = new System.Windows.Shapes.Path();
+            recentcmIcon.Data = Geometry.Parse("M288,48H136c-22.092,0-40,17.908-40,40v336c0,22.092,17.908,40,40,40h240c22.092,0,40-17.908,40-40V176L288,48z M272,192 V80l112, 112H272z");
+            recentcmIcon.Stretch = Stretch.Fill;
+            recentcmIcon.Width = recentcmIcon.Height = 12;
+            recentcmIcon.Fill = scbf;
+            recentcm.Icon = recentcmIcon;
+            cm.Items.Add(recentcm);
+
+            var sortcm = new MenuItem
+            {
+                Header = "Sort files by"
+            };
+            var sortcmIcon = new System.Windows.Shapes.Path();
+            sortcmIcon.Data = Geometry.Parse("M666 481q-60 92-137 273-22-45-37-72.5t-40.5-63.5-51-56.5-63-35-81.5-14.5h-224q-14 0-23-9t-9-23v-192q0-14 9-23t23-9h224q250 0 410 225zm1126 799q0 14-9 23l-320 320q-9 9-23 9-13 0-22.5-9.5t-9.5-22.5v-192q-32 0-85 .5t-81 1-73-1-71-5-64-10.5-63-18.5-58-28.5-59-40-55-53.5-56-69.5q59-93 136-273 22 45 37 72.5t40.5 63.5 51 56.5 63 35 81.5 14.5h256v-192q0-14 9-23t23-9q12 0 24 10l319 319q9 9 9 23zm0-896q0 14-9 23l-320 320q-9 9-23 9-13 0-22.5-9.5t-9.5-22.5v-192h-256q-48 0-87 15t-69 45-51 61.5-45 77.5q-32 62-78 171-29 66-49.5 111t-54 105-64 100-74 83-90 68.5-106.5 42-128 16.5h-224q-14 0-23-9t-9-23v-192q0-14 9-23t23-9h224q48 0 87-15t69-45 51-61.5 45-77.5q32-62 78-171 29-66 49.5-111t54-105 64-100 74-83 90-68.5 106.5-42 128-16.5h256v-192q0-14 9-23t23-9q12 0 24 10l319 319q9 9 9 23z");
+            sortcmIcon.Stretch = Stretch.Fill;
+            sortcmIcon.Width = sortcmIcon.Height = 12;
+            sortcmIcon.Fill = scbf;
+            sortcm.Icon = sortcmIcon;
+            var sortcmChild0 = new RadioButton();
+            sortcmChild0.Content = "File name";
+            sortcmChild0.Click += (s, x) =>
+            {
+                Properties.Settings.Default.SortPreference = 0;
+                if (!string.IsNullOrWhiteSpace(PicPath))
+                    Pics = FileList(Path.GetDirectoryName(PicPath));
+            };
+            sortcm.Items.Add(sortcmChild0);
+            var sortcmChild1 = new RadioButton();
+            sortcmChild1.Content = "File Size";
+            sortcmChild1.Click += (s, x) =>
+            {
+                Properties.Settings.Default.SortPreference = 1;
+                if (!string.IsNullOrWhiteSpace(PicPath))
+                    Pics = FileList(Path.GetDirectoryName(PicPath));
+            };
+            sortcm.Items.Add(sortcmChild1);
+            var sortcmChild2 = new RadioButton();
+            sortcmChild2.Content = "Creation time";
+            sortcmChild2.Click += (s, x) =>
+            {
+                Properties.Settings.Default.SortPreference = 2;
+                if (!string.IsNullOrWhiteSpace(PicPath))
+                    Pics = FileList(Path.GetDirectoryName(PicPath));
+            };
+            sortcm.Items.Add(sortcmChild2);
+            var sortcmChild3 = new RadioButton();
+            sortcmChild3.Content = "File extension";
+            sortcmChild3.Click += (s, x) =>
+            {
+                Properties.Settings.Default.SortPreference = 3;
+                if (!string.IsNullOrWhiteSpace(PicPath))
+                    Pics = FileList(Path.GetDirectoryName(PicPath));
+            };
+            sortcm.Items.Add(sortcmChild3);
+            var sortcmChild4 = new RadioButton();
+            sortcmChild4.Content = "Last access time";
+            sortcmChild4.Click += (s, x) =>
+            {
+                Properties.Settings.Default.SortPreference = 4;
+                if (!string.IsNullOrWhiteSpace(PicPath))
+                    Pics = FileList(Path.GetDirectoryName(PicPath));
+            };
+            sortcm.Items.Add(sortcmChild4);
+            var sortcmChild5 = new RadioButton();
+            sortcmChild5.Content = "Last write time";
+            sortcmChild5.Click += (s, x) =>
+            {
+                Properties.Settings.Default.SortPreference = 5;
+                if (!string.IsNullOrWhiteSpace(PicPath))
+                    Pics = FileList(Path.GetDirectoryName(PicPath));
+            };
+            sortcm.Items.Add(sortcmChild5);
+            var sortcmChild6 = new RadioButton();
+            sortcmChild6.Content = "Random";
+            sortcmChild6.Click += (s, x) =>
+            {
+                Properties.Settings.Default.SortPreference = 6;
+                if (!string.IsNullOrWhiteSpace(PicPath))
+                    Pics = FileList(Path.GetDirectoryName(PicPath));
+            };
+            sortcm.Items.Add(sortcmChild6);
+            cm.Items.Add(sortcm);
+            cm.Items.Add(new Separator());
+
+            var wallcm = new MenuItem
+            {
+                Header = "Set as wallpaper"
+            };
+            wallcm.Click += (s, x) => Wallpaper.SetWallpaper(PicPath, WallpaperStyle.Fill);
+            cm.Items.Add(wallcm);
+            cm.Items.Add(new Separator());
+
+            var lcdcm = new MenuItem
+            {
+                Header = "Locate on disk",
+                InputGestureText = "F3",
+                ToolTip = "Opens the current image on your drive"
+            };
+            lcdcm.Click += (s, x) => Open_In_Explorer();
+            cm.Items.Add(lcdcm);
+
+            var fildecm = new MenuItem
+            {
+                Header = "File Details",
+                InputGestureText = "Ctrl + I"
+            };
+            fildecm.Click += (s, x) => NativeMethods.ShowFileProperties(PicPath);
+            cm.Items.Add(fildecm);
+            cm.Items.Add(new Separator());
+
+            var cppcm = new MenuItem
+            {
+                Header = "Copy picture",
+                InputGestureText = "Ctrl + C"
+            };
+            var cppcmIcon = new System.Windows.Shapes.Path();
+            cppcmIcon.Data = Geometry.Parse("M1696 384q40 0 68 28t28 68v1216q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-288h-544q-40 0-68-28t-28-68v-672q0-40 20-88t48-76l408-408q28-28 76-48t88-20h416q40 0 68 28t28 68v328q68-40 128-40h416zm-544 213l-299 299h299v-299zm-640-384l-299 299h299v-299zm196 647l316-316v-416h-384v416q0 40-28 68t-68 28h-416v640h512v-256q0-40 20-88t48-76zm956 804v-1152h-384v416q0 40-28 68t-68 28h-416v640h896z");
+            cppcmIcon.Stretch = Stretch.Fill;
+            cppcmIcon.Width = cppcmIcon.Height = 12;
+            cppcmIcon.Fill = scbf;
+            cppcm.Icon = cppcmIcon;
+            cppcm.Click += (s, x) => CopyPic();
+            cm.Items.Add(cppcm);
+
+            var pastecm = new MenuItem
+            {
+                Header = "Paste picture",
+                InputGestureText = "Ctrl + V"
+            };
+            var pastecmIcon = new System.Windows.Shapes.Path();
+            pastecmIcon.Data = Geometry.Parse("M768 1664h896v-640h-416q-40 0-68-28t-28-68v-416h-384v1152zm256-1440v-64q0-13-9.5-22.5t-22.5-9.5h-704q-13 0-22.5 9.5t-9.5 22.5v64q0 13 9.5 22.5t22.5 9.5h704q13 0 22.5-9.5t9.5-22.5zm256 672h299l-299-299v299zm512 128v672q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-544q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h1088q40 0 68 28t28 68v328q21 13 36 28l408 408q28 28 48 76t20 88z");
+            pastecmIcon.Stretch = Stretch.Fill;
+            pastecmIcon.Width = pastecmIcon.Height = 12;
+            pastecmIcon.Fill = scbf;
+            pastecm.Icon = pastecmIcon;
+            pastecm.Click += (s, x) => Paste();
+            cm.Items.Add(pastecm);
+
+            var MovetoRecycleBin = new MenuItem
+            {
+                Header = "Delete picture",
+                InputGestureText = "Delete"
+            };
+            var MovetoRecycleBinIcon = new System.Windows.Shapes.Path();
+            MovetoRecycleBinIcon.Data = Geometry.Parse("M836 1169l-15 368-2 22-420-29q-36-3-67-31.5t-47-65.5q-11-27-14.5-55t4-65 12-55 21.5-64 19-53q78 12 509 28zm-387-586l180 379-147-92q-63 72-111.5 144.5t-72.5 125-39.5 94.5-18.5 63l-4 21-190-357q-17-26-18-56t6-47l8-18q35-63 114-188l-140-86zm1231 517l-188 359q-12 29-36.5 46.5t-43.5 20.5l-18 4q-71 7-219 12l8 164-230-367 211-362 7 173q170 16 283 5t170-33zm-785-924q-47 63-265 435l-317-187-19-12 225-356q20-31 60-45t80-10q24 2 48.5 12t42 21 41.5 33 36 34.5 36 39.5 32 35zm655 307l212 363q18 37 12.5 76t-27.5 74q-13 20-33 37t-38 28-48.5 22-47 16-51.5 14-46 12q-34-72-265-436l313-195zm-143-226l142-83-220 373-419-20 151-86q-34-89-75-166t-75.5-123.5-64.5-80-47-46.5l-17-13 405 1q31-3 58 10.5t39 28.5l11 15q39 61 112 190z");
+            MovetoRecycleBinIcon.Stretch = Stretch.Fill;
+            MovetoRecycleBinIcon.Width = MovetoRecycleBinIcon.Height = 12;
+            MovetoRecycleBinIcon.Fill = scbf;
+            MovetoRecycleBin.Icon = MovetoRecycleBinIcon;
+            MovetoRecycleBin.Click += (s, x) => DeleteFile(PicPath, true);
+            cm.Items.Add(MovetoRecycleBin);
+
+            cm.Items.Add(new Separator());
+            var clcm = new MenuItem
+            {
+                Header = "Close",
+                InputGestureText = "Esc",
+                StaysOpenOnClick = false
+            };
+            //var mclcmIcon = new System.Windows.Shapes.Path();
+            //mclcmIcon.Data = Geometry.Parse("M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z");
+            //mclcmIcon.Stretch = Stretch.Fill;
+            //mclcmIcon.Width = mclcmIcon.Height = 12;
+            //mclcmIcon.Fill = scbf;
+            //clcm.Icon = mclcmIcon;
+            //clcm.Click += (s, x) => Close();
+            //cm.Items.Add(clcm);
+
+            // Add to elements
+            img.ContextMenu = bg.ContextMenu = cm;
+
+            // Add left and right ContextMenus
+            var cmLeft = new ContextMenu();
+            var cmRight = new ContextMenu();
+
+            var nextcm = new MenuItem
+            {
+                Header = "Next picture",
+                InputGestureText = "ᗌ or D",
+                ToolTip = "Go to Next image in folder",
+                StaysOpenOnClick = true
+            };
+            nextcm.Click += (s, x) => Pic();
+            cmRight.Items.Add(nextcm);
+
+            var prevcm = new MenuItem
+            {
+                Header = "Previous picture",
+                InputGestureText = "ᗏ or A",
+                ToolTip = "Go to previous image in folder",
+                StaysOpenOnClick = true
+            };
+            prevcm.Click += (s, x) => Pic(false);
+            cmLeft.Items.Add(prevcm);
+
+            var firstcm = new MenuItem
+            {
+                Header = "First picture",
+                InputGestureText = "Ctrl + D or Ctrl + ᗌ",
+                ToolTip = "Go to first image in folder"
+            };
+            firstcm.Click += (s, x) => Pic(false, true);
+            cmLeft.Items.Add(firstcm);
+
+            var lastcm = new MenuItem
+            {
+                Header = "Last picture",
+                InputGestureText = "Ctrl + A or Ctrl + ᗏ",
+                ToolTip = "Go to last image in folder"
+            };
+            lastcm.Click += (s, x) => Pic(true, true);
+            cmRight.Items.Add(lastcm);
+
+            // Add to elements
+            RightButton.ContextMenu = cmRight;
+            LeftButton.ContextMenu = cmLeft;
+
+            clickArrowRight.ContextMenu = cmRight;
+            clickArrowLeft.ContextMenu = cmLeft;
+
+            // Add Title contextMenu
+            var cmTitle = new ContextMenu();
+
+            var clTc = new MenuItem
+            {
+                Header = "Copy path to clipboard"
+            };
+            clTc.Click += (s, x) => CopyText();
+            cmTitle.Items.Add(clTc);
+
+            Bar.ContextMenu = cmTitle;
+
+            switch (Properties.Settings.Default.SortPreference)
+            {
+                case 0:
+                    sortcmChild0.IsChecked = true;
+                    break;
+
+                case 1:
+                    sortcmChild1.IsChecked = true;
+                    break;
+
+                case 2:
+                    sortcmChild2.IsChecked = true;
+                    break;
+
+                case 3:
+                    sortcmChild3.IsChecked = true;
+                    break;
+
+                case 4:
+                    sortcmChild4.IsChecked = true;
+                    break;
+
+                case 5:
+                    sortcmChild5.IsChecked = true;
+                    break;
+
+                case 6:
+                    sortcmChild6.IsChecked = true;
+                    break;
+
+                default:
+                    sortcmChild0.IsChecked = true;
+                    break;
+            }
+
+            #endregion Add ContextMenus
+
+            cm.Opened += (tt, yy) => Recentcm_MouseEnter(recentcm);
+        }
+
+        // Add timers
+        private void AddTimers()
+        {
+            autoScrollTimer = new System.Timers.Timer()
+            {
+                Interval = 7,
+                AutoReset = true,
+                Enabled = false
+            };
+            autoScrollTimer.Elapsed += AutoScrollTimerEvent;
+
+            activityTimer = new System.Timers.Timer()
+            {
+                Interval = 1500,
+                AutoReset = true,
+                Enabled = false
+            };
+            activityTimer.Elapsed += ActivityTimer_Elapsed;
+
+            fastPicTimer = new System.Timers.Timer()
+            {
+                Interval = 100,
+                Enabled = false
+            };
+            fastPicTimer.Elapsed += FastPic;
+
+            Slidetimer = new System.Timers.Timer()
+            {
+                Interval = Properties.Settings.Default.Slidetimeren,
+                Enabled = false
+            };
+            Slidetimer.Elapsed += SlideTimer_Elapsed;
+
+            HideCursorTimer = new System.Timers.Timer()
+            {
+                Interval = 2500,
+                Enabled = false
+            };
+            HideCursorTimer.Elapsed += HideCursorTimer_Elapsed;
+
+            MouseIdleTimer = new System.Timers.Timer()
+            {
+                Interval = 2500,
+                Enabled = false
+            };
+            MouseIdleTimer.Elapsed += MouseIdleTimer_Elapsed;
+        }
 
         // Load controls
 
@@ -3022,7 +3012,7 @@ namespace PicView
                 VerticalAlignment = VerticalAlignment.Top,
                 Visibility = Visibility.Collapsed,
                 HorizontalAlignment = HorizontalAlignment.Right,
-                Margin = new Thickness(0,0,50,0)
+                Margin = new Thickness(0, 0, 50, 0)
             };
 
             bg.Children.Add(minus);
@@ -3110,9 +3100,7 @@ namespace PicView
             picGallery = new PicGallery
             {
                 Opacity = 0,
-                Visibility = Visibility.Collapsed,
-                Width = bg.Width,
-                Height = bg.Height
+                Visibility = Visibility.Collapsed
             };
 
             bg.Children.Add(picGallery);
@@ -3181,20 +3169,20 @@ namespace PicView
             sexyToolTip.Visibility = Visibility.Hidden;
         }
 
-        // AjaxLoading
-        /// <summary>
-        /// Loads AjaxLoading and adds it to the window
-        /// </summary>
-        private void LoadAjaxLoading()
-        {
-            ajaxLoading = new AjaxLoading
-            {
-                Focusable = false,
-                Opacity = 0
-            };
+        //// AjaxLoading
+        ///// <summary>
+        ///// Loads AjaxLoading and adds it to the window
+        ///// </summary>
+        //private void LoadAjaxLoading()
+        //{
+        //    ajaxLoading = new AjaxLoading
+        //    {
+        //        Focusable = false,
+        //        Opacity = 0
+        //    };
 
-            bg.Children.Add(ajaxLoading);
-        }
+        //    bg.Children.Add(ajaxLoading);
+        //}
 
         /// <summary>
         /// Start loading animation
@@ -3473,12 +3461,134 @@ namespace PicView
 
         #region Manipulate Interface
 
+        #region PicGallery
+
+        private void PicGalleryFade(bool show = true)
+        {
+            if (!picGallery.LoadComplete)
+                if (!picGallery.isLoading)
+                    picGallery.Load();
+
+            picGallery.Visibility = Visibility.Visible;
+
+            if (Properties.Settings.Default.PicGallery == 1)
+            {
+                if (Properties.Settings.Default.ShowInterface)
+                {
+                    picGallery.Width = Width - 15; // 14 = borders width
+                    picGallery.Height = ActualHeight - 85;
+                }
+                else
+                {
+                    picGallery.Width = Width;
+                    picGallery.Height = Height;
+                }
+
+                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.5) };
+                if (!show)
+                {
+                    da.To = 0;
+                    da.Completed += delegate
+                    {
+                        picGallery.Visibility = Visibility.Collapsed;
+                        picGallery.open = false;
+                    };
+                }
+                else
+                {
+                    if (Application.Current.Windows.OfType<FakeWindow>().Any())
+                    {
+                        var fake = Application.Current.Windows[1] as FakeWindow;
+                        fake.grid.Children.Remove(picGallery);
+                        picGallery.grid.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
+                        bg.Children.Add(picGallery);
+                    }
+
+                    da.To = 1;
+                    picGallery.open = true;
+                    picGallery.Calculate_Paging();
+                    picGallery.ScrollTo();
+                }
+
+                if (picGallery != null)
+                    picGallery.BeginAnimation(OpacityProperty, da);
+            }
+
+            else if (Properties.Settings.Default.PicGallery == 2)
+            {
+                bg.Children.Remove(picGallery);
+
+                if (show)
+                {
+                    if (Application.Current.Windows.OfType<FakeWindow>().Any())
+                    {
+                        Application.Current.Windows[1].Show();
+
+                        picGallery.Calculate_Paging();
+                        picGallery.ScrollTo();
+
+                        Focus();
+                        return;
+                    }
+                   
+                    var fake = new FakeWindow();
+                    fake.Show();
+
+                    if (Properties.Settings.Default.ShowInterface)
+                        HideInterface();
+
+                    fake.AddGallery();
+
+                    picGallery.grid.Background = new SolidColorBrush(Colors.Transparent);
+                    Focus();
+                    return;
+                }
+
+                if (Application.Current.Windows.OfType<FakeWindow>().Any())
+                    Application.Current.Windows[1].Hide();
+
+                picGallery.Visibility = Visibility.Collapsed;
+
+                Focus();
+                //LoadPicGallery();
+            }
+        }
+
+        private void PicGallery_PreviewItemClick(object source, MyEventArgs e)
+        {
+            var size = ImageSize(Pics[e.GetId()]);
+            ZoomFit(size.Width, size.Height);
+
+            Task.Run(() =>
+            {
+                //Preloader.Clear();
+                Preloader.Add(e.GetId());
+            });
+        }
+
+        private async void PicGallery_ItemClick(object source, MyEventArgs e)
+        {
+            Focus();
+            while (!Preloader.Contains(Pics[e.GetId()]))
+            {
+                if (Bar.Text != Loading)
+                {
+                    Bar.Text = Loading;
+                    img.Source = e.GetImage();
+                }
+                await Task.Delay(50);
+            }
+            Pic(e.GetId());
+        }
+
+        #endregion
+
         /// <summary>
         /// Toggle between hidden interface and default
         /// </summary>
         private void HideInterface(bool slideshow = false)
         {
-            if (Properties.Settings.Default.WindowStyle == 0)
+            if (Properties.Settings.Default.ShowInterface)
             {
                 TitleBar.Visibility =
                 LowerBar.Visibility =
@@ -3493,9 +3603,10 @@ namespace PicView
                 Visibility.Visible;
 
                 if (!slideshow)
-                    Properties.Settings.Default.WindowStyle = 2;
+                    Properties.Settings.Default.ShowInterface = false;
 
-                activityTimer.Start();
+                if (activityTimer != null)
+                    activityTimer.Start();
             }
             else
             {
@@ -3511,8 +3622,9 @@ namespace PicView
                 minus.Visibility =
                 Visibility.Collapsed;
 
-                Properties.Settings.Default.WindowStyle = 0;
-                activityTimer.Stop();
+                Properties.Settings.Default.ShowInterface = true;
+                if (activityTimer != null)
+                    activityTimer.Stop();
             }
         }
 
@@ -3527,7 +3639,7 @@ namespace PicView
 
             await Application.Current.Dispatcher.BeginInvoke((Action)(() =>
             {
-                if (Properties.Settings.Default.WindowStyle == 2 | Slidetimer.Enabled == true)
+                if (!Properties.Settings.Default.ShowInterface | Slidetimer.Enabled == true)
                 {
                     if (clickArrowRight != null && clickArrowLeft != null && x2 != null)
                     {
@@ -3550,53 +3662,6 @@ namespace PicView
         private void ActivityTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             FadeControlsAsync(false);
-        }
-
-        private void PicGalleryFade(bool show = true)
-        {
-            if (Properties.Settings.Default.PicGallery == 1)
-            {
-                picGallery.Width = Width; // 15 = borders width
-                picGallery.Height = Height; // 95 = top + bottom bar height
-
-                if (!picGallery.LoadComplete)
-                    if (!picGallery.isLoading)
-                        picGallery.Load();
-
-                picGallery.Visibility = Visibility.Visible;
-                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.5) };
-                if (!show)
-                {
-                    da.To = 0;
-                    da.Completed += delegate
-                    {
-                        picGallery.Visibility = Visibility.Collapsed;
-                        picGallery.open = false;
-                    };
-                }
-                else
-                {
-                    da.To = 1;
-                    picGallery.open = true;
-                    picGallery.Calculate_Paging();
-                    picGallery.ScrollTo();
-                }
-
-                if (picGallery != null)
-                    picGallery.BeginAnimation(OpacityProperty, da);
-            }
-            else if (Properties.Settings.Default.PicGallery == 2)
-            {
-                var fake = new FakeWindow();
-                fake.Show();
-                Focus();
-                if (Properties.Settings.Default.WindowStyle == 0)
-                {
-                    HideInterface();
-                }
-                bg.Children.Remove(picGallery);
-                fake.AddGallery();
-            }
         }
 
         /// <summary>
@@ -3848,13 +3913,13 @@ namespace PicView
             window.ShowDialog();
         }
 
-        /// <summary>
-        /// Show Tools window
-        /// </summary>
-        private void ToolsWindow()
-        {
-            new Tools().Show();
-        }
+        ///// <summary>
+        ///// Show Tools window
+        ///// </summary>
+        //private void ToolsWindow()
+        //{
+        //    new Tools().Show();
+        //}
 
         #endregion Windows
 
@@ -4437,16 +4502,18 @@ namespace PicView
         {
             if (FileFunctions.DeleteFile(file, Recyclebin))
             {
-                Pic();
-                Close_UserControls();
                 var filename = Path.GetFileName(file);
+                Pics.Remove(filename);
+
+                // Go to next image
+                Pic(FolderIndex);
+
                 if (filename.Length >= 25)
                 {
                     filename = filename.Substring(0, 21);
                     filename += "...";
                 }
-                var y = Recyclebin ? "Sent " + filename + " to the recyle bin" : "Deleted " + filename;
-                ToolTipStyle(y);
+                ToolTipStyle(Recyclebin ? "Sent " + filename + " to the recyle bin" : "Deleted " + filename);
             }
             else
             {

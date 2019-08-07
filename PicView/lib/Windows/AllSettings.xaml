@@ -9,6 +9,7 @@
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
+    SizeToContent="WidthAndHeight"
     TextOptions.TextFormattingMode="Display"
     TextOptions.TextRenderingMode="ClearType"
     WindowStartupLocation="CenterOwner"
@@ -16,12 +17,13 @@
 
 
     <Border
+        x:Name="WindowBorderBrush"
         Width="450"
-        Height="490"
+        MaxHeight="700"
         BorderBrush="{StaticResource ChosenColorBrush}"
         BorderThickness="1">
 
-        <Grid>
+        <StackPanel>
             <Canvas
                 Height="34"
                 VerticalAlignment="Top"
@@ -102,24 +104,20 @@
 
             </Canvas>
 
-            <Canvas Width="449" Height="420">
+            <Grid>
                 <Rectangle
                     x:Name="LeftBorderRectangle"
                     Width="7"
-                    Height="420"
+                    HorizontalAlignment="Left"
                     Fill="{StaticResource BackgroundColorBrushAltW}" />
                 <Rectangle
                     x:Name="RightBorderRectangle"
-                    Canvas.Left="441"
-                    Canvas.Top="-1"
                     Width="7"
-                    Height="421"
+                    HorizontalAlignment="Right"
                     Fill="{StaticResource BackgroundColorBrushAltW}" />
                 <ScrollViewer
                     x:Name="Scroller"
                     Width="436"
-                    Height="421"
-                    Margin="6,-1,0,0"
                     Background="{StaticResource BackgroundColorBrushAlt}"
                     HorizontalScrollBarVisibility="Disabled"
                     VerticalScrollBarVisibility="Auto">
@@ -257,15 +255,15 @@
                                 </RadioButton.Background>
                             </RadioButton>
                             <RadioButton
-                                x:Name="YellowRadio"
+                                x:Name="GreyRadio"
                                 Width="100"
                                 Height="40"
                                 Margin="5,3"
                                 BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="1"
-                                Content="Yellow">
+                                Content="Grey">
                                 <RadioButton.Background>
-                                    <SolidColorBrush x:Name="YellowBrush" Color="{StaticResource BackgroundColorFade}" />
+                                    <SolidColorBrush x:Name="GreyBrush" Color="{StaticResource BackgroundColorFade}" />
                                 </RadioButton.Background>
                             </RadioButton>
                             <RadioButton
@@ -329,7 +327,7 @@
                                 Content="Enable Window Color Brush"
                                 Style="{StaticResource Checkstyle}">
                                 <CheckBox.Background>
-                                    <SolidColorBrush x:Name="BorderBrush" Color="{StaticResource BackgroundColorFade}" />
+                                    <SolidColorBrush x:Name="BorderBrushColor" Color="{StaticResource BackgroundColorFade}" />
                                 </CheckBox.Background>
                             </CheckBox>
                         </WrapPanel>
@@ -337,11 +335,11 @@
                             Margin="0,3,0,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Content="Slideshow Timer"
+                            Content="Set the slideshow timer"
                             Foreground="{StaticResource MainColorBrush}" />
                         <WrapPanel
                             Width="332"
-                            Margin="0,3,0,8"
+                            Margin="0,3,0,10"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Top"
                             Orientation="Horizontal">
@@ -359,18 +357,27 @@
                                 Width="30"
                                 Margin="5,3"
                                 HorizontalAlignment="Right"
+                                FontFamily="/PicView;component/lib/fonts/#TeX Gyre Heros"
+                                FontSize="15"
                                 IsReadOnly="True"
-                                ToolTip="0 = 0.5 Sec - 15 = 15 Sec." />
+                                Text="1"
+                                TextAlignment="Center"
+                                ToolTip="Enter the slideshow amount in seconds." />
 
                             <Label Content="Sec." />
 
                         </WrapPanel>
 
-                        <TextBlock Margin="0,5" TextAlignment="Center">Some settings may require restart to take effect</TextBlock>
+                        <TextBlock
+                            Margin="0,5"
+                            FontStyle="Italic"
+                            TextAlignment="Center">
+                            Color effects require a restart to take effect
+                        </TextBlock>
                     </StackPanel>
                 </ScrollViewer>
 
-            </Canvas>
+            </Grid>
             <Border
                 Height="35"
                 VerticalAlignment="Bottom"
@@ -383,7 +390,7 @@
                     FontSize="14"
                     FontStyle="Italic" />
             </Border>
-        </Grid>
+        </StackPanel>
 
 
 

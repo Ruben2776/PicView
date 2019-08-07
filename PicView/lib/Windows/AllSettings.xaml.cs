@@ -92,11 +92,11 @@ namespace PicView.Windows
                 MagentaRadio.MouseLeave += MagentaRadio_MouseLeave;
                 MagentaRadio.Click += Magenta;
 
-                // YellowRadio
-                YellowRadio.PreviewMouseLeftButtonDown += YellowRadio_PreviewMouseLeftButtonDown;
-                YellowRadio.MouseEnter += YellowRadio_MouseEnter;
-                YellowRadio.MouseLeave += YellowRadio_MouseLeave;
-                YellowRadio.Click += Yellow;
+                // GreyRadio
+                GreyRadio.PreviewMouseLeftButtonDown += GreyRadio_PreviewMouseLeftButtonDown;
+                GreyRadio.MouseEnter += GreyRadio_MouseEnter;
+                GreyRadio.MouseLeave += GreyRadio_MouseLeave;
+                GreyRadio.Click += Grey;
 
                 // LoopRadio
                 LoopRadio.PreviewMouseLeftButtonDown += LoopRadio_PreviewMouseLeftButtonDown;
@@ -162,7 +162,7 @@ namespace PicView.Windows
                         MagentaRadio.IsChecked = true;
                         break;
                     case 12:
-                        YellowRadio.IsChecked = true;
+                        GreyRadio.IsChecked = true;
                         break;
                 }
 
@@ -535,34 +535,34 @@ namespace PicView.Windows
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(MagentaBrush, 11);
         }
 
-        // Yellow
-        void YellowRadio_MouseLeave(object sender, MouseEventArgs e)
+        // Grey
+        void GreyRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
-                YellowBrush,
+                GreyBrush,
                 12
             );
         }
 
-        void YellowRadio_MouseEnter(object sender, MouseEventArgs e)
+        void GreyRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
-                YellowBrush,
+                GreyBrush,
                 12
             );
         }
 
-        void YellowRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        void GreyRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(YellowBrush, 12);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(GreyBrush, 12);
         }
 
         // Loop
@@ -633,7 +633,7 @@ namespace PicView.Windows
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
-                BorderBrush,
+                BorderBrushColor,
                 false
             );
         }
@@ -645,14 +645,14 @@ namespace PicView.Windows
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
-                BorderBrush,
+                BorderBrushColor,
                 false
             );
         }
 
         void BorderRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, BorderBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, BorderBrushColor, false);
         }
 
         #endregion
@@ -714,7 +714,7 @@ namespace PicView.Windows
             Properties.Settings.Default.ColorTheme = 11;
         }
 
-        private static void Yellow(object sender, RoutedEventArgs e)
+        private static void Grey(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 12;
         }

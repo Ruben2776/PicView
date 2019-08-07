@@ -10,10 +10,9 @@ namespace PicView.lib.UserControls
     /// </summary>
     public partial class PicGalleryItem : UserControl
     {
-        public PicGalleryItem(BitmapSource pic, string file)
+        public PicGalleryItem(BitmapSource pic)
         {
             InitializeComponent();
-            var x = Path.GetFileName(file);
 
             img.Source = pic;
 
@@ -31,12 +30,12 @@ namespace PicView.lib.UserControls
             );
 
             img.MouseLeftButtonUp += Img_MouseLeftButtonUp;
-
         }
 
         private void Img_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.HoverSizeAnim(border, false, 230, 1000);
+            if (Properties.Settings.Default.PicGallery == 1)
+                AnimationHelper.HoverSizeAnim(border, false, 230, 1000);
         }
     }
 }

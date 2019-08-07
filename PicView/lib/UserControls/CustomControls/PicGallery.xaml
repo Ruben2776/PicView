@@ -8,22 +8,29 @@
     d:DesignHeight="300"
     d:DesignWidth="300"
     mc:Ignorable="d">
-    <Grid x:Name="grid" Background="{StaticResource BackgroundColorBrushFade}">
-        <UserControls:X2
-            x:Name="x2"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top" />
-        <ScrollViewer
-            x:Name="Scroller"
-            Margin="0,60,0,0"
-            HorizontalScrollBarVisibility="Visible"
-            VerticalScrollBarVisibility="Disabled">
-            <WrapPanel
-                x:Name="Container"
-                VerticalAlignment="Center"
-                Background="Transparent"
-                Orientation="Vertical"
-                VirtualizingPanel.VirtualizationMode="Recycling" />
-        </ScrollViewer>
-    </Grid>
+    <Border
+        x:Name="border"
+        Background="{StaticResource BackgroundColorBrushFade}"
+        BorderBrush="{StaticResource BorderBrush}"
+        BorderThickness="1">
+        <Grid x:Name="grid">
+            <UserControls:X2
+                x:Name="x2"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top" />
+            <ScrollViewer
+                x:Name="Scroller"
+                FocusVisualStyle="{x:Null}"
+                Focusable="False"
+                HorizontalScrollBarVisibility="Visible"
+                VerticalScrollBarVisibility="Disabled">
+                <WrapPanel
+                    x:Name="Container"
+                    VerticalAlignment="Center"
+                    Background="Transparent"
+                    Orientation="Vertical"
+                    VirtualizingPanel.VirtualizationMode="Recycling" />
+            </ScrollViewer>
+        </Grid>
+    </Border>
 </UserControl>

@@ -193,7 +193,7 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#FFEAD393")]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FFE2C290")]
         public global::System.Windows.Media.Color Beige {
             get {
                 return ((global::System.Windows.Media.Color)(this["Beige"]));
@@ -205,7 +205,7 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#F2BAAB7E")]
+        [global::System.Configuration.DefaultSettingValueAttribute("#F2E2C290")]
         public global::System.Windows.Media.Color BeigeMouse {
             get {
                 return ((global::System.Windows.Media.Color)(this["BeigeMouse"]));
@@ -277,25 +277,25 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#FFFEFE0F")]
-        public global::System.Windows.Media.Color Yellow {
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF5F5449")]
+        public global::System.Windows.Media.Color Grey {
             get {
-                return ((global::System.Windows.Media.Color)(this["Yellow"]));
+                return ((global::System.Windows.Media.Color)(this["Grey"]));
             }
             set {
-                this["Yellow"] = value;
+                this["Grey"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#F2FFFF43")]
-        public global::System.Windows.Media.Color YellowMouse {
+        [global::System.Configuration.DefaultSettingValueAttribute("#F25F5449")]
+        public global::System.Windows.Media.Color GreyMouse {
             get {
-                return ((global::System.Windows.Media.Color)(this["YellowMouse"]));
+                return ((global::System.Windows.Media.Color)(this["GreyMouse"]));
             }
             set {
-                this["YellowMouse"] = value;
+                this["GreyMouse"] = value;
             }
         }
         
@@ -349,13 +349,13 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public short WindowStyle {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowInterface {
             get {
-                return ((short)(this["WindowStyle"]));
+                return ((bool)(this["ShowInterface"]));
             }
             set {
-                this["WindowStyle"] = value;
+                this["ShowInterface"] = value;
             }
         }
         
@@ -373,7 +373,7 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public byte PicGallery {
             get {
                 return ((byte)(this["PicGallery"]));
@@ -397,7 +397,7 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool Looping {
             get {
                 return ((bool)(this["Looping"]));
@@ -409,13 +409,37 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool WindowBorderColorEnabled {
             get {
                 return ((bool)(this["WindowBorderColorEnabled"]));
             }
             set {
                 this["WindowBorderColorEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool BgColorWhite {
+            get {
+                return ((bool)(this["BgColorWhite"]));
+            }
+            set {
+                this["BgColorWhite"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool FitToWindow {
+            get {
+                return ((bool)(this["FitToWindow"]));
+            }
+            set {
+                this["FitToWindow"] = value;
             }
         }
     }

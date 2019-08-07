@@ -3,8 +3,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using static PicView.lib.Variables;
 using static PicView.lib.Helper;
+using static PicView.lib.Variables;
 
 namespace PicView.Windows
 {
@@ -16,19 +16,26 @@ namespace PicView.Windows
         public FakeWindow()
         {
             InitializeComponent();
-            var monitorSize = GetMonitorSize();
-            Width = monitorSize.Width;
-            Height = monitorSize.Height;
-            Width = monitorSize.Width;
-            Height = monitorSize.Height;
+            Width = MonitorInfo.Width;
+            Height = MonitorInfo.Height;
+            Width = MonitorInfo.Width;
+            Height = MonitorInfo.Height;
+            ContentRendered += FakeWindow_ContentRendered;
+
+        }
+
+        private void FakeWindow_ContentRendered(object sender, EventArgs e)
+        {
             MouseLeftButtonDown += FakeWindow_MouseLeftButtonDown;
+            MouseRightButtonDown += FakeWindow_MouseLeftButtonDown;
             Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
             MouseWheel += FakeWindow_MouseWheel;
+            Application.Current.MainWindow.Focus();
         }
 
         private void FakeWindow_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            
+            picGallery.ScrollTo(e.Delta > 0);
         }
 
         private void MainWindow_StateChanged(object sender, EventArgs e)
@@ -37,6 +44,7 @@ namespace PicView.Windows
             {
                 case WindowState.Normal:
                     Show();
+                    Application.Current.MainWindow.Focus();
                     break;
 
                 case WindowState.Minimized:
@@ -59,9 +67,7 @@ namespace PicView.Windows
         public void AddGallery()
         {
             if (grid.Children.Contains(picGallery))
-            {
                 return;
-            }
 
             picGallery.Width = 250;
             picGallery.Height = SystemParameters.WorkArea.Height;
@@ -75,7 +81,8 @@ namespace PicView.Windows
             picGallery.x2.Visibility = Visibility.Collapsed;
             picGallery.Scroller.Margin = new Thickness(0);
             picGallery.Background = new SolidColorBrush(Colors.Transparent);
-            grid.Children.Add(picGallery);
+            if (!grid.Children.Contains(picGallery))
+                grid.Children.Add(picGallery);
         }
     }
 }

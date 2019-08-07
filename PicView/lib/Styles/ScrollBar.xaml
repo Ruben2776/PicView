@@ -7,14 +7,14 @@
     <Style x:Key="VerticalScrollBarThumbStyle" TargetType="{x:Type Thumb}">
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Focusable" Value="False" />
-        <Setter Property="Margin" Value="0,0,2,0" />
+        <Setter Property="MinHeight" Value="50" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Thumb}">
                     <Rectangle
                         Name="ellipse"
-                        Width="11"
-                        Fill="#FF919191" />
+                        Width="30"
+                        Fill="WhiteSmoke" />
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter TargetName="ellipse" Property="Fill" Value="{StaticResource ChosenColorBrush}" />
@@ -42,12 +42,11 @@
                         RadiusY="3.5" />
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="ellipse" Property="Fill" Value="white" />
+                            <Setter TargetName="ellipse" Property="Fill" Value="{StaticResource ChosenColorBrush}" />
                         </Trigger>
                         <Trigger Property="IsDragging" Value="True">
-                            <Setter TargetName="ellipse" Property="Fill" Value="white" />
+                            <Setter TargetName="ellipse" Property="Fill" Value="{StaticResource ChosenColorBrush}" />
                         </Trigger>
-
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -60,17 +59,24 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type RepeatButton}">
                     <Grid
-                        Width="11"
-                        Height="18"
+                        Width="21"
+                        Height="28"
                         Margin="0,0,0,1">
+                        <Grid.Background>
+                            <ImageBrush
+                                ImageSource="/PicView;component/lib/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
+                                TileMode="FlipXY"
+                                Viewport="0,0,100,100"
+                                ViewportUnits="Absolute" />
+                        </Grid.Background>
                         <Path
                             Name="Path"
-                            Width="13"
-                            Height="13"
+                            Width="18"
+                            Height="18"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Data="M413.1,327.3l-1.8-2.1l-136-156.5c-4.6-5.3-11.5-8.6-19.2-8.6c-7.7,0-14.6,3.4-19.2,8.6L101,324.9l-2.3,2.6  C97,330,96,333,96,336.2c0,8.7,7.4,15.8,16.6,15.8v0h286.8v0c9.2,0,16.6-7.1,16.6-15.8C416,332.9,414.9,329.8,413.1,327.3z"
-                            Fill="#FF919191"
+                            Fill="WhiteSmoke"
                             Stretch="Fill" />
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -92,17 +98,17 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type RepeatButton}">
                     <Grid
-                        Width="11"
-                        Height="18"
+                        Width="21"
+                        Height="28"
                         Margin="0,0,0,0">
                         <Path
                             Name="Path"
-                            Width="13"
-                            Height="13"
+                            Width="18"
+                            Height="18"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Data="M98.9,184.7l1.8,2.1l136,156.5c4.6,5.3,11.5,8.6,19.2,8.6c7.7,0,14.6-3.4,19.2-8.6L411,187.1l2.3-2.6  c1.7-2.5,2.7-5.5,2.7-8.7c0-8.7-7.4-15.8-16.6-15.8v0H112.6v0c-9.2,0-16.6,7.1-16.6,15.8C96,179.1,97.1,182.2,98.9,184.7z"
-                            Fill="#FF919191"
+                            Fill="WhiteSmoke"
                             Stretch="Fill" />
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -183,94 +189,98 @@
         </Setter>
     </Style>
     <ControlTemplate x:Key="VerticalScrollBar" TargetType="{x:Type ScrollBar}">
-        <Grid Width="23">
-            <Grid.Background>
-                <ImageBrush
-                    ImageSource="/PicView;component/lib/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
-                    TileMode="FlipXY"
-                    Viewport="0,0,100,100"
-                    ViewportUnits="Absolute" />
-            </Grid.Background>
-            <Grid.RowDefinitions>
-                <RowDefinition MaxHeight="18" />
-                <RowDefinition Height="*" />
-                <RowDefinition MaxHeight="18" />
-            </Grid.RowDefinitions>
-            <RepeatButton
-                Grid.Row="0"
-                Height="18"
-                Command="ScrollBar.LineUpCommand"
-                Style="{StaticResource LineButtonUpStyle}" />
+        <Border
+            Background="#D8141414"
+            BorderBrush="{StaticResource BorderBrush}"
+            BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition MaxHeight="35" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition MaxHeight="35" />
+                </Grid.RowDefinitions>
+                <RepeatButton
+                    Grid.Row="0"
+                    Height="35"
+                    Command="ScrollBar.LineUpCommand"
+                    Style="{StaticResource LineButtonUpStyle}" />
 
-            <Track
-                Name="PART_Track"
-                Grid.Row="1"
-                IsDirectionReversed="True">
-                <Track.DecreaseRepeatButton>
-                    <RepeatButton Command="ScrollBar.PageUpCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
-                </Track.DecreaseRepeatButton>
-                <Track.Thumb>
-                    <Thumb Style="{StaticResource VerticalScrollBarThumbStyle}" />
-                </Track.Thumb>
-                <Track.IncreaseRepeatButton>
-                    <RepeatButton Command="ScrollBar.PageDownCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
-                </Track.IncreaseRepeatButton>
-            </Track>
+                <Track
+                    Name="PART_Track"
+                    Grid.Row="1"
+                    IsDirectionReversed="True">
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Command="ScrollBar.PageUpCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb Style="{StaticResource VerticalScrollBarThumbStyle}" />
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Command="ScrollBar.PageDownCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
+                    </Track.IncreaseRepeatButton>
+                </Track>
 
-            <RepeatButton
-                Grid.Row="2"
-                Height="18"
-                Command="ScrollBar.LineDownCommand"
-                Style="{StaticResource LineButtonDownStyle}" />
-        </Grid>
+                <RepeatButton
+                    Grid.Row="2"
+                    Height="35"
+                    Command="ScrollBar.LineDownCommand"
+                    Style="{StaticResource LineButtonDownStyle}" />
+            </Grid>
+        </Border>
     </ControlTemplate>
     <ControlTemplate x:Key="HorizontalScrollBar" TargetType="{x:Type ScrollBar}">
-        <Grid Background="#D8141414">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition MaxWidth="18" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition MaxWidth="18" />
-            </Grid.ColumnDefinitions>
-            <RepeatButton
+        <Border
+            Background="#D8141414"
+            BorderBrush="{StaticResource BorderBrush}"
+            BorderThickness="0,1,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MaxWidth="18" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition MaxWidth="18" />
+                </Grid.ColumnDefinitions>
+                <RepeatButton
                 Grid.Column="0"
                 Width="18"
                 Command="ScrollBar.LineLeftCommand"
                 Style="{StaticResource LineButtonLeftStyle}" />
 
-            <Track
+                <Track
                 Name="PART_Track"
                 Grid.Column="1"
                 IsDirectionReversed="False">
-                <Track.DecreaseRepeatButton>
-                    <RepeatButton Command="ScrollBar.PageLeftCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
-                </Track.DecreaseRepeatButton>
-                <Track.Thumb>
-                    <Thumb Style="{StaticResource HorizontalScrollBarThumbStyle}" />
-                </Track.Thumb>
-                <Track.IncreaseRepeatButton>
-                    <RepeatButton Command="ScrollBar.PageRightCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
-                </Track.IncreaseRepeatButton>
-                <Track.Resources>
-                    <!--  Thumb's minimum height is half of this metric  -->
-                    <system:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarButtonWidthKey}">
-                        90
-                    </system:Double>
-                </Track.Resources>
-            </Track>
-            <RepeatButton
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Command="ScrollBar.PageLeftCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb Style="{StaticResource HorizontalScrollBarThumbStyle}" />
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Command="ScrollBar.PageRightCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
+                    </Track.IncreaseRepeatButton>
+                    <Track.Resources>
+                        <!--  Thumb's minimum height is half of this metric  -->
+                        <system:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarButtonWidthKey}">
+                            90
+                        </system:Double>
+                    </Track.Resources>
+                </Track>
+                <RepeatButton
                 Grid.Column="2"
                 Width="18"
                 Command="ScrollBar.LineRightCommand"
                 Style="{StaticResource LineButtonRightStyle}" />
-        </Grid>
+            </Grid>
+        </Border>
     </ControlTemplate>
     <Style TargetType="{x:Type ScrollBar}">
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Style.Triggers>
             <Trigger Property="Orientation" Value="Vertical">
-                <Setter Property="Width" Value="18" />
+                <Setter Property="Width" Value="30" />
                 <Setter Property="Height" Value="Auto" />
+                <Setter Property="MinHeight" Value="25" />
                 <Setter Property="Template" Value="{StaticResource VerticalScrollBar}" />
             </Trigger>
             <Trigger Property="Orientation" Value="Horizontal">

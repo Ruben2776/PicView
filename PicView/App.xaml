@@ -6,6 +6,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <!--<ResourceDictionary Source="lib\Styles\Backgrounds.xaml" />-->
                 <ResourceDictionary Source="lib\Styles\Colors.xaml" />
                 <ResourceDictionary Source="lib\Styles\Menu.xaml" />
                 <ResourceDictionary Source="lib\Styles\Button.xaml" />
@@ -25,9 +26,9 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="Window">
                             <Border
-                            x:Name="WindowBorder"
-                            Margin="0"
-                            Background="{StaticResource WindowBackgroundColorBrushDefault}">
+                                x:Name="WindowBorder"
+                                Margin="0"
+                                Background="{StaticResource WindowBackgroundColorBrushDefault}">
                                 <Grid>
                                     <Border BorderThickness="1">
                                         <AdornerDecorator>
@@ -37,10 +38,10 @@
                                         </AdornerDecorator>
                                     </Border>
                                     <Border
-                                    BorderBrush="{DynamicResource WindowBackgroundColorBrush}"
-                                    BorderThickness="1"
-                                    Opacity=".4"
-                                    Visibility="{Binding IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource bool2VisibilityConverter}}" />
+                                        BorderBrush="{DynamicResource WindowBackgroundColorBrush}"
+                                        BorderThickness="1"
+                                        Opacity=".4"
+                                        Visibility="{Binding IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource bool2VisibilityConverter}}" />
                                 </Grid>
                             </Border>
                         </ControlTemplate>
@@ -49,17 +50,17 @@
                 <Setter Property="WindowChrome.WindowChrome">
                     <Setter.Value>
                         <WindowChrome
-                        CaptionHeight="0"
-                        CornerRadius="0"
-                        GlassFrameThickness="1"
-                        ResizeBorderThickness="1"
-                        UseAeroCaptionButtons="False" />
+                            CaptionHeight="0"
+                            CornerRadius="0"
+                            GlassFrameThickness="1"
+                            ResizeBorderThickness="1"
+                            UseAeroCaptionButtons="False" />
                     </Setter.Value>
                 </Setter>
             </Style>
         </ResourceDictionary>
     </Application.Resources>
     <JumpList.JumpList>
-        <JumpList ShowRecentCategory="False" ShowFrequentCategory="True"/>
+        <JumpList ShowFrequentCategory="True" ShowRecentCategory="False" />
     </JumpList.JumpList>
 </Application>
