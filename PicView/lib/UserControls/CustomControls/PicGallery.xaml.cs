@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -26,8 +25,7 @@ namespace PicView.lib.UserControls
         public event MyEventHandler PreviewItemClick, ItemClick;
 
         private int current_page, total_pages, items_per_page, horizontal_items, vertical_items;
-
-        const int picGalleryItem_Size = 230;
+        
 
         //int next_page
         //{
@@ -95,26 +93,72 @@ namespace PicView.lib.UserControls
 
             if (Properties.Settings.Default.PicGallery == 1)
             {
-                horizontal_items = (int)Math.Ceiling(Width / picGalleryItem_Size);
-                vertical_items = (int)Math.Ceiling(Container.ActualHeight / picGalleryItem_Size);
+                horizontal_items = (int)Math.Ceiling(Width / PicGalleryItem.picGalleryItem_Size);
+                vertical_items = (int)Math.Ceiling(Container.ActualHeight / PicGalleryItem.picGalleryItem_Size);
                 items_per_page = horizontal_items * vertical_items;
-                total_pages = (int)Math.Floor((double)Pics.Count / items_per_page);
-                current_page = (int)Math.Floor((double)FolderIndex / items_per_page);
-                return;
+            }
+            else
+                items_per_page = (int)Math.Floor(Height / PicGalleryItem.picGalleryItem_Size);
+
+            total_pages = (int)Math.Ceiling((double)Pics.Count / items_per_page);
+            current_page = (int)Math.Floor((double)FolderIndex / items_per_page);
+        }
+
+        internal void LoadLayout()
+        {
+            Calculate_Paging();
+
+            if (Properties.Settings.Default.PicGallery == 1)
+            {
+                if (Properties.Settings.Default.ShowInterface)
+                {
+                    Width = Application.Current.MainWindow.Width - 15;
+                    Height = Application.Current.MainWindow.ActualHeight - 85;
+                }
+                else
+                {
+                    Width = Application.Current.MainWindow.Width;
+                    Height = Application.Current.MainWindow.Height;
+                }
+
+                HorizontalAlignment = HorizontalAlignment.Stretch;
+                Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+                Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+                x2.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Width = PicGalleryItem.picGalleryItem_Size + 20;
+                Height = MonitorInfo.Height;
+                HorizontalAlignment = HorizontalAlignment.Right;
+                Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+                Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+                x2.Visibility = Visibility.Collapsed;
             }
 
-            vertical_items = Pics.Count;
-            items_per_page = (int)Math.Floor(Height / picGalleryItem_Size);
-            total_pages = (int)Math.Floor((double)Pics.Count / items_per_page);
-            current_page = (int)Math.Floor((double)FolderIndex / items_per_page);
+            Visibility = Visibility.Visible;
+            Opacity = 1;
+            Container.Orientation = Orientation.Vertical;
         }
 
         private async void Add(BitmapSource pic, int index)
         {
             await Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
-                var item = new PicGalleryItem(pic);
-                item.MouseLeftButtonUp += (s, x) => Click(index);
+                var selected = index == FolderIndex;
+                var item = new PicGalleryItem(pic, index, selected);
+                item.MouseLeftButtonUp += (s, x) => 
+                {
+                    Click(index);
+
+                    if (!selected)
+                    {
+                        item.Setselected(true);
+                        var child = Container.Children[FolderIndex] as PicGalleryItem;
+                        child.Setselected(false);
+                    }
+
+                };
                 Container.Children.Add(item);
             }));
         }
@@ -177,7 +221,7 @@ namespace PicView.lib.UserControls
                 border.Child = img;
                 grid.Children.Add(border);
 
-                var from = picGalleryItem_Size;
+                var from = PicGalleryItem.picGalleryItem_Size;
                 var to = new double[] { Application.Current.MainWindow.ActualWidth - 15, Application.Current.MainWindow.ActualHeight - 95 };
 
                 var da = new DoubleAnimation
@@ -213,6 +257,7 @@ namespace PicView.lib.UserControls
             {
                 ItemClick(this, new MyEventArgs(id, GetBitmapSourceThumb(Pics[id])));
             }
+
             Application.Current.MainWindow.Focus();
         }
 
@@ -220,11 +265,10 @@ namespace PicView.lib.UserControls
 
         private void Scroller_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            e.Handled = true;
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                ScrollTo(e.Delta > 0, true);
-            else
                 ScrollTo(e.Delta > 0);
+            else
+                ScrollTo(e.Delta > 0, false);
         }
 
         /// <summary>
@@ -232,7 +276,7 @@ namespace PicView.lib.UserControls
         /// </summary>
         /// <param name="next"></param>
         /// <param name="end"></param>
-        internal void ScrollTo(bool next, bool end = false, bool animate = false)
+        internal void ScrollTo(bool next, bool end = false, bool speedUp = false, bool animate = false)
         {
             if (end)
             {
@@ -243,7 +287,8 @@ namespace PicView.lib.UserControls
             }
             else
             {
-                var direction = next ? Scroller.HorizontalOffset + picGalleryItem_Size : Scroller.HorizontalOffset - picGalleryItem_Size;
+                var speed = speedUp ? PicGalleryItem.picGalleryItem_Size * 4.7 : PicGalleryItem.picGalleryItem_Size;
+                var direction = next ? Scroller.HorizontalOffset + speed : Scroller.HorizontalOffset - speed;
 
                 if (Properties.Settings.Default.PicGallery == 1)
                 {
@@ -270,7 +315,6 @@ namespace PicView.lib.UserControls
                         else
                             Scroller.ScrollToHorizontalOffset(direction);
                     }
-
                 }
                 else
                 {
@@ -294,9 +338,9 @@ namespace PicView.lib.UserControls
                     else
                     {
                         if (next)
-                            Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - picGalleryItem_Size); 
+                            Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - speed); 
                         else
-                            Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + picGalleryItem_Size);
+                            Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + speed);
                     }
                 }
             }
@@ -309,17 +353,9 @@ namespace PicView.lib.UserControls
         internal void ScrollTo()
         {
             if (Properties.Settings.Default.PicGallery == 1)
-            {
-                var x = (picGalleryItem_Size * horizontal_items) * current_page;
-                Scroller.ScrollToHorizontalOffset(x);
-                return;
-            }
-
-            if (vertical_items != 0)
-            {
-                var y = (picGalleryItem_Size * Pics.Count) * current_page;
-                Scroller.ScrollToVerticalOffset(y);
-            }
+                Scroller.ScrollToHorizontalOffset((PicGalleryItem.picGalleryItem_Size * horizontal_items) * current_page);
+            else
+                Scroller.ScrollToVerticalOffset((PicGalleryItem.picGalleryItem_Size * items_per_page) * current_page);
         }
 
         #endregion Scroll

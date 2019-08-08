@@ -1,6 +1,8 @@
 ﻿using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace PicView.lib.UserControls
@@ -10,32 +12,52 @@ namespace PicView.lib.UserControls
     /// </summary>
     public partial class PicGalleryItem : UserControl
     {
-        public PicGalleryItem(BitmapSource pic)
+        internal bool Selected { get; set; }
+
+        internal const int picGalleryItem_Size = 230;
+        internal const int picGalleryItem_Size_s = 200;
+        public PicGalleryItem(BitmapSource pic, int id, bool selected = false)
         {
             InitializeComponent();
 
             img.Source = pic;
+            Selected = selected;
+            Loaded += PicGalleryItem_Loaded;
+        }
 
+        private void PicGalleryItem_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
             img.MouseEnter += (s, y) => AnimationHelper.HoverSizeAnim(
                 border,
                 false,
-                200,
-                230
+                picGalleryItem_Size_s,
+                picGalleryItem_Size
             );
             img.MouseLeave += (s, y) => AnimationHelper.HoverSizeAnim(
                 border,
                 true,
-                230,
-                200
+                picGalleryItem_Size,
+                picGalleryItem_Size_s
             );
 
-            img.MouseLeftButtonUp += Img_MouseLeftButtonUp;
+            if (Selected)
+                border.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColorOverAlpha());
         }
 
-        private void Img_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        internal void Setselected(bool b)
         {
-            if (Properties.Settings.Default.PicGallery == 1)
-                AnimationHelper.HoverSizeAnim(border, false, 230, 1000);
+            if (b)
+            {
+                Selected = true;
+                border.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColorOverAlpha());
+            }
+            else
+            {
+                Selected = false;
+                var bgBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
+                if (bgBrush != null)
+                    border.BorderBrush = bgBrush;
+            }
         }
     }
 }

@@ -736,11 +736,6 @@ namespace PicView
         /// <param name="x"></param>
         private async void Pic(int x)
         {
-#if DEBUG
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
-#endif
-
             // Additional error checking
             if (Pics.Count < x)
             {
@@ -812,6 +807,9 @@ namespace PicView
             if (!freshStartup)
                 RecentFiles.Add(Pics[x]);
 
+            // Stop AjaxLoading if it's shown
+            AjaxLoadingEnd();
+
             // Preload images \\
             // Only preload every second entry
             // and determine if going backwards or forwards
@@ -837,15 +835,6 @@ namespace PicView
                     }
                 });
             }
-
-            // Stop AjaxLoading if it's shown
-            AjaxLoadingEnd();
-
-#if DEBUG
-            stopWatch.Stop();
-            ToolTipStyle(stopWatch.Elapsed);
-#endif
-
         }
 
         /// <summary>
@@ -890,8 +879,9 @@ namespace PicView
 
             if (picGallery != null)
             {
-                if (picGallery.open)
-                    return;
+                if (Properties.Settings.Default.PicGallery == 1)
+                    if (picGallery.open)
+                        return;
             }
 
             // Go to first or last
@@ -1892,8 +1882,10 @@ namespace PicView
             // F7
             else if (e.Key == Key.F7)
             {
+                #if DEBUG
                 picGallery.Calculate_Paging();
                 picGallery.ScrollTo();
+                #endif
             }
 
             //F10
@@ -2350,7 +2342,7 @@ namespace PicView
             double maxWidth, maxHeight;
             var interfaceHeight = 93; // TopBar + LowerBar height
 
-            if (Properties.Settings.Default.ShowInterface)
+            if (Properties.Settings.Default.FitToWindow)
             {
                 // Get max width and height, based on user's screen
                 maxWidth = Math.Min(MonitorInfo.Width - ComfySpace, width);
@@ -3467,23 +3459,10 @@ namespace PicView
         {
             if (!picGallery.LoadComplete)
                 if (!picGallery.isLoading)
-                    picGallery.Load();
-
-            picGallery.Visibility = Visibility.Visible;
+                    picGallery.Load();          
 
             if (Properties.Settings.Default.PicGallery == 1)
             {
-                if (Properties.Settings.Default.ShowInterface)
-                {
-                    picGallery.Width = Width - 15; // 14 = borders width
-                    picGallery.Height = ActualHeight - 85;
-                }
-                else
-                {
-                    picGallery.Width = Width;
-                    picGallery.Height = Height;
-                }
-
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.5) };
                 if (!show)
                 {
@@ -3496,17 +3475,19 @@ namespace PicView
                 }
                 else
                 {
+                    picGallery.LoadLayout();
+
                     if (Application.Current.Windows.OfType<FakeWindow>().Any())
                     {
                         var fake = Application.Current.Windows[1] as FakeWindow;
                         fake.grid.Children.Remove(picGallery);
-                        picGallery.grid.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
-                        bg.Children.Add(picGallery);
+                        fake.Hide();
+                        if (!bg.Children.Contains(picGallery))
+                            bg.Children.Add(picGallery);
                     }
 
                     da.To = 1;
                     picGallery.open = true;
-                    picGallery.Calculate_Paging();
                     picGallery.ScrollTo();
                 }
 
@@ -3516,30 +3497,40 @@ namespace PicView
 
             else if (Properties.Settings.Default.PicGallery == 2)
             {
-                bg.Children.Remove(picGallery);
+
+                if (Properties.Settings.Default.ShowInterface)
+                    HideInterface();
 
                 if (show)
                 {
+                    picGallery.Visibility = Visibility.Visible;
+                    bg.Children.Remove(picGallery);                
+                    picGallery.open = true;
+                    picGallery.LoadLayout();
+
                     if (Application.Current.Windows.OfType<FakeWindow>().Any())
                     {
-                        Application.Current.Windows[1].Show();
+                        var f = Application.Current.Windows[1] as FakeWindow;
+
+                        if (!f.grid.Children.Contains(picGallery))
+                        {
+                            f.grid.Children.Add(picGallery);
+                        }
 
                         picGallery.Calculate_Paging();
                         picGallery.ScrollTo();
 
-                        Focus();
+                        f.Show();
                         return;
                     }
-                   
+
+                    
                     var fake = new FakeWindow();
+                    
+                    fake.grid.Children.Add(picGallery);
                     fake.Show();
 
-                    if (Properties.Settings.Default.ShowInterface)
-                        HideInterface();
 
-                    fake.AddGallery();
-
-                    picGallery.grid.Background = new SolidColorBrush(Colors.Transparent);
                     Focus();
                     return;
                 }
@@ -3548,9 +3539,8 @@ namespace PicView
                     Application.Current.Windows[1].Hide();
 
                 picGallery.Visibility = Visibility.Collapsed;
-
+                picGallery.open = false;
                 Focus();
-                //LoadPicGallery();
             }
         }
 
@@ -3581,7 +3571,7 @@ namespace PicView
             Pic(e.GetId());
         }
 
-        #endregion
+#endregion
 
         /// <summary>
         /// Toggle between hidden interface and default
@@ -3857,394 +3847,394 @@ namespace PicView
 
         #region Windows
 
-        /// <summary>
-        /// Show About window in a dialog
-        /// </summary>
-        private void AboutWindow()
-        {
-            Window window = new About
-            {
-                Width = Width,
-                Height = Height,
-                Opacity = 0,
-                Owner = Application.Current.MainWindow,
-            };
+                /// <summary>
+                /// Show About window in a dialog
+                /// </summary>
+                private void AboutWindow()
+                {
+                    Window window = new About
+                    {
+                        Width = Width,
+                        Height = Height,
+                        Opacity = 0,
+                        Owner = Application.Current.MainWindow,
+                    };
 
-            var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
-            window.BeginAnimation(OpacityProperty, animation);
+                    var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
+                    window.BeginAnimation(OpacityProperty, animation);
 
-            window.ShowDialog();
-        }
+                    window.ShowDialog();
+                }
 
-        /// <summary>
-        /// Show Help window in a dialog
-        /// </summary>
-        private void HelpWindow()
-        {
-            Window window = new Help
-            {
-                Width = Width,
-                Height = Height,
-                Opacity = 0,
-                Owner = Application.Current.MainWindow,
-            };
+                /// <summary>
+                /// Show Help window in a dialog
+                /// </summary>
+                private void HelpWindow()
+                {
+                    Window window = new Help
+                    {
+                        Width = Width,
+                        Height = Height,
+                        Opacity = 0,
+                        Owner = Application.Current.MainWindow,
+                    };
 
-            var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
-            window.BeginAnimation(OpacityProperty, animation);
-            window.Show();
-        }
+                    var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
+                    window.BeginAnimation(OpacityProperty, animation);
+                    window.Show();
+                }
 
-        /// <summary>
-        /// Show All Settings window in a dialog
-        /// </summary>
-        public void AllSettingsWindow()
-        {
-            Window window = new AllSettings
-            {
-                Width = Width,
-                Height = Height,
-                Opacity = 0,
-                Owner = Application.Current.MainWindow,
-            };
+                /// <summary>
+                /// Show All Settings window in a dialog
+                /// </summary>
+                public void AllSettingsWindow()
+                {
+                    Window window = new AllSettings
+                    {
+                        Width = Width,
+                        Height = Height,
+                        Opacity = 0,
+                        Owner = Application.Current.MainWindow,
+                    };
 
-            var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
-            window.BeginAnimation(OpacityProperty, animation);
+                    var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
+                    window.BeginAnimation(OpacityProperty, animation);
 
-            window.ShowDialog();
-        }
+                    window.ShowDialog();
+                }
 
-        ///// <summary>
-        ///// Show Tools window
-        ///// </summary>
-        //private void ToolsWindow()
-        //{
-        //    new Tools().Show();
-        //}
+                ///// <summary>
+                ///// Show Tools window
+                ///// </summary>
+                //private void ToolsWindow()
+                //{
+                //    new Tools().Show();
+                //}
 
         #endregion Windows
 
         #region MouseOver Button Events
 
-        /*
+                /*
 
-            Adds MouseOver events for the given elements with the AnimationHelper.
-            Changes color depending on the users settings.
+                    Adds MouseOver events for the given elements with the AnimationHelper.
+                    Changes color depending on the users settings.
 
-        */
+                */
 
-        // Logo Mouse Over
-        //private void LogoMouseOver(object sender, MouseEventArgs e)
-        //{
-        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, pBrush, false);
-        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, iBrush, false);
-        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, cBrush, false);
-        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, vBrush, false);
-        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, iiBrush, false);
-        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, eBrush, false);
-        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, wBrush, false);
-        //}
+                // Logo Mouse Over
+                //private void LogoMouseOver(object sender, MouseEventArgs e)
+                //{
+                //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, pBrush, false);
+                //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, iBrush, false);
+                //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, cBrush, false);
+                //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, vBrush, false);
+                //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, iiBrush, false);
+                //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, eBrush, false);
+                //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, wBrush, false);
+                //}
 
-        //private void LogoMouseLeave(object sender, MouseEventArgs e)
-        //{
-        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, pBrush, false);
-        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, iBrush, false);
-        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, cBrush, false);
-        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, vBrush, false);
-        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, iiBrush, false);
-        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, eBrush, false);
-        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, wBrush, false);
-        //}
+                //private void LogoMouseLeave(object sender, MouseEventArgs e)
+                //{
+                //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, pBrush, false);
+                //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, iBrush, false);
+                //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, cBrush, false);
+                //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, vBrush, false);
+                //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, iiBrush, false);
+                //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, eBrush, false);
+                //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, wBrush, false);
+                //}
 
-        //private void LogoMouseButtonDown(object sender, MouseButtonEventArgs e)
-        //{
-        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(pBrush, false);
-        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(iBrush, false);
-        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(cBrush, false);
-        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(vBrush, false);
-        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(iiBrush, false);
-        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(eBrush, false);
-        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(wBrush, false);
-        //}
+                //private void LogoMouseButtonDown(object sender, MouseButtonEventArgs e)
+                //{
+                //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(pBrush, false);
+                //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(iBrush, false);
+                //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(cBrush, false);
+                //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(vBrush, false);
+                //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(iiBrush, false);
+                //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(eBrush, false);
+                //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(wBrush, false);
+                //}
 
-        // Close Button
+                // Close Button
 
-        private void CloseButtonMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
-        }
+                private void CloseButtonMouseOver(object sender, MouseEventArgs e)
+                {
+                    AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
+                }
 
-        private void CloseButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(CloseButtonBrush, false);
-        }
+                private void CloseButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+                {
+                    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(CloseButtonBrush, false);
+                }
 
-        private void CloseButtonMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
-        }
+                private void CloseButtonMouseLeave(object sender, MouseEventArgs e)
+                {
+                    AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
+                }
 
-        // MaxButton
-        private void MaxButtonMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, MaxButtonBrush, false);
-        }
+                // MaxButton
+                private void MaxButtonMouseOver(object sender, MouseEventArgs e)
+                {
+                    AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, MaxButtonBrush, false);
+                }
 
-        private void MaxButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(MaxButtonBrush, false);
-        }
+                private void MaxButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+                {
+                    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(MaxButtonBrush, false);
+                }
 
-        private void MaxButtonMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, MaxButtonBrush, false);
-        }
+                private void MaxButtonMouseLeave(object sender, MouseEventArgs e)
+                {
+                    AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, MaxButtonBrush, false);
+                }
 
-        // MinButton
-        private void MinButtonMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, MinButtonBrush, false);
-        }
+                // MinButton
+                private void MinButtonMouseOver(object sender, MouseEventArgs e)
+                {
+                    AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, MinButtonBrush, false);
+                }
 
-        private void MinButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(MinButtonBrush, false);
-        }
+                private void MinButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+                {
+                    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(MinButtonBrush, false);
+                }
 
-        private void MinButtonMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, MinButtonBrush, false);
-        }
+                private void MinButtonMouseLeave(object sender, MouseEventArgs e)
+                {
+                    AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, MinButtonBrush, false);
+                }
 
-        // LeftButton
-        private void LeftButtonMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseEnterColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                LeftArrowFill,
-                false
-            );
-        }
+                // LeftButton
+                private void LeftButtonMouseOver(object sender, MouseEventArgs e)
+                {
+                    AnimationHelper.MouseEnterColorEvent(
+                        mainColor.A,
+                        mainColor.R,
+                        mainColor.G,
+                        mainColor.B,
+                        LeftArrowFill,
+                        false
+                    );
+                }
 
-        private void LeftButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(LeftArrowFill, false);
-        }
+                private void LeftButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+                {
+                    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(LeftArrowFill, false);
+                }
 
-        private void LeftButtonMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                LeftArrowFill,
-                false
-            );
-        }
+                private void LeftButtonMouseLeave(object sender, MouseEventArgs e)
+                {
+                    AnimationHelper.MouseLeaveColorEvent(
+                        mainColor.A,
+                        mainColor.R,
+                        mainColor.G,
+                        mainColor.B,
+                        LeftArrowFill,
+                        false
+                    );
+                }
 
-        // RightButton
-        private void RightButtonMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseEnterColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                RightArrowFill,
-                false
-            );
-        }
+                // RightButton
+                private void RightButtonMouseOver(object sender, MouseEventArgs e)
+                {
+                    AnimationHelper.MouseEnterColorEvent(
+                        mainColor.A,
+                        mainColor.R,
+                        mainColor.G,
+                        mainColor.B,
+                        RightArrowFill,
+                        false
+                    );
+                }
 
-        private void RightButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(RightArrowFill, false);
-        }
+                private void RightButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+                {
+                    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(RightArrowFill, false);
+                }
 
-        private void RightButtonMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                RightArrowFill,
-                false
-            );
-        }
+                private void RightButtonMouseLeave(object sender, MouseEventArgs e)
+                {
+                    AnimationHelper.MouseLeaveColorEvent(
+                        mainColor.A,
+                        mainColor.R,
+                        mainColor.G,
+                        mainColor.B,
+                        RightArrowFill,
+                        false
+                    );
+                }
 
-        // OpenMenuButton
-        private void OpenMenuButtonMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseEnterColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                FolderFill,
-                false
-            );
-        }
+                // OpenMenuButton
+                private void OpenMenuButtonMouseOver(object sender, MouseEventArgs e)
+                {
+                    AnimationHelper.MouseEnterColorEvent(
+                        mainColor.A,
+                        mainColor.R,
+                        mainColor.G,
+                        mainColor.B,
+                        FolderFill,
+                        false
+                    );
+                }
 
-        private void OpenMenuButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(FolderFill, false);
-        }
+                private void OpenMenuButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+                {
+                    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(FolderFill, false);
+                }
 
-        private void OpenMenuButtonMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                FolderFill,
-                false
-            );
-        }
+                private void OpenMenuButtonMouseLeave(object sender, MouseEventArgs e)
+                {
+                    AnimationHelper.MouseLeaveColorEvent(
+                        mainColor.A,
+                        mainColor.R,
+                        mainColor.G,
+                        mainColor.B,
+                        FolderFill,
+                        false
+                    );
+                }
 
-        // ImageButton
-        private void ImageButtonMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseEnterColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                ImagePath1Fill,
-                false
-            );
-            AnimationHelper.MouseEnterColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                ImagePath2Fill,
-                false
-            );
-            AnimationHelper.MouseEnterColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                ImagePath3Fill,
-                false
-            );
-            //AnimationHelper.MouseEnterColorEvent(
-            //    mainColor.A,
-            //    mainColor.R,
-            //    mainColor.G,
-            //    mainColor.B,
-            //    ImagePath4Fill,
-            //    false
-            //);
-        }
+                // ImageButton
+                private void ImageButtonMouseOver(object sender, MouseEventArgs e)
+                {
+                    AnimationHelper.MouseEnterColorEvent(
+                        mainColor.A,
+                        mainColor.R,
+                        mainColor.G,
+                        mainColor.B,
+                        ImagePath1Fill,
+                        false
+                    );
+                    AnimationHelper.MouseEnterColorEvent(
+                        mainColor.A,
+                        mainColor.R,
+                        mainColor.G,
+                        mainColor.B,
+                        ImagePath2Fill,
+                        false
+                    );
+                    AnimationHelper.MouseEnterColorEvent(
+                        mainColor.A,
+                        mainColor.R,
+                        mainColor.G,
+                        mainColor.B,
+                        ImagePath3Fill,
+                        false
+                    );
+                    //AnimationHelper.MouseEnterColorEvent(
+                    //    mainColor.A,
+                    //    mainColor.R,
+                    //    mainColor.G,
+                    //    mainColor.B,
+                    //    ImagePath4Fill,
+                    //    false
+                    //);
+                }
 
-        private void ImageButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ImagePath1Fill, false);
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ImagePath2Fill, false);
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ImagePath3Fill, false);
-            //AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ImagePath4Fill, false);
-        }
+                private void ImageButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+                {
+                    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ImagePath1Fill, false);
+                    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ImagePath2Fill, false);
+                    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ImagePath3Fill, false);
+                    //AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ImagePath4Fill, false);
+                }
 
-        private void ImageButtonMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                ImagePath1Fill,
-                false
-            );
-            AnimationHelper.MouseLeaveColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                ImagePath2Fill,
-                false
-            );
-            AnimationHelper.MouseLeaveColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                ImagePath3Fill,
-                false
-            );
-            //AnimationHelper.MouseLeaveColorEvent(
-            //    mainColor.A,
-            //    mainColor.R,
-            //    mainColor.G,
-            //    mainColor.B,
-            //    ImagePath4Fill,
-            //    false
-            //);
-        }
+                private void ImageButtonMouseLeave(object sender, MouseEventArgs e)
+                {
+                    AnimationHelper.MouseLeaveColorEvent(
+                        mainColor.A,
+                        mainColor.R,
+                        mainColor.G,
+                        mainColor.B,
+                        ImagePath1Fill,
+                        false
+                    );
+                    AnimationHelper.MouseLeaveColorEvent(
+                        mainColor.A,
+                        mainColor.R,
+                        mainColor.G,
+                        mainColor.B,
+                        ImagePath2Fill,
+                        false
+                    );
+                    AnimationHelper.MouseLeaveColorEvent(
+                        mainColor.A,
+                        mainColor.R,
+                        mainColor.G,
+                        mainColor.B,
+                        ImagePath3Fill,
+                        false
+                    );
+                    //AnimationHelper.MouseLeaveColorEvent(
+                    //    mainColor.A,
+                    //    mainColor.R,
+                    //    mainColor.G,
+                    //    mainColor.B,
+                    //    ImagePath4Fill,
+                    //    false
+                    //);
+                }
 
-        // SettingsButton
-        private void SettingsButtonButtonMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseEnterColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                SettingsButtonFill,
-                false
-            );
-        }
+                // SettingsButton
+                private void SettingsButtonButtonMouseOver(object sender, MouseEventArgs e)
+                {
+                    AnimationHelper.MouseEnterColorEvent(
+                        mainColor.A,
+                        mainColor.R,
+                        mainColor.G,
+                        mainColor.B,
+                        SettingsButtonFill,
+                        false
+                    );
+                }
 
-        private void SettingsButtonButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(SettingsButtonFill, false);
-        }
+                private void SettingsButtonButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+                {
+                    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(SettingsButtonFill, false);
+                }
 
-        private void SettingsButtonButtonMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                SettingsButtonFill,
-                false
-            );
-        }
+                private void SettingsButtonButtonMouseLeave(object sender, MouseEventArgs e)
+                {
+                    AnimationHelper.MouseLeaveColorEvent(
+                        mainColor.A,
+                        mainColor.R,
+                        mainColor.G,
+                        mainColor.B,
+                        SettingsButtonFill,
+                        false
+                    );
+                }
 
-        // FunctionMenu
-        private void FunctionMenuButtonButtonMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseEnterColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                QuestionButtonFill1,
-                false
-            );
-        }
+                // FunctionMenu
+                private void FunctionMenuButtonButtonMouseOver(object sender, MouseEventArgs e)
+                {
+                    AnimationHelper.MouseEnterColorEvent(
+                        mainColor.A,
+                        mainColor.R,
+                        mainColor.G,
+                        mainColor.B,
+                        QuestionButtonFill1,
+                        false
+                    );
+                }
 
-        private void FunctionMenuButtonButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(QuestionButtonFill1, false);
-        }
+                private void FunctionMenuButtonButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+                {
+                    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(QuestionButtonFill1, false);
+                }
 
-        private void FunctionMenuButtonButtonMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                QuestionButtonFill1,
-                false
-            );
-        }
+                private void FunctionMenuButtonButtonMouseLeave(object sender, MouseEventArgs e)
+                {
+                    AnimationHelper.MouseLeaveColorEvent(
+                        mainColor.A,
+                        mainColor.R,
+                        mainColor.G,
+                        mainColor.B,
+                        QuestionButtonFill1,
+                        false
+                    );
+                }
 
         #endregion MouseOver Button Events
 
@@ -4505,15 +4495,15 @@ namespace PicView
                 var filename = Path.GetFileName(file);
                 Pics.Remove(filename);
 
-                // Go to next image
-                Pic(FolderIndex);
-
                 if (filename.Length >= 25)
                 {
                     filename = filename.Substring(0, 21);
                     filename += "...";
                 }
                 ToolTipStyle(Recyclebin ? "Sent " + filename + " to the recyle bin" : "Deleted " + filename);
+
+                // Go to next image
+                Pic(Pics[FolderIndex]);
             }
             else
             {

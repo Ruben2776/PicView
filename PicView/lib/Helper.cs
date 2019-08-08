@@ -20,27 +20,6 @@ namespace PicView.lib
             return y == 0 ? x : GCD(y, x % y);
         }
 
-        internal static double GetAspectRatio(bool windowstyle, double width, double height, double monitorSizeWidth, double monitorSizeHeight)
-        {
-            double maxWidth, maxHeight;
-            var interfaceHeight = 93; // TopBar + LowerBar height
-
-            if (windowstyle)
-            {
-                // Get max width and height, based on user's screen
-                maxWidth = Math.Min(monitorSizeWidth - ComfySpace, width);
-                maxHeight = Math.Min((monitorSizeHeight - interfaceHeight), height);
-            }
-            else
-            {
-                // Get max width and height, based on window size
-                maxWidth = Math.Min(monitorSizeWidth, width);
-                maxHeight = Math.Min(monitorSizeHeight - interfaceHeight, height);
-            }
-
-            return Math.Min((maxWidth / width), (maxHeight / height));
-        } 
-
         /// <summary>
         /// Show progress on taskbar
         /// </summary>

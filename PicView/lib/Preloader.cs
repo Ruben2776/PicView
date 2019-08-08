@@ -40,8 +40,10 @@ namespace PicView.lib
                 return;
 
             if (File.Exists(Pics[i]))
+            {
                 if (!Contains(Pics[i]))
                     Add(Pics[i]);
+            }
             else
                 Pics.Remove(Pics[i]);
         }
@@ -70,6 +72,7 @@ namespace PicView.lib
 
             var value = Sources[key];
             Sources.TryRemove(key, out value);
+            value = null;
         }
 
         /// <summary>
@@ -89,7 +92,7 @@ namespace PicView.lib
         {
             // Set time to clear the images
             var timeInSeconds = 120;
-            
+
             // clear faster if it contains a lot of images or if fast == true
             if (Sources.Count > 100)
             {
@@ -252,7 +255,7 @@ namespace PicView.lib
                     Pics = FileList(TempZipPath);
             }
         }
-        
+
     }
 
 }
