@@ -240,20 +240,23 @@ namespace PicView.lib
             }
 
             // Update Pics if needed
-            // If very large archive being extracted, update Pics
-            if (!string.IsNullOrWhiteSpace(TempZipPath) && index >= 5 && Pics.Count > 10)
-            {
-                if (!Directory.Exists(TempZipPath))
-                    return;
+            var tmp = FileList(Path.GetDirectoryName(PicPath));
+            if (tmp.Count != Pics.Count)
+                Pics = tmp;
 
-                var getProcesses = Process.GetProcessesByName("7z");
-                if (getProcesses.Length > 0)
-                    Pics = FileList(TempZipPath);
+            //if (!string.IsNullOrWhiteSpace(TempZipPath) && index >= 5 && Pics.Count > 10)
+            //{
+            //    if (!Directory.Exists(TempZipPath))
+            //        return;
 
-                getProcesses = Process.GetProcessesByName("Zip");
-                if (getProcesses.Length > 0)
-                    Pics = FileList(TempZipPath);
-            }
+            //    var getProcesses = Process.GetProcessesByName("7z");
+            //    if (getProcesses.Length > 0)
+            //        Pics = FileList(TempZipPath);
+
+            //    getProcesses = Process.GetProcessesByName("Zip");
+            //    if (getProcesses.Length > 0)
+            //        Pics = FileList(TempZipPath);
+            //}
         }
 
     }

@@ -88,13 +88,10 @@ namespace PicView.lib.UserControls
 
         internal void Calculate_Paging()
         {
-            if (Container.ActualHeight == 0)
-                return;
-
             if (Properties.Settings.Default.PicGallery == 1)
             {
                 horizontal_items = (int)Math.Ceiling(Width / PicGalleryItem.picGalleryItem_Size);
-                vertical_items = (int)Math.Ceiling(Container.ActualHeight / PicGalleryItem.picGalleryItem_Size);
+                vertical_items = (int)Math.Ceiling(Height / PicGalleryItem.picGalleryItem_Size);
                 items_per_page = horizontal_items * vertical_items;
             }
             else
@@ -117,8 +114,8 @@ namespace PicView.lib.UserControls
                 }
                 else
                 {
-                    Width = Application.Current.MainWindow.Width;
-                    Height = Application.Current.MainWindow.Height;
+                    Width = Application.Current.MainWindow.Width - 2;
+                    Height = Application.Current.MainWindow.Height - 2; // 2px for borders
                 }
 
                 HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -128,7 +125,7 @@ namespace PicView.lib.UserControls
             }
             else
             {
-                Width = PicGalleryItem.picGalleryItem_Size + 20;
+                Width = PicGalleryItem.picGalleryItem_Size + 19; // 17 for scrollbar width + 2 for borders
                 Height = MonitorInfo.Height;
                 HorizontalAlignment = HorizontalAlignment.Right;
                 Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
@@ -151,7 +148,7 @@ namespace PicView.lib.UserControls
                 {
                     Click(index);
 
-                    if (!selected)
+                    if (!selected && FolderIndex < Container.Children.Count)
                     {
                         item.Setselected(true);
                         var child = Container.Children[FolderIndex] as PicGalleryItem;
@@ -163,10 +160,10 @@ namespace PicView.lib.UserControls
             }));
         }
 
-        internal void Load()
+        internal async void Load()
         {
             isLoading = true;
-            var t = new Task(() =>
+            await Task.Run(() =>
             {
                 for (int i = 0; i < Pics.Count; i++)
                 {
@@ -184,7 +181,6 @@ namespace PicView.lib.UserControls
                     }
                 }
             });
-            t.Start();
         }
 
         internal void Clear()
@@ -201,42 +197,66 @@ namespace PicView.lib.UserControls
         internal void Click(int id)
         {
             Application.Current.MainWindow.Focus();
-            PreviewItemClick(this, new MyEventArgs(id, null));
+            var z = Container.Children[id] as PicGalleryItem;
+            var img = z.img.Source;
+            
+            PreviewItemClick(this, new MyEventArgs(id, img));
+
 
             if (Properties.Settings.Default.PicGallery == 1)
             {
-                var img = new Image()
-                {
-                    Source = GetBitmapSourceThumb(Pics[id]),
-                    Stretch = Stretch.Fill,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-                var border = new Border()
-                {
-                    BorderThickness = new Thickness(1),
-                    BorderBrush = (SolidColorBrush)Application.Current.Resources["BorderBrush"],
-                    Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"]
-                };
-                border.Child = img;
-                grid.Children.Add(border);
+                //var img = new Image()
+                //{
+                //    Source = GetBitmapSourceThumb(Pics[id]),
+                //    Stretch = Stretch.Fill,
+                //    HorizontalAlignment = HorizontalAlignment.Center,
+                //    VerticalAlignment = VerticalAlignment.Center
+                //};
+                //var border = new Border()
+                //{
+                //    BorderThickness = new Thickness(1),
+                //    BorderBrush = (SolidColorBrush)Application.Current.Resources["BorderBrush"],
+                //    Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"]
+                //};
+                //border.Child = img;
+                //grid.Children.Add(border);
 
-                var from = PicGalleryItem.picGalleryItem_Size;
-                var to = new double[] { Application.Current.MainWindow.ActualWidth - 15, Application.Current.MainWindow.ActualHeight - 95 };
+                //var from = PicGalleryItem.picGalleryItem_Size;
+                //var to = new double[] { Application.Current.MainWindow.ActualWidth - 15, Application.Current.MainWindow.ActualHeight - 95 };
+
+                //var da = new DoubleAnimation
+                //{
+                //    From = from,
+                //    To = to[0],
+                //    Duration = TimeSpan.FromSeconds(.3),
+                //    AccelerationRatio = 0.2,
+                //    DecelerationRatio = 0.4
+                //};
+
+                //var da0 = new DoubleAnimation
+                //{
+                //    From = from,
+                //    To = to[1],
+                //    Duration = TimeSpan.FromSeconds(.3),
+                //    AccelerationRatio = 0.2,
+                //    DecelerationRatio = 0.4
+                //};
+
+                //da.Completed += delegate
+                //{
+                //    ItemClick(this, new MyEventArgs(id, img.Source));
+                //    grid.Children.Remove(border);
+                //    Visibility = Visibility.Collapsed;
+                //    picGallery.open = false;
+                //};
+
+                //img.BeginAnimation(WidthProperty, da);
+                //img.BeginAnimation(HeightProperty, da0);
 
                 var da = new DoubleAnimation
                 {
-                    From = from,
-                    To = to[0],
-                    Duration = TimeSpan.FromSeconds(.3),
-                    AccelerationRatio = 0.2,
-                    DecelerationRatio = 0.4
-                };
-
-                var da0 = new DoubleAnimation
-                {
-                    From = from,
-                    To = to[1],
+                    From = 1,
+                    To = 0,
                     Duration = TimeSpan.FromSeconds(.3),
                     AccelerationRatio = 0.2,
                     DecelerationRatio = 0.4
@@ -244,21 +264,19 @@ namespace PicView.lib.UserControls
 
                 da.Completed += delegate
                 {
-                    ItemClick(this, new MyEventArgs(id, img.Source));
-                    grid.Children.Remove(border);
+                    ItemClick(this, new MyEventArgs(id, null));
                     Visibility = Visibility.Collapsed;
                     picGallery.open = false;
                 };
 
-                img.BeginAnimation(WidthProperty, da);
-                img.BeginAnimation(HeightProperty, da0);
+                BeginAnimation(OpacityProperty, da);
             }
             else
             {
-                ItemClick(this, new MyEventArgs(id, GetBitmapSourceThumb(Pics[id])));
+                ItemClick(this, new MyEventArgs(id, img));
             }
 
-            Application.Current.MainWindow.Focus();
+            picGallery.open = false;
         }
 
         #region Scroll
@@ -288,7 +306,7 @@ namespace PicView.lib.UserControls
             else
             {
                 var speed = speedUp ? PicGalleryItem.picGalleryItem_Size * 4.7 : PicGalleryItem.picGalleryItem_Size;
-                var direction = next ? Scroller.HorizontalOffset + speed : Scroller.HorizontalOffset - speed;
+                var direction = next ? Scroller.HorizontalOffset - speed : Scroller.HorizontalOffset + speed;
 
                 if (Properties.Settings.Default.PicGallery == 1)
                 {
@@ -310,10 +328,7 @@ namespace PicView.lib.UserControls
                     }
                     else
                     {
-                        if (next)
-                            Scroller.ScrollToHorizontalOffset(direction);
-                        else
-                            Scroller.ScrollToHorizontalOffset(direction);
+                        Scroller.ScrollToHorizontalOffset(direction);
                     }
                 }
                 else

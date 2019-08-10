@@ -53,7 +53,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>
     </DefineConstants>
@@ -357,16 +357,18 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Resource Include="lib\fonts\Aller_Rg.ttf" />
-    <Resource Include="lib\fonts\texgyreheros-bold.otf" />
-    <Resource Include="lib\fonts\texgyreheros-bolditalic.otf" />
-    <Resource Include="lib\fonts\texgyreheros-italic.otf" />
-    <Resource Include="lib\fonts\texgyreheros-regular.otf" />
     <Resource Include="lib\fonts\Aller_Bd.ttf" />
     <Resource Include="lib\fonts\Aller_BdIt.ttf" />
     <Resource Include="lib\fonts\Aller_It.ttf" />
     <Resource Include="lib\fonts\Aller_Lt.ttf" />
     <Resource Include="lib\fonts\Aller_LtIt.ttf" />
-    <None Include="packages.config" />
+    <Resource Include="lib\fonts\texgyreheros-bold.otf" />
+    <Resource Include="lib\fonts\texgyreheros-bolditalic.otf" />
+    <Resource Include="lib\fonts\texgyreheros-italic.otf" />
+    <Resource Include="lib\fonts\texgyreheros-regular.otf" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

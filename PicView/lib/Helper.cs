@@ -41,6 +41,16 @@ namespace PicView.lib
             prog.SetProgressState(TaskbarProgressBarState.NoProgress);
         }
 
+        internal static bool? PreloadDirection()
+        {
+            if (PreloadCount > 1 || freshStartup)
+                return false;
+            else if (PreloadCount < 0)
+                return true;
+            else
+                return null;
+        }
+
         /// <summary>
         /// Returns a Windows Thumbnail
         /// </summary>

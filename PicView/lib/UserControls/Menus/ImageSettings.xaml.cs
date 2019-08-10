@@ -1,5 +1,6 @@
 ﻿using System.Windows.Input;
 using System.Windows.Media;
+using static PicView.lib.Variables;
 
 namespace PicView.lib.UserControls
 {
@@ -71,9 +72,16 @@ namespace PicView.lib.UserControls
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(Rotation0BorderBrush, true);
         }
 
-        void Rotation0Border_MouseLeave(object sender, MouseEventArgs e)
+        private void Rotation0Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, Rotation0BorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                Rotation0BorderBrush,
+                true
+            );
         }
 
         // 90 border
@@ -87,9 +95,16 @@ namespace PicView.lib.UserControls
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(Rotation90BorderBrush, true);
         }
 
-        void Rotation90Border_MouseLeave(object sender, MouseEventArgs e)
+        private void Rotation90Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, Rotation90BorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                Rotation90BorderBrush,
+                true
+            );
         }
 
         // Rotation180Border
@@ -103,9 +118,16 @@ namespace PicView.lib.UserControls
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(Rotation180BorderBrush, true);
         }
 
-        void Rotation180Border_MouseLeave(object sender, MouseEventArgs e)
+        private void Rotation180Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, Rotation180BorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                Rotation180BorderBrush,
+                true
+            );
         }
 
         // Rotation270Border
@@ -119,9 +141,16 @@ namespace PicView.lib.UserControls
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(Rotation270BorderBrush, true);
         }
 
-        void Rotation270Border_MouseLeave(object sender, MouseEventArgs e)
+        private void Rotation270Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(165, 23, 23, 23, Rotation270BorderBrush, true);
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                Rotation270BorderBrush,
+                true
+            );
         }
 
         // Close Button
@@ -137,7 +166,14 @@ namespace PicView.lib.UserControls
 
         private void CloseButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                CloseButtonBrush,
+                false
+            );
         }
 
         // Flip Button
@@ -153,7 +189,14 @@ namespace PicView.lib.UserControls
 
         private void FlipButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, FlipButtonBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                FlipButtonBrush,
+                false
+            );
         }
 
         #endregion

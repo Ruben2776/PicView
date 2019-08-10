@@ -2,9 +2,6 @@
     x:Class="PicView.lib.UserControls.FileMenu"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:PicView.lib.UserControls"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Foreground="{StaticResource MainColorBrush}"
     TextOptions.TextFormattingMode="Display"
     TextOptions.TextRenderingMode="ClearType">
@@ -12,49 +9,47 @@
         <Border
             Width="292"
             Height="217"
+            Background="{DynamicResource BackgroundColorBrush}"
             BorderBrush="{StaticResource BorderBrush}"
-            BorderThickness="1">
-            <Border.Background>
-                <LinearGradientBrush StartPoint=".5,0" EndPoint=".5,1">
-                    <GradientStop Offset="0.60" Color="{StaticResource BackgroundColorAlt}" />
-                    <GradientStop Offset="1" Color="{StaticResource BackgroundColor}" />
-                </LinearGradientBrush>
-            </Border.Background>
+            BorderThickness="1"
+            CornerRadius="2">
             <Grid>
                 <Canvas Height="51" VerticalAlignment="Top">
                     <Rectangle
-                        Canvas.Top="51"
+                        Canvas.Top="50"
                         Width="290"
-                        Stroke="{StaticResource BorderBrushAlt}"
+                        Panel.ZIndex="1"
+                        Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
                     <Rectangle
                         Canvas.Left="238"
                         Width="1"
                         Height="51"
-                        Stroke="{StaticResource BorderBrushAlt}"
+                        Panel.ZIndex="1"
+                        Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
                     <Rectangle
                         Canvas.Left="187"
                         Width="1"
                         Height="51"
-                        Stroke="{StaticResource BorderBrushAlt}"
+                        Panel.ZIndex="1"
+                        Stroke="{DynamicResource BorderBrush}"
                         StrokeThickness="1" />
                     <Rectangle
                         Canvas.Left="136"
                         Width="1"
-                        Height="51"
-                        Stroke="{StaticResource BorderBrushAlt}"
+                        Height="50"
+                        Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
                     <TextBlock
                         x:Name="bar"
                         Width="137"
                         Height="51"
-                        Padding="25,14"
-                        FontFamily="/PicView;component/lib/fonts/#TeX Gyre Heros"
+                        Padding="31,17,0,0"
+                        FontFamily="/PicView;component/lib/fonts/#Aller"
                         FontSize="16"
                         FontWeight="Bold"
-                        Text="File Menu"
-                        TextTrimming="CharacterEllipsis" />
+                        Text="File Menu" />
 
                     <Button
                         x:Name="CopyButton"
@@ -66,7 +61,7 @@
                         FontWeight="Bold"
                         ToolTip="Copy image to clipholder">
                         <Button.Background>
-                            <SolidColorBrush x:Name="CopyButtonBrush" Color="Transparent" />
+                            <SolidColorBrush x:Name="CopyButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Button.Background>
                         <Path
                             Width="16"
@@ -86,7 +81,7 @@
                         FontWeight="Bold"
                         ToolTip="Paste image from clipholder">
                         <Button.Background>
-                            <SolidColorBrush x:Name="PasteButtonBrush" Color="Transparent" />
+                            <SolidColorBrush x:Name="PasteButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Button.Background>
                         <Path
                             Width="16"
@@ -105,7 +100,7 @@
                         FocusVisualStyle="{x:Null}"
                         ToolTip="Close">
                         <Button.Background>
-                            <SolidColorBrush x:Name="CloseButtonBrush" Color="Transparent" />
+                            <SolidColorBrush x:Name="CloseButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Button.Background>
                         <Path
                             Width="10"
@@ -129,15 +124,13 @@
                         Style="{StaticResource SexyBorder}">
                         <Button
                             x:Name="Open"
-                            Width="80"
-                            Height="70"
                             Content="Open"
                             FocusVisualStyle="{x:Null}"
                             FontSize="14"
                             FontWeight="Bold"
                             ToolTip="Open a file" />
                         <Border.Background>
-                            <SolidColorBrush x:Name="OpenBorderBrush" Color="{StaticResource BackgroundColorFade}" />
+                            <SolidColorBrush x:Name="OpenBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Border.Background>
                     </Border>
 
@@ -148,15 +141,13 @@
                         Style="{StaticResource SexyBorder}">
                         <Button
                             x:Name="Open_File_Location"
-                            Width="128"
-                            Height="70"
                             Content="Find on Disk"
                             FocusVisualStyle="{x:Null}"
                             FontSize="14"
                             FontWeight="Bold"
                             ToolTip="Shows current image in your file system" />
                         <Border.Background>
-                            <SolidColorBrush x:Name="OpenFileLocationBorderBrush" Color="{StaticResource BackgroundColorFade}" />
+                            <SolidColorBrush x:Name="OpenFileLocationBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Border.Background>
                     </Border>
 
@@ -167,15 +158,13 @@
                         Style="{StaticResource SexyBorder}">
                         <Button
                             x:Name="Print"
-                            Width="80"
-                            Height="70"
                             Content="Print"
                             FocusVisualStyle="{x:Null}"
                             FontSize="14"
                             FontWeight="Bold"
                             ToolTip="Print the current image" />
                         <Border.Background>
-                            <SolidColorBrush x:Name="PrintBorderBrush" Color="{StaticResource BackgroundColorFade}" />
+                            <SolidColorBrush x:Name="PrintBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Border.Background>
                     </Border>
 
@@ -186,15 +175,13 @@
                         Style="{StaticResource SexyBorder}">
                         <Button
                             x:Name="Save_File"
-                            Width="128"
-                            Height="70"
                             Content="Save"
                             FocusVisualStyle="{x:Null}"
                             FontSize="14"
                             FontWeight="Bold"
                             ToolTip="Saves current image in your file system" />
                         <Border.Background>
-                            <SolidColorBrush x:Name="SaveFileLocationBorderBrush" Color="{StaticResource BackgroundColorFade}" />
+                            <SolidColorBrush x:Name="SaveFileLocationBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Border.Background>
                     </Border>
                 </Canvas>

@@ -9,44 +9,43 @@
     <StackPanel>
         <Border
             Width="292"
+            Height="217"
+            Background="{DynamicResource BackgroundColorBrush}"
             BorderBrush="{StaticResource BorderBrush}"
-            BorderThickness="1">
-            <Border.Background>
-                <LinearGradientBrush StartPoint=".5,0" EndPoint=".5,1">
-                    <GradientStop Offset="0.60" Color="{StaticResource BackgroundColorAlt}" />
-                    <GradientStop Offset="1" Color="{StaticResource BackgroundColor}" />
-                </LinearGradientBrush>
-            </Border.Background>
+            BorderThickness="1"
+            CornerRadius="2">
             <Grid>
                 <Canvas Height="51" VerticalAlignment="Top">
                     <Rectangle
-                        Canvas.Top="51"
+                        Canvas.Top="50"
                         Width="290"
-                        Stroke="{StaticResource BorderBrushAlt}"
+                        Panel.ZIndex="1"
+                        Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
                     <Rectangle
                         Canvas.Left="238"
                         Width="1"
                         Height="51"
-                        Stroke="{StaticResource BorderBrushAlt}"
+                        Panel.ZIndex="1"
+                        Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
                     <Rectangle
                         Canvas.Left="187"
                         Width="1"
                         Height="51"
-                        Stroke="{StaticResource BorderBrushAlt}"
+                        Panel.ZIndex="1"
+                        Stroke="{DynamicResource BorderBrush}"
                         StrokeThickness="1" />
                     <TextBlock
                         x:Name="bar"
                         Width="188"
                         Height="51"
-                        Padding="16,14,0,14"
-                        FontFamily="/PicView;component/lib/fonts/#TeX Gyre Heros"
+                        Padding="21,15,0,0"
+                        FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros"
                         FontSize="16"
                         FontWeight="Bold"
                         Foreground="{StaticResource MainColorBrush}"
-                        Text="Rotate and flip"
-                        TextTrimming="CharacterEllipsis" />
+                        Text="Rotate and flip" />
 
                     <CheckBox
                         x:Name="FlipButton"
@@ -58,7 +57,7 @@
                         Foreground="{x:Null}"
                         ToolTip="Flip image">
                         <CheckBox.Background>
-                            <SolidColorBrush x:Name="FlipButtonBrush" Color="Transparent" />
+                            <SolidColorBrush x:Name="FlipButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </CheckBox.Background>
                         <CheckBox.Content>
                             <Path
@@ -81,7 +80,7 @@
                         FocusVisualStyle="{x:Null}"
                         ToolTip="Close">
                         <Button.Background>
-                            <SolidColorBrush x:Name="CloseButtonBrush" Color="Transparent" />
+                            <SolidColorBrush x:Name="CloseButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Button.Background>
                         <Path
                             Width="10"
@@ -109,9 +108,10 @@
                             VerticalAlignment="Center"
                             Content="0°"
                             FontWeight="Bold"
-                            IsChecked="True" />
+                            IsChecked="True"
+                            Style="{StaticResource MetroAlphaFlatRadioButton}" />
                         <Border.Background>
-                            <SolidColorBrush x:Name="Rotation0BorderBrush" Color="{StaticResource BackgroundColorFade}" />
+                            <SolidColorBrush x:Name="Rotation0BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Border.Background>
                     </Border>
                     <Border
@@ -124,9 +124,10 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Content="90°"
-                            FontWeight="Bold" />
+                            FontWeight="Bold"
+                            Style="{StaticResource MetroAlphaFlatRadioButton}" />
                         <Border.Background>
-                            <SolidColorBrush x:Name="Rotation90BorderBrush" Color="{StaticResource BackgroundColorFade}" />
+                            <SolidColorBrush x:Name="Rotation90BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Border.Background>
                     </Border>
 
@@ -140,9 +141,10 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Content="180°"
-                            FontWeight="Bold" />
+                            FontWeight="Bold"
+                            Style="{StaticResource MetroAlphaFlatRadioButton}" />
                         <Border.Background>
-                            <SolidColorBrush x:Name="Rotation180BorderBrush" Color="{StaticResource BackgroundColorFade}" />
+                            <SolidColorBrush x:Name="Rotation180BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Border.Background>
                     </Border>
                     <Border
@@ -155,9 +157,10 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Content="270°"
-                            FontWeight="Bold" />
+                            FontWeight="Bold"
+                            Style="{StaticResource MetroAlphaFlatRadioButton}" />
                         <Border.Background>
-                            <SolidColorBrush x:Name="Rotation270BorderBrush" Color="{StaticResource BackgroundColorFade}" />
+                            <SolidColorBrush x:Name="Rotation270BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Border.Background>
                     </Border>
                 </Canvas>
@@ -169,11 +172,11 @@
             Height="2"
             Margin="54,-2,0,0"
             HorizontalAlignment="Left"
-            Fill="{StaticResource BackgroundColorBrushAlt}" />
+            Fill="{StaticResource BackgroundColorBrush}" />
         <Polygon
             Margin="50,-7,0,0"
             Panel.ZIndex="-1"
-            Fill="{StaticResource BackgroundColorBrushAlt}"
+            Fill="{StaticResource BackgroundColorBrush}"
             Points="0,0 15,30, 30,0"
             Stroke="{StaticResource BorderBrush}" />
     </StackPanel>

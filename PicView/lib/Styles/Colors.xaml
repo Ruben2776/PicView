@@ -23,13 +23,13 @@
     <SolidColorBrush x:Key="FadeColorBrush" Color="{StaticResource FadeColor}" />
 
     <!--  Background Color  -->
-    <Color x:Key="BackgroundColor">#FF131313</Color>
+    <Color x:Key="BackgroundColor">#FF1B1B1B</Color>
     <SolidColorBrush x:Key="bgBackgroundColorBrush" Color="{StaticResource BackgroundColor}" />
     <!--  Used for usercontrol menus  -->
     <SolidColorBrush x:Key="BackgroundColorBrush" Color="#FF171717" />
 
     <!--  Background Color Alt  -->
-    <Color x:Key="BackgroundColorAlt">#F7111111</Color>
+    <Color x:Key="BackgroundColorAlt">#F81F1F1F</Color>
     <SolidColorBrush x:Key="BackgroundColorBrushAlt" Color="{StaticResource BackgroundColorAlt}" />
 
     <!--  Background Color Alt  -->

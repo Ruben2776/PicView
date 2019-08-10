@@ -55,7 +55,14 @@ namespace PicView.lib.UserControls
 
         private void CloseButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                CloseButtonBrush,
+                false
+            );
         }
 
         private void PasteButtonMouseOver(object sender, MouseEventArgs e)
@@ -70,7 +77,14 @@ namespace PicView.lib.UserControls
 
         private void PasteButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, PasteButtonBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                PasteButtonBrush,
+                false
+            );
         }
 
         private void CopyButtonMouseOver(object sender, MouseEventArgs e)
@@ -85,7 +99,14 @@ namespace PicView.lib.UserControls
 
         private void CopyButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CopyButtonBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                CopyButtonBrush,
+                false
+            );
         }
 
         private void Open_Border_MouseLeave(object sender, MouseEventArgs e)

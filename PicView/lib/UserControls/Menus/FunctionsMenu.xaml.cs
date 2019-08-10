@@ -85,7 +85,14 @@ namespace PicView.lib.UserControls.Menus
 
         private void CloseButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                CloseButtonBrush,
+                false
+            );
         }
 
         //Help Button
@@ -101,7 +108,14 @@ namespace PicView.lib.UserControls.Menus
 
         private void HelpButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, HelpBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                HelpBrush,
+                false
+            );
         }
 
         // About Button
@@ -116,7 +130,14 @@ namespace PicView.lib.UserControls.Menus
 
         private void AboutButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, AboutBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                AboutBrush,
+                false
+            );
         }
 
         // Reload Button

@@ -56,7 +56,7 @@ namespace PicView
                 Opacity = 0
             };
             bg.Children.Add(ajaxLoading);
-            AjaxLoadingStart();           
+            AjaxLoadingStart();
 
             // Update values
             var endLoading = false;
@@ -113,7 +113,7 @@ namespace PicView
             }
 
             // Update UserControl values
-            backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorFade"];
+            backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
             mainColor = (Color)Application.Current.Resources["MainColor"];
             quickSettingsMenu.ToggleScroll.IsChecked = IsScrollEnabled;
             if (SizeMode)
@@ -126,7 +126,7 @@ namespace PicView
             {
                 LoadPicGallery();
 
-                if (Properties.Settings.Default.PicGallery == 2)
+                if (Properties.Settings.Default.PicGallery == 2 && !endLoading)
                     PicGalleryFade();
             }
 
@@ -137,7 +137,7 @@ namespace PicView
             // Add things!
             AddEvents();
             AddTimers();
-            AddContextMenus();        
+            AddContextMenus();
 
             // Updates settings from older version to newer version
             if (Properties.Settings.Default.CallUpgrade)
@@ -227,7 +227,7 @@ namespace PicView
             RightButton.MouseLeave += RightButtonMouseLeave;
             RightButton.Click += (s, x) => { RightbuttonClicked = true; Pic(); };
 
-            // Settings and QuickSettingsMenu
+            // QuickSettingsMenu
             SettingsButton.PreviewMouseLeftButtonDown += SettingsButtonButtonMouseButtonDown;
             SettingsButton.MouseEnter += SettingsButtonButtonMouseOver;
             SettingsButton.MouseLeave += SettingsButtonButtonMouseLeave;
@@ -248,31 +248,14 @@ namespace PicView
             FunctionMenuButton.MouseLeave += FunctionMenuButtonButtonMouseLeave;
             FunctionMenuButton.Click += Toggle_Functions_menu;
             functionsMenu.CloseButton.Click += Toggle_Functions_menu;
-
-            functionsMenu.Help.Click += Toggle_Functions_menu;
             functionsMenu.Help.Click += (s, x) => HelpWindow();
-
-            functionsMenu.About.Click += Toggle_Functions_menu;
             functionsMenu.About.Click += (s, x) => AboutWindow();
-
-            functionsMenu.ClearButton.Click += (s, x) => Unload();
-            functionsMenu.ClearButton.Click += Toggle_Functions_menu;
-
             functionsMenu.FileDetailsButton.Click += (s, x) => NativeMethods.ShowFileProperties(PicPath);
-            functionsMenu.FileDetailsButton.Click += Toggle_Functions_menu;
-
             functionsMenu.DeleteButton.Click += (s, x) => DeleteFile(PicPath, true);
             functionsMenu.DeletePermButton.Click += (s, x) => DeleteFile(PicPath, false);
-
             functionsMenu.ReloadButton.Click += (s, x) => Reload();
-            functionsMenu.ReloadButton.Click += Toggle_Functions_menu;
-
             functionsMenu.ResetZoomButton.Click += (s, x) => ResetZoom();
-            functionsMenu.ResetZoomButton.Click += Toggle_Functions_menu;
-
             functionsMenu.SlideshowButton.Click += (s, x) => LoadSlideshow();
-            functionsMenu.SlideshowButton.Click += Toggle_Functions_menu;
-
             functionsMenu.BgButton.Click += (s, x) =>
             {
                 if (imgBorder == null)
@@ -287,7 +270,6 @@ namespace PicView
                 else
                     imgBorder.Background = new SolidColorBrush(Colors.White);
             };
-            functionsMenu.BgButton.Click += Toggle_Functions_menu;
 
             // FlipButton
             imageSettingsMenu.FlipButton.Click += (s, x) => Flip();
@@ -385,7 +367,8 @@ namespace PicView
             canNavigate = false;
             img.Source = null;
             freshStartup = true;
-            Pics.Clear();
+            if (Pics != null)
+                Pics.Clear();
             PreloadCount = 0;
             Preloader.Clear();
             PicPath = string.Empty;
@@ -655,9 +638,7 @@ namespace PicView
             Title = Bar.Text = Loading;
             Bar.ToolTip = Loading;
             if (img.Source == null)
-            {
                 AjaxLoadingStart();
-            }
 
             // Handle if from web
             if (!File.Exists(path))
@@ -670,10 +651,10 @@ namespace PicView
             }
 
             // If count not correct or just started, get values
-            if (Pics.Count <= FolderIndex || FolderIndex < 0 || freshStartup)
-            {
+            if (Pics == null)
                 await GetValues(path);
-            }
+            else if (Pics.Count <= FolderIndex || FolderIndex < 0 || freshStartup)
+                await GetValues(path);
 
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
             else if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(path) != Path.GetDirectoryName(PicPath))
@@ -692,24 +673,40 @@ namespace PicView
             }
 
             // If no need to reset values, get index
+            else if (Pics != null)
+                FolderIndex = Pics.IndexOf(path);
+
+            if (Pics != null)
+            {
+                // Fix large archive extraction error
+                if (Pics.Count == 0)
+                {
+                    var recovery = await RecoverFailedArchiveAsync();
+                    if (!recovery)
+                    {
+                        ToolTipStyle("Archive could not be processed");
+                        Reload(true);
+                        return;
+                    }
+                }
+            }
             else
             {
-                FolderIndex = Pics.IndexOf(path);
+                Reload(true);
+                return;
             }
 
-            // Fix large archive extraction error
-            if (Pics.Count == 0)
+            if (File.Exists(Pics[FolderIndex]))
             {
-                bool foo = await RecoverFailedArchiveAsync();
-                if (!foo)
-                    return;
+                // Navigate to picture using obtained index
+                Pic(FolderIndex);
             }
-
-            // Navigate to picture using obtained index
-            Pic(FolderIndex);
-
-            if (freshStartup)
-                freshStartup = false;
+            else
+            {
+                Reload(true);
+                return;
+            }
+                
 
             // Fix loading bug
             if (ajaxLoading.Opacity != 1 && canNavigate)
@@ -726,7 +723,15 @@ namespace PicView
                 if (!picGallery.LoadComplete)
                     if (!picGallery.isLoading)
                         picGallery.Load();
+                if (freshStartup)
+                {
+                    picGallery.Calculate_Paging();
+                    picGallery.ScrollTo();
+                }
+                    
             }
+
+            freshStartup = false;
         }
 
         /// <summary>
@@ -740,12 +745,27 @@ namespace PicView
             if (Pics.Count < x)
             {
                 if (x == 0)
-                    await RecoverFailedArchiveAsync();
+                {
+                    var recovery = await RecoverFailedArchiveAsync();
+                    if (!recovery)
+                    {
+                        ToolTipStyle("Archive could not be processed");
+                        Reload(true);
+                        return;
+                    }
+                }
+
                 else if (!File.Exists(Pics[x]))
                     PicErrorFix(x);
                 else
                     Reload(true);
                 return;
+            }
+            if (x < 0)
+            {
+                var b = PicErrorFix(x);
+                if (!b)
+                    return;
             }
 
 
@@ -813,19 +833,13 @@ namespace PicView
             // Preload images \\
             // Only preload every second entry
             // and determine if going backwards or forwards
-            bool? reverse;
-            if (PreloadCount > 1 || freshStartup)
-                reverse = false;
-            else if (PreloadCount < 0)
-                reverse = true;
-            else
-                reverse = null;
+            var direction = PreloadDirection();
 
-            if (reverse.HasValue)
+            if (direction.HasValue)
             {
                 await Task.Run(() =>
                 {
-                    Preloader.PreLoad(x, reverse.Value);
+                    Preloader.PreLoad(x, direction.Value);
                     PreloadCount = 0;
 
                     if (x < Pics.Count)
@@ -835,6 +849,9 @@ namespace PicView
                     }
                 });
             }
+
+            if (picGallery != null)
+                picGallery.ScrollTo(reverse);
         }
 
         /// <summary>
@@ -877,6 +894,7 @@ namespace PicView
             if (!canNavigate)
                 return;
 
+            // .. Or browsing PicGallery
             if (picGallery != null)
             {
                 if (Properties.Settings.Default.PicGallery == 1)
@@ -921,6 +939,7 @@ namespace PicView
                     }
 
                     PreloadCount++;
+                    reverse = false;
                 }
                 else
                 {
@@ -938,6 +957,7 @@ namespace PicView
                     }
 
                     PreloadCount--;
+                    reverse = true;
                 }
             }
             Pic(FolderIndex);
@@ -1065,6 +1085,12 @@ namespace PicView
         /// <param name="x">The index to start from</param>
         private bool PicErrorFix(int x)
         {
+            if (Pics == null)
+            {
+                Reload(true);
+                return false;
+            }
+
             if (Pics.Count < 0)
             {
                 ToolTipStyle("Unexpected error", true, TimeSpan.FromSeconds(3));
@@ -1082,6 +1108,28 @@ namespace PicView
                 {
                     Unload();
                     return false;
+                }
+            }
+            else if (x < 0)
+            {
+                var img = RenderToBitmapSource(PicPath, Path.GetExtension(PicPath));
+                if (img != null)
+                {
+                    Pic(PicPath);
+                    return true;
+                }
+
+                else
+                {
+                    Pics = FileList(Path.GetDirectoryName(PicPath));
+                    Pics.Remove(PicPath);
+                    x--;
+
+                    if (x < 0)
+                    {
+                        Unload();
+                        return false;
+                    }
                 }
             }
 
@@ -1119,16 +1167,14 @@ namespace PicView
 
             // Go to next image
             if (Properties.Settings.Default.Looping)
-                FolderIndex = FolderIndex == Pics.Count - 1 ? 0 : FolderIndex++;
+                FolderIndex = FolderIndex == Pics.Count - 1 ? 0 : FolderIndex;
             else
-                FolderIndex = FolderIndex == Pics.Count - 1 ? Pics.Count - 2 : FolderIndex + 1;
+                FolderIndex = FolderIndex == Pics.Count - 1 ? Pics.Count - 2 : FolderIndex;
 
             if (File.Exists(file))
-            {
-                Pic(file);
                 ToolTipStyle("File not found or unable to render, " + file, false, TimeSpan.FromSeconds(2.5));
-                return true;
-            }
+
+            AjaxLoadingEnd();
 
             // Repeat process if the next image was not found
             PicErrorFix(FolderIndex);
@@ -1155,17 +1201,17 @@ namespace PicView
             Bar.Text = "Unzipping...";
             do
             {
-                try
-                {
-                    // If there are no pictures, but a folder when TempZipPath has a value,
-                    // we should open the folder
-                    var directory = Directory.GetDirectories(TempZipPath);
-                    if (directory.Length > -1)
-                        TempZipPath = directory[0];
+                //try
+                //{
+                //    // If there are no pictures, but a folder when TempZipPath has a value,
+                //    // we should open the folder
+                //    var directory = Directory.GetDirectories(TempZipPath);
+                //    if (directory.Length > -1)
+                //        TempZipPath = directory[0];
 
-                    Pics = FileList(TempZipPath);
-                }
-                catch (Exception) { }
+                //    Pics = FileList(TempZipPath);
+                //}
+                //catch (Exception) { }
 
                 if (count > 3)
                 {
@@ -1174,9 +1220,9 @@ namespace PicView
                     if (getProcesses.Length > 0)
                         processed = true;
 
-                    //getProcesses = Process.GetProcessesByName("Zip");
-                    //if (getProcesses.Length > 0)
-                    //    processed = true;
+                    getProcesses = Process.GetProcessesByName("Zip");
+                    if (getProcesses.Length > 0)
+                        processed = true;
 
                     if (!processed)
                     {
@@ -1219,7 +1265,8 @@ namespace PicView
                 }
                 count++;
             } while (Pics.Count < 1);
-            return true;
+
+            return Directory.Exists(TempZipPath);
         }
 
         /// <summary>
@@ -1267,8 +1314,8 @@ namespace PicView
             }
             else
             {
-                var y = fromBackup ? xFolderIndex : FolderIndex;
-                PicErrorFix(y);
+                Unload();
+                ToolTipStyle("Unknown error occured");
             }
         }
 
@@ -1591,8 +1638,8 @@ namespace PicView
                     {
                         if (picGallery.open)
                         {
-                            picGallery.ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
-                            return;
+                            if (Properties.Settings.Default.PicGallery == 1)
+                                return;
                         }
                     }
                     if (!e.IsRepeat)
@@ -1623,8 +1670,8 @@ namespace PicView
                     {
                         if (picGallery.open)
                         {
-                            picGallery.ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
-                            return;
+                            if (Properties.Settings.Default.PicGallery == 1)
+                                return;
                         }
                     }
                     if (!e.IsRepeat)
@@ -1684,10 +1731,17 @@ namespace PicView
                         else
                             Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 30);
                     }
+                    else if (picGallery != null)
+                    {
+                        if (picGallery.open)
+                        {
+                            picGallery.ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            return;
+                        }
+                    }
                     else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
                         Rotate(false);
                     break;
-
                 case Key.Down:
                 case Key.S:
                     if (Properties.Settings.Default.ScrollEnabled)
@@ -1696,6 +1750,14 @@ namespace PicView
                             return; // Save Ctrl + S fix
                         else
                             Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 30);
+                    }
+                    else if (picGallery != null)
+                    {
+                        if (picGallery.open)
+                        {
+                            picGallery.ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            return;
+                        }
                     }
                     else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
                         Rotate(true);
@@ -1837,6 +1899,8 @@ namespace PicView
                 {
                     if (picGallery.open)
                     {
+                        if (picGallery.isLoading)
+                            picGallery.Calculate_Paging();
                         picGallery.ScrollTo();
                         return;
                     }
@@ -2389,9 +2453,6 @@ namespace PicView
                     Bar.MaxWidth = interfaceSize;
                 else
                     Bar.MaxWidth = xWidth - interfaceSize;
-
-                // Loses position gradually if not forced to center
-                CenterWindowOnScreen();
             }
             else
             {
@@ -2400,6 +2461,9 @@ namespace PicView
                 else
                     Bar.MaxWidth = Width - interfaceSize;
             }
+
+            // Loses position gradually if not forced to center
+            CenterWindowOnScreen();
 
             isZoomed = false;
 
@@ -2495,7 +2559,7 @@ namespace PicView
         /// <param name="right"></param>
         private void Rotate(bool right)
         {
-            if (img.Source == null)
+            if (img.Source == null || picGallery.open)
             {
                 return;
             }
@@ -2582,9 +2646,11 @@ namespace PicView
                 Header = "Open",
                 InputGestureText = "Ctrl + O"
             };
-            var opencmIcon = new System.Windows.Shapes.Path();
-            opencmIcon.Data = Geometry.Parse("M1717 931q0-35-53-35h-1088q-40 0-85.5 21.5t-71.5 52.5l-294 363q-18 24-18 40 0 35 53 35h1088q40 0 86-22t71-53l294-363q18-22 18-39zm-1141-163h768v-160q0-40-28-68t-68-28h-576q-40 0-68-28t-28-68v-64q0-40-28-68t-68-28h-320q-40 0-68 28t-28 68v853l256-315q44-53 116-87.5t140-34.5zm1269 163q0 62-46 120l-295 363q-43 53-116 87.5t-140 34.5h-1088q-92 0-158-66t-66-158v-960q0-92 66-158t158-66h320q92 0 158 66t66 158v32h544q92 0 158 66t66 158v160h192q54 0 99 24.5t67 70.5q15 32 15 68z");
-            opencmIcon.Stretch = Stretch.Fill;
+            var opencmIcon = new System.Windows.Shapes.Path
+            {
+                Data = Geometry.Parse("M1717 931q0-35-53-35h-1088q-40 0-85.5 21.5t-71.5 52.5l-294 363q-18 24-18 40 0 35 53 35h1088q40 0 86-22t71-53l294-363q18-22 18-39zm-1141-163h768v-160q0-40-28-68t-68-28h-576q-40 0-68-28t-28-68v-64q0-40-28-68t-68-28h-320q-40 0-68 28t-28 68v853l256-315q44-53 116-87.5t140-34.5zm1269 163q0 62-46 120l-295 363q-43 53-116 87.5t-140 34.5h-1088q-92 0-158-66t-66-158v-960q0-92 66-158t158-66h320q92 0 158 66t66 158v32h544q92 0 158 66t66 158v160h192q54 0 99 24.5t67 70.5q15 32 15 68z"),
+                Stretch = Stretch.Fill
+            };
             opencmIcon.Width = opencmIcon.Height = 12;
             opencmIcon.Fill = scbf;
             opencm.Icon = opencmIcon;
@@ -2596,9 +2662,11 @@ namespace PicView
                 Header = "Save",
                 InputGestureText = "Ctrl + S"
             };
-            var savecmIcon = new System.Windows.Shapes.Path();
-            savecmIcon.Data = Geometry.Parse("M512 1536h768v-384h-768v384zm896 0h128v-896q0-14-10-38.5t-20-34.5l-281-281q-10-10-34-20t-39-10v416q0 40-28 68t-68 28h-576q-40 0-68-28t-28-68v-416h-128v1280h128v-416q0-40 28-68t68-28h832q40 0 68 28t28 68v416zm-384-928v-320q0-13-9.5-22.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 22.5v320q0 13 9.5 22.5t22.5 9.5h192q13 0 22.5-9.5t9.5-22.5zm640 32v928q0 40-28 68t-68 28h-1344q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h928q40 0 88 20t76 48l280 280q28 28 48 76t20 88z");
-            savecmIcon.Stretch = Stretch.Fill;
+            var savecmIcon = new System.Windows.Shapes.Path
+            {
+                Data = Geometry.Parse("M512 1536h768v-384h-768v384zm896 0h128v-896q0-14-10-38.5t-20-34.5l-281-281q-10-10-34-20t-39-10v416q0 40-28 68t-68 28h-576q-40 0-68-28t-28-68v-416h-128v1280h128v-416q0-40 28-68t68-28h832q40 0 68 28t28 68v416zm-384-928v-320q0-13-9.5-22.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 22.5v320q0 13 9.5 22.5t22.5 9.5h192q13 0 22.5-9.5t9.5-22.5zm640 32v928q0 40-28 68t-68 28h-1344q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h928q40 0 88 20t76 48l280 280q28 28 48 76t20 88z"),
+                Stretch = Stretch.Fill
+            };
             savecmIcon.Width = savecmIcon.Height = 12;
             savecmIcon.Fill = scbf;
             savecm.Icon = savecmIcon;
@@ -3457,10 +3525,6 @@ namespace PicView
 
         private void PicGalleryFade(bool show = true)
         {
-            if (!picGallery.LoadComplete)
-                if (!picGallery.isLoading)
-                    picGallery.Load();          
-
             if (Properties.Settings.Default.PicGallery == 1)
             {
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.5) };
@@ -3503,10 +3567,6 @@ namespace PicView
 
                 if (show)
                 {
-                    picGallery.Visibility = Visibility.Visible;
-                    bg.Children.Remove(picGallery);                
-                    picGallery.open = true;
-                    picGallery.LoadLayout();
 
                     if (Application.Current.Windows.OfType<FakeWindow>().Any())
                     {
@@ -3514,24 +3574,29 @@ namespace PicView
 
                         if (!f.grid.Children.Contains(picGallery))
                         {
+                            picGallery.Visibility = Visibility.Visible;
+                            bg.Children.Remove(picGallery);
                             f.grid.Children.Add(picGallery);
                         }
 
-                        picGallery.Calculate_Paging();
-                        picGallery.ScrollTo();
-
                         f.Show();
+                        picGallery.open = true;
+
                         return;
                     }
 
-                    
+                    bg.Children.Remove(picGallery);
+
+                    picGallery.LoadLayout();
+                    picGallery.Calculate_Paging();
+                    picGallery.ScrollTo();
+
                     var fake = new FakeWindow();
                     
                     fake.grid.Children.Add(picGallery);
                     fake.Show();
+                    picGallery.open = true;
 
-
-                    Focus();
                     return;
                 }
 
@@ -3540,38 +3605,32 @@ namespace PicView
 
                 picGallery.Visibility = Visibility.Collapsed;
                 picGallery.open = false;
-                Focus();
             }
         }
 
-        private void PicGallery_PreviewItemClick(object source, MyEventArgs e)
+        private async void PicGallery_PreviewItemClick(object source, MyEventArgs e)
         {
+            img.Source = e.GetImage();
             var size = ImageSize(Pics[e.GetId()]);
             ZoomFit(size.Width, size.Height);
 
-            Task.Run(() =>
+            await Task.Run(() =>
             {
                 //Preloader.Clear();
                 Preloader.Add(e.GetId());
             });
         }
 
-        private async void PicGallery_ItemClick(object source, MyEventArgs e)
+        private void PicGallery_ItemClick(object source, MyEventArgs e)
         {
-            Focus();
-            while (!Preloader.Contains(Pics[e.GetId()]))
-            {
-                if (Bar.Text != Loading)
-                {
-                    Bar.Text = Loading;
-                    img.Source = e.GetImage();
-                }
-                await Task.Delay(50);
-            }
+            Bar.Text = Loading;
             Pic(e.GetId());
+
+            /// Fix annoying bug
+            ajaxLoading.Opacity = 0;
         }
 
-#endregion
+        #endregion
 
         /// <summary>
         /// Toggle between hidden interface and default
@@ -3847,69 +3906,69 @@ namespace PicView
 
         #region Windows
 
-                /// <summary>
-                /// Show About window in a dialog
-                /// </summary>
-                private void AboutWindow()
-                {
-                    Window window = new About
-                    {
-                        Width = Width,
-                        Height = Height,
-                        Opacity = 0,
-                        Owner = Application.Current.MainWindow,
-                    };
+        /// <summary>
+        /// Show About window in a dialog
+        /// </summary>
+        private void AboutWindow()
+        {
+            Window window = new About
+            {
+                Width = Width,
+                Height = Height,
+                Opacity = 0,
+                Owner = Application.Current.MainWindow,
+            };
 
-                    var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
-                    window.BeginAnimation(OpacityProperty, animation);
+            var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
+            window.BeginAnimation(OpacityProperty, animation);
 
-                    window.ShowDialog();
-                }
+            window.ShowDialog();
+        }
 
-                /// <summary>
-                /// Show Help window in a dialog
-                /// </summary>
-                private void HelpWindow()
-                {
-                    Window window = new Help
-                    {
-                        Width = Width,
-                        Height = Height,
-                        Opacity = 0,
-                        Owner = Application.Current.MainWindow,
-                    };
+        /// <summary>
+        /// Show Help window in a dialog
+        /// </summary>
+        private void HelpWindow()
+        {
+            Window window = new Help
+            {
+                Width = Width,
+                Height = Height,
+                Opacity = 0,
+                Owner = Application.Current.MainWindow,
+            };
 
-                    var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
-                    window.BeginAnimation(OpacityProperty, animation);
-                    window.Show();
-                }
+            var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
+            window.BeginAnimation(OpacityProperty, animation);
+            window.Show();
+        }
 
-                /// <summary>
-                /// Show All Settings window in a dialog
-                /// </summary>
-                public void AllSettingsWindow()
-                {
-                    Window window = new AllSettings
-                    {
-                        Width = Width,
-                        Height = Height,
-                        Opacity = 0,
-                        Owner = Application.Current.MainWindow,
-                    };
+        /// <summary>
+        /// Show All Settings window in a dialog
+        /// </summary>
+        public void AllSettingsWindow()
+        {
+            Window window = new AllSettings
+            {
+                Width = Width,
+                Height = Height,
+                Opacity = 0,
+                Owner = Application.Current.MainWindow,
+            };
 
-                    var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
-                    window.BeginAnimation(OpacityProperty, animation);
+            var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
+            window.BeginAnimation(OpacityProperty, animation);
 
-                    window.ShowDialog();
-                }
+            window.ShowDialog();
+        }
 
-                ///// <summary>
-                ///// Show Tools window
-                ///// </summary>
-                //private void ToolsWindow()
-                //{
-                //    new Tools().Show();
-                //}
+        ///// <summary>
+        ///// Show Tools window
+        ///// </summary>
+        //private void ToolsWindow()
+        //{
+        //    new Tools().Show();
+        //}
 
         #endregion Windows
 
@@ -4490,6 +4549,9 @@ namespace PicView
         /// <param name="Recyclebin"></param>
         private void DeleteFile(string file, bool Recyclebin)
         {
+            /// Need to add function to remove from PicGallery
+
+
             if (FileFunctions.DeleteFile(file, Recyclebin))
             {
                 var filename = Path.GetFileName(file);
@@ -4502,8 +4564,14 @@ namespace PicView
                 }
                 ToolTipStyle(Recyclebin ? "Sent " + filename + " to the recyle bin" : "Deleted " + filename);
 
-                // Go to next image
-                Pic(Pics[FolderIndex]);
+                if (reverse)
+                    FolderIndex = FolderIndex-- < 0 ? 0 : FolderIndex--;
+
+                if (FolderIndex > Pics.Count || Pics.Count < 0)
+                    Unload();
+                else
+                    // Go to next image
+                    Pic(FolderIndex);
             }
             else
             {

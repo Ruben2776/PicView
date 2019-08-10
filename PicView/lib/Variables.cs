@@ -119,6 +119,7 @@ namespace PicView.lib
         internal static bool clickArrowRightClicked;
         internal static bool clickArrowLeftClicked;
         internal static bool SlideshowActive;
+        internal static bool reverse;
 
         /// <summary>
         /// Used as comfortable space for standard viewing

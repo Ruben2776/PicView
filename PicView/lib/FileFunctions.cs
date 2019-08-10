@@ -158,6 +158,9 @@ namespace PicView.lib
         /// </summary>
         internal static List<string> FileList(string path, SortFilesBy sortFilesBy)
         {
+            if (!Directory.Exists(path))
+                return null;
+
             var items = Directory.GetFiles(path)
                 .AsParallel()
                 .Where(file =>
@@ -392,6 +395,8 @@ namespace PicView.lib
                 {
                     // Set files to Pics and get index
                     Pics = FileList(Path.GetDirectoryName(path));
+                    if (Pics == null)
+                        return;
                     FolderIndex = Pics.IndexOf(path);
                 }
 

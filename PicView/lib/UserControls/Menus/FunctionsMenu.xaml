@@ -12,43 +12,42 @@
         <Border
             Width="390"
             Height="220"
+            Background="{DynamicResource BackgroundColorBrush}"
             BorderBrush="{StaticResource BorderBrush}"
-            BorderThickness="1">
-            <Border.Background>
-                <LinearGradientBrush StartPoint=".5,0" EndPoint=".5,1">
-                    <GradientStop Offset="0.60" Color="{StaticResource BackgroundColorAlt}" />
-                    <GradientStop Offset="1" Color="{StaticResource BackgroundColor}" />
-                </LinearGradientBrush>
-            </Border.Background>
+            BorderThickness="1"
+            CornerRadius="2">
             <Canvas>
                 <Canvas Height="51" VerticalAlignment="Top">
                     <Rectangle
-                        Canvas.Top="51"
-                        Width="390"
-                        Stroke="{StaticResource BorderBrushAlt}"
-                        StrokeThickness="1" />
-                    <Rectangle
-                        Canvas.Left="173"
-                        Width="1"
-                        Height="51"
-                        Stroke="{StaticResource BorderBrushAlt}"
-                        StrokeThickness="1" />
-                    <Rectangle
-                        Canvas.Left="253"
-                        Width="1"
-                        Height="51"
-                        Stroke="{StaticResource BorderBrushAlt}"
+                        Canvas.Top="50"
+                        Width="388"
+                        Panel.ZIndex="1"
+                        Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
                     <Rectangle
                         Canvas.Left="335"
                         Width="1"
                         Height="51"
-                        Stroke="{StaticResource BorderBrushAlt}"
+                        Panel.ZIndex="1"
+                        Stroke="{StaticResource BorderBrush}"
+                        StrokeThickness="1" />
+                    <Rectangle
+                        Canvas.Left="254"
+                        Width="1"
+                        Height="51"
+                        Panel.ZIndex="1"
+                        Stroke="{DynamicResource BorderBrush}"
+                        StrokeThickness="1" />
+                    <Rectangle
+                        Canvas.Left="172"
+                        Width="1"
+                        Height="50"
+                        Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
                     <TextBlock
                         x:Name="bar"
-                        Canvas.Left="13"
-                        Canvas.Top="13"
+                        Canvas.Left="15"
+                        Canvas.Top="15"
                         FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros"
                         FontSize="16"
                         FontWeight="Bold"
@@ -63,7 +62,7 @@
                         BorderThickness="0"
                         ToolTip="Show About window">
                         <Button.Background>
-                            <SolidColorBrush x:Name="AboutBrush" Color="Transparent" />
+                            <SolidColorBrush x:Name="AboutBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Button.Background>
                         <Canvas>
                             <Path
@@ -92,7 +91,7 @@
                         BorderThickness="0"
                         ToolTip="Show Help window">
                         <Button.Background>
-                            <SolidColorBrush x:Name="HelpBrush" Color="Transparent" />
+                            <SolidColorBrush x:Name="HelpBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Button.Background>
                         <Canvas>
                             <Path
@@ -120,7 +119,7 @@
                         FocusVisualStyle="{x:Null}"
                         ToolTip="Close">
                         <Button.Background>
-                            <SolidColorBrush x:Name="CloseButtonBrush" Color="Transparent" />
+                            <SolidColorBrush x:Name="CloseButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Button.Background>
                         <Path
                             Width="10"
@@ -305,7 +304,7 @@
         <Rectangle
             Width="22"
             Height="2"
-            Margin="346,-2,0,0"
+            Margin="346,-1,0,0"
             HorizontalAlignment="Left"
             Fill="{StaticResource BackgroundColorBrush}" />
         <Polygon
