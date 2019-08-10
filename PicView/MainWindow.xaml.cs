@@ -722,16 +722,8 @@ namespace PicView
 
                 if (!picGallery.LoadComplete)
                     if (!picGallery.isLoading)
-                        picGallery.Load();
-                if (freshStartup)
-                {
-                    picGallery.Calculate_Paging();
-                    picGallery.ScrollTo();
-                }
-                    
+                        picGallery.Load();                    
             }
-
-            freshStartup = false;
         }
 
         /// <summary>
@@ -851,7 +843,19 @@ namespace PicView
             }
 
             if (picGallery != null)
-                picGallery.ScrollTo(reverse);
+            {
+                if (freshStartup)
+                {
+                    if (!picGallery.LoadComplete)
+                        return;
+
+                    picGallery.Calculate_Paging();
+                    picGallery.ScrollTo();
+                }
+                else
+                    picGallery.ScrollTo(reverse);
+            }
+            freshStartup = false;
         }
 
         /// <summary>
@@ -3574,14 +3578,13 @@ namespace PicView
 
                         if (!f.grid.Children.Contains(picGallery))
                         {
-                            picGallery.Visibility = Visibility.Visible;
                             bg.Children.Remove(picGallery);
                             f.grid.Children.Add(picGallery);
                         }
 
                         f.Show();
                         picGallery.open = true;
-
+                        picGallery.Visibility = Visibility.Visible;
                         return;
                     }
 

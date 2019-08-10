@@ -133,7 +133,7 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Background="{x:Null}"
-                FontFamily="/PicView;component/lib/fonts/#Aller"
+                FontFamily="Proxima Nova Alt Th"
                 FontSize="15"
                 FontWeight="Bold"
                 Foreground="{StaticResource MainColorBrush}"
