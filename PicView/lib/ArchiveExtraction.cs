@@ -17,6 +17,9 @@ namespace PicView.lib
         /// <returns></returns>
         internal static bool Extract(string path)
         {
+            if (!string.IsNullOrWhiteSpace(TempZipPath))
+                DeleteTempFiles();
+
             var Winrar = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\WinRAR\\WinRAR.exe";
             if (!File.Exists(Winrar))
                 Winrar = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\WinRAR\\WinRAR.exe";
@@ -71,46 +74,6 @@ namespace PicView.lib
             });
 
             if (x == null) return;
-            x.EnableRaisingEvents = true;
-            x.Exited += (s, e) => 
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    var mainWindow = Application.Current.MainWindow as MainWindow;
-                    if (!string.IsNullOrWhiteSpace(TempZipPath))
-                    {
-                        if (Directory.Exists(TempZipPath))
-                        {
-                            try
-                            {
-                                if (FolderIndex > 0)
-                                {
-                                    //Pics = FileList(TempZipPath);
-                                    //mainWindow.Focus();
-                                }
-                                else
-                                {
-                                    // If there are no pictures, but a folder when TempZipPath has a value,
-                                    // we should open the folder
-                                    var directory = Directory.GetDirectories(TempZipPath);
-                                    if (directory.Length > 0)
-                                        TempZipPath = directory[0];
-
-                                    Pics = FileList(TempZipPath);
-                                    mainWindow.Pic(Pics[0]);
-                                    mainWindow.Focus();
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                mainWindow.Reload(true);
-                            }
-                        }
-                    }
-                    else
-                        mainWindow.Reload(true);
-                });
-            };
             x.WaitForExit(750);
         }
     }

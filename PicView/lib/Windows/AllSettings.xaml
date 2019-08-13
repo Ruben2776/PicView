@@ -10,8 +10,6 @@
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     SizeToContent="WidthAndHeight"
-    TextOptions.TextFormattingMode="Display"
-    TextOptions.TextRenderingMode="ClearType"
     WindowStartupLocation="CenterOwner"
     WindowStyle="None">
 

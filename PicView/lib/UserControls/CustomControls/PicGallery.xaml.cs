@@ -119,7 +119,7 @@ namespace PicView.lib.UserControls
                 }
 
                 HorizontalAlignment = HorizontalAlignment.Stretch;
-                Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+                Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
                 Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
                 x2.Visibility = Visibility.Visible;
             }
@@ -129,7 +129,7 @@ namespace PicView.lib.UserControls
                 Height = MonitorInfo.Height;
                 HorizontalAlignment = HorizontalAlignment.Right;
                 Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
-                Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+                Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
                 x2.Visibility = Visibility.Collapsed;
             }
 
@@ -197,83 +197,77 @@ namespace PicView.lib.UserControls
         internal void Click(int id)
         {
             Application.Current.MainWindow.Focus();
-            var z = Container.Children[id] as PicGalleryItem;
-            var img = z.img.Source;
-            
-            PreviewItemClick(this, new MyEventArgs(id, img));
 
 
             if (Properties.Settings.Default.PicGallery == 1)
             {
-                //var img = new Image()
-                //{
-                //    Source = GetBitmapSourceThumb(Pics[id]),
-                //    Stretch = Stretch.Fill,
-                //    HorizontalAlignment = HorizontalAlignment.Center,
-                //    VerticalAlignment = VerticalAlignment.Center
-                //};
-                //var border = new Border()
-                //{
-                //    BorderThickness = new Thickness(1),
-                //    BorderBrush = (SolidColorBrush)Application.Current.Resources["BorderBrush"],
-                //    Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"]
-                //};
-                //border.Child = img;
-                //grid.Children.Add(border);
+                var z = Container.Children[id] as PicGalleryItem;
+                PreviewItemClick(this, new MyEventArgs(id, z.img.Source));
+                Width = xWidth;
+                Height = xHeight;
 
-                //var from = PicGalleryItem.picGalleryItem_Size;
-                //var to = new double[] { Application.Current.MainWindow.ActualWidth - 15, Application.Current.MainWindow.ActualHeight - 95 };
+                var img = new Image()
+                {
+                    Source = GetBitmapSourceThumb(Pics[id]),
+                    Stretch = Stretch.Fill,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                // Need to add border for background to pictures with transparent background
+                var border = new Border()
+                {
+                    Background = new SolidColorBrush(Properties.Settings.Default.BgColorWhite ? Colors.White : (Color)Application.Current.Resources["BackgroundColorBrush"])
+                };
+                border.Child = img;
+                grid.Children.Add(border);
 
-                //var da = new DoubleAnimation
-                //{
-                //    From = from,
-                //    To = to[0],
-                //    Duration = TimeSpan.FromSeconds(.3),
-                //    AccelerationRatio = 0.2,
-                //    DecelerationRatio = 0.4
-                //};
-
-                //var da0 = new DoubleAnimation
-                //{
-                //    From = from,
-                //    To = to[1],
-                //    Duration = TimeSpan.FromSeconds(.3),
-                //    AccelerationRatio = 0.2,
-                //    DecelerationRatio = 0.4
-                //};
-
-                //da.Completed += delegate
-                //{
-                //    ItemClick(this, new MyEventArgs(id, img.Source));
-                //    grid.Children.Remove(border);
-                //    Visibility = Visibility.Collapsed;
-                //    picGallery.open = false;
-                //};
-
-                //img.BeginAnimation(WidthProperty, da);
-                //img.BeginAnimation(HeightProperty, da0);
+                var from = PicGalleryItem.picGalleryItem_Size;
+                var to = new double[] { xWidth, xHeight };
+                var acceleration = 0.2;
+                var deceleration = 0.4;
+                var duration = TimeSpan.FromSeconds(.3);
 
                 var da = new DoubleAnimation
                 {
-                    From = 1,
-                    To = 0,
-                    Duration = TimeSpan.FromSeconds(.3),
-                    AccelerationRatio = 0.2,
-                    DecelerationRatio = 0.4
+                    From = from,
+                    To = to[0],
+                    Duration = duration,
+                    AccelerationRatio = acceleration,
+                    DecelerationRatio = deceleration
+                };
+
+                var da0 = new DoubleAnimation
+                {
+                    From = from,
+                    To = to[1],
+                    Duration = duration,
+                    AccelerationRatio = acceleration,
+                    DecelerationRatio = deceleration
                 };
 
                 da.Completed += delegate
                 {
-                    ItemClick(this, new MyEventArgs(id, null));
-                    Visibility = Visibility.Collapsed;
+                    ItemClick(this, new MyEventArgs(id, img.Source));
+                    grid.Children.Remove(border);
                     picGallery.open = false;
                 };
 
-                BeginAnimation(OpacityProperty, da);
+                border.BeginAnimation(WidthProperty, da);
+                border.BeginAnimation(HeightProperty, da0);
             }
             else
             {
-                ItemClick(this, new MyEventArgs(id, img));
+                if (Preloader.Contains(Pics[id]))
+                {
+                    ItemClick(this, new MyEventArgs(id, null));
+                }
+                else
+                {
+                    var z = Container.Children[id] as PicGalleryItem;
+                    PreviewItemClick(this, new MyEventArgs(id, z.img.Source));
+                    ItemClick(this, new MyEventArgs(id, null));
+                }
+
             }
 
             picGallery.open = false;

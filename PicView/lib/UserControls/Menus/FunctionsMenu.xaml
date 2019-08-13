@@ -5,9 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PicView.lib.UserControls.Menus"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Foreground="{StaticResource MainColorBrush}"
-    TextOptions.TextFormattingMode="Display"
-    TextOptions.TextRenderingMode="ClearType">
+    Foreground="{StaticResource MainColorBrush}">
     <StackPanel>
         <Border
             Width="390"

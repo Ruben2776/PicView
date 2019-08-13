@@ -41,6 +41,11 @@ namespace PicView.lib
             prog.SetProgressState(TaskbarProgressBarState.NoProgress);
         }
 
+        /// <summary>
+        ///  Only preload every second entry
+        ///  and determine if going backwards or forwards
+        /// </summary>
+        /// <returns></returns>
         internal static bool? PreloadDirection()
         {
             if (PreloadCount > 1 || freshStartup)
@@ -90,6 +95,16 @@ namespace PicView.lib
                 var bgBrush = Application.Current.Resources["WindowBackgroundColorBrush"] as System.Windows.Media.SolidColorBrush;
                 bgBrush.Color = AnimationHelper.GetPrefferedColorOver();
             }
+        }
+
+        internal static string Shorten(string name,int amount)
+        {
+            if (name.Length >= 25)
+            {
+                name = name.Substring(0, amount);
+                name += "...";
+            }
+            return name;
         }
      
 

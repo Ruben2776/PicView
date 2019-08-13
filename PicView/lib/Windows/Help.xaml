@@ -15,8 +15,6 @@
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
-    TextOptions.TextFormattingMode="Display"
-    TextOptions.TextRenderingMode="ClearType"
     WindowStartupLocation="CenterOwner"
     WindowStyle="None"
     mc:Ignorable="d">
@@ -161,7 +159,7 @@
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
                                 <Bold>F1</Bold>
-                                to show help window (this).</TextBlock>
+                                to show help window.</TextBlock>
                         </BulletDecorator>
 
                         <BulletDecorator Margin="7,2">
@@ -223,8 +221,8 @@
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
                                 <Bold>Ctrl</Bold>
-                                +<Bold>0</Bold>
-                                or<Bold>0</Bold>
+                                + <Bold>0</Bold>
+                                or <Bold>0</Bold>
                                 to open a file.</TextBlock>
                         </BulletDecorator>
                         <BulletDecorator Margin="7,2">
@@ -236,20 +234,8 @@
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
                                 <Bold>Ctrl</Bold>
-                                +<Bold>Shift</Bold>
-                                +<Bold>C</Bold>
-                                to copy bitmap image to clipboard.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Ctrl</Bold>
-                                +<Bold>C</Bold>
+                                + <Bold>Shift</Bold>
+                                + <Bold>C</Bold>
                                 to copy image to clipboard.</TextBlock>
                         </BulletDecorator>
                         <BulletDecorator Margin="7,2">
@@ -261,7 +247,19 @@
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
                                 <Bold>Ctrl</Bold>
-                                +<Bold>V</Bold>
+                                + <Bold>C</Bold>
+                                to copy image to clipboard.</TextBlock>
+                        </BulletDecorator>
+                        <BulletDecorator Margin="7,2">
+                            <BulletDecorator.Bullet>
+                                <Ellipse
+                                    Width="7"
+                                    Height="7"
+                                    Fill="{StaticResource MainColorBrush}" />
+                            </BulletDecorator.Bullet>
+                            <TextBlock Margin="5,0,0,0">
+                                <Bold>Ctrl</Bold>
+                                + <Bold>V</Bold>
                                 to paste image from clipboard.</TextBlock>
                         </BulletDecorator>
                         <BulletDecorator Margin="7,2">
@@ -273,7 +271,7 @@
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
                                 <Bold>Ctrl</Bold>
-                                +<Bold>S</Bold>
+                                + <Bold>S</Bold>
                                 to save image.</TextBlock>
                         </BulletDecorator>
                         <BulletDecorator Margin="7,2">
@@ -285,7 +283,7 @@
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
                                 <Bold>Ctrl</Bold>
-                                +<Bold>I</Bold>
+                                + <Bold>I</Bold>
                                 to show file details.</TextBlock>
                         </BulletDecorator>
                         <BulletDecorator Margin="7,2">
@@ -297,7 +295,7 @@
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
                                 <Bold>Ctrl</Bold>
-                                +<Bold>R</Bold>
+                                + <Bold>R</Bold>
                                 to reload.</TextBlock>
                         </BulletDecorator>
                         <BulletDecorator Margin="7,2">
@@ -309,7 +307,7 @@
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
                                 <Bold>Shift</Bold>
-                                +<Bold>Del</Bold>
+                                + <Bold>Del</Bold>
                                 to premanently delete image.</TextBlock>
                         </BulletDecorator>
                         <BulletDecorator Margin="7,2">

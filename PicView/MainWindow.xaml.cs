@@ -156,8 +156,8 @@ namespace PicView
 
             // keyboard and Mouse_Keys Keys
             //PreviewKeyDown += previewKeys;
-            KeyDown += MainWindow_KeyDown;
-            KeyUp += MainWindow_KeyUp;
+            KeyDown += KeysDown;
+            KeyUp += KeysUp;
             MouseDown += MainWindow_MouseDown;
 
             // Close Button
@@ -266,9 +266,17 @@ namespace PicView
                     return;
 
                 if (cc.Color == Colors.White)
+                {
                     imgBorder.Background = new SolidColorBrush(Colors.Transparent);
+                    Properties.Settings.Default.BgColorWhite = false;
+                }
+                    
                 else
+                {
                     imgBorder.Background = new SolidColorBrush(Colors.White);
+                    Properties.Settings.Default.BgColorWhite = true;
+                }
+                    
             };
 
             // FlipButton
@@ -392,14 +400,9 @@ namespace PicView
 
             //Keep position when size has changed
             if (size.HeightChanged)
-            {
                 Top += (size.PreviousSize.Height - size.NewSize.Height) / 2;
-            }
-
             if (size.WidthChanged)
-            {
                 Left += (size.PreviousSize.Width - size.NewSize.Width) / 2;
-            }
 
             // Move cursor after resize when the button has been pressed
             if (RightbuttonClicked)
@@ -512,13 +515,13 @@ namespace PicView
             Hide(); // Make it feel faster
 
             // Update user preference for white or transparent image border
-            if (imgBorder != null && bg != null)
-            {
-                var cc = imgBorder.Background as SolidColorBrush;
+            //if (imgBorder != null && bg != null)
+            //{
+            //    var cc = imgBorder.Background as SolidColorBrush;
 
-                if (cc.Color != Colors.White)
-                    Properties.Settings.Default.BgColorWhite = false;
-            }
+            //    if (cc.Color != Colors.White)
+            //        Properties.Settings.Default.BgColorWhite = false;
+            //}
 
             Properties.Settings.Default.Save();
             DeleteTempFiles();
@@ -781,6 +784,8 @@ namespace PicView
                 // Load new value manually
                 await Task.Run(() => pic = RenderToBitmapSource(Pics[x], Extension));
 
+                canNavigate = true;
+
                 // If pic is still null, image can't be rendered
                 if (pic == null)
                 {
@@ -788,6 +793,8 @@ namespace PicView
                     return;
                 }
             }
+
+            img.Source = pic;
 
             // Scroll to top if scroll enabled
             if (IsScrollEnabled)
@@ -800,20 +807,13 @@ namespace PicView
             // Fit image to new values
             ZoomFit(pic.PixelWidth, pic.PixelHeight);
 
-            // If gif, use XamlAnimatedGif to animate it
-            if (Extension == ".gif")
-                XamlAnimatedGif.AnimationBehavior.SetSourceUri(img, new Uri(Pics[x]));
-            else
-                img.Source = pic;
-
-            // Update values
+            // Update values          
             var titleString = TitleString(pic.PixelWidth, pic.PixelHeight, x);
             Title = titleString[0];
             Bar.Text = titleString[1];
             Bar.ToolTip = titleString[2];
 
             PicPath = Pics[x];
-            canNavigate = true;
             Progress(x, Pics.Count);
             FolderIndex = x;
             if (!freshStartup)
@@ -823,15 +823,12 @@ namespace PicView
             AjaxLoadingEnd();
 
             // Preload images \\
-            // Only preload every second entry
-            // and determine if going backwards or forwards
             var direction = PreloadDirection();
-
             if (direction.HasValue)
             {
                 await Task.Run(() =>
                 {
-                    Preloader.PreLoad(x, direction.Value);
+                    Preloader.PreLoad(x, reverse);
                     PreloadCount = 0;
 
                     if (x < Pics.Count)
@@ -855,6 +852,7 @@ namespace PicView
                 else
                     picGallery.ScrollTo(reverse);
             }
+
             freshStartup = false;
         }
 
@@ -1026,13 +1024,11 @@ namespace PicView
         private async void PicWeb(string path)
         {
             if (ajaxLoading.Opacity != 1)
-            {
                 AjaxLoadingStart();
-            }
-            var backUp = Bar.Text;
+
             Bar.Text = Loading;
 
-            BitmapSource pic = null;
+            BitmapSource pic;
             try
             {
                 pic = await LoadImageWebAsync(path);
@@ -1044,11 +1040,7 @@ namespace PicView
 
             if (pic == null)
             {
-                if (backUp == Loading)
-                {
-                    backUp = NoImage;
-                }
-                Bar.Text = backUp;
+                Reload(true);
                 ToolTipStyle("Unable to load image");
                 AjaxLoadingEnd();
                 return;
@@ -1205,62 +1197,48 @@ namespace PicView
             Bar.Text = "Unzipping...";
             do
             {
-                //try
-                //{
-                //    // If there are no pictures, but a folder when TempZipPath has a value,
-                //    // we should open the folder
-                //    var directory = Directory.GetDirectories(TempZipPath);
-                //    if (directory.Length > -1)
-                //        TempZipPath = directory[0];
+                var processed = false;
+                var getProcesses = Process.GetProcessesByName("7z");
+                if (getProcesses.Length > 0)
+                    processed = true;
 
-                //    Pics = FileList(TempZipPath);
-                //}
-                //catch (Exception) { }
+                getProcesses = Process.GetProcessesByName("Zip");
+                if (getProcesses.Length > 0)
+                    processed = true;
+
+                if (!processed)
+                {
+                    Reload(true);
+                    return false;
+                }
+
+                // Kill it if it's asking for password
+                if (!getProcesses[0].HasExited)
+                    if (getProcesses[0].Threads[0].ThreadState == System.Diagnostics.ThreadState.Wait)
+                    {
+                        ToolTipStyle("Password protected archive not supported");
+                        Reload(true);
+                        getProcesses[0].Kill();
+                        return false;
+                    }
 
                 if (count > 3)
                 {
-                    var processed = false;
-                    var getProcesses = Process.GetProcessesByName("7z");
-                    if (getProcesses.Length > 0)
-                        processed = true;
-
-                    getProcesses = Process.GetProcessesByName("Zip");
-                    if (getProcesses.Length > 0)
-                        processed = true;
-
-                    if (!processed)
-                    {
-                        Reload(true);
-                        return false;
-                    }
-
-                    if (getProcesses.Length == 0)
-                    {
-                        Reload(true);
-                        return false;
-                    }
-
-                    // Kill it if it's asking for password
-                    if (!getProcesses[0].HasExited)
-                        if (getProcesses[0].Threads[0].ThreadState == System.Diagnostics.ThreadState.Wait)
-                        {
-                            Reload(true);
-                            ToolTipStyle("Password protected archive not supported");
-                            getProcesses[0].Kill();
-                            return false;
-                        }
+                    Reload(true);
+                    return false;
                 }
                 switch (count)
                 {
                     case 0:
+                        await Task.Delay(400);
                         break;
 
                     case 1:
-                        await Task.Delay(100);
+                        await Task.Delay(600);
                         break;
 
                     case 2:
-                        await Task.Delay(500);
+                        await Task.Delay(750);
                         break;
 
                     default:
@@ -1284,9 +1262,7 @@ namespace PicView
             PreloadCount = 0;
 
             if (Properties.Settings.Default.PicGallery > 0)
-            {
                 picGallery.Clear();
-            }
         }
 
         /// <summary>
@@ -1631,7 +1607,7 @@ namespace PicView
 
         #region Keyboard & Mouse Shortcuts
 
-        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+        private void KeysDown(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
@@ -1786,7 +1762,7 @@ namespace PicView
             }
         }
 
-        private void MainWindow_KeyUp(object sender, KeyEventArgs e)
+        private void KeysUp(object sender, KeyEventArgs e)
         {
             // FastPicUpdate()
             if (e.Key == Key.Left || e.Key == Key.A || e.Key == Key.Right || e.Key == Key.D)
@@ -2451,20 +2427,10 @@ namespace PicView
 
             // Update TitleBar width to fit new size
             var interfaceSize = 220; // logo and buttons width + extra padding
-            if (Properties.Settings.Default.ShowInterface)
-            {
-                if (xWidth - interfaceSize < interfaceSize)
-                    Bar.MaxWidth = interfaceSize;
-                else
-                    Bar.MaxWidth = xWidth - interfaceSize;
-            }
+            if (xWidth - interfaceSize < interfaceSize)
+                Bar.MaxWidth = interfaceSize;
             else
-            {
-                if (MonitorInfo.Width - interfaceSize < interfaceSize)
-                    Bar.MaxWidth = interfaceSize;
-                else
-                    Bar.MaxWidth = Width - interfaceSize;
-            }
+                Bar.MaxWidth = xWidth - interfaceSize;
 
             // Loses position gradually if not forced to center
             CenterWindowOnScreen();
@@ -3532,18 +3498,14 @@ namespace PicView
             if (Properties.Settings.Default.PicGallery == 1)
             {
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.5) };
-                if (!show)
+                if (show)
                 {
-                    da.To = 0;
-                    da.Completed += delegate
-                    {
-                        picGallery.Visibility = Visibility.Collapsed;
-                        picGallery.open = false;
-                    };
-                }
-                else
-                {
+                    da.To = 1;
+                    da.From = 0;
+
+                    picGallery.open = true;
                     picGallery.LoadLayout();
+                    picGallery.ScrollTo();
 
                     if (Application.Current.Windows.OfType<FakeWindow>().Any())
                     {
@@ -3553,14 +3515,19 @@ namespace PicView
                         if (!bg.Children.Contains(picGallery))
                             bg.Children.Add(picGallery);
                     }
-
-                    da.To = 1;
-                    picGallery.open = true;
-                    picGallery.ScrollTo();
+                }
+                else
+                {
+                    da.To = 0;
+                    da.From = 1;
+                    da.Completed += delegate
+                    {
+                        picGallery.Visibility = Visibility.Collapsed;
+                        picGallery.open = false;
+                    };
                 }
 
-                if (picGallery != null)
-                    picGallery.BeginAnimation(OpacityProperty, da);
+                picGallery.BeginAnimation(OpacityProperty, da);
             }
 
             else if (Properties.Settings.Default.PicGallery == 2)
@@ -3629,6 +3596,9 @@ namespace PicView
             Bar.Text = Loading;
             Pic(e.GetId());
 
+            if (Properties.Settings.Default.PicGallery == 1)
+                picGallery.Visibility = Visibility.Collapsed;
+
             /// Fix annoying bug
             ajaxLoading.Opacity = 0;
         }
@@ -3686,7 +3656,6 @@ namespace PicView
         /// <param name="show"></param>
         private async void FadeControlsAsync(bool show)
         {
-            // Hide/show Scrollbar
             var fadeTo = show ? 1 : 0;
 
             await Application.Current.Dispatcher.BeginInvoke((Action)(() =>
@@ -4330,7 +4299,9 @@ namespace PicView
 
                     // Change values
                     var menuItem = (MenuItem)RecentFilesMenuItem.Items[i];
-                    menuItem.Header = Path.GetFileName(item);
+                    var header = Path.GetFileName(item);
+                    header = header.Length > 30 ? Shorten(header, 30) : header;
+                    menuItem.Header = header;
                     menuItem.ToolTip = item;
                 }
                 return;
@@ -4343,10 +4314,12 @@ namespace PicView
                 if (i != 0 && fileNames[i - 1] == item)
                     continue;
 
+                var header = Path.GetFileName(item);
+                header = header.Length > 30 ? Shorten(header, 30) : header;
                 // Add items
                 var menuItem = new MenuItem()
                 {
-                    Header = Path.GetFileName(item),
+                    Header = header,
                     ToolTip = item
                 };
                 // Set tooltip as argument to avoid subscribing and unsubscribing to events
@@ -4378,23 +4351,20 @@ namespace PicView
             {
                 var paths = new System.Collections.Specialized.StringCollection { PicPath };
                 Clipboard.SetFileDropList(paths);
+                ToolTipStyle(FileCopy);
             }
-            ToolTipStyle(FileCopy);
         }
 
         private void CopyBitmap()
         {
             if (Preloader.Contains(PicPath))
-            {
                 Clipboard.SetImage(Preloader.Load(PicPath));
-            }
             else if (img.Source != null)
-            {
                 Clipboard.SetImage((BitmapSource)img.Source);
-            }
             else
                 return;
-            ToolTipStyle(ImageCopy);
+
+            ToolTipStyle("Copied Image to clipboard");
         }
 
         /// <summary>
@@ -4560,11 +4530,7 @@ namespace PicView
                 var filename = Path.GetFileName(file);
                 Pics.Remove(filename);
 
-                if (filename.Length >= 25)
-                {
-                    filename = filename.Substring(0, 21);
-                    filename += "...";
-                }
+                filename = filename.Length >= 25 ? Shorten(filename, 21) : filename;
                 ToolTipStyle(Recyclebin ? "Sent " + filename + " to the recyle bin" : "Deleted " + filename);
 
                 if (reverse)

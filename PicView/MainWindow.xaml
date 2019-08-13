@@ -10,8 +10,6 @@
     Icon="lib/img/reflex-icon.png"
     SizeToContent="WidthAndHeight"
     Style="{DynamicResource MyWindowStyle}"
-    TextOptions.TextFormattingMode="Display"
-    TextOptions.TextRenderingMode="ClearType"
     WindowStartupLocation="CenterScreen">
     <DockPanel LastChildFill="True">
         <DockPanel
@@ -130,10 +128,9 @@
             </Button>
             <TextBlock
                 x:Name="Bar"
-                HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Background="{x:Null}"
-                FontFamily="Proxima Nova Alt Th"
+                FontFamily="/PicView;component/lib/fonts/#Aller"
                 FontSize="15"
                 FontWeight="Bold"
                 Foreground="{StaticResource MainColorBrush}"

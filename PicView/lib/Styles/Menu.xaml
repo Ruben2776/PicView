@@ -120,7 +120,7 @@
     </Style>
 
     <!--  ScrollViewer for a MenuItem  -->
-    <Style
+    <!--<Style
         x:Key="MenuScrollViewer"
         BasedOn="{x:Null}"
         TargetType="{x:Type ScrollViewer}">
@@ -128,8 +128,8 @@
         <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="Template">
             <Setter.Value>
-                <!--<SnippetMenuScrollViewer>-->
-                <!--  ScrollViewer for a MenuItem  -->
+                --><!--<SnippetMenuScrollViewer>-->
+                <!--  ScrollViewer for a MenuItem  --><!--
                 <ControlTemplate TargetType="{x:Type ScrollViewer}">
                     <Grid SnapsToDevicePixels="True">
                         <Grid.ColumnDefinitions>
@@ -185,10 +185,10 @@
                         </RepeatButton>
                     </Grid>
                 </ControlTemplate>
-                <!--</SnippetMenuScrollViewer>-->
+                --><!--</SnippetMenuScrollViewer>--><!--
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 
     <!--<SnippetMenuItem>-->
     <!--<Seperator>-->
@@ -418,12 +418,7 @@
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1"
                         SnapsToDevicePixels="True">
-                        <ScrollViewer
-                            CanContentScroll="True"
-                            Foreground="{StaticResource MainColorBrush}"
-                            Style="{StaticResource MenuScrollViewer}">
-                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
-                        </ScrollViewer>
+                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
                     </Border>
                 </Popup>
             </Grid>

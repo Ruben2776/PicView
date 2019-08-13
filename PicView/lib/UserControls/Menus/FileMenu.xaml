@@ -2,9 +2,7 @@
     x:Class="PicView.lib.UserControls.FileMenu"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Foreground="{StaticResource MainColorBrush}"
-    TextOptions.TextFormattingMode="Display"
-    TextOptions.TextRenderingMode="ClearType">
+    Foreground="{StaticResource MainColorBrush}">
     <StackPanel>
         <Border
             Width="292"

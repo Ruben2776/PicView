@@ -10,9 +10,7 @@
     Foreground="{StaticResource MainColorBrush}"
     Icon="/lib/img/reflex-icon.png"
     SizeToContent="WidthAndHeight"
-    Style="{DynamicResource MyWindowStyle}"
-    TextOptions.TextFormattingMode="Display"
-    TextOptions.TextRenderingMode="ClearType">
+    Style="{DynamicResource MyWindowStyle}">
 
     <DockPanel LastChildFill="True">
         <DockPanel
