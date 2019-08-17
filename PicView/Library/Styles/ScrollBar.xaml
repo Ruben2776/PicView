@@ -1,0 +1,291 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:system="clr-namespace:System;assembly=mscorlib">
+    <!--  Resource dictionary entries should be defined here.  -->
+
+    <Style x:Key="VerticalScrollBarThumbStyle" TargetType="{x:Type Thumb}">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="MinHeight" Value="50" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Thumb}">
+                    <Rectangle
+                        Name="ellipse"
+                        Width="17"
+                        Fill="WhiteSmoke" />
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter TargetName="ellipse" Property="Fill" Value="{StaticResource ChosenColorBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsDragging" Value="True">
+                            <Setter TargetName="ellipse" Property="Fill" Value="{StaticResource ChosenColorBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="HorizontalScrollBarThumbStyle" TargetType="{x:Type Thumb}">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Margin" Value="2,1" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Thumb}">
+                    <Rectangle
+                        Name="ellipse"
+                        Height="15"
+                        Fill="#D8FFFFFF"
+                        RadiusX="3.5"
+                        RadiusY="3.5" />
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter TargetName="ellipse" Property="Fill" Value="{StaticResource ChosenColorBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsDragging" Value="True">
+                            <Setter TargetName="ellipse" Property="Fill" Value="{StaticResource ChosenColorBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="LineButtonUpStyle" TargetType="{x:Type RepeatButton}">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                    <Grid
+                        Width="15"
+                        Height="21"
+                        Margin="0,0,0,1">
+                        <Grid.Background>
+                            <ImageBrush
+                                ImageSource="/PicView;component/Library/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
+                                TileMode="FlipXY"
+                                Viewport="0,0,100,100"
+                                ViewportUnits="Absolute" />
+                        </Grid.Background>
+                        <Path
+                            Name="Path"
+                            Width="13"
+                            Height="13"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Data="M413.1,327.3l-1.8-2.1l-136-156.5c-4.6-5.3-11.5-8.6-19.2-8.6c-7.7,0-14.6,3.4-19.2,8.6L101,324.9l-2.3,2.6  C97,330,96,333,96,336.2c0,8.7,7.4,15.8,16.6,15.8v0h286.8v0c9.2,0,16.6-7.1,16.6-15.8C416,332.9,414.9,329.8,413.1,327.3z"
+                            Fill="WhiteSmoke"
+                            Stretch="Fill" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter TargetName="Path" Property="Fill" Value="{StaticResource ChosenColorBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter TargetName="Path" Property="Fill" Value="{StaticResource ChosenColorBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="LineButtonDownStyle" TargetType="{x:Type RepeatButton}">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                    <Grid
+                        Width="15"
+                        Height="21"
+                        Margin="0,0,0,0">
+                        <Path
+                            Name="Path"
+                            Width="13"
+                            Height="13"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Data="M98.9,184.7l1.8,2.1l136,156.5c4.6,5.3,11.5,8.6,19.2,8.6c7.7,0,14.6-3.4,19.2-8.6L411,187.1l2.3-2.6  c1.7-2.5,2.7-5.5,2.7-8.7c0-8.7-7.4-15.8-16.6-15.8v0H112.6v0c-9.2,0-16.6,7.1-16.6,15.8C96,179.1,97.1,182.2,98.9,184.7z"
+                            Fill="WhiteSmoke"
+                            Stretch="Fill" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter TargetName="Path" Property="Fill" Value="{StaticResource ChosenColorBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter TargetName="Path" Property="Fill" Value="{StaticResource ChosenColorBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="LineButtonLeftStyle" TargetType="{x:Type RepeatButton}">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                    <Grid Width="10.9" Margin="3,2,5,2">
+                        <Path
+                            Name="Path"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Data="M0.199,10.79l9.646,9.646c0.13,0.133,0.302,0.197,0.471,0.197c0.173,0,0.344-0.064,0.473-0.197l0.013-0.011  C10.929,20.305,11,20.132,11,19.952v-4.68c0-0.182-0.07-0.347-0.198-0.475L6.323,10.32l4.479-4.483C10.929,5.714,11,5.543,11,5.364  V0.682c0-0.176-0.07-0.345-0.198-0.474l-0.013-0.012C10.667,0.071,10.497,0,10.316,0C10.143,0,9.97,0.071,9.845,0.196L0.199,9.845  C-0.066,10.104-0.066,10.532,0.199,10.79z"
+                            Fill="{StaticResource MainColorBrush}"
+                            Stretch="None" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter TargetName="Path" Property="Fill" Value="{StaticResource MainColorBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter TargetName="Path" Property="Fill" Value="{StaticResource MainColorBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="LineButtonRightStyle" TargetType="{x:Type RepeatButton}">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                    <Grid Width="11" Margin="5,2,3,2">
+                        <Path
+                            Name="Path"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Data="M10.804,9.844L1.154,0.195C1.025,0.064,0.857,0,0.683,0C0.512,0,0.34,0.064,0.21,0.195L0.197,0.207  C0.071,0.334,0,0.506,0,0.682v4.682c0,0.178,0.071,0.348,0.197,0.471l4.481,4.482l-4.481,4.479C0.071,14.922,0,15.09,0,15.271v4.68  c0,0.18,0.071,0.354,0.197,0.475l0.013,0.01c0.124,0.127,0.294,0.197,0.473,0.197s0.348-0.07,0.474-0.197l9.647-9.646  C11.064,10.531,11.064,10.104,10.804,9.844z"
+                            Fill="{StaticResource MainColorBrush}"
+                            Stretch="None" />
+
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter TargetName="Path" Property="Fill" Value="{StaticResource MainColorBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter TargetName="Path" Property="Fill" Value="{StaticResource MainColorBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ScrollBarPageButtonStyle" TargetType="{x:Type RepeatButton}">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                    <Border Background="Transparent" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <ControlTemplate x:Key="VerticalScrollBar" TargetType="{x:Type ScrollBar}">
+        <Border
+            Background="#D8141414"
+            BorderBrush="{StaticResource BorderBrush}"
+            BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition MaxHeight="35" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition MaxHeight="35" />
+                </Grid.RowDefinitions>
+                <RepeatButton
+                    Grid.Row="0"
+                    Height="35"
+                    Command="ScrollBar.LineUpCommand"
+                    Style="{StaticResource LineButtonUpStyle}" />
+
+                <Track
+                    Name="PART_Track"
+                    Grid.Row="1"
+                    IsDirectionReversed="True">
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Command="ScrollBar.PageUpCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb Style="{StaticResource VerticalScrollBarThumbStyle}" />
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Command="ScrollBar.PageDownCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
+                    </Track.IncreaseRepeatButton>
+                </Track>
+
+                <RepeatButton
+                    Grid.Row="2"
+                    Height="35"
+                    Command="ScrollBar.LineDownCommand"
+                    Style="{StaticResource LineButtonDownStyle}" />
+            </Grid>
+        </Border>
+    </ControlTemplate>
+    <ControlTemplate x:Key="HorizontalScrollBar" TargetType="{x:Type ScrollBar}">
+        <Border
+            Background="#D8141414"
+            BorderBrush="{StaticResource BorderBrush}"
+            BorderThickness="0,1,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MaxWidth="18" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition MaxWidth="18" />
+                </Grid.ColumnDefinitions>
+                <RepeatButton
+                Grid.Column="0"
+                Width="18"
+                Command="ScrollBar.LineLeftCommand"
+                Style="{StaticResource LineButtonLeftStyle}" />
+
+                <Track
+                Name="PART_Track"
+                Grid.Column="1"
+                IsDirectionReversed="False">
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Command="ScrollBar.PageLeftCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb Style="{StaticResource HorizontalScrollBarThumbStyle}" />
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Command="ScrollBar.PageRightCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
+                    </Track.IncreaseRepeatButton>
+                    <Track.Resources>
+                        <!--  Thumb's minimum height is half of this metric  -->
+                        <system:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarButtonWidthKey}">
+                            90
+                        </system:Double>
+                    </Track.Resources>
+                </Track>
+                <RepeatButton
+                Grid.Column="2"
+                Width="18"
+                Command="ScrollBar.LineRightCommand"
+                Style="{StaticResource LineButtonRightStyle}" />
+            </Grid>
+        </Border>
+    </ControlTemplate>
+    <Style TargetType="{x:Type ScrollBar}">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Style.Triggers>
+            <Trigger Property="Orientation" Value="Vertical">
+                <Setter Property="Width" Value="17" />
+                <Setter Property="Height" Value="Auto" />
+                <Setter Property="MinHeight" Value="25" />
+                <Setter Property="Template" Value="{StaticResource VerticalScrollBar}" />
+            </Trigger>
+            <Trigger Property="Orientation" Value="Horizontal">
+                <Setter Property="Width" Value="Auto" />
+                <Setter Property="Height" Value="30" />
+                <Setter Property="Template" Value="{StaticResource HorizontalScrollBar}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

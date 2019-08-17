@@ -1,0 +1,180 @@
+﻿<UserControl
+    x:Class="PicView.UserControls.ImageSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:PicView.UserControls">
+    <StackPanel>
+        <Border
+            Width="292"
+            Height="217"
+            Background="{DynamicResource BackgroundColorBrush}"
+            BorderBrush="{StaticResource BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="2">
+            <Grid>
+                <Canvas Height="51" VerticalAlignment="Top">
+                    <Rectangle
+                        Canvas.Top="50"
+                        Width="290"
+                        Panel.ZIndex="1"
+                        Stroke="{StaticResource BorderBrush}"
+                        StrokeThickness="1" />
+                    <Rectangle
+                        Canvas.Left="238"
+                        Width="1"
+                        Height="51"
+                        Panel.ZIndex="1"
+                        Stroke="{StaticResource BorderBrush}"
+                        StrokeThickness="1" />
+                    <Rectangle
+                        Canvas.Left="187"
+                        Width="1"
+                        Height="51"
+                        Panel.ZIndex="1"
+                        Stroke="{DynamicResource BorderBrush}"
+                        StrokeThickness="1" />
+                    <TextBlock
+                        x:Name="bar"
+                        Width="188"
+                        Height="51"
+                        Padding="21,15,0,0"
+                        FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros"
+                        FontSize="16"
+                        FontWeight="Bold"
+                        Foreground="{StaticResource MainColorBrush}"
+                        Text="Rotate and flip" />
+
+                    <CheckBox
+                        x:Name="FlipButton"
+                        Canvas.Left="188"
+                        Width="51"
+                        Height="51"
+                        BorderBrush="{x:Null}"
+                        FontWeight="Bold"
+                        Foreground="{x:Null}"
+                        ToolTip="Flip image">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="FlipButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </CheckBox.Background>
+                        <CheckBox.Content>
+                            <Path
+                                x:Name="FlipPath"
+                                Canvas.Top="19"
+                                Width="13"
+                                Height="13"
+                                Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
+                                Fill="{StaticResource MainColorBrush}"
+                                Stretch="Fill" />
+                        </CheckBox.Content>
+                    </CheckBox>
+
+                    <Button
+                        x:Name="CloseButton"
+                        Canvas.Left="239"
+                        Width="51"
+                        Height="51"
+                        BorderThickness="0"
+                        FocusVisualStyle="{x:Null}"
+                        ToolTip="Close">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="CloseButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Button.Background>
+                        <Path
+                            Width="10"
+                            Height="10"
+                            Data="M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z"
+                            Fill="{StaticResource MainColorBrush}"
+                            SnapsToDevicePixels="True"
+                            Stretch="Fill" />
+                    </Button>
+                </Canvas>
+
+                <Canvas
+                    Width="290"
+                    Height="165"
+                    Margin="0,51,0,0"
+                    VerticalAlignment="Top">
+                    <Border
+                        x:Name="Rotation0Border"
+                        Canvas.Left="14"
+                        Canvas.Top="7"
+                        Style="{StaticResource SexyBorder}">
+                        <RadioButton
+                            x:Name="Rotation0Button"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="0°"
+                            FontWeight="Bold"
+                            IsChecked="True"
+                            Style="{StaticResource MetroAlphaFlatRadioButton}" />
+                        <Border.Background>
+                            <SolidColorBrush x:Name="Rotation0BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Border.Background>
+                    </Border>
+                    <Border
+                        x:Name="Rotation90Border"
+                        Canvas.Left="150"
+                        Canvas.Top="7"
+                        Style="{StaticResource SexyBorder}">
+                        <RadioButton
+                            x:Name="Rotation90Button"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="90°"
+                            FontWeight="Bold"
+                            Style="{StaticResource MetroAlphaFlatRadioButton}" />
+                        <Border.Background>
+                            <SolidColorBrush x:Name="Rotation90BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Border.Background>
+                    </Border>
+
+                    <Border
+                        x:Name="Rotation180Border"
+                        Canvas.Left="150"
+                        Canvas.Top="82"
+                        Style="{StaticResource SexyBorder}">
+                        <RadioButton
+                            x:Name="Rotation180Button"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="180°"
+                            FontWeight="Bold"
+                            Style="{StaticResource MetroAlphaFlatRadioButton}" />
+                        <Border.Background>
+                            <SolidColorBrush x:Name="Rotation180BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Border.Background>
+                    </Border>
+                    <Border
+                        x:Name="Rotation270Border"
+                        Canvas.Left="14"
+                        Canvas.Top="82"
+                        Style="{StaticResource SexyBorder}">
+                        <RadioButton
+                            x:Name="Rotation270Button"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="270°"
+                            FontWeight="Bold"
+                            Style="{StaticResource MetroAlphaFlatRadioButton}" />
+                        <Border.Background>
+                            <SolidColorBrush x:Name="Rotation270BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Border.Background>
+                    </Border>
+                </Canvas>
+
+            </Grid>
+        </Border>
+        <Rectangle
+            Width="22"
+            Height="2"
+            Margin="54,-2,0,0"
+            HorizontalAlignment="Left"
+            Fill="{StaticResource BackgroundColorBrush}" />
+        <Polygon
+            Margin="50,-7,0,0"
+            Panel.ZIndex="-1"
+            Fill="{StaticResource BackgroundColorBrush}"
+            Points="0,0 15,30, 30,0"
+            Stroke="{StaticResource BorderBrush}" />
+    </StackPanel>
+</UserControl>

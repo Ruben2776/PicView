@@ -47,7 +47,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>
     </DocumentationFile>
-    <LangVersion>6</LangVersion>
+    <LangVersion>7.0</LangVersion>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -59,7 +59,7 @@
     </DefineConstants>
     <ErrorReport>none</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>6</LangVersion>
+    <LangVersion>7.0</LangVersion>
     <DocumentationFile>
     </DocumentationFile>
     <FileAlignment>1024</FileAlignment>
@@ -87,7 +87,7 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>lib\img\Brainleaf-Dark-Blog-Reflex.ico</ApplicationIcon>
+    <ApplicationIcon>Library\img\Brainleaf-Dark-Blog-Reflex.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -97,8 +97,14 @@
       <HintPath>..\packages\Magick.NET-Q16-HDRI-x64.7.14.2\lib\net40\Magick.NET-Q16-HDRI-x64.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Microsoft.WindowsAPICodePack.Shell">
-      <HintPath>..\..\..\..\gDrive\Programming Projects\PicView\PicView\PicView\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.3.3, Culture=neutral, PublicKeyToken=8985beaab7ea3f04, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft-WindowsAPICodePack-Core.1.1.3.3\lib\net452\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.3.3, Culture=neutral, PublicKeyToken=8985beaab7ea3f04, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft-WindowsAPICodePack-Shell.1.1.3.3\lib\net452\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions, Version=1.1.3.3, Culture=neutral, PublicKeyToken=8985beaab7ea3f04, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft-WindowsAPICodePack-ShellExtensions.1.1.3.3\lib\net452\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -121,170 +127,184 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Drag and Drop\DragAndDrop.cs" />
+    <Compile Include="Error Handling\Error_Handling.cs" />
+    <Compile Include="File Logic\Copy_Paste.cs" />
+    <Compile Include="File Logic\DeleteFiles.cs" />
+    <Compile Include="File Logic\FileLists.cs" />
+    <Compile Include="File Logic\Open_Save.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="lib\ArchiveExtraction.cs" />
-    <Compile Include="lib\FileAssociation.cs" />
-    <Compile Include="lib\FileFunctions.cs" />
-    <Compile Include="lib\MonitorSize.cs" />
-    <Compile Include="lib\NativeMethods.cs" />
-    <Compile Include="lib\RecentFiles.cs" />
-    <Compile Include="lib\UserControls\CustomControls\AutoScrollSign.xaml.cs">
+    <Compile Include="File Logic\ArchiveExtraction.cs" />
+    <Compile Include="File Logic\FileAssociation.cs" />
+    <Compile Include="File Logic\FileFunctions.cs" />
+    <Compile Include="Image Logic\Navigation.cs" />
+    <Compile Include="Image Logic\Resize_and_Zoom.cs" />
+    <Compile Include="Image Logic\Rotate_and_Flip.cs" />
+    <Compile Include="Image Logic\SlideShow.cs" />
+    <Compile Include="Interface Logic\ContextMenus.cs" />
+    <Compile Include="Interface Logic\Interface.cs" />
+    <Compile Include="Interface Logic\PicGallery.cs" />
+    <Compile Include="Screen-Logic\MonitorSize.cs" />
+    <Compile Include="Native\NativeMethods.cs" />
+    <Compile Include="File Logic\RecentFiles.cs" />
+    <Compile Include="Shortcuts\Shortcuts.cs" />
+    <Compile Include="UserControls\CustomControls\AutoScrollSign.xaml.cs">
       <DependentUpon>AutoScrollSign.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\CustomControls\Minus.xaml.cs">
+    <Compile Include="UserControls\CustomControls\Minus.xaml.cs">
       <DependentUpon>Minus.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\CustomControls\PicGallery.xaml.cs">
+    <Compile Include="UserControls\CustomControls\PicGallery.xaml.cs">
       <DependentUpon>PicGallery.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\CustomControls\PicGalleryItem.xaml.cs">
+    <Compile Include="UserControls\CustomControls\PicGalleryItem.xaml.cs">
       <DependentUpon>PicGalleryItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\Menus\FunctionsMenu.xaml.cs">
+    <Compile Include="UserControls\Menus\FunctionsMenu.xaml.cs">
       <DependentUpon>FunctionsMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\Windows\AllSettings.xaml.cs">
+    <Compile Include="Windows\AllSettings.xaml.cs">
       <DependentUpon>AllSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\Variables.cs" />
-    <Compile Include="lib\Windows\FakeWindow.xaml.cs">
+    <Compile Include="Helpers\Variables.cs" />
+    <Compile Include="Windows\FakeWindow.xaml.cs">
       <DependentUpon>FakeWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\Windows\Help.xaml.cs">
+    <Compile Include="Windows\Help.xaml.cs">
       <DependentUpon>Help.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\Windows\About.xaml.cs">
+    <Compile Include="Windows\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
-    <Page Include="lib\Styles\Backgrounds.xaml">
+    <Page Include="Library\Styles\Backgrounds.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\Styles\Colors.xaml">
+    <Page Include="Library\Styles\Colors.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\Styles\Border.xaml">
+    <Page Include="Library\Styles\Border.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\Styles\Button.xaml">
+    <Page Include="Library\Styles\Button.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\Styles\FlatSlider.xaml">
+    <Page Include="Library\Styles\FlatSlider.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\Styles\Label.xaml">
+    <Page Include="Library\Styles\Label.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\Styles\ListBox.xaml">
+    <Page Include="Library\Styles\ListBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\Styles\ListView.xaml">
+    <Page Include="Library\Styles\ListView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\Styles\Menu.xaml">
+    <Page Include="Library\Styles\Menu.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\Styles\ProgressBar.xaml">
+    <Page Include="Library\Styles\ProgressBar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\Styles\RadioButton.xaml">
+    <Page Include="Library\Styles\RadioButton.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\Styles\ScrollBar.xaml">
+    <Page Include="Library\Styles\ScrollBar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\Styles\Separator.xaml">
+    <Page Include="Library\Styles\Separator.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\Styles\Slider.xaml">
+    <Page Include="Library\Styles\Slider.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\Styles\TabControl.xaml">
+    <Page Include="Library\Styles\TabControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\Styles\ToggleButton.xaml">
+    <Page Include="Library\Styles\ToggleButton.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\Styles\ToolTip.xaml">
+    <Page Include="Library\Styles\ToolTip.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\UserControls\CustomControls\AutoScrollSign.xaml">
+    <Page Include="UserControls\CustomControls\AutoScrollSign.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\CustomControls\Minus.xaml">
+    <Page Include="UserControls\CustomControls\Minus.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\UserControls\CustomControls\PicGallery.xaml">
+    <Page Include="UserControls\CustomControls\PicGallery.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\CustomControls\PicGalleryItem.xaml">
+    <Page Include="UserControls\CustomControls\PicGalleryItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\Menus\FunctionsMenu.xaml">
+    <Page Include="UserControls\Menus\FunctionsMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\Windows\AllSettings.xaml">
+    <Page Include="Windows\AllSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\Windows\FakeWindow.xaml">
+    <Page Include="Windows\FakeWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\Windows\Help.xaml">
+    <Page Include="Windows\Help.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="lib\UserControls\CustomControls\AjaxLoading.xaml">
+    <Page Include="UserControls\CustomControls\AjaxLoading.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\Menus\ImageSettings.xaml">
+    <Page Include="UserControls\Menus\ImageSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\Menus\FileMenu.xaml">
+    <Page Include="UserControls\Menus\FileMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\Menus\QuickSettingsMenu.xaml">
+    <Page Include="UserControls\Menus\QuickSettingsMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\CustomControls\ClickArrow.xaml">
+    <Page Include="UserControls\CustomControls\ClickArrow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\CustomControls\SexyToolTip.xaml">
+    <Page Include="UserControls\CustomControls\SexyToolTip.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\UserControls\CustomControls\X2.xaml">
+    <Page Include="UserControls\CustomControls\X2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="lib\Windows\Tools.xaml">
+    <Page Include="Windows\Tools.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -296,40 +316,40 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="lib\AnimationHelper.cs" />
-    <Compile Include="lib\Helper.cs" />
-    <Compile Include="lib\ImageManager.cs" />
-    <Compile Include="lib\Preloader.cs" />
-    <Compile Include="lib\UserControls\CustomControls\AjaxLoading.xaml.cs">
+    <Compile Include="Helpers\AnimationHelper.cs" />
+    <Compile Include="Helpers\Helper.cs" />
+    <Compile Include="Image Logic\ImageManager.cs" />
+    <Compile Include="Loading\Preloader.cs" />
+    <Compile Include="UserControls\CustomControls\AjaxLoading.xaml.cs">
       <DependentUpon>AjaxLoading.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\Menus\ImageSettings.xaml.cs">
+    <Compile Include="UserControls\Menus\ImageSettings.xaml.cs">
       <DependentUpon>ImageSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\Menus\FileMenu.xaml.cs">
+    <Compile Include="UserControls\Menus\FileMenu.xaml.cs">
       <DependentUpon>FileMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\Menus\QuickSettingsMenu.xaml.cs">
+    <Compile Include="UserControls\Menus\QuickSettingsMenu.xaml.cs">
       <DependentUpon>QuickSettingsMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\CustomControls\ClickArrow.xaml.cs">
+    <Compile Include="UserControls\CustomControls\ClickArrow.xaml.cs">
       <DependentUpon>ClickArrow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\CustomControls\SexyToolTip.xaml.cs">
+    <Compile Include="UserControls\CustomControls\SexyToolTip.xaml.cs">
       <DependentUpon>SexyToolTip.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\UserControls\CustomControls\X2.xaml.cs">
+    <Compile Include="UserControls\CustomControls\X2.xaml.cs">
       <DependentUpon>X2.xaml</DependentUpon>
     </Compile>
-    <Compile Include="lib\Wallpaper.cs" />
-    <Compile Include="lib\Windows\Tools.xaml.cs">
+    <Compile Include="File Logic\Wallpaper.cs" />
+    <Compile Include="Windows\Tools.xaml.cs">
       <DependentUpon>Tools.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="lib\Windows\About.xaml">
+    <Page Include="Windows\About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -352,16 +372,16 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Resource Include="lib\fonts\Aller_Rg.ttf" />
-    <Resource Include="lib\fonts\Aller_Bd.ttf" />
-    <Resource Include="lib\fonts\Aller_BdIt.ttf" />
-    <Resource Include="lib\fonts\Aller_It.ttf" />
-    <Resource Include="lib\fonts\Aller_Lt.ttf" />
-    <Resource Include="lib\fonts\Aller_LtIt.ttf" />
-    <Resource Include="lib\fonts\texgyreheros-bold.otf" />
-    <Resource Include="lib\fonts\texgyreheros-bolditalic.otf" />
-    <Resource Include="lib\fonts\texgyreheros-italic.otf" />
-    <Resource Include="lib\fonts\texgyreheros-regular.otf" />
+    <Resource Include="Library\fonts\Aller_Rg.ttf" />
+    <Resource Include="Library\fonts\Aller_Bd.ttf" />
+    <Resource Include="Library\fonts\Aller_BdIt.ttf" />
+    <Resource Include="Library\fonts\Aller_It.ttf" />
+    <Resource Include="Library\fonts\Aller_Lt.ttf" />
+    <Resource Include="Library\fonts\Aller_LtIt.ttf" />
+    <Resource Include="Library\fonts\texgyreheros-bold.otf" />
+    <Resource Include="Library\fonts\texgyreheros-bolditalic.otf" />
+    <Resource Include="Library\fonts\texgyreheros-italic.otf" />
+    <Resource Include="Library\fonts\texgyreheros-regular.otf" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -395,16 +415,10 @@
     <Content Include="dcraw.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="lib\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
-    <Resource Include="lib\img\noisy-texture-200x200-o4-d30-c-101010-t0.png" />
-    <Resource Include="lib\img\Brainleaf-Dark-Blog-Reflex.ico" />
-    <Resource Include="lib\img\reflex-icon.png" />
-    <Content Include="Microsoft.WindowsAPICodePack.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Microsoft.WindowsAPICodePack.Shell.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Resource Include="Library\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
+    <Resource Include="Library\img\noisy-texture-200x200-o4-d30-c-101010-t0.png" />
+    <Resource Include="Library\img\Brainleaf-Dark-Blog-Reflex.ico" />
+    <Resource Include="Library\img\reflex-icon.png" />
   </ItemGroup>
   <ItemGroup>
     <FileAssociation Include=".jpg">
@@ -414,6 +428,7 @@
       <DefaultIcon>lib\img\Brainleaf-Dark-Blog-Reflex.ico</DefaultIcon>
     </FileAssociation>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
