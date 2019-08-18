@@ -5,13 +5,13 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media.Animation;
-using static PicView.Helpers.Variables;
-using static PicView.Image_Logic.ImageManager;
-using static PicView.Image_Logic.Navigation;
-using static PicView.Image_Logic.Resize_and_Zoom;
-using static PicView.Interface_Logic.Interface;
+using static PicView.Variables;
+using static PicView.ImageManager;
+using static PicView.Navigation;
+using static PicView.Resize_and_Zoom;
+using static PicView.Interface;
 
-namespace PicView.Interface_Logic
+namespace PicView
 {
     internal static class PicGallery
     {
@@ -108,7 +108,8 @@ namespace PicView.Interface_Logic
         {
             mainWindow.img.Source = e.GetImage();
             var size = ImageSize(Pics[e.GetId()]);
-            ZoomFit(size.Width, size.Height);
+            if (size.HasValue)
+                ZoomFit(size.Value.Width, size.Value.Height);
 
             await System.Threading.Tasks.Task.Run(() =>
             {

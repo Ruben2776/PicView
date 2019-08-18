@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Input;
-using static PicView.Helpers.Variables;
+using static PicView.Variables;
 
 namespace PicView.Windows
 {

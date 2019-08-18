@@ -9,8 +9,8 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using static PicView.Helpers.Variables;
-using static PicView.Image_Logic.ImageManager;
+using static PicView.Variables;
+using static PicView.ImageManager;
 
 namespace PicView.UserControls
 {
@@ -174,12 +174,12 @@ namespace PicView.UserControls
                         pic.Freeze();
                         Add(pic, i);
                     }
-
                     if (i == Pics.Count - 1)
                     {
                         LoadComplete = true;
                         isLoading = false;
                     }
+
                 }
             });
         }

@@ -27,7 +27,6 @@
                 VerticalScrollBarVisibility="Disabled">
                 <WrapPanel
                     x:Name="Container"
-                    VerticalAlignment="Center"
                     Background="Transparent"
                     Orientation="Vertical"
                     VirtualizingPanel.VirtualizationMode="Recycling" />

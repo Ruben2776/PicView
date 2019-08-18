@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using static PicView.Helpers.Variables;
+using static PicView.Variables;
 
-namespace PicView.Helpers
+namespace PicView
 {
     internal static class Helper
     {
@@ -92,11 +92,12 @@ namespace PicView.Helpers
             p.Start();
         }
 
-        internal static void SetWindowBorderColor()
+        internal static void UpdateColor()
         {
+            Application.Current.Resources["ChosenColor"] = AnimationHelper.GetPrefferedColorOver();
+
             if (Properties.Settings.Default.WindowBorderColorEnabled)
             {
-                Application.Current.Resources["ChosenColor"] = AnimationHelper.GetPrefferedColorOver();
                 var bgBrush = Application.Current.Resources["WindowBackgroundColorBrush"] as System.Windows.Media.SolidColorBrush;
                 bgBrush.Color = AnimationHelper.GetPrefferedColorOver();
             }

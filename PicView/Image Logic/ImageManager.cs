@@ -3,9 +3,9 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using static PicView.Helpers.Helper;
+using static PicView.Helper;
 
-namespace PicView.Image_Logic
+namespace PicView
 {
     internal static class ImageManager
     {
@@ -15,12 +15,10 @@ namespace PicView.Image_Logic
         /// <param name="file">Full path of the file</param>
         /// <param name="extension">file extension beggining with dot</param>
         /// <returns></returns>
-        internal static BitmapSource RenderToBitmapSource(string file, string extension)
+        internal static BitmapSource RenderToBitmapSource(string file)
         {
             if (string.IsNullOrWhiteSpace(file) || file.Length < 2)
                 return null;
-
-            BitmapSource pic;
 
             using (MagickImage magick = new MagickImage())
             {
@@ -28,38 +26,23 @@ namespace PicView.Image_Logic
                 magick.Quality = 100;
                 magick.ColorSpace = ColorSpace.Transparent;
 
-                if (extension.ToLower() == ".svg")
+                var mrs = new MagickReadSettings()
                 {
-                    var mrs = new MagickReadSettings()
-                    {
-                        Density = new Density(300, 300),
-                    };
+                    Density = new Density(300, 300),
+                };
 
-                    // Make background transparent
-                    mrs.Format = MagickFormat.Svg;
-                    mrs.BackgroundColor = MagickColors.Transparent;
-                    try
-                    {
-                        magick.Read(file, mrs);
-                    }
-                    catch (MagickException)
-                    {
-                        return null;
-                    }
-                }
-                else
+                // Make background transparent
+                mrs.BackgroundColor = MagickColors.Transparent;
+                try
                 {
-                    try
-                    {
-                        magick.Read(file);
-                    }
-                    catch (MagickException)
-                    {
-                        return null;
-                    }
+                    magick.Read(file, mrs);
+                }
+                catch (MagickException)
+                {
+                    return null;
                 }
 
-                pic = magick.ToBitmapSource();
+                var pic = magick.ToBitmapSource();
                 pic.Freeze();
                 return pic;
             }
@@ -307,11 +290,19 @@ namespace PicView.Image_Logic
             return true;
         }
 
-        internal static Size ImageSize (string file)
+        internal static Size? ImageSize (string file)
         {
             using (MagickImage magick = new MagickImage())
             {
-                magick.Read(file);
+                try
+                {
+                    magick.Read(file);
+                }
+                catch (MagickException)
+                {
+                    return null;
+                }
+                
                 return new Size(magick.Width, magick.Height);
             }
         }

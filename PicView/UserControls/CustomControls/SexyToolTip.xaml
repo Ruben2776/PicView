@@ -1,20 +1,14 @@
 ﻿<UserControl
     x:Class="PicView.UserControls.SexyToolTip"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:PicView.UserControls"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="300"
-    d:DesignWidth="300"
-    mc:Ignorable="d">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Border
         x:Name="SexyToolTipBorder"
         Margin="0,0,0,95"
         HorizontalAlignment="Center"
         VerticalAlignment="Bottom"
-        Background="#BF1E1E1E"
-        BorderBrush="#FF232323"
+        Background="{StaticResource BackgroundColorBrushAltW}"
+        BorderBrush="{StaticResource BorderBrush}"
         BorderThickness="1"
         CornerRadius="7">
         <TextBlock
@@ -23,12 +17,13 @@
             Padding="12"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros"
+            FontFamily="/PicView;component/Library/Fonts/#TeX Gyre Heros"
             FontSize="16"
             FontStyle="Italic"
             FontWeight="Bold"
-            Foreground="#FFF7F7F7"
+            Foreground="{StaticResource MainColorBrush}"
             Text="My Awesome Tooltip style :)"
             TextWrapping="WrapWithOverflow" />
+
     </Border>
 </UserControl>

@@ -1,14 +1,13 @@
 ﻿using Microsoft.Win32;
-using PicView.Image_Logic;
 using PicView.Native;
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
-using static PicView.Helpers.Variables;
+using static PicView.Variables;
 
-namespace PicView.File_Logic
+namespace PicView
 {
     public static class Wallpaper // Taken from a Microsoft sample...
     {

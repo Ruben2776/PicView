@@ -1,19 +1,18 @@
-﻿using PicView.Helpers;
-using PicView.PreLoading;
+﻿using PicView.PreLoading;
 using System;
 using System.IO;
 using System.Windows.Media.Imaging;
-using static PicView.File_Logic.DeleteFiles;
-using static PicView.File_Logic.FileLists;
-using static PicView.Helpers.Helper;
-using static PicView.Helpers.Variables;
-using static PicView.Image_Logic.ImageManager;
-using static PicView.Image_Logic.Navigation;
-using static PicView.Image_Logic.Resize_and_Zoom;
-using static PicView.Image_Logic.Rotate_and_Flip;
-using static PicView.Interface_Logic.Interface;
+using static PicView.DeleteFiles;
+using static PicView.FileLists;
+using static PicView.Helper;
+using static PicView.Variables;
+using static PicView.ImageManager;
+using static PicView.Navigation;
+using static PicView.Resize_and_Zoom;
+using static PicView.Rotate_and_Flip;
+using static PicView.Interface;
 
-namespace PicView.Error_Handling
+namespace PicView
 {
     internal static class Error_Handling
     {
@@ -50,7 +49,7 @@ namespace PicView.Error_Handling
             }
             else if (x < 0)
             {
-                var img = RenderToBitmapSource(PicPath, Path.GetExtension(PicPath));
+                var img = RenderToBitmapSource(PicPath);
                 if (img != null)
                 {
                     Pic(PicPath);

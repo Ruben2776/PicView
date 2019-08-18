@@ -1,23 +1,14 @@
-﻿using PicView.PreLoading;
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using static PicView.Error_Handling.Error_Handling;
-using static PicView.File_Logic.FileLists;
-using static PicView.Helpers.Helper;
-using static PicView.Helpers.Variables;
-using static PicView.Image_Logic.Navigation;
-using static PicView.Interface_Logic.Interface;
+using static PicView.Helper;
+using static PicView.Navigation;
+using static PicView.Variables;
 
-namespace PicView.File_Logic
+namespace PicView
 {
     class FileFunctions
     {

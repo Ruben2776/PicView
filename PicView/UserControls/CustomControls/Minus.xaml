@@ -11,18 +11,20 @@
     <Border
         Width="40"
         Height="25"
-        BorderBrush="{StaticResource BorderBrush}"
         BorderThickness="1,0,0,1">
         <Border.Background>
-            <SolidColorBrush x:Name="CanvasBGcolor" Color="#A7222222" />
+            <SolidColorBrush x:Name="CanvasBGcolor" Color="{StaticResource AltInterface}" />
         </Border.Background>
+        <Border.BorderBrush>
+            <SolidColorBrush x:Name="BorderBrushKey" Color="{StaticResource BorderColor}" />
+        </Border.BorderBrush>
         <Viewbox
             Width="20"
             Height="20"
             Margin="0,0,0,8">
             <Path Data="M24,11c0-0.6-0.4-1-1-1H1c-0.6,0-1,0.4-1,1v2c0,0.6,0.4,1,1,1h22c0.6,0,1-0.4,1-1V11z">
                 <Path.Fill>
-                    <SolidColorBrush x:Name="MinusFill" Color="WhiteSmoke" />
+                    <SolidColorBrush x:Name="MinusFill" Color="{StaticResource MainColor}" />
                 </Path.Fill>
             </Path>
         </Viewbox>

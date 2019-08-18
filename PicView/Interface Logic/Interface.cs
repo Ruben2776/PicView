@@ -1,5 +1,5 @@
 ﻿
-using PicView.Helpers;
+
 using PicView.UserControls;
 using PicView.Windows;
 using System;
@@ -10,13 +10,13 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using static PicView.File_Logic.FileFunctions;
-using static PicView.Helpers.Variables;
-using static PicView.Image_Logic.Navigation;
-using static PicView.Image_Logic.Resize_and_Zoom;
+using static PicView.FileFunctions;
+using static PicView.Variables;
+using static PicView.Navigation;
+using static PicView.Resize_and_Zoom;
 
 
-namespace PicView.Interface_Logic
+namespace PicView
 {
     internal static class Interface
     {
@@ -45,7 +45,7 @@ namespace PicView.Interface_Logic
 
             fastPicTimer = new System.Timers.Timer()
             {
-                Interval = 100,
+                Interval = 1,
                 Enabled = false
             };
             fastPicTimer.Elapsed += FastPic;
@@ -747,7 +747,10 @@ namespace PicView.Interface_Logic
         {
             var s1 = new StringBuilder();
             s1.Append(AppName).Append(" - ").Append(Path.GetFileName(Pics[index])).Append(" ").Append(index + 1).Append("/").Append(Pics.Count).Append(" files")
-                    .Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height)).Append(GetSizeReadable(new FileInfo(Pics[index]).Length)).Append(Zoomed);
+                    .Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height)).Append(GetSizeReadable(new FileInfo(Pics[index]).Length));
+
+            if (!string.IsNullOrEmpty(ZoomPercentage))
+                s1.Append(" - ").Append(ZoomPercentage);
 
             var array = new string[3];
             array[0] = s1.ToString();
@@ -769,7 +772,10 @@ namespace PicView.Interface_Logic
         internal static string[] TitleString(int width, int height, string path)
         {
             var s1 = new StringBuilder();
-            s1.Append(AppName).Append(" - ").Append(path).Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height)).Append(" ").Append(Zoomed);
+            s1.Append(AppName).Append(" - ").Append(path).Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height));
+
+            if (!string.IsNullOrEmpty(ZoomPercentage))
+                s1.Append(" - ").Append(ZoomPercentage);
 
             var array = new string[2];
             array[0] = s1.ToString();

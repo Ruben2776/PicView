@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace PicView.File_Logic
+namespace PicView
 {
     /// <summary>
     /// Class to handle Most Recently Used files

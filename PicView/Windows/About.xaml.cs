@@ -1,13 +1,11 @@
-﻿
-using PicView.Helpers;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Navigation;
-using static PicView.Helpers.Variables;
+using static PicView.Variables;
 
 namespace PicView.Windows
 {

@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using static PicView.File_Logic.ArchiveExtraction;
-using static PicView.Helpers.Variables;
+using static PicView.ArchiveExtraction;
+using static PicView.Variables;
+using static PicView.Error_Handling;
 
-namespace PicView.File_Logic
+namespace PicView
 {
     internal static class FileLists
     {
@@ -262,29 +263,31 @@ namespace PicView.File_Logic
                 {
                     // Make a backup of FolderIndex and PicPath
                     if (FolderIndex > -1)
-                    {
                         xFolderIndex = FolderIndex;
-                    }
+
                     if (!string.IsNullOrWhiteSpace(PicPath))
-                    {
                         xPicPath = PicPath;
-                    }
-
-                    // Start at first file
-                    FolderIndex = 0;
-
-                    // Add zipped files as recent file
-                    RecentFiles.SetZipped(path);
 
                     // Set extracted files to Pics
                     if (Directory.Exists(TempZipPath))
                     {
+                        // Start at first file
+                        FolderIndex = 0;
+
+                        // Add zipped files as recent file
+                        RecentFiles.SetZipped(path);
+
                         var directory = Directory.GetDirectories(TempZipPath);
                         if (directory.Length > 0)
                             TempZipPath = directory[0];
 
                         Pics = FileList(TempZipPath);
+                        if (Pics.Count > 0)
+                            PicPath = Pics[0];
+                        else
+                            Reload(true);
                     }
+                    else Reload(true);
                 }
                 else
                 {
@@ -293,9 +296,8 @@ namespace PicView.File_Logic
                     if (Pics == null)
                         return;
                     FolderIndex = Pics.IndexOf(path);
+                    PicPath = path;
                 }
-
-                PicPath = path;
             });
         }
     }

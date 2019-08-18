@@ -1,7 +1,7 @@
 ﻿using System.Windows.Media;
-using static PicView.Helpers.Variables;
+using static PicView.Variables;
 
-namespace PicView.Image_Logic
+namespace PicView
 {
     internal static class Rotate_and_Flip
     {

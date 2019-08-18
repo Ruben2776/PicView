@@ -135,7 +135,6 @@
     <Compile Include="File Logic\Open_Save.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="File Logic\ArchiveExtraction.cs" />
-    <Compile Include="File Logic\FileAssociation.cs" />
     <Compile Include="File Logic\FileFunctions.cs" />
     <Compile Include="Image Logic\Navigation.cs" />
     <Compile Include="Image Logic\Resize_and_Zoom.cs" />

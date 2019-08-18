@@ -1,12 +1,10 @@
-﻿
-using PicView.Helpers;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using static PicView.Helpers.Variables;
-using static PicView.Helpers.Helper;
+using static PicView.Helper;
+using static PicView.Variables;
 
 namespace PicView.Windows
 {
@@ -830,7 +828,7 @@ namespace PicView.Windows
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             SetSlidetimer();
-            SetWindowBorderColor();
+            UpdateColor();
             Closing -= Window_Closing;
             e.Cancel = true;
             AnimationHelper.FadeWindow(this, 0, TimeSpan.FromSeconds(.5));

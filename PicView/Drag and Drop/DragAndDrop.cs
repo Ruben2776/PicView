@@ -4,12 +4,12 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
-using static PicView.Helpers.Variables;
-using static PicView.Image_Logic.ImageManager;
-using static PicView.Image_Logic.Navigation;
-using static PicView.Interface_Logic.Interface;
+using static PicView.Variables;
+using static PicView.ImageManager;
+using static PicView.Navigation;
+using static PicView.Interface;
 
-namespace PicView.Drag_and_Drop
+namespace PicView
 {
     internal static class DragAndDrop
     {

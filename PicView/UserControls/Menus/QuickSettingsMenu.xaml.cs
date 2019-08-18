@@ -1,9 +1,7 @@
-﻿using PicView.File_Logic;
-using PicView.Helpers;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
-using static PicView.File_Logic.Wallpaper;
-using static PicView.Helpers.Variables;
+using static PicView.Variables;
+using static PicView.Wallpaper;
 
 namespace PicView.UserControls
 {

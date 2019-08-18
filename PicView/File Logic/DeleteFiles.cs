@@ -1,15 +1,14 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 using System;
 using System.IO;
-using System.Text.RegularExpressions;
-using static PicView.Error_Handling.Error_Handling;
-using static PicView.Helpers.Helper;
-using static PicView.Helpers.Variables;
-using static PicView.Image_Logic.Navigation;
-using static PicView.Interface_Logic.Interface;
+using static PicView.Error_Handling;
+using static PicView.Helper;
+using static PicView.Interface;
+using static PicView.Navigation;
+using static PicView.Variables;
 
 
-namespace PicView.File_Logic
+namespace PicView
 {
     internal static class DeleteFiles
     {

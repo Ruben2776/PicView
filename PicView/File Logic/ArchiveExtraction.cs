@@ -2,12 +2,12 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using static PicView.Error_Handling.Error_Handling;
-using static PicView.File_Logic.DeleteFiles;
-using static PicView.Helpers.Variables;
-using static PicView.Interface_Logic.Interface;
+using static PicView.Error_Handling;
+using static PicView.DeleteFiles;
+using static PicView.Variables;
+using static PicView.Interface;
 
-namespace PicView.File_Logic
+namespace PicView
 {
     internal static class ArchiveExtraction
     {

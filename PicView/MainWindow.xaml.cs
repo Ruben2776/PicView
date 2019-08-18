@@ -1,5 +1,4 @@
-﻿using PicView.File_Logic;
-using PicView.Native;
+﻿using PicView.Native;
 using PicView.ScreenLogic;
 using PicView.UserControls;
 using PicView.Windows;
@@ -11,21 +10,21 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using static PicView.Drag_and_Drop.DragAndDrop;
-using static PicView.Error_Handling.Error_Handling;
-using static PicView.File_Logic.Copy_Paste;
-using static PicView.File_Logic.DeleteFiles;
-using static PicView.File_Logic.Open_Save;
-using static PicView.Helpers.Helper;
-using static PicView.Helpers.Variables;
-using static PicView.Image_Logic.Navigation;
-using static PicView.Image_Logic.Resize_and_Zoom;
-using static PicView.Image_Logic.Rotate_and_Flip;
-using static PicView.Image_Logic.SlideShow;
-using static PicView.Interface_Logic.ContextMenus;
-using static PicView.Interface_Logic.Interface;
-using static PicView.Interface_Logic.PicGallery;
+using static PicView.ContextMenus;
+using static PicView.Copy_Paste;
+using static PicView.DeleteFiles;
+using static PicView.DragAndDrop;
+using static PicView.Error_Handling;
+using static PicView.Helper;
+using static PicView.Interface;
+using static PicView.Navigation;
+using static PicView.Open_Save;
+using static PicView.PicGallery;
+using static PicView.Resize_and_Zoom;
+using static PicView.Rotate_and_Flip;
 using static PicView.Shortcuts.Shortcuts;
+using static PicView.SlideShow;
+using static PicView.Variables;
 
 namespace PicView
 {
@@ -86,7 +85,7 @@ namespace PicView
                 Pic(args);
             }
 
-            SetWindowBorderColor();
+            UpdateColor();
 
             // Add UserControls :)
             LoadTooltipStyle();
@@ -128,7 +127,7 @@ namespace PicView
             // Load PicGallery, if needed
             if (Properties.Settings.Default.PicGallery > 0)
             {
-                picGallery = new PicGallery
+                picGallery = new UserControls.PicGallery
                 {
                     Opacity = 0,
                     Visibility = Visibility.Collapsed

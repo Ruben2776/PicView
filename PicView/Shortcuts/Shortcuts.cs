@@ -1,18 +1,18 @@
 ﻿using PicView.Native;
 using System.Windows;
 using System.Windows.Input;
-using static PicView.Error_Handling.Error_Handling;
-using static PicView.File_Logic.Copy_Paste;
-using static PicView.File_Logic.DeleteFiles;
-using static PicView.File_Logic.Open_Save;
-using static PicView.Helpers.Helper;
-using static PicView.Helpers.Variables;
-using static PicView.Image_Logic.Navigation;
-using static PicView.Image_Logic.Resize_and_Zoom;
-using static PicView.Image_Logic.Rotate_and_Flip;
-using static PicView.Image_Logic.SlideShow;
-using static PicView.Interface_Logic.Interface;
-using static PicView.Interface_Logic.PicGallery;
+using static PicView.Error_Handling;
+using static PicView.Copy_Paste;
+using static PicView.DeleteFiles;
+using static PicView.Open_Save;
+using static PicView.Helper;
+using static PicView.Variables;
+using static PicView.Navigation;
+using static PicView.Resize_and_Zoom;
+using static PicView.Rotate_and_Flip;
+using static PicView.SlideShow;
+using static PicView.Interface;
+using static PicView.PicGallery;
 
 namespace PicView.Shortcuts
 {

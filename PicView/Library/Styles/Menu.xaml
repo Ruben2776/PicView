@@ -107,10 +107,10 @@
                     </DockPanel>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsPressed" Value="true">
-                            <Setter TargetName="R1" Property="Fill" Value="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" />
-                            <Setter TargetName="B1" Property="Fill" Value="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" />
-                            <Setter TargetName="L1" Property="Fill" Value="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" />
-                            <Setter TargetName="T1" Property="Fill" Value="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" />
+                            <Setter TargetName="R1" Property="Fill" Value="{StaticResource {x:Static SystemColors.ControlLightLightBrushKey}}" />
+                            <Setter TargetName="B1" Property="Fill" Value="{StaticResource {x:Static SystemColors.ControlLightLightBrushKey}}" />
+                            <Setter TargetName="L1" Property="Fill" Value="{StaticResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" />
+                            <Setter TargetName="T1" Property="Fill" Value="{StaticResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" />
                             <Setter TargetName="ContentContainer" Property="Margin" Value="3,3,1,1" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -128,8 +128,10 @@
         <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="Template">
             <Setter.Value>
-                --><!--<SnippetMenuScrollViewer>-->
-                <!--  ScrollViewer for a MenuItem  --><!--
+    -->
+    <!--<SnippetMenuScrollViewer>-->
+    <!--  ScrollViewer for a MenuItem  -->
+    <!--
                 <ControlTemplate TargetType="{x:Type ScrollViewer}">
                     <Grid SnapsToDevicePixels="True">
                         <Grid.ColumnDefinitions>
@@ -185,7 +187,9 @@
                         </RepeatButton>
                     </Grid>
                 </ControlTemplate>
-                --><!--</SnippetMenuScrollViewer>--><!--
+    -->
+    <!--</SnippetMenuScrollViewer>-->
+    <!--
             </Setter.Value>
         </Setter>
     </Style>-->

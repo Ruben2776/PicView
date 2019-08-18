@@ -1,7 +1,6 @@
-﻿using PicView.Helpers;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
-using static PicView.Helpers.Variables;
+using static PicView.Variables;
 
 namespace PicView.UserControls.Menus
 {

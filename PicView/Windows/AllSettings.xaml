@@ -413,7 +413,7 @@
                             Margin="0,5"
                             FontStyle="Italic"
                             TextAlignment="Center">
-                            Color effects require a restart to take effect
+                            Context menu hover color effects may require a restart to take effect
                         </TextBlock>
                     </StackPanel>
                 </ScrollViewer>

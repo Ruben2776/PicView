@@ -3,11 +3,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using static PicView.Helpers.Variables;
-using static PicView.Image_Logic.Navigation;
-using static PicView.Interface_Logic.Interface;
+using static PicView.Variables;
+using static PicView.Navigation;
+using static PicView.Interface;
 
-namespace PicView.Image_Logic
+namespace PicView
 {
     internal static class Resize_and_Zoom
     {
@@ -53,12 +53,10 @@ namespace PicView.Image_Logic
         {
             // Error checking
             if (autoScrollPos == null || autoScrollOrigin == null)
-            {
                 return;
-            }
 
             // Start in dispatcher because timer is threaded
-            await Application.Current.MainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
             {
                 if (autoScrollOrigin.HasValue)
                 {
@@ -69,10 +67,8 @@ namespace PicView.Image_Logic
                     //    + Environment.NewLine + "offset = " + offset, false);
 
                     if (autoScrolling)
-                    {
                         // Tell the scrollviewer to scroll to calculated offset
                         mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset + offset);
-                    }
                 }
             }));
         }
@@ -248,13 +244,13 @@ namespace PicView.Image_Logic
             isZoomed = false;
 
             // Reset size
-            ZoomFit(mainWindow.img.Source.Width, mainWindow.img.Source.Height);
+            ZoomFit(xWidth, xHeight);
 
             // Display non-zoomed values
             string[] titleString;
             if (canNavigate)
             {
-                titleString = TitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
+                titleString = TitleString((int)xWidth, (int)xHeight, FolderIndex);
                 mainWindow.Title = titleString[0];
                 mainWindow.Bar.Text = titleString[1];
                 mainWindow.Bar.ToolTip = titleString[2];
@@ -262,7 +258,7 @@ namespace PicView.Image_Logic
             else
             {
                 // Display values from web
-                titleString = TitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, PicPath);
+                titleString = TitleString((int)xWidth, (int)xHeight, PicPath);
                 mainWindow.Title = titleString[0];
                 mainWindow.Bar.Text = titleString[1];
                 mainWindow.Bar.ToolTip = titleString[1];
@@ -307,32 +303,40 @@ namespace PicView.Image_Logic
                 var position = Mouse.GetPosition(mainWindow.img);
 
                 // Use our position as starting point for zoom
-                mainWindow.img.RenderTransformOrigin = new Point(position.X / mainWindow.img.ActualWidth, position.Y / mainWindow.img.ActualHeight);
+                mainWindow.img.RenderTransformOrigin = new Point(position.X / xWidth, position.Y / xHeight);
 
                 // Determine zoom speed
-                var zoomValue = st.ScaleX > 1.3 ? .04 : .01;
+                var zoomValue = st.ScaleX > 1.3 ? .03 : .01;
                 if (st.ScaleX > 1.5)
-                    zoomValue += .007;
+                    zoomValue += .005;
                 if (st.ScaleX > 1.7)
-                    zoomValue += .009;
+                    zoomValue += .007;
 
                 if (st.ScaleX >= 1.0 && st.ScaleX + zoomValue >= 1.0 || st.ScaleX - zoomValue >= 1.0)
                 {
+                    zoomValue = i > 0 ? zoomValue : -zoomValue;
                     // Start zoom
-                    st.ScaleY = st.ScaleX = AspectRatio += i > 0 ? zoomValue : -zoomValue;
+                    st.ScaleY = st.ScaleX += zoomValue;
+                    AspectRatio += zoomValue;
                 }
 
                 if (st.ScaleX < 1.0)
                 {
                     // Don't zoom less than 1.0, does not work so good...
-                    st.ScaleX = st.ScaleY = AspectRatio = 1.0;
+                    st.ScaleX = st.ScaleY = 1.0;
                 }
+                //zoomValue = i > 0 ? zoomValue : -zoomValue;
+                //st.ScaleY = st.ScaleX += zoomValue;
+
             }
 
             isZoomed = true;
 
             // Displays zoompercentage in the center window
-            ToolTipStyle(ZoomPercentage, true);
+            if (!string.IsNullOrEmpty(ZoomPercentage))
+                ToolTipStyle(ZoomPercentage, true);
+            else
+                CloseToolTipStyle();
 
             // Display updated values
             string[] titleString;

@@ -7,14 +7,14 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using static PicView.Error_Handling.Error_Handling;
-using static PicView.File_Logic.FileFunctions;
-using static PicView.File_Logic.FileLists;
-using static PicView.Helpers.Variables;
-using static PicView.Image_Logic.Navigation;
-using static PicView.Interface_Logic.Interface;
+using static PicView.Error_Handling;
+using static PicView.FileFunctions;
+using static PicView.FileLists;
+using static PicView.Variables;
+using static PicView.Navigation;
+using static PicView.Interface;
 
-namespace PicView.File_Logic
+namespace PicView
 {
     internal static class Copy_Paste
     {

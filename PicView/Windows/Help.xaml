@@ -148,7 +148,7 @@
                     HorizontalScrollBarVisibility="Disabled"
                     VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="8,0,3,0">
-                        <Label Margin="0,5,0,0">Shortcuts:</Label>
+                        <Label Margin="0,5,0,0" FontSize="15">Shortcuts:</Label>
                         <Label Margin="0,2,0,2" Content="Show windows:" />
                         <BulletDecorator Margin="7,2">
                             <BulletDecorator.Bullet>
@@ -583,10 +583,11 @@
                 VerticalAlignment="Bottom"
                 Background="#FF0C0C0C">
                 <Label
-                    Margin="0,0,0,6"
+                    Margin="0,0,0,9"
+                    Padding="0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Bottom"
-                    Content="© PicView 2017"
+                    Content="© PicView anno 2017"
                     FontSize="14"
                     FontStyle="Italic" />
             </Border>

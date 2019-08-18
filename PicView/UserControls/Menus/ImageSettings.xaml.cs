@@ -1,7 +1,6 @@
-﻿using PicView.Helpers;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using System.Windows.Media;
-using static PicView.Helpers.Variables;
+using static PicView.Variables;
 
 namespace PicView.UserControls
 {

@@ -9,13 +9,15 @@
         x:Name="border"
         Width="50"
         Height="60"
-        BorderBrush="{StaticResource BorderBrush}"
         BorderThickness="1,1,0,1"
         CornerRadius="2,0,0,2">
+        <Border.BorderBrush>
+            <SolidColorBrush x:Name="BorderBrushKey" Color="{StaticResource BorderColor}"/>
+        </Border.BorderBrush>
         <Canvas x:Name="canvas">
             <Polygon
                 x:Name="Arrow"
-                Canvas.Left="17"
+                Canvas.Left="19"
                 Canvas.Top="10"
                 Width="20"
                 Height="40"
@@ -23,11 +25,11 @@
                 RenderTransformOrigin="0.5,0.5"
                 Stretch="Uniform">
                 <Polygon.Fill>
-                    <SolidColorBrush x:Name="ArrowFill" Color="White" />
+                    <SolidColorBrush x:Name="ArrowFill" Color="{StaticResource MainColor}" />
                 </Polygon.Fill>
             </Polygon>
             <Canvas.Background>
-                <SolidColorBrush x:Name="CanvasBGcolor" Color="#A7222222" />
+                <SolidColorBrush x:Name="CanvasBGcolor" Color="{StaticResource AltInterface}" />
             </Canvas.Background>
         </Canvas>
     </Border>

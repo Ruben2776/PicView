@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using static PicView.Helpers.Helper;
-using static PicView.Image_Logic.Resize_and_Zoom;
+using static PicView.Helper;
+using static PicView.Resize_and_Zoom;
 using System.Timers;
 
-namespace PicView.Helpers
+namespace PicView
 {
     internal static class Variables
     {
@@ -54,7 +54,7 @@ namespace PicView.Helpers
             + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz"                                                        // Comics
             + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw";      // Camera files
 
-        internal static MainWindow mainWindow = ((MainWindow) Application.Current.MainWindow);
+        internal static MainWindow mainWindow = ((MainWindow)Application.Current.MainWindow);
 
         /// <summary>
         /// File path of current image
@@ -72,22 +72,17 @@ namespace PicView.Helpers
         internal static string TempZipPath { get; set; }
 
         /// <summary>
-        /// Returns string with zoom %
-        /// </summary>
-        internal static string ZoomPercentage { get { return Math.Round(AspectRatio * 100) + "%"; } }
-
-        /// <summary>
         /// Returns zoom percentage. if 100%, return empty string
         /// </summary>
-        internal static string Zoomed
+        internal static string ZoomPercentage
         {
             get
             {
                 var zoom = Math.Round(AspectRatio * 100);
-                if (zoom == 100)
+                if (st.ScaleX == 1)
                     return string.Empty;
 
-                return " - " + zoom + "%";
+                return zoom + "%";
             }
         }
 
@@ -103,7 +98,7 @@ namespace PicView.Helpers
             var x = (width / gcd);
             var y = (height / gcd);
 
-            if (x == width && y == height)
+            if (x == width && y == height || x > 99)
                 return ") ";
 
             return ", " + x + ":" + y + ") ";
@@ -219,7 +214,7 @@ namespace PicView.Helpers
         internal static ClickArrow clickArrowRight;
         internal static X2 x2;
         internal static Minus minus;
-        internal static PicGallery picGallery;
+        internal static UserControls.PicGallery picGallery;
 
         internal static Point origin;
         internal static Point start;

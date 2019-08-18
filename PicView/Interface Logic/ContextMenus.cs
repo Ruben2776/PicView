@@ -3,17 +3,17 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using static PicView.File_Logic.Copy_Paste;
-using static PicView.File_Logic.DeleteFiles;
-using static PicView.File_Logic.FileFunctions;
-using static PicView.File_Logic.FileLists;
-using static PicView.File_Logic.Open_Save;
-using static PicView.File_Logic.Wallpaper;
-using static PicView.Helpers.Helper;
-using static PicView.Helpers.Variables;
-using static PicView.Image_Logic.Navigation;
+using static PicView.Copy_Paste;
+using static PicView.DeleteFiles;
+using static PicView.FileFunctions;
+using static PicView.FileLists;
+using static PicView.Open_Save;
+using static PicView.Wallpaper;
+using static PicView.Helper;
+using static PicView.Variables;
+using static PicView.Navigation;
 
-namespace PicView.Interface_Logic
+namespace PicView
 {
     internal static class ContextMenus
     {

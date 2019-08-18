@@ -2,10 +2,10 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using static PicView.Helpers.Variables;
-using static PicView.Interface_Logic.Interface;
+using static PicView.Variables;
+using static PicView.Interface;
 
-namespace PicView.Image_Logic
+namespace PicView
 {
     internal static class SlideShow
     {
