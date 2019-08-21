@@ -12,18 +12,23 @@ namespace PicView.UserControls
     {
         internal bool Selected { get; set; }
 
+        internal readonly int Id;
+
         internal const int picGalleryItem_Size = 230;
         internal const int picGalleryItem_Size_s = 200;
         public PicGalleryItem(BitmapSource pic, int id, bool selected = false)
         {
             InitializeComponent();
 
-            img.Source = pic;
+            if (pic != null)
+                img.Source = pic;
+
             Selected = selected;
+            Id = id;
             Loaded += PicGalleryItem_Loaded;
         }
 
-        private void PicGalleryItem_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        private void PicGalleryItem_Loaded(object sender, RoutedEventArgs e)
         {
             img.MouseEnter += (s, y) => AnimationHelper.HoverSizeAnim(
                 border,
@@ -52,8 +57,7 @@ namespace PicView.UserControls
             else
             {
                 Selected = false;
-                var bgBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
-                if (bgBrush != null)
+                if (Application.Current.Resources["BorderBrush"] is SolidColorBrush bgBrush)
                     border.BorderBrush = bgBrush;
             }
         }

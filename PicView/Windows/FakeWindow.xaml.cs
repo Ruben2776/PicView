@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Input;
-using static PicView.Variables;
+using static PicView.Fields;
 
 namespace PicView.Windows
 {
@@ -56,9 +56,9 @@ namespace PicView.Windows
         private void FakeWindow_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                picGallery.ScrollTo(e.Delta > 0, true);
+                PicGalleryLogic.ScrollTo(e.Delta > 0, true);
             else
-                picGallery.ScrollTo(e.Delta > 0, false, true);
+                PicGalleryLogic.ScrollTo(e.Delta > 0, false, true);
         }
 
         private void MainWindow_StateChanged(object sender, EventArgs e)

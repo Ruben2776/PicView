@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using static PicView.FileLists;
-using static PicView.Variables;
+using static PicView.Fields;
 
 namespace PicView.PreLoading
 {

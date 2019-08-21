@@ -209,8 +209,9 @@ namespace PicView
                 magick.ColorSpace = ColorSpace.Transparent;
                 try
                 {
-                    magick.AdaptiveResize(size, size);
                     magick.Read(file);
+                    magick.AdaptiveResize(size, size);
+                    
                 }
                 catch (MagickException)
                 {

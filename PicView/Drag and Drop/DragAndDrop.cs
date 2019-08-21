@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
-using static PicView.Variables;
+using static PicView.Fields;
 using static PicView.ImageManager;
 using static PicView.Navigation;
 using static PicView.Interface;
@@ -13,6 +13,8 @@ namespace PicView
 {
     internal static class DragAndDrop
     {
+        internal const string DragOverString = "Drop to load image";
+
         /// <summary>
         /// Check if dragged file is valid,
         /// returns false for valid file with no thumbnail,
@@ -216,7 +218,7 @@ namespace PicView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static void Image_DraEnter(object sender, DragEventArgs e)
+        internal static void Image_DragEnter(object sender, DragEventArgs e)
         {
             // Error handling
             if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;

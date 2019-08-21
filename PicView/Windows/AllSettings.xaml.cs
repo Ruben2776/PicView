@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static PicView.Helper;
-using static PicView.Variables;
+using static PicView.Fields;
 
 namespace PicView.Windows
 {

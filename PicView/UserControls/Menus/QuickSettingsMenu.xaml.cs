@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
-using static PicView.Variables;
+using static PicView.Fields;
 using static PicView.Wallpaper;
 
 namespace PicView.UserControls

@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using static PicView.Variables;
+using static PicView.Fields;
 
 namespace PicView
 {

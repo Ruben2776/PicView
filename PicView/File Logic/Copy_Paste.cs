@@ -10,7 +10,7 @@ using System.Windows.Media.Imaging;
 using static PicView.Error_Handling;
 using static PicView.FileFunctions;
 using static PicView.FileLists;
-using static PicView.Variables;
+using static PicView.Fields;
 using static PicView.Navigation;
 using static PicView.Interface;
 
@@ -128,6 +128,31 @@ namespace PicView
                 PicWeb(s);
             else
                 ToolTipStyle("An error occured while trying to paste file");
+        }
+
+        /// <summary>
+        /// Add file to move/paste clipboard
+        /// </summary>
+        /// <param name="path"></param>
+        internal static void Cut(string path)
+        {
+            var x = new System.Collections.Specialized.StringCollection
+            {
+                path
+            };
+
+            byte[] moveEffect = new byte[] { 2, 0, 0, 0 };
+            MemoryStream dropEffect = new MemoryStream();
+            dropEffect.Write(moveEffect, 0, moveEffect.Length);
+
+            DataObject data = new DataObject();
+            data.SetFileDropList(x);
+            data.SetData("Preferred DropEffect", dropEffect);
+
+            Clipboard.Clear();
+            Clipboard.SetDataObject(data, true);
+
+            ToolTipStyle("Added Image to move clipboard");
         }
     }
 }

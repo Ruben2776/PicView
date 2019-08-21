@@ -5,7 +5,7 @@ using static PicView.Error_Handling;
 using static PicView.Helper;
 using static PicView.Interface;
 using static PicView.Navigation;
-using static PicView.Variables;
+using static PicView.Fields;
 
 
 namespace PicView

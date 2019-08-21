@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using static PicView.ArchiveExtraction;
-using static PicView.Variables;
+using static PicView.Fields;
 using static PicView.Error_Handling;
 
 namespace PicView

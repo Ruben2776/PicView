@@ -5,7 +5,7 @@ using System.Windows.Media.Imaging;
 using static PicView.DeleteFiles;
 using static PicView.FileLists;
 using static PicView.Helper;
-using static PicView.Variables;
+using static PicView.Fields;
 using static PicView.ImageManager;
 using static PicView.Navigation;
 using static PicView.Resize_and_Zoom;
@@ -131,7 +131,7 @@ namespace PicView
             PreloadCount = 0;
 
             if (Properties.Settings.Default.PicGallery > 0)
-                picGallery.Clear();
+                PicGalleryLogic.Clear();
         }
 
         /// <summary>

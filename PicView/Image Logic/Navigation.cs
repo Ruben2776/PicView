@@ -11,11 +11,12 @@ using static PicView.ArchiveExtraction;
 using static PicView.DeleteFiles;
 using static PicView.FileLists;
 using static PicView.Helper;
-using static PicView.Variables;
+using static PicView.Fields;
 using static PicView.ImageManager;
 using static PicView.Resize_and_Zoom;
 using static PicView.Interface;
 using System.Windows.Media;
+using PicView.UserControls;
 
 namespace PicView
 {
@@ -110,9 +111,9 @@ namespace PicView
             // Load images for PicGallery if enabled
             if (Properties.Settings.Default.PicGallery > 0)
             {
-                if (!picGallery.LoadComplete)
-                    if (!picGallery.isLoading)
-                        picGallery.Load();
+                if (!PicGalleryLogic.LoadComplete)
+                    if (!PicGalleryLogic.isLoading)
+                        await PicGalleryLogic.Load();
             }
         }
 
@@ -166,16 +167,16 @@ namespace PicView
                     ZoomFit(size.Value.Width, size.Value.Height);
 
                 ImageSource thumb;
-                //if (picGallery != null)
-                //{
-                //    if (x < picGallery.Container.Children.Count)
-                //    {
-                //        var _ = picGallery.Container.Children[x] as UserControls.PicGalleryItem;
-                //        thumb = _.img.Source;
-                //    }
-                //    else thumb = GetBitmapSourceThumb(Pics[x]);
-                //}
-                //else
+                if (picGallery != null)
+                {
+                    if (x < picGallery.Container.Children.Count)
+                    {
+                        var y = picGallery.Container.Children[x] as UserControls.PicGalleryItem;
+                        thumb = y.img.Source;
+                    }
+                    else thumb = GetBitmapSourceThumb(Pics[x]);
+                }
+                else
                     thumb = GetBitmapSourceThumb(Pics[x]);
 
                 if (thumb != null)
@@ -228,7 +229,8 @@ namespace PicView
             mainWindow.Bar.ToolTip = titleString[2];
             PicPath = Pics[x];
             FolderIndex = x;
-            AjaxLoadingEnd();            
+            AjaxLoadingEnd();
+            Progress(x, Pics.Count);
 
             // Preload images \\
             if (PreloadDirection().HasValue)
@@ -250,19 +252,27 @@ namespace PicView
             {
                 if (freshStartup)
                 {
-                    if (picGallery.LoadComplete)
-                    {
-                        picGallery.Calculate_Paging();
-                        picGallery.ScrollTo();
-                    }
+                    if (PicGalleryLogic.LoadComplete)
+                        PicGalleryLogic.ScrollTo();
                 }
                 else
-                    picGallery.ScrollTo(reverse);
-            }
+                    PicGalleryLogic.ScrollTo(reverse);
 
-            Progress(x, Pics.Count);
+                //if (x < picGallery.Container.Children.Count)
+                //{
+                //    var item = picGallery.Container.Children[x] as PicGalleryItem;
+                //    item.Setselected(true);
+
+                //    var y = reverse ? x - 1 : x + 1;
+                //    var previtem = picGallery.Container.Children[y] as PicGalleryItem;
+                //    previtem.Setselected(false);
+                //}
+
+            }
+            
             if (!freshStartup)
                 RecentFiles.Add(Pics[x]);
+
             freshStartup = false;
         }
 
@@ -310,7 +320,7 @@ namespace PicView
             if (picGallery != null)
             {
                 if (Properties.Settings.Default.PicGallery == 1)
-                    if (picGallery.open)
+                    if (PicGalleryLogic.IsOpen)
                         return;
             }
 

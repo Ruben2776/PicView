@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.Helper;
 using static PicView.Navigation;
-using static PicView.Variables;
+using static PicView.SvgIcons;
 
 namespace PicView
 {

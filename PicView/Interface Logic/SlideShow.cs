@@ -1,9 +1,11 @@
 ﻿using PicView.Native;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using static PicView.Variables;
+using static PicView.Fields;
 using static PicView.Interface;
+using static PicView.Navigation;
 
 namespace PicView
 {
@@ -50,6 +52,21 @@ namespace PicView
             NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
             SlideshowActive = false;
             Slidetimer.Stop();
+        }
+
+        /// <summary>
+        /// Timer starts Slideshow Fade animation.
+        /// </summary>
+        /// <param name="server"></param>
+        /// <param name="e"></param>
+        internal static async void SlideTimer_Elapsed(object server, System.Timers.ElapsedEventArgs e)
+        {
+            await Application.Current.MainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            {
+                AnimationHelper.Fade(mainWindow.img, 0, TimeSpan.FromSeconds(.5));
+                Pic(true, false);
+                AnimationHelper.Fade(mainWindow.img, 1, TimeSpan.FromSeconds(.5));
+            }));
         }
     }
 }

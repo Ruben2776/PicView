@@ -15,16 +15,21 @@ using static PicView.Copy_Paste;
 using static PicView.DeleteFiles;
 using static PicView.DragAndDrop;
 using static PicView.Error_Handling;
+using static PicView.Fields;
 using static PicView.Helper;
 using static PicView.Interface;
+using static PicView.LoadControls;
+using static PicView.LoadWindows;
+using static PicView.MouseOverAnimations;
 using static PicView.Navigation;
 using static PicView.Open_Save;
-using static PicView.PicGallery;
+using static PicView.PicGalleryLogic;
 using static PicView.Resize_and_Zoom;
 using static PicView.Rotate_and_Flip;
-using static PicView.Shortcuts.Shortcuts;
+using static PicView.Shortcuts;
 using static PicView.SlideShow;
-using static PicView.Variables;
+using static PicView.Timers;
+using static PicView.ToggleMenus;
 
 namespace PicView
 {
@@ -62,7 +67,6 @@ namespace PicView
             AjaxLoadingStart();
 
             // Update values
-            var endLoading = false;
             AllowDrop = true;
             IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
             Pics = new List<string>();
@@ -75,15 +79,9 @@ namespace PicView
 
             // Load image if possible
             if (Application.Current.Properties["ArbitraryArgName"] == null)
-            {
                 Unload();
-                endLoading = true;
-            }
             else
-            {
-                var args = Application.Current.Properties["ArbitraryArgName"].ToString();
-                Pic(args);
-            }
+                Pic(Application.Current.Properties["ArbitraryArgName"].ToString());
 
             UpdateColor();
 
@@ -119,15 +117,12 @@ namespace PicView
             backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
             mainColor = (Color)Application.Current.Resources["MainColor"];
             quickSettingsMenu.ToggleScroll.IsChecked = IsScrollEnabled;
-            if (FitToWindow)
-                quickSettingsMenu.SetFit.IsChecked = true;
-            else
-                quickSettingsMenu.SetCenter.IsChecked = true;
+            FitToWindow = !quickSettingsMenu.SetFit.IsChecked.Value;
 
             // Load PicGallery, if needed
             if (Properties.Settings.Default.PicGallery > 0)
             {
-                picGallery = new UserControls.PicGallery
+                picGallery = new PicGallery
                 {
                     Opacity = 0,
                     Visibility = Visibility.Collapsed
@@ -136,8 +131,8 @@ namespace PicView
                 bg.Children.Add(picGallery);
                 Panel.SetZIndex(picGallery, 999);
 
-                if (Properties.Settings.Default.PicGallery == 2 && !endLoading)
-                    PicGalleryFade();
+                if (Properties.Settings.Default.PicGallery == 2 && freshStartup)
+                    PicGalleryToggle();
             }
 
             // Initilize Things!
@@ -156,8 +151,7 @@ namespace PicView
                 Properties.Settings.Default.CallUpgrade = false;
             }
 
-            if (endLoading)
-                AjaxLoadingEnd();
+            AjaxLoadingEnd();
         }
 
         #endregion
@@ -267,27 +261,7 @@ namespace PicView
             functionsMenu.ReloadButton.Click += (s, x) => Reload();
             functionsMenu.ResetZoomButton.Click += (s, x) => ResetZoom();
             functionsMenu.SlideshowButton.Click += (s, x) => LoadSlideshow();
-            functionsMenu.BgButton.Click += (s, x) =>
-            {
-                if (imgBorder == null)
-                    return;
-
-                if (!(imgBorder.Background is SolidColorBrush cc))
-                    return;
-
-                if (cc.Color == Colors.White)
-                {
-                    imgBorder.Background = new SolidColorBrush(Colors.Transparent);
-                    Properties.Settings.Default.BgColorWhite = false;
-                }
-                    
-                else
-                {
-                    imgBorder.Background = new SolidColorBrush(Colors.White);
-                    Properties.Settings.Default.BgColorWhite = true;
-                }
-                    
-            };
+            functionsMenu.BgButton.Click += ChangeBackground;
 
             // FlipButton
             imageSettingsMenu.FlipButton.Click += (s, x) => Flip();
@@ -323,7 +297,7 @@ namespace PicView
             bg.MouseLeftButtonDown += Bg_MouseLeftButtonDown;
             bg.Drop += Image_Drop;
             bg.DragOver += Image_DraOver;
-            bg.DragEnter += Image_DraEnter;
+            bg.DragEnter += Image_DragEnter;
             bg.DragLeave += Image_DragLeave;
 
             // TooltipStyle
@@ -340,13 +314,6 @@ namespace PicView
 
             // Lower Bar
             LowerBar.Drop += Image_Drop;
-
-            // PicGallery
-            if (Properties.Settings.Default.PicGallery > 0)
-            {
-                picGallery.PreviewItemClick += PicGallery_PreviewItemClick;
-                picGallery.ItemClick += PicGallery_ItemClick;
-            }
 
             // This
             Closing += Window_Closing;

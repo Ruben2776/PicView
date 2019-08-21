@@ -12,7 +12,7 @@ using System.Timers;
 
 namespace PicView
 {
-    internal static class Variables
+    internal static class Fields
     {
         internal const string AppName = "PicView";
         internal const string Loading = "Loading...";
@@ -21,9 +21,7 @@ namespace PicView
         internal const string ImageCopy = "Image copied to Clipboard";
         internal const string ExpFind = "Locating in file explorer";
         internal const string NoImage = "No image loaded";
-        internal const string DragOverString = "Drop to load image";
-
-        internal const string CameraIconSVG = "M448 405.333V106.667C448 83.198 428.802 64 405.333 64H106.667C83.198 64 64 83.198 64 106.667v298.666C64 428.802 83.198 448 106.667 448h298.666C428.802 448 448 428.802 448 405.333zM181.333 288l53.334 64 74.666-96 96 128H106.667l74.666-96z";
+        
 
         internal const string SupportedFiles =
         " *.jpg *.jpeg *.jpe *.png *.bmp *.tif *.tiff *.gif *.ico *.wdp *.svg *.psd *.psb *.orf *.cr2 *.crw *.dng *.raf *.raw *.mrw *.nef *.x3f *.arw *.webp *"

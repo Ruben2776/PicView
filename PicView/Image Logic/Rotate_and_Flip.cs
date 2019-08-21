@@ -1,5 +1,5 @@
 ﻿using System.Windows.Media;
-using static PicView.Variables;
+using static PicView.Fields;
 
 namespace PicView
 {
@@ -72,7 +72,7 @@ namespace PicView
         /// <param name="right"></param>
         internal static void Rotate(bool right)
         {
-            if (mainWindow.img.Source == null || picGallery.open)
+            if (mainWindow.img.Source == null || PicGalleryLogic.IsOpen)
             {
                 return;
             }

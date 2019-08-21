@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
-using static PicView.Variables;
+using static PicView.Fields;
 
 namespace PicView
 {

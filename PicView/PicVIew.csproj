@@ -137,12 +137,18 @@
     <Compile Include="File Logic\ArchiveExtraction.cs" />
     <Compile Include="File Logic\FileFunctions.cs" />
     <Compile Include="Image Logic\Navigation.cs" />
+    <Compile Include="Interface Logic\LoadControls.cs" />
+    <Compile Include="Interface Logic\LoadWindows.cs" />
+    <Compile Include="Interface Logic\MouseOverAnimations.cs" />
+    <Compile Include="Interface Logic\PicGalleryLogic.cs" />
     <Compile Include="Image Logic\Resize_and_Zoom.cs" />
     <Compile Include="Image Logic\Rotate_and_Flip.cs" />
-    <Compile Include="Image Logic\SlideShow.cs" />
+    <Compile Include="Interface Logic\SlideShow.cs" />
     <Compile Include="Interface Logic\ContextMenus.cs" />
     <Compile Include="Interface Logic\Interface.cs" />
-    <Compile Include="Interface Logic\PicGallery.cs" />
+    <Compile Include="Interface Logic\SvgIcons.cs" />
+    <Compile Include="Interface Logic\Timers.cs" />
+    <Compile Include="Interface Logic\ToggleMenus.cs" />
     <Compile Include="Screen-Logic\MonitorSize.cs" />
     <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="File Logic\RecentFiles.cs" />
@@ -165,7 +171,7 @@
     <Compile Include="Windows\AllSettings.xaml.cs">
       <DependentUpon>AllSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\Variables.cs" />
+    <Compile Include="Helpers\Fields.cs" />
     <Compile Include="Windows\FakeWindow.xaml.cs">
       <DependentUpon>FakeWindow.xaml</DependentUpon>
     </Compile>

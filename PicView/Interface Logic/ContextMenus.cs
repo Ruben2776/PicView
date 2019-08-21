@@ -10,8 +10,9 @@ using static PicView.FileLists;
 using static PicView.Open_Save;
 using static PicView.Wallpaper;
 using static PicView.Helper;
-using static PicView.Variables;
+using static PicView.Fields;
 using static PicView.Navigation;
+using static PicView.SvgIcons;
 
 namespace PicView
 {
@@ -62,9 +63,11 @@ namespace PicView
                 Header = "Print",
                 InputGestureText = "Ctrl + P"
             };
-            var printcmIcon = new System.Windows.Shapes.Path();
-            printcmIcon.Data = Geometry.Parse("M448 1536h896v-256h-896v256zm0-640h896v-384h-160q-40 0-68-28t-28-68v-160h-640v640zm1152 64q0-26-19-45t-45-19-45 19-19 45 19 45 45 19 45-19 19-45zm128 0v416q0 13-9.5 22.5t-22.5 9.5h-224v160q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-224q-13 0-22.5-9.5t-9.5-22.5v-416q0-79 56.5-135.5t135.5-56.5h64v-544q0-40 28-68t68-28h672q40 0 88 20t76 48l152 152q28 28 48 76t20 88v256h64q79 0 135.5 56.5t56.5 135.5z");
-            printcmIcon.Stretch = Stretch.Fill;
+            var printcmIcon = new System.Windows.Shapes.Path
+            {
+                Data = Geometry.Parse("M448 1536h896v-256h-896v256zm0-640h896v-384h-160q-40 0-68-28t-28-68v-160h-640v640zm1152 64q0-26-19-45t-45-19-45 19-19 45 19 45 45 19 45-19 19-45zm128 0v416q0 13-9.5 22.5t-22.5 9.5h-224v160q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-224q-13 0-22.5-9.5t-9.5-22.5v-416q0-79 56.5-135.5t135.5-56.5h64v-544q0-40 28-68t68-28h672q40 0 88 20t76 48l152 152q28 28 48 76t20 88v256h64q79 0 135.5 56.5t56.5 135.5z"),
+                Stretch = Stretch.Fill
+            };
             printcmIcon.Width = printcmIcon.Height = 12;
             printcmIcon.Fill = scbf;
             printcm.Icon = printcmIcon;
@@ -94,8 +97,10 @@ namespace PicView
             sortcmIcon.Width = sortcmIcon.Height = 12;
             sortcmIcon.Fill = scbf;
             sortcm.Icon = sortcmIcon;
-            var sortcmChild0 = new RadioButton();
-            sortcmChild0.Content = "File name";
+            var sortcmChild0 = new RadioButton
+            {
+                Content = "File name"
+            };
             sortcmChild0.Click += (s, x) =>
             {
                 Properties.Settings.Default.SortPreference = 0;
@@ -197,14 +202,30 @@ namespace PicView
                 Header = "Copy picture",
                 InputGestureText = "Ctrl + C"
             };
-            var cppcmIcon = new System.Windows.Shapes.Path();
-            cppcmIcon.Data = Geometry.Parse("M1696 384q40 0 68 28t28 68v1216q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-288h-544q-40 0-68-28t-28-68v-672q0-40 20-88t48-76l408-408q28-28 76-48t88-20h416q40 0 68 28t28 68v328q68-40 128-40h416zm-544 213l-299 299h299v-299zm-640-384l-299 299h299v-299zm196 647l316-316v-416h-384v416q0 40-28 68t-68 28h-416v640h512v-256q0-40 20-88t48-76zm956 804v-1152h-384v416q0 40-28 68t-68 28h-416v640h896z");
-            cppcmIcon.Stretch = Stretch.Fill;
+            var cppcmIcon = new System.Windows.Shapes.Path
+            {
+                Data = Geometry.Parse(CopyIconSVG),
+                Stretch = Stretch.Fill
+            };
             cppcmIcon.Width = cppcmIcon.Height = 12;
             cppcmIcon.Fill = scbf;
             cppcm.Icon = cppcmIcon;
             cppcm.Click += (s, x) => CopyPic();
             cm.Items.Add(cppcm);
+
+            var cpccm = new MenuItem
+            {
+                Header = "Cut picture",
+                InputGestureText = "Ctrl + X"
+            };
+            var cpccmIcon = new System.Windows.Shapes.Path();
+            cpccmIcon.Data = Geometry.Parse(ScissorIconSVG);
+            cpccmIcon.Stretch = Stretch.Fill;
+            cpccmIcon.Width = cpccmIcon.Height = 12;
+            cpccmIcon.Fill = scbf;
+            cpccm.Icon = cpccmIcon;
+            cpccm.Click += (s, x) => Cut(PicPath);
+            cm.Items.Add(cpccm);
 
             var pastecm = new MenuItem
             {

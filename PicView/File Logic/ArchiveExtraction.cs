@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using static PicView.Error_Handling;
 using static PicView.DeleteFiles;
-using static PicView.Variables;
+using static PicView.Fields;
 using static PicView.Interface;
 
 namespace PicView

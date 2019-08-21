@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using static PicView.Variables;
+using static PicView.Fields;
 using static PicView.Navigation;
 using static PicView.Interface;
 
@@ -275,7 +275,7 @@ namespace PicView
             // Don't zoom when gallery is open
             if (picGallery != null)
             {
-                if (picGallery.open)
+                if (PicGalleryLogic.IsOpen)
                 {
                     return;
                 }
