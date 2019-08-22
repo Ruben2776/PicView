@@ -2,14 +2,12 @@
     x:Class="PicView.UserControls.Menus.FunctionsMenu"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:PicView.UserControls.Menus"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Foreground="{StaticResource MainColorBrush}">
     <StackPanel>
         <Border
-            Width="390"
-            Height="220"
+            Width="350"
+            Height="165"
+            Margin="-5,0,0,0"
             Background="{DynamicResource BackgroundColorBrush}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1"
@@ -18,28 +16,29 @@
                 <Canvas Height="51" VerticalAlignment="Top">
                     <Rectangle
                         Canvas.Top="50"
-                        Width="388"
+                        Width="348"
                         Panel.ZIndex="1"
                         Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
                     <Rectangle
-                        Canvas.Left="335"
+                        Canvas.Left="135"
                         Width="1"
                         Height="51"
                         Panel.ZIndex="1"
                         Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
                     <Rectangle
-                        Canvas.Left="254"
+                        Canvas.Left="216"
                         Width="1"
                         Height="51"
                         Panel.ZIndex="1"
                         Stroke="{DynamicResource BorderBrush}"
                         StrokeThickness="1" />
                     <Rectangle
-                        Canvas.Left="172"
+                        Canvas.Left="296"
                         Width="1"
                         Height="50"
+                        Panel.ZIndex="1"
                         Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
                     <TextBlock
@@ -52,7 +51,7 @@
                         Text="All Functions" />
                     <Button
                         x:Name="About"
-                        Canvas.Left="173"
+                        Canvas.Left="136"
                         Width="80"
                         Height="51"
                         Margin="0"
@@ -81,7 +80,7 @@
                     </Button>
                     <Button
                         x:Name="Help"
-                        Canvas.Left="255"
+                        Canvas.Left="217"
                         Width="80"
                         Height="51"
                         Margin="0"
@@ -110,7 +109,7 @@
                     </Button>
                     <Button
                         x:Name="CloseButton"
-                        Canvas.Left="336"
+                        Canvas.Left="297"
                         Width="51"
                         Height="51"
                         BorderThickness="0"
@@ -129,16 +128,16 @@
                     </Button>
                 </Canvas>
                 <WrapPanel
-                    Canvas.Left="12"
+                    Canvas.Left="11"
                     Canvas.Top="61"
-                    Width="375"
+                    Width="339"
                     Height="97"
                     VerticalAlignment="Top">
                     <Button
                         x:Name="DeleteButton"
                         Width="42"
                         Height="42"
-                        Margin="0,0,4,0"
+                        Margin="0,0,5,5"
                         Style="{StaticResource MetroAlphaFlatButton}"
                         ToolTip="Send image to the recycle bin [Delete]">
                         <Path
@@ -155,7 +154,7 @@
                         x:Name="DeletePermButton"
                         Width="42"
                         Height="42"
-                        Margin="0,0,4,0"
+                        Margin="0,0,5,5"
                         Style="{StaticResource MetroAlphaFlatButton}"
                         ToolTip="Permanently delete image [Shift + Delete]">
                         <Path
@@ -173,7 +172,7 @@
                         x:Name="ResetZoomButton"
                         Width="42"
                         Height="42"
-                        Margin="0,0,4,0"
+                        Margin="0,0,5,5"
                         Style="{StaticResource MetroAlphaFlatButton}"
                         ToolTip="Reset zoom value [Double click image]">
                         <Path
@@ -191,7 +190,7 @@
                         x:Name="ClearButton"
                         Width="42"
                         Height="42"
-                        Margin="0,0,4,0"
+                        Margin="0,0,5,5"
                         Style="{StaticResource MetroAlphaFlatButton}"
                         ToolTip="Clear image">
                         <Path
@@ -208,7 +207,7 @@
                         x:Name="ReloadButton"
                         Width="42"
                         Height="42"
-                        Margin="0,0,4,0"
+                        Margin="0,0,5,5"
                         Style="{StaticResource MetroAlphaFlatButton}"
                         ToolTip="Reload image [Ctrl + R]">
                         <Path
@@ -226,7 +225,7 @@
                         x:Name="FileDetailsButton"
                         Width="42"
                         Height="42"
-                        Margin="0,0,4,0"
+                        Margin="0,0,5,5"
                         Style="{StaticResource MetroAlphaFlatButton}"
                         ToolTip="Show file details [Ctrl + I]">
                         <Canvas>
@@ -256,7 +255,7 @@
                         x:Name="SlideshowButton"
                         Width="42"
                         Height="42"
-                        Margin="0,0,4,0"
+                        Margin="0,0,5,5"
                         Style="{StaticResource MetroAlphaFlatButton}"
                         ToolTip="Start Slideshow [F11]">
                         <Canvas>
@@ -300,13 +299,13 @@
             </Canvas>
         </Border>
         <Rectangle
-            Width="22"
+            Width="23"
             Height="2"
-            Margin="346,-1,0,0"
+            Margin="308,-2,0,0"
             HorizontalAlignment="Left"
             Fill="{StaticResource BackgroundColorBrush}" />
         <Polygon
-            Margin="342,-7,0,0"
+            Margin="305,-7,0,0"
             Panel.ZIndex="-1"
             Fill="{StaticResource BackgroundColorBrush}"
             Points="0,0 15,30, 30,0"

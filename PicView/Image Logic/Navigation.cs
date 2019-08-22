@@ -4,19 +4,18 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using static PicView.Error_Handling;
 using static PicView.ArchiveExtraction;
 using static PicView.DeleteFiles;
+using static PicView.Error_Handling;
+using static PicView.Fields;
 using static PicView.FileLists;
 using static PicView.Helper;
-using static PicView.Fields;
 using static PicView.ImageManager;
-using static PicView.Resize_and_Zoom;
 using static PicView.Interface;
-using System.Windows.Media;
-using PicView.UserControls;
+using static PicView.Resize_and_Zoom;
 
 namespace PicView
 {
@@ -235,17 +234,14 @@ namespace PicView
             // Preload images \\
             if (PreloadDirection().HasValue)
             {
-                await Task.Run(() =>
-                {
-                    Preloader.PreLoad(x, reverse);
-                    PreloadCount = 0;
+                PreloadCount = 0;
+                await Preloader.PreLoad(x, reverse);              
 
-                    if (x < Pics.Count)
-                    {
-                        if (!Preloader.Contains(Pics[x]))
-                            Preloader.Add(pic, Pics[x]);
-                    }
-                });
+                if (x < Pics.Count)
+                {
+                    if (!Preloader.Contains(Pics[x]))
+                        Preloader.Add(pic, Pics[x]);
+                }
             }
 
             if (picGallery != null)

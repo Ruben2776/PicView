@@ -17,8 +17,8 @@ namespace PicView
         {
             Window window = new About
             {
-                Width = mainWindow.Width,
-                Height = mainWindow.Height,
+                Width = double.IsNaN(mainWindow.Width) ? 465 : mainWindow.Width,
+                Height = double.IsNaN(mainWindow.Height) ? 715 : mainWindow.Height,
                 Opacity = 0,
                 Owner = Application.Current.MainWindow,
             };
@@ -36,8 +36,8 @@ namespace PicView
         {
             Window window = new Help
             {
-                Width = mainWindow.Width,
-                Height = mainWindow.Height,
+                Width = double.IsNaN(mainWindow.Width) ? 465 : mainWindow.Width,
+                Height = double.IsNaN(mainWindow.Height) ? 715 : mainWindow.Height,
                 Opacity = 0,
                 Owner = Application.Current.MainWindow,
             };
@@ -54,8 +54,8 @@ namespace PicView
         {
             Window window = new AllSettings
             {
-                Width = mainWindow.Width,
-                Height = mainWindow.Height,
+                Width = double.IsNaN(mainWindow.Width) ? 465 : mainWindow.Width,
+                Height = double.IsNaN(mainWindow.Height) ? 715 : mainWindow.Height,
                 Opacity = 0,
                 Owner = Application.Current.MainWindow,
             };

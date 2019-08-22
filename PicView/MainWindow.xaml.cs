@@ -260,6 +260,7 @@ namespace PicView
             functionsMenu.DeletePermButton.Click += (s, x) => DeleteFile(PicPath, false);
             functionsMenu.ReloadButton.Click += (s, x) => Reload();
             functionsMenu.ResetZoomButton.Click += (s, x) => ResetZoom();
+            functionsMenu.ClearButton.Click += (s, x) => Unload();
             functionsMenu.SlideshowButton.Click += (s, x) => LoadSlideshow();
             functionsMenu.BgButton.Click += ChangeBackground;
 

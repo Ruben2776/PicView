@@ -5,45 +5,44 @@
     Foreground="{StaticResource MainColorBrush}">
     <StackPanel>
         <Border
-            Width="292"
-            Height="217"
+            Width="279"
+            Height="175"
             Background="{DynamicResource BackgroundColorBrush}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1"
             CornerRadius="2">
-            <Grid>
-                <Canvas Height="51" VerticalAlignment="Top">
+            <Canvas>
                     <Rectangle
                         Canvas.Top="50"
-                        Width="290"
+                        Width="278"
                         Panel.ZIndex="1"
                         Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
                     <Rectangle
-                        Canvas.Left="238"
+                        Canvas.Left="121"
                         Width="1"
                         Height="51"
                         Panel.ZIndex="1"
                         Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
                     <Rectangle
-                        Canvas.Left="187"
+                        Canvas.Left="173"
                         Width="1"
                         Height="51"
                         Panel.ZIndex="1"
                         Stroke="{DynamicResource BorderBrush}"
                         StrokeThickness="1" />
                     <Rectangle
-                        Canvas.Left="136"
+                        Canvas.Left="225"
                         Width="1"
                         Height="50"
                         Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
                     <TextBlock
                         x:Name="bar"
-                        Width="137"
+                        Width="121"
                         Height="51"
-                        Padding="31,17,0,0"
+                        Padding="25,17,0,0"
                         FontFamily="/PicView;component/lib/fonts/#Aller"
                         FontSize="16"
                         FontWeight="Bold"
@@ -51,7 +50,7 @@
 
                     <Button
                         x:Name="CopyButton"
-                        Canvas.Left="137"
+                        Canvas.Left="122"
                         Width="51"
                         Height="51"
                         Margin="0"
@@ -71,7 +70,7 @@
 
                     <Button
                         x:Name="PasteButton"
-                        Canvas.Left="188"
+                        Canvas.Left="174"
                         Width="51"
                         Height="51"
                         Margin="0"
@@ -89,36 +88,30 @@
                             Stretch="Fill" />
                     </Button>
 
-                    <Button
+                <Button
                         x:Name="CloseButton"
-                        Canvas.Left="239"
+                        Canvas.Left="226"
                         Width="51"
                         Height="51"
                         BorderThickness="0"
                         FocusVisualStyle="{x:Null}"
                         ToolTip="Close">
-                        <Button.Background>
-                            <SolidColorBrush x:Name="CloseButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </Button.Background>
-                        <Path
+                    <Button.Background>
+                        <SolidColorBrush x:Name="CloseButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Button.Background>
+                    <Path
                             Width="10"
                             Height="10"
                             Data="M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z"
                             Fill="{StaticResource MainColorBrush}"
                             SnapsToDevicePixels="True"
                             Stretch="Fill" />
-                    </Button>
-                </Canvas>
-
-                <Canvas
-                    Width="290"
-                    Height="164"
-                    Margin="0,51,0,6"
-                    VerticalAlignment="Top">
-                    <Border
+                </Button>
+                
+                <Border
                         x:Name="Open_Border"
-                        Canvas.Left="14"
-                        Canvas.Top="7"
+                        Canvas.Left="9"
+                        Canvas.Top="59"
                         Style="{StaticResource SexyBorder}">
                         <Button
                             x:Name="Open"
@@ -134,8 +127,8 @@
 
                     <Border
                         x:Name="Open_File_Location_Border"
-                        Canvas.Left="150"
-                        Canvas.Top="7"
+                        Canvas.Left="143"
+                        Canvas.Top="59"
                         Style="{StaticResource SexyBorder}">
                         <Button
                             x:Name="Open_File_Location"
@@ -151,8 +144,8 @@
 
                     <Border
                         x:Name="Print_Border"
-                        Canvas.Left="14"
-                        Canvas.Top="82"
+                        Canvas.Left="9"
+                        Canvas.Top="116"
                         Style="{StaticResource SexyBorder}">
                         <Button
                             x:Name="Print"
@@ -168,8 +161,8 @@
 
                     <Border
                         x:Name="Save_File_Location_Border"
-                        Canvas.Left="150"
-                        Canvas.Top="82"
+                        Canvas.Left="143"
+                        Canvas.Top="116"
                         Style="{StaticResource SexyBorder}">
                         <Button
                             x:Name="Save_File"
@@ -182,9 +175,8 @@
                             <SolidColorBrush x:Name="SaveFileLocationBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Border.Background>
                     </Border>
-                </Canvas>
 
-            </Grid>
+                </Canvas>
 
         </Border>
         <Rectangle
