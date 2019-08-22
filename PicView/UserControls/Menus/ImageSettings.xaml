@@ -5,8 +5,8 @@
     <StackPanel>
         <Border
             Width="280"
-            Height="178"
-            Background="{DynamicResource BackgroundColorBrush}"
+            Height="180"
+            Background="{StaticResource BackgroundColorBrush}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1"
             CornerRadius="2">

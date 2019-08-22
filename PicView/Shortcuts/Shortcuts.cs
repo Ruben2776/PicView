@@ -51,8 +51,8 @@ namespace PicView
                         else
                             FolderIndex++;
 
-                        fastPicTimer.Start();
-                        //FastPic();
+                        //fastPicTimer.Start();
+                        FastPic();
                     }
                     break;
 
@@ -83,8 +83,8 @@ namespace PicView
                         else
                             FolderIndex--;
 
-                        fastPicTimer.Start();
-                        //FastPic();
+                        //fastPicTimer.Start();
+                        FastPic();
                     }
                     break;
 
@@ -367,7 +367,7 @@ namespace PicView
                 else if (picGallery != null)
                 {
                     if (Properties.Settings.Default.PicGallery != 2 && PicGalleryLogic.IsOpen)
-                        PicGalleryLogic.PicGalleryToggle(false);
+                        PicGalleryLogic.PicGalleryToggle();
                     else
                         SystemCommands.CloseWindow(mainWindow);
                 }
@@ -491,14 +491,14 @@ namespace PicView
             else if (e.Key == Key.F4)
             {
                 if (picGallery != null)
-                    PicGalleryLogic.PicGalleryToggle(picGallery.Visibility == Visibility.Collapsed, Properties.Settings.Default.PicGallery == 2);
+                    PicGalleryLogic.PicGalleryToggle(Properties.Settings.Default.PicGallery == 2);
             }
 
             // F5
             else if (e.Key == Key.F5)
             {
                 if (picGallery != null)
-                    PicGalleryLogic.PicGalleryToggle(picGallery.Visibility == Visibility.Collapsed, Properties.Settings.Default.PicGallery == 1);
+                    PicGalleryLogic.PicGalleryToggle(Properties.Settings.Default.PicGallery == 1);
             }
 
             // F6

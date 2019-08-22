@@ -1,14 +1,15 @@
 ﻿using PicView.ScreenLogic;
 using PicView.UserControls;
 using PicView.UserControls.Menus;
+using PicView.Windows;
 using System;
 using System.Collections.Generic;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.Helper;
 using static PicView.Resize_and_Zoom;
-using System.Timers;
 
 namespace PicView
 {
@@ -53,6 +54,8 @@ namespace PicView
             + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw";      // Camera files
 
         internal static MainWindow mainWindow = ((MainWindow)Application.Current.MainWindow);
+
+        internal static FakeWindow fake;
 
         /// <summary>
         /// File path of current image
@@ -212,7 +215,7 @@ namespace PicView
         internal static ClickArrow clickArrowRight;
         internal static X2 x2;
         internal static Minus minus;
-        internal static UserControls.PicGallery picGallery;
+        internal static PicGallery picGallery;
 
         internal static Point origin;
         internal static Point start;
@@ -235,7 +238,7 @@ namespace PicView
         internal static List<string> Pics { get; set; }
 
 
-        internal static List<ImageSource> Images { get; set; }
+        //internal static List<ImageSource> Images { get; set; }
         /// <summary>
         /// Timer used to continously scroll with AutoScroll
         /// </summary>
@@ -249,7 +252,7 @@ namespace PicView
         /// <summary>
         /// Timer used for FastPic()
         /// </summary>
-        internal static Timer fastPicTimer;
+        //internal static Timer fastPicTimer;
 
         /// <summary>
         /// Timer used for hide/show cursor.

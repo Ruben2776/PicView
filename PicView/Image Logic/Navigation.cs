@@ -101,18 +101,13 @@ namespace PicView
             }
 
 
-            // Fix loading bug
-            if (ajaxLoading.Opacity != 1 && canNavigate)
-            {
-                AjaxLoadingEnd();
-            }
+            AjaxLoadingEnd();
 
             // Load images for PicGallery if enabled
             if (Properties.Settings.Default.PicGallery > 0)
             {
-                if (!PicGalleryLogic.LoadComplete)
-                    if (!PicGalleryLogic.isLoading)
-                        await PicGalleryLogic.Load();
+                if (!PicGalleryLogic.LoadComplete && !PicGalleryLogic.isLoading)
+                    await PicGalleryLogic.Load();
             }
         }
 
@@ -384,22 +379,33 @@ namespace PicView
         /// <summary>
         /// Only load image from preload or thumbnail without resizing
         /// </summary>
-        internal static async void FastPic(object sender, EventArgs e)
+        internal static void FastPic()
         {
-            await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
-            {
-                mainWindow.Bar.ToolTip =
-                mainWindow.Title =
-                mainWindow.Bar.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count;
+            //await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            //{
+            //    mainWindow.Bar.ToolTip =
+            //    mainWindow.Title =
+            //    mainWindow.Bar.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count;
 
-                mainWindow.img.Width = xWidth;
-                mainWindow.img.Height = xHeight;
+            //    mainWindow.img.Width = xWidth;
+            //    mainWindow.img.Height = xHeight;
 
-                mainWindow.img.Source = Preloader.Contains(Pics[FolderIndex]) ? Preloader.Load(Pics[FolderIndex]) : GetBitmapSourceThumb(Pics[FolderIndex]);
-            }));
+            //    mainWindow.img.Source = Preloader.Contains(Pics[FolderIndex]) ? Preloader.Load(Pics[FolderIndex]) : GetBitmapSourceThumb(Pics[FolderIndex]);
+            //}));
+            //Progress(FolderIndex, Pics.Count);
+            //FastPicRunning = true;
+
+            mainWindow.Bar.ToolTip =
+            mainWindow.Title =
+            mainWindow.Bar.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count;
+
+            mainWindow.img.Width = xWidth;
+            mainWindow.img.Height = xHeight;
+
+            mainWindow.img.Source = Preloader.Contains(Pics[FolderIndex]) ? Preloader.Load(Pics[FolderIndex]) : GetBitmapSourceThumb(Pics[FolderIndex]);
             Progress(FolderIndex, Pics.Count);
             FastPicRunning = true;
-            
+
         }
 
         /// <summary>
@@ -407,7 +413,7 @@ namespace PicView
         /// </summary>
         internal static void FastPicUpdate()
         {
-            fastPicTimer.Stop();
+            //fastPicTimer.Stop();
             FastPicRunning = false;
 
             //if (!Preloader.Contains(Pics[FolderIndex]))
@@ -465,10 +471,10 @@ namespace PicView
             {
                 var client = new WebClient();
                 client.DownloadProgressChanged += (sender, e) =>
-                    Application.Current.MainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
-                    {
-                        mainWindow.Title = mainWindow.Bar.Text = e.BytesReceived + "/" + e.TotalBytesToReceive + ". " + e.ProgressPercentage + "% complete...";
-                    }));
+                mainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                {
+                    mainWindow.Title = mainWindow.Bar.Text = e.BytesReceived + "/" + e.TotalBytesToReceive + ". " + e.ProgressPercentage + "% complete...";
+                }));
 
                 var bytes = await client.DownloadDataTaskAsync(new Uri(address));
                 var stream = new MemoryStream(bytes);

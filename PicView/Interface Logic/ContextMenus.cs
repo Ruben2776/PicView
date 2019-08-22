@@ -5,14 +5,14 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.Copy_Paste;
 using static PicView.DeleteFiles;
-using static PicView.FileFunctions;
-using static PicView.FileLists;
-using static PicView.Open_Save;
-using static PicView.Wallpaper;
-using static PicView.Helper;
 using static PicView.Fields;
+using static PicView.FileLists;
+using static PicView.Helper;
 using static PicView.Navigation;
+using static PicView.Open_Save;
+using static PicView.RecentFiles;
 using static PicView.SvgIcons;
+using static PicView.Wallpaper;
 
 namespace PicView
 {

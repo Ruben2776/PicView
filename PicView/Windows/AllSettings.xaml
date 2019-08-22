@@ -147,7 +147,7 @@
                 <ScrollViewer
                     x:Name="Scroller"
                     Width="436"
-                    Background="{DynamicResource BackgroundColorBrushAltW}"
+                    Background="{StaticResource BackgroundColorBrush}"
                     HorizontalScrollBarVisibility="Disabled"
                     VerticalScrollBarVisibility="Auto">
                     <StackPanel>
@@ -168,7 +168,6 @@
                                 Width="100"
                                 Height="40"
                                 Margin="5,3"
-                                BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="2"
                                 Content="Blue"
                                 Style="{StaticResource MetroAlphaFlatRadioButton}">
@@ -181,7 +180,6 @@
                                 Width="100"
                                 Height="40"
                                 Margin="5,3"
-                                BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="2"
                                 Content="Cyan"
                                 Style="{StaticResource MetroAlphaFlatRadioButton}">
@@ -194,7 +192,6 @@
                                 Width="100"
                                 Height="40"
                                 Margin="5,3"
-                                BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="2"
                                 Content="Aqua"
                                 Style="{StaticResource MetroAlphaFlatRadioButton}">
@@ -207,7 +204,6 @@
                                 Width="100"
                                 Height="40"
                                 Margin="5"
-                                BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="2"
                                 Content="Green"
                                 Style="{StaticResource MetroAlphaFlatRadioButton}">
@@ -220,7 +216,6 @@
                                 Width="100"
                                 Height="40"
                                 Margin="5"
-                                BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="2"
                                 Content="Magenta"
                                 Style="{StaticResource MetroAlphaFlatRadioButton}">
@@ -233,7 +228,6 @@
                                 Width="100"
                                 Height="40"
                                 Margin="5"
-                                BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="2"
                                 Content="Pink"
                                 Style="{StaticResource MetroAlphaFlatRadioButton}">
@@ -246,7 +240,6 @@
                                 Width="100"
                                 Height="40"
                                 Margin="5"
-                                BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="2"
                                 Content="Purple"
                                 Style="{StaticResource MetroAlphaFlatRadioButton}">
@@ -259,7 +252,6 @@
                                 Width="100"
                                 Height="40"
                                 Margin="5,3"
-                                BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="2"
                                 Content="Violet"
                                 Style="{StaticResource MetroAlphaFlatRadioButton}">
@@ -272,7 +264,6 @@
                                 Width="100"
                                 Height="40"
                                 Margin="5,3"
-                                BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="2"
                                 Content="Red"
                                 Style="{StaticResource MetroAlphaFlatRadioButton}">
@@ -285,7 +276,6 @@
                                 Width="100"
                                 Height="40"
                                 Margin="5,3"
-                                BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="2"
                                 Content="Orange"
                                 Style="{StaticResource MetroAlphaFlatRadioButton}">
@@ -298,7 +288,6 @@
                                 Width="100"
                                 Height="40"
                                 Margin="5,3"
-                                BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="2"
                                 Content="Grey"
                                 Style="{StaticResource MetroAlphaFlatRadioButton}">
@@ -311,7 +300,6 @@
                                 Width="100"
                                 Height="40"
                                 Margin="5,3"
-                                BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="2"
                                 Content="Beige"
                                 Style="{StaticResource MetroAlphaFlatRadioButton}">
@@ -337,7 +325,6 @@
                                 Width="180"
                                 Height="40"
                                 Margin="5,3"
-                                BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="2"
                                 Content="Enable Picture Gallery"
                                 Style="{StaticResource Checkstyle}">
@@ -350,7 +337,6 @@
                                 Width="131"
                                 Height="40"
                                 Margin="5,3"
-                                BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="2"
                                 Content="Enable Looping"
                                 Style="{StaticResource Checkstyle}">
@@ -360,10 +346,9 @@
                             </CheckBox>
                             <CheckBox
                                 x:Name="BorderRadio"
-                                Width="205"
+                                Width="210"
                                 Height="40"
                                 Margin="5,3"
-                                BorderBrush="{StaticResource BorderBrushAlt}"
                                 BorderThickness="2"
                                 Content="Enable Window Color Brush"
                                 Style="{StaticResource Checkstyle}">

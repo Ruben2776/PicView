@@ -87,49 +87,25 @@ namespace PicView.PreLoading
         }
 
         /// <summary>
-        /// Removes all keys and clears them when app is idle
+        /// Removes all keys 
         /// </summary>
-        internal static Task Clear()
+        internal static void Clear()
         {
             // Add elemnts to Clear method and set timer to fast
-            return Clear(Sources.Keys.ToArray(), true);
+            Clear(Sources.Keys.ToArray());
         }
 
         /// <summary>
-        /// Removes specific keys and clears them when app is idle
+        /// Removes specific keys
         /// </summary>
         /// <param name="array"></param>
-        internal static Task Clear(string[] array, bool fast = false)
+        internal static void Clear(string[] array)
         {
-            // Set time to clear the images
-            var timeInSeconds = 40;
-
-            // clear faster if it contains a lot of images or if fast == true
-            if (Sources.Count > 50)
+            for (int i = 0; i < array.Length; i++)
             {
-                timeInSeconds = 15;
+                Remove(array[i]);
+                GC.Collect();
             }
-            else if (fast)
-            {
-                timeInSeconds = 20;
-            }
-
-            #if DEBUG
-            timeInSeconds = 15;
-            #endif
-
-
-            return Task.Run(() =>
-            {
-                Task.Delay(TimeSpan.FromSeconds(timeInSeconds));
-
-                // Remove elements
-                for (int i = 0; i < array.Length; i++)
-                {
-                    Remove(array[i]);
-                    GC.Collect();
-                }
-            });
         }
 
         /// <summary>

@@ -6,7 +6,7 @@
     <StackPanel>
         <Border
             Width="279"
-            Height="175"
+            Height="180"
             Background="{DynamicResource BackgroundColorBrush}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1"
@@ -182,7 +182,7 @@
         <Rectangle
             Width="22"
             Height="1"
-            Margin="29,-2,0,0"
+            Margin="29,-1,0,0"
             HorizontalAlignment="Left"
             Fill="{StaticResource BackgroundColorBrush}" />
         <Polygon

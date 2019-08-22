@@ -85,93 +85,107 @@ namespace PicView
 
         #region Open/Close
 
-        internal static void PicGalleryToggle(bool show = true, bool change = false)
+        internal static void PicGalleryToggle(bool change = false)
         {
+            /// Quit when not enabled
             if (Properties.Settings.Default.PicGallery == 0)
                 return;
 
-            if (change)
-                Properties.Settings.Default.PicGallery = Properties.Settings.Default.PicGallery == 1 ? (byte)2 : (byte)1;
-
-            if (Properties.Settings.Default.PicGallery == 1)
+            /// Toggle PicGallery, when not changed
+            if (!change)
             {
-                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.5) };
-                if (show)
+                if (Properties.Settings.Default.PicGallery == 1)
                 {
-                    da.To = 1;
-                    da.From = 0;
+                    var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.5) };
 
-                    IsOpen = true;
-                    LoadLayout();
-                    ScrollTo();
-
-                    if (Application.Current.Windows.OfType<FakeWindow>().Any())
+                    if (!IsOpen)
                     {
-                        var fake = Application.Current.Windows[1] as FakeWindow;
-                        fake.grid.Children.Remove(picGallery);
-                        fake.Hide();
-                        if (!mainWindow.bg.Children.Contains(picGallery))
-                            mainWindow.bg.Children.Add(picGallery);
+                        LoadLayout();
+                        da.To = 1;
+                        da.From = 0;
+                        IsOpen = true;
+                        ScrollTo();
                     }
+                    else
+                    {
+                        da.To = 0;
+                        da.From = 1;
+                        da.Completed += delegate
+                        {
+                            if (IsOpen && Properties.Settings.Default.PicGallery == 1)
+                            {
+                                picGallery.Visibility = Visibility.Collapsed;
+                                IsOpen = false;
+                            }
+                        };
+                    }
+
+                    picGallery.BeginAnimation(UIElement.OpacityProperty, da);
                 }
                 else
                 {
-                    da.To = 0;
-                    da.From = 1;
-                    da.Completed += delegate
+                    if (!IsOpen)
                     {
-                        picGallery.Visibility = Visibility.Collapsed;
-                        IsOpen = false;
-                    };
-                }
+                        LoadLayout();
 
-                picGallery.BeginAnimation(UIElement.OpacityProperty, da);
-            }
+                        if (Properties.Settings.Default.ShowInterface)
+                            HideInterface();
 
-            else if (Properties.Settings.Default.PicGallery == 2)
-            {
-
-                if (Properties.Settings.Default.ShowInterface)
-                    HideInterface();
-
-                if (show)
-                {
-
-                    if (Application.Current.Windows.OfType<FakeWindow>().Any())
-                    {
-                        var f = Application.Current.Windows[1] as FakeWindow;
-
-                        if (!f.grid.Children.Contains(picGallery))
+                        if (fake != null)
+                        {
+                            if (!fake.grid.Children.Contains(picGallery))
+                            {
+                                mainWindow.bg.Children.Remove(picGallery);
+                                fake.grid.Children.Add(picGallery);
+                            }
+                        }
+                        else
                         {
                             mainWindow.bg.Children.Remove(picGallery);
-                            f.grid.Children.Add(picGallery);
+                            fake = new FakeWindow();
+                            fake.grid.Children.Add(picGallery);
                         }
 
-                        f.Show();
+                        fake.Show();
                         IsOpen = true;
-                        picGallery.Visibility = Visibility.Visible;
-                        return;
+                        ScrollTo();
+                    }
+                    else
+                    {
+                        fake.Hide();
+                        IsOpen = false;
                     }
 
-                    mainWindow.bg.Children.Remove(picGallery);
-
-                    LoadLayout();
-                    ScrollTo();
-
-                    var fake = new FakeWindow();
-
-                    fake.grid.Children.Add(picGallery);
-                    fake.Show();
-                    IsOpen = true;
-
-                    return;
                 }
+            }
+            /// Toggle PicGallery, when changed
+            else
+            {
+                if (Properties.Settings.Default.PicGallery == 1)
+                {
+                    Properties.Settings.Default.PicGallery = 2;
+                    LoadLayout();
 
-                if (Application.Current.Windows.OfType<FakeWindow>().Any())
-                    Application.Current.Windows[1].Hide();
+                    if (fake == null)
+                        fake = new FakeWindow();
 
-                picGallery.Visibility = Visibility.Collapsed;
-                IsOpen = false;
+                    if (!fake.grid.Children.Contains(picGallery))
+                    {
+                        mainWindow.bg.Children.Remove(picGallery);
+                        fake.grid.Children.Add(picGallery);
+                    }
+
+                    fake.Show();
+                }
+                else
+                {
+                    fake.grid.Children.Remove(picGallery);
+                    fake.Hide();
+                    mainWindow.bg.Children.Add(picGallery);
+
+                    Properties.Settings.Default.PicGallery = 1;
+                    LoadLayout();
+                }
             }
         }
 

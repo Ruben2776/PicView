@@ -152,7 +152,7 @@
                         Foreground="{StaticResource MainColorBrush}" />
                     <StackPanel
                         Width="320"
-                        Margin="0,3,0,25"
+                        Margin="0,3,0,10"
                         Orientation="Horizontal">
                         <CheckBox
                             x:Name="ToggleScroll"

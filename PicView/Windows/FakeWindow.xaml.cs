@@ -34,7 +34,7 @@ namespace PicView.Windows
 
         private void FakeWindow_LostFocus(object sender, RoutedEventArgs e)
         {
-            Application.Current.MainWindow.Focus();
+            mainWindow.Focus();
         }
 
         private void FakeWindow_StateChanged(object sender, EventArgs e)
@@ -42,7 +42,7 @@ namespace PicView.Windows
             switch (WindowState)
             {
                 case WindowState.Normal:
-                    Application.Current.MainWindow.Focus();
+                    mainWindow.Focus();
                     break;
                 case WindowState.Minimized:
                     break;
@@ -63,28 +63,22 @@ namespace PicView.Windows
 
         private void MainWindow_StateChanged(object sender, EventArgs e)
         {
-            switch (Application.Current.MainWindow.WindowState)
+            switch (mainWindow.WindowState)
             {
                 case WindowState.Normal:
                     Show();
-                    Application.Current.MainWindow.Focus();
+                    mainWindow.Focus();
                     break;
 
                 case WindowState.Minimized:
                     Hide();
-                    break;
-
-                case WindowState.Maximized:
-                    break;
-
-                default:
                     break;
             }
         }
 
         private void FakeWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Application.Current.MainWindow.Focus();
+            mainWindow.Focus();
         }
     }
 }

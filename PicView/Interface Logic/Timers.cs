@@ -32,12 +32,12 @@ namespace PicView
             };
             activityTimer.Elapsed += ActivityTimer_Elapsed;
 
-            fastPicTimer = new Timer()
-            {
-                Interval = 1,
-                Enabled = false
-            };
-            fastPicTimer.Elapsed += FastPic;
+            //fastPicTimer = new Timer()
+            //{
+            //    Interval = 1,
+            //    Enabled = false
+            //};
+            //fastPicTimer.Elapsed += FastPic;
 
             Slidetimer = new Timer()
             {

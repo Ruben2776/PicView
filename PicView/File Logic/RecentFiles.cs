@@ -1,6 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using static PicView.Helper;
+using static PicView.Navigation;
+using static PicView.SvgIcons;
 
 namespace PicView
 {
@@ -103,6 +109,82 @@ namespace PicView
             if (!string.IsNullOrWhiteSpace(zipfile))
                 Add(zipfile);
             zipped = isZipped;
+        }
+
+
+        /// <summary>
+        /// Adds events and submenu items to recent items in the context menu
+        /// </summary>
+        /// <param name="sender"></param>
+        internal static void Recentcm_MouseEnter(object sender)
+        {
+            // Need to register the object as a MenuItem to use it
+            var RecentFilesMenuItem = (MenuItem)sender;
+
+            // Load values and check if succeeded
+            var fileNames = RecentFiles.LoadValues();
+            if (fileNames == null)
+                return;
+
+            // Update old values
+            // If items exist: replace them, else add them
+            if (RecentFilesMenuItem.Items.Count >= fileNames.Length)
+            {
+                for (int i = fileNames.Length - 1; i >= 0; i--)
+                {
+                    // Don't add the same item more than once
+                    var item = fileNames[i];
+                    if (i != 0 && fileNames[i - 1] == item)
+                        continue;
+
+                    // Change values
+                    var menuItem = (MenuItem)RecentFilesMenuItem.Items[i];
+                    var header = Path.GetFileNameWithoutExtension(item);
+                    header = header.Length > 30 ? Shorten(header, 30) : header;
+                    menuItem.Header = header;
+                    menuItem.ToolTip = item;
+                    var ext = Path.GetExtension(item);
+                    var ext5 = !string.IsNullOrWhiteSpace(ext) && ext.Length >= 5 ? ext.Substring(0, 5) : ext;
+                    //ext5 = ext5.Length == 5 ? ext.Replace("?", string.Empty) : ext5;
+                    menuItem.InputGestureText = ext5;
+                }
+                return;
+            }
+
+            // Add if not exist
+            for (int i = fileNames.Length - 1; i >= 0; i--)
+            {
+                // Don't add the same item more than once
+                var item = fileNames[i];
+                if (i != 0 && fileNames[i - 1] == item)
+                    continue;
+
+                var cmIcon = new System.Windows.Shapes.Path
+                {
+                    Data = Geometry.Parse(CameraIconSVG),
+                    Stretch = Stretch.Fill,
+                    Width = 12,
+                    Height = 12,
+                    Fill = (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"]
+                };
+
+                var header = Path.GetFileNameWithoutExtension(item);
+                header = header.Length > 30 ? Shorten(header, 30) : header;
+                // Add items
+                var menuItem = new MenuItem()
+                {
+                    Header = header,
+                    ToolTip = item
+                };
+                // Set tooltip as argument to avoid subscribing and unsubscribing to events
+                menuItem.Click += (x, xx) => Pic(menuItem.ToolTip.ToString());
+                menuItem.Icon = cmIcon;
+                var ext = Path.GetExtension(item);
+                var ext5 = !string.IsNullOrWhiteSpace(ext) && ext.Length >= 5 ? ext.Substring(0, 5) : ext;
+                //ext5 = ext5.Length == 5 ? ext.Replace("?", string.Empty) : ext5;
+                menuItem.InputGestureText = ext5;
+                RecentFilesMenuItem.Items.Add(menuItem);
+            }
         }
 
     }
