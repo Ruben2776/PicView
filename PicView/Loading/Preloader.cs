@@ -170,18 +170,21 @@ namespace PicView.PreLoading
                         i = index + 4 >= Pics.Count ? Pics.Count : index + 4;
                         Add(i);
 
-                        //Clean up behind
-                        var arr = new string[3];
-                        i = index - 3 < 0 ? (Pics.Count - index) - 3 : index - 3;
-                        if (i > -1 && i < Pics.Count)
-                            arr[0] = Pics[i];
-                        i = i - 1 < 0 ? (Pics.Count - index) - 1 : i - 1;
-                        if (i > -1 && i < Pics.Count)
-                            arr[1] = Pics[i];
-                        i = i - 1 < 0 ? (Pics.Count - index) - 1 : i - 1;
-                        if (i > -1 && i < Pics.Count)
-                            arr[2] = Pics[i];
-                        Clear(arr);
+                        if (Pics.Count > 20 && !freshStartup)
+                        {
+                            //Clean up behind
+                            var arr = new string[3];
+                            i = index - 3 < 0 ? (Pics.Count - index) - 3 : index - 3;
+                            if (i > -1 && i < Pics.Count)
+                                arr[0] = Pics[i];
+                            i = i - 1 < 0 ? (Pics.Count - index) - 1 : i - 1;
+                            if (i > -1 && i < Pics.Count)
+                                arr[1] = Pics[i];
+                            i = i - 1 < 0 ? (Pics.Count - index) - 1 : i - 1;
+                            if (i > -1 && i < Pics.Count)
+                                arr[2] = Pics[i];
+                            Clear(arr);
+                        }
                     }
                     else
                     {
@@ -203,16 +206,18 @@ namespace PicView.PreLoading
                         i = index - 4 < 0 ? (index + 4) - Pics.Count : index - 4;
                         Add(i);
 
-                        //Clean up behind
-                        var arr = new string[3];
-                        i = index + 3 > Pics.Count - 1 ? Pics.Count - 1 : index + 3;
-                        arr[0] = Pics[i];
-                        i = index + 4 > Pics.Count - 1 ? Pics.Count - 1 : index + 4;
-                        arr[1] = Pics[i];
-                        i = index + 5 > Pics.Count - 1 ? Pics.Count - 1 : index + 5;
-                        arr[2] = Pics[i];
-                        Clear(arr);
-
+                        if (Pics.Count > 20 && !freshStartup)
+                        {
+                            //Clean up behind
+                            var arr = new string[3];
+                            i = index + 3 > Pics.Count - 1 ? Pics.Count - 1 : index + 3;
+                            arr[0] = Pics[i];
+                            i = index + 4 > Pics.Count - 1 ? Pics.Count - 1 : index + 4;
+                            arr[1] = Pics[i];
+                            i = index + 5 > Pics.Count - 1 ? Pics.Count - 1 : index + 5;
+                            arr[2] = Pics[i];
+                            Clear(arr);
+                        }
                     }
                 }
                 else
@@ -239,18 +244,21 @@ namespace PicView.PreLoading
                         i = index + 4 >= Pics.Count ? (index + 4) - Pics.Count : index + 4;
                         Add(i);
 
-                        //Clean up behind
-                        var arr = new string[3];
-                        i = index - 3 < 0 ? (Pics.Count - index) - 3 : index - 3;
-                        if (i > -1 && i < Pics.Count)
-                            arr[0] = Pics[i];
-                        i = i - 1 < 0 ? (Pics.Count - index) - 1 : i - 1;
-                        if (i > -1 && i < Pics.Count)
-                            arr[1] = Pics[i];
-                        i = i - 1 < 0 ? (Pics.Count - index) - 1 : i - 1;
-                        if (i > -1 && i < Pics.Count)
-                            arr[2] = Pics[i];
-                        Clear(arr);
+                        if (Pics.Count > 20 && !freshStartup)
+                        {
+                            //Clean up behind
+                            var arr = new string[3];
+                            i = index - 3 < 0 ? (Pics.Count - index) - 3 : index - 3;
+                            if (i > -1 && i < Pics.Count)
+                                arr[0] = Pics[i];
+                            i = i - 1 < 0 ? (Pics.Count - index) - 1 : i - 1;
+                            if (i > -1 && i < Pics.Count)
+                                arr[1] = Pics[i];
+                            i = i - 1 < 0 ? (Pics.Count - index) - 1 : i - 1;
+                            if (i > -1 && i < Pics.Count)
+                                arr[2] = Pics[i];
+                            Clear(arr);
+                        }
                     }
 
                     else
@@ -273,15 +281,18 @@ namespace PicView.PreLoading
                         i = index - 4 < 0 ? (index + 4) - Pics.Count : index - 4;
                         Add(i);
 
-                        //Clean up behind
-                        var arr = new string[3];
-                        i = index + 3 > Pics.Count - 1 ? Pics.Count - 1 : index + 3;
-                        arr[0] = Pics[i];
-                        i = index + 4 > Pics.Count - 1 ? Pics.Count - 1 : index + 4;
-                        arr[1] = Pics[i];
-                        i = index + 5 > Pics.Count - 1 ? Pics.Count - 1 : index + 5;
-                        arr[2] = Pics[i];
-                        Clear(arr);
+                        if (Pics.Count > 20 && !freshStartup)
+                        {
+                            //Clean up behind
+                            var arr = new string[3];
+                            i = index + 3 > Pics.Count - 1 ? Pics.Count - 1 : index + 3;
+                            arr[0] = Pics[i];
+                            i = index + 4 > Pics.Count - 1 ? Pics.Count - 1 : index + 4;
+                            arr[1] = Pics[i];
+                            i = index + 5 > Pics.Count - 1 ? Pics.Count - 1 : index + 5;
+                            arr[2] = Pics[i];
+                            Clear(arr);
+                        }
                     }
                 }
 

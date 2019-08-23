@@ -27,6 +27,7 @@
                 x:Name="img"
                 FocusVisualStyle="{x:Null}"
                 Focusable="False"
+                RenderOptions.BitmapScalingMode="Linear"
                 Stretch="UniformToFill" />
         </Border>
     </Border>

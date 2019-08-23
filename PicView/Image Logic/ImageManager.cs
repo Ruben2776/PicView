@@ -22,10 +22,6 @@ namespace PicView
 
             using (MagickImage magick = new MagickImage())
             {
-                // Set values for maximum quality
-                magick.Quality = 100;
-                magick.ColorSpace = ColorSpace.Transparent;
-
                 var mrs = new MagickReadSettings()
                 {
                     Density = new Density(300, 300),
@@ -41,6 +37,10 @@ namespace PicView
                 {
                     return null;
                 }
+
+                // Set values for maximum quality
+                magick.Quality = 100;
+                magick.ColorSpace = ColorSpace.Transparent;
 
                 var pic = magick.ToBitmapSource();
                 pic.Freeze();

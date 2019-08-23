@@ -143,6 +143,7 @@
     <Compile Include="Interface Logic\PicGalleryLogic.cs" />
     <Compile Include="Image Logic\Resize_and_Zoom.cs" />
     <Compile Include="Image Logic\Rotate_and_Flip.cs" />
+    <Compile Include="Interface Logic\ResizeLogic.cs" />
     <Compile Include="Interface Logic\SlideShow.cs" />
     <Compile Include="Interface Logic\ContextMenus.cs" />
     <Compile Include="Interface Logic\Interface.cs" />

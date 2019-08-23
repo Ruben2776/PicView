@@ -10,7 +10,8 @@
     Icon="Library/img/reflex-icon.png"
     SizeToContent="WidthAndHeight"
     Style="{DynamicResource MyWindowStyle}"
-    WindowStartupLocation="CenterScreen">
+    WindowStartupLocation="CenterScreen" 
+    ResizeMode="NoResize">
     <DockPanel LastChildFill="True">
         <DockPanel
             x:Name="TitleBar"
@@ -94,7 +95,7 @@
                 DockPanel.Dock="Right"
                 FocusVisualStyle="{x:Null}"
                 Focusable="False"
-                ToolTip="Maximize">
+                ToolTip="Fullscreen">
                 <Button.Background>
                     <SolidColorBrush x:Name="MaxButtonBrush" />
                 </Button.Background>

@@ -3,7 +3,6 @@ using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -226,19 +225,6 @@ namespace PicView
             AjaxLoadingEnd();
             Progress(x, Pics.Count);
 
-            // Preload images \\
-            if (PreloadDirection().HasValue)
-            {
-                PreloadCount = 0;
-                await Preloader.PreLoad(x, reverse);              
-
-                if (x < Pics.Count)
-                {
-                    if (!Preloader.Contains(Pics[x]))
-                        Preloader.Add(pic, Pics[x]);
-                }
-            }
-
             if (picGallery != null)
             {
                 if (freshStartup)
@@ -260,7 +246,14 @@ namespace PicView
                 //}
 
             }
-            
+
+            // Preload images \\
+            if (PreloadDirection().HasValue)
+            {
+                PreloadCount = 0;
+                await Preloader.PreLoad(x, reverse);
+            }
+
             if (!freshStartup)
                 RecentFiles.Add(Pics[x]);
 

@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows;
 
-namespace PicView.ScreenLogic
+namespace PicView
 {
 
     internal class MonitorSize

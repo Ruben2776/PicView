@@ -118,7 +118,7 @@ namespace PicView
                 // Rotate or Scroll
                 case Key.Up:
                 case Key.W:
-                    if (Properties.Settings.Default.ScrollEnabled)
+                    if (Properties.Settings.Default.ScrollEnabled && mainWindow.Scroller.ScrollableHeight > 0)
                     {
                         if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                             return;
@@ -128,17 +128,16 @@ namespace PicView
                     else if (picGallery != null)
                     {
                         if (PicGalleryLogic.IsOpen)
-                        {
                             PicGalleryLogic.ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
-                            return;
-                        }
+                        else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
+                            Rotate(false);
                     }
                     else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
                         Rotate(false);
                     break;
                 case Key.Down:
                 case Key.S:
-                    if (Properties.Settings.Default.ScrollEnabled)
+                    if (Properties.Settings.Default.ScrollEnabled && mainWindow.Scroller.ScrollableHeight > 0)
                     {
                         if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                             return; // Save Ctrl + S fix
@@ -148,11 +147,10 @@ namespace PicView
                     else if (picGallery != null)
                     {
                         if (PicGalleryLogic.IsOpen)
-                        {
                             PicGalleryLogic.ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
-                            return;
+                        else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
+                                Rotate(true);
                         }
-                    }
                     else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
                         Rotate(true);
                     break;

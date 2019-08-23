@@ -1,5 +1,4 @@
-﻿using PicView.ScreenLogic;
-using PicView.UserControls;
+﻿using PicView.UserControls;
 using PicView.UserControls.Menus;
 using PicView.Windows;
 using System;
@@ -103,38 +102,6 @@ namespace PicView
                 return ") ";
 
             return ", " + x + ":" + y + ") ";
-        }
-
-        /// <summary>
-        /// Set whether to fit window to image or image to window
-        /// </summary>
-        internal static bool FitToWindow
-        {
-            get
-            {
-                return Properties.Settings.Default.FitToWindow;
-            }
-            set
-            {
-                if (value)
-                {
-                    mainWindow.SizeToContent = SizeToContent.WidthAndHeight;
-
-                    Properties.Settings.Default.FitToWindow = true;
-                    quickSettingsMenu.SetFit.IsChecked = true;
-
-                    mainWindow.Width = mainWindow.Height = double.NaN;
-                }
-                else
-                {
-                    mainWindow.SizeToContent = SizeToContent.Manual;
-
-                    Properties.Settings.Default.FitToWindow = false;
-                    quickSettingsMenu.SetCenter.IsChecked = true;
-                }
-                if (mainWindow.img.Source != null)
-                    ZoomFit(mainWindow.img.Source.Width, mainWindow.img.Source.Height);
-            }
         }
 
         internal static bool LeftbuttonClicked;

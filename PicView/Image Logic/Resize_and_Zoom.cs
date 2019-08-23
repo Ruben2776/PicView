@@ -4,8 +4,9 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using static PicView.Fields;
-using static PicView.Navigation;
 using static PicView.Interface;
+using static PicView.Navigation;
+using static PicView.ResizeLogic;
 
 namespace PicView
 {
@@ -250,7 +251,7 @@ namespace PicView
             string[] titleString;
             if (canNavigate)
             {
-                titleString = TitleString((int)xWidth, (int)xHeight, FolderIndex);
+                titleString = TitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
                 mainWindow.Title = titleString[0];
                 mainWindow.Bar.Text = titleString[1];
                 mainWindow.Bar.ToolTip = titleString[2];
@@ -258,7 +259,7 @@ namespace PicView
             else
             {
                 // Display values from web
-                titleString = TitleString((int)xWidth, (int)xHeight, PicPath);
+                titleString = TitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, PicPath);
                 mainWindow.Title = titleString[0];
                 mainWindow.Bar.Text = titleString[1];
                 mainWindow.Bar.ToolTip = titleString[1];
@@ -368,7 +369,7 @@ namespace PicView
             double maxWidth, maxHeight;
             var interfaceHeight = 93; // TopBar + mainWindow.LowerBar height
 
-            if (Properties.Settings.Default.FitToWindow)
+            if (FitToWindow)
             {
                 // Get max width and height, based on user's screen
                 maxWidth = Math.Min(MonitorInfo.Width - ComfySpace, width);
@@ -377,8 +378,8 @@ namespace PicView
             else
             {
                 // Get max width and height, based on window size
-                maxWidth = Math.Min(MonitorInfo.Width, width);
-                maxHeight = Math.Min(MonitorInfo.Height - interfaceHeight, height);
+                maxWidth = Math.Min(mainWindow.Width, width);
+                maxHeight = Math.Min(mainWindow.Height - interfaceHeight, height);
             }
 
             AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));
@@ -407,15 +408,16 @@ namespace PicView
                 mainWindow.img.Width = xWidth = (width * AspectRatio);
             }
 
-            // Update mainWindow.TitleBar width to fit new size
-            var interfaceSize = 220; // logo and buttons width + extra padding
-            if (xWidth - interfaceSize < interfaceSize)
-                mainWindow.Bar.MaxWidth = interfaceSize;
-            else
-                mainWindow.Bar.MaxWidth = xWidth - interfaceSize;
+            if (FitToWindow)
+            {
+                // Update mainWindow.TitleBar width to fit new size
+                var interfaceSize = 220; // logo and buttons width + extra padding
+                mainWindow.Bar.MaxWidth = xWidth - interfaceSize < interfaceSize ? interfaceSize : xWidth - interfaceSize;
 
-            // Loses position gradually if not forced to center
-            mainWindow.CenterWindowOnScreen();
+                // Loses position gradually if not forced to center
+                mainWindow.CenterWindowOnScreen();
+            }
+
 
             isZoomed = false;
 

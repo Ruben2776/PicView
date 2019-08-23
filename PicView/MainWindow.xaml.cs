@@ -1,11 +1,8 @@
 ﻿using PicView.Native;
-using PicView.ScreenLogic;
 using PicView.UserControls;
-using PicView.Windows;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -25,6 +22,7 @@ using static PicView.Navigation;
 using static PicView.Open_Save;
 using static PicView.PicGalleryLogic;
 using static PicView.Resize_and_Zoom;
+using static PicView.ResizeLogic;
 using static PicView.Rotate_and_Flip;
 using static PicView.Shortcuts;
 using static PicView.SlideShow;
@@ -73,6 +71,7 @@ namespace PicView
             freshStartup = true;
             DataContext = this;
             MonitorInfo = MonitorSize.GetMonitorSize();
+            FitToWindow = Properties.Settings.Default.FitToWindow;
 
             if (!Properties.Settings.Default.BgColorWhite)
                 imgBorder.Background = new SolidColorBrush(Colors.Transparent);
@@ -84,6 +83,7 @@ namespace PicView
                 Pic(Application.Current.Properties["ArbitraryArgName"].ToString());
 
             UpdateColor();
+            backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
 
             // Add UserControls :)
             LoadTooltipStyle();
@@ -114,10 +114,20 @@ namespace PicView
             }
 
             // Update UserControl values
-            backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
             mainColor = (Color)Application.Current.Resources["MainColor"];
             quickSettingsMenu.ToggleScroll.IsChecked = IsScrollEnabled;
-            FitToWindow = !quickSettingsMenu.SetFit.IsChecked.Value;
+            if (FitToWindow)
+            {
+                quickSettingsMenu.SetFit.IsChecked = false;
+                quickSettingsMenu.SetCenter.IsChecked = true;
+            }
+
+            else
+            {
+                quickSettingsMenu.SetCenter.IsChecked = true;
+                quickSettingsMenu.SetFit.IsChecked = false;
+            }
+                
 
             // Load PicGallery, if needed
             if (Properties.Settings.Default.PicGallery > 0)
@@ -149,7 +159,7 @@ namespace PicView
             {
                 Properties.Settings.Default.Upgrade();
                 Properties.Settings.Default.CallUpgrade = false;
-            }
+            }            
 
             AjaxLoadingEnd();
         }
@@ -323,7 +333,8 @@ namespace PicView
             StateChanged += MainWindow_StateChanged;
 
             //LocationChanged += MainWindow_LocationChanged;
-            Microsoft.Win32.SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;          
+            Microsoft.Win32.SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
+            
         }
 
         #endregion Add events
@@ -335,7 +346,7 @@ namespace PicView
             switch (WindowState)
             {
                 case WindowState.Normal:
-                    FitToWindow = FitToWindow ? false : true;
+                    //FitToWindow = FitToWindow ? false : true;
                     break;
                 case WindowState.Minimized:
                     break;
@@ -367,14 +378,12 @@ namespace PicView
         {
             base.OnRenderSizeChanged(size);
 
-            if (!FitToWindow)
+            if (!FitToWindow || !size.WidthChanged && !size.HeightChanged)
                 return;
 
             //Keep position when size has changed
-            if (size.HeightChanged)
-                Top += (size.PreviousSize.Height - size.NewSize.Height) / 2;
-            if (size.WidthChanged)
-                Left += (size.PreviousSize.Width - size.NewSize.Width) / 2;
+            Top += (size.PreviousSize.Height - size.NewSize.Height) / 2;
+            Left += (size.PreviousSize.Width - size.NewSize.Width) / 2;
 
             // Move cursor after resize when the button has been pressed
             if (RightbuttonClicked)
@@ -430,17 +439,11 @@ namespace PicView
             }
             else
             {
-                try
-                {
-                    DragMove();
+                if (e.LeftButton == MouseButtonState.Pressed)
+                DragMove();
 
-                    // Update info for possible new screen, needs more engineering
-                    MonitorInfo = MonitorSize.GetMonitorSize();
-                }
-                catch (InvalidOperationException)
-                {
-                    //Supress "Can only call DragMove when primary mouse button is down"
-                }
+                // Update info for possible new screen, needs more engineering
+                MonitorInfo = MonitorSize.GetMonitorSize();
             }
         }
 
@@ -510,7 +513,7 @@ namespace PicView
             // Update new setting and sizing
             FitToWindow = false;
 
-            HideInterface(false, false);           
+            HideInterface(false, false);
 
             Width = bg.Width = SystemParameters.PrimaryScreenWidth + 2;
             Height = bg.Height = SystemParameters.PrimaryScreenHeight + 2;
@@ -545,8 +548,8 @@ namespace PicView
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             // Close Extra windows when closing
-            if (Application.Current.Windows.OfType<FakeWindow>().Any())
-                Application.Current.Windows[1].Close();
+            if (fake != null)
+                fake.Close();
 
             Hide(); // Make it feel faster
 

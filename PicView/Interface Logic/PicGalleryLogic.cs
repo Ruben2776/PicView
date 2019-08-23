@@ -2,7 +2,6 @@
 using PicView.UserControls;
 using PicView.Windows;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,10 +10,10 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using static PicView.Fields;
 using static PicView.ImageManager;
 using static PicView.Interface;
 using static PicView.Navigation;
-using static PicView.Fields;
 
 
 namespace PicView
@@ -149,11 +148,15 @@ namespace PicView
                         fake.Show();
                         IsOpen = true;
                         ScrollTo();
+                        mainWindow.Focus();
                     }
                     else
                     {
                         fake.Hide();
                         IsOpen = false;
+
+                        // Don't show it on next startup
+                        Properties.Settings.Default.PicGallery = 1;
                     }
 
                 }
@@ -176,6 +179,7 @@ namespace PicView
                     }
 
                     fake.Show();
+                    mainWindow.Focus();
                 }
                 else
                 {
@@ -266,7 +270,7 @@ namespace PicView
 
         private static async void Add(BitmapSource pic, int index)
         {
-            await mainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            await mainWindow.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(() =>
             {
                 var selected = index == FolderIndex;
                 var item = new PicGalleryItem(pic, index, selected);

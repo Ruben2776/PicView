@@ -6,6 +6,7 @@ using System.Windows.Input;
 using static PicView.Fields;
 using static PicView.Interface;
 using static PicView.Navigation;
+using static PicView.ResizeLogic;
 
 namespace PicView
 {
