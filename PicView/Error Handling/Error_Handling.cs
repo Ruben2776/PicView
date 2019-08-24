@@ -82,13 +82,14 @@ namespace PicView
             // Retry if exists, fixes rare error
             if (File.Exists(file))
             {
-                Preloader.Add(file);
+                //Preloader.Add(file);
                 BitmapSource pic = Preloader.Load(file);
                 if (pic != null)
                 {
                     Pic(file);
                     return true;
                 }
+                return false;
             }
 
             // Continue to remove file if can't be rendered
@@ -129,6 +130,7 @@ namespace PicView
             Preloader.Clear();
             DeleteTempFiles();
             PreloadCount = 0;
+            freshStartup = true;
 
             if (Properties.Settings.Default.PicGallery > 0)
                 PicGalleryLogic.Clear();

@@ -41,27 +41,6 @@ namespace PicView
         }
 
         /// <summary>
-        ///  Only preload every second entry
-        ///  and determine if going backwards or forwards
-        /// </summary>
-        /// <returns></returns>
-        internal static bool? PreloadDirection()
-        {
-            if (freshStartup)
-                return false;
-
-            if (!reverse)
-            {
-                if (PreloadCount > 2)
-                    return false;
-            }
-            else if (PreloadCount < -1)
-                return true;
-
-            return false;
-        }
-
-        /// <summary>
         /// Returns a Windows Thumbnail
         /// </summary>
         /// <param name="path">The path to the file</param>

@@ -25,10 +25,12 @@ namespace PicView
                 var mrs = new MagickReadSettings()
                 {
                     Density = new Density(300, 300),
-                };
+                    //Width = Fields.MonitorInfo.Width,
+                    //Height = Fields.MonitorInfo.Height,
+                    BackgroundColor = MagickColors.Transparent,
+                    //Format = MagickFormat.Jpeg
+                };           
 
-                // Make background transparent
-                mrs.BackgroundColor = MagickColors.Transparent;
                 try
                 {
                     magick.Read(file, mrs);
@@ -44,6 +46,7 @@ namespace PicView
 
                 var pic = magick.ToBitmapSource();
                 pic.Freeze();
+                magick.Dispose();
                 return pic;
             }
 

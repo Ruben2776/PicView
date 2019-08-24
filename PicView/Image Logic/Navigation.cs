@@ -139,8 +139,7 @@ namespace PicView
             }
             if (x < 0)
             {
-                var b = PicErrorFix(x);
-                if (!b)
+                if (!PicErrorFix(x))
                     return;
             }
 
@@ -189,15 +188,21 @@ namespace PicView
                     {
                         // Try again while loading?                      
                         await Task.Delay(25);
-                        pic = Preloader.Load(Pics[x]);
+                        if (x < Pics.Count)
+                            pic = Preloader.Load(Pics[x]);
                     } while (Preloader.IsLoading);
                 }
                 
                 // If pic is still null, image can't be rendered
                 if (pic == null)
                 {
-                    PicErrorFix(x);
-                    return;
+                    if (!PicErrorFix(x))
+                    {
+                        // Fixes error when Skipping to last or first pic
+                        await Task.Run(() => pic = RenderToBitmapSource(Pics[x]));
+                        if (pic == null)
+                            Reload(true);
+                    }
                 }
             }
             else
@@ -248,11 +253,8 @@ namespace PicView
             }
 
             // Preload images \\
-            if (PreloadDirection().HasValue)
-            {
-                PreloadCount = 0;
-                await Preloader.PreLoad(x, reverse);
-            }
+            if (Preloader.StartPreload())
+                await Preloader.PreLoad(x);
 
             if (!freshStartup)
                 RecentFiles.Add(Pics[x]);
@@ -312,19 +314,8 @@ namespace PicView
             if (end)
             {
                 FolderIndex = next ? Pics.Count - 1 : 0;
-
-                if (!Preloader.Contains(Pics[FolderIndex]))
-                {
-                    PreloadCount = 0;
-                    Preloader.Clear();
-                }
-                else
-                {
-                    if (next)
-                        PreloadCount++;
-                    else
-                        PreloadCount--;
-                }
+                PreloadCount = 4;
+                Preloader.Clear();
             }
             // Go to next or previous
             else
@@ -366,6 +357,7 @@ namespace PicView
                     reverse = true;
                 }
             }
+
             Pic(FolderIndex);
         }
 
