@@ -1,5 +1,4 @@
-﻿using PicView.Properties;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -80,40 +79,40 @@ namespace PicView
             {
                 case 1:
                 default:
-                    ccAnim.From = Settings.Default.Blue;
+                    ccAnim.From = Properties.Settings.Default.Blue;
                     break;
                 case 2:
-                    ccAnim.From = Settings.Default.Pink;
+                    ccAnim.From = Properties.Settings.Default.Pink;
                     break;
                 case 3:
-                    ccAnim.From = Settings.Default.Orange;
+                    ccAnim.From = Properties.Settings.Default.Orange;
                     break;
                 case 4:
-                    ccAnim.From = Settings.Default.Green;
+                    ccAnim.From = Properties.Settings.Default.Green;
                     break;
                 case 5:
-                    ccAnim.From = Settings.Default.Red;
+                    ccAnim.From = Properties.Settings.Default.Red;
                     break;
                 case 6:
-                    ccAnim.From = Settings.Default.Teal;
+                    ccAnim.From = Properties.Settings.Default.Teal;
                     break;
                 case 7:
-                    ccAnim.From = Settings.Default.Aqua;
+                    ccAnim.From = Properties.Settings.Default.Aqua;
                     break;
                 case 8:
-                    ccAnim.From = Settings.Default.Beige;
+                    ccAnim.From = Properties.Settings.Default.Beige;
                     break;
                 case 9:
-                    ccAnim.From = Settings.Default.Purple;
+                    ccAnim.From = Properties.Settings.Default.Purple;
                     break;
                 case 10:
-                    ccAnim.From = Settings.Default.Cyan;
+                    ccAnim.From = Properties.Settings.Default.Cyan;
                     break;
                 case 11:
-                    ccAnim.From = Settings.Default.Magenta;
+                    ccAnim.From = Properties.Settings.Default.Magenta;
                     break;
                 case 12:
-                    ccAnim.From = Settings.Default.Grey;
+                    ccAnim.From = Properties.Settings.Default.Grey;
                     break;
             }
             ccAnim.To = Color.FromArgb(a, r, g, b);
@@ -127,40 +126,40 @@ namespace PicView
             {
                 case 1:
                 default:
-                    ccAnim.To = Settings.Default.Blue;
+                    ccAnim.To = Properties.Settings.Default.Blue;
                     break;
                 case 2:
-                    ccAnim.To = Settings.Default.Pink;
+                    ccAnim.To = Properties.Settings.Default.Pink;
                     break;
                 case 3:
-                    ccAnim.To = Settings.Default.Orange;
+                    ccAnim.To = Properties.Settings.Default.Orange;
                     break;
                 case 4:
-                    ccAnim.To = Settings.Default.Green;
+                    ccAnim.To = Properties.Settings.Default.Green;
                     break;
                 case 5:
-                    ccAnim.To = Settings.Default.Red;
+                    ccAnim.To = Properties.Settings.Default.Red;
                     break;
                 case 6:
-                    ccAnim.To = Settings.Default.Teal;
+                    ccAnim.To = Properties.Settings.Default.Teal;
                     break;
                 case 7:
-                    ccAnim.To = Settings.Default.Aqua;
+                    ccAnim.To = Properties.Settings.Default.Aqua;
                     break;
                 case 8:
-                    ccAnim.To = Settings.Default.Beige;
+                    ccAnim.To = Properties.Settings.Default.Beige;
                     break;
                 case 9:
-                    ccAnim.To = Settings.Default.Purple;
+                    ccAnim.To = Properties.Settings.Default.Purple;
                     break;
                 case 10:
-                    ccAnim.To = Settings.Default.Cyan;
+                    ccAnim.To = Properties.Settings.Default.Cyan;
                     break;
                 case 11:
-                    ccAnim.To = Settings.Default.Magenta;
+                    ccAnim.To = Properties.Settings.Default.Magenta;
                     break;
                 case 12:
-                    ccAnim.To = Settings.Default.Grey;
+                    ccAnim.To = Properties.Settings.Default.Grey;
                     break;
             }
             brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
@@ -172,52 +171,52 @@ namespace PicView
             {
                 case 1:
                 default:
-                    ccAnim.From = Settings.Default.Blue;
-                    ccAnim.To = Settings.Default.BlueMouse;
+                    ccAnim.From = Properties.Settings.Default.Blue;
+                    ccAnim.To = Properties.Settings.Default.BlueMouse;
                     break;
                 case 2:
-                    ccAnim.From = Settings.Default.Pink;
-                    ccAnim.To = Settings.Default.PinkMouse;
+                    ccAnim.From = Properties.Settings.Default.Pink;
+                    ccAnim.To = Properties.Settings.Default.PinkMouse;
                     break;
                 case 3:
-                    ccAnim.From = Settings.Default.Orange;
-                    ccAnim.To = Settings.Default.OrangeMouse;
+                    ccAnim.From = Properties.Settings.Default.Orange;
+                    ccAnim.To = Properties.Settings.Default.OrangeMouse;
                     break;
                 case 4:
-                    ccAnim.From = Settings.Default.Green;
-                    ccAnim.To = Settings.Default.GreenMouse;
+                    ccAnim.From = Properties.Settings.Default.Green;
+                    ccAnim.To = Properties.Settings.Default.GreenMouse;
                     break;
                 case 5:
-                    ccAnim.From = Settings.Default.Red;
-                    ccAnim.To = Settings.Default.RedMouse;
+                    ccAnim.From = Properties.Settings.Default.Red;
+                    ccAnim.To = Properties.Settings.Default.RedMouse;
                     break;
                 case 6:
-                    ccAnim.From = Settings.Default.Teal;
-                    ccAnim.To = Settings.Default.TealMouse;
+                    ccAnim.From = Properties.Settings.Default.Teal;
+                    ccAnim.To = Properties.Settings.Default.TealMouse;
                     break;
                 case 7:
-                    ccAnim.From = Settings.Default.Aqua;
-                    ccAnim.To = Settings.Default.AquaMouse;
+                    ccAnim.From = Properties.Settings.Default.Aqua;
+                    ccAnim.To = Properties.Settings.Default.AquaMouse;
                     break;
                 case 8:
-                    ccAnim.From = Settings.Default.Beige;
-                    ccAnim.To = Settings.Default.BeigeMouse;
+                    ccAnim.From = Properties.Settings.Default.Beige;
+                    ccAnim.To = Properties.Settings.Default.BeigeMouse;
                     break;
                 case 9:
-                    ccAnim.From = Settings.Default.Purple;
-                    ccAnim.To = Settings.Default.PurpleMouse;
+                    ccAnim.From = Properties.Settings.Default.Purple;
+                    ccAnim.To = Properties.Settings.Default.PurpleMouse;
                     break;
                 case 10:
-                    ccAnim.From = Settings.Default.Cyan;
-                    ccAnim.To = Settings.Default.CyanMouse;
+                    ccAnim.From = Properties.Settings.Default.Cyan;
+                    ccAnim.To = Properties.Settings.Default.CyanMouse;
                     break;
                 case 11:
-                    ccAnim.From = Settings.Default.Magenta;
-                    ccAnim.To = Settings.Default.MagentaMouse;
+                    ccAnim.From = Properties.Settings.Default.Magenta;
+                    ccAnim.To = Properties.Settings.Default.MagentaMouse;
                     break;
                 case 12:
-                    ccAnim.From = Settings.Default.Grey;
-                    ccAnim.To = Settings.Default.GreyMouse;
+                    ccAnim.From = Properties.Settings.Default.Grey;
+                    ccAnim.To = Properties.Settings.Default.GreyMouse;
                     break;
             }
             brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
@@ -231,66 +230,66 @@ namespace PicView
 
         internal static Color GetPrefferedColorOver()
         {
-            switch (Settings.Default.ColorTheme)
+            switch (Properties.Settings.Default.ColorTheme)
             {
                 case 1:
                 default:
-                    return Settings.Default.Blue;
+                    return Properties.Settings.Default.Blue;
                 case 2:
-                    return Settings.Default.Pink;
+                    return Properties.Settings.Default.Pink;
                 case 3:
-                    return Settings.Default.Orange;
+                    return Properties.Settings.Default.Orange;
                 case 4:
-                    return Settings.Default.Green;
+                    return Properties.Settings.Default.Green;
                 case 5:
-                    return Settings.Default.Red;
+                    return Properties.Settings.Default.Red;
                 case 6:
-                    return Settings.Default.Teal;
+                    return Properties.Settings.Default.Teal;
                 case 7:
-                    return Settings.Default.Aqua;
+                    return Properties.Settings.Default.Aqua;
                 case 8:
-                    return Settings.Default.Beige;
+                    return Properties.Settings.Default.Beige;
                 case 9:
-                    return Settings.Default.Purple;
+                    return Properties.Settings.Default.Purple;
                 case 10:
-                    return Settings.Default.Cyan;
+                    return Properties.Settings.Default.Cyan;
                 case 11:
-                    return Settings.Default.Magenta;
+                    return Properties.Settings.Default.Magenta;
                 case 12:
-                    return Settings.Default.Grey;
+                    return Properties.Settings.Default.Grey;
 
             }
         }
 
         internal static Color GetPrefferedColorDown()
         {
-            switch (Settings.Default.ColorTheme)
+            switch (Properties.Settings.Default.ColorTheme)
             {
                 case 1:
                 default:
-                    return Settings.Default.BlueMouse;
+                    return Properties.Settings.Default.BlueMouse;
                 case 2:
-                    return Settings.Default.PinkMouse;
+                    return Properties.Settings.Default.PinkMouse;
                 case 3:
-                    return Settings.Default.OrangeMouse;
+                    return Properties.Settings.Default.OrangeMouse;
                 case 4:
-                    return Settings.Default.GreenMouse;
+                    return Properties.Settings.Default.GreenMouse;
                 case 5:
-                    return Settings.Default.RedMouse;
+                    return Properties.Settings.Default.RedMouse;
                 case 6:
-                    return Settings.Default.TealMouse;
+                    return Properties.Settings.Default.TealMouse;
                 case 7:
-                    return Settings.Default.AquaMouse;
+                    return Properties.Settings.Default.AquaMouse;
                 case 8:
-                    return Settings.Default.BeigeMouse;
+                    return Properties.Settings.Default.BeigeMouse;
                 case 9:
-                    return Settings.Default.PurpleMouse;
+                    return Properties.Settings.Default.PurpleMouse;
                 case 10:
-                    return Settings.Default.CyanMouse;
+                    return Properties.Settings.Default.CyanMouse;
                 case 11:
-                    return Settings.Default.MagentaMouse;
+                    return Properties.Settings.Default.MagentaMouse;
                 case 12:
-                    return Settings.Default.GreyMouse;
+                    return Properties.Settings.Default.GreyMouse;
             }
         }
 
@@ -298,161 +297,161 @@ namespace PicView
 
         internal static Color GetPrefferedColorDownAlpha()
         {
-            switch (Settings.Default.ColorTheme)
+            switch (Properties.Settings.Default.ColorTheme)
             {
                 case 1:
                 default:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.BlueMouse.R,
-                        Settings.Default.BlueMouse.G,
-                        Settings.Default.BlueMouse.B);
+                        Properties.Settings.Default.BlueMouse.R,
+                        Properties.Settings.Default.BlueMouse.G,
+                        Properties.Settings.Default.BlueMouse.B);
                 case 2:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.PinkMouse.R,
-                        Settings.Default.PinkMouse.G,
-                        Settings.Default.PinkMouse.B);
+                        Properties.Settings.Default.PinkMouse.R,
+                        Properties.Settings.Default.PinkMouse.G,
+                        Properties.Settings.Default.PinkMouse.B);
                 case 3:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.OrangeMouse.R,
-                        Settings.Default.OrangeMouse.G,
-                        Settings.Default.OrangeMouse.B);
+                        Properties.Settings.Default.OrangeMouse.R,
+                        Properties.Settings.Default.OrangeMouse.G,
+                        Properties.Settings.Default.OrangeMouse.B);
                 case 4:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.GreenMouse.R,
-                        Settings.Default.GreenMouse.G,
-                        Settings.Default.GreenMouse.B);
+                        Properties.Settings.Default.GreenMouse.R,
+                        Properties.Settings.Default.GreenMouse.G,
+                        Properties.Settings.Default.GreenMouse.B);
                 case 5:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.RedMouse.R,
-                        Settings.Default.RedMouse.G,
-                        Settings.Default.RedMouse.B);
+                        Properties.Settings.Default.RedMouse.R,
+                        Properties.Settings.Default.RedMouse.G,
+                        Properties.Settings.Default.RedMouse.B);
                 case 6:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.TealMouse.R,
-                        Settings.Default.TealMouse.G,
-                        Settings.Default.TealMouse.B);
+                        Properties.Settings.Default.TealMouse.R,
+                        Properties.Settings.Default.TealMouse.G,
+                        Properties.Settings.Default.TealMouse.B);
                 case 7:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.AquaMouse.R,
-                        Settings.Default.AquaMouse.G,
-                        Settings.Default.AquaMouse.B);
+                        Properties.Settings.Default.AquaMouse.R,
+                        Properties.Settings.Default.AquaMouse.G,
+                        Properties.Settings.Default.AquaMouse.B);
                 case 8:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.BeigeMouse.R,
-                        Settings.Default.BeigeMouse.G,
-                        Settings.Default.BeigeMouse.B);
+                        Properties.Settings.Default.BeigeMouse.R,
+                        Properties.Settings.Default.BeigeMouse.G,
+                        Properties.Settings.Default.BeigeMouse.B);
                 case 9:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.PurpleMouse.R,
-                        Settings.Default.PurpleMouse.G,
-                        Settings.Default.PurpleMouse.B);
+                        Properties.Settings.Default.PurpleMouse.R,
+                        Properties.Settings.Default.PurpleMouse.G,
+                        Properties.Settings.Default.PurpleMouse.B);
                 case 10:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.CyanMouse.R,
-                        Settings.Default.CyanMouse.G,
-                        Settings.Default.CyanMouse.B);
+                        Properties.Settings.Default.CyanMouse.R,
+                        Properties.Settings.Default.CyanMouse.G,
+                        Properties.Settings.Default.CyanMouse.B);
                 case 11:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.MagentaMouse.R,
-                        Settings.Default.MagentaMouse.G,
-                        Settings.Default.MagentaMouse.B);
+                        Properties.Settings.Default.MagentaMouse.R,
+                        Properties.Settings.Default.MagentaMouse.G,
+                        Properties.Settings.Default.MagentaMouse.B);
                 case 12:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.GreyMouse.R,
-                        Settings.Default.GreyMouse.G,
-                        Settings.Default.GreyMouse.B);
+                        Properties.Settings.Default.GreyMouse.R,
+                        Properties.Settings.Default.GreyMouse.G,
+                        Properties.Settings.Default.GreyMouse.B);
             }
         }
 
         internal static Color GetPrefferedColorOverAlpha()
         {
-            switch (Settings.Default.ColorTheme)
+            switch (Properties.Settings.Default.ColorTheme)
             {
                 case 1:
                 default:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.Blue.R,
-                        Settings.Default.Blue.G,
-                        Settings.Default.Blue.B);
+                        Properties.Settings.Default.Blue.R,
+                        Properties.Settings.Default.Blue.G,
+                        Properties.Settings.Default.Blue.B);
                 case 2:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.Pink.R,
-                        Settings.Default.Pink.G,
-                        Settings.Default.Pink.B);
+                        Properties.Settings.Default.Pink.R,
+                        Properties.Settings.Default.Pink.G,
+                        Properties.Settings.Default.Pink.B);
                 case 3:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.Orange.R,
-                        Settings.Default.Orange.G,
-                        Settings.Default.Orange.B);
+                        Properties.Settings.Default.Orange.R,
+                        Properties.Settings.Default.Orange.G,
+                        Properties.Settings.Default.Orange.B);
                 case 4:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.Green.R,
-                        Settings.Default.Green.G,
-                        Settings.Default.Green.B);
+                        Properties.Settings.Default.Green.R,
+                        Properties.Settings.Default.Green.G,
+                        Properties.Settings.Default.Green.B);
                 case 5:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.Red.R,
-                        Settings.Default.Red.G,
-                        Settings.Default.Red.B);
+                        Properties.Settings.Default.Red.R,
+                        Properties.Settings.Default.Red.G,
+                        Properties.Settings.Default.Red.B);
                 case 6:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.Teal.R,
-                        Settings.Default.Teal.G,
-                        Settings.Default.Teal.B);
+                        Properties.Settings.Default.Teal.R,
+                        Properties.Settings.Default.Teal.G,
+                        Properties.Settings.Default.Teal.B);
                 case 7:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.Aqua.R,
-                        Settings.Default.Aqua.G,
-                        Settings.Default.Aqua.B);
+                        Properties.Settings.Default.Aqua.R,
+                        Properties.Settings.Default.Aqua.G,
+                        Properties.Settings.Default.Aqua.B);
                 case 8:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.Beige.R,
-                        Settings.Default.Beige.G,
-                        Settings.Default.Beige.B);
+                        Properties.Settings.Default.Beige.R,
+                        Properties.Settings.Default.Beige.G,
+                        Properties.Settings.Default.Beige.B);
                 case 9:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.Purple.R,
-                        Settings.Default.Purple.G,
-                        Settings.Default.Purple.B);
+                        Properties.Settings.Default.Purple.R,
+                        Properties.Settings.Default.Purple.G,
+                        Properties.Settings.Default.Purple.B);
                 case 10:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.Cyan.R,
-                        Settings.Default.Cyan.G,
-                        Settings.Default.Cyan.B);
+                        Properties.Settings.Default.Cyan.R,
+                        Properties.Settings.Default.Cyan.G,
+                        Properties.Settings.Default.Cyan.B);
                 case 11:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.Magenta.R,
-                        Settings.Default.Magenta.G,
-                        Settings.Default.Magenta.B);
+                        Properties.Settings.Default.Magenta.R,
+                        Properties.Settings.Default.Magenta.G,
+                        Properties.Settings.Default.Magenta.B);
                 case 12:
                     return Color.FromArgb(
                         220,
-                        Settings.Default.Grey.R,
-                        Settings.Default.Grey.G,
-                        Settings.Default.Grey.B);
+                        Properties.Settings.Default.Grey.R,
+                        Properties.Settings.Default.Grey.G,
+                        Properties.Settings.Default.Grey.B);
             }
         }
 

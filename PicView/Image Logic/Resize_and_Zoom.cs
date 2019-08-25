@@ -367,7 +367,8 @@ namespace PicView
         internal static void ZoomFit(double width, double height)
         {
             double maxWidth, maxHeight;
-            var interfaceHeight = 93; // TopBar + mainWindow.LowerBar height
+            //var interfaceHeight = 93; // TopBar + mainWindow.LowerBar height
+            var interfaceHeight = mainWindow.TitleBar.ActualHeight + mainWindow.LowerBar.ActualHeight;
 
             if (FitToWindow)
             {
@@ -379,7 +380,11 @@ namespace PicView
             {
                 // Get max width and height, based on window size
                 maxWidth = Math.Min(mainWindow.Width, width);
-                maxHeight = Math.Min(mainWindow.Height - interfaceHeight, height);
+
+                if (Properties.Settings.Default.ShowInterface)
+                    maxHeight = Math.Min(mainWindow.Height - interfaceHeight, height);
+                else
+                    maxHeight = Math.Min(mainWindow.Height, height);
             }
 
             AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));

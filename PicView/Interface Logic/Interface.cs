@@ -9,6 +9,7 @@ using System.Windows.Media.Animation;
 using static PicView.Fields;
 using static PicView.FileFunctions;
 using static PicView.Resize_and_Zoom;
+using static PicView.WindowLogic;
 
 namespace PicView
 {
@@ -157,6 +158,8 @@ namespace PicView
             // Show interface
             else
             {
+                Properties.Settings.Default.ShowInterface = true;
+
                 mainWindow.TitleBar.Visibility =
                 mainWindow.LowerBar.Visibility =
                 mainWindow.LeftBorderRectangle.Visibility =
@@ -167,11 +170,15 @@ namespace PicView
                 x2.Visibility =
                 minus.Visibility = Visibility.Collapsed;
 
-                Properties.Settings.Default.ShowInterface = true;
+
+                if (!FitToWindow)
+                    ZoomFit(xWidth, xHeight);
 
                 if (activityTimer != null)
                     activityTimer.Stop();
             }
+
+            ToggleMenus.Close_UserControls();
         }
 
         /// <summary>

@@ -489,15 +489,14 @@ namespace PicView
             }
             else
             {
-                if (Preloader.Contains(Pics[id]))
+                if (!Preloader.Contains(Pics[id]))
                 {
-                    ItemClick(id);
-                }
-                else
-                {
-                    ItemClick(id);
+                    PreloadCount = 4;
+                    Preloader.Clear();
+                    Preloader.Add(Pics[id]);
                 }
 
+                ItemClick(id);
             }
 
             IsOpen = false;
@@ -505,6 +504,14 @@ namespace PicView
 
         internal static void PreviewItemClick(ImageSource source, int id)
         {
+            if (!Preloader.Contains(Pics[id]))
+            {
+                PreloadCount = 4;
+                Preloader.Clear();
+                Preloader.Add(Pics[id]);
+            }
+            
+
             mainWindow.img.Source = source;
             var size = ImageSize(Pics[id]);
             if (size.HasValue)

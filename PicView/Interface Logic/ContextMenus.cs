@@ -13,6 +13,7 @@ using static PicView.Open_Save;
 using static PicView.RecentFiles;
 using static PicView.SvgIcons;
 using static PicView.Wallpaper;
+using static PicView.Interface;
 
 namespace PicView
 {
@@ -26,6 +27,12 @@ namespace PicView
             cm = new ContextMenu();
             var scbf = (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"];
 
+
+            ///////////////////////////
+            ///////////////////////////
+            ///     Open           \\\\
+            ///////////////////////////
+            ///////////////////////////
             var opencm = new MenuItem
             {
                 Header = "Open",
@@ -42,6 +49,12 @@ namespace PicView
             opencm.Click += (s, x) => Open();
             cm.Items.Add(opencm);
 
+
+            ///////////////////////////
+            ///////////////////////////
+            ///     Save           \\\\
+            ///////////////////////////
+            ///////////////////////////
             var savecm = new MenuItem()
             {
                 Header = "Save",
@@ -58,6 +71,13 @@ namespace PicView
             savecm.Click += (s, x) => SaveFiles();
             cm.Items.Add(savecm);
 
+
+
+            ///////////////////////////
+            ///////////////////////////
+            ///     Print          \\\\
+            ///////////////////////////
+            ///////////////////////////
             var printcm = new MenuItem
             {
                 Header = "Print",
@@ -74,29 +94,48 @@ namespace PicView
             printcm.Click += (s, x) => Print(PicPath);
             cm.Items.Add(printcm);
 
+
+            ///////////////////////////
+            ///////////////////////////
+            ///     Recent Files   \\\\
+            ///////////////////////////
+            ///////////////////////////
             cm.Items.Add(new Separator());
             var recentcm = new MenuItem
             {
                 Header = "Recent files"
             };
-            var recentcmIcon = new System.Windows.Shapes.Path();
-            recentcmIcon.Data = Geometry.Parse("M288,48H136c-22.092,0-40,17.908-40,40v336c0,22.092,17.908,40,40,40h240c22.092,0,40-17.908,40-40V176L288,48z M272,192 V80l112, 112H272z");
-            recentcmIcon.Stretch = Stretch.Fill;
+            var recentcmIcon = new System.Windows.Shapes.Path
+            {
+                Data = Geometry.Parse("M288,48H136c-22.092,0-40,17.908-40,40v336c0,22.092,17.908,40,40,40h240c22.092,0,40-17.908,40-40V176L288,48z M272,192 V80l112, 112H272z"),
+                Stretch = Stretch.Fill
+            };
             recentcmIcon.Width = recentcmIcon.Height = 12;
             recentcmIcon.Fill = scbf;
             recentcm.Icon = recentcmIcon;
             cm.Items.Add(recentcm);
 
+            ///////////////////////////
+            ///////////////////////////
+            ///     Sort Files     \\\\
+            ///////////////////////////
+            ///////////////////////////
             var sortcm = new MenuItem
             {
                 Header = "Sort files by"
             };
-            var sortcmIcon = new System.Windows.Shapes.Path();
-            sortcmIcon.Data = Geometry.Parse("M666 481q-60 92-137 273-22-45-37-72.5t-40.5-63.5-51-56.5-63-35-81.5-14.5h-224q-14 0-23-9t-9-23v-192q0-14 9-23t23-9h224q250 0 410 225zm1126 799q0 14-9 23l-320 320q-9 9-23 9-13 0-22.5-9.5t-9.5-22.5v-192q-32 0-85 .5t-81 1-73-1-71-5-64-10.5-63-18.5-58-28.5-59-40-55-53.5-56-69.5q59-93 136-273 22 45 37 72.5t40.5 63.5 51 56.5 63 35 81.5 14.5h256v-192q0-14 9-23t23-9q12 0 24 10l319 319q9 9 9 23zm0-896q0 14-9 23l-320 320q-9 9-23 9-13 0-22.5-9.5t-9.5-22.5v-192h-256q-48 0-87 15t-69 45-51 61.5-45 77.5q-32 62-78 171-29 66-49.5 111t-54 105-64 100-74 83-90 68.5-106.5 42-128 16.5h-224q-14 0-23-9t-9-23v-192q0-14 9-23t23-9h224q48 0 87-15t69-45 51-61.5 45-77.5q32-62 78-171 29-66 49.5-111t54-105 64-100 74-83 90-68.5 106.5-42 128-16.5h256v-192q0-14 9-23t23-9q12 0 24 10l319 319q9 9 9 23z");
-            sortcmIcon.Stretch = Stretch.Fill;
+            var sortcmIcon = new System.Windows.Shapes.Path
+            {
+                Data = Geometry.Parse("M666 481q-60 92-137 273-22-45-37-72.5t-40.5-63.5-51-56.5-63-35-81.5-14.5h-224q-14 0-23-9t-9-23v-192q0-14 9-23t23-9h224q250 0 410 225zm1126 799q0 14-9 23l-320 320q-9 9-23 9-13 0-22.5-9.5t-9.5-22.5v-192q-32 0-85 .5t-81 1-73-1-71-5-64-10.5-63-18.5-58-28.5-59-40-55-53.5-56-69.5q59-93 136-273 22 45 37 72.5t40.5 63.5 51 56.5 63 35 81.5 14.5h256v-192q0-14 9-23t23-9q12 0 24 10l319 319q9 9 9 23zm0-896q0 14-9 23l-320 320q-9 9-23 9-13 0-22.5-9.5t-9.5-22.5v-192h-256q-48 0-87 15t-69 45-51 61.5-45 77.5q-32 62-78 171-29 66-49.5 111t-54 105-64 100-74 83-90 68.5-106.5 42-128 16.5h-224q-14 0-23-9t-9-23v-192q0-14 9-23t23-9h224q48 0 87-15t69-45 51-61.5 45-77.5q32-62 78-171 29-66 49.5-111t54-105 64-100 74-83 90-68.5 106.5-42 128-16.5h256v-192q0-14 9-23t23-9q12 0 24 10l319 319q9 9 9 23z"),
+                Stretch = Stretch.Fill
+            };
             sortcmIcon.Width = sortcmIcon.Height = 12;
             sortcmIcon.Fill = scbf;
             sortcm.Icon = sortcmIcon;
+
+            ///////////////////////////
+            ///   File Name        \\\\
+            ///////////////////////////
             var sortcmChild0 = new RadioButton
             {
                 Content = "File name"
@@ -108,8 +147,14 @@ namespace PicView
                     Pics = FileList(Path.GetDirectoryName(PicPath));
             };
             sortcm.Items.Add(sortcmChild0);
-            var sortcmChild1 = new RadioButton();
-            sortcmChild1.Content = "File Size";
+
+            ///////////////////////////
+            ///   File Size        \\\\
+            ///////////////////////////
+            var sortcmChild1 = new RadioButton
+            {
+                Content = "File Size"
+            };
             sortcmChild1.Click += (s, x) =>
             {
                 Properties.Settings.Default.SortPreference = 1;
@@ -117,8 +162,14 @@ namespace PicView
                     Pics = FileList(Path.GetDirectoryName(PicPath));
             };
             sortcm.Items.Add(sortcmChild1);
-            var sortcmChild2 = new RadioButton();
-            sortcmChild2.Content = "Creation time";
+
+            ///////////////////////////
+            ///   Creatin Time     \\\\
+            ///////////////////////////
+            var sortcmChild2 = new RadioButton
+            {
+                Content = "Creation time"
+            };
             sortcmChild2.Click += (s, x) =>
             {
                 Properties.Settings.Default.SortPreference = 2;
@@ -126,8 +177,14 @@ namespace PicView
                     Pics = FileList(Path.GetDirectoryName(PicPath));
             };
             sortcm.Items.Add(sortcmChild2);
-            var sortcmChild3 = new RadioButton();
-            sortcmChild3.Content = "File extension";
+
+            ///////////////////////////
+            ///   File extension   \\\\
+            ///////////////////////////
+            var sortcmChild3 = new RadioButton
+            {
+                Content = "File extension"
+            };
             sortcmChild3.Click += (s, x) =>
             {
                 Properties.Settings.Default.SortPreference = 3;
@@ -135,8 +192,14 @@ namespace PicView
                     Pics = FileList(Path.GetDirectoryName(PicPath));
             };
             sortcm.Items.Add(sortcmChild3);
-            var sortcmChild4 = new RadioButton();
-            sortcmChild4.Content = "Last access time";
+
+            ///////////////////////////
+            ///   Last Access Time \\\\
+            ///////////////////////////
+            var sortcmChild4 = new RadioButton
+            {
+                Content = "Last access time"
+            };
             sortcmChild4.Click += (s, x) =>
             {
                 Properties.Settings.Default.SortPreference = 4;
@@ -144,8 +207,14 @@ namespace PicView
                     Pics = FileList(Path.GetDirectoryName(PicPath));
             };
             sortcm.Items.Add(sortcmChild4);
-            var sortcmChild5 = new RadioButton();
-            sortcmChild5.Content = "Last write time";
+
+            ///////////////////////////
+            ///   Last Write Time  \\\\
+            ///////////////////////////
+            var sortcmChild5 = new RadioButton
+            {
+                Content = "Last write time"
+            };
             sortcmChild5.Click += (s, x) =>
             {
                 Properties.Settings.Default.SortPreference = 5;
@@ -153,8 +222,14 @@ namespace PicView
                     Pics = FileList(Path.GetDirectoryName(PicPath));
             };
             sortcm.Items.Add(sortcmChild5);
-            var sortcmChild6 = new RadioButton();
-            sortcmChild6.Content = "Random";
+
+            ///////////////////////////
+            ///   Random        \\\\
+            ///////////////////////////
+            var sortcmChild6 = new RadioButton
+            {
+                Content = "Random"
+            };
             sortcmChild6.Click += (s, x) =>
             {
                 Properties.Settings.Default.SortPreference = 6;
@@ -163,22 +238,79 @@ namespace PicView
             };
             sortcm.Items.Add(sortcmChild6);
             cm.Items.Add(sortcm);
+
+
+            ///////////////////////////
+            ///////////////////////////
+            ///     Settings       \\\\
+            ///////////////////////////
+            ///////////////////////////
+            var settingscm = new MenuItem
+            {
+                Header = "Setings"
+            };
+            cm.Items.Add(settingscm);
+
+            ///////////////////////////
+            ///   Looping          \\\\
+            ///////////////////////////
+            var settingscmLoop = new MenuItem();
+            var settingscmLoopHeader = new CheckBox {
+                IsChecked = Properties.Settings.Default.Looping,
+                Content = "Looping"
+            };
+            settingscmLoopHeader.Click += Settings.SetLooping;
+            settingscmLoopHeader.Style = Application.Current.FindResource("Checkstyle") as Style;
+            settingscmLoopHeader.FontSize = 13;
+            settingscmLoop.Header = settingscmLoopHeader;
+            settingscm.Items.Add(settingscmLoop);
+
+
+            ///////////////////////////
+            ///   Scroll         \\\\
+            ///////////////////////////
+            var settingscmScroll = new MenuItem();
+            var settingscmScrollHeader = new CheckBox
+            {
+                IsChecked = Properties.Settings.Default.ScrollEnabled,
+                Content = "Scrolling"
+            };
+            settingscmScrollHeader.Click += delegate { IsScrollEnabled = IsScrollEnabled ? false : true; };
+            settingscmScrollHeader.Style = Application.Current.FindResource("Checkstyle") as Style;
+            settingscmScrollHeader.FontSize = 13;
+            settingscmScroll.Header = settingscmScrollHeader;
+            settingscm.Items.Add(settingscmScroll);
+            //settingscmScroll.Checked += delegate { IsScrollEnabled = IsScrollEnabled ? false : true; };
             cm.Items.Add(new Separator());
 
+            ///////////////////////////
+            ///////////////////////////
+            ///  Set as Wallpaper  \\\\
+            ///////////////////////////
+            ///////////////////////////
             var wallcm = new MenuItem
             {
                 Header = "Set as wallpaper"
             };
             wallcm.Click += (s, x) => SetWallpaper(PicPath, WallpaperStyle.Fill);
-            var wallcmIcon = new System.Windows.Shapes.Path();
-            wallcmIcon.Data = Geometry.Parse(CameraIconSVG);
-            wallcmIcon.Stretch = Stretch.Fill;
+            var wallcmIcon = new System.Windows.Shapes.Path
+            {
+                Data = Geometry.Parse(CameraIconSVG),
+                Stretch = Stretch.Fill
+            };
             wallcmIcon.Width = wallcmIcon.Height = 12;
             wallcmIcon.Fill = scbf;
             wallcm.Icon = wallcmIcon;
             cm.Items.Add(wallcm);
             cm.Items.Add(new Separator());
 
+
+
+            ///////////////////////////
+            ///////////////////////////
+            ///   Locate on disk   \\\\
+            ///////////////////////////
+            ///////////////////////////
             var lcdcm = new MenuItem
             {
                 Header = "Locate on disk",
@@ -188,6 +320,12 @@ namespace PicView
             lcdcm.Click += (s, x) => Open_In_Explorer();
             cm.Items.Add(lcdcm);
 
+
+            ///////////////////////////
+            ///////////////////////////
+            ///   File Details     \\\\
+            ///////////////////////////
+            ///////////////////////////
             var fildecm = new MenuItem
             {
                 Header = "File Details",
@@ -197,6 +335,11 @@ namespace PicView
             cm.Items.Add(fildecm);
             cm.Items.Add(new Separator());
 
+            ///////////////////////////
+            ///////////////////////////
+            ///   Copy Picture     \\\\
+            ///////////////////////////
+            ///////////////////////////
             var cppcm = new MenuItem
             {
                 Header = "Copy picture",
@@ -213,6 +356,11 @@ namespace PicView
             cppcm.Click += (s, x) => CopyPic();
             cm.Items.Add(cppcm);
 
+            ///////////////////////////
+            ///////////////////////////
+            ///   Cut Picture      \\\\
+            ///////////////////////////
+            ///////////////////////////
             var cpccm = new MenuItem
             {
                 Header = "Cut picture",
@@ -227,6 +375,11 @@ namespace PicView
             cpccm.Click += (s, x) => Cut(PicPath);
             cm.Items.Add(cpccm);
 
+            ///////////////////////////
+            ///////////////////////////
+            ///   Paste Picture    \\\\
+            ///////////////////////////
+            ///////////////////////////
             var pastecm = new MenuItem
             {
                 Header = "Paste picture",
@@ -241,6 +394,11 @@ namespace PicView
             pastecm.Click += (s, x) => Paste();
             cm.Items.Add(pastecm);
 
+            ///////////////////////////
+            ///////////////////////////
+            ///   Delete Picture   \\\\
+            ///////////////////////////
+            ///////////////////////////
             var MovetoRecycleBin = new MenuItem
             {
                 Header = "Delete picture",
@@ -255,6 +413,12 @@ namespace PicView
             MovetoRecycleBin.Click += (s, x) => DeleteFile(PicPath, true);
             cm.Items.Add(MovetoRecycleBin);
 
+
+            ///////////////////////////
+            ///////////////////////////
+            ///   Close            \\\\
+            ///////////////////////////
+            ///////////////////////////
             cm.Items.Add(new Separator());
             var clcm = new MenuItem
             {

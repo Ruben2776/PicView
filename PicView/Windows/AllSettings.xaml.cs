@@ -102,20 +102,29 @@ namespace PicView.Windows
                 LoopRadio.MouseEnter += LoopRadio_MouseEnter;
                 LoopRadio.MouseLeave += LoopRadio_MouseLeave;
                 LoopRadio.IsChecked = Properties.Settings.Default.Looping;
-                LoopRadio.Click += SetLooping;
+                LoopRadio.Click += Settings.SetLooping;
 
                 // PicGalleryRadio
                 PicGalleryRadio.PreviewMouseLeftButtonDown += PicGalleryRadio_PreviewMouseLeftButtonDown;
                 PicGalleryRadio.MouseEnter += PicGalleryRadio_MouseEnter;
                 PicGalleryRadio.MouseLeave += PicGalleryRadio_MouseLeave;
                 PicGalleryRadio.IsChecked = Properties.Settings.Default.PicGallery > 0;
-                PicGalleryRadio.Checked += SetPicGallery;
+                PicGalleryRadio.Checked += delegate {
+                    if (PicGalleryRadio.IsChecked.Value)
+                    {
+                        Properties.Settings.Default.PicGallery = 0;
+                    }
+                    else
+                    {
+                        Properties.Settings.Default.PicGallery = 1;
+                    }
+                }; 
 
                 // BorderColorRadio
                 BorderRadio.PreviewMouseLeftButtonDown += BorderRadio_PreviewMouseLeftButtonDown;
                 BorderRadio.MouseEnter += BorderRadio_MouseEnter;
                 BorderRadio.MouseLeave += BorderRadio_MouseLeave;
-                BorderRadio.Click += SetBgColorEnabled;
+                BorderRadio.Click += Settings.SetBgColorEnabled;
                 if (Properties.Settings.Default.WindowBorderColorEnabled)
                     BorderRadio.IsChecked = true;
 
@@ -183,6 +192,15 @@ namespace PicView.Windows
                 default:
                     break;
             }
+        }
+
+        //Slideslider
+        void SlideSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double value = Properties.Settings.Default.Slidetimeren;
+            var slider = sender as Slider;
+            value = slider.Value;
+            txtSlide.Text = value.ToString("0");
         }
 
 
@@ -720,114 +738,9 @@ namespace PicView.Windows
 
         #endregion
 
-        //Slideslider
-        private void SlideSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            double value = Properties.Settings.Default.Slidetimeren;
-            var slider = sender as Slider;
-            value = slider.Value;
-            txtSlide.Text = value.ToString("0");
-        }
-
-        private void SetSlidetimer()
-        {
-            switch (Properties.Settings.Default.Slidetimeren.ToString("0"))
-            {
-                case "1":
-                    Properties.Settings.Default.Slidetimeren = 1000;
-                    break;
-
-                case "2":
-                    Properties.Settings.Default.Slidetimeren = 2000;
-                    break;
-
-                case "3":
-                    Properties.Settings.Default.Slidetimeren = 3000;
-                    break;
-
-                case "4":
-                    Properties.Settings.Default.Slidetimeren = 4000;
-                    break;
-
-                case "5":
-                    Properties.Settings.Default.Slidetimeren = 5000;
-                    break;
-
-                case "6":
-                    Properties.Settings.Default.Slidetimeren = 6000;
-                    break;
-
-                case "7":
-                    Properties.Settings.Default.Slidetimeren = 7000;
-                    break;
-
-                case "8":
-                    Properties.Settings.Default.Slidetimeren = 8000;
-                    break;
-
-                case "9":
-                    Properties.Settings.Default.Slidetimeren = 9000;
-                    break;
-
-                case "10":
-                    Properties.Settings.Default.Slidetimeren = 10000;
-                    break;
-
-                case "11":
-                    Properties.Settings.Default.Slidetimeren = 11000;
-                    break;
-
-                case "12":
-                    Properties.Settings.Default.Slidetimeren = 12000;
-                    break;
-
-                case "13":
-                    Properties.Settings.Default.Slidetimeren = 13000;
-                    break;
-
-                case "14":
-                    Properties.Settings.Default.Slidetimeren = 140000;
-                    break;
-
-                case "15":
-                    Properties.Settings.Default.Slidetimeren = 15000;
-                    break;
-            }
-        }
-
-
-        private void SetLooping(object sender, RoutedEventArgs e)
-        {
-            if (Properties.Settings.Default.Looping)
-            {
-                Properties.Settings.Default.Looping = false;
-            }
-            else
-            {
-                Properties.Settings.Default.Looping = true;
-            }
-        }
-
-        private void SetPicGallery(object sender, RoutedEventArgs e)
-        {
-            if (PicGalleryRadio.IsChecked.Value)
-            {
-                Properties.Settings.Default.PicGallery = 0;
-            }
-            else
-            {
-                Properties.Settings.Default.PicGallery = 1;
-            }
-        }
-
-        private void SetBgColorEnabled(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.WindowBorderColorEnabled = Properties.Settings.Default.WindowBorderColorEnabled ? false : true;
-        }
-
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            SetSlidetimer();
+            Settings.SetSlidetimer();
             UpdateColor();
             Closing -= Window_Closing;
             e.Cancel = true;
