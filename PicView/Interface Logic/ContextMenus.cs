@@ -282,7 +282,7 @@ namespace PicView
             {
                 Header = "Next picture",
                 InputGestureText = "ᗌ or D",
-                ToolTip = "Go to Next image in folder",
+                ToolTip = "Go to Next image",
                 StaysOpenOnClick = true
             };
             nextcm.Click += (s, x) => Pic();

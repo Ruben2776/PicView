@@ -18,13 +18,13 @@ namespace PicView
     internal static class Error_Handling
     {
         /// <summary>
-        /// Attemps to fix Pics list by removing invalid files
+        /// Attemps to fix erros and prevent crashes
         /// </summary>
         /// <param name="x">The index to start from</param>
         internal static bool PicErrorFix(int x)
         {
 #if DEBUG
-            Trace.WriteLine("Entered PicErrorFix");
+            Trace.WriteLine("Entered PicErrorFix"); // We don't want to go in here
 #endif
             if (Pics == null)
             {

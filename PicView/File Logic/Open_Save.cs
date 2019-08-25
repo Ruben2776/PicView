@@ -43,6 +43,7 @@ namespace PicView
             };
             if (dlg.ShowDialog() == true)
             {
+                
                 Pic(dlg.FileName);
 
                 if (string.IsNullOrWhiteSpace(PicPath))
@@ -69,22 +70,15 @@ namespace PicView
             {
                 if (Savedlg.ShowDialog() == true)
                 {
-                    if (TrySaveImage(Rotateint, Flipped, PicPath, Savedlg.FileName) == false)
-                    {
-                        ToolTipStyle("Error, File didn't get saved - File not Found.");
-                    }
+                    if (!TrySaveImage(Rotateint, Flipped, PicPath, Savedlg.FileName))
+                        ToolTipStyle("Error, File didn't get saved");
                 }
-                else
-                    return;
+                else return;
 
                 //Refresh the list of pictures.
                 Reload();
 
                 Close_UserControls();
-            }
-            else if (mainWindow.img.Source != null)
-            {
-                ToolTipStyle("Error, File does not exist, or something went wrong...");
             }
         }
     }

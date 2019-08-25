@@ -93,8 +93,8 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Magick.NET-Q16-HDRI-x64, Version=7.14.2.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=AMD64">
-      <HintPath>..\packages\Magick.NET-Q16-HDRI-x64.7.14.2\lib\net40\Magick.NET-Q16-HDRI-x64.dll</HintPath>
+    <Reference Include="Magick.NET-Q16-x64, Version=7.14.3.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=AMD64">
+      <HintPath>..\packages\Magick.NET-Q16-x64.7.14.3\lib\net40\Magick.NET-Q16-x64.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.3.3, Culture=neutral, PublicKeyToken=8985beaab7ea3f04, processorArchitecture=MSIL">
@@ -156,7 +156,7 @@
     <Compile Include="Interface Logic\PicGalleryLogic.cs" />
     <Compile Include="Image Logic\Resize_and_Zoom.cs" />
     <Compile Include="Image Logic\Rotate_and_Flip.cs" />
-    <Compile Include="Interface Logic\ResizeLogic.cs" />
+    <Compile Include="Interface Logic\WindowLogic.cs" />
     <Compile Include="Interface Logic\SlideShow.cs" />
     <Compile Include="Interface Logic\ContextMenus.cs" />
     <Compile Include="Interface Logic\Interface.cs" />
@@ -443,12 +443,12 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\Magick.NET-Q16-HDRI-x64.7.14.2\build\net40\Magick.NET-Q16-HDRI-x64.targets" Condition="Exists('..\packages\Magick.NET-Q16-HDRI-x64.7.14.2\build\net40\Magick.NET-Q16-HDRI-x64.targets')" />
+  <Import Project="..\packages\Magick.NET-Q16-x64.7.14.3\build\net40\Magick.NET-Q16-x64.targets" Condition="Exists('..\packages\Magick.NET-Q16-x64.7.14.3\build\net40\Magick.NET-Q16-x64.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Magick.NET-Q16-HDRI-x64.7.14.2\build\net40\Magick.NET-Q16-HDRI-x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Magick.NET-Q16-HDRI-x64.7.14.2\build\net40\Magick.NET-Q16-HDRI-x64.targets'))" />
+    <Error Condition="!Exists('..\packages\Magick.NET-Q16-x64.7.14.3\build\net40\Magick.NET-Q16-x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Magick.NET-Q16-x64.7.14.3\build\net40\Magick.NET-Q16-x64.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

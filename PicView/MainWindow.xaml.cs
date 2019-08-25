@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using static PicView.ContextMenus;
 using static PicView.Copy_Paste;
@@ -22,12 +21,12 @@ using static PicView.Navigation;
 using static PicView.Open_Save;
 using static PicView.PicGalleryLogic;
 using static PicView.Resize_and_Zoom;
-using static PicView.ResizeLogic;
 using static PicView.Rotate_and_Flip;
 using static PicView.Shortcuts;
 using static PicView.SlideShow;
 using static PicView.Timers;
 using static PicView.ToggleMenus;
+using static PicView.WindowLogic;
 
 namespace PicView
 {
@@ -39,6 +38,22 @@ namespace PicView
             InitializeComponent();
             Loaded += (s, e) => MainWindow_Loaded(s, e);
             ContentRendered += MainWindow_ContentRendered;
+
+            // If normal window style
+            if (!Properties.Settings.Default.FitToWindow)
+            {
+                Top = Properties.Settings.Default.Top;
+                Left = Properties.Settings.Default.Left;
+                Height = Properties.Settings.Default.Height;
+                Width = Properties.Settings.Default.Width;
+
+                if (Properties.Settings.Default.Maximized)
+                {
+                    WindowState = WindowState.Maximized;
+                }
+                FitToWindow = false;
+            }
+            else FitToWindow = true;
         }
 
         #region Loaded and Rendered
@@ -71,7 +86,6 @@ namespace PicView
             freshStartup = true;
             DataContext = this;
             MonitorInfo = MonitorSize.GetMonitorSize();
-            FitToWindow = Properties.Settings.Default.FitToWindow;
 
             if (!Properties.Settings.Default.BgColorWhite)
                 imgBorder.Background = new SolidColorBrush(Colors.Transparent);
@@ -112,14 +126,16 @@ namespace PicView
                 minus.Visibility =
                 Visibility.Visible;
             }
+            if (Properties.Settings.Default.Fullscreen)
+                Fullscreen_Restore(true);
 
             // Update UserControl values
             mainColor = (Color)Application.Current.Resources["MainColor"];
             quickSettingsMenu.ToggleScroll.IsChecked = IsScrollEnabled;
             if (FitToWindow)
             {
-                quickSettingsMenu.SetFit.IsChecked = false;
-                quickSettingsMenu.SetCenter.IsChecked = true;
+                quickSettingsMenu.SetFit.IsChecked = true;
+                quickSettingsMenu.SetCenter.IsChecked = false;
             }
 
             else
@@ -414,131 +430,7 @@ namespace PicView
 
         #endregion Changed Events
 
-        #region Window Functions
-
-        /// <summary>
-        /// Move window and maximize on double click
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        internal void Move(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton != MouseButton.Left)
-                return;
-
-            if (e.ClickCount == 2)
-            {
-                // Prevent method from being called twice
-                var bar = sender as TextBlock;
-                if (bar != null)
-                {
-                    if (bar.Name == "Bar")
-                        return;
-                }
-                Maximize_Restore();
-            }
-            else
-            {
-                if (e.LeftButton == MouseButtonState.Pressed)
-                DragMove();
-
-                // Update info for possible new screen, needs more engineering
-                MonitorInfo = MonitorSize.GetMonitorSize();
-            }
-        }
-
-
-        /// <summary>
-        /// Function made to restore and drag window from maximized windowstate
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Restore_From_Move(object sender, MouseEventArgs e)
-        {
-            if (WindowState == WindowState.Maximized && e.LeftButton == MouseButtonState.Pressed)
-            {
-                //Maximize_Restore();
-                try
-                {
-                    DragMove();
-                }
-                catch (InvalidOperationException)
-                {
-                    //Supress "Can only call DragMove when primary mouse button is down"
-                }
-            }
-        }
-
-        /// <summary>
-        /// Maximizes/restore window
-        /// </summary>
-        internal void Maximize_Restore()
-        {
-            // Maximize
-            if (WindowState == WindowState.Normal)
-            {
-                // Update new setting and sizing
-                FitToWindow = false;
-
-                // Tell Windows that it's maximized
-                WindowState = WindowState.Maximized;
-                SystemCommands.MaximizeWindow(this);
-
-                //// Update button to reflect change
-                //MaxButton.ToolTip = "Restore";
-                //MaxButtonPath.Data = Geometry.Parse("M143-7h428v286h-428v-286z m571 286h286v428h-429v-143h54q37 0 63-26t26-63v-196z m429 482v-536q0-37-26-63t-63-26h-340v-197q0-37-26-63t-63-26h-536q-36 0-63 26t-26 63v536q0 37 26 63t63 26h340v197q0 37 26 63t63 26h536q36 0 63-26t26-63z");
-            }
-
-            // Restore
-            else if (WindowState == WindowState.Maximized)
-            {
-                // Update new setting and sizing
-                FitToWindow = true;
-
-                // Tell Windows that it's normal
-                WindowState = WindowState.Normal;
-                SystemCommands.RestoreWindow(this);
-
-                //// Update button to reflect change
-                //MaxButton.ToolTip = "Maximize";
-                //MaxButtonPath.Data = Geometry.Parse("M143 64h714v429h-714v-429z m857 625v-678q0-37-26-63t-63-27h-822q-36 0-63 27t-26 63v678q0 37 26 63t63 27h822q37 0 63-27t26-63z");
-            }
-        }
-
-        /// <summary>
-        /// Fullscreen/restore window
-        /// </summary>
-        internal void Fullscreen_Restore()
-        {
-            // Update new setting and sizing
-            FitToWindow = false;
-
-            HideInterface(false, false);
-
-            Width = bg.Width = SystemParameters.PrimaryScreenWidth + 2;
-            Height = bg.Height = SystemParameters.PrimaryScreenHeight + 2;
-
-            Top = 0;
-            Left = 0;
-
-            Topmost = true;
-        }
-
-        /// <summary>
-        /// Centers on the current monitor
-        /// </summary>
-        internal void CenterWindowOnScreen()
-        {
-            if (!FitToWindow)
-                return;
-
-            //move to the centre
-            Left = (((MonitorInfo.WorkArea.Width - (Width * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling));
-            Top = ((MonitorInfo.WorkArea.Height - (Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
-
-        }
-
-        #endregion
+        
 
         /// <summary>
         /// Save settings when closing
@@ -552,6 +444,15 @@ namespace PicView
                 fake.Close();
 
             Hide(); // Make it feel faster
+
+            if (!Properties.Settings.Default.FitToWindow)
+            {
+                Properties.Settings.Default.Top = Top;
+                Properties.Settings.Default.Left = Left;
+                Properties.Settings.Default.Height = Height;
+                Properties.Settings.Default.Width = Width;
+                Properties.Settings.Default.Maximized = WindowState == WindowState.Maximized;
+            }
 
             Properties.Settings.Default.Save();
             DeleteTempFiles();

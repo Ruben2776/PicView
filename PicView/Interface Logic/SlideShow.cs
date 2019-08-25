@@ -6,7 +6,7 @@ using System.Windows.Input;
 using static PicView.Fields;
 using static PicView.Interface;
 using static PicView.Navigation;
-using static PicView.ResizeLogic;
+using static PicView.WindowLogic;
 
 namespace PicView
 {
@@ -25,7 +25,7 @@ namespace PicView
             }
 
             if (mainWindow.WindowState == WindowState.Maximized)
-                mainWindow.Maximize_Restore();
+                Maximize_Restore();
 
             HideInterface(false);
             mainWindow.Topmost = true;

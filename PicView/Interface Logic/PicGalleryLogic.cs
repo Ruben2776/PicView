@@ -14,6 +14,7 @@ using static PicView.Fields;
 using static PicView.ImageManager;
 using static PicView.Interface;
 using static PicView.Navigation;
+using static PicView.WindowLogic;
 
 
 namespace PicView

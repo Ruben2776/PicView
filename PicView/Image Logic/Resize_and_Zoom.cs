@@ -6,7 +6,7 @@ using System.Windows.Media;
 using static PicView.Fields;
 using static PicView.Interface;
 using static PicView.Navigation;
-using static PicView.ResizeLogic;
+using static PicView.WindowLogic;
 
 namespace PicView
 {
@@ -84,7 +84,7 @@ namespace PicView
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
-                mainWindow.Move(sender, e);
+                Move(sender, e);
                 return;
             }
             if (autoScrolling)
@@ -111,7 +111,7 @@ namespace PicView
         internal static void Bg_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                mainWindow.Move(sender, e);
+                Move(sender, e);
         }
 
         /// <summary>
@@ -415,7 +415,8 @@ namespace PicView
                 mainWindow.Bar.MaxWidth = xWidth - interfaceSize < interfaceSize ? interfaceSize : xWidth - interfaceSize;
 
                 // Loses position gradually if not forced to center
-                mainWindow.CenterWindowOnScreen();
+                if (!Properties.Settings.Default.Fullscreen)
+                    CenterWindowOnScreen();
             }
 
 

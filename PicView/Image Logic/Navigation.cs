@@ -397,7 +397,7 @@ namespace PicView
 
             mainWindow.img.Source = Preloader.Contains(Pics[FolderIndex]) ? Preloader.Load(Pics[FolderIndex]) : GetBitmapSourceThumb(Pics[FolderIndex]);
             Progress(FolderIndex, Pics.Count);
-            FastPicRunning = true;
+            //FastPicRunning = true;
 
         }
 
@@ -407,7 +407,7 @@ namespace PicView
         internal static void FastPicUpdate()
         {
             //fastPicTimer.Stop();
-            FastPicRunning = false;
+            //FastPicRunning = false;
 
             //if (!Preloader.Contains(Pics[FolderIndex]))
             //{

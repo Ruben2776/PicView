@@ -14,6 +14,7 @@ using static PicView.Resize_and_Zoom;
 using static PicView.Rotate_and_Flip;
 using static PicView.SlideShow;
 using static PicView.ToggleMenus;
+using static PicView.WindowLogic;
 
 namespace PicView
 {
@@ -346,8 +347,8 @@ namespace PicView
             // FastPicUpdate()
             if (e.Key == Key.Left || e.Key == Key.A || e.Key == Key.Right || e.Key == Key.D)
             {
-                if (!FastPicRunning)
-                    return;
+                //if (!FastPicRunning)
+                //    return;
                 FastPicUpdate();
             }
 
@@ -362,11 +363,15 @@ namespace PicView
                 {
                     UnloadSlideshow();
                 }
-                else if (picGallery != null)
+                else if (Properties.Settings.Default.Fullscreen)
                 {
-                    if (Properties.Settings.Default.PicGallery != 2 && PicGalleryLogic.IsOpen)
+                    Fullscreen_Restore();
+                }
+                else if (Properties.Settings.Default.PicGallery > 0)
+                {
+                    if (PicGalleryLogic.IsOpen)
                         PicGalleryLogic.PicGalleryToggle();
-                    else
+                    else 
                         SystemCommands.CloseWindow(mainWindow);
                 }
                 else
@@ -450,7 +455,7 @@ namespace PicView
             // Alt + Enter
             else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.Enter))
             {
-                mainWindow.Fullscreen_Restore();
+                Maximize_Restore();
             }
 
             // Space
@@ -464,7 +469,7 @@ namespace PicView
                         return;
                     }
                 }
-                mainWindow.CenterWindowOnScreen();
+                CenterWindowOnScreen();
             }
 
             // F1
@@ -505,10 +510,10 @@ namespace PicView
                 ResetZoom();
             }
 
-            //F10
-            else if (e.Key == Key.F10)
+            //F11
+            else if (e.Key == Key.F11)
             {
-                mainWindow.Fullscreen_Restore();
+                Fullscreen_Restore();
             }
 
             //F12

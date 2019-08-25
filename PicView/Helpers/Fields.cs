@@ -20,8 +20,7 @@ namespace PicView
         internal const string FileCopy = "File copied to Clipboard";
         internal const string ImageCopy = "Image copied to Clipboard";
         internal const string ExpFind = "Locating in file explorer";
-        internal const string NoImage = "No image loaded";
-        
+        internal const string NoImage = "No image loaded";        
 
         internal const string SupportedFiles =
         " *.jpg *.jpeg *.jpe *.png *.bmp *.tif *.tiff *.gif *.ico *.wdp *.svg *.psd *.psb *.orf *.cr2 *.crw *.dng *.raf *.raw *.mrw *.nef *.x3f *.arw *.webp *"
@@ -53,8 +52,6 @@ namespace PicView
             + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw";      // Camera files
 
         internal static MainWindow mainWindow = ((MainWindow)Application.Current.MainWindow);
-
-        internal static FakeWindow fake;
 
         /// <summary>
         /// File path of current image
@@ -110,7 +107,7 @@ namespace PicView
         internal static bool fileMenuOpen;
         internal static bool quickSettingsMenuOpen;
         internal static bool functionsMenuOpen;
-        internal static bool FastPicRunning;
+        //internal static bool FastPicRunning;
         internal static bool isZoomed;
         internal static bool Flipped;
         internal static bool canNavigate;
@@ -121,6 +118,7 @@ namespace PicView
         internal static bool clickArrowLeftClicked;
         internal static bool SlideshowActive;
         internal static bool reverse;
+        //internal static bool dialogOpen;
 
         /// <summary>
         /// Used as comfortable space for standard viewing

@@ -1,6 +1,7 @@
 ﻿using Microsoft.WindowsAPICodePack.Taskbar;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Media;
 
 namespace PicView
 {
@@ -61,6 +62,15 @@ namespace PicView
             {
                 var bgBrush = Application.Current.Resources["WindowBackgroundColorBrush"] as System.Windows.Media.SolidColorBrush;
                 bgBrush.Color = AnimationHelper.GetPrefferedColorOver();
+            }
+        }
+
+        internal static void RemoveBorderColor()
+        {
+            if (Properties.Settings.Default.WindowBorderColorEnabled)
+            {
+                var bgBrush = Application.Current.Resources["WindowBackgroundColorBrush"] as System.Windows.Media.SolidColorBrush;
+                bgBrush.Color = Colors.Black;
             }
         }
 

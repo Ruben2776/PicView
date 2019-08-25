@@ -128,6 +128,7 @@ namespace PicView
         /// </summary>
         internal static void HideInterface(bool slideshow = false, bool navigationButtons = true)
         {
+            // Hide interface
             if (Properties.Settings.Default.ShowInterface)
             {
                 mainWindow.TitleBar.Visibility =
@@ -140,31 +141,34 @@ namespace PicView
                     clickArrowLeft.Visibility =
                     clickArrowRight.Visibility =
                     x2.Visibility =
-                    minus.Visibility =
-                    Visibility.Visible;
+                    minus.Visibility = Visibility.Visible;
+                else
+                    clickArrowLeft.Visibility =
+                    clickArrowRight.Visibility =
+                    x2.Visibility =
+                    minus.Visibility = Visibility.Collapsed;
 
-                if (!slideshow)
+                if (!slideshow || !Properties.Settings.Default.Fullscreen)
                     Properties.Settings.Default.ShowInterface = false;
 
                 if (activityTimer != null)
                     activityTimer.Start();
             }
+            // Show interface
             else
             {
                 mainWindow.TitleBar.Visibility =
                 mainWindow.LowerBar.Visibility =
                 mainWindow.LeftBorderRectangle.Visibility =
-                mainWindow.RightBorderRectangle.Visibility
-                = Visibility.Visible;
+                mainWindow.RightBorderRectangle.Visibility = Visibility.Visible;
 
-                if (navigationButtons)
-                    clickArrowLeft.Visibility =
-                    clickArrowRight.Visibility =
-                    x2.Visibility =
-                    minus.Visibility =
-                    Visibility.Collapsed;
+                clickArrowLeft.Visibility =
+                clickArrowRight.Visibility =
+                x2.Visibility =
+                minus.Visibility = Visibility.Collapsed;
 
                 Properties.Settings.Default.ShowInterface = true;
+
                 if (activityTimer != null)
                     activityTimer.Stop();
             }
