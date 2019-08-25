@@ -161,7 +161,7 @@ namespace PicView
                 ImageSource thumb;
                 if (picGallery != null)
                 {
-                    if (x < picGallery.Container.Children.Count)
+                    if (x < picGallery.Container.Children.Count && picGallery.Container.Children.Count == Pics.Count)
                     {
                         var y = picGallery.Container.Children[x] as UserControls.PicGalleryItem;
                         thumb = y.img.Source;
@@ -202,6 +202,7 @@ namespace PicView
                         await Task.Run(() => pic = RenderToBitmapSource(Pics[x]));
                         if (pic == null)
                             Reload(true);
+                        //return;
                     }
                 }
             }
@@ -254,7 +255,11 @@ namespace PicView
 
             // Preload images \\
             if (Preloader.StartPreload())
+            {
+                Preloader.Add(pic, PicPath);
                 await Preloader.PreLoad(x);
+            }
+                
 
             if (!freshStartup)
                 RecentFiles.Add(Pics[x]);

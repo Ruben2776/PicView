@@ -425,15 +425,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CORE_RL_jp2_.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="CORE_RL_jpeg_.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="dcraw.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Resource Include="Library\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
     <Resource Include="Library\img\noisy-texture-200x200-o4-d30-c-101010-t0.png" />
     <Resource Include="Library\img\Brainleaf-Dark-Blog-Reflex.ico" />
@@ -447,7 +438,6 @@
       <DefaultIcon>lib\img\Brainleaf-Dark-Blog-Reflex.ico</DefaultIcon>
     </FileAssociation>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

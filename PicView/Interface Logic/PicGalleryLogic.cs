@@ -256,8 +256,11 @@ namespace PicView
                 for (int i = 0; i < Pics.Count; i++)
                 {
                     var pic = GetBitmapSourceThumb(Pics[i]);
-                    pic.Freeze();
-                    Add(pic, i);
+                    if (pic != null)
+                    { 
+                        pic.Freeze();
+                        Add(pic, i);
+                    }
                 }
                 LoadComplete = true;
                 isLoading = false;

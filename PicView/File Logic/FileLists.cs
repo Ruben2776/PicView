@@ -57,7 +57,7 @@ namespace PicView
             if (!Directory.Exists(path))
                 return null;
 
-            var items = Directory.GetFiles(path)
+            var items = Directory.EnumerateFiles(path)
                 .AsParallel()
                 .Where(file =>
                         file.ToLower().EndsWith("jpg", StringComparison.OrdinalIgnoreCase)
