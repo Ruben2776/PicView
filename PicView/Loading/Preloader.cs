@@ -34,7 +34,7 @@ namespace PicView.PreLoading
         /// <summary>
         /// Preloader list of BitmapSources
         /// </summary>
-        private static ConcurrentDictionary<string, BitmapSource> Sources = new ConcurrentDictionary<string, BitmapSource>();
+        private static readonly ConcurrentDictionary<string, BitmapSource> Sources = new ConcurrentDictionary<string, BitmapSource>();
 
         /// <summary>
         /// When Preloader is adding an image
@@ -232,6 +232,7 @@ namespace PicView.PreLoading
                 var toLoad = 5;
                 var extraToLoad = 3;
                 var cleanUpLoad = toLoad + extraToLoad;
+                var noCleanUp = cleanUpLoad + toLoad;
 
 
                 // Not looping
@@ -256,7 +257,7 @@ namespace PicView.PreLoading
                         }
 
                         //Clean up behind
-                        if (Pics.Count > 20 && !freshStartup)
+                        if (Pics.Count > noCleanUp && !freshStartup)
                         {
                             for (int i = index - cleanUpLoad; i < index - toLoad; i++)
                             {
@@ -288,7 +289,7 @@ namespace PicView.PreLoading
                         }
 
                         //Clean up infront
-                        if (Pics.Count > 20 && !freshStartup)
+                        if (Pics.Count > noCleanUp && !freshStartup)
                         {
                             for (int i = index + toLoad; i < index + cleanUpLoad; i++)
                             {
@@ -318,7 +319,7 @@ namespace PicView.PreLoading
                         }
 
                         //Clean up behind
-                        if (Pics.Count > 20 && !freshStartup)
+                        if (Pics.Count > noCleanUp && !freshStartup)
                         {
                             for (int i = index - cleanUpLoad + Pics.Count; i < index + Pics.Count; i++)
                             {
@@ -330,10 +331,39 @@ namespace PicView.PreLoading
                     else
                     {
                         // Add 5 elements behind
-                        for (int i = index; i <= toLoad; i++) // Need proper working solution
+                        int y = 0;
+                        for (int i = index - 1; i > index - toLoad; i--)
                         {
-                            Add(i % Pics.Count); 
+                            y++;
+                            if (i < 0)
+                            {
+                                for (int x = Pics.Count - 1; x >= Pics.Count - y; x--)
+                                {
+                                    Add(x);
+                                }
+                                break;
+                            }
+                            Add(i);
                         }
+
+                        #region Discarded code
+                        //for (int i = index; i <= toLoad; i++) // Need proper working solution
+                        //{
+                        //    Add(i % Pics.Count); 
+                        //}
+                        //for (int i = index - 1; i >= Pics.Count - toLoad; i--)
+                        //{
+                        //    if (i == 0)
+                        //    {
+                        //        for (int x = Pics.Count - 1; x >= toLoad - i; x--)
+                        //        {
+                        //            Add(i);
+                        //        }
+                        //        break;
+                        //    }
+
+                        //    Add(i);
+                        //}
 
                         // Non-working, runs more than it should
                         //for (int i = index - 1; i >= index - (toLoad + 1); i--)
@@ -343,6 +373,7 @@ namespace PicView.PreLoading
 
                         //    Add(i % Pics.Count);
                         //}
+                        #endregion
 
                         // Add 3 elements
                         for (int i = index; i <= index + extraToLoad; i++) // Somewhat untested
@@ -351,44 +382,13 @@ namespace PicView.PreLoading
                         }
 
                         //Clean up infront
-                        if (Pics.Count > 20 && !freshStartup)
+                        if (Pics.Count > noCleanUp && !freshStartup)
                         {
                             for (int i = index + toLoad; i <= index + cleanUpLoad; i++)
                             {
                                 Remove(i % Pics.Count);
                             }
                         }
-
-                        ////Add first three
-                        //int i = index - 1 < 0 ? Pics.Count : index - 1;
-                        //Add(i);
-                        //i = i - 1 < 0 ? Pics.Count : i - 1;
-                        //Add(i);
-                        //i = i - 1 < 0 ? Pics.Count : i - 1;
-                        //Add(i);
-
-                        ////Add two behind
-                        //i = index + 1 >= Pics.Count ? (i + 1) - Pics.Count : index + 1;
-                        //Add(i);
-                        //i = i + 1 >= Pics.Count ? (i + 1) - Pics.Count : i + 1;
-                        //Add(i);
-
-                        ////Add one more infront
-                        //i = index - 4 < 0 ? (index + 4) - Pics.Count : index - 4;
-                        //Add(i);
-
-                        //if (Pics.Count > 20 && !freshStartup)
-                        //{
-                        //    //Clean up behind
-                        //    var arr = new string[3];
-                        //    i = index + 3 > Pics.Count - 1 ? Pics.Count - 1 : index + 3;
-                        //    arr[0] = Pics[i];
-                        //    i = index + 4 > Pics.Count - 1 ? Pics.Count - 1 : index + 4;
-                        //    arr[1] = Pics[i];
-                        //    i = index + 5 > Pics.Count - 1 ? Pics.Count - 1 : index + 5;
-                        //    arr[2] = Pics[i];
-                        //    Clear(arr);
-                        //}
                     }
                 }
 

@@ -3,7 +3,6 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using static PicView.Helper;
 
 namespace PicView
 {
@@ -25,11 +24,8 @@ namespace PicView
                 var mrs = new MagickReadSettings()
                 {
                     Density = new Density(300, 300),
-                    //Width = Fields.MonitorInfo.Width,
-                    //Height = Fields.MonitorInfo.Height,
                     BackgroundColor = MagickColors.Transparent,
-                    //Format = MagickFormat.Jpeg
-                };           
+                };
 
                 try
                 {
@@ -49,7 +45,6 @@ namespace PicView
                 magick.Dispose();
                 return pic;
             }
-
         }
 
         internal static BitmapSource GetBitmapSourceThumb(string path)
@@ -328,6 +323,22 @@ namespace PicView
             {
                 return;
             }          
+        }
+
+        /// <summary>
+        /// Returns a Windows Thumbnail
+        /// </summary>
+        /// <param name="path">The path to the file</param>
+        /// <returns></returns>
+        internal static BitmapSource GetWindowsThumbnail(string path, bool extralarge = false)
+        {
+            if (!File.Exists(path))
+                return null;
+
+            if (extralarge)
+                return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.ExtraLargeBitmapSource;
+
+            return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
         }
     }
 }

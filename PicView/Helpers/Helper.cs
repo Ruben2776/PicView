@@ -1,8 +1,6 @@
 ﻿using Microsoft.WindowsAPICodePack.Taskbar;
 using System.Diagnostics;
-using System.IO;
 using System.Windows;
-using static PicView.Fields;
 
 namespace PicView
 {
@@ -38,22 +36,6 @@ namespace PicView
         {
             TaskbarManager prog = TaskbarManager.Instance;
             prog.SetProgressState(TaskbarProgressBarState.NoProgress);
-        }
-
-        /// <summary>
-        /// Returns a Windows Thumbnail
-        /// </summary>
-        /// <param name="path">The path to the file</param>
-        /// <returns></returns>
-        internal static System.Windows.Media.Imaging.BitmapSource GetWindowsThumbnail(string path, bool extralarge = false)
-        {
-            if (!File.Exists(path))
-                return null;
-
-            if (extralarge)
-                return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.ExtraLargeBitmapSource;
-
-            return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
         }
 
         /// <summary>

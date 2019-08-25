@@ -1,16 +1,17 @@
 ﻿using PicView.PreLoading;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
 using static PicView.DeleteFiles;
+using static PicView.Fields;
 using static PicView.FileLists;
 using static PicView.Helper;
-using static PicView.Fields;
 using static PicView.ImageManager;
+using static PicView.Interface;
 using static PicView.Navigation;
 using static PicView.Resize_and_Zoom;
 using static PicView.Rotate_and_Flip;
-using static PicView.Interface;
 
 namespace PicView
 {
@@ -22,6 +23,9 @@ namespace PicView
         /// <param name="x">The index to start from</param>
         internal static bool PicErrorFix(int x)
         {
+#if DEBUG
+            Trace.WriteLine("Entered PicErrorFix");
+#endif
             if (Pics == null)
             {
                 Reload(true);

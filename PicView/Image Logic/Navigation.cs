@@ -314,8 +314,11 @@ namespace PicView
             if (end)
             {
                 FolderIndex = next ? Pics.Count - 1 : 0;
-                PreloadCount = 4;
-                Preloader.Clear();
+                if (Pics.Count > 20)
+                {
+                    PreloadCount = 4;
+                    Preloader.Clear();
+                }
             }
             // Go to next or previous
             else
