@@ -1,8 +1,12 @@
 ﻿using System.Windows;
+using static PicView.Fields;
+using static PicView.Resize_and_Zoom;
+using static PicView.Helper;
+using static PicView.Interface;
 
 namespace PicView
 {
-    internal static class Settings
+    internal static class Configs
     {
 
         internal static void SetSlidetimer()
@@ -71,6 +75,21 @@ namespace PicView
             }
         }
 
+
+        internal static void SetScrolling(object sender, RoutedEventArgs e)
+        {
+            if (Properties.Settings.Default.ScrollEnabled)
+            {
+                Properties.Settings.Default.ScrollEnabled = false;
+                
+                IsScrollEnabled = false;
+            }
+            else
+            {
+                Properties.Settings.Default.ScrollEnabled = true;
+                IsScrollEnabled = true;
+            }
+        }
 
         internal static void SetLooping(object sender, RoutedEventArgs e)
         {

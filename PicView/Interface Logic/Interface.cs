@@ -170,41 +170,27 @@ namespace PicView
                 x2.Visibility =
                 minus.Visibility = Visibility.Collapsed;
 
-
-                if (!FitToWindow)
-                    ZoomFit(xWidth, xHeight);
-
                 if (activityTimer != null)
                     activityTimer.Stop();
             }
+            if (xWidth != 0 && xHeight != 0)
+                ZoomFit(xWidth, xHeight);
 
             ToggleMenus.Close_UserControls();
         }
 
+
+
         /// <summary>
-        /// Hides/shows interface elements with a fade animation
+        /// Logic for mouse enter mainwindow event
         /// </summary>
-        /// <param name="show"></param>
-        internal static async void FadeControlsAsync(bool show)
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        internal static void MainWindow_MouseEnter(object sender, MouseEventArgs e)
         {
-            var fadeTo = show ? 1 : 0;
-
-            /// Might cause unnecessary cpu usage? Need to check
-            await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
-            {
-                if (!Properties.Settings.Default.ShowInterface | Slidetimer.Enabled == true)
-                {
-                    if (clickArrowRight != null && clickArrowLeft != null && x2 != null)
-                    {
-                        AnimationHelper.Fade(clickArrowLeft, fadeTo, TimeSpan.FromSeconds(.5));
-                        AnimationHelper.Fade(clickArrowRight, fadeTo, TimeSpan.FromSeconds(.5));
-                        AnimationHelper.Fade(x2, fadeTo, TimeSpan.FromSeconds(.5));
-                        AnimationHelper.Fade(minus, fadeTo, TimeSpan.FromSeconds(.5));
-                    }
-                }
-
-                ScrollbarFade(show);
-            }));
+            // Start timer when mouse enters mainwindow
+            activityTimer.Start();
+            //FadeControlsAsync(true);
         }
 
 
@@ -215,26 +201,27 @@ namespace PicView
         /// <param name="e"></param>
         internal static void MainWindow_MouseMove(object sender, MouseEventArgs e)
         {
-            //If Mouse is hidden, show it and interface elements.
-            if (e.MouseDevice.OverrideCursor == Cursors.None)
-            {
-                Mouse.OverrideCursor = null;
-                HideCursorTimer.Stop();
-            }
+            ////If Mouse is hidden, show it and interface elements.
+            //if (e.MouseDevice.OverrideCursor == Cursors.None)
+            //{
+            //    Mouse.OverrideCursor = null;
+            //    HideCursorTimer.Stop();
+            //}
 
-            // Stop timer if mouse moves on mainwindow and show elements
-            activityTimer.Stop();
+
+            // If mouse moves on mainwindow, show elements
             FadeControlsAsync(true);
 
-            // If Slideshow is running the interface will hide after 2,5 sec.
-            if (Slidetimer.Enabled == true)
-            {
-                MouseIdleTimer.Start();
-            }
-            else
-            {
-                MouseIdleTimer.Stop();
-            }
+
+            //// If Slideshow is running the interface will hide after 2,5 sec.
+            //if (Slidetimer.Enabled == true)
+            //{
+            //    MouseIdleTimer.Start();
+            //}
+            //else
+            //{
+            //    MouseIdleTimer.Stop();
+            //}
         }
 
         /// <summary>
@@ -245,7 +232,8 @@ namespace PicView
         internal static void MainWindow_MouseLeave(object sender, MouseEventArgs e)
         {
             // Start timer when mouse leaves mainwindow
-            activityTimer.Start();
+            //activityTimer.Start();
+            FadeControlsAsync(false);
         }
 
         /// <summary>
@@ -358,5 +346,50 @@ namespace PicView
 
 
         #endregion Manipulate Interface
+
+        #region Fade controls 
+
+        /// <summary>
+        /// Hides/shows interface elements with a fade animation
+        /// </summary>
+        /// <param name="show"></param>
+        internal static async void FadeControlsAsync(bool show, double time = .5)
+        {
+            /// Might cause unnecessary cpu usage? Need to check
+            await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            {
+                if (!Properties.Settings.Default.ShowInterface | Slidetimer.Enabled == true)
+                {
+                    if (clickArrowRight != null && clickArrowLeft != null && x2 != null)
+                    {
+                        var fadeTo = show ? 1 : 0;
+                        var timespan = TimeSpan.FromSeconds(time);
+
+                        AnimationHelper.Fade(clickArrowLeft, fadeTo, timespan);
+                        AnimationHelper.Fade(clickArrowRight, fadeTo, timespan);
+                        AnimationHelper.Fade(x2, fadeTo, timespan);
+                        AnimationHelper.Fade(minus, fadeTo, timespan);
+                    }
+                }
+
+                ScrollbarFade(show);
+            }));
+        }
+
+        //internal static async void FadeCursor(double time = .5)
+        //{
+        //    /// Might cause unnecessary cpu usage? Need to check
+        //    await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
+        //    {
+        //        AnimationHelper.Fade(clickArrowLeft, 0, TimeSpan.FromSeconds(.5));
+        //        AnimationHelper.Fade(clickArrowRight, 0, TimeSpan.FromSeconds(.5));
+        //        AnimationHelper.Fade(x2, 0, TimeSpan.FromSeconds(.5));
+        //        Mouse.OverrideCursor = Cursors.None;
+
+        //        MouseIdleTimer.Stop();
+        //    }));
+        //}
+
+        #endregion
     }
 }

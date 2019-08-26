@@ -166,7 +166,7 @@
     <Compile Include="Screen-Logic\MonitorSize.cs" />
     <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="File Logic\RecentFiles.cs" />
-    <Compile Include="Settings\Settings.cs" />
+    <Compile Include="Configs\Configs.cs" />
     <Compile Include="Shortcuts\Shortcuts.cs" />
     <Compile Include="UserControls\CustomControls\AutoScrollSign.xaml.cs">
       <DependentUpon>AutoScrollSign.xaml</DependentUpon>

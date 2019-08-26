@@ -192,6 +192,8 @@ namespace PicView
             FolderIndex = 0;
             mainWindow.img.Width = mainWindow.Scroller.Width = mainWindow.Scroller.Height =
             mainWindow.img.Height = double.NaN;
+            xWidth = xHeight = 0;
+            prevPicResource = null;
 
             if (!string.IsNullOrWhiteSpace(TempZipPath))
             {

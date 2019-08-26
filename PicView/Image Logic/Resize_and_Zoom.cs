@@ -367,15 +367,23 @@ namespace PicView
         internal static void ZoomFit(double width, double height)
         {
             double maxWidth, maxHeight;
-            //var interfaceHeight = 93; // TopBar + mainWindow.LowerBar height
-            var interfaceHeight = mainWindow.TitleBar.ActualHeight + mainWindow.LowerBar.ActualHeight;
+            var interfaceHeight = 93; // TopBar + mainWindow.LowerBar height
+            //var interfaceHeight = (mainWindow.TitleBar.ActualHeight + mainWindow.LowerBar.ActualHeight) + 2; // + 2 for window border
 
             if (FitToWindow)
             {
                 // Get max width and height, based on user's screen
-                maxWidth = Math.Min(MonitorInfo.Width - ComfySpace, width);
-                maxHeight = Math.Min((MonitorInfo.Height - interfaceHeight), height);
-            }
+                if (Properties.Settings.Default.ShowInterface)
+                {
+                    maxWidth = Math.Min(MonitorInfo.Width - ComfySpace, width);
+                    maxHeight = Math.Min((MonitorInfo.Height - interfaceHeight), height);
+                }
+                else
+                {
+                    maxWidth = Math.Min(MonitorInfo.Width - 2, width - 2);
+                    maxHeight = Math.Min(MonitorInfo.Height - 2, height - 2);
+                }
+            }       
             else
             {
                 // Get max width and height, based on window size

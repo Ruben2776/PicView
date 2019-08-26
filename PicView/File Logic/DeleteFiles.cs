@@ -1,12 +1,12 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 using System;
+using System.Diagnostics;
 using System.IO;
 using static PicView.Error_Handling;
+using static PicView.Fields;
 using static PicView.Helper;
 using static PicView.Interface;
 using static PicView.Navigation;
-using static PicView.Fields;
-
 
 namespace PicView
 {
@@ -56,8 +56,11 @@ namespace PicView
                 FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, recycle);
                 Pics.Remove(file);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+#if DEBUG
+                        Trace.WriteLine("Delete exception \n" + e.Message);
+#endif
                 return false;
             }
             return true;
@@ -78,7 +81,15 @@ namespace PicView
                 filename = filename.Length >= 25 ? Shorten(filename, 21) : filename;
                 ToolTipStyle(Recyclebin ? "Sent " + filename + " to the recyle bin" : "Deleted " + filename);
 
-                Pic(reverse);
+                PreloadCount = reverse ? PreloadCount - 1 : PreloadCount + 1;
+
+                // Go to next image
+                if (!reverse)
+                    Pic(FolderIndex);
+                else if (FolderIndex - 2 >= 0)
+                    Pic(FolderIndex - 2);
+                else
+                    Unload();
             }
             else
             {

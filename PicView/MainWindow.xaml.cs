@@ -344,6 +344,7 @@ namespace PicView
 
             // This
             Closing += Window_Closing;
+            MouseEnter += MainWindow_MouseEnter;
             MouseMove += MainWindow_MouseMove;
             MouseLeave += MainWindow_MouseLeave;
             StateChanged += MainWindow_StateChanged;
@@ -352,6 +353,7 @@ namespace PicView
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
             
         }
+
 
         #endregion Add events
 

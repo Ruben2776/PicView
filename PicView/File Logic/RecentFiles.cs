@@ -161,7 +161,7 @@ namespace PicView
 
                 var cmIcon = new System.Windows.Shapes.Path
                 {
-                    Data = Geometry.Parse(CameraIconSVG),
+                    Data = Geometry.Parse(SVGiconCamera),
                     Stretch = Stretch.Fill,
                     Width = 12,
                     Height = 12,

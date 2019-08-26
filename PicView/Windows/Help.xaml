@@ -17,7 +17,7 @@
     ShowInTaskbar="False"
     WindowStartupLocation="CenterOwner"
     WindowStyle="None"
-    mc:Ignorable="d">
+    mc:Ignorable="d" FontSize="14">
 
 
     <Border
@@ -148,8 +148,8 @@
                     HorizontalScrollBarVisibility="Disabled"
                     VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="8,0,3,0">
-                        <Label Margin="0,5,0,0" FontSize="15">Shortcuts:</Label>
-                        <Label Margin="0,2,0,2" Content="Show windows:" />
+                        <Label Margin="0,5,0,0" FontSize="16">Shortcuts:</Label>
+                        <Label Margin="0,2,0,2" FontSize="15" Content="Show windows:" />
                         <BulletDecorator Margin="7,2">
                             <BulletDecorator.Bullet>
                                 <Ellipse
@@ -210,7 +210,7 @@
                                 to show/hide slideshow.</TextBlock>
                         </BulletDecorator>
 
-                        <Label Margin="0,10,0,0" Content="File functions:" />
+                        <Label Margin="0,10,0,0" FontSize="15" Content="File functions:" />
 
                         <BulletDecorator Margin="7,2">
                             <BulletDecorator.Bullet>
@@ -322,7 +322,7 @@
                                 to move image to the recycle bin.</TextBlock>
                         </BulletDecorator>
 
-                        <Label Margin="0,10,0,0" Content="Navigate:" />
+                        <Label Margin="0,10,0,0" FontSize="15" Content="Navigate:" />
                         <BulletDecorator Margin="7,2">
                             <BulletDecorator.Bullet>
                                 <Ellipse
@@ -415,7 +415,7 @@
                         <Label
                             Margin="0,10,0,0"
                             Content="Transform image:"
-                            FontSize="14" />
+                            FontSize="15" />
                         <BulletDecorator Margin="7,2">
                             <BulletDecorator.Bullet>
                                 <Ellipse
@@ -475,7 +475,7 @@
                         <Label
                             Margin="0,10,0,0"
                             Content="Zoom:"
-                            FontSize="14" />
+                            FontSize="15" />
                         <BulletDecorator Margin="7,2">
                             <BulletDecorator.Bullet>
                                 <Ellipse
@@ -551,7 +551,7 @@
                         <Label
                             Margin="0,10,0,0"
                             Content="Misc:"
-                            FontSize="14" />
+                            FontSize="15" />
                         <BulletDecorator Margin="7,2">
                             <BulletDecorator.Bullet>
                                 <Ellipse
@@ -587,7 +587,7 @@
                     Padding="0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Bottom"
-                    Content="© PicView anno 2017"
+                    Content="© PicView 2017"
                     FontSize="14"
                     FontStyle="Italic" />
             </Border>

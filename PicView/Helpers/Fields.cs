@@ -151,7 +151,7 @@ namespace PicView
         /// If higher than 0, Preload forwards.
         /// If less than 0, Preload backwards.
         /// </summary>
-        internal static short PreloadCount { get; set; }
+        internal static int PreloadCount { get; set; }
 
         /// <summary>
         /// Used to get and set Aspect Ratio

@@ -152,6 +152,8 @@ namespace PicView
             Clipboard.Clear();
             Clipboard.SetDataObject(data, true);
 
+            PreloadCount = 4;
+
             ToolTipStyle("Added Image to move clipboard");
         }
     }

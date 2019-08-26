@@ -108,6 +108,9 @@ namespace PicView
                 if (!PicGalleryLogic.LoadComplete && !PicGalleryLogic.isLoading)
                     await PicGalleryLogic.Load();
             }
+
+            if (prevPicResource != null)
+                prevPicResource = null;
         }
 
         /// <summary>
@@ -233,13 +236,9 @@ namespace PicView
 
             if (picGallery != null)
             {
-                if (freshStartup)
-                {
+                if (!freshStartup)
                     if (PicGalleryLogic.LoadComplete)
                         PicGalleryLogic.ScrollTo();
-                }
-                else
-                    PicGalleryLogic.ScrollTo(reverse);
 
                 //if (x < picGallery.Container.Children.Count)
                 //{

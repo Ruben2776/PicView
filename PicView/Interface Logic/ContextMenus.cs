@@ -8,12 +8,10 @@ using static PicView.DeleteFiles;
 using static PicView.Fields;
 using static PicView.FileLists;
 using static PicView.Helper;
-using static PicView.Navigation;
 using static PicView.Open_Save;
 using static PicView.RecentFiles;
 using static PicView.SvgIcons;
 using static PicView.Wallpaper;
-using static PicView.Interface;
 
 namespace PicView
 {
@@ -40,7 +38,7 @@ namespace PicView
             };
             var opencmIcon = new System.Windows.Shapes.Path
             {
-                Data = Geometry.Parse("M1717 931q0-35-53-35h-1088q-40 0-85.5 21.5t-71.5 52.5l-294 363q-18 24-18 40 0 35 53 35h1088q40 0 86-22t71-53l294-363q18-22 18-39zm-1141-163h768v-160q0-40-28-68t-68-28h-576q-40 0-68-28t-28-68v-64q0-40-28-68t-68-28h-320q-40 0-68 28t-28 68v853l256-315q44-53 116-87.5t140-34.5zm1269 163q0 62-46 120l-295 363q-43 53-116 87.5t-140 34.5h-1088q-92 0-158-66t-66-158v-960q0-92 66-158t158-66h320q92 0 158 66t66 158v32h544q92 0 158 66t66 158v160h192q54 0 99 24.5t67 70.5q15 32 15 68z"),
+                Data = Geometry.Parse(SVGiconFile),
                 Stretch = Stretch.Fill
             };
             opencmIcon.Width = opencmIcon.Height = 12;
@@ -62,7 +60,7 @@ namespace PicView
             };
             var savecmIcon = new System.Windows.Shapes.Path
             {
-                Data = Geometry.Parse("M512 1536h768v-384h-768v384zm896 0h128v-896q0-14-10-38.5t-20-34.5l-281-281q-10-10-34-20t-39-10v416q0 40-28 68t-68 28h-576q-40 0-68-28t-28-68v-416h-128v1280h128v-416q0-40 28-68t68-28h832q40 0 68 28t28 68v416zm-384-928v-320q0-13-9.5-22.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 22.5v320q0 13 9.5 22.5t22.5 9.5h192q13 0 22.5-9.5t9.5-22.5zm640 32v928q0 40-28 68t-68 28h-1344q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h928q40 0 88 20t76 48l280 280q28 28 48 76t20 88z"),
+                Data = Geometry.Parse(SVGiconSave),
                 Stretch = Stretch.Fill
             };
             savecmIcon.Width = savecmIcon.Height = 12;
@@ -85,7 +83,7 @@ namespace PicView
             };
             var printcmIcon = new System.Windows.Shapes.Path
             {
-                Data = Geometry.Parse("M448 1536h896v-256h-896v256zm0-640h896v-384h-160q-40 0-68-28t-28-68v-160h-640v640zm1152 64q0-26-19-45t-45-19-45 19-19 45 19 45 45 19 45-19 19-45zm128 0v416q0 13-9.5 22.5t-22.5 9.5h-224v160q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-224q-13 0-22.5-9.5t-9.5-22.5v-416q0-79 56.5-135.5t135.5-56.5h64v-544q0-40 28-68t68-28h672q40 0 88 20t76 48l152 152q28 28 48 76t20 88v256h64q79 0 135.5 56.5t56.5 135.5z"),
+                Data = Geometry.Parse(SVGiconPrint),
                 Stretch = Stretch.Fill
             };
             printcmIcon.Width = printcmIcon.Height = 12;
@@ -107,7 +105,7 @@ namespace PicView
             };
             var recentcmIcon = new System.Windows.Shapes.Path
             {
-                Data = Geometry.Parse("M288,48H136c-22.092,0-40,17.908-40,40v336c0,22.092,17.908,40,40,40h240c22.092,0,40-17.908,40-40V176L288,48z M272,192 V80l112, 112H272z"),
+                Data = Geometry.Parse(SVGiconPaper),
                 Stretch = Stretch.Fill
             };
             recentcmIcon.Width = recentcmIcon.Height = 12;
@@ -126,7 +124,7 @@ namespace PicView
             };
             var sortcmIcon = new System.Windows.Shapes.Path
             {
-                Data = Geometry.Parse("M666 481q-60 92-137 273-22-45-37-72.5t-40.5-63.5-51-56.5-63-35-81.5-14.5h-224q-14 0-23-9t-9-23v-192q0-14 9-23t23-9h224q250 0 410 225zm1126 799q0 14-9 23l-320 320q-9 9-23 9-13 0-22.5-9.5t-9.5-22.5v-192q-32 0-85 .5t-81 1-73-1-71-5-64-10.5-63-18.5-58-28.5-59-40-55-53.5-56-69.5q59-93 136-273 22 45 37 72.5t40.5 63.5 51 56.5 63 35 81.5 14.5h256v-192q0-14 9-23t23-9q12 0 24 10l319 319q9 9 9 23zm0-896q0 14-9 23l-320 320q-9 9-23 9-13 0-22.5-9.5t-9.5-22.5v-192h-256q-48 0-87 15t-69 45-51 61.5-45 77.5q-32 62-78 171-29 66-49.5 111t-54 105-64 100-74 83-90 68.5-106.5 42-128 16.5h-224q-14 0-23-9t-9-23v-192q0-14 9-23t23-9h224q48 0 87-15t69-45 51-61.5 45-77.5q32-62 78-171 29-66 49.5-111t54-105 64-100 74-83 90-68.5 106.5-42 128-16.5h256v-192q0-14 9-23t23-9q12 0 24 10l319 319q9 9 9 23z"),
+                Data = Geometry.Parse(SVGiconSort),
                 Stretch = Stretch.Fill
             };
             sortcmIcon.Width = sortcmIcon.Height = 12;
@@ -254,33 +252,55 @@ namespace PicView
             ///////////////////////////
             ///   Looping          \\\\
             ///////////////////////////
-            var settingscmLoop = new MenuItem();
+            var settingscmLoop = new MenuItem
+            {
+                InputGestureText = "L"
+            };
             var settingscmLoopHeader = new CheckBox {
                 IsChecked = Properties.Settings.Default.Looping,
-                Content = "Looping"
-            };
-            settingscmLoopHeader.Click += Settings.SetLooping;
+                Content = "Looping",
+                FontSize = 13,
+                Width = double.NaN,
+                Height = double.NaN
+            };            
             settingscmLoopHeader.Style = Application.Current.FindResource("Checkstyle") as Style;
-            settingscmLoopHeader.FontSize = 13;
+            settingscmLoopHeader.HorizontalAlignment = HorizontalAlignment.Left;
             settingscmLoop.Header = settingscmLoopHeader;
+            //var settingscmLoopIcon = new System.Windows.Shapes.Path
+            //{
+            //    Data = Geometry.Parse(InfiniteIconSVG),
+            //    Stretch = Stretch.Fill,
+            //    Width = 13,
+            //    Height = 13,
+            //    Fill = scbf
+            //};
+            //settingscmLoop.Icon = settingscmLoopIcon;
+            settingscmLoop.Click += (s, x) => { Configs.SetLooping(s, x); settingscmLoopHeader.IsChecked = (bool)settingscmLoopHeader.IsChecked ? false : true; };
             settingscm.Items.Add(settingscmLoop);
+            
 
 
             ///////////////////////////
             ///   Scroll         \\\\
             ///////////////////////////
-            var settingscmScroll = new MenuItem();
+            var settingscmScroll = new MenuItem
+            {
+                InputGestureText = "X"
+            };
             var settingscmScrollHeader = new CheckBox
             {
                 IsChecked = Properties.Settings.Default.ScrollEnabled,
-                Content = "Scrolling"
+                Content = "Scrolling",
+                FontSize = 13,
+                Width = double.NaN,
+                Height = double.NaN
             };
-            settingscmScrollHeader.Click += delegate { IsScrollEnabled = IsScrollEnabled ? false : true; };
+            settingscmScrollHeader.Click += Configs.SetScrolling;
             settingscmScrollHeader.Style = Application.Current.FindResource("Checkstyle") as Style;
             settingscmScrollHeader.FontSize = 13;
             settingscmScroll.Header = settingscmScrollHeader;
+            settingscmScroll.Click += (s, x) => { Configs.SetScrolling(s, x); settingscmScrollHeader.IsChecked = (bool)settingscmScrollHeader.IsChecked ? false : true; };
             settingscm.Items.Add(settingscmScroll);
-            //settingscmScroll.Checked += delegate { IsScrollEnabled = IsScrollEnabled ? false : true; };
             cm.Items.Add(new Separator());
 
             ///////////////////////////
@@ -295,7 +315,7 @@ namespace PicView
             wallcm.Click += (s, x) => SetWallpaper(PicPath, WallpaperStyle.Fill);
             var wallcmIcon = new System.Windows.Shapes.Path
             {
-                Data = Geometry.Parse(CameraIconSVG),
+                Data = Geometry.Parse(SVGiconCamera),
                 Stretch = Stretch.Fill
             };
             wallcmIcon.Width = wallcmIcon.Height = 12;
@@ -347,7 +367,7 @@ namespace PicView
             };
             var cppcmIcon = new System.Windows.Shapes.Path
             {
-                Data = Geometry.Parse(CopyIconSVG),
+                Data = Geometry.Parse(SVGiconCopy),
                 Stretch = Stretch.Fill
             };
             cppcmIcon.Width = cppcmIcon.Height = 12;
@@ -367,7 +387,7 @@ namespace PicView
                 InputGestureText = "Ctrl + X"
             };
             var cpccmIcon = new System.Windows.Shapes.Path();
-            cpccmIcon.Data = Geometry.Parse(ScissorIconSVG);
+            cpccmIcon.Data = Geometry.Parse(SVGiconScissor);
             cpccmIcon.Stretch = Stretch.Fill;
             cpccmIcon.Width = cpccmIcon.Height = 12;
             cpccmIcon.Fill = scbf;
@@ -426,66 +446,66 @@ namespace PicView
                 InputGestureText = "Esc",
                 StaysOpenOnClick = false
             };
-            //var mclcmIcon = new System.Windows.Shapes.Path();
-            //mclcmIcon.Data = Geometry.Parse("M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z");
-            //mclcmIcon.Stretch = Stretch.Fill;
-            //mclcmIcon.Width = mclcmIcon.Height = 12;
-            //mclcmIcon.Fill = scbf;
-            //clcm.Icon = mclcmIcon;
-            //clcm.Click += (s, x) => Close();
-            //cm.Items.Add(clcm);
+            var mclcmIcon = new System.Windows.Shapes.Path();
+            mclcmIcon.Data = Geometry.Parse("M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z");
+            mclcmIcon.Stretch = Stretch.Fill;
+            mclcmIcon.Width = mclcmIcon.Height = 12;
+            mclcmIcon.Fill = scbf;
+            clcm.Icon = mclcmIcon;
+            clcm.Click += (s, x) => { cm.Visibility = Visibility.Collapsed; SystemCommands.CloseWindow(mainWindow); };
+            cm.Items.Add(clcm);
 
             // Add to elements
-            mainWindow.img.ContextMenu = mainWindow.bg.ContextMenu = cm;
+            mainWindow.img.ContextMenu = mainWindow.bg.ContextMenu = mainWindow.LowerBar.ContextMenu = cm;
 
             // Add left and right ContextMenus
-            var cmLeft = new ContextMenu();
-            var cmRight = new ContextMenu();
+            //var cmLeft = new ContextMenu();
+            //var cmRight = new ContextMenu();
 
-            var nextcm = new MenuItem
-            {
-                Header = "Next picture",
-                InputGestureText = "ᗌ or D",
-                ToolTip = "Go to Next image",
-                StaysOpenOnClick = true
-            };
-            nextcm.Click += (s, x) => Pic();
-            cmRight.Items.Add(nextcm);
+            //var nextcm = new MenuItem
+            //{
+            //    Header = "Next picture",
+            //    InputGestureText = "ᗌ or D",
+            //    ToolTip = "Go to Next image",
+            //    StaysOpenOnClick = true
+            //};
+            //nextcm.Click += (s, x) => Pic();
+            //cmRight.Items.Add(nextcm);
 
-            var prevcm = new MenuItem
-            {
-                Header = "Previous picture",
-                InputGestureText = "ᗏ or A",
-                ToolTip = "Go to previous image in folder",
-                StaysOpenOnClick = true
-            };
-            prevcm.Click += (s, x) => Pic(false);
-            cmLeft.Items.Add(prevcm);
+            //var prevcm = new MenuItem
+            //{
+            //    Header = "Previous picture",
+            //    InputGestureText = "ᗏ or A",
+            //    ToolTip = "Go to previous image in folder",
+            //    StaysOpenOnClick = true
+            //};
+            //prevcm.Click += (s, x) => Pic(false);
+            //cmLeft.Items.Add(prevcm);
 
-            var firstcm = new MenuItem
-            {
-                Header = "First picture",
-                InputGestureText = "Ctrl + D or Ctrl + ᗌ",
-                ToolTip = "Go to first image in folder"
-            };
-            firstcm.Click += (s, x) => Pic(false, true);
-            cmLeft.Items.Add(firstcm);
+            //var firstcm = new MenuItem
+            //{
+            //    Header = "First picture",
+            //    InputGestureText = "Ctrl + D or Ctrl + ᗌ",
+            //    ToolTip = "Go to first image in folder"
+            //};
+            //firstcm.Click += (s, x) => Pic(false, true);
+            //cmLeft.Items.Add(firstcm);
 
-            var lastcm = new MenuItem
-            {
-                Header = "Last picture",
-                InputGestureText = "Ctrl + A or Ctrl + ᗏ",
-                ToolTip = "Go to last image in folder"
-            };
-            lastcm.Click += (s, x) => Pic(true, true);
-            cmRight.Items.Add(lastcm);
+            //var lastcm = new MenuItem
+            //{
+            //    Header = "Last picture",
+            //    InputGestureText = "Ctrl + A or Ctrl + ᗏ",
+            //    ToolTip = "Go to last image in folder"
+            //};
+            //lastcm.Click += (s, x) => Pic(true, true);
+            //cmRight.Items.Add(lastcm);
 
-            // Add to elements
-            mainWindow.RightButton.ContextMenu = cmRight;
-            mainWindow.LeftButton.ContextMenu = cmLeft;
+            //// Add to elements
+            //mainWindow.RightButton.ContextMenu = cmRight;
+            //mainWindow.LeftButton.ContextMenu = cmLeft;
 
-            clickArrowRight.ContextMenu = cmRight;
-            clickArrowLeft.ContextMenu = cmLeft;
+            //clickArrowRight.ContextMenu = cmRight;
+            //clickArrowLeft.ContextMenu = cmLeft;
 
             // Add Title contextMenu
             var cmTitle = new ContextMenu();

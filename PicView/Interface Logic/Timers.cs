@@ -26,11 +26,11 @@ namespace PicView
 
             activityTimer = new Timer()
             {
-                Interval = 1500,
+                Interval = 6000,
                 AutoReset = true,
                 Enabled = false
             };
-            activityTimer.Elapsed += ActivityTimer_Elapsed;
+            activityTimer.Elapsed += delegate { FadeControlsAsync(false); };
 
             //fastPicTimer = new Timer()
             //{
@@ -46,58 +46,21 @@ namespace PicView
             };
             Slidetimer.Elapsed += SlideShow.SlideTimer_Elapsed;
 
-            HideCursorTimer = new Timer()
-            {
-                Interval = 2500,
-                Enabled = false
-            };
-            HideCursorTimer.Elapsed += HideCursorTimer_Elapsed;
+            //HideCursorTimer = new Timer()
+            //{
+            //    Interval = 2500,
+            //    Enabled = false
+            //};
+            //HideCursorTimer.Elapsed += delegate { FadeCursor(false); };
 
-            MouseIdleTimer = new Timer()
-            {
-                Interval = 2500,
-                Enabled = false
-            };
-            MouseIdleTimer.Elapsed += MouseIdleTimer_Elapsed;
+            //MouseIdleTimer = new Timer()
+            //{
+            //    Interval = 2500,
+            //    Enabled = false
+            //};
+            //MouseIdleTimer.Elapsed += delegate { HideCursorTimer.Start(); };
         }
 
         #endregion
-
-        /// <summary>
-        /// Timer starts FadeControlsAsync
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        internal static void ActivityTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            FadeControlsAsync(false);
-        }
-
-        /// <summary>
-        /// Timer to show/hide cursor.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        internal static void HideCursorTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            mainWindow.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new System.Threading.ThreadStart(() =>
-            {
-                AnimationHelper.Fade(clickArrowLeft, 0, TimeSpan.FromSeconds(.5));
-                AnimationHelper.Fade(clickArrowRight, 0, TimeSpan.FromSeconds(.5));
-                AnimationHelper.Fade(x2, 0, TimeSpan.FromSeconds(.5));
-                Mouse.OverrideCursor = Cursors.None;
-            }));
-            MouseIdleTimer.Stop();
-        }
-
-        /// <summary>
-        /// Timer to check if Mouse is idle in Slideshow.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        internal static void MouseIdleTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            HideCursorTimer.Start();
-        }
     }
 }

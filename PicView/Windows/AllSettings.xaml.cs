@@ -102,7 +102,7 @@ namespace PicView.Windows
                 LoopRadio.MouseEnter += LoopRadio_MouseEnter;
                 LoopRadio.MouseLeave += LoopRadio_MouseLeave;
                 LoopRadio.IsChecked = Properties.Settings.Default.Looping;
-                LoopRadio.Click += Settings.SetLooping;
+                LoopRadio.Click += Configs.SetLooping;
 
                 // PicGalleryRadio
                 PicGalleryRadio.PreviewMouseLeftButtonDown += PicGalleryRadio_PreviewMouseLeftButtonDown;
@@ -124,7 +124,7 @@ namespace PicView.Windows
                 BorderRadio.PreviewMouseLeftButtonDown += BorderRadio_PreviewMouseLeftButtonDown;
                 BorderRadio.MouseEnter += BorderRadio_MouseEnter;
                 BorderRadio.MouseLeave += BorderRadio_MouseLeave;
-                BorderRadio.Click += Settings.SetBgColorEnabled;
+                BorderRadio.Click += Configs.SetBgColorEnabled;
                 if (Properties.Settings.Default.WindowBorderColorEnabled)
                     BorderRadio.IsChecked = true;
 
@@ -740,7 +740,7 @@ namespace PicView.Windows
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            Settings.SetSlidetimer();
+            Configs.SetSlidetimer();
             UpdateColor();
             Closing -= Window_Closing;
             e.Cancel = true;
