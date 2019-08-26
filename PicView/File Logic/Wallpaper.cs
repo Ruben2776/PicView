@@ -2,6 +2,7 @@
 using PicView.Native;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
@@ -30,8 +31,11 @@ namespace PicView
                     {
                         Task.Run(() => SetDesktopWallpaper(path, style));
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
+#if DEBUG
+                        Trace.WriteLine("Wallpaper exception \n" + e.Message);
+#endif
                         return;
                     }
                 }
@@ -53,8 +57,11 @@ namespace PicView
                         var timer = new Timer(2000);
                         timer.Elapsed += (s, x) => Directory.Delete(tempPath);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
+#if DEBUG
+                        Trace.WriteLine("Wallpaper download exception \n" + e.Message);
+#endif
                         return;
                     }
                 });

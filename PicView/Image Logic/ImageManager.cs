@@ -1,5 +1,6 @@
 ﻿using ImageMagick;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -31,8 +32,11 @@ namespace PicView
                 {
                     magick.Read(file, mrs);
                 }
-                catch (MagickException)
+                catch (MagickException e)
                 {
+#if DEBUG
+                    Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
+#endif
                     return null;
                 }
 
@@ -211,8 +215,11 @@ namespace PicView
                     magick.AdaptiveResize(size, size);
                     
                 }
-                catch (MagickException)
+                catch (MagickException e)
                 {
+#if DEBUG
+                    Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
+#endif
                     return null;
                 }
                 pic = magick.ToBitmapSource();

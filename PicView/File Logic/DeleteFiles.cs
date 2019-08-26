@@ -78,14 +78,7 @@ namespace PicView
                 filename = filename.Length >= 25 ? Shorten(filename, 21) : filename;
                 ToolTipStyle(Recyclebin ? "Sent " + filename + " to the recyle bin" : "Deleted " + filename);
 
-                if (reverse)
-                    FolderIndex = FolderIndex-- < 0 ? 0 : FolderIndex--;
-
-                if (FolderIndex > Pics.Count || Pics.Count < 0)
-                    Unload();
-                else
-                    // Go to next image
-                    Pic(FolderIndex);
+                Pic(reverse);
             }
             else
             {

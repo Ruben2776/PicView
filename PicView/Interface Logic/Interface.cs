@@ -189,6 +189,7 @@ namespace PicView
         {
             var fadeTo = show ? 1 : 0;
 
+            /// Might cause unnecessary cpu usage? Need to check
             await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
             {
                 if (!Properties.Settings.Default.ShowInterface | Slidetimer.Enabled == true)

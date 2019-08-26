@@ -28,7 +28,12 @@ namespace PicView
                 ToolTipStyle(ExpFind);
                 Process.Start("explorer.exe", "/select,\"" + PicPath + "\"");
             }
-            catch (InvalidCastException) { }
+            catch (InvalidCastException e)
+            {
+#if DEBUG
+                Trace.WriteLine("Open_In_Explorer exception \n" + e.Message);
+#endif
+            }
         }
 
         /// <summary>

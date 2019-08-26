@@ -63,12 +63,16 @@ namespace PicView.PreLoading
                 IsLoading = false;
                 return;
             }
-            pic.Freeze();
+
+            if (!pic.IsFrozen)
+                pic.Freeze();
+
             Sources.TryAdd(file, pic);
+            IsLoading = false;
+
 #if DEBUG
             Trace.WriteLine("Added = " + file + " to Preloader, index " + Pics.IndexOf(file));
 #endif
-            IsLoading = false;
         }
 
         /// <summary>
@@ -161,6 +165,9 @@ namespace PicView.PreLoading
         /// </summary>
         internal static void Clear()
         {
+            if (Sources.Count <= 0)
+                return;
+
             Sources.Clear();
             PreloadCount = 4; // Reset to make sure
 #if DEBUG

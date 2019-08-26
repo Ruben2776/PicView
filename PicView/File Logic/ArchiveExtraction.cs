@@ -83,6 +83,11 @@ namespace PicView
         /// </summary>
         internal static async Task<bool> RecoverFailedArchiveAsync()
         {
+
+#if DEBUG
+            Trace.WriteLine("Entered RecoverFailedArchiveAsync");
+#endif
+
             if (Pics.Count > 0)
                 return true;
 
@@ -115,7 +120,7 @@ namespace PicView
 
                 // Kill it if it's asking for password
                 if (!getProcesses[0].HasExited)
-                    if (getProcesses[0].Threads[0].ThreadState == System.Diagnostics.ThreadState.Wait)
+                    if (getProcesses[0].Threads[0].ThreadState == ThreadState.Wait)
                     {
                         ToolTipStyle("Password protected archive not supported");
                         Reload(true);
