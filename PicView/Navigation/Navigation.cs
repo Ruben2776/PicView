@@ -94,6 +94,9 @@ namespace PicView
 
             if (File.Exists(Pics[FolderIndex]))
             {
+                if (!freshStartup)
+                    Preloader.Clear();
+
                 // Navigate to picture using obtained index
                 Pic(FolderIndex);
             }

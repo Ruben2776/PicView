@@ -50,7 +50,7 @@
                         BorderBrush="{x:Null}"
                         FontWeight="Bold"
                         Foreground="{x:Null}"
-                        ToolTip="Flip image">
+                        ToolTip="Flip image [F]">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="FlipButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </CheckBox.Background>

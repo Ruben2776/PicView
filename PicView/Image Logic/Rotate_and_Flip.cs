@@ -5,7 +5,6 @@ namespace PicView
 {
     internal static class Rotate_and_Flip
     {
-        // Rotate and flip
         /// <summary>
         /// Rotates the image the specified degrees and updates imageSettingsMenu value
         /// </summary>

@@ -19,8 +19,6 @@ namespace PicView
     {
         internal static void AddContextMenus()
         {
-            #region Add ContextMenus
-
             // Add main contextmenu
             cm = new ContextMenu();
             var scbf = (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"];
@@ -247,6 +245,14 @@ namespace PicView
             {
                 Header = "Setings"
             };
+            var settingscmIcon = new System.Windows.Shapes.Path
+            {
+                Data = Geometry.Parse(SVGiconWrench),
+                Stretch = Stretch.Fill
+            };
+            settingscmIcon.Width = settingscmIcon.Height = 12;
+            settingscmIcon.Fill = scbf;
+            settingscm.Icon = settingscmIcon;
             cm.Items.Add(settingscm);
 
             ///////////////////////////
@@ -337,6 +343,14 @@ namespace PicView
                 InputGestureText = "F3",
                 ToolTip = "Opens the current image on your drive"
             };
+            var lcdcmIcon = new System.Windows.Shapes.Path
+            {
+                Data = Geometry.Parse(SVGiconSearch),
+                Stretch = Stretch.Fill
+            };
+            lcdcmIcon.Width = lcdcmIcon.Height = 12;
+            lcdcmIcon.Fill = scbf;
+            lcdcm.Icon = lcdcmIcon;
             lcdcm.Click += (s, x) => Open_In_Explorer();
             cm.Items.Add(lcdcm);
 
@@ -351,6 +365,14 @@ namespace PicView
                 Header = "File Details",
                 InputGestureText = "Ctrl + I"
             };
+            var fildecmIcon = new System.Windows.Shapes.Path
+            {
+                Data = Geometry.Parse(SVGiconPaperDetails),
+                Stretch = Stretch.Fill
+            };
+            fildecmIcon.Width = fildecmIcon.Height = 12;
+            fildecmIcon.Fill = scbf;
+            fildecm.Icon = fildecmIcon;
             fildecm.Click += (s, x) => NativeMethods.ShowFileProperties(PicPath);
             cm.Items.Add(fildecm);
             cm.Items.Add(new Separator());
@@ -553,8 +575,6 @@ namespace PicView
                     sortcmChild0.IsChecked = true;
                     break;
             }
-
-            #endregion Add ContextMenus
 
             cm.Opened += (tt, yy) => Recentcm_MouseEnter(recentcm);
         }

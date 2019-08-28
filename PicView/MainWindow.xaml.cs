@@ -40,22 +40,6 @@ namespace PicView
             InitializeComponent();
             Loaded += (s, e) => MainWindow_Loaded(s, e);
             ContentRendered += MainWindow_ContentRendered;
-
-            // If normal window style
-            if (!Properties.Settings.Default.FitToWindow)
-            {
-                Top = Properties.Settings.Default.Top;
-                Left = Properties.Settings.Default.Left;
-                Height = Properties.Settings.Default.Height;
-                Width = Properties.Settings.Default.Width;
-
-                if (Properties.Settings.Default.Maximized)
-                {
-                    WindowState = WindowState.Maximized;
-                }
-                FitToWindow = false;
-            }
-            else FitToWindow = true;
         }
 
         #region Loaded and Rendered
@@ -70,6 +54,20 @@ namespace PicView
                 RightBorderRectangle.Visibility
                 = Visibility.Collapsed;
             }
+            // If normal window style
+            if (!Properties.Settings.Default.FitToWindow)
+            {
+                Top = Properties.Settings.Default.Top;
+                Left = Properties.Settings.Default.Left;
+                Height = Properties.Settings.Default.Height;
+                Width = Properties.Settings.Default.Width;
+
+                if (Properties.Settings.Default.Maximized)
+                    WindowState = WindowState.Maximized;
+
+                FitToWindow = false;
+            }
+            else FitToWindow = true;
         }
 
         private void MainWindow_ContentRendered(object sender, EventArgs e)

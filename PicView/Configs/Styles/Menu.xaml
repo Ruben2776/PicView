@@ -202,7 +202,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Separator}">
-                    <Border BorderBrush="{StaticResource BorderBrushAlt}" BorderThickness="2" />
+                    <Border BorderBrush="#FF2B2727" BorderThickness="2"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -68,25 +68,41 @@ namespace PicView
             {
                 var files = Clipboard.GetFileDropList().Cast<string>().ToArray();
 
-                if (!string.IsNullOrWhiteSpace(PicPath) &&
-                    Path.GetDirectoryName(files[0]) == Path.GetDirectoryName(PicPath))
-                    Pic(Pics.IndexOf(files[0]));
-                else
-                    Pic(files[0]);
-
-                if (files.Length > 0)
+                if (files != null)
                 {
-                    Parallel.For(1, files.Length, x =>
+                    if (files.Length >= 1)
                     {
-                        var myProcess = new Process
-                        {
-                            StartInfo = { FileName = Assembly.GetExecutingAssembly().Location, Arguments = files[x] }
-                        };
-                        myProcess.Start();
-                    });
-                }
+                        var x = files[0];
 
-                return;
+                        // If from same folder
+                        if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(x) == Path.GetDirectoryName(PicPath))
+                        {
+                            if (!Preloader.Contains(x))
+                            {
+                                PreloadCount = 4;
+                                Preloader.Add(x);
+                            }
+
+                            Pic(Pics.IndexOf(x));
+                        }
+                        else
+                            Pic(x);
+
+                        if (files.Length > 1)
+                        {
+                            for (int i = 1; i < files.Length; i++)
+                            {
+                                using (var n = new Process ())
+                                {
+                                    n.StartInfo.FileName = Assembly.GetExecutingAssembly().Location;
+                                    n.StartInfo.Arguments = files[i];
+                                    n.Start();
+                                }
+                            }
+                        }
+                    }
+                    return;
+                }
             }
 
             // Clipboard Image
@@ -152,6 +168,7 @@ namespace PicView
             Clipboard.Clear();
             Clipboard.SetDataObject(data, true);
 
+            // Force Preloader to add new images, to minimize slowdown errors
             PreloadCount = 4;
 
             ToolTipStyle("Added Image to move clipboard");
