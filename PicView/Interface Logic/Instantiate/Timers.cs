@@ -1,11 +1,7 @@
-﻿using System;
-using System.Timers;
-using System.Windows.Input;
-using System.Windows.Threading;
+﻿using System.Timers;
+using static PicView.FadeControls;
 using static PicView.Fields;
-using static PicView.Interface;
-using static PicView.Navigation;
-using static PicView.Resize_and_Zoom;
+using static PicView.Scroll;
 
 namespace PicView
 {

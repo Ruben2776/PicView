@@ -2,11 +2,11 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using static PicView.Error_Handling;
-using static PicView.Fields;
-using static PicView.Helper;
-using static PicView.Interface;
 using static PicView.Navigation;
+using static PicView.Tooltip;
+using static PicView.Fields;
+using static PicView.Error_Handling;
+using static PicView.FileFunctions;
 
 namespace PicView
 {
@@ -56,13 +56,15 @@ namespace PicView
                 FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, recycle);
                 Pics.Remove(file);
             }
+#if DEBUG
             catch (Exception e)
             {
-#if DEBUG
-                        Trace.WriteLine("Delete exception \n" + e.Message);
-#endif
+                Trace.WriteLine("Delete exception \n" + e.Message);
                 return false;
             }
+#else
+            catch (Exception) {return false; }
+#endif
             return true;
         }
 

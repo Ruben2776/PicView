@@ -57,7 +57,7 @@ namespace PicView.PreLoading
 
             IsLoading = true;
 
-            var pic = ImageManager.RenderToBitmapSource(file);
+            var pic = ImageDecoder.RenderToBitmapSource(file);
             if (pic == null)
             {
                 IsLoading = false;

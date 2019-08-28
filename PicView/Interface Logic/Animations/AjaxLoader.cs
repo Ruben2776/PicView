@@ -1,0 +1,45 @@
+﻿using System;
+using static PicView.Fields;
+
+namespace PicView
+{
+    internal static class AjaxLoader
+    {
+        //// AjaxLoading
+        ///// <summary>
+        ///// Loads AjaxLoading and adds it to the window
+        ///// </summary>
+        //internal static void LoadAjaxLoading()
+        //{
+        //    ajaxLoading = new AjaxLoading
+        //    {
+        //        Focusable = false,
+        //        Opacity = 0
+        //    };
+
+        //    mainWindow.bg.Children.Add(ajaxLoading);
+        //}
+
+        /// <summary>
+        /// Start loading animation
+        /// </summary>
+        internal static void AjaxLoadingStart()
+        {
+            if (ajaxLoading.Opacity != 1)
+            {
+                AnimationHelper.Fade( ajaxLoading, 1, TimeSpan.FromSeconds(.2));
+            }
+        }
+
+        /// <summary>
+        /// End loading animation
+        /// </summary>
+        internal static void AjaxLoadingEnd()
+        {
+            if (ajaxLoading.Opacity != 0)
+            {
+                AnimationHelper.Fade(ajaxLoading, 0, TimeSpan.FromSeconds(.2));
+            }
+        }
+    }
+}

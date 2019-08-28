@@ -3,10 +3,10 @@ using System.Diagnostics;
 using System.IO;
 using static PicView.Error_Handling;
 using static PicView.Fields;
-using static PicView.ImageManager;
+using static PicView.ImageDecoder;
 using static PicView.Navigation;
-using static PicView.Interface;
 using static PicView.ToggleMenus;
+using static PicView.Tooltip;
 
 namespace PicView
 {

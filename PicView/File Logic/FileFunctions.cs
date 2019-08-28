@@ -60,9 +60,6 @@ namespace PicView
             return sign + readable.ToString("0.## ") + suffix + 'B';
         }
 
-        
-
-        #region File Methods
 
         internal static bool FilePathHasInvalidChars(string path)
         {
@@ -77,7 +74,15 @@ namespace PicView
             return Regex.Replace(name, invalidRegStr, "_");
         }
 
-        #endregion File Methods
+        internal static string Shorten(string name, int amount)
+        {
+            if (name.Length >= 25)
+            {
+                name = name.Substring(0, amount);
+                name += "...";
+            }
+            return name;
+        }
     }
 
    

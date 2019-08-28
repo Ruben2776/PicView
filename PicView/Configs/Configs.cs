@@ -1,8 +1,5 @@
 ﻿using System.Windows;
-using static PicView.Fields;
-using static PicView.Resize_and_Zoom;
-using static PicView.Helper;
-using static PicView.Interface;
+using static PicView.Scroll;
 
 namespace PicView
 {

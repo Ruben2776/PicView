@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.Error_Handling;
+using static PicView.Fields;
 using static PicView.FileFunctions;
 using static PicView.FileLists;
-using static PicView.Fields;
 using static PicView.Navigation;
-using static PicView.Interface;
+using static PicView.Tooltip;
 
 namespace PicView
 {

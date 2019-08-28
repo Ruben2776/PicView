@@ -4,7 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using static PicView.Helper;
+using static PicView.FileFunctions;
 using static PicView.Navigation;
 using static PicView.SvgIcons;
 

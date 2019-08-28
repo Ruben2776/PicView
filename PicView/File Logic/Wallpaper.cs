@@ -159,7 +159,7 @@ namespace PicView
                 var dest = string.Format(@"{0}\Microsoft\Windows\Themes\{1}.jpg",
                         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                         Path.GetFileNameWithoutExtension(path));
-                ImageManager.TrySaveImage(Rotateint, Flipped, path, dest);
+                ImageDecoder.TrySaveImage(Rotateint, Flipped, path, dest);
                 path = dest;
 
             }

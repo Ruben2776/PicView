@@ -1,6 +1,5 @@
 ﻿using PicView.UserControls;
 using PicView.UserControls.Menus;
-using PicView.Windows;
 using System;
 using System.Collections.Generic;
 using System.Timers;
@@ -8,7 +7,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.Helper;
-using static PicView.Resize_and_Zoom;
 
 namespace PicView
 {
@@ -222,12 +220,12 @@ namespace PicView
         /// <summary>
         /// Timer used for hide/show cursor.
         /// </summary>
-        internal static Timer HideCursorTimer;
+        //internal static Timer HideCursorTimer;
 
         /// <summary>
         /// Timer used to check if mouse is idle.
         /// </summary>
-        internal static Timer MouseIdleTimer;
+        //internal static Timer MouseIdleTimer;
 
         /// <summary>
         /// Timer used for slideshow

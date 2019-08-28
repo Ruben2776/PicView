@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
+using static PicView.Fields;
 
 namespace PicView
 {
@@ -74,16 +75,28 @@ namespace PicView
             }
         }
 
-        internal static string Shorten(string name,int amount)
+        internal static void ChangeBackground(object sender, RoutedEventArgs e)
         {
-            if (name.Length >= 25)
+            if (mainWindow.imgBorder == null)
+                return;
+
+            if (!(mainWindow.imgBorder.Background is SolidColorBrush cc))
+                return;
+
+            if (cc.Color == Colors.White)
             {
-                name = name.Substring(0, amount);
-                name += "...";
+                mainWindow.imgBorder.Background = new SolidColorBrush(Colors.Transparent);
+                Properties.Settings.Default.BgColorWhite = false;
             }
-            return name;
+
+            else
+            {
+                mainWindow.imgBorder.Background = new SolidColorBrush(Colors.White);
+                Properties.Settings.Default.BgColorWhite = true;
+            }
+
         }
-     
+
 
     }
 }

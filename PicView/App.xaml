@@ -6,17 +6,17 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!--<ResourceDictionary Source="Library\Styles\Backgrounds.xaml" />-->
-                <ResourceDictionary Source="Library\Styles\Colors.xaml" />
-                <ResourceDictionary Source="Library\Styles\Menu.xaml" />
-                <ResourceDictionary Source="Library\Styles\Button.xaml" />
-                <ResourceDictionary Source="Library\Styles\Border.xaml" />
-                <ResourceDictionary Source="Library\Styles\ToggleButton.xaml" />
-                <ResourceDictionary Source="Library\Styles\ToolTip.xaml" />
-                <ResourceDictionary Source="Library\Styles\ScrollBar.xaml" />
-                <!--<ResourceDictionary Source="Library\Styles\TabControl.xaml" />-->
-                <ResourceDictionary Source="Library\Styles\RadioButton.xaml" />
-                <ResourceDictionary Source="Library\Styles\Label.xaml" />
+                <!--<ResourceDictionary Source="Configs\Styles\Backgrounds.xaml" />-->
+                <ResourceDictionary Source="Configs\Styles\Colors.xaml" />
+                <ResourceDictionary Source="Configs\Styles\Menu.xaml" />
+                <ResourceDictionary Source="Configs\Styles\Button.xaml" />
+                <ResourceDictionary Source="Configs\Styles\Border.xaml" />
+                <ResourceDictionary Source="Configs\Styles\ToggleButton.xaml" />
+                <ResourceDictionary Source="Configs\Styles\ToolTip.xaml" />
+                <ResourceDictionary Source="Configs\Styles\ScrollBar.xaml" />
+                <!--<ResourceDictionary Source="Configs\Styles\TabControl.xaml" />-->
+                <ResourceDictionary Source="Configs\Styles\RadioButton.xaml" />
+                <ResourceDictionary Source="Configs\Styles\Label.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <BooleanToVisibilityConverter x:Key="bool2VisibilityConverter" />

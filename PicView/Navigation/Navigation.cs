@@ -6,15 +6,19 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using static PicView.AjaxLoader;
 using static PicView.ArchiveExtraction;
 using static PicView.DeleteFiles;
 using static PicView.Error_Handling;
 using static PicView.Fields;
 using static PicView.FileLists;
 using static PicView.Helper;
-using static PicView.ImageManager;
-using static PicView.Interface;
+using static PicView.ImageDecoder;
 using static PicView.Resize_and_Zoom;
+using static PicView.Scroll;
+using static PicView.SetTitle;
+using static PicView.Thumbnails;
+using static PicView.Tooltip;
 
 namespace PicView
 {
@@ -225,10 +229,7 @@ namespace PicView
 
             // Update values
             canNavigate = true;
-            var titleString = TitleString(pic.PixelWidth, pic.PixelHeight, x);
-            mainWindow.Title = titleString[0];
-            mainWindow.Bar.Text = titleString[1];
-            mainWindow.Bar.ToolTip = titleString[2];
+            SetTitleString(pic.PixelWidth, pic.PixelHeight, x);
             PicPath = Pics[x];
             FolderIndex = x;
             AjaxLoadingEnd();
@@ -283,10 +284,7 @@ namespace PicView
             ZoomFit(pic.PixelWidth, pic.PixelHeight);
             CloseToolTipStyle();
 
-            var titleString = TitleString(pic.PixelWidth, pic.PixelHeight, imageName);
-            mainWindow.Title = titleString[0];
-            mainWindow.Bar.Text = titleString[1];
-            mainWindow.Bar.ToolTip = titleString[1];
+            SetTitleString(pic.PixelWidth, pic.PixelHeight, imageName);
 
             NoProgress();
             PicPath = string.Empty;
@@ -466,6 +464,7 @@ namespace PicView
                 mainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                 {
                     mainWindow.Title = mainWindow.Bar.Text = e.BytesReceived + "/" + e.TotalBytesToReceive + ". " + e.ProgressPercentage + "% complete...";
+                    mainWindow.Bar.ToolTip = mainWindow.Title;
                 }));
 
                 var bytes = await client.DownloadDataTaskAsync(new Uri(address));

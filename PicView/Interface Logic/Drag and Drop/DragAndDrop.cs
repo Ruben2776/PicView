@@ -5,9 +5,9 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using static PicView.Fields;
-using static PicView.ImageManager;
 using static PicView.Navigation;
-using static PicView.Interface;
+using static PicView.Thumbnails;
+using static PicView.Tooltip;
 
 namespace PicView
 {

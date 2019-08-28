@@ -3,15 +3,16 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
+using static PicView.AjaxLoader;
 using static PicView.DeleteFiles;
 using static PicView.Fields;
 using static PicView.FileLists;
 using static PicView.Helper;
-using static PicView.ImageManager;
-using static PicView.Interface;
+using static PicView.ImageDecoder;
 using static PicView.Navigation;
 using static PicView.Resize_and_Zoom;
 using static PicView.Rotate_and_Flip;
+using static PicView.Tooltip;
 
 namespace PicView
 {

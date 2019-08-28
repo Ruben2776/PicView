@@ -1,56 +1,12 @@
 ﻿using ImageMagick;
-using System;
 using System.Diagnostics;
 using System.IO;
-using System.Windows;
 using System.Windows.Media.Imaging;
 
 namespace PicView
 {
-    internal static class ImageManager
+    internal static class Thumbnails
     {
-        /// <summary>
-        /// Decodes image from file to BitMapSource
-        /// </summary>
-        /// <param name="file">Full path of the file</param>
-        /// <param name="extension">file extension beggining with dot</param>
-        /// <returns></returns>
-        internal static BitmapSource RenderToBitmapSource(string file)
-        {
-            if (string.IsNullOrWhiteSpace(file) || file.Length < 2)
-                return null;
-
-            using (MagickImage magick = new MagickImage())
-            {
-                var mrs = new MagickReadSettings()
-                {
-                    Density = new Density(300, 300),
-                    BackgroundColor = MagickColors.Transparent,
-                };
-
-                try
-                {
-                    magick.Read(file, mrs);
-                }
-                catch (MagickException e)
-                {
-#if DEBUG
-                    Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
-#endif
-                    return null;
-                }
-
-                // Set values for maximum quality
-                magick.Quality = 100;
-                magick.ColorSpace = ColorSpace.Transparent;
-
-                var pic = magick.ToBitmapSource();
-                pic.Freeze();
-                magick.Dispose();
-                return pic;
-            }
-        }
-
         internal static BitmapSource GetBitmapSourceThumb(string path)
         {
             var ext = Path.GetExtension(path).ToLower();
@@ -213,7 +169,7 @@ namespace PicView
                 {
                     magick.Read(file);
                     magick.AdaptiveResize(size, size);
-                    
+
                 }
                 catch (MagickException e)
                 {
@@ -226,110 +182,6 @@ namespace PicView
                 pic.Freeze();
                 return pic;
             }
-        }
-
-        internal static BitmapSource GetMagickImage(Stream s)
-        {
-            BitmapSource pic;
-
-            using (MagickImage magick = new MagickImage())
-            {
-                magick.Quality = 100;
-                var mrs = new MagickReadSettings()
-                {
-                    Density = new Density(300)
-                };
-
-                magick.Read(s);
-                magick.ColorSpace = ColorSpace.Transparent;
-                pic = magick.ToBitmapSource();
-
-                pic.Freeze();
-                return pic;
-            }
-        }
-
-        /// <summary>
-        /// Tries to save image to the specified destination,
-        /// returns false if unsuccesful
-        /// </summary>
-        /// <param name="rotate">Degrees image is rotated by</param>
-        /// <param name="flipped">Whether to flip image or not</param>
-        /// <param name="path">The path of the source file</param>
-        /// <param name="destination">Where to save image to</param>
-        /// <returns></returns>
-        internal static bool TrySaveImage(int rotate, bool flipped, string path, string destination)
-        {
-            if (File.Exists(path))
-            {
-                try
-                {
-                    using (var SaveImage = new MagickImage())
-                    {
-                        // Set maximum quality
-                        var mrs = new MagickReadSettings()
-                        {
-                            Density = new Density(300, 300),
-                        };
-                        SaveImage.Quality = 100;
-
-                        SaveImage.Read(path, mrs);
-
-                        // Apply transformation values
-                        if (flipped)
-                            SaveImage.Flop();
-                        SaveImage.Rotate(rotate);
-
-                        SaveImage.Write(destination);
-                    }
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        internal static Size? ImageSize (string file)
-        {
-            using (MagickImage magick = new MagickImage())
-            {
-                try
-                {
-                    magick.Read(file);
-                }
-                catch (MagickException)
-                {
-                    return null;
-                }
-                
-                return new Size(magick.Width, magick.Height);
-            }
-        }
-
-        internal static void ResizeImage(string Pic, int NewWidth, int NewHeight)
-        {
-            try
-            {
-                using (MagickImage magick = new MagickImage(Pic))
-                {
-                    MagickGeometry size = new MagickGeometry(NewWidth, NewHeight);
-                    size.IgnoreAspectRatio = true;
-                    magick.Resize(size);
-                    magick.Quality = 100;
-                    magick.Write(Pic);
-                }
-            }
-            catch (MagickException)
-            {
-                return;
-            }          
         }
 
         /// <summary>

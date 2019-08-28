@@ -4,76 +4,16 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using static PicView.Fields;
-using static PicView.Interface;
 using static PicView.Navigation;
+using static PicView.Scroll;
+using static PicView.SetTitle;
+using static PicView.Tooltip;
 using static PicView.WindowLogic;
 
 namespace PicView
 {
     internal static class Resize_and_Zoom
-    {
-        #region Zoom, Scroll, Rotate and Flip
-
-        // Auto scroll
-
-        /// <summary>
-        /// Starts the auto scroll feature and shows the sign on the ui
-        /// </summary>
-        /// <param name="e"></param>
-        internal static void StartAutoScroll(MouseButtonEventArgs e)
-        {
-            // Don't scroll if not scrollable
-            if (mainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed)
-                return;
-
-            autoScrolling = true;
-            autoScrollOrigin = e.GetPosition(mainWindow.Scroller);
-
-            ShowAutoScrollSign();
-        }
-
-        /// <summary>
-        /// Stop auto scroll feature and remove sign from the ui
-        /// </summary>
-        internal static void StopAutoScroll()
-        {
-            autoScrollTimer.Stop();
-            //window.ReleaseMouseCapture();
-            autoScrollTimer.Enabled = false;
-            autoScrolling = false;
-            autoScrollOrigin = null;
-            HideAutoScrollSign();
-        }
-
-        /// <summary>
-        /// Uses timer to scroll vertical up/down every seventh milisecond
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="E"></param>
-        internal static async void AutoScrollTimerEvent(object sender, System.Timers.ElapsedEventArgs E)
-        {
-            // Error checking
-            if (autoScrollPos == null || autoScrollOrigin == null)
-                return;
-
-            // Start in dispatcher because timer is threaded
-            await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
-            {
-                if (autoScrollOrigin.HasValue)
-                {
-                    // Calculate offset by Y coordinate
-                    var offset = (autoScrollPos.Y - autoScrollOrigin.Value.Y) / 15;
-
-                    //ToolTipStyle("pos = " + autoScrollPos.Y.ToString() + " origin = " + autoScrollOrigin.Value.Y.ToString()
-                    //    + Environment.NewLine + "offset = " + offset, false);
-
-                    if (autoScrolling)
-                        // Tell the scrollviewer to scroll to calculated offset
-                        mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset + offset);
-                }
-            }));
-        }
-
+    { 
         // Zoom
         /// <summary>
         /// Pan and Zoom, reset zoom and double click to reset
@@ -82,11 +22,13 @@ namespace PicView
         /// <param name="e"></param>
         internal static void Zoom_img_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            // Move window when Ctrl is being held down
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
                 Move(sender, e);
                 return;
             }
+            // Logic for auto scrolling
             if (autoScrolling)
             {
                 // Report position and enable autoscrolltimer
@@ -94,11 +36,13 @@ namespace PicView
                 autoScrollTimer.Enabled = true;
                 return;
             }
+            // Reset zoom on double click
             if (e.ClickCount == 2)
             {
                 ResetZoom();
                 return;
             }
+            // Drag logic
             if (!IsScrollEnabled)
             {
                 // Report position for image drag
@@ -184,18 +128,15 @@ namespace PicView
                         mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset + zoomSpeed);
                 }
             }
+            // Change image with shift being held down
             else if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
-            {
                 Pic(e.Delta > 0);
-            }
+            // Scale when Ctrl being held down
             else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !autoScrolling)
-            {
                 Zoom(e.Delta, true);
-            }
-            else
-            {
+            // Zoom
+            else if (!autoScrolling)
                 Zoom(e.Delta, false);
-            }
         }
 
         /// <summary>
@@ -205,7 +146,7 @@ namespace PicView
         internal static void InitializeZoom()
         {
             // Set center
-            mainWindow.img.RenderTransformOrigin = new Point(0.5, 0.5);
+            //mainWindow.img.RenderTransformOrigin = new Point(0.5, 0.5); // Already set in xaml
 
             // Add children, which can be manipulated ;)
             mainWindow.img.RenderTransform = new TransformGroup
@@ -248,22 +189,11 @@ namespace PicView
             ZoomFit(xWidth, xHeight);
 
             // Display non-zoomed values
-            string[] titleString;
             if (canNavigate)
-            {
-                titleString = TitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
-                mainWindow.Title = titleString[0];
-                mainWindow.Bar.Text = titleString[1];
-                mainWindow.Bar.ToolTip = titleString[2];
-            }
+                SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
             else
-            {
                 // Display values from web
-                titleString = TitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, PicPath);
-                mainWindow.Title = titleString[0];
-                mainWindow.Bar.Text = titleString[1];
-                mainWindow.Bar.ToolTip = titleString[1];
-            }
+                SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, PicPath);
         }
 
         /// <summary>
@@ -273,19 +203,15 @@ namespace PicView
         /// <param name="zoomMode"></param>
         internal static void Zoom(int i, bool zoomMode)
         {
-            // Don't zoom when gallery is open
+            /// Don't zoom when gallery is open
             if (picGallery != null)
-            {
                 if (PicGalleryLogic.IsOpen)
-                {
                     return;
-                }
-            }
 
-            // Scales the window with img.LayoutTransform
+            /// Scales the window with img.LayoutTransform
             if (zoomMode)
             {
-                // Start from 1 or zoom value
+                /// Start from 1 or zoom value
                 if (isZoomed)
                     AspectRatio += i > 0 ? .01 : -.01;
                 else
@@ -297,16 +223,16 @@ namespace PicView
                 mainWindow.img.LayoutTransform = scaletransform;
             }
 
-            // Pan and zoom
+            /// Pan and zoom
             else
             {
-                // Get position where user points cursor
+                /// Get position where user points cursor
                 var position = Mouse.GetPosition(mainWindow.img);
 
-                // Use our position as starting point for zoom
+                /// Use our position as starting point for zoom
                 mainWindow.img.RenderTransformOrigin = new Point(position.X / xWidth, position.Y / xHeight);
 
-                // Determine zoom speed
+                /// Determine zoom speed
                 var zoomValue = st.ScaleX > 1.3 ? .03 : .01;
                 if (st.ScaleX > 1.5)
                     zoomValue += .005;
@@ -323,7 +249,7 @@ namespace PicView
 
                 if (st.ScaleX < 1.0)
                 {
-                    // Don't zoom less than 1.0, does not work so good...
+                    /// Don't zoom less than 1.0, does not work so good...
                     st.ScaleX = st.ScaleY = 1.0;
                 }
                 //zoomValue = i > 0 ? zoomValue : -zoomValue;
@@ -333,29 +259,18 @@ namespace PicView
 
             isZoomed = true;
 
-            // Displays zoompercentage in the center window
+            /// Displays zoompercentage in the center window
             if (!string.IsNullOrEmpty(ZoomPercentage))
                 ToolTipStyle(ZoomPercentage, true);
             else
                 CloseToolTipStyle();
 
-            // Display updated values
-            string[] titleString;
+            /// Display updated values
             if (canNavigate)
-            {
-                titleString = TitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
-                mainWindow.Title = titleString[0];
-                mainWindow.Bar.Text = titleString[1];
-                mainWindow.Bar.ToolTip = titleString[2];
-            }
+                SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
             else
-            {
-                // Display values from web
-                titleString = TitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, PicPath);
-                mainWindow.Title = titleString[0];
-                mainWindow.Bar.Text = titleString[1];
-                mainWindow.Bar.ToolTip = titleString[1];
-            }
+                /// Display values from web
+                SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, PicPath);
         }
 
         /// <summary>
@@ -367,17 +282,17 @@ namespace PicView
         internal static void ZoomFit(double width, double height)
         {
             double maxWidth, maxHeight;
-            var interfaceHeight = 93; // TopBar + mainWindow.LowerBar height
-            //var interfaceHeight = (mainWindow.TitleBar.ActualHeight + mainWindow.LowerBar.ActualHeight) + 2; // + 2 for window border
+            var interfaceHeight = 85; /// TopBar + mainWindow.LowerBar height + extra padding
 
             if (FitToWindow)
             {
-                // Get max width and height, based on user's screen
+                /// Get max width and height, based on user's screen
                 if (Properties.Settings.Default.ShowInterface)
                 {
                     maxWidth = Math.Min(MonitorInfo.Width - ComfySpace, width);
                     maxHeight = Math.Min((MonitorInfo.Height - interfaceHeight), height);
                 }
+                /// - 2 for window border
                 else
                 {
                     maxWidth = Math.Min(MonitorInfo.Width - 2, width - 2);
@@ -386,7 +301,7 @@ namespace PicView
             }       
             else
             {
-                // Get max width and height, based on window size
+                /// Get max width and height, based on window size
                 maxWidth = Math.Min(mainWindow.Width, width);
 
                 if (Properties.Settings.Default.ShowInterface)
@@ -399,35 +314,35 @@ namespace PicView
 
             if (IsScrollEnabled)
             {
-                // Calculate height based on width
+                /// Calculate height based on width
                 mainWindow.img.Width = maxWidth;
                 mainWindow.img.Height = maxWidth * height / width;
 
-                // Set mainWindow.Scroller height to aspect ratio calculation
+                /// Set mainWindow.Scroller height to aspect ratio calculation
                 mainWindow.Scroller.Height = (height * AspectRatio);
 
-                // Update values
+                /// Update values
                 xWidth = mainWindow.img.Width;
                 xHeight = mainWindow.Scroller.Height;
             }
             else
             {
-                // Reset mainWindow.Scroller's height to auto
+                /// Reset mainWindow.Scroller's height to auto
                 mainWindow.Scroller.Height = double.NaN;
 
-                // Fit image by aspect ratio calculation
-                // and update values
+                /// Fit image by aspect ratio calculation
+                /// and update values
                 mainWindow.img.Height = xHeight = (height * AspectRatio);
                 mainWindow.img.Width = xWidth = (width * AspectRatio);
             }
 
             if (FitToWindow)
             {
-                // Update mainWindow.TitleBar width to fit new size
+                /// Update mainWindow.TitleBar width to dynamically fit new size
                 var interfaceSize = 220; // logo and buttons width + extra padding
                 mainWindow.Bar.MaxWidth = xWidth - interfaceSize < interfaceSize ? interfaceSize : xWidth - interfaceSize;
 
-                // Loses position gradually if not forced to center
+                /// Loses position gradually if not forced to center
                 if (!Properties.Settings.Default.Fullscreen)
                     CenterWindowOnScreen();
             }
@@ -459,7 +374,5 @@ namespace PicView
                    So much math!
             */
         }
-
-        #endregion Zoom, Scroll, Rotate and Flip
     }
 }

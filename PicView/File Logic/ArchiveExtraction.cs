@@ -2,10 +2,10 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using static PicView.Error_Handling;
 using static PicView.DeleteFiles;
+using static PicView.Error_Handling;
 using static PicView.Fields;
-using static PicView.Interface;
+using static PicView.Tooltip;
 
 namespace PicView
 {

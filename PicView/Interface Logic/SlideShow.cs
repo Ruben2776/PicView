@@ -4,8 +4,9 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.Fields;
-using static PicView.Interface;
+using static PicView.HideInterfaceLogic;
 using static PicView.Navigation;
+using static PicView.Tooltip;
 using static PicView.WindowLogic;
 
 namespace PicView
