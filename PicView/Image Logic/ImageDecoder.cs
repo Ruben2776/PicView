@@ -121,7 +121,36 @@ namespace PicView
 
         internal static Size? ImageSize (string file)
         {
-            using (MagickImage magick = new MagickImage())
+            var magick = new MagickImage();
+            var ext = Path.GetExtension(file).ToLower();
+            switch (ext)
+            {
+                // Standards
+                case ".jpg":
+                case ".jpeg":
+                case ".jpe":
+                    magick.Format = MagickFormat.Jpg;
+                    break;
+                case ".png":
+                    magick.Format = MagickFormat.Png;
+                    break;
+                case ".bmp":
+                    magick.Format = MagickFormat.Bmp;
+                    break;
+                case ".tif":
+                case ".tiff":
+                    magick.Format = MagickFormat.Tif;
+                    break;
+                case ".gif":
+                    magick.Format = MagickFormat.Gif;
+                    break;
+                case ".ico":
+                    magick.Format = MagickFormat.Ico;
+                    break;
+                default: return null;
+            }
+
+            using (magick)
             {
                 try
                 {

@@ -11,7 +11,7 @@
     SizeToContent="WidthAndHeight"
     Style="{DynamicResource MyWindowStyle}"
     WindowStartupLocation="CenterScreen" 
-    ResizeMode="NoResize">
+    ResizeMode="CanMinimize">
     <DockPanel LastChildFill="True">
         <DockPanel
             x:Name="TitleBar"

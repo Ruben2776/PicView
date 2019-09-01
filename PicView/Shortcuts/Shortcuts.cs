@@ -1,5 +1,4 @@
-﻿using PicView.Native;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using static PicView.Copy_Paste;
 using static PicView.DeleteFiles;
@@ -10,6 +9,8 @@ using static PicView.HideInterfaceLogic;
 using static PicView.LoadWindows;
 using static PicView.Navigation;
 using static PicView.Open_Save;
+using static PicView.PicGalleryScroll;
+using static PicView.PicGalleryToggle;
 using static PicView.Resize_and_Zoom;
 using static PicView.Rotate_and_Flip;
 using static PicView.Scroll;
@@ -45,6 +46,7 @@ namespace PicView
                             Pic(true, true);
                         else
                             Pic();
+
                     }
                     else if (canNavigate)
                     {
@@ -72,7 +74,7 @@ namespace PicView
                     }
                     if (!e.IsRepeat)
                     {
-                        // Go to first if Ctrl held down
+                        // Go to last if Ctrl held down
                         if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                             Pic(false, true);
                         else
@@ -96,7 +98,7 @@ namespace PicView
                     {
                         if (PicGalleryLogic.IsOpen)
                         {
-                            PicGalleryLogic.ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
                             return;
                         }
                     }
@@ -109,7 +111,7 @@ namespace PicView
                     {
                         if (PicGalleryLogic.IsOpen)
                         {
-                            PicGalleryLogic.ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
                             return;
                         }
                     }
@@ -130,7 +132,7 @@ namespace PicView
                     else if (picGallery != null)
                     {
                         if (PicGalleryLogic.IsOpen)
-                            PicGalleryLogic.ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
                         else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
                             Rotate(false);
                     }
@@ -149,7 +151,7 @@ namespace PicView
                     else if (picGallery != null)
                     {
                         if (PicGalleryLogic.IsOpen)
-                            PicGalleryLogic.ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
                         else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
                                 Rotate(true);
                         }
@@ -180,7 +182,7 @@ namespace PicView
             if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.Z))
             {
                 if (!e.IsRepeat)
-                    HideInterface();
+                    ToggleInterface();
                 return;
             }
 
@@ -220,7 +222,7 @@ namespace PicView
                     else if (Properties.Settings.Default.PicGallery > 0)
                     {
                         if (PicGalleryLogic.IsOpen)
-                            PicGalleryLogic.PicGalleryToggle();
+                            ToggleGallery();
                         else if (!cm.IsVisible)
                             SystemCommands.CloseWindow(mainWindow);
                     }
@@ -241,9 +243,9 @@ namespace PicView
                 // X, Ctrl + X
                 case Key.X:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                        Cut(PicPath);
+                        Cut(Pics[FolderIndex]);
                     else
-                        IsScrollEnabled = IsScrollEnabled ? false : true;
+                        Configs.SetScrolling(sender, e);
                     break;
                 // F
                 case Key.F:
@@ -251,7 +253,7 @@ namespace PicView
                     break;
                 // Delete, Shift + Delete
                 case Key.Delete:
-                    DeleteFile(PicPath, e.KeyboardDevice.Modifiers != ModifierKeys.Shift);
+                    DeleteFile(Pics[FolderIndex], e.KeyboardDevice.Modifiers != ModifierKeys.Shift);
                     break;
                 // Ctrl + C, Ctrl + Shift + C
                 case Key.C:
@@ -273,12 +275,12 @@ namespace PicView
                 // Ctrl + I
                 case Key.I:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                        NativeMethods.ShowFileProperties(PicPath);
+                        NativeMethods.ShowFileProperties(Pics[FolderIndex]);
                     break;
                 // Ctrl + P
                 case Key.P:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                        Print(PicPath);
+                        Print(Pics[FolderIndex]);
                     break;
                 // Ctrl + R
                 case Key.R:
@@ -295,7 +297,7 @@ namespace PicView
                     {
                         if (PicGalleryLogic.IsOpen)
                         {
-                            PicGalleryLogic.ScrollTo();
+                            ScrollTo();
                             return;
                         }
                     }
@@ -316,12 +318,34 @@ namespace PicView
                 // F4
                 case Key.F4:
                     if (picGallery != null)
-                        PicGalleryLogic.PicGalleryToggle(Properties.Settings.Default.PicGallery == 2);
+                    {
+                        if (Properties.Settings.Default.PicGallery == 2)
+                            ToggleGallery(true);
+                        else
+                        {
+                            Properties.Settings.Default.PicGallery = 1;
+                            ToggleGallery();
+                        }
+                    }
                     break;
                 // F5
                 case Key.F5:
                     if (picGallery != null)
-                        PicGalleryLogic.PicGalleryToggle(Properties.Settings.Default.PicGallery == 1);
+                    {
+                        if (Properties.Settings.Default.PicGallery == 1)
+                            if (PicGalleryLogic.IsOpen)
+                                ToggleGallery(true);
+                            else
+                            {
+                                Properties.Settings.Default.PicGallery = 2;
+                                ToggleGallery();
+                            }
+                        else
+                        {
+                            Properties.Settings.Default.PicGallery = 2;
+                            ToggleGallery();
+                        }
+                    }
                     break;
                 // F6
                 case Key.F6:
@@ -347,7 +371,6 @@ namespace PicView
                     mainWindow.Scroller.ScrollToEnd();
                     break;
             }
-
         }
 
         internal static void MainWindow_MouseDown(object sender, MouseButtonEventArgs e)

@@ -2,16 +2,17 @@
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace PicView.Native
+namespace PicView
 {
     //https://msdn.microsoft.com/en-us/library/ms182161.aspx
     [SuppressUnmanagedCodeSecurity]
     internal static class NativeMethods
     {
-
+        // Alphanumeric sort
         [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
         internal static extern int StrCmpLogicalW(string x, string y);
 
+        // Change cursor position
         [DllImport("User32.dll")]
         internal static extern bool SetCursorPos(int x, int y);
 
@@ -67,13 +68,19 @@ namespace PicView.Native
             public IntPtr hProcess;
         }
 
-        [DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern void SHChangeNotify(uint wEventId, uint uFlags, IntPtr dwItem1, IntPtr dwItem2);
+        //[DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        //public static extern void SHChangeNotify(uint wEventId, uint uFlags, IntPtr dwItem1, IntPtr dwItem2);
+
+        // Remove from Alt + tab
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+        [DllImport("user32.dll")]
+        internal static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+        internal const int GWL_EX_STYLE = -20;
+        internal const int WS_EX_APPWINDOW = 0x00040000, WS_EX_TOOLWINDOW = 0x00000080;
 
 
-        /// <summary>
-        /// Used to disable Screensaver and Power options.
-        /// </summary>
+        // Disable Screensaver and Power options.
         internal const uint ES_CONTINUOUS = 0x80000000;
         internal const uint ES_SYSTEM_REQUIRED = 0x00000001;
         internal const uint ES_DISPLAY_REQUIRED = 0x00000002;

@@ -47,7 +47,7 @@ namespace PicView.UserControls
                 border.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColorOverAlpha());
         }
 
-        internal void Setselected(bool b)
+        internal void SetSelected(bool b)
         {
             if (b)
             {

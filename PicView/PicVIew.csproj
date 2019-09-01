@@ -140,7 +140,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Interface Logic\Drag and Drop\DragAndDrop.cs" />
+    <Compile Include="Interface Logic\DragAndDrop.cs" />
     <Compile Include="Interface Logic\SetTitle.cs" />
     <Compile Include="Navigation\Error_Handling.cs" />
     <Compile Include="File Logic\Copy_Paste.cs" />
@@ -156,17 +156,21 @@
     <Compile Include="Interface Logic\Animations\FadeControls.cs" />
     <Compile Include="Image Logic\Scroll.cs" />
     <Compile Include="Interface Logic\Tooltip.cs" />
+    <Compile Include="Navigation\LoadFromWeb.cs" />
     <Compile Include="Navigation\Navigation.cs" />
     <Compile Include="Interface Logic\Instantiate\LoadControls.cs" />
     <Compile Include="Interface Logic\Instantiate\LoadWindows.cs" />
     <Compile Include="Interface Logic\Animations\MouseOverAnimations.cs" />
+    <Compile Include="PicGallery\PicGalleryLoad.cs" />
+    <Compile Include="PicGallery\PicGalleryToggle.cs" />
+    <Compile Include="PicGallery\PicGalleryScroll.cs" />
     <Compile Include="PicGallery\PicGalleryLogic.cs" />
     <Compile Include="Image Logic\Resize_and_Zoom.cs" />
     <Compile Include="Image Logic\Rotate_and_Flip.cs" />
     <Compile Include="Interface Logic\WindowLogic.cs" />
     <Compile Include="Interface Logic\SlideShow.cs" />
     <Compile Include="Interface Logic\Instantiate\ContextMenus.cs" />
-    <Compile Include="Interface Logic\InterfaceUtilities.cs" />
+    <Compile Include="Interface Logic\HideInterfaceLogic.cs" />
     <Compile Include="Interface Logic\SvgIcons.cs" />
     <Compile Include="Interface Logic\Instantiate\Timers.cs" />
     <Compile Include="Interface Logic\ToggleMenus.cs" />
@@ -193,7 +197,7 @@
     <Compile Include="Windows\AllSettings.xaml.cs">
       <DependentUpon>AllSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Misc\Fields.cs" />
+    <Compile Include="Fields.cs" />
     <Compile Include="Windows\FakeWindow.xaml.cs">
       <DependentUpon>FakeWindow.xaml</DependentUpon>
     </Compile>
@@ -344,9 +348,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Interface Logic\Animations\AnimationHelper.cs" />
-    <Compile Include="Misc\Helper.cs" />
+    <Compile Include="Misc\Utilities.cs" />
     <Compile Include="Image Logic\ImageDecoder.cs" />
-    <Compile Include="Loading\Preloader.cs" />
+    <Compile Include="Navigation\Preloader.cs" />
     <Compile Include="UserControls\CustomControls\AjaxLoading.xaml.cs">
       <DependentUpon>AjaxLoading.xaml</DependentUpon>
     </Compile>

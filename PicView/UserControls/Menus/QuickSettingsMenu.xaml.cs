@@ -41,31 +41,31 @@ namespace PicView.UserControls
             Fill.PreviewMouseLeftButtonDown += Fill_PreviewMouseLeftButtonDown;
             Fill.MouseEnter += Fill_MouseEnter;
             Fill.MouseLeave += Fill_MouseLeave;
-            Fill.Click += (s,x) => SetWallpaper(PicPath, WallpaperStyle.Fill);
+            Fill.Click += (s,x) => SetWallpaper(Pics[FolderIndex], WallpaperStyle.Fill);
             
             // Fit
             Fit.PreviewMouseLeftButtonDown += Fit_PreviewMouseLeftButtonDown;
             Fit.MouseEnter += Fit_MouseEnter;
             Fit.MouseLeave += Fit_MouseLeave;
-            Fit.Click += (s, x) => SetWallpaper(PicPath, WallpaperStyle.Fit);
+            Fit.Click += (s, x) => SetWallpaper(Pics[FolderIndex], WallpaperStyle.Fit);
 
             // Center
             Center.PreviewMouseLeftButtonDown += Center_PreviewMouseLeftButtonDown;
             Center.MouseEnter += Center_MouseEnter;
             Center.MouseLeave += Center_MouseLeave;
-            Center.Click += (s, x) => SetWallpaper(PicPath, WallpaperStyle.Center);
+            Center.Click += (s, x) => SetWallpaper(Pics[FolderIndex], WallpaperStyle.Center);
 
             // Tile
             Tile.PreviewMouseLeftButtonDown += Tile_PreviewMouseLeftButtonDown;
             Tile.MouseEnter += Tile_MouseEnter;
             Tile.MouseLeave += Tile_MouseLeave;
-            Tile.Click += (s, x) => SetWallpaper(PicPath, WallpaperStyle.Tile);
+            Tile.Click += (s, x) => SetWallpaper(Pics[FolderIndex], WallpaperStyle.Tile);
 
             // Stretch
             Stretch.PreviewMouseLeftButtonDown += Stretch_PreviewMouseLeftButtonDown;
             Stretch.MouseEnter += Stretch_MouseEnter;
             Stretch.MouseLeave += Stretch_MouseLeave;
-            Stretch.Click += (s, x) => SetWallpaper(PicPath, WallpaperStyle.Stretch);
+            Stretch.Click += (s, x) => SetWallpaper(Pics[FolderIndex], WallpaperStyle.Stretch);
 
             // Set Center
             SetCenter.PreviewMouseLeftButtonDown += SetCenter_PreviewMouseLeftButtonDown;

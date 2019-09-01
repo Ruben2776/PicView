@@ -22,6 +22,9 @@ namespace PicView
             try
             {
                 Array.ForEach(Directory.GetFiles(TempZipPath), File.Delete);
+#if DEBUG
+                Trace.WriteLine("Temp zip files deleted");
+#endif
             }
             catch (Exception)
             {
@@ -31,6 +34,9 @@ namespace PicView
             try
             {
                 Directory.Delete(TempZipPath);
+#if DEBUG
+                Trace.WriteLine("Temp zip folder " + TempZipPath +  " deleted");
+#endif
             }
             catch (Exception)
             {

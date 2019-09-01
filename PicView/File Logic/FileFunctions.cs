@@ -7,14 +7,14 @@ namespace PicView
     class FileFunctions
     {
 
-        internal static bool RenameFile(string PicPath, string PicNewPath)
+        internal static bool RenameFile(string path, string newPath)
         {
-            if (File.Exists(PicNewPath))
+            if (File.Exists(path))
                 return false;
 
             try
             {
-                File.Move(PicPath, PicNewPath);
+                File.Move(path, newPath);
             }
             catch (Exception)
             {

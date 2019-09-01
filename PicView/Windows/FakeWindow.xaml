@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="FakeWindow"
     AllowsTransparency="True"
-    Background="#72000000"
+    Background="{x:Null}"
     Focusable="False"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
@@ -16,6 +16,7 @@
     </WindowChrome.WindowChrome>
     <Grid
         x:Name="grid"
+        Background="#72000000"
         FocusVisualStyle="{x:Null}"
         Focusable="False" />
 </Window>

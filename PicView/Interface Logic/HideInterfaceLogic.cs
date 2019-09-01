@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using PicView.PreLoading;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using static PicView.FadeControls;
@@ -13,30 +14,18 @@ namespace PicView
         /// <summary>
         /// Toggle between hidden interface and default
         /// </summary>
-        internal static void HideInterface(bool slideshow = false, bool navigationButtons = true)
+        internal static void ToggleInterface()
         {
+            if (Properties.Settings.Default.PicGallery == 2)
+                return;
+
             // Hide interface
             if (Properties.Settings.Default.ShowInterface)
             {
-                mainWindow.TitleBar.Visibility =
-                mainWindow.LowerBar.Visibility =
-                mainWindow.LeftBorderRectangle.Visibility =
-                mainWindow.RightBorderRectangle.Visibility
-                = Visibility.Collapsed;
+                ShowTopandBottom(false);
+                ShowNavigation(true);
 
-                if (navigationButtons)
-                    clickArrowLeft.Visibility =
-                    clickArrowRight.Visibility =
-                    x2.Visibility =
-                    minus.Visibility = Visibility.Visible;
-                else
-                    clickArrowLeft.Visibility =
-                    clickArrowRight.Visibility =
-                    x2.Visibility =
-                    minus.Visibility = Visibility.Collapsed;
-
-                if (!slideshow || !Properties.Settings.Default.Fullscreen)
-                    Properties.Settings.Default.ShowInterface = false;
+                Properties.Settings.Default.ShowInterface = false;
 
                 if (activityTimer != null)
                     activityTimer.Start();
@@ -46,23 +35,55 @@ namespace PicView
             {
                 Properties.Settings.Default.ShowInterface = true;
 
-                mainWindow.TitleBar.Visibility =
-                mainWindow.LowerBar.Visibility =
-                mainWindow.LeftBorderRectangle.Visibility =
-                mainWindow.RightBorderRectangle.Visibility = Visibility.Visible;
-
-                clickArrowLeft.Visibility =
-                clickArrowRight.Visibility =
-                x2.Visibility =
-                minus.Visibility = Visibility.Collapsed;
+                ShowTopandBottom(true);
+                ShowNavigation(false);
 
                 if (activityTimer != null)
                     activityTimer.Stop();
             }
-            if (xWidth != 0 && xHeight != 0)
-                ZoomFit(xWidth, xHeight);
+
+            TryZoomFit();
 
             ToggleMenus.Close_UserControls();
+        }
+
+        internal static void ShowTopandBottom(bool show)
+        {
+            if (show)
+            {
+                mainWindow.TitleBar.Visibility =
+                mainWindow.LowerBar.Visibility =
+                mainWindow.LeftBorderRectangle.Visibility =
+                mainWindow.RightBorderRectangle.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                mainWindow.TitleBar.Visibility =
+                mainWindow.LowerBar.Visibility =
+                mainWindow.LeftBorderRectangle.Visibility =
+                mainWindow.RightBorderRectangle.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        internal static void ShowNavigation(bool show)
+        {
+            if (clickArrowLeft == null && clickArrowRight == null && x2 == null && minus == null)
+                return;
+
+            if (show)
+            {
+                clickArrowLeft.Visibility =
+                clickArrowRight.Visibility =
+                x2.Visibility =
+                minus.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                clickArrowLeft.Visibility =
+                clickArrowRight.Visibility =
+                x2.Visibility =
+                minus.Visibility = Visibility.Collapsed;
+            }
         }
 
 

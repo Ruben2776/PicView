@@ -1,12 +1,9 @@
-﻿using PicView.Native;
-using System.IO;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.Copy_Paste;
 using static PicView.DeleteFiles;
 using static PicView.Fields;
-using static PicView.FileLists;
 using static PicView.Helper;
 using static PicView.Open_Save;
 using static PicView.RecentFiles;
@@ -87,7 +84,7 @@ namespace PicView
             printcmIcon.Width = printcmIcon.Height = 12;
             printcmIcon.Fill = scbf;
             printcm.Icon = printcmIcon;
-            printcm.Click += (s, x) => Print(PicPath);
+            printcm.Click += (s, x) => Print(Pics[FolderIndex]);
             cm.Items.Add(printcm);
 
 
@@ -132,106 +129,100 @@ namespace PicView
             ///////////////////////////
             ///   File Name        \\\\
             ///////////////////////////
-            var sortcmChild0 = new RadioButton
+            var sortcmChild0 = new MenuItem();
+            var sortcmChild0Header = new RadioButton
             {
-                Content = "File name"
+                Content = "File name",
+                IsChecked = Properties.Settings.Default.SortPreference == 0
             };
-            sortcmChild0.Click += (s, x) =>
-            {
-                Properties.Settings.Default.SortPreference = 0;
-                if (!string.IsNullOrWhiteSpace(PicPath))
-                    Pics = FileList(Path.GetDirectoryName(PicPath));
-            };
+            sortcmChild0Header.Click += delegate { Configs.ChangeSorting(0); };
+            sortcmChild0.Click += delegate { Configs.ChangeSorting(0); };
+            sortcmChild0.Header = sortcmChild0Header;
             sortcm.Items.Add(sortcmChild0);
 
             ///////////////////////////
             ///   File Size        \\\\
             ///////////////////////////
-            var sortcmChild1 = new RadioButton
+            var sortcmChild1 = new MenuItem();
+            var sortcmChild1Header = new RadioButton
             {
-                Content = "File Size"
+                Content = "File Size",
+                IsChecked = Properties.Settings.Default.SortPreference == 1
             };
-            sortcmChild1.Click += (s, x) =>
-            {
-                Properties.Settings.Default.SortPreference = 1;
-                if (!string.IsNullOrWhiteSpace(PicPath))
-                    Pics = FileList(Path.GetDirectoryName(PicPath));
-            };
+            sortcmChild1Header.Click += delegate { Configs.ChangeSorting(1); };
+            sortcmChild1.Click += delegate { Configs.ChangeSorting(1); };
+            sortcmChild1.Header = sortcmChild1Header;
             sortcm.Items.Add(sortcmChild1);
 
             ///////////////////////////
-            ///   Creatin Time     \\\\
+            ///   Creation Time     \\\\
             ///////////////////////////
-            var sortcmChild2 = new RadioButton
+            var sortcmChild2 = new MenuItem();
+            var sortcmChild2Header = new RadioButton
             {
-                Content = "Creation time"
+                Content = "Creation time",
+                IsChecked = Properties.Settings.Default.SortPreference == 2
+
             };
-            sortcmChild2.Click += (s, x) =>
-            {
-                Properties.Settings.Default.SortPreference = 2;
-                if (!string.IsNullOrWhiteSpace(PicPath))
-                    Pics = FileList(Path.GetDirectoryName(PicPath));
-            };
+            sortcmChild2Header.Click += delegate { Configs.ChangeSorting(2); };
+            sortcmChild2.Click += delegate { Configs.ChangeSorting(2); };
+            sortcmChild2.Header = sortcmChild2Header;
             sortcm.Items.Add(sortcmChild2);
 
             ///////////////////////////
             ///   File extension   \\\\
             ///////////////////////////
-            var sortcmChild3 = new RadioButton
+            var sortcmChild3 = new MenuItem();
+            var sortcmChild3Header = new RadioButton
             {
-                Content = "File extension"
+                Content = "File extension",
+                IsChecked = Properties.Settings.Default.SortPreference == 3
             };
-            sortcmChild3.Click += (s, x) =>
-            {
-                Properties.Settings.Default.SortPreference = 3;
-                if (!string.IsNullOrWhiteSpace(PicPath))
-                    Pics = FileList(Path.GetDirectoryName(PicPath));
-            };
+            sortcmChild3Header.Click += delegate { Configs.ChangeSorting(3); };
+            sortcmChild3.Click += delegate { Configs.ChangeSorting(3); };
+            sortcmChild3.Header = sortcmChild3Header;
             sortcm.Items.Add(sortcmChild3);
 
             ///////////////////////////
             ///   Last Access Time \\\\
             ///////////////////////////
-            var sortcmChild4 = new RadioButton
+            var sortcmChild4 = new MenuItem();
+            var sortcmChild4Header = new RadioButton
             {
-                Content = "Last access time"
+                Content = "Last access time",
+                IsChecked = Properties.Settings.Default.SortPreference == 4
             };
-            sortcmChild4.Click += (s, x) =>
-            {
-                Properties.Settings.Default.SortPreference = 4;
-                if (!string.IsNullOrWhiteSpace(PicPath))
-                    Pics = FileList(Path.GetDirectoryName(PicPath));
-            };
+            sortcmChild4Header.Click += delegate { Configs.ChangeSorting(4); };
+            sortcmChild4.Click += delegate { Configs.ChangeSorting(4); };
+            sortcmChild4.Header = sortcmChild4Header;
             sortcm.Items.Add(sortcmChild4);
 
             ///////////////////////////
             ///   Last Write Time  \\\\
             ///////////////////////////
-            var sortcmChild5 = new RadioButton
+            var sortcmChild5 = new MenuItem();
+            var sortcmChild5Header = new RadioButton
             {
-                Content = "Last write time"
+                Content = "Last write time",
+                IsChecked = Properties.Settings.Default.SortPreference == 5
             };
-            sortcmChild5.Click += (s, x) =>
-            {
-                Properties.Settings.Default.SortPreference = 5;
-                if (!string.IsNullOrWhiteSpace(PicPath))
-                    Pics = FileList(Path.GetDirectoryName(PicPath));
-            };
+            sortcmChild5Header.Click += delegate { Configs.ChangeSorting(5); };
+            sortcmChild5.Click += delegate { Configs.ChangeSorting(5); };
+            sortcmChild5.Header = sortcmChild5Header;
             sortcm.Items.Add(sortcmChild5);
 
             ///////////////////////////
             ///   Random        \\\\
             ///////////////////////////
-            var sortcmChild6 = new RadioButton
+            var sortcmChild6 = new MenuItem();
+            var sortcmChild6Header = new RadioButton
             {
-                Content = "Random"
+                Content = "Random",
+                IsChecked = Properties.Settings.Default.SortPreference == 6
             };
-            sortcmChild6.Click += (s, x) =>
-            {
-                Properties.Settings.Default.SortPreference = 6;
-                if (!string.IsNullOrWhiteSpace(PicPath))
-                    Pics = FileList(Path.GetDirectoryName(PicPath));
-            };
+            sortcmChild6Header.Click += delegate { Configs.ChangeSorting(6); };
+            sortcmChild6.Click += delegate { Configs.ChangeSorting(6); };
+            sortcmChild6.Header = sortcmChild6Header;
             sortcm.Items.Add(sortcmChild6);
             cm.Items.Add(sortcm);
 
@@ -318,7 +309,7 @@ namespace PicView
             {
                 Header = "Set as wallpaper"
             };
-            wallcm.Click += (s, x) => SetWallpaper(PicPath, WallpaperStyle.Fill);
+            wallcm.Click += (s, x) => SetWallpaper(Pics[FolderIndex], WallpaperStyle.Fill);
             var wallcmIcon = new System.Windows.Shapes.Path
             {
                 Data = Geometry.Parse(SVGiconCamera),
@@ -373,7 +364,7 @@ namespace PicView
             fildecmIcon.Width = fildecmIcon.Height = 12;
             fildecmIcon.Fill = scbf;
             fildecm.Icon = fildecmIcon;
-            fildecm.Click += (s, x) => NativeMethods.ShowFileProperties(PicPath);
+            fildecm.Click += (s, x) => NativeMethods.ShowFileProperties(Pics[FolderIndex]);
             cm.Items.Add(fildecm);
             cm.Items.Add(new Separator());
 
@@ -414,7 +405,7 @@ namespace PicView
             cpccmIcon.Width = cpccmIcon.Height = 12;
             cpccmIcon.Fill = scbf;
             cpccm.Icon = cpccmIcon;
-            cpccm.Click += (s, x) => Cut(PicPath);
+            cpccm.Click += (s, x) => Cut(Pics[FolderIndex]);
             cm.Items.Add(cpccm);
 
             ///////////////////////////
@@ -452,7 +443,7 @@ namespace PicView
             MovetoRecycleBinIcon.Width = MovetoRecycleBinIcon.Height = 12;
             MovetoRecycleBinIcon.Fill = scbf;
             MovetoRecycleBin.Icon = MovetoRecycleBinIcon;
-            MovetoRecycleBin.Click += (s, x) => DeleteFile(PicPath, true);
+            MovetoRecycleBin.Click += (s, x) => DeleteFile(Pics[FolderIndex], true);
             cm.Items.Add(MovetoRecycleBin);
 
 

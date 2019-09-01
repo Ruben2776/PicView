@@ -1,5 +1,4 @@
-﻿using PicView.Native;
-using System;
+﻿using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -19,7 +18,7 @@ namespace PicView
         internal static void LoadSlideshow()
         {
             Slidetimer.Interval = Properties.Settings.Default.Slidetimeren;
-            if (!File.Exists(PicPath))
+            if (!File.Exists(Pics[FolderIndex]))
             {
                 ToolTipStyle("There was no image(s) to show.");
                 return;
@@ -28,7 +27,7 @@ namespace PicView
             if (mainWindow.WindowState == WindowState.Maximized)
                 Maximize_Restore();
 
-            HideInterface(false);
+            ToggleInterface();
             mainWindow.Topmost = true;
             FitToWindow = false;
             mainWindow.Width = mainWindow.bg.Width = SystemParameters.PrimaryScreenWidth;
@@ -44,7 +43,7 @@ namespace PicView
 
         internal static void UnloadSlideshow()
         {
-            HideInterface();
+            ToggleInterface();
             mainWindow.Topmost = false;
             FitToWindow = true;
             mainWindow.bg.Width = double.NaN;

@@ -10,7 +10,8 @@ namespace PicView.UserControls
         public PicGallery()
         {
             InitializeComponent();
-            Loaded += PicView.PicGalleryLogic.PicGallery_Loaded;
+            //PicGalleryLogic.IsLoading = PicGalleryLogic.IsOpen = false;
+            Loaded += PicGalleryLoad.PicGallery_Loaded;
         }
 
     }

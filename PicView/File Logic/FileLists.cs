@@ -1,12 +1,10 @@
-﻿using PicView.Native;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using static PicView.ArchiveExtraction;
 using static PicView.Fields;
-using static PicView.Error_Handling;
 
 namespace PicView
 {
@@ -85,7 +83,7 @@ namespace PicView
                         || file.ToLower().EndsWith("arw", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("webp", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("aai", StringComparison.OrdinalIgnoreCase)
-                        || file.ToLower().EndsWith("ai", StringComparison.OrdinalIgnoreCase)
+                        //|| file.ToLower().EndsWith("ai", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("art", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("bgra", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower().EndsWith("bgro", StringComparison.OrdinalIgnoreCase)
@@ -253,51 +251,17 @@ namespace PicView
                         {
                             Pics = new List<string>();
                             FolderIndex = -1;
-                            TempZipPath = string.Empty;
-                            return;
                         }
-                        break;
-                }
-
-                if (zipped)
-                {
-                    // Make a backup of FolderIndex and PicPath
-                    if (FolderIndex > -1)
-                        xFolderIndex = FolderIndex;
-
-                    if (!string.IsNullOrWhiteSpace(PicPath))
-                        xPicPath = PicPath;
-
-                    // Set extracted files to Pics
-                    if (Directory.Exists(TempZipPath))
-                    {
-                        // Start at first file
-                        FolderIndex = 0;
-
-                        // Add zipped files as recent file
-                        RecentFiles.SetZipped(path);
-
-                        var directory = Directory.GetDirectories(TempZipPath);
-                        if (directory.Length > 0)
-                            TempZipPath = directory[0];
-
-                        Pics = FileList(TempZipPath);
-                        if (Pics.Count > 0)
-                            PicPath = Pics[0];
-                        else
-                            Reload(true);
-                    }
-                    else Reload(true);
-                }
-                else
-                {
-                    // Set files to Pics and get index
-                    Pics = FileList(Path.GetDirectoryName(path));
-                    if (Pics == null)
                         return;
-                    FolderIndex = Pics.IndexOf(path);
-                    PicPath = path;
                 }
+
+                // Set files to Pics and get index
+                Pics = FileList(Path.GetDirectoryName(path));
+                if (Pics == null)
+                    return;
+                FolderIndex = Pics.IndexOf(path);
+                Pics[FolderIndex] = path;
+
             });
         }
     }

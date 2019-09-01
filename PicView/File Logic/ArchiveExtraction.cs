@@ -6,6 +6,7 @@ using static PicView.DeleteFiles;
 using static PicView.Error_Handling;
 using static PicView.Fields;
 using static PicView.Tooltip;
+using static PicView.FileLists;
 
 namespace PicView
 {
@@ -19,15 +20,20 @@ namespace PicView
         internal static bool Extract(string path)
         {
             if (!string.IsNullOrWhiteSpace(TempZipPath))
+            {
+#if DEBUG
+                Trace.WriteLine("Extract function delete temp files");
+#endif
                 DeleteTempFiles();
+            }
+                
 
             var Winrar = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\WinRAR\\WinRAR.exe";
             if (!File.Exists(Winrar))
                 Winrar = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\WinRAR\\WinRAR.exe";
             if (File.Exists(Winrar))
             {
-                Extract(path, Winrar, true);
-                return true;
+                return Extract(path, Winrar, true);
             }
 
             var sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\7-Zip\\7z.exe";
@@ -35,8 +41,7 @@ namespace PicView
                 sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\7-Zip\\7z.exe";
             if (File.Exists(sevenZip))
             {
-                Extract(path, sevenZip, false);
-                return true;
+                return Extract(path, sevenZip, false);
             }
 
             return false;
@@ -48,10 +53,19 @@ namespace PicView
         /// <param name="path">The path to the archived file</param>
         /// <param name="exe">Full path of the executeable</param>
         /// <param name="winrar">If WinRar or 7-Zip</param>
-        private static void Extract(string path, string exe, bool winrar)
+        private static bool Extract(string path, string exe, bool winrar)
         {
-            TempZipPath = Path.GetTempPath() + Path.GetRandomFileName();
-            Directory.CreateDirectory(TempZipPath);
+#if DEBUG
+            if (CreateTempDirectory(path))
+            {
+                Trace.WriteLine("Created temp dir: " + TempZipPath);
+            }
+            else
+                return false;
+#else
+            if (!CreateTempDirectory(path))
+                return false;
+#endif
 
             var arguments = winrar ?
                 // Add WinRAR specifics
@@ -73,9 +87,68 @@ namespace PicView
                 WindowStyle = ProcessWindowStyle.Hidden
                 #endif
             });
+            x.EnableRaisingEvents = true;
+            x.Exited += delegate {
+                SetDirectory();
+            }; 
 
-            if (x == null) return;
-            x.WaitForExit(750);
+            if (x == null)
+                return false;
+            if (!x.WaitForExit(500))
+                return false;
+
+            //return SetDirectory(path);
+            return true;
+        }
+
+        private static bool CreateTempDirectory(string path)
+        {
+            TempZipFile = path;
+            TempZipPath = Path.GetTempPath() + Path.GetRandomFileName();
+            Directory.CreateDirectory(TempZipPath);
+
+            return Directory.Exists(TempZipPath);
+        }
+
+        private static bool SetDirectory()
+        {
+            if (string.IsNullOrEmpty(TempZipPath))
+            {
+#if DEBUG
+                Trace.WriteLine("SetDirectory empty zip path");
+#endif
+                return false;
+            }
+
+            // Set extracted files to Pics
+            if (Directory.Exists(TempZipPath))
+            {
+                var directory = Directory.GetDirectories(TempZipPath);
+                if (directory.Length > 0)
+                {
+                    TempZipPath = directory[0];
+                }                    
+
+                var extractedFiles = FileList(TempZipPath);
+                if (extractedFiles.Count > 0)
+                    Pics = extractedFiles;
+                else
+                    return false;
+
+                //if (Pics.Count > 0)
+                //    Pics[FolderIndex] = Pics[0];
+                //else
+                //    return false;
+
+                // Start at first file
+                FolderIndex = 0;
+
+                // Add zipped files as recent file
+                RecentFiles.SetZipped(TempZipFile);
+
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -91,48 +164,51 @@ namespace PicView
             if (Pics.Count > 0)
                 return true;
 
-            if (string.IsNullOrWhiteSpace(TempZipPath))
-            {
-                // Unexped result
-                Reload(true);
-                return false;
-            }
+            mainWindow.Bar.Text = "Unzipping...";
+            mainWindow.Bar.ToolTip = mainWindow.Bar.Text;
+            await Task.Delay(25);
 
             // TempZipPath is not null = images being extracted
             short count = 0;
-            mainWindow.Bar.Text = "Unzipping...";
             do
             {
-                var processed = false;
-                var getProcesses = Process.GetProcessesByName("7z");
-                if (getProcesses.Length > 0)
-                    processed = true;
-
-                getProcesses = Process.GetProcessesByName("Zip");
-                if (getProcesses.Length > 0)
-                    processed = true;
-
-                if (!processed)
-                {
-                    Reload(true);
-                    return false;
-                }
-
-                // Kill it if it's asking for password
-                if (!getProcesses[0].HasExited)
-                    if (getProcesses[0].Threads[0].ThreadState == ThreadState.Wait)
-                    {
-                        ToolTipStyle("Password protected archive not supported");
-                        Reload(true);
-                        getProcesses[0].Kill();
-                        return false;
-                    }
+                if (SetDirectory())
+                    return true;
 
                 if (count > 3)
                 {
-                    Reload(true);
-                    return false;
+                    var processed = false;
+                    var getProcesses = Process.GetProcessesByName("7z");
+                    if (getProcesses.Length > 0)
+                        processed = true;
+
+                    if (!processed)
+                    {
+                        getProcesses = Process.GetProcessesByName("Zip");
+                        if (getProcesses.Length > 0)
+                            processed = true;
+                    }
+
+                    if (processed)
+                    {
+                        // Kill it if it's asking for password
+                        if (!getProcesses[0].HasExited)
+                            if (getProcesses[0].Threads[0].ThreadState == ThreadState.Wait)
+                            {
+#if DEBUG
+                                Trace.WriteLine("Process killed");
+#endif
+                                ToolTipStyle("Password protected archive not supported");
+                                //Reload(true);
+                                getProcesses[0].Kill();
+                                return false;
+                            }
+                    }
+                    break;
+                    //Reload(true);
+                    //return false;
                 }
+
                 switch (count)
                 {
                     case 0:
@@ -144,17 +220,23 @@ namespace PicView
                         break;
 
                     case 2:
-                        await Task.Delay(750);
+                        await Task.Delay(950);
                         break;
 
                     default:
-                        await Task.Delay(2500);
+                        await Task.Delay(1500);
                         break;
                 }
                 count++;
             } while (Pics.Count < 1);
 
-            return Directory.Exists(TempZipPath);
+#if DEBUG
+            Trace.WriteLine("RecoverFailedArchiveAsync processed");
+#endif
+
+            if (SetDirectory())
+                return true;
+            return false;
         }
     }
 }

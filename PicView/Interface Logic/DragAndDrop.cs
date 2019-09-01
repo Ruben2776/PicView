@@ -189,31 +189,6 @@ namespace PicView
         }
 
         /// <summary>
-        /// Determine if supported files for drag and drop operation
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        internal static void Image_DraOver(object sender, DragEventArgs e)
-        {
-            // Error handling
-            if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
-            var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-
-            if (!Drag_Drop_Check(files).HasValue)
-            {
-                // Tell user drop not supported
-                e.Effects = DragDropEffects.None;
-                e.Handled = true;
-                return;
-            }
-
-            // Tell that it's succeeded
-            e.Effects = DragDropEffects.Copy;
-            isDraggedOver = e.Handled = true;
-            ToolTipStyle(DragOverString, true);
-        }
-
-        /// <summary>
         /// Show image or thumbnail preview on drag enter
         /// </summary>
         /// <param name="sender"></param>
@@ -223,25 +198,34 @@ namespace PicView
             // Error handling
             if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+            var check = Drag_Drop_Check(files);
 
             // Do nothing for invalid files
-            if (!Drag_Drop_Check(files).HasValue)
+            if (!check.HasValue)
                 return;
 
-            // If no image, fix it to container
-            if (mainWindow.img.Source == null)
-            {
-                mainWindow.img.Width = mainWindow.Scroller.ActualWidth;
-                mainWindow.img.Height = mainWindow.Scroller.ActualHeight;
-            }
-            else
-            {
-                // Save our image so we can swap back to it later if neccesary
-                prevPicResource = mainWindow.img.Source;
-            }
+            // Tell that it's succeeded
+            e.Effects = DragDropEffects.Copy;
+            isDraggedOver = e.Handled = true;
+            ToolTipStyle(DragOverString, true);
 
-            // Load from preloader or thumbnails
-            mainWindow.img.Source = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : GetBitmapSourceThumb(files[0]);
+            if (check.Value)
+            {
+                // If no image, fix it to container
+                if (mainWindow.img.Source == null)
+                {
+                    mainWindow.img.Width = mainWindow.Scroller.ActualWidth;
+                    mainWindow.img.Height = mainWindow.Scroller.ActualHeight;
+                }
+                else
+                {
+                    // Save our image so we can swap back to it later if neccesary
+                    prevPicResource = mainWindow.img.Source;
+                }
+
+                // Load from preloader or thumbnails
+                mainWindow.img.Source = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : GetBitmapSourceThumb(files[0]);
+            }
         }
 
         /// <summary>

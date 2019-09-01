@@ -13,7 +13,7 @@ using static PicView.WindowLogic;
 namespace PicView
 {
     internal static class Resize_and_Zoom
-    { 
+    {
         // Zoom
         /// <summary>
         /// Pan and Zoom, reset zoom and double click to reset
@@ -186,14 +186,14 @@ namespace PicView
             isZoomed = false;
 
             // Reset size
-            ZoomFit(xWidth, xHeight);
+            TryZoomFit();
 
             // Display non-zoomed values
             if (canNavigate)
                 SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
             else
                 // Display values from web
-                SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, PicPath);
+                SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, Pics[FolderIndex]);
         }
 
         /// <summary>
@@ -270,7 +270,40 @@ namespace PicView
                 SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
             else
                 /// Display values from web
-                SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, PicPath);
+                SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, Pics[FolderIndex]);
+        }
+
+        /// <summary>
+        /// Tries to call Zoomfit with additional error checking
+        /// </summary>
+        internal static void TryZoomFit()
+        {
+            if (freshStartup)
+                return;
+            
+            if (Pics != null)
+            {
+                if (Pics.Count > FolderIndex)
+                {
+                    var tmp = PreLoading.Preloader.Load(Pics[FolderIndex]);
+                    if (tmp != null)
+                        ZoomFit(tmp.PixelWidth, tmp.PixelHeight);
+                    else
+                    {
+                        var size = ImageDecoder.ImageSize(Pics[FolderIndex]);
+                        if (size.HasValue)
+                            ZoomFit(size.Value.Width, size.Value.Height);
+                        else if (mainWindow.img.Source != null)
+                            ZoomFit(mainWindow.img.Source.Width, mainWindow.img.Source.Height);
+                        else if (xWidth != 0 && xHeight != 0)
+                            ZoomFit(xWidth, xHeight);
+                    }
+                }
+            }
+            else if (mainWindow.img.Source != null)
+                ZoomFit(mainWindow.img.Source.Width, mainWindow.img.Source.Height);
+            else if (xWidth != 0 && xHeight != 0)
+                ZoomFit(xWidth, xHeight);
         }
 
         /// <summary>

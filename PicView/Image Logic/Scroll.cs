@@ -20,9 +20,9 @@ namespace PicView
             {
                 Properties.Settings.Default.ScrollEnabled = value;
                 mainWindow.Scroller.VerticalScrollBarVisibility = value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
-                if (!freshStartup && !string.IsNullOrEmpty(PicPath))
+                if (Pics != null)
                 {
-                    ZoomFit(mainWindow.img.Source.Width, mainWindow.img.Source.Height);
+                    TryZoomFit();
                     ToolTipStyle(value ? "Scrolling enabled" : "Scrolling disabled");
                 }
             }

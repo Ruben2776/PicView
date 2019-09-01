@@ -23,7 +23,7 @@ namespace PicView
         /// </summary>
         internal static void CopyText()
         {
-            Clipboard.SetText(PicPath);
+            Clipboard.SetText(Pics[FolderIndex]);
             ToolTipStyle(TxtCopy);
         }
 
@@ -33,13 +33,13 @@ namespace PicView
         internal static void CopyPic()
         {
             // Copy pic if from web
-            if (string.IsNullOrWhiteSpace(PicPath) || Uri.IsWellFormedUriString(PicPath, UriKind.Absolute))
+            if (string.IsNullOrWhiteSpace(Pics[FolderIndex]) || Uri.IsWellFormedUriString(Pics[FolderIndex], UriKind.Absolute))
             {
                 CopyBitmap();
             }
             else
             {
-                var paths = new System.Collections.Specialized.StringCollection { PicPath };
+                var paths = new System.Collections.Specialized.StringCollection { Pics[FolderIndex] };
                 Clipboard.SetFileDropList(paths);
                 ToolTipStyle(FileCopy);
             }
@@ -47,8 +47,8 @@ namespace PicView
 
         internal static void CopyBitmap()
         {
-            if (Preloader.Contains(PicPath))
-                Clipboard.SetImage(Preloader.Load(PicPath));
+            if (Preloader.Contains(Pics[FolderIndex]))
+                Clipboard.SetImage(Preloader.Load(Pics[FolderIndex]));
             else if (mainWindow.img.Source != null)
                 Clipboard.SetImage((BitmapSource)mainWindow.img.Source);
             else
@@ -75,7 +75,7 @@ namespace PicView
                         var x = files[0];
 
                         // If from same folder
-                        if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(x) == Path.GetDirectoryName(PicPath))
+                        if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]) && Path.GetDirectoryName(x) == Path.GetDirectoryName(Pics[FolderIndex]))
                         {
                             if (!Preloader.Contains(x))
                             {
@@ -135,13 +135,13 @@ namespace PicView
                 Pics = FileList(s);
                 if (Pics.Count > 0)
                     Pic(Pics[0]);
-                else if (!string.IsNullOrWhiteSpace(PicPath))
-                    Pic(PicPath);
+                else if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]))
+                    Pic(Pics[FolderIndex]);
                 else
                     Unload();
             }
             else if (Uri.IsWellFormedUriString(s, UriKind.Absolute)) // Check if from web
-                PicWeb(s);
+               LoadFromWeb.PicWeb(s);
             else
                 ToolTipStyle("An error occured while trying to paste file");
         }

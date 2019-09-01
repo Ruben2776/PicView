@@ -17,7 +17,7 @@ namespace PicView
         /// </summary>
         internal static void Open_In_Explorer()
         {
-            if (!File.Exists(PicPath) || mainWindow.img.Source == null)
+            if (!File.Exists(Pics[FolderIndex]) || mainWindow.img.Source == null)
             {
                 ToolTipStyle("Error, File does not exist, or something went wrong...");
                 return;
@@ -26,14 +26,16 @@ namespace PicView
             {
                 Close_UserControls();
                 ToolTipStyle(ExpFind);
-                Process.Start("explorer.exe", "/select,\"" + PicPath + "\"");
+                Process.Start("explorer.exe", "/select,\"" + Pics[FolderIndex] + "\"");
             }
+#if DEBUG
             catch (InvalidCastException e)
             {
-#if DEBUG
                 Trace.WriteLine("Open_In_Explorer exception \n" + e.Message);
-#endif
             }
+#else
+            catch (InvalidCastException) { }
+#endif
         }
 
         /// <summary>
@@ -48,11 +50,7 @@ namespace PicView
             };
             if (dlg.ShowDialog() == true)
             {
-                
                 Pic(dlg.FileName);
-
-                if (string.IsNullOrWhiteSpace(PicPath))
-                    PicPath = dlg.FileName;
             }
             else return;
 
@@ -68,14 +66,14 @@ namespace PicView
             {
                 Filter = FilterFiles,
                 Title = "Save image - PicView",
-                FileName = Path.GetFileName(PicPath)
+                FileName = Path.GetFileName(Pics[FolderIndex])
             };
 
-            if (!string.IsNullOrEmpty(PicPath))
+            if (!string.IsNullOrEmpty(Pics[FolderIndex]))
             {
                 if (Savedlg.ShowDialog() == true)
                 {
-                    if (!TrySaveImage(Rotateint, Flipped, PicPath, Savedlg.FileName))
+                    if (!TrySaveImage(Rotateint, Flipped, Pics[FolderIndex], Savedlg.FileName))
                         ToolTipStyle("Error, File didn't get saved");
                 }
                 else return;

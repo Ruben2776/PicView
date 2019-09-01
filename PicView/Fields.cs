@@ -51,13 +51,13 @@ namespace PicView
 
         internal static MainWindow mainWindow = ((MainWindow)Application.Current.MainWindow);
 
-        /// <summary>
-        /// File path of current image
-        /// </summary>
-        internal static string PicPath { get; set; }
+        ///// <summary>
+        ///// File path of current image
+        ///// </summary>
+        //internal static string Pics[FolderIndex] { get; set; }
 
         /// <summary>
-        /// Backup of PicPath
+        /// Backup of Previous file, if changed folder etc.
         /// </summary>
         internal static string xPicPath;
 
@@ -65,6 +65,11 @@ namespace PicView
         /// File path for the extracted folder
         /// </summary>
         internal static string TempZipPath { get; set; }
+
+        /// <summary>
+        /// File path for the extracted zip file
+        /// </summary>
+        internal static string TempZipFile { get; set; }
 
         /// <summary>
         /// Returns zoom percentage. if 100%, return empty string

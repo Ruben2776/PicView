@@ -171,13 +171,16 @@ namespace PicView
                     magick.AdaptiveResize(size, size);
 
                 }
+#if DEBUG
                 catch (MagickException e)
                 {
-#if DEBUG
+
                     Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
-#endif
                     return null;
-                }
+                    }
+#else
+                catch (MagickException) { return null; }
+#endif
                 pic = magick.ToBitmapSource();
                 pic.Freeze();
                 return pic;

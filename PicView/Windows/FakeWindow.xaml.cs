@@ -2,6 +2,9 @@
 using System.Windows;
 using System.Windows.Input;
 using static PicView.Fields;
+using static PicView.PicGalleryScroll;
+using static PicView.NativeMethods;
+using System.Windows.Interop;
 
 namespace PicView.Windows
 {
@@ -18,7 +21,6 @@ namespace PicView.Windows
             Width = MonitorInfo.Width;
             Height = MonitorInfo.Height;
             ContentRendered += FakeWindow_ContentRendered;
-
         }
 
         private void FakeWindow_ContentRendered(object sender, EventArgs e)
@@ -30,6 +32,11 @@ namespace PicView.Windows
             MouseWheel += FakeWindow_MouseWheel;
             Application.Current.MainWindow.Focus();
             LostFocus += FakeWindow_LostFocus;
+            GotFocus += FakeWindow_LostFocus;
+
+            // Hide from alt tab
+            var helper = new WindowInteropHelper(this).Handle;
+            SetWindowLong(helper, GWL_EX_STYLE, (GetWindowLong(helper, GWL_EX_STYLE) | WS_EX_TOOLWINDOW) & ~WS_EX_APPWINDOW);
         }
 
         private void FakeWindow_LostFocus(object sender, RoutedEventArgs e)
@@ -56,9 +63,9 @@ namespace PicView.Windows
         private void FakeWindow_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                PicGalleryLogic.ScrollTo(e.Delta > 0, true);
+                ScrollTo(e.Delta > 0, true);
             else
-                PicGalleryLogic.ScrollTo(e.Delta > 0, false, true);
+                ScrollTo(e.Delta > 0, false, true);
         }
 
         private void MainWindow_StateChanged(object sender, EventArgs e)

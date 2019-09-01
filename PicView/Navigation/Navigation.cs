@@ -1,14 +1,11 @@
 ﻿using PicView.PreLoading;
 using System;
 using System.IO;
-using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using static PicView.AjaxLoader;
 using static PicView.ArchiveExtraction;
-using static PicView.DeleteFiles;
 using static PicView.Error_Handling;
 using static PicView.Fields;
 using static PicView.FileLists;
@@ -24,6 +21,7 @@ namespace PicView
 {
     internal static class Navigation
     {
+        #region Update Pic
         /// <summary>
         /// Loads a picture from a given file path and does extra error checking
         /// </summary>
@@ -33,38 +31,36 @@ namespace PicView
             // Set Loading
             mainWindow.Title = mainWindow.Bar.Text = Loading;
             mainWindow.Bar.ToolTip = Loading;
-            if (mainWindow.img.Source == null)
+            //if (mainWindow.img.Source == null)
                 AjaxLoadingStart();
 
             // Handle if from web
             if (!File.Exists(path))
             {
                 if (Uri.IsWellFormedUriString(path, UriKind.Absolute))
-                    PicWeb(path);
+                    LoadFromWeb.PicWeb(path);
                 else
                     Unload();
                 return;
             }
 
             // If count not correct or just started, get values
-            if (Pics == null)
-                await GetValues(path);
-            else if (Pics.Count <= FolderIndex || FolderIndex < 0 || freshStartup)
+            if (Pics.Count <= FolderIndex || FolderIndex < 0 || freshStartup)
                 await GetValues(path);
 
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
-            else if (!string.IsNullOrWhiteSpace(PicPath) && Path.GetDirectoryName(path) != Path.GetDirectoryName(PicPath))
+            else if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]) && Path.GetDirectoryName(path) != Path.GetDirectoryName(Pics[FolderIndex]))
             {
-                // Reset zipped values
-                if (!string.IsNullOrWhiteSpace(TempZipPath))
-                {
-                    DeleteTempFiles();
-                    TempZipPath = string.Empty;
-                    RecentFiles.SetZipped(string.Empty, false);
-                }
+                //// Reset zipped values
+                //if (!string.IsNullOrWhiteSpace(TempZipPath))
+                //{
+                //    DeleteTempFiles();
+                //    TempZipPath = string.Empty;
+                //    RecentFiles.SetZipped(string.Empty, false);
+                //}
 
                 // Reset old values and get new
-                ChangeFolder();
+                ChangeFolder(true);
                 await GetValues(path);
             }
 
@@ -80,10 +76,13 @@ namespace PicView
                     var recovery = await RecoverFailedArchiveAsync();
                     if (!recovery)
                     {
-                        ToolTipStyle("Archive could not be processed");
+                        if (sexyToolTip.Opacity == 0)
+                            ToolTipStyle("Archive could not be processed");
+
                         Reload(true);
                         return;
                     }
+                    mainWindow.Focus();
                 }
             }
             else
@@ -104,16 +103,13 @@ namespace PicView
             {
                 Reload(true);
                 return;
-            }
-
-
-            AjaxLoadingEnd();
+            }           
 
             // Load images for PicGallery if enabled
             if (Properties.Settings.Default.PicGallery > 0)
             {
-                if (!PicGalleryLogic.LoadComplete && !PicGalleryLogic.isLoading)
-                    await PicGalleryLogic.Load();
+                if (!PicGalleryLogic.IsLoading)
+                    await PicGalleryLoad.Load();
             }
 
             if (prevPicResource != null)
@@ -122,13 +118,14 @@ namespace PicView
 
         /// <summary>
         /// Loads image based on overloaded int.
-        /// Possible out of range error if used inappropriately.
         /// </summary>
-        /// <param name="x"></param>
+        /// <param name="x">The index of file to load from Pics</param>
         internal static async void Pic(int x)
         {
+            BitmapSource pic;
+
             // Additional error checking
-            if (Pics.Count < x)
+            if (Pics.Count <= x)
             {
                 if (x == 0)
                 {
@@ -141,23 +138,31 @@ namespace PicView
                     }
                 }
 
-                else if (!File.Exists(Pics[x]))
-                    PicErrorFix(x);
-                else
+                // Untested code
+                pic = await PicErrorFix(x);
+                if (pic == null)
+                {
                     Reload(true);
-                return;
+                    return;
+                }
             }
             if (x < 0)
             {
-                if (!PicErrorFix(x))
-                    return;
+                pic = await PicErrorFix(x);
+            }
+            //if (!canNavigate)
+            //{
+            //    Reload(true);
+            //    return;
+            //}
+            else
+            {
+                // Add "pic" as local variable used for the image.
+                // Use the Load() function load image from memory if available
+                // if not, it will be null
+                pic = Preloader.Load(Pics[x]);
             }
 
-
-            // Add "pic" as local variable used for the image.
-            // Use the Load() function load image from memory if available
-            // if not, it will be null
-            BitmapSource pic = Preloader.Load(Pics[x]);
 
             if (pic == null)
             {
@@ -206,13 +211,19 @@ namespace PicView
                 // If pic is still null, image can't be rendered
                 if (pic == null)
                 {
-                    if (!PicErrorFix(x))
+                    // Attempt to load new image
+                    pic = await PicErrorFix(x);
+                    if (pic == null)
                     {
-                        // Fixes error when Skipping to last or first pic
-                        await Task.Run(() => pic = RenderToBitmapSource(Pics[x]));
-                        if (pic == null)
-                            Reload(true);
-                        //return;
+                        Pics.RemoveAt(x);
+                        if (Pics.Count <= 0)
+                        {
+                            Unload();
+                            return;
+                        }
+
+                        Pic(reverse);
+                        return;
                     }
                 }
             }
@@ -233,40 +244,32 @@ namespace PicView
             // Update values
             canNavigate = true;
             SetTitleString(pic.PixelWidth, pic.PixelHeight, x);
-            PicPath = Pics[x];
-            FolderIndex = x;
-            AjaxLoadingEnd();
-            Progress(x, Pics.Count);
-
-            if (picGallery != null)
-            {
-                if (!freshStartup)
-                    if (PicGalleryLogic.LoadComplete)
-                        PicGalleryLogic.ScrollTo();
-
-                //if (x < picGallery.Container.Children.Count)
-                //{
-                //    var item = picGallery.Container.Children[x] as PicGalleryItem;
-                //    item.Setselected(true);
-
-                //    var y = reverse ? x - 1 : x + 1;
-                //    var previtem = picGallery.Container.Children[y] as PicGalleryItem;
-                //    previtem.Setselected(false);
-                //}
-
-            }
+            //Pics[FolderIndex] = Pics[x];
+            FolderIndex = x;            
 
             // Preload images \\
             if (Preloader.StartPreload())
             {
-                Preloader.Add(pic, PicPath);
+                Preloader.Add(pic, Pics[FolderIndex]);
                 await Preloader.PreLoad(x);
+
+                // Update if changed file list size
+                if (PreloadCount == 4 && FolderIndex == x)
+                    SetTitleString(pic.PixelWidth, pic.PixelHeight, x);
             }
-                
+
+            if (picGallery != null)
+            {
+                if (!PicGalleryLogic.IsLoading)
+                    PicGalleryScroll.ScrollTo();
+            }
+
+            Progress(x, Pics.Count);
 
             if (!freshStartup)
                 RecentFiles.Add(Pics[x]);
-
+            
+            AjaxLoadingEnd();
             freshStartup = false;
         }
 
@@ -290,10 +293,14 @@ namespace PicView
             SetTitleString(pic.PixelWidth, pic.PixelHeight, imageName);
 
             NoProgress();
-            PicPath = string.Empty;
+            Pics[FolderIndex] = string.Empty;
 
             canNavigate = false;
         }
+
+        #endregion
+
+        #region Change Image
 
         /// <summary>
         /// Goes to next, previous, first or last file in folder
@@ -320,10 +327,9 @@ namespace PicView
             {
                 FolderIndex = next ? Pics.Count - 1 : 0;
                 if (Pics.Count > 20)
-                {
-                    PreloadCount = 4;
                     Preloader.Clear();
-                }
+
+                PreloadCount = 4;
             }
             // Go to next or previous
             else
@@ -418,63 +424,6 @@ namespace PicView
             Pic(FolderIndex);
         }
 
-        /// <summary>
-        /// Attemps to download image and display it
-        /// </summary>
-        /// <param name="path"></param>
-        internal static async void PicWeb(string path)
-        {
-            if (ajaxLoading.Opacity != 1)
-                AjaxLoadingStart();
-
-            mainWindow.Bar.Text = Loading;
-
-            BitmapSource pic;
-            try
-            {
-                pic = await LoadImageWebAsync(path);
-            }
-            catch (Exception)
-            {
-                pic = null;
-            }
-
-            if (pic == null)
-            {
-                Reload(true);
-                ToolTipStyle("Unable to load image");
-                AjaxLoadingEnd();
-                return;
-            }
-
-            Pic(pic, path);
-            PicPath = path;
-            RecentFiles.Add(path);
-        }
-
-        /// <summary>
-        /// Downloads image from web and returns as BitmapSource
-        /// </summary>
-        /// <param name="address"></param>
-        /// <returns></returns>
-        internal static async Task<BitmapSource> LoadImageWebAsync(string address)
-        {
-            BitmapSource pic = null;
-            await Task.Run(async () =>
-            {
-                var client = new WebClient();
-                client.DownloadProgressChanged += (sender, e) =>
-                mainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
-                {
-                    mainWindow.Title = mainWindow.Bar.Text = e.BytesReceived + "/" + e.TotalBytesToReceive + ". " + e.ProgressPercentage + "% complete...";
-                    mainWindow.Bar.ToolTip = mainWindow.Title;
-                }));
-
-                var bytes = await client.DownloadDataTaskAsync(new Uri(address));
-                var stream = new MemoryStream(bytes);
-                pic = GetMagickImage(stream);
-            });
-            return pic;
-        }
+        #endregion
     }
 }

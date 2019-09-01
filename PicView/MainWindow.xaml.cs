@@ -1,5 +1,4 @@
-﻿using PicView.Native;
-using PicView.UserControls;
+﻿using PicView.UserControls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,7 +19,6 @@ using static PicView.LoadWindows;
 using static PicView.MouseOverAnimations;
 using static PicView.Navigation;
 using static PicView.Open_Save;
-using static PicView.PicGalleryLogic;
 using static PicView.Resize_and_Zoom;
 using static PicView.Rotate_and_Flip;
 using static PicView.Scroll;
@@ -46,6 +44,8 @@ namespace PicView
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            freshStartup = true;
+
             if (!Properties.Settings.Default.ShowInterface)
             {
                 TitleBar.Visibility =
@@ -68,44 +68,40 @@ namespace PicView
                 FitToWindow = false;
             }
             else FitToWindow = true;
-        }
 
-        private void MainWindow_ContentRendered(object sender, EventArgs e)
-        {
             ajaxLoading = new AjaxLoading
             {
                 Opacity = 0
             };
             bg.Children.Add(ajaxLoading);
             AjaxLoadingStart();
+        }
 
+        private void MainWindow_ContentRendered(object sender, EventArgs e)
+        {
             // Update values
             AllowDrop = true;
             IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
-            Pics = new List<string>();
-            freshStartup = true;
-            DataContext = this;
+            Pics = new List<string>();            
+            //DataContext = this;
             MonitorInfo = MonitorSize.GetMonitorSize();
-
-            if (!Properties.Settings.Default.BgColorWhite)
-                imgBorder.Background = new SolidColorBrush(Colors.Transparent);
 
             // Load image if possible
             if (Application.Current.Properties["ArbitraryArgName"] == null)
+            {
                 Unload();
+                UpdateColor();
+            }
             else
+            {
                 Pic(Application.Current.Properties["ArbitraryArgName"].ToString());
 
-            UpdateColor();
-            backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
+                if (Properties.Settings.Default.Fullscreen)
+                    Fullscreen_Restore(true);
+                else
+                    UpdateColor();
+            }
 
-            // Add UserControls :)
-            LoadTooltipStyle();
-            LoadFileMenu();
-            LoadImageSettingsMenu();
-            LoadQuickSettingsMenu();
-            LoadFunctionsMenu();
-            LoadAutoScrollSign();
             LoadClickArrow(true);
             LoadClickArrow(false);
             Loadx2();
@@ -126,24 +122,12 @@ namespace PicView
                 minus.Visibility =
                 Visibility.Visible;
             }
-            if (Properties.Settings.Default.Fullscreen)
-                Fullscreen_Restore(true);
 
-            // Update UserControl values
             mainColor = (Color)Application.Current.Resources["MainColor"];
-            quickSettingsMenu.ToggleScroll.IsChecked = IsScrollEnabled;
-            if (FitToWindow)
-            {
-                quickSettingsMenu.SetFit.IsChecked = true;
-                quickSettingsMenu.SetCenter.IsChecked = false;
-            }
+            if (!Properties.Settings.Default.BgColorWhite)
+                imgBorder.Background = new SolidColorBrush(Colors.Transparent);
 
-            else
-            {
-                quickSettingsMenu.SetCenter.IsChecked = true;
-                quickSettingsMenu.SetFit.IsChecked = false;
-            }
-                
+            backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
 
             // Load PicGallery, if needed
             if (Properties.Settings.Default.PicGallery > 0)
@@ -158,7 +142,29 @@ namespace PicView
                 Panel.SetZIndex(picGallery, 999);
 
                 if (Properties.Settings.Default.PicGallery == 2 && freshStartup)
-                    PicGalleryToggle();
+                    PicGalleryToggle.ToggleGallery();
+            }
+
+            // Add UserControls :)
+            LoadTooltipStyle();
+            LoadFileMenu();
+            LoadImageSettingsMenu();
+            LoadQuickSettingsMenu();
+            LoadFunctionsMenu();
+            LoadAutoScrollSign();
+
+            // Update UserControl values            
+            quickSettingsMenu.ToggleScroll.IsChecked = IsScrollEnabled;
+            if (FitToWindow)
+            {
+                quickSettingsMenu.SetFit.IsChecked = true;
+                quickSettingsMenu.SetCenter.IsChecked = false;
+            }
+
+            else
+            {
+                quickSettingsMenu.SetCenter.IsChecked = true;
+                quickSettingsMenu.SetFit.IsChecked = false;
             }
 
             // Initilize Things!
@@ -217,12 +223,12 @@ namespace PicView
 
             fileMenu.Open.Click += (s, x) => Open();
             fileMenu.Open_File_Location.Click += (s, x) => Open_In_Explorer();
-            fileMenu.Print.Click += (s, x) => Print(PicPath);
+            fileMenu.Print.Click += (s, x) => Print(Pics[FolderIndex]);
             fileMenu.Save_File.Click += (s, x) => SaveFiles();
 
             fileMenu.Open_Border.MouseLeftButtonUp += (s, x) => Open();
             fileMenu.Open_File_Location_Border.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
-            fileMenu.Print_Border.MouseLeftButtonUp += (s, x) => Print(PicPath);
+            fileMenu.Print_Border.MouseLeftButtonUp += (s, x) => Print(Pics[FolderIndex]);
             fileMenu.Save_File_Location_Border.MouseLeftButtonUp += (s, x) => SaveFiles();
 
             fileMenu.CloseButton.Click += Close_UserControls;
@@ -281,9 +287,9 @@ namespace PicView
             functionsMenu.CloseButton.Click += Toggle_Functions_menu;
             functionsMenu.Help.Click += (s, x) => HelpWindow();
             functionsMenu.About.Click += (s, x) => AboutWindow();
-            functionsMenu.FileDetailsButton.Click += (s, x) => NativeMethods.ShowFileProperties(PicPath);
-            functionsMenu.DeleteButton.Click += (s, x) => DeleteFile(PicPath, true);
-            functionsMenu.DeletePermButton.Click += (s, x) => DeleteFile(PicPath, false);
+            functionsMenu.FileDetailsButton.Click += (s, x) => NativeMethods.ShowFileProperties(Pics[FolderIndex]);
+            functionsMenu.DeleteButton.Click += (s, x) => DeleteFile(Pics[FolderIndex], true);
+            functionsMenu.DeletePermButton.Click += (s, x) => DeleteFile(Pics[FolderIndex], false);
             functionsMenu.ReloadButton.Click += (s, x) => Reload();
             functionsMenu.ResetZoomButton.Click += (s, x) => ResetZoom();
             functionsMenu.ClearButton.Click += (s, x) => Unload();
@@ -323,7 +329,6 @@ namespace PicView
             // bg
             bg.MouseLeftButtonDown += Bg_MouseLeftButtonDown;
             bg.Drop += Image_Drop;
-            bg.DragOver += Image_DraOver;
             bg.DragEnter += Image_DragEnter;
             bg.DragLeave += Image_DragLeave;
 
@@ -406,13 +411,13 @@ namespace PicView
             // Move cursor after resize when the button has been pressed
             if (RightbuttonClicked)
             {
-                Point p = RightButton.PointToScreen(new Point(50, 30)); //Points cursor to center of RighButton
+                Point p = RightButton.PointToScreen(new Point(50, 10)); //Points cursor to center of RighButton
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 RightbuttonClicked = false;
             }
             else if (LeftbuttonClicked)
             {
-                Point p = LeftButton.PointToScreen(new Point(50, 30));
+                Point p = LeftButton.PointToScreen(new Point(50, 10));
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 LeftbuttonClicked = false;
             }
@@ -447,7 +452,7 @@ namespace PicView
 
             Hide(); // Make it feel faster
 
-            if (!Properties.Settings.Default.FitToWindow)
+            if (!Properties.Settings.Default.FitToWindow && !Properties.Settings.Default.Fullscreen)
             {
                 Properties.Settings.Default.Top = Top;
                 Properties.Settings.Default.Left = Left;

@@ -5,7 +5,7 @@ using static PicView.Scroll;
 
 namespace PicView
 {
-    class Timers
+    internal static class Timers
     {
         #region Add Timers
 

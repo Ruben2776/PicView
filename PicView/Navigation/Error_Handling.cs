@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using static PicView.AjaxLoader;
 using static PicView.DeleteFiles;
@@ -22,55 +23,56 @@ namespace PicView
         /// Attemps to fix erros and prevent crashes
         /// </summary>
         /// <param name="x">The index to start from</param>
-        internal static bool PicErrorFix(int x)
+        internal static async Task<BitmapSource> PicErrorFix(int x)
         {
+            BitmapSource pic = null;
 #if DEBUG
             Trace.WriteLine("Entered PicErrorFix"); // We don't want to go in here
 #endif
             if (Pics == null)
             {
                 Reload(true);
-                return false;
+                return null;
             }
 
             if (Pics.Count < 0)
             {
                 ToolTipStyle("Unexpected error", true, TimeSpan.FromSeconds(3));
                 Unload();
-                return false;
+                return null;
             }
             else if (x >= Pics.Count)
             {
                 if (Pics.Count > 0)
                 {
-                    Pic(Pics[0]);
-                    return true;
+                    if (x < Pics.Count)
+                    {
+                        await Task.Run(() => pic = RenderToBitmapSource(Pics[x]));
+                        if (pic != null)
+                            return pic;
+                    }
                 }
                 else
                 {
                     Unload();
-                    return false;
+                    return null;
                 }
             }
             else if (x < 0)
             {
-                var img = RenderToBitmapSource(PicPath);
-                if (img != null)
-                {
-                    Pic(PicPath);
-                    return true;
-                }
-
+                await Task.Run(() => pic = RenderToBitmapSource(Pics[FolderIndex]));
+                if (pic != null)
+                    return pic;
                 else
                 {
-                    Pics = FileList(Path.GetDirectoryName(PicPath));
-                    Pics.Remove(PicPath);
+                    Pics = FileList(Path.GetDirectoryName(Pics[FolderIndex]));
+                    Pics.Remove(Pics[FolderIndex]);
                     x--;
 
                     if (x < 0)
                     {
                         Unload();
-                        return false;
+                        return null;
                     }
                 }
             }
@@ -81,20 +83,17 @@ namespace PicView
             {
                 ToolTipStyle("Unexpected error", true, TimeSpan.FromSeconds(3));
                 Unload();
-                return false;
+                return null;
             }
 
             // Retry if exists, fixes rare error
             if (File.Exists(file))
             {
-                //Preloader.Add(file);
-                BitmapSource pic = Preloader.Load(file);
+                await Task.Run(() => pic = RenderToBitmapSource(file));
                 if (pic != null)
-                {
-                    Pic(file);
-                    return true;
-                }
-                return false;
+                    return pic;
+
+                return null;
             }
 
             // Continue to remove file if can't be rendered
@@ -105,7 +104,8 @@ namespace PicView
             {
                 ToolTipStyle("No images in folder", true, TimeSpan.FromSeconds(3));
                 Unload();
-                return false;
+
+                return null;
             }
 
             // Go to next image
@@ -120,8 +120,8 @@ namespace PicView
             AjaxLoadingEnd();
 
             // Repeat process if the next image was not found
-            PicErrorFix(FolderIndex);
-            return false;
+            await PicErrorFix(FolderIndex);
+            return null;
         }
 
 
@@ -129,8 +129,18 @@ namespace PicView
         /// <summary>
         /// Clears data, to free objects no longer necessary to store in memory and allow changing folder without error.
         /// </summary>
-        internal static void ChangeFolder()
+        internal static void ChangeFolder(bool backup = false)
         {
+            if (backup)
+            {
+                // Make a backup of xPicPath and FolderIndex
+                if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]))
+                    xPicPath = Pics[FolderIndex];
+
+                if (FolderIndex > -1)
+                    xFolderIndex = FolderIndex;
+            }
+
             Pics.Clear();
             Preloader.Clear();
             DeleteTempFiles();
@@ -152,12 +162,20 @@ namespace PicView
                 return;
             }
 
-            var x = fromBackup ? xPicPath : PicPath;
+            var x = fromBackup ? xPicPath : Pics[FolderIndex];
 
             if (File.Exists(x))
             {
                 // Force reloading values by setting freshStartup to true
                 freshStartup = true;
+
+                // Clear Preloader, to avoid errors by FolderIndex changing location because of re-sorting
+                Preloader.Clear();
+
+                // Need a sort method instead
+                PicGalleryLogic.Clear();
+                PicGalleryLoad.Load();
+
                 Pic(x);
 
                 // Reset
@@ -189,7 +207,6 @@ namespace PicView
                 Pics.Clear();
             PreloadCount = 0;
             Preloader.Clear();
-            PicPath = string.Empty;
             FolderIndex = 0;
             mainWindow.img.Width = mainWindow.Scroller.Width = mainWindow.Scroller.Height =
             mainWindow.img.Height = double.NaN;

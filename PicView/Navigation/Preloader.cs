@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using static PicView.Fields;
@@ -100,14 +98,11 @@ namespace PicView.PreLoading
             else
             {
                 Pics.Remove(Pics[i]);
+                IsLoading = false;
 #if DEBUG
                 Trace.WriteLine("Preloader removed = " + Pics[i] + " from Pics, index " + i);
 #endif
-                IsLoading = false;
             }
-           
-
-            
         }
 
         internal static void Add(BitmapSource bmp, string key)
@@ -120,7 +115,15 @@ namespace PicView.PreLoading
                 return;
             if (!bmp.IsFrozen)
                 bmp.Freeze();
+#if DEBUG
+            if (Sources.TryAdd(key, bmp))
+                Trace.WriteLine("Manually added = " + key + " to Preloader, index " + Pics.IndexOf(key));
+            else
+                Trace.WriteLine("Preloader failed to add = " + key + " , index " + Pics.IndexOf(key));
+#else
             Sources.TryAdd(key, bmp);
+#endif
+
         }
 
         /// <summary>
@@ -135,11 +138,15 @@ namespace PicView.PreLoading
                 return;
 
             _ = Sources[key];
-            Sources.TryRemove(key, out _);
-
 #if DEBUG
-            Trace.WriteLine("Removed = " + key + " from Preloader, index " + Pics.IndexOf(key));
+            if (Sources.TryRemove(key, out _))
+                Trace.WriteLine("Removed = " + key + " from Preloader, index " + Pics.IndexOf(key));
+            else
+                Trace.WriteLine("Failed to Remove = " + key + " from Preloader, index " + Pics.IndexOf(key));
+#else
+            Sources.TryRemove(key, out _);
 #endif
+            //GC.Collect(); // Need to force this, else too high memory usage?
         }
 
         /// <summary>
@@ -183,9 +190,7 @@ namespace PicView.PreLoading
         {
             for (int i = 0; i < array.Length; i++)
             {
-                Remove(array[i]);
-                GC.Collect();
-
+                Remove(array[i]);               
 #if DEBUG
                 Trace.WriteLine("Removed = " + array[i] + " from Preloader");
 #endif
@@ -239,7 +244,6 @@ namespace PicView.PreLoading
                 var toLoad = 5;
                 var extraToLoad = 3;
                 var cleanUp = toLoad + extraToLoad;
-
 
                 // Not looping
                 if (!Properties.Settings.Default.Looping)
@@ -374,9 +378,16 @@ namespace PicView.PreLoading
                 IsLoading = false; // Fixes loading erros
 
                 // Update Pics if needed
-                var tmp = FileList(Path.GetDirectoryName(PicPath));
+                var tmp = FileList(Path.GetDirectoryName(Pics[index]));
                 if (tmp.Count != Pics.Count)
+                {
                     Pics = tmp;
+                    PreloadCount = 4; // Prevent possible loading errors
+#if DEBUG
+                    Trace.WriteLine("Preloader changed Pics filelist.");
+#endif
+                }
+
             });
         }
     }

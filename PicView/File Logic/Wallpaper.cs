@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32;
-using PicView.Native;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -31,13 +30,15 @@ namespace PicView
                     {
                         Task.Run(() => SetDesktopWallpaper(path, style));
                     }
+#if DEBUG
                     catch (Exception e)
                     {
-#if DEBUG
                         Trace.WriteLine("Wallpaper exception \n" + e.Message);
-#endif
-                        return;
+                    return;
                     }
+#else
+                    catch (Exception) { return; }
+#endif
                 }
             }
             else
@@ -57,13 +58,15 @@ namespace PicView
                         var timer = new Timer(2000);
                         timer.Elapsed += (s, x) => Directory.Delete(tempPath);
                     }
+#if DEBUG
                     catch (Exception e)
                     {
-#if DEBUG
                         Trace.WriteLine("Wallpaper download exception \n" + e.Message);
-#endif
-                        return;
+                    return;
                     }
+#else
+                    catch (Exception) { return; }
+#endif
                 });
             }
         }

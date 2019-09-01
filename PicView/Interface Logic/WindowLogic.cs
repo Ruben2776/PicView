@@ -30,10 +30,13 @@ namespace PicView
                 if (value)
                 {
                     mainWindow.SizeToContent = SizeToContent.WidthAndHeight;
-                    mainWindow.ResizeMode = ResizeMode.NoResize;
+                    mainWindow.ResizeMode = ResizeMode.CanMinimize;
 
                     if (quickSettingsMenu != null)
+                    {
                         quickSettingsMenu.SetFit.IsChecked = true;
+                        quickSettingsMenu.SetCenter.IsChecked = false;
+                    }
 
                     mainWindow.WindowState = WindowState.Normal;
 
@@ -44,11 +47,14 @@ namespace PicView
                     mainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
 
                     if (quickSettingsMenu != null)
+                    {
                         quickSettingsMenu.SetCenter.IsChecked = true;
+                        quickSettingsMenu.SetFit.IsChecked = false;
+                    }
                 }
 
-                if (mainWindow.img.Source != null)
-                    ZoomFit(mainWindow.img.Source.Width, mainWindow.img.Source.Height);
+                // Resize it
+                TryZoomFit();
             }
         }
 
@@ -143,19 +149,17 @@ namespace PicView
         {
             if (startup || !Properties.Settings.Default.Fullscreen)
             {
+                if (!FitToWindow)
+                    Properties.Settings.Default.Save();
+
                 Properties.Settings.Default.Fullscreen = true;
                 // Update new setting and sizing
                 //FitToWindow = false;
 
-                HideInterface(false, false);
+                ShowTopandBottom(false);
+                ShowNavigation(false);
 
-                mainWindow.TitleBar.Visibility =
-                mainWindow.LowerBar.Visibility =
-                mainWindow.LeftBorderRectangle.Visibility =
-                mainWindow.RightBorderRectangle.Visibility = Visibility.Collapsed;
-
-
-                mainWindow.ResizeMode = ResizeMode.NoResize;
+                mainWindow.ResizeMode = ResizeMode.CanMinimize;
                 mainWindow.SizeToContent = SizeToContent.Manual;
                 mainWindow.Width = mainWindow.bg.Width = SystemParameters.PrimaryScreenWidth + 2;
                 mainWindow.Height = SystemParameters.PrimaryScreenHeight + 2;
@@ -165,19 +169,45 @@ namespace PicView
 
                 mainWindow.Topmost = true;
 
-
-
                 RemoveBorderColor();
             }
             else
             {
+                if (FitToWindow)
+                {
+                    mainWindow.SizeToContent = SizeToContent.WidthAndHeight;
+                    mainWindow.ResizeMode = ResizeMode.NoResize;
+
+                    if (quickSettingsMenu != null)
+                        quickSettingsMenu.SetFit.IsChecked = true;
+
+                    mainWindow.WindowState = WindowState.Normal;
+
+                    mainWindow.Width = mainWindow.bg.Width = double.NaN;
+                    mainWindow.Height = mainWindow.bg.Height = double.NaN;
+                }
+                else
+                {
+                    mainWindow.SizeToContent = SizeToContent.Manual;
+                    mainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
+
+                    if (quickSettingsMenu != null)
+                        quickSettingsMenu.SetCenter.IsChecked = true;
+
+                    mainWindow.Top = Properties.Settings.Default.Top;
+                    mainWindow.Left = Properties.Settings.Default.Left;
+                    mainWindow.Height = Properties.Settings.Default.Height;
+                    mainWindow.Width = Properties.Settings.Default.Width;
+
+                    mainWindow.bg.Width = double.NaN;
+                    mainWindow.bg.Height = double.NaN;
+                }
+
                 Properties.Settings.Default.Fullscreen = false;
-                FitToWindow = FitToWindow; // Just run it...
 
-                HideInterface();
+                if (!Properties.Settings.Default.ShowInterface)
+                    ToggleInterface();
 
-                mainWindow.Width = mainWindow.bg.Width = double.NaN;
-                mainWindow.Height = mainWindow.bg.Height = double.NaN;
                 mainWindow.Topmost = false;
                 UpdateColor(); // Regain border
             }
