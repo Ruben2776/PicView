@@ -16,7 +16,8 @@
     </WindowChrome.WindowChrome>
     <Grid
         x:Name="grid"
-        Background="#72000000"
+        Background="#A4000000"
         FocusVisualStyle="{x:Null}"
-        Focusable="False" />
+        Focusable="False" >
+    </Grid>
 </Window>

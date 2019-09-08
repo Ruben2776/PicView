@@ -241,8 +241,11 @@ namespace PicView.PreLoading
 
             return Task.Run(() =>
             {
-                var toLoad = 5;
-                var extraToLoad = 3;
+                /// TODO Make Preloading amount a user preference
+                /// Maybe?
+
+                var toLoad = 10;
+                var extraToLoad = toLoad / 2; // Maybe get a third instead?
                 var cleanUp = toLoad + extraToLoad;
 
                 // Not looping
@@ -251,14 +254,14 @@ namespace PicView.PreLoading
                     // Forwards
                     if (!reverse)
                     {
-                        // Add 5 elements
+                        // Add first elements
                         for (int i = index + 1; i < (index + 1) + toLoad; i++)
                         {
                             if (i > Pics.Count)
                                 break;
                             Add(i);
                         }
-                        // Add 3 elements behind
+                        // Add second elements behind
                         for (int i = index - 1; i > (index - 1) - extraToLoad; i--)
                         {
                             if (i < 0)
@@ -267,9 +270,9 @@ namespace PicView.PreLoading
                         }
 
                         //Clean up behind
-                        if (Pics.Count > cleanUp + toLoad && !freshStartup)
+                        if (Pics.Count > cleanUp * 2 && !freshStartup)
                         {
-                            for (int i = (index - 1) - cleanUp; i < ((index - 1) - cleanUp) + (extraToLoad - 1); i++)
+                            for (int i = (index - 1) - cleanUp; i < ((index - 1) - extraToLoad); i++)
                             {
                                 if (i < 0)
                                     continue;
@@ -283,14 +286,14 @@ namespace PicView.PreLoading
                     // Backwards
                     else
                     {
-                        // Add 5 elements behind
+                        // Add first elements behind
                         for (int i = index - 1; i > (index - 1) - toLoad; i--)
                         {
                             if (i < 0)
                                 break;
                             Add(i);
                         }
-                        // Add 3 elements
+                        // Add second elements
                         for (int i = index + 1; i <= (index + 1) + toLoad; i++)
                         {
                             if (i > Pics.Count)
@@ -299,7 +302,7 @@ namespace PicView.PreLoading
                         }
 
                         //Clean up infront
-                        if (Pics.Count > cleanUp + toLoad && !freshStartup)
+                        if (Pics.Count > cleanUp * 2 && !freshStartup)
                         {
                             for (int i = (index + 1) + cleanUp; i > ((index + 1) + cleanUp) - extraToLoad; i--)
                             {
@@ -319,21 +322,21 @@ namespace PicView.PreLoading
                     // Forwards
                     if (!reverse)
                     {
-                        // Add 5 elements
+                        // Add first elements
                         for (int i = index + 1; i < (index + 1) + toLoad; i++)
                         {
                             Add(i % Pics.Count);
                         }
-                        // Add 3 elements behind
+                        // Add second elements behind
                         for (int i = index - 1; i > (index - 1) - extraToLoad; i--)
                         {
                             Add(i % Pics.Count);
                         }
 
                         //Clean up behind
-                        if (Pics.Count > cleanUp + toLoad && !freshStartup)
+                        if (Pics.Count > cleanUp * 2 && !freshStartup)
                         {
-                            for (int i = (index - 1) - cleanUp; i < ((index - 1) - cleanUp) + (extraToLoad - 1); i++)
+                            for (int i = (index - 1) - cleanUp; i < ((index - 1) - extraToLoad); i++)
                             {
                                 Remove(i % Pics.Count);
                             }
@@ -342,7 +345,7 @@ namespace PicView.PreLoading
                     // Backwards
                     else
                     {
-                        // Add 5 elements behind
+                        // Add first elements behind
                         int y = 0;
                         for (int i = index - 1; i > (index - 1) - toLoad; i--)
                         {
@@ -358,7 +361,7 @@ namespace PicView.PreLoading
                             Add(i);
                         }
 
-                        // Add 3 elements
+                        // Add second elements
                         for (int i = index + 1; i <= (index + 1) + toLoad; i++)
                         {
                             Add(i % Pics.Count);
@@ -387,6 +390,10 @@ namespace PicView.PreLoading
                     Trace.WriteLine("Preloader changed Pics filelist.");
 #endif
                 }
+
+//#if DEBUG
+//                Trace.WriteLine(nameof(PreloadCount) + " = " + PreloadCount);
+//#endif
 
             });
         }

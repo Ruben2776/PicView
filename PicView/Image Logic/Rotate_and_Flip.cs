@@ -12,9 +12,8 @@ namespace PicView
         internal static void Rotate(int r)
         {
             if (mainWindow.img.Source == null)
-            {
                 return;
-            }
+
             var rt = new RotateTransform { Angle = Rotateint = r };
 
             // If it's flipped, keep it flipped when rotating
@@ -63,6 +62,8 @@ namespace PicView
                     imageSettingsMenu.Rotation0Button.IsChecked = true;
                     break;
             }
+
+            // TODO Make a way to respect monitor height at 90 and 270 degrees
         }
 
         /// <summary>
@@ -72,9 +73,7 @@ namespace PicView
         internal static void Rotate(bool right)
         {
             if (mainWindow.img.Source == null || PicGalleryLogic.IsOpen)
-            {
                 return;
-            }
 
             switch (Rotateint)
             {
@@ -114,9 +113,7 @@ namespace PicView
         internal static void Flip()
         {
             if (mainWindow.img.Source == null)
-            {
                 return;
-            }
 
             var rt = new RotateTransform();
             var flip = new ScaleTransform();

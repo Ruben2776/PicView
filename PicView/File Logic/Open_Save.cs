@@ -43,16 +43,17 @@ namespace PicView
         /// </summary>
         internal static void Open()
         {
+            dialogOpen = true;
+
             var dlg = new Microsoft.Win32.OpenFileDialog()
             {
                 Filter = FilterFiles,
                 Title = "Open image - PicView"
             };
-            if (dlg.ShowDialog() == true)
-            {
+            if (dlg.ShowDialog().Value)
                 Pic(dlg.FileName);
-            }
-            else return;
+            else
+                return;
 
             Close_UserControls();
         }
@@ -62,6 +63,8 @@ namespace PicView
         /// </summary>
         internal static void SaveFiles()
         {
+            dialogOpen = true;
+
             var Savedlg = new Microsoft.Win32.SaveFileDialog()
             {
                 Filter = FilterFiles,
@@ -82,6 +85,7 @@ namespace PicView
                 Reload();
 
                 Close_UserControls();
+                dialogOpen = false;
             }
         }
     }

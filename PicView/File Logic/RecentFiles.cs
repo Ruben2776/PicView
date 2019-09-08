@@ -126,8 +126,9 @@ namespace PicView
             if (fileNames == null)
                 return;
 
-            // Update old values
-            // If items exist: replace them, else add them
+            /// Update old values
+            /// If items exist: replace them, else add them
+            /// TODO Improve how this is handled and make it more user friendly
             if (RecentFilesMenuItem.Items.Count >= fileNames.Length)
             {
                 for (int i = fileNames.Length - 1; i >= 0; i--)

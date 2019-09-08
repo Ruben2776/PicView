@@ -47,6 +47,7 @@ namespace PicView
 
         //internal static void Sort()
         //{
+        //    // TODO Get PicGallery sorting working
         //    var items = picGallery.Container.Children.Cast<PicGalleryItem>();
         //    switch (Properties.Settings.Default.SortPreference)
         //    {

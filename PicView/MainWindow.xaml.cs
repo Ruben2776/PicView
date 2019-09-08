@@ -305,17 +305,22 @@ namespace PicView
                 clickArrowLeftClicked = true;
                 Pic(false, false);
             };
+            clickArrowLeft.MouseEnter += Interface_MouseEnter_Negative;
+
             clickArrowRight.MouseLeftButtonUp += (s, x) =>
             {
                 clickArrowRightClicked = true;
                 Pic();
             };
+            clickArrowRight.MouseEnter += Interface_MouseEnter_Negative;
 
             // x2
             x2.MouseLeftButtonUp += (x, xx) => Close();
+            x2.MouseEnter += Interface_MouseEnter_Negative;
 
             // Minus
             minus.MouseLeftButtonUp += (s, x) => SystemCommands.MinimizeWindow(this);
+            minus.MouseEnter += Interface_MouseEnter_Negative;
 
             // Bar
             Bar.MouseLeftButtonDown += Move;
@@ -331,6 +336,9 @@ namespace PicView
             bg.Drop += Image_Drop;
             bg.DragEnter += Image_DragEnter;
             bg.DragLeave += Image_DragLeave;
+            bg.MouseEnter += Interface_MouseEnter;
+            bg.MouseMove += Interface_MouseMove;
+            bg.MouseLeave += Interface_MouseLeave;
 
             // TooltipStyle
             sexyToolTip.MouseWheel += Zoom_img_MouseWheel;
@@ -349,10 +357,15 @@ namespace PicView
 
             // This
             Closing += Window_Closing;
-            MouseEnter += MainWindow_MouseEnter;
-            MouseMove += MainWindow_MouseMove;
-            MouseLeave += MainWindow_MouseLeave;
             StateChanged += MainWindow_StateChanged;
+            //Activated += delegate
+            //{
+            //    if (Properties.Settings.Default.PicGallery == 2)
+            //    {
+            //        fake.Focus();
+            //        Focus();
+            //    }
+            //};
 
             //LocationChanged += MainWindow_LocationChanged;
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
@@ -368,15 +381,14 @@ namespace PicView
         {
             switch (WindowState)
             {
-                case WindowState.Normal:
-                    //FitToWindow = FitToWindow ? false : true;
-                    break;
-                case WindowState.Minimized:
-                    break;
+                //case WindowState.Normal:
+                //    if (Properties.Settings.Default.PicGallery == 2)
+                //        fake.Show();
+                //    break;
+                //case WindowState.Minimized:
+                //    break;
                 case WindowState.Maximized:
                     FitToWindow = false;
-                    break;
-                default:
                     break;
             }
         }
@@ -391,7 +403,7 @@ namespace PicView
 
         //private void MainWindow_LocationChanged(object sender, EventArgs e)
         //{
-        //    // Need to figure out a way to handle user dragging app to a monitor, with different resolution.
+        //    // TODO Need to figure out a way to handle user dragging app to a monitor, with different resolution.
 
         //    //MonitorInfo = MonitorSize.GetMonitorSize();
         //    //ZoomFit(img.Width, img.Height);

@@ -2,6 +2,7 @@
 using System.Text;
 using static PicView.Fields;
 using static PicView.FileFunctions;
+
 namespace PicView
 {
     internal static class SetTitle

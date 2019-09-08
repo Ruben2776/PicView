@@ -274,7 +274,7 @@ namespace PicView
             //settingscmLoop.Icon = settingscmLoopIcon;
             settingscmLoop.Click += (s, x) => { Configs.SetLooping(s, x); settingscmLoopHeader.IsChecked = (bool)settingscmLoopHeader.IsChecked ? false : true; };
             settingscm.Items.Add(settingscmLoop);
-            
+        
 
 
             ///////////////////////////
@@ -399,9 +399,11 @@ namespace PicView
                 Header = "Cut picture",
                 InputGestureText = "Ctrl + X"
             };
-            var cpccmIcon = new System.Windows.Shapes.Path();
-            cpccmIcon.Data = Geometry.Parse(SVGiconScissor);
-            cpccmIcon.Stretch = Stretch.Fill;
+            var cpccmIcon = new System.Windows.Shapes.Path
+            {
+                Data = Geometry.Parse(SVGiconScissor),
+                Stretch = Stretch.Fill
+            };
             cpccmIcon.Width = cpccmIcon.Height = 12;
             cpccmIcon.Fill = scbf;
             cpccm.Icon = cpccmIcon;
@@ -418,11 +420,14 @@ namespace PicView
                 Header = "Paste picture",
                 InputGestureText = "Ctrl + V"
             };
-            var pastecmIcon = new System.Windows.Shapes.Path();
-            pastecmIcon.Data = Geometry.Parse("M768 1664h896v-640h-416q-40 0-68-28t-28-68v-416h-384v1152zm256-1440v-64q0-13-9.5-22.5t-22.5-9.5h-704q-13 0-22.5 9.5t-9.5 22.5v64q0 13 9.5 22.5t22.5 9.5h704q13 0 22.5-9.5t9.5-22.5zm256 672h299l-299-299v299zm512 128v672q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-544q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h1088q40 0 68 28t28 68v328q21 13 36 28l408 408q28 28 48 76t20 88z");
-            pastecmIcon.Stretch = Stretch.Fill;
-            pastecmIcon.Width = pastecmIcon.Height = 12;
-            pastecmIcon.Fill = scbf;
+            var pastecmIcon = new System.Windows.Shapes.Path
+            {
+                Data = Geometry.Parse(SVGiconPaste),
+                Stretch = Stretch.Fill,
+                Width = 12,
+                Height = 12,
+                Fill = scbf
+            };
             pastecm.Icon = pastecmIcon;
             pastecm.Click += (s, x) => Paste();
             cm.Items.Add(pastecm);
@@ -437,11 +442,14 @@ namespace PicView
                 Header = "Delete picture",
                 InputGestureText = "Delete"
             };
-            var MovetoRecycleBinIcon = new System.Windows.Shapes.Path();
-            MovetoRecycleBinIcon.Data = Geometry.Parse("M836 1169l-15 368-2 22-420-29q-36-3-67-31.5t-47-65.5q-11-27-14.5-55t4-65 12-55 21.5-64 19-53q78 12 509 28zm-387-586l180 379-147-92q-63 72-111.5 144.5t-72.5 125-39.5 94.5-18.5 63l-4 21-190-357q-17-26-18-56t6-47l8-18q35-63 114-188l-140-86zm1231 517l-188 359q-12 29-36.5 46.5t-43.5 20.5l-18 4q-71 7-219 12l8 164-230-367 211-362 7 173q170 16 283 5t170-33zm-785-924q-47 63-265 435l-317-187-19-12 225-356q20-31 60-45t80-10q24 2 48.5 12t42 21 41.5 33 36 34.5 36 39.5 32 35zm655 307l212 363q18 37 12.5 76t-27.5 74q-13 20-33 37t-38 28-48.5 22-47 16-51.5 14-46 12q-34-72-265-436l313-195zm-143-226l142-83-220 373-419-20 151-86q-34-89-75-166t-75.5-123.5-64.5-80-47-46.5l-17-13 405 1q31-3 58 10.5t39 28.5l11 15q39 61 112 190z");
-            MovetoRecycleBinIcon.Stretch = Stretch.Fill;
-            MovetoRecycleBinIcon.Width = MovetoRecycleBinIcon.Height = 12;
-            MovetoRecycleBinIcon.Fill = scbf;
+            var MovetoRecycleBinIcon = new System.Windows.Shapes.Path
+            {
+                Data = Geometry.Parse(SVGiconRecycle),
+                Stretch = Stretch.Fill,
+                Width = 12,
+                Height = 12,
+                Fill = scbf
+            };
             MovetoRecycleBin.Icon = MovetoRecycleBinIcon;
             MovetoRecycleBin.Click += (s, x) => DeleteFile(Pics[FolderIndex], true);
             cm.Items.Add(MovetoRecycleBin);
@@ -459,11 +467,14 @@ namespace PicView
                 InputGestureText = "Esc",
                 StaysOpenOnClick = false
             };
-            var mclcmIcon = new System.Windows.Shapes.Path();
-            mclcmIcon.Data = Geometry.Parse("M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z");
-            mclcmIcon.Stretch = Stretch.Fill;
-            mclcmIcon.Width = mclcmIcon.Height = 12;
-            mclcmIcon.Fill = scbf;
+            var mclcmIcon = new System.Windows.Shapes.Path
+            {
+                Data = Geometry.Parse(SVGiconClose),
+                Stretch = Stretch.Fill,
+                Width = 12,
+                Height = 12,
+                Fill = scbf
+            };
             clcm.Icon = mclcmIcon;
             clcm.Click += (s, x) => { cm.Visibility = Visibility.Collapsed; SystemCommands.CloseWindow(mainWindow); };
             cm.Items.Add(clcm);

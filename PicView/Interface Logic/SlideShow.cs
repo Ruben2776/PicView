@@ -12,6 +12,8 @@ namespace PicView
 {
     internal static class SlideShow
     {
+        // TODO Slideshow needs a rework
+
         /// <summary>
         /// Maximize and removes Interface and start timer for slideshow.
         /// </summary>

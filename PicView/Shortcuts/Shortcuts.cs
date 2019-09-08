@@ -50,13 +50,7 @@ namespace PicView
                     }
                     else if (canNavigate)
                     {
-                        if (FolderIndex == Pics.Count - 1)
-                            FolderIndex = 0;
-                        else
-                            FolderIndex++;
-
-                        //fastPicTimer.Start();
-                        FastPic();
+                        FastPic(true);
                     }
                     return;
 
@@ -82,13 +76,7 @@ namespace PicView
                     }
                     else if (canNavigate)
                     {
-                        if (FolderIndex == 0)
-                            FolderIndex = Pics.Count - 1;
-                        else
-                            FolderIndex--;
-
-                        //fastPicTimer.Start();
-                        FastPic();
+                        FastPic(false);
                     }
                     return;
 
@@ -210,23 +198,32 @@ namespace PicView
                     if (UserControls_Open())
                     {
                         Close_UserControls();
+                        return;
                     }
-                    else if (SlideshowActive)
+                    if (SlideshowActive)
                     {
                         UnloadSlideshow();
+                        return;
                     }
-                    else if (Properties.Settings.Default.Fullscreen)
+                    if (Properties.Settings.Default.Fullscreen)
                     {
                         Fullscreen_Restore();
+                        return;
                     }
-                    else if (Properties.Settings.Default.PicGallery > 0)
+                    if (Properties.Settings.Default.PicGallery > 0)
                     {
                         if (PicGalleryLogic.IsOpen)
+                        { 
                             ToggleGallery();
-                        else if (!cm.IsVisible)
-                            SystemCommands.CloseWindow(mainWindow);
+                            return;
+                        }
                     }
-                    else if (!cm.IsVisible)
+                    if (dialogOpen)
+                    {
+                        dialogOpen = false;
+                        return;
+                    }
+                    if (!cm.IsVisible)
                     {
                         SystemCommands.CloseWindow(mainWindow);
                     }
@@ -396,9 +393,6 @@ namespace PicView
 
                 case MouseButton.XButton2:
                     Pic();
-                    break;
-
-                default:
                     break;
             }
         }

@@ -14,13 +14,14 @@ namespace PicView
     {
         internal const string AppName = "PicView";
         internal const string Loading = "Loading...";
-        internal const string TxtCopy = "Filename copied to Clipboard";
-        internal const string FileCopy = "File copied to Clipboard";
-        internal const string ImageCopy = "Image copied to Clipboard";
+        internal const string TxtCopy = "Filename added to clipboard";
+        internal const string FileCopy = "File added to clipboard";
+        internal const string ImageCopy = "Image added to clipboard";
+        internal const string ImageCut = "Image added to move clipboard";
         internal const string ExpFind = "Locating in file explorer";
         internal const string NoImage = "No image loaded";        
 
-        internal const string SupportedFiles =
+        internal const string SupportedFilesFilter =
         " *.jpg *.jpeg *.jpe *.png *.bmp *.tif *.tiff *.gif *.ico *.wdp *.svg *.psd *.psb *.orf *.cr2 *.crw *.dng *.raf *.raw *.mrw *.nef *.x3f *.arw *.webp *"
         + ".aai *.ai *.art *.bgra *.bgro *.canvas *.cin *.cmyk *.cmyka *.cur *.cut *.dcm *.dcr *.dcx *.dds *.dfont *.dlib *.dpx *.dxt1 *.dxt5 *.emf *.epi *.eps *.ept"
         + " *.ept2 *.ept3 *.exr *.fax *.fits *.flif *.g3 *.g4 *.gif87 *.gradient *.gray *.group4 *.hald *.hdr *.hrz *.icb *.icon *.ipl *.jc2 *.j2k *.jng *.jnx"
@@ -29,7 +30,10 @@ namespace PicView
         + " *.svgz *.tiff64 *.ttf *.vda *.vicar *.vid *.viff *.vst *.vmf *.wpg *.xbm *.xcf *.yuv";
 
 
-        // May need update to display all files
+        /// <summary>
+        ///  Files filterering string used for file/save dialog
+        ///  TODO update for and check file support
+        /// </summary>
         internal const string FilterFiles =
             "All Supported files|*.bmp;*.jpg;*.png;*.tif;*.gif;*.ico;*.jpeg;*.wdp;*.psd;*.psb;*.cbr;*.cb7;*.cbt;"
             + "*.cbz;*.xz;*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;*.webp;"
@@ -49,6 +53,9 @@ namespace PicView
             + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz"                                                        // Comics
             + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw";      // Camera files
 
+        /// <summary>
+        /// The Main Window?
+        /// </summary>
         internal static MainWindow mainWindow = ((MainWindow)Application.Current.MainWindow);
 
         ///// <summary>
@@ -98,7 +105,7 @@ namespace PicView
             var x = (width / gcd);
             var y = (height / gcd);
 
-            if (x == width && y == height || x > 99)
+            if (x == width && y == height || x > 16 || y > 9)
                 return ") ";
 
             return ", " + x + ":" + y + ") ";
@@ -110,7 +117,7 @@ namespace PicView
         internal static bool fileMenuOpen;
         internal static bool quickSettingsMenuOpen;
         internal static bool functionsMenuOpen;
-        //internal static bool FastPicRunning;
+        internal static bool FastPicRunning;
         internal static bool isZoomed;
         internal static bool Flipped;
         internal static bool canNavigate;
@@ -121,12 +128,13 @@ namespace PicView
         internal static bool clickArrowLeftClicked;
         internal static bool SlideshowActive;
         internal static bool reverse;
-        //internal static bool dialogOpen;
+        internal static bool dialogOpen;
 
         /// <summary>
-        /// Used as comfortable space for standard viewing
+        /// Used to prevent overlapping in PicGallery 2
+        /// and as a comfortable space for standard viewing
         /// </summary>
-        internal const int ComfySpace = 350;
+        internal const int ComfySpace = 520;
 
         /// <summary>
         /// Backup of Width data
@@ -143,16 +151,13 @@ namespace PicView
         /// </summary>
         internal static int FolderIndex { get; set; }
 
-        /// <summary>
-        /// Backup of FolderIndex
-        /// </summary>
-        internal static int xFolderIndex;
+        ///// <summary>
+        ///// Backup of FolderIndex
+        ///// </summary>
+        //internal static int xFolderIndex;
 
         /// <summary>
         /// Counter used to check if preloading is neccesary.
-        /// If 0, not neccesary.
-        /// If higher than 0, Preload forwards.
-        /// If less than 0, Preload backwards.
         /// </summary>
         internal static int PreloadCount { get; set; }
 

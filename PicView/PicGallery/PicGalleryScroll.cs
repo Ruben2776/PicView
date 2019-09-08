@@ -5,22 +5,23 @@ using static PicView.Fields;
 
 namespace PicView
 {
+    // TODO Get scrolling calculation working for PicGallery 2
+
     internal static class PicGalleryScroll
     {
         internal const int picGalleryItem_Size = 230;
         internal const int picGalleryItem_Size_s = 200;
 
-        public static int Horizontal_items
+        static int Horizontal_items
         {
             get
             {
                 if (picGallery == null) return 0;
                 return (int)Math.Floor(picGallery.Width / picGalleryItem_Size);
             }
-            set { }
         }
 
-        public static int Vertical_items
+        static int Vertical_items
         {
             get
             {
@@ -29,10 +30,9 @@ namespace PicView
                     (int)Math.Floor(picGallery.Height / picGalleryItem_Size) :
                     Pics.Count;
             }
-            set { }
         }
 
-        public static int Items_per_page
+        static int Items_per_page
         {
             get
             {
@@ -41,26 +41,23 @@ namespace PicView
                     Horizontal_items * Vertical_items :
                     (int)Math.Floor(picGallery.Height / picGalleryItem_Size);
             }
-            set { }
         }
 
-        public static int Current_page
+        static int Current_page
         {
             get
             {
                 return (int)Math.Floor((double)FolderIndex / Items_per_page);
             }
-            set { }
         }
 
-        public static int Total_pages
-        {
-            get
-            {
-                return (int)Math.Floor((double)Pics.Count / Items_per_page);
-            }
-            set { }
-        }
+       //static int Total_pages
+       // {
+       //     get
+       //     {
+       //         return (int)Math.Floor((double)Pics.Count / Items_per_page);
+       //     }
+       // }
 
         /// <summary>
         /// Scrolls to center of current item

@@ -1,7 +1,5 @@
-﻿using PicView.PreLoading;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using static PicView.FadeControls;
 using static PicView.Fields;
 using static PicView.Resize_and_Zoom;
@@ -93,10 +91,22 @@ namespace PicView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static void MainWindow_MouseEnter(object sender, MouseEventArgs e)
+        internal static void Interface_MouseEnter(object sender, MouseEventArgs e)
         {
-            // Start timer when mouse enters mainwindow
+            // Start timer when mouse enters
             activityTimer.Start();
+            //FadeControlsAsync(true);
+        }
+
+        /// <summary>
+        /// Logic for mouse enter mainwindow event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        internal static void Interface_MouseEnter_Negative(object sender, MouseEventArgs e)
+        {
+            // Start timer when mouse enters
+            activityTimer.Stop();
             //FadeControlsAsync(true);
         }
 
@@ -106,7 +116,7 @@ namespace PicView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static void MainWindow_MouseMove(object sender, MouseEventArgs e)
+        internal static void Interface_MouseMove(object sender, MouseEventArgs e)
         {
             ////If Mouse is hidden, show it and interface elements.
             //if (e.MouseDevice.OverrideCursor == Cursors.None)
@@ -136,7 +146,7 @@ namespace PicView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static void MainWindow_MouseLeave(object sender, MouseEventArgs e)
+        internal static void Interface_MouseLeave(object sender, MouseEventArgs e)
         {
             // Start timer when mouse leaves mainwindow
             //activityTimer.Start();

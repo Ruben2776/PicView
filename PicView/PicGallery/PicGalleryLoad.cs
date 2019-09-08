@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using PicView.UserControls;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.Fields;
@@ -6,7 +7,7 @@ using static PicView.HideInterfaceLogic;
 using static PicView.PicGalleryLogic;
 using static PicView.PicGalleryScroll;
 using static PicView.Thumbnails;
-
+using static PicView.WindowLogic;
 
 
 namespace PicView
@@ -15,15 +16,18 @@ namespace PicView
     {
         internal static void PicGallery_Loaded(object sender, RoutedEventArgs e)
         {
+            // Add events and set fields, when it's loaded.
             picGallery.Scroller.PreviewMouseWheel += ScrollTo;
             picGallery.Scroller.MouseDown += (s, x) => mainWindow.Focus();
             picGallery.grid.MouseLeftButtonDown += (s, x) => mainWindow.Focus();
+            picGallery.x2.MouseLeftButtonUp += delegate { PicGalleryToggle.ToggleGallery(); };
 
-             IsLoading = IsOpen = false;
+            IsLoading = IsOpen = false;
         }
 
         internal static void LoadLayout()
         {
+            // TODO Make this code more clean and explain what's going on?
             if (Properties.Settings.Default.PicGallery == 1)
             {
                 if (Properties.Settings.Default.ShowInterface)
@@ -52,8 +56,10 @@ namespace PicView
                 picGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
                 picGallery.x2.Visibility = Visibility.Collapsed;
                 picGallery.Container.Margin = new Thickness(0, 0, 0, 0);
-                ShowNavigation(true);
+                ShowNavigation(false);
                 ShowTopandBottom(false);
+                Helper.RemoveBorderColor();
+                FitToWindow = true;
             }
 
             picGallery.Visibility = Visibility.Visible;
@@ -66,14 +72,20 @@ namespace PicView
             IsLoading = true;
             return Task.Run(() =>
             {
+                /// TODO Maybe make this start at at folder index
+                /// and get it work with a real sorting method?
+
                 for (int i = 0; i < Pics.Count; i++)
                 {
                     var pic = GetBitmapSourceThumb(Pics[i]);
                     if (pic != null)
-                    { 
-                        pic.Freeze();
+                    {
+                        if (!pic.IsFrozen)
+                            pic.Freeze();
+
                         Add(pic, i);
                     }
+                    // TODO find a placeholder for null images?
                 }
                 IsLoading = false;
             });

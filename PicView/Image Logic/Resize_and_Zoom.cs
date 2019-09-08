@@ -307,6 +307,24 @@ namespace PicView
         }
 
         /// <summary>
+        /// Tries to call Zoomfit with specified path
+        /// </summary>
+        internal static void TryZoomFit(string source)
+        {
+            if (string.IsNullOrWhiteSpace(source))
+            {
+                ZoomFit(465, 515); // Numbers for min width and height for mainWindow
+                return;
+            }
+
+            var size = ImageDecoder.ImageSize(source);
+            if (size.HasValue)
+                ZoomFit(size.Value.Width, size.Value.Height);
+            else 
+                ZoomFit(465, 515);
+        }
+
+        /// <summary>
         /// Fits image size based on users screen resolution
         /// or window size
         /// </summary>
@@ -319,22 +337,22 @@ namespace PicView
 
             if (FitToWindow)
             {
-                // Get max width and height, based on user's screen
+                /// Get max width and height, based on user's screen
                 if (Properties.Settings.Default.ShowInterface)
                 {
                     maxWidth = Math.Min(MonitorInfo.Width - ComfySpace, width);
                     maxHeight = Math.Min((MonitorInfo.Height - interfaceHeight), height);
                 }
-                // - 2 for window border
+                /// - 2 for window border
                 else
                 {
-                    maxWidth = Math.Min(MonitorInfo.Width - 2, width - 2);
+                    maxWidth = Math.Min((MonitorInfo.Width - ComfySpace) - 2, width - 2);
                     maxHeight = Math.Min(MonitorInfo.Height - 2, height - 2);
                 }
             }       
             else
             {
-                // Get max width and height, based on window size
+                /// Get max width and height, based on window size
                 maxWidth = Math.Min(mainWindow.Width, width);
 
                 if (Properties.Settings.Default.ShowInterface)
@@ -347,24 +365,24 @@ namespace PicView
 
             if (IsScrollEnabled)
             {
-                // Calculate height based on width
+                /// Calculate height based on width
                 mainWindow.img.Width = maxWidth;
                 mainWindow.img.Height = maxWidth * height / width;
 
-                // Set mainWindow.Scroller height to aspect ratio calculation
+                /// Set mainWindow.Scroller height to aspect ratio calculation
                 mainWindow.Scroller.Height = (height * AspectRatio);
 
-                // Update values
+                /// Update values
                 xWidth = mainWindow.img.Width;
                 xHeight = mainWindow.Scroller.Height;
             }
             else
             {
-                // Reset mainWindow.Scroller's height to auto
+                /// Reset mainWindow.Scroller's height to auto
                 mainWindow.Scroller.Height = double.NaN;
 
-                // Fit image by aspect ratio calculation
-                // and update values
+                /// Fit image by aspect ratio calculation
+                /// and update values
                 mainWindow.img.Width = xWidth = (width * AspectRatio);
                 mainWindow.img.Height = xHeight = (height * AspectRatio);
             }

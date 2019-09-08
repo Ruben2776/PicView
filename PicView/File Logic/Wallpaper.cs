@@ -147,6 +147,9 @@ namespace PicView
 
             key.Close();
 
+            /// TODO Check if support for execotic file formats can be converted and
+            /// works for Windows supported standard images, such as PSD to jpg?
+
             // If the specified image file is neither .bmp nor .jpg, - or -
             // if the image is a .jpg file but the operating system is Windows Server 
             // 2003 or Windows XP/2000 that does not support .jpg as the desktop 

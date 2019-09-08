@@ -15,6 +15,9 @@ namespace PicView
     {
         internal static void ToggleGallery(bool change = false)
         {
+            /// TODO need to get this fixed when changing between them.
+            /// Is open variable stats true when it should be false, dunno why..
+
             /// Quit when not enabled
             if (Properties.Settings.Default.PicGallery == 0)
                 return;
@@ -109,10 +112,11 @@ namespace PicView
             da.From = 1;
             da.Completed += delegate
             {
-                if (IsOpen && Properties.Settings.Default.PicGallery == 1)
-                {
-                    picGallery.Visibility = Visibility.Collapsed;
-                }
+                //if (IsOpen && Properties.Settings.Default.PicGallery == 1)
+                //{
+                //    picGallery.Visibility = Visibility.Collapsed;
+                //}
+                picGallery.Visibility = Visibility.Collapsed;
             };
 
             picGallery.BeginAnimation(UIElement.OpacityProperty, da);
@@ -122,6 +126,11 @@ namespace PicView
         {
             IsOpen = false;
             fake.Hide();
+
+            Helper.UpdateColor();
+
+            if (!Properties.Settings.Default.ShowInterface)
+                HideInterfaceLogic.ShowNavigation(true);
 
             // Don't show it on next startup
             Properties.Settings.Default.PicGallery = 1;

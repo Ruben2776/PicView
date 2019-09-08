@@ -11,7 +11,7 @@
     Background="#99000000"
     Closing="Window_Closing"
     ContentRendered="Window_ContentRendered"
-    FontFamily="/PicView;component/Library/fonts/#TeX Gyre Heros"
+    FontFamily="/PicView;component/Library/fonts/#Aller"
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
@@ -147,20 +147,11 @@
                     Background="{StaticResource BackgroundColorBrushAlt}"
                     HorizontalScrollBarVisibility="Disabled"
                     VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="8,0,3,0">
+                    <StackPanel Margin="8,0,3,5">
+
                         <Label Margin="0,5,0,0" FontSize="16">Shortcuts:</Label>
-                        <Label Margin="0,2,0,2" FontSize="15" Content="Show windows:" />
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>F1</Bold>
-                                to show help window.</TextBlock>
-                        </BulletDecorator>
+
+                        <Label Margin="0,2,0,2" FontSize="15" Content="Main functions:" />
 
                         <BulletDecorator Margin="7,2">
                             <BulletDecorator.Bullet>
@@ -170,431 +161,468 @@
                                     Fill="{StaticResource MainColorBrush}" />
                             </BulletDecorator.Bullet>
                             <TextBlock Margin="5,0,0,0">
-                                <Bold>F2</Bold>
-                                to show about window.</TextBlock>
-                        </BulletDecorator>
+                                <Bold>Alt + Z</Bold> show/hide interface.</TextBlock>
+                            </BulletDecorator>
 
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Esc</Bold>
-                                to close window.</TextBlock>
-                        </BulletDecorator>
+                            <BulletDecorator Margin="7,2">
+                                <BulletDecorator.Bullet>
+                                    <Ellipse
+                                        Width="7"
+                                        Height="7"
+                                        Fill="{StaticResource MainColorBrush}" />
+                                </BulletDecorator.Bullet>
+                                <TextBlock Margin="5,0,0,0">
+                                    <Bold>X</Bold> toggle scroll</TextBlock>
+                                </BulletDecorator>
 
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Alt + Z</Bold>
-                                to show/hide interface.</TextBlock>
-                        </BulletDecorator>
+                                <BulletDecorator Margin="7,2">
+                                    <BulletDecorator.Bullet>
+                                        <Ellipse
+                                            Width="7"
+                                            Height="7"
+                                            Fill="{StaticResource MainColorBrush}" />
+                                    </BulletDecorator.Bullet>
+                                    <TextBlock Margin="5,0,0,0">
+                                        <Bold>L</Bold> toggle looping</TextBlock>
+                                    </BulletDecorator>
 
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>F11</Bold>
-                                to show/hide slideshow.</TextBlock>
-                        </BulletDecorator>
+                                    <BulletDecorator Margin="7,2">
+                                        <BulletDecorator.Bullet>
+                                            <Ellipse
+                                                Width="7"
+                                                Height="7"
+                                                Fill="{StaticResource MainColorBrush}" />
+                                        </BulletDecorator.Bullet>
+                                        <TextBlock Margin="5,0,0,0">
+                                            <Bold>F4</Bold> show/hide picture gallery</TextBlock>
+                                        </BulletDecorator>
 
-                        <Label Margin="0,10,0,0" FontSize="15" Content="File functions:" />
+                                        <BulletDecorator Margin="7,2">
+                                            <BulletDecorator.Bullet>
+                                                <Ellipse
+                                                    Width="7"
+                                                    Height="7"
+                                                    Fill="{StaticResource MainColorBrush}" />
+                                            </BulletDecorator.Bullet>
+                                            <TextBlock Margin="5,0,0,0">
+                                                <Bold>F5</Bold> show/hide fullscreen picture gallery</TextBlock>
+                                            </BulletDecorator>
 
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Ctrl</Bold>
-                                + <Bold>0</Bold>
-                                or <Bold>0</Bold>
-                                to open a file.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Ctrl</Bold>
-                                + <Bold>Shift</Bold>
-                                + <Bold>C</Bold>
-                                to copy image to clipboard.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Ctrl</Bold>
-                                + <Bold>C</Bold>
-                                to copy image to clipboard.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Ctrl</Bold>
-                                + <Bold>V</Bold>
-                                to paste image from clipboard.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Ctrl</Bold>
-                                + <Bold>S</Bold>
-                                to save image.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Ctrl</Bold>
-                                + <Bold>I</Bold>
-                                to show file details.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Ctrl</Bold>
-                                + <Bold>R</Bold>
-                                to reload.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Shift</Bold>
-                                + <Bold>Del</Bold>
-                                to premanently delete image.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Del</Bold>
-                                to move image to the recycle bin.</TextBlock>
-                        </BulletDecorator>
+                                            <BulletDecorator Margin="7,2">
+                                                <BulletDecorator.Bullet>
+                                                    <Ellipse
+                                                        Width="7"
+                                                        Height="7"
+                                                        Fill="{StaticResource MainColorBrush}" />
+                                                </BulletDecorator.Bullet>
+                                                <TextBlock Margin="5,0,0,0">
+                                                    <Bold>Esc</Bold> close the currently opened element</TextBlock>
+                                                </BulletDecorator>
 
-                        <Label Margin="0,10,0,0" FontSize="15" Content="Navigate:" />
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Right arrow</Bold>
-                                to show next image.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>D</Bold>
-                                to show next image.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Shift + Mousewheel up</Bold>
-                                to show next image.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Mouse button forward</Bold>
-                                to show next image.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Left arrow</Bold>
-                                to show previous image.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>A</Bold>
-                                to show previous image.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Shift + Mousewheel down</Bold>
-                                to show previous image.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Mouse button backward</Bold>
-                                to show previous image.</TextBlock>
-                        </BulletDecorator>
+                                                <Label
+                                                    Margin="0,10,0,0"
+                                                    Content="Zoom:"
+                                                    FontSize="15" />
+                                                <BulletDecorator Margin="7,2">
+                                                    <BulletDecorator.Bullet>
+                                                        <Ellipse
+                                                            Width="7"
+                                                            Height="7"
+                                                            Fill="{StaticResource MainColorBrush}" />
+                                                    </BulletDecorator.Bullet>
+                                                    <TextBlock Margin="5,0,0,0">
+                                                        <Bold>Mousewheel</Bold> zoom at cursor position</TextBlock>
+                                                    </BulletDecorator>
+                        
+                                                    <BulletDecorator Margin="7,2">
+                                                        <BulletDecorator.Bullet>
+                                                            <Ellipse
+                                                                Width="7"
+                                                                Height="7"
+                                                                Fill="{StaticResource MainColorBrush}" />
+                                                        </BulletDecorator.Bullet>
+                                                        <TextBlock Margin="5,0,0,0">
+                                                            <Bold>Mousewheel</Bold>
+                                                            + <Bold>Ctrl</Bold> scale window size</TextBlock>
+                                                        </BulletDecorator>
+                        
+                                                        <BulletDecorator Margin="7,2">
+                                                            <BulletDecorator.Bullet>
+                                                                <Ellipse
+                                                                    Width="7"
+                                                                    Height="7"
+                                                                    Fill="{StaticResource MainColorBrush}" />
+                                                            </BulletDecorator.Bullet>
+                                                            <TextBlock Margin="5,0,0,0">
+                                                                Numpad <Bold> + </Bold> /  <Bold> - </Bold> zoom in/out</TextBlock>
+                                                            </BulletDecorator>
 
-                        <Label
-                            Margin="0,10,0,0"
-                            Content="Transform image:"
-                            FontSize="15" />
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Arrow up</Bold>
-                                to rotate right.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>W</Bold>
-                                to rotate right.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Arrow down</Bold>
-                                to rotate left.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>S</Bold>
-                                to rotate left.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>F</Bold>
-                                to flip image.</TextBlock>
-                        </BulletDecorator>
+                                                            <BulletDecorator Margin="7,2">
+                                                                <BulletDecorator.Bullet>
+                                                                    <Ellipse
+                                                                        Width="7"
+                                                                        Height="7"
+                                                                        Fill="{StaticResource MainColorBrush}" />
+                                                                </BulletDecorator.Bullet>
+                                                                <TextBlock Margin="5,0,0,0">
+                                                                    <Bold>Ctrl + </Bold> /  <Bold> - </Bold> scale window size</TextBlock>
+                                                                </BulletDecorator>
 
-                        <Label
-                            Margin="0,10,0,0"
-                            Content="Zoom:"
-                            FontSize="15" />
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Mousewheel</Bold>
-                                to zoom at cursor position.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Mousewheel</Bold>
-                                while holding<Bold>Ctrl</Bold>
-                                to scale size.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Plus</Bold>
-                                (<Bold>+</Bold>
-                                ) to zoom in.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Minus</Bold>
-                                (<Bold>-</Bold>
-                                ) to zoom out.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Ctrl Plus</Bold>
-                                (<Bold>+</Bold>
-                                ) to scale.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Ctrl Minus</Bold>
-                                (<Bold>-</Bold>
-                                ) to scale.</TextBlock>
-                        </BulletDecorator>
+                                                                <BulletDecorator Margin="7,2">
+                                                                    <BulletDecorator.Bullet>
+                                                                        <Ellipse
+                                                                            Width="7"
+                                                                            Height="7"
+                                                                            Fill="{StaticResource MainColorBrush}" />
+                                                                    </BulletDecorator.Bullet>
+                                                                    <TextBlock Margin="5,0,0,0">
+                                                                        <Bold>Double click</Bold> reset zoom</TextBlock>
+                                                                    </BulletDecorator>
 
-                        <Label
-                            Margin="0,10,0,0"
-                            Content="Misc:"
-                            FontSize="15" />
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,0">
-                                <Bold>Spacebar</Bold>
-                                to center on screen.</TextBlock>
-                        </BulletDecorator>
-                        <BulletDecorator Margin="7,2">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="7"
-                                    Height="7"
-                                    Fill="{StaticResource MainColorBrush}" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock Margin="5,0,0,30">
-                                <Bold>X</Bold>
-                                to toggle scroll.</TextBlock>
-                        </BulletDecorator>
-                    </StackPanel>
-                </ScrollViewer>
+                                                                    <Label Margin="0,2,0,2" FontSize="15" Content="Show windows:" />
 
-            </Grid>
-            <Border
-                Height="35"
-                VerticalAlignment="Bottom"
-                Background="#FF0C0C0C">
-                <Label
-                    Margin="0,0,0,9"
-                    Padding="0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Bottom"
-                    Content="© PicView 2017"
-                    FontSize="14"
-                    FontStyle="Italic" />
-            </Border>
-        </StackPanel>
+                                                                    <BulletDecorator Margin="7,2">
+                                                                        <BulletDecorator.Bullet>
+                                                                            <Ellipse
+                                                                                Width="7"
+                                                                                Height="7"
+                                                                                Fill="{StaticResource MainColorBrush}" />
+                                                                        </BulletDecorator.Bullet>
+                                                                        <TextBlock Margin="5,0,0,0">
+                                                                            <Bold>F1</Bold> show help window</TextBlock>
+                                                                        </BulletDecorator>
+
+                                                                        <BulletDecorator Margin="7,2">
+                                                                            <BulletDecorator.Bullet>
+                                                                                <Ellipse
+                                                                                    Width="7"
+                                                                                    Height="7"
+                                                                                    Fill="{StaticResource MainColorBrush}" />
+                                                                            </BulletDecorator.Bullet>
+                                                                            <TextBlock Margin="5,0,0,0">
+                                                                                <Bold>F2</Bold> show about window</TextBlock>
+                                                                            </BulletDecorator>
+
+                                                                            <BulletDecorator Margin="7,2">
+                                                                                <BulletDecorator.Bullet>
+                                                                                    <Ellipse
+                                                                                        Width="7"
+                                                                                        Height="7"
+                                                                                        Fill="{StaticResource MainColorBrush}" />
+                                                                                </BulletDecorator.Bullet>
+                                                                                <TextBlock Margin="5,0,0,0">
+                                                                                    <Bold>F12</Bold> show/hide slideshow</TextBlock>
+                                                                                </BulletDecorator>
+
+                                                                                <Label Margin="0,10,0,0" FontSize="15" Content="File functions:" />
+
+                                                                                <BulletDecorator Margin="7,2">
+                                                                                    <BulletDecorator.Bullet>
+                                                                                        <Ellipse
+                                                                                            Width="7"
+                                                                                            Height="7"
+                                                                                            Fill="{StaticResource MainColorBrush}" />
+                                                                                    </BulletDecorator.Bullet>
+                                                                                    <TextBlock Margin="5,0,0,0">
+                                                                                        <Bold>Ctrl</Bold>
+                                                                                        + <Bold>0</Bold> / <Bold>0</Bold> open a file</TextBlock>
+                                                                                    </BulletDecorator>
+
+                                                                                    <BulletDecorator Margin="7,2">
+                                                                                        <BulletDecorator.Bullet>
+                                                                                            <Ellipse
+                                                                                                Width="7"
+                                                                                                Height="7"
+                                                                                                Fill="{StaticResource MainColorBrush}" />
+                                                                                        </BulletDecorator.Bullet>
+                                                                                        <TextBlock Margin="5,0,0,0">
+                                                                                            <Bold>Ctrl</Bold>
+                                                                                            + <Bold>C</Bold> add file to clipboard.</TextBlock>
+                                                                                        </BulletDecorator>
+
+                                                                                        <BulletDecorator Margin="7,2">
+                                                                                            <BulletDecorator.Bullet>
+                                                                                                <Ellipse
+                                                                                                    Width="7"
+                                                                                                    Height="7"
+                                                                                                    Fill="{StaticResource MainColorBrush}" />
+                                                                                            </BulletDecorator.Bullet>
+                                                                                            <TextBlock Margin="5,0,0,0">
+                                                                                                <Bold>Ctrl</Bold>
+                                                                                                + <Bold>X</Bold> move file to clipboard.</TextBlock>
+                                                                                            </BulletDecorator>
+
+                                                                                            <BulletDecorator Margin="7,2">
+                                                                                                <BulletDecorator.Bullet>
+                                                                                                    <Ellipse
+                                                                                                        Width="7"
+                                                                                                        Height="7"
+                                                                                                        Fill="{StaticResource MainColorBrush}" />
+                                                                                                </BulletDecorator.Bullet>
+                                                                                                <TextBlock Margin="5,0,0,0">
+                                                                                                    <Bold>Ctrl</Bold>
+                                                                                                    + <Bold>Shift</Bold>
+                                                                                                    + <Bold>C</Bold> add image to clipboard</TextBlock>
+                                                                                                </BulletDecorator>
+
+                                                                                                <BulletDecorator Margin="7,2">
+                                                                                                    <BulletDecorator.Bullet>
+                                                                                                        <Ellipse
+                                                                                                            Width="7"
+                                                                                                            Height="7"
+                                                                                                            Fill="{StaticResource MainColorBrush}" />
+                                                                                                    </BulletDecorator.Bullet>
+                                                                                                    <TextBlock Margin="5,0,0,0">
+                                                                                                        <Bold>Ctrl</Bold>
+                                                                                                        + <Bold>V</Bold> paste image/file from clipboard</TextBlock>
+                                                                                                    </BulletDecorator>
+                        
+                                                                                                    <BulletDecorator Margin="7,2">
+                                                                                                        <BulletDecorator.Bullet>
+                                                                                                            <Ellipse
+                                                                                                                Width="7"
+                                                                                                                Height="7"
+                                                                                                                Fill="{StaticResource MainColorBrush}" />
+                                                                                                        </BulletDecorator.Bullet>
+                                                                                                        <TextBlock Margin="5,0,0,0">
+                                                                                                            <Bold>Ctrl</Bold>
+                                                                                                            + <Bold>S</Bold> save image</TextBlock>
+                                                                                                        </BulletDecorator>
+                        
+                                                                                                        <BulletDecorator Margin="7,2">
+                                                                                                            <BulletDecorator.Bullet>
+                                                                                                                <Ellipse
+                                                                                                                    Width="7"
+                                                                                                                    Height="7"
+                                                                                                                    Fill="{StaticResource MainColorBrush}" />
+                                                                                                            </BulletDecorator.Bullet>
+                                                                                                            <TextBlock Margin="5,0,0,0">
+                                                                                                                <Bold>Ctrl</Bold>
+                                                                                                                + <Bold>I</Bold> show file details</TextBlock>
+                                                                                                            </BulletDecorator>
+                        
+                                                                                                            <BulletDecorator Margin="7,2">
+                                                                                                                <BulletDecorator.Bullet>
+                                                                                                                    <Ellipse
+                                                                                                                        Width="7"
+                                                                                                                        Height="7"
+                                                                                                                        Fill="{StaticResource MainColorBrush}" />
+                                                                                                                </BulletDecorator.Bullet>
+                                                                                                                <TextBlock Margin="5,0,0,0">
+                                                                                                                    <Bold>Ctrl</Bold>
+                                                                                                                    + <Bold>R</Bold> reload.</TextBlock>
+                                                                                                                </BulletDecorator>
+                        
+                                                                                                                <BulletDecorator Margin="7,2">
+                                                                                                                    <BulletDecorator.Bullet>
+                                                                                                                        <Ellipse
+                                                                                                                            Width="7"
+                                                                                                                            Height="7"
+                                                                                                                            Fill="{StaticResource MainColorBrush}" />
+                                                                                                                    </BulletDecorator.Bullet>
+                                                                                                                    <TextBlock Margin="5,0,0,0">
+                                                                                                                        <Bold>Shift</Bold>
+                                                                                                                        + <Bold>Del</Bold> permanently delete file</TextBlock>
+                                                                                                                    </BulletDecorator>
+                        
+                                                                                                                    <BulletDecorator Margin="7,2">
+                                                                                                                        <BulletDecorator.Bullet>
+                                                                                                                            <Ellipse
+                                                                                                                                Width="7"
+                                                                                                                                Height="7"
+                                                                                                                                Fill="{StaticResource MainColorBrush}" />
+                                                                                                                        </BulletDecorator.Bullet>
+                                                                                                                        <TextBlock Margin="5,0,0,0">
+                                                                                                                            <Bold>Del</Bold> move to recycle bin</TextBlock>
+                                                                                                                        </BulletDecorator>
+
+                        
+                        
+                                                                                                                        <Label Margin="0,10,0,0" FontSize="15" Content="Navigate:" />
+                        
+                                                                                                                        <BulletDecorator Margin="7,2">
+                                                                                                                            <BulletDecorator.Bullet>
+                                                                                                                                <Ellipse
+                                                                                                                                    Width="7"
+                                                                                                                                    Height="7"
+                                                                                                                                    Fill="{StaticResource MainColorBrush}" />
+                                                                                                                            </BulletDecorator.Bullet>
+                                                                                                                            <TextBlock Margin="5,0,0,0">
+                                                                                                                                <Bold>Right arrow</Bold> next image</TextBlock>
+                                                                                                                            </BulletDecorator>
+                        
+                                                                                                                            <BulletDecorator Margin="7,2">
+                                                                                                                                <BulletDecorator.Bullet>
+                                                                                                                                    <Ellipse
+                                                                                                                                        Width="7"
+                                                                                                                                        Height="7"
+                                                                                                                                        Fill="{StaticResource MainColorBrush}" />
+                                                                                                                                </BulletDecorator.Bullet>
+                                                                                                                                <TextBlock Margin="5,0,0,0">
+                                                                                                                                    <Bold>D</Bold> next image</TextBlock>
+                                                                                                                                </BulletDecorator>
+                        
+                                                                                                                                <BulletDecorator Margin="7,2">
+                                                                                                                                    <BulletDecorator.Bullet>
+                                                                                                                                        <Ellipse
+                                                                                                                                            Width="7"
+                                                                                                                                            Height="7"
+                                                                                                                                            Fill="{StaticResource MainColorBrush}" />
+                                                                                                                                    </BulletDecorator.Bullet>
+                                                                                                                                    <TextBlock Margin="5,0,0,0">
+                                                                                                                                        <Bold>Shift + Mousewheel up</Bold> next image</TextBlock>
+                                                                                                                                    </BulletDecorator>
+                        
+                                                                                                                                    <BulletDecorator Margin="7,2">
+                                                                                                                                        <BulletDecorator.Bullet>
+                                                                                                                                            <Ellipse
+                                                                                                                                                Width="7"
+                                                                                                                                                Height="7"
+                                                                                                                                                Fill="{StaticResource MainColorBrush}" />
+                                                                                                                                        </BulletDecorator.Bullet>
+                                                                                                                                        <TextBlock Margin="5,0,0,0">
+                                                                                                                                            <Bold>Mouse button forward</Bold> next image</TextBlock>
+                                                                                                                                        </BulletDecorator>
+                        
+                                                                                                                                        <BulletDecorator Margin="7,2">
+                                                                                                                                            <BulletDecorator.Bullet>
+                                                                                                                                                <Ellipse
+                                                                                                                                                    Width="7"
+                                                                                                                                                    Height="7"
+                                                                                                                                                    Fill="{StaticResource MainColorBrush}" />
+                                                                                                                                            </BulletDecorator.Bullet>
+                                                                                                                                            <TextBlock Margin="5,0,0,0">
+                                                                                                                                                <Bold>Left arrow</Bold>
+                                                                                                                                                       to show previous image.</TextBlock>
+                                                                                                                                        </BulletDecorator>
+                        
+                                                                                                                                        <BulletDecorator Margin="7,2">
+                                                                                                                                            <BulletDecorator.Bullet>
+                                                                                                                                                <Ellipse
+                                                                                                                                                    Width="7"
+                                                                                                                                                    Height="7"
+                                                                                                                                                    Fill="{StaticResource MainColorBrush}" />
+                                                                                                                                            </BulletDecorator.Bullet>
+                                                                                                                                            <TextBlock Margin="5,0,0,0">
+                                                                                                                                                <Bold>A</Bold>
+                                                                                                                                                       to show previous image.</TextBlock>
+                                                                                                                                        </BulletDecorator>
+                        
+                                                                                                                                        <BulletDecorator Margin="7,2">
+                                                                                                                                            <BulletDecorator.Bullet>
+                                                                                                                                                <Ellipse
+                                                                                                                                                    Width="7"
+                                                                                                                                                    Height="7"
+                                                                                                                                                    Fill="{StaticResource MainColorBrush}" />
+                                                                                                                                            </BulletDecorator.Bullet>
+                                                                                                                                            <TextBlock Margin="5,0,0,0">
+                                                                                                                                                <Bold>Shift + Mousewheel down</Bold> previous image</TextBlock>
+                                                                                                                                            </BulletDecorator>
+                        
+                                                                                                                                            <BulletDecorator Margin="7,2">
+                                                                                                                                                <BulletDecorator.Bullet>
+                                                                                                                                                    <Ellipse
+                                                                                                                                                        Width="7"
+                                                                                                                                                        Height="7"
+                                                                                                                                                        Fill="{StaticResource MainColorBrush}" />
+                                                                                                                                                </BulletDecorator.Bullet>
+                                                                                                                                                <TextBlock Margin="5,0,0,0">
+                                                                                                                                                    <Bold>Mouse button backward</Bold> previous image</TextBlock>
+                                                                                                                                                </BulletDecorator>
+
+                                                                                                                                                <Label
+                                                                                                                                                    Margin="0,10,0,0"
+                                                                                                                                                    Content="Transform image:"
+                                                                                                                                                    FontSize="15" />
+                        
+                                                                                                                                                <BulletDecorator Margin="7,2">
+                                                                                                                                                    <BulletDecorator.Bullet>
+                                                                                                                                                        <Ellipse
+                                                                                                                                                            Width="7"
+                                                                                                                                                            Height="7"
+                                                                                                                                                            Fill="{StaticResource MainColorBrush}" />
+                                                                                                                                                    </BulletDecorator.Bullet>
+                                                                                                                                                    <TextBlock Margin="5,0,0,0">
+                                                                                                                                                        <Bold>Arrow up</Bold> rotate right</TextBlock>
+                                                                                                                                                    </BulletDecorator>
+                        
+                                                                                                                                                    <BulletDecorator Margin="7,2">
+                                                                                                                                                        <BulletDecorator.Bullet>
+                                                                                                                                                            <Ellipse
+                                                                                                                                                                Width="7"
+                                                                                                                                                                Height="7"
+                                                                                                                                                                Fill="{StaticResource MainColorBrush}" />
+                                                                                                                                                        </BulletDecorator.Bullet>
+                                                                                                                                                        <TextBlock Margin="5,0,0,0">
+                                                                                                                                                            <Bold>W</Bold> rotate right</TextBlock>
+                                                                                                                                                        </BulletDecorator>
+                        
+                                                                                                                                                        <BulletDecorator Margin="7,2">
+                                                                                                                                                            <BulletDecorator.Bullet>
+                                                                                                                                                                <Ellipse
+                                                                                                                                                                    Width="7"
+                                                                                                                                                                    Height="7"
+                                                                                                                                                                    Fill="{StaticResource MainColorBrush}" />
+                                                                                                                                                            </BulletDecorator.Bullet>
+                                                                                                                                                            <TextBlock Margin="5,0,0,0">
+                                                                                                                                                                <Bold>Arrow down</Bold> rotate left</TextBlock>
+                                                                                                                                                            </BulletDecorator>
+                        
+                                                                                                                                                            <BulletDecorator Margin="7,2">
+                                                                                                                                                                <BulletDecorator.Bullet>
+                                                                                                                                                                    <Ellipse
+                                                                                                                                                                        Width="7"
+                                                                                                                                                                        Height="7"
+                                                                                                                                                                        Fill="{StaticResource MainColorBrush}" />
+                                                                                                                                                                </BulletDecorator.Bullet>
+                                                                                                                                                                <TextBlock Margin="5,0,0,0">
+                                                                                                                                                                    <Bold>S</Bold> rotate left.</TextBlock>
+                                                                                                                                                                </BulletDecorator>
+                        
+                                                                                                                                                                <BulletDecorator Margin="7,2">
+                                                                                                                                                                    <BulletDecorator.Bullet>
+                                                                                                                                                                        <Ellipse
+                                                                                                                                                                            Width="7"
+                                                                                                                                                                            Height="7"
+                                                                                                                                                                            Fill="{StaticResource MainColorBrush}" />
+                                                                                                                                                                    </BulletDecorator.Bullet>
+                                                                                                                                                                    <TextBlock Margin="5,0,0,0">
+                                                                                                                                                                        <Bold>F</Bold> flip image</TextBlock>
+                                                                                                                                                                    </BulletDecorator>
 
 
+                                                                                                                                                                    <Label
+                                                                                                                                                                        Margin="0,10,0,0"
+                                                                                                                                                                        Content="Misc:"
+                                                                                                                                                                        FontSize="15" />
+                                                                                                                                                                    <BulletDecorator Margin="7,2">
+                                                                                                                                                                        <BulletDecorator.Bullet>
+                                                                                                                                                                            <Ellipse
+                                                                                                                                                                                Width="7"
+                                                                                                                                                                                Height="7"
+                                                                                                                                                                                Fill="{StaticResource MainColorBrush}" />
+                                                                                                                                                                        </BulletDecorator.Bullet>
+                                                                                                                                                                        <TextBlock Margin="5,0,0,0">
+                                                                                                                                                                            <Bold>Spacebar</Bold> center on current screen</TextBlock>
+                                                                                                                                                                        </BulletDecorator>
 
+                                                                                                                                                                    </StackPanel>
+                                                                                                                                                                </ScrollViewer>
 
-    </Border>
-</Window>
+                                                                                                                                                            </Grid>
+                                                                                                                                                            <Border
+                                                                                                                                                                Height="35"
+                                                                                                                                                                VerticalAlignment="Bottom"
+                                                                                                                                                                Background="#FF0C0C0C">
+                                                                                                                                                                <Label
+                                                                                                                                                                    Margin="0,0,0,9"
+                                                                                                                                                                    Padding="0"
+                                                                                                                                                                    HorizontalAlignment="Center"
+                                                                                                                                                                    VerticalAlignment="Bottom"
+                                                                                                                                                                    Content="© PicView 2017 - 2019"
+                                                                                                                                                                    FontSize="14"
+                                                                                                                                                                    FontStyle="Italic" />
+                                                                                                                                                            </Border>
+                                                                                                                                                        </StackPanel>
+                                                                                                                                                    </Border>
+                                                                                                                                                </Window>

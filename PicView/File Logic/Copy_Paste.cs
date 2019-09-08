@@ -171,7 +171,7 @@ namespace PicView
             // Force Preloader to add new images, to minimize slowdown errors
             PreloadCount = 4;
 
-            ToolTipStyle("Added Image to move clipboard");
+            ToolTipStyle(ImageCut);
         }
     }
 }

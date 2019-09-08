@@ -49,7 +49,42 @@ namespace PicView
                 return pic;
             }
         }
-        
+
+        /// <summary>
+        /// Decodes image from file to BitMapSource
+        /// </summary>
+        /// <param name="file">Full path of the file</param>
+        /// <returns></returns>
+        internal static BitmapSource RenderToBitmapSource(string file, int quality)
+        {
+            /// TODO find an alternmative faster way of decoding images on the fly
+
+            if (string.IsNullOrWhiteSpace(file) || file.Length < 2)
+                return null;
+
+            using (MagickImage magick = new MagickImage())
+            {
+                try
+                {
+                    magick.Read(file);
+                }
+#if DEBUG
+                catch (MagickException e)
+                {
+                    Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
+                    return null;
+                }
+#else
+                catch (MagickException) { return null; }
+#endif
+                magick.Quality = quality;
+
+                var pic = magick.ToBitmapSource();
+                pic.Freeze();
+                return pic;
+            }
+        }
+
 
         internal static BitmapSource GetMagickImage(Stream s)
         {

@@ -120,7 +120,9 @@ namespace PicView
             AjaxLoadingEnd();
 
             // Repeat process if the next image was not found
-            await PicErrorFix(FolderIndex);
+            if (FolderIndex > 0 && FolderIndex < Pics.Count)
+                await PicErrorFix(FolderIndex);
+
             return null;
         }
 
@@ -136,9 +138,6 @@ namespace PicView
                 // Make a backup of xPicPath and FolderIndex
                 if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]))
                     xPicPath = Pics[FolderIndex];
-
-                if (FolderIndex > -1)
-                    xFolderIndex = FolderIndex;
             }
 
             Pics.Clear();

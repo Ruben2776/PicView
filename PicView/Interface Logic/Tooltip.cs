@@ -1,15 +1,7 @@
 ﻿using System;
-using System.IO;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
 using static PicView.Fields;
-using static PicView.FileFunctions;
-using static PicView.Resize_and_Zoom;
-using static PicView.FadeControls;
 
 namespace PicView
 {

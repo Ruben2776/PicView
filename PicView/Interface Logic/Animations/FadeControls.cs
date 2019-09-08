@@ -1,5 +1,6 @@
 ﻿using System;
 using static PicView.Fields;
+
 namespace PicView
 {
     internal static class FadeControls

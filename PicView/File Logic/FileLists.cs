@@ -52,6 +52,10 @@ namespace PicView
         /// </summary>
         internal static List<string> FileList(string path, SortFilesBy sortFilesBy)
         {
+            /// TODO need to get a recursive folder user configurable option for this added
+            /// Need to look through file list to check if they all work,
+            /// or some alternative way, mayhaps..?
+
             if (!Directory.Exists(path))
                 return null;
 
@@ -259,9 +263,8 @@ namespace PicView
                 Pics = FileList(Path.GetDirectoryName(path));
                 if (Pics == null)
                     return;
-                FolderIndex = Pics.IndexOf(path);
-                Pics[FolderIndex] = path;
 
+                FolderIndex = Pics.IndexOf(path);
             });
         }
     }

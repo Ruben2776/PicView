@@ -26,7 +26,10 @@ namespace PicView
 #endif
                 DeleteTempFiles();
             }
-                
+
+
+            // TODO find a way to make user set path and app
+            // if installed in irregular way
 
             var Winrar = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\WinRAR\\WinRAR.exe";
             if (!File.Exists(Winrar))
@@ -74,7 +77,7 @@ namespace PicView
                 // Add 7-Zip specifics
                 "x \"" + path + "\" -o";
 
-            arguments += TempZipPath + SupportedFiles + " -r -aou";
+            arguments += TempZipPath + SupportedFilesFilter + " -r -aou";
 
             var x = Process.Start(new ProcessStartInfo
             {

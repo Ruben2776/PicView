@@ -161,8 +161,8 @@ namespace PicView
 
                 mainWindow.ResizeMode = ResizeMode.CanMinimize;
                 mainWindow.SizeToContent = SizeToContent.Manual;
-                mainWindow.Width = mainWindow.bg.Width = SystemParameters.PrimaryScreenWidth + 2;
-                mainWindow.Height = SystemParameters.PrimaryScreenHeight + 2;
+                mainWindow.Width = mainWindow.bg.Width = SystemParameters.PrimaryScreenWidth;
+                mainWindow.Height = SystemParameters.PrimaryScreenHeight;
 
                 mainWindow.Top = 0;
                 mainWindow.Left = 0;
@@ -173,6 +173,19 @@ namespace PicView
             }
             else
             {
+                mainWindow.Topmost = false;
+
+                if (Properties.Settings.Default.ShowInterface)
+                {
+                    ShowNavigation(false);
+                    ShowTopandBottom(true);
+                }
+                else
+                {
+                    ShowNavigation(true);
+                    ShowTopandBottom(false);
+                }
+
                 if (FitToWindow)
                 {
                     mainWindow.SizeToContent = SizeToContent.WidthAndHeight;
@@ -185,6 +198,8 @@ namespace PicView
 
                     mainWindow.Width = mainWindow.bg.Width = double.NaN;
                     mainWindow.Height = mainWindow.bg.Height = double.NaN;
+
+                    mainWindow.Top -= mainWindow.LowerBar.ActualHeight / 2; // It works...
                 }
                 else
                 {
@@ -201,15 +216,16 @@ namespace PicView
 
                     mainWindow.bg.Width = double.NaN;
                     mainWindow.bg.Height = double.NaN;
+
+                    /// TODO need to fix not getting correct placement
+                    /// centering window does not work in this state
+                    /// suspects it needs a delay to work?
+                    TryZoomFit();
                 }
 
+                UpdateColor(); // Regain border              
+
                 Properties.Settings.Default.Fullscreen = false;
-
-                if (!Properties.Settings.Default.ShowInterface)
-                    ToggleInterface();
-
-                mainWindow.Topmost = false;
-                UpdateColor(); // Regain border
             }
 
         }
