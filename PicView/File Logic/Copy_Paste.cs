@@ -74,19 +74,28 @@ namespace PicView
                     {
                         var x = files[0];
 
-                        // If from same folder
-                        if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]) && Path.GetDirectoryName(x) == Path.GetDirectoryName(Pics[FolderIndex]))
+                        if (Pics.Count != 0)
                         {
-                            if (!Preloader.Contains(x))
+                            // If from same folder
+                            if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]) && Path.GetDirectoryName(x) == Path.GetDirectoryName(Pics[FolderIndex]))
                             {
-                                PreloadCount = 4;
-                                Preloader.Add(x);
-                            }
+                                if (!Preloader.Contains(x))
+                                {
+                                    PreloadCount = 4;
+                                    Preloader.Add(x);
+                                }
 
-                            Pic(Pics.IndexOf(x));
+                                Pic(Pics.IndexOf(x));
+                            }
+                            else
+                            {
+                                Pic(x);
+                            }
                         }
                         else
+                        {
                             Pic(x);
+                        }
 
                         if (files.Length > 1)
                         {

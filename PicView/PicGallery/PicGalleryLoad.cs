@@ -33,7 +33,7 @@ namespace PicView
                 if (Properties.Settings.Default.ShowInterface)
                 {
                     picGallery.Width = mainWindow.Width - 15;
-                    picGallery.Height = mainWindow.ActualHeight - 78;
+                    picGallery.Height = mainWindow.ActualHeight - 70;
                 }
                 else
                 {

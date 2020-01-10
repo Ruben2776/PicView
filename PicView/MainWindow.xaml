@@ -15,7 +15,7 @@
     <DockPanel LastChildFill="True">
         <DockPanel
             x:Name="TitleBar"
-            Height="38"
+            Height="33"
             MinWidth="444"
             DockPanel.Dock="Top">
             <DockPanel.Background>
@@ -67,8 +67,8 @@
             </Canvas>
             <Button
                 x:Name="CloseButton"
-                Width="38"
-                Height="38"
+                Width="33"
+                Height="33"
                 VerticalAlignment="Center"
                 BorderThickness="0"
                 DockPanel.Dock="Right"
@@ -88,8 +88,8 @@
             </Button>
             <Button
                 x:Name="MaxButton"
-                Width="38"
-                Height="38"
+                Width="33"
+                Height="33"
                 VerticalAlignment="Center"
                 BorderThickness="0"
                 DockPanel.Dock="Right"
@@ -110,8 +110,8 @@
             </Button>
             <Button
                 x:Name="MinButton"
-                Width="38"
-                Height="38"
+                Width="33"
+                Height="33"
                 Margin="5,0,0,0"
                 VerticalAlignment="Center"
                 BorderThickness="0"
@@ -141,7 +141,7 @@
         </DockPanel>
         <StackPanel
             x:Name="LowerBar"
-            Height="38"
+            Height="35"
             MinWidth="444"
             DockPanel.Dock="Bottom">
             <StackPanel.Background>
@@ -156,7 +156,7 @@
                     x:Name="FileMenuButton"
                     Canvas.Left="-15"
                     Width="55"
-                    Height="38"
+                    Height="35"
                     FocusVisualStyle="{x:Null}"
                     Focusable="False"
                     ToolTip="Open file menu">
@@ -175,7 +175,7 @@
                     x:Name="image_button"
                     Canvas.Left="41"
                     Width="55"
-                    Height="38"
+                    Height="35"
                     FocusVisualStyle="{x:Null}"
                     Focusable="False"
                     ToolTip="Rotate and flip menu">
@@ -222,19 +222,19 @@
                 <Canvas
                     Canvas.Left="97"
                     Width="200"
-                    Height="38"
+                    Height="35"
                     Background="#131313">
                     <Rectangle
                         Canvas.Left="102"
                         Canvas.Top="0"
                         Width="1"
-                        Height="38"
+                        Height="35"
                         Fill="{StaticResource BorderBrushAlt}" />
                     <Rectangle
                         Canvas.Left="0"
                         Canvas.Top="0"
                         Width="1"
-                        Height="38"
+                        Height="35"
                         Fill="{StaticResource BorderBrushAlt}" />
                     <Rectangle
                         Canvas.Left="200"
@@ -245,7 +245,7 @@
                     <Button
                         x:Name="LeftButton"
                         Width="100"
-                        Height="38"
+                        Height="35"
                         FocusVisualStyle="{x:Null}"
                         Focusable="False"
                         KeyboardNavigation.DirectionalNavigation="None"
@@ -266,7 +266,7 @@
                         x:Name="RightButton"
                         Canvas.Left="100"
                         Width="100"
-                        Height="38"
+                        Height="35"
                         FocusVisualStyle="{x:Null}"
                         Focusable="False"
                         KeyboardNavigation.DirectionalNavigation="None"
@@ -288,7 +288,7 @@
                     x:Name="SettingsButton"
                     Canvas.Left="298"
                     Width="55"
-                    Height="38"
+                    Height="35"
                     Margin="0"
                     FocusVisualStyle="{x:Null}"
                     Focusable="False"
@@ -309,7 +309,7 @@
                     Canvas.Left="354"
                     Canvas.Top="1"
                     Width="55"
-                    Height="38"
+                    Height="35"
                     Margin="0"
                     FocusVisualStyle="{x:Null}"
                     Focusable="False"

@@ -194,6 +194,8 @@ namespace PicView
             else
                 // Display values from web
                 SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, Pics[FolderIndex]);
+
+            isZoomed = false;
         }
 
         /// <summary>
@@ -398,8 +400,10 @@ namespace PicView
                     CenterWindowOnScreen();
             }
 
+            if (isZoomed)
+                ResetZoom();
 
-            isZoomed = false;
+            
 
             /*
 
