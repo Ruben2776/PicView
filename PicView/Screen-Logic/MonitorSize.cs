@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows;
 
 namespace PicView
@@ -14,7 +13,7 @@ namespace PicView
 
         internal double DpiScaling { get; set; }
 
-        internal Rectangle WorkArea { get; set; }
+        internal Rect WorkArea { get; set; }
 
         /// <summary>
         /// Store current monitor info
@@ -23,7 +22,7 @@ namespace PicView
         /// <param name="height">The Pixel Height</param>
         /// <param name="dpiScaling"></param>
         /// <param name="workArea"></param>
-        internal MonitorSize(int width, int height, double dpiScaling, Rectangle workArea)
+        internal MonitorSize(int width, int height, double dpiScaling, Rect workArea)
         {
             Width = width;
             Height = height;
@@ -39,10 +38,9 @@ namespace PicView
         {
             /// TODO Get Solution to get actual screen pixzel size
             /// and not just without taskbar and such... 
-            /// Maybe a solution not dependant on Windows Forms?
 
             // https://stackoverflow.com/a/32599760
-            var currentMonitor = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow).Handle);
+            var currentMonitor = WpfScreenHelper.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow).Handle);
 
             //find out if our app is being scaled by the monitor
             var source = PresentationSource.FromVisual(Application.Current.MainWindow);
@@ -55,10 +53,8 @@ namespace PicView
 
             //return new MonitorSize(workAreaWidth, workAreaHeight, dpiScaling, workArea);
             return new MonitorSize(workAreaWidth, workAreaHeight, dpiScaling, workArea);
+
         }
     }
-
-
-
 
 }

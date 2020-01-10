@@ -1,19 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9B5425DC-4329-4A7A-A0C5-F93161F77245}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PicView</RootNamespace>
     <AssemblyName>PicView</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <TargetFrameworkProfile />
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -35,6 +30,9 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Version>1.0.0.0</Version>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
@@ -93,317 +91,6 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Magick.NET-Q16-x64, Version=7.15.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=AMD64">
-      <HintPath>..\packages\Magick.NET-Q16-x64.7.15.0\lib\net40\Magick.NET-Q16-x64.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.3.3, Culture=neutral, PublicKeyToken=8985beaab7ea3f04, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft-WindowsAPICodePack-Core.1.1.3.3\lib\net452\Microsoft.WindowsAPICodePack.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.3.3, Culture=neutral, PublicKeyToken=8985beaab7ea3f04, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft-WindowsAPICodePack-Shell.1.1.3.3\lib\net452\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions, Version=1.1.3.3, Culture=neutral, PublicKeyToken=8985beaab7ea3f04, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft-WindowsAPICodePack-ShellExtensions.1.1.3.3\lib\net452\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Buffers.4.5.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.6.0-preview5.19224.8\lib\net46\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.7.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-  </ItemGroup>
-  <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="File Logic\SupportedFiles.cs" />
-    <Compile Include="Interface Logic\DragAndDrop.cs" />
-    <Compile Include="Interface Logic\SetTitle.cs" />
-    <Compile Include="Navigation\Error_Handling.cs" />
-    <Compile Include="File Logic\Copy_Paste.cs" />
-    <Compile Include="File Logic\DeleteFiles.cs" />
-    <Compile Include="File Logic\FileLists.cs" />
-    <Compile Include="File Logic\Open_Save.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="File Logic\ArchiveExtraction.cs" />
-    <Compile Include="File Logic\FileFunctions.cs" />
-    <Compile Include="Image Logic\SaveImages.cs" />
-    <Compile Include="Image Logic\Thumbnails.cs" />
-    <Compile Include="Interface Logic\Animations\AjaxLoader.cs" />
-    <Compile Include="Interface Logic\Animations\FadeControls.cs" />
-    <Compile Include="Image Logic\Scroll.cs" />
-    <Compile Include="Interface Logic\Tooltip.cs" />
-    <Compile Include="Navigation\LoadFromWeb.cs" />
-    <Compile Include="Navigation\Navigation.cs" />
-    <Compile Include="Interface Logic\Instantiate\LoadControls.cs" />
-    <Compile Include="Interface Logic\Instantiate\LoadWindows.cs" />
-    <Compile Include="Interface Logic\Animations\MouseOverAnimations.cs" />
-    <Compile Include="PicGallery\PicGalleryLoad.cs" />
-    <Compile Include="PicGallery\PicGalleryToggle.cs" />
-    <Compile Include="PicGallery\PicGalleryScroll.cs" />
-    <Compile Include="PicGallery\PicGalleryLogic.cs" />
-    <Compile Include="Image Logic\Resize_and_Zoom.cs" />
-    <Compile Include="Image Logic\Rotate_and_Flip.cs" />
-    <Compile Include="Interface Logic\WindowLogic.cs" />
-    <Compile Include="Interface Logic\SlideShow.cs" />
-    <Compile Include="Interface Logic\Instantiate\ContextMenus.cs" />
-    <Compile Include="Interface Logic\HideInterfaceLogic.cs" />
-    <Compile Include="Interface Logic\SvgIcons.cs" />
-    <Compile Include="Interface Logic\Instantiate\Timers.cs" />
-    <Compile Include="Interface Logic\ToggleMenus.cs" />
-    <Compile Include="Screen-Logic\MonitorSize.cs" />
-    <Compile Include="Misc\NativeMethods.cs" />
-    <Compile Include="File Logic\RecentFiles.cs" />
-    <Compile Include="Configs\Configs.cs" />
-    <Compile Include="Shortcuts\Shortcuts.cs" />
-    <Compile Include="UserControls\CustomControls\AutoScrollSign.xaml.cs">
-      <DependentUpon>AutoScrollSign.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\CustomControls\Minus.xaml.cs">
-      <DependentUpon>Minus.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\CustomControls\PicGallery.xaml.cs">
-      <DependentUpon>PicGallery.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\CustomControls\PicGalleryItem.xaml.cs">
-      <DependentUpon>PicGalleryItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\Menus\FunctionsMenu.xaml.cs">
-      <DependentUpon>FunctionsMenu.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\AllSettings.xaml.cs">
-      <DependentUpon>AllSettings.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Fields.cs" />
-    <Compile Include="Windows\FakeWindow.xaml.cs">
-      <DependentUpon>FakeWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\Help.xaml.cs">
-      <DependentUpon>Help.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\About.xaml.cs">
-      <DependentUpon>About.xaml</DependentUpon>
-    </Compile>
-    <Page Include="Configs\Styles\Backgrounds.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Configs\Styles\Colors.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Configs\Styles\Border.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Configs\Styles\Button.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Configs\Styles\FlatSlider.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Configs\Styles\Label.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Configs\Styles\ListBox.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Configs\Styles\ListView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Configs\Styles\Menu.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Configs\Styles\ProgressBar.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Configs\Styles\RadioButton.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Configs\Styles\ScrollBar.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Configs\Styles\Separator.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Configs\Styles\Slider.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Configs\Styles\TabControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Configs\Styles\ToggleButton.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Configs\Styles\ToolTip.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UserControls\CustomControls\AutoScrollSign.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\CustomControls\Minus.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UserControls\CustomControls\PicGallery.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\CustomControls\PicGalleryItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\Menus\FunctionsMenu.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\AllSettings.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\FakeWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\Help.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UserControls\CustomControls\AjaxLoading.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\Menus\ImageSettings.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\Menus\FileMenu.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\Menus\QuickSettingsMenu.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\CustomControls\ClickArrow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\CustomControls\SexyToolTip.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\CustomControls\X2.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\Tools.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interface Logic\Animations\AnimationHelper.cs" />
-    <Compile Include="Misc\Utilities.cs" />
-    <Compile Include="Image Logic\ImageDecoder.cs" />
-    <Compile Include="Navigation\Preloader.cs" />
-    <Compile Include="UserControls\CustomControls\AjaxLoading.xaml.cs">
-      <DependentUpon>AjaxLoading.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\Menus\ImageSettings.xaml.cs">
-      <DependentUpon>ImageSettings.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\Menus\FileMenu.xaml.cs">
-      <DependentUpon>FileMenu.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\Menus\QuickSettingsMenu.xaml.cs">
-      <DependentUpon>QuickSettingsMenu.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\CustomControls\ClickArrow.xaml.cs">
-      <DependentUpon>ClickArrow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\CustomControls\SexyToolTip.xaml.cs">
-      <DependentUpon>SexyToolTip.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\CustomControls\X2.xaml.cs">
-      <DependentUpon>X2.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="File Logic\Wallpaper.cs" />
-    <Compile Include="Windows\Tools.xaml.cs">
-      <DependentUpon>Tools.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="Windows\About.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <Resource Include="Library\fonts\Aller_Rg.ttf" />
     <Resource Include="Library\fonts\Aller_Bd.ttf" />
     <Resource Include="Library\fonts\Aller_BdIt.ttf" />
@@ -414,16 +101,7 @@
     <Resource Include="Library\fonts\texgyreheros-bolditalic.otf" />
     <Resource Include="Library\fonts\texgyreheros-italic.otf" />
     <Resource Include="Library\fonts\texgyreheros-regular.otf" />
-    <None Include="packages.config" />
-    <None Include="Properties\app.manifest" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
     <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
@@ -451,13 +129,23 @@
       <DefaultIcon>lib\img\Brainleaf-Dark-Blog-Reflex.ico</DefaultIcon>
     </FileAssociation>
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <PackageReference Include="Magick.NET-Q16-x64" Version="7.15.0" />
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.3.3" />
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.3.3" />
+    <PackageReference Include="Microsoft-WindowsAPICodePack-ShellExtensions" Version="1.1.3.3" />
+    <PackageReference Include="System.Buffers" Version="4.5.0" />
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+    <PackageReference Include="System.Memory" Version="4.5.3" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.6.0-preview5.19224.8" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.0" />
+    <PackageReference Include="WpfScreenHelper" Version="0.4.0" />
+  </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
+    <FileVersion>0.9.7.0</FileVersion>
   </PropertyGroup>
-  <Import Project="..\packages\Magick.NET-Q16-x64.7.15.0\build\net40\Magick.NET-Q16-x64.targets" Condition="Exists('..\packages\Magick.NET-Q16-x64.7.15.0\build\net40\Magick.NET-Q16-x64.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
