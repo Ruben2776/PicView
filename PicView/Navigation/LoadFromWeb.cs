@@ -32,7 +32,7 @@ namespace PicView
             BitmapSource pic;
             try
             {
-                pic = await LoadImageWebAsync(path);
+                pic = await LoadImageWebAsync(path).ConfigureAwait(true);
             }
 #if DEBUG
             catch (Exception e)
@@ -52,7 +52,6 @@ namespace PicView
             }
 
             Pic(pic, path);
-            Pics[FolderIndex] = path;
             RecentFiles.Add(path);
             canNavigate = false;
         }
@@ -83,10 +82,10 @@ namespace PicView
                     canNavigate = false;
                 }));
 
-                var bytes = await client.DownloadDataTaskAsync(new Uri(address));
+                var bytes = await client.DownloadDataTaskAsync(new Uri(address)).ConfigureAwait(false);
                 var stream = new MemoryStream(bytes);
                 pic = GetMagickImage(stream);
-            });
+            }).ConfigureAwait(false);
             return pic;
         }
     }

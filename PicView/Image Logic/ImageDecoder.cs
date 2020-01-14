@@ -1,6 +1,7 @@
 ﻿using ImageMagick;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -57,8 +58,6 @@ namespace PicView
         /// <returns></returns>
         internal static BitmapSource RenderToBitmapSource(string file, int quality)
         {
-            /// TODO find an alternmative faster way of decoding images on the fly
-
             if (string.IsNullOrWhiteSpace(file) || file.Length < 2)
                 return null;
 
@@ -93,10 +92,10 @@ namespace PicView
             using (MagickImage magick = new MagickImage())
             {
                 magick.Quality = 100;
-                var mrs = new MagickReadSettings()
-                {
-                    Density = new Density(300)
-                };
+                //var mrs = new MagickReadSettings()
+                //{
+                //    Density = new Density(300)
+                //};
 
                 magick.Read(s);
                 magick.ColorSpace = ColorSpace.Transparent;
@@ -156,37 +155,36 @@ namespace PicView
 
         internal static Size? ImageSize (string file)
         {
-            var magick = new MagickImage();
-            var ext = Path.GetExtension(file).ToLower();
-            switch (ext)
+            using (var magick = new MagickImage())
             {
-                // Standards
-                case ".jpg":
-                case ".jpeg":
-                case ".jpe":
-                    magick.Format = MagickFormat.Jpg;
-                    break;
-                case ".png":
-                    magick.Format = MagickFormat.Png;
-                    break;
-                case ".bmp":
-                    magick.Format = MagickFormat.Bmp;
-                    break;
-                case ".tif":
-                case ".tiff":
-                    magick.Format = MagickFormat.Tif;
-                    break;
-                case ".gif":
-                    magick.Format = MagickFormat.Gif;
-                    break;
-                case ".ico":
-                    magick.Format = MagickFormat.Ico;
-                    break;
-                default: return null;
-            }
+                var ext = Path.GetExtension(file).ToUpperInvariant();
+                switch (ext)
+                {
+                    // Standards
+                    case ".JPG":
+                    case ".JPEG":
+                    case ".JPE":
+                        magick.Format = MagickFormat.Jpg;
+                        break;
+                    case ".PNG":
+                        magick.Format = MagickFormat.Png;
+                        break;
+                    case ".BMP":
+                        magick.Format = MagickFormat.Bmp;
+                        break;
+                    case ".TIF":
+                    case ".TIFF":
+                        magick.Format = MagickFormat.Tif;
+                        break;
+                    case ".GIF":
+                        magick.Format = MagickFormat.Gif;
+                        break;
+                    case ".ICO":
+                        magick.Format = MagickFormat.Ico;
+                        break;
+                    default: return null;
+                }
 
-            using (magick)
-            {
                 try
                 {
                     magick.Read(file);

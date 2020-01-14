@@ -47,7 +47,7 @@ namespace PicView
                 {
                     if (x < Pics.Count)
                     {
-                        await Task.Run(() => pic = RenderToBitmapSource(Pics[x]));
+                        await Task.Run(() => pic = RenderToBitmapSource(Pics[x])).ConfigureAwait(false);
                         if (pic != null)
                             return pic;
                     }
@@ -60,7 +60,7 @@ namespace PicView
             }
             else if (x < 0)
             {
-                await Task.Run(() => pic = RenderToBitmapSource(Pics[FolderIndex]));
+                await Task.Run(() => pic = RenderToBitmapSource(Pics[FolderIndex])).ConfigureAwait(false);
                 if (pic != null)
                     return pic;
                 else
@@ -89,7 +89,7 @@ namespace PicView
             // Retry if exists, fixes rare error
             if (File.Exists(file))
             {
-                await Task.Run(() => pic = RenderToBitmapSource(file));
+                await Task.Run(() => pic = RenderToBitmapSource(file)).ConfigureAwait(false);
                 if (pic != null)
                     return pic;
 
@@ -121,7 +121,7 @@ namespace PicView
 
             // Repeat process if the next image was not found
             if (FolderIndex > 0 && FolderIndex < Pics.Count)
-                await PicErrorFix(FolderIndex);
+                await PicErrorFix(FolderIndex).ConfigureAwait(false);
 
             return null;
         }
@@ -220,6 +220,23 @@ namespace PicView
 
             NoProgress();
             AnimationHelper.Fade(ajaxLoading, 0, TimeSpan.FromSeconds(.2));
+        }
+
+        /// <summary>
+        /// Display broken image status, without affecting file list
+        /// </summary>
+        internal static void BrokenImage()
+        {
+            mainWindow.img.Source = null;
+
+            mainWindow.topLayer.Children.Add(new UserControls.BadImage
+            {
+                Width = xWidth,
+                Height = xHeight
+            });
+
+            mainWindow.Bar.ToolTip = mainWindow.Bar.Text = BadImage;
+            mainWindow.Title = BadImage + " - " + AppName;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -24,16 +25,18 @@ namespace PicView
         }
 
 
+
         /// <summary>
         /// Return file size in a readable format
         /// </summary>
         /// <param name="i"></param>
         /// <returns></returns>
         /// Credits to http://www.somacon.com/p576.php
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]
         internal static string GetSizeReadable(long i)
         {
             string sign = (i < 0 ? "-" : string.Empty);
-            double readable = (i < 0 ? -i : i);
+            double readable = i < 0 ? -i : i;
             char suffix;
 
             if (i >= 0x40000000) // Gigabyte
@@ -53,11 +56,11 @@ namespace PicView
             }
             else
             {
-                return i.ToString(sign + "0 B"); // Byte
+                return i.ToString(sign + "0 B", CultureInfo.CurrentCulture); // Byte
             }
             readable /= 1024;
 
-            return sign + readable.ToString("0.## ") + suffix + 'B';
+            return sign + readable.ToString("0.## ", CultureInfo.CurrentCulture) + suffix + 'B';
         }
 
 

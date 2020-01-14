@@ -57,9 +57,11 @@ namespace PicView
             ToolTipStyle("Copied Image to clipboard");
         }
 
+
         /// <summary>
         /// Retrieves the data from the clipboard and attemps to load image, if possible
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
         internal static void Paste()
         {
             // file
@@ -167,16 +169,17 @@ namespace PicView
             };
 
             byte[] moveEffect = new byte[] { 2, 0, 0, 0 };
-            MemoryStream dropEffect = new MemoryStream();
-            dropEffect.Write(moveEffect, 0, moveEffect.Length);
+            using (var dropEffect = new MemoryStream())
+            {
+                dropEffect.Write(moveEffect, 0, moveEffect.Length);
 
-            DataObject data = new DataObject();
-            data.SetFileDropList(x);
-            data.SetData("Preferred DropEffect", dropEffect);
+                DataObject data = new DataObject();
+                data.SetFileDropList(x);
+                data.SetData("Preferred DropEffect", dropEffect);
 
-            Clipboard.Clear();
-            Clipboard.SetDataObject(data, true);
-
+                Clipboard.Clear();
+                Clipboard.SetDataObject(data, true);
+            }
             // Force Preloader to add new images, to minimize slowdown errors
             PreloadCount = 4;
 

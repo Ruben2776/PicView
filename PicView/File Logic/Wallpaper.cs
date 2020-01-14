@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
@@ -162,7 +163,7 @@ namespace PicView
                 (ext.Equals(".jpg", StringComparison.OrdinalIgnoreCase) &&
                 !SupportJpgAsWallpaper))
             {
-                var dest = string.Format(@"{0}\Microsoft\Windows\Themes\{1}.jpg",
+                var dest = string.Format(CultureInfo.CurrentCulture, @"{0}\Microsoft\Windows\Themes\{1}.jpg",
                         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                         Path.GetFileNameWithoutExtension(path));
                 ImageDecoder.TrySaveImage(Rotateint, Flipped, path, dest);

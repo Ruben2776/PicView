@@ -188,7 +188,7 @@ namespace PicView
         }
     }
 
-    public class InternalMagickFormatInfo
+    public static class InternalMagickFormatInfo
     {
         internal static MagickFormat GetFormat(ImageFormat format)
         {

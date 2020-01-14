@@ -135,8 +135,8 @@ namespace PicView
                 Content = "File name",
                 IsChecked = Properties.Settings.Default.SortPreference == 0
             };
-            sortcmChild0Header.Click += delegate { Configs.ChangeSorting(0); };
-            sortcmChild0.Click += delegate { Configs.ChangeSorting(0); };
+            sortcmChild0Header.Click += delegate { Configs.ChangeSorting(0); cm.IsOpen = false; };
+            sortcmChild0.Click += delegate { Configs.ChangeSorting(0); cm.IsOpen = false; };
             sortcmChild0.Header = sortcmChild0Header;
             sortcm.Items.Add(sortcmChild0);
 
@@ -149,8 +149,8 @@ namespace PicView
                 Content = "File Size",
                 IsChecked = Properties.Settings.Default.SortPreference == 1
             };
-            sortcmChild1Header.Click += delegate { Configs.ChangeSorting(1); };
-            sortcmChild1.Click += delegate { Configs.ChangeSorting(1); };
+            sortcmChild1Header.Click += delegate { Configs.ChangeSorting(1); cm.IsOpen = false; };
+            sortcmChild1.Click += delegate { Configs.ChangeSorting(1); cm.IsOpen = false; };
             sortcmChild1.Header = sortcmChild1Header;
             sortcm.Items.Add(sortcmChild1);
 
@@ -164,8 +164,8 @@ namespace PicView
                 IsChecked = Properties.Settings.Default.SortPreference == 2
 
             };
-            sortcmChild2Header.Click += delegate { Configs.ChangeSorting(2); };
-            sortcmChild2.Click += delegate { Configs.ChangeSorting(2); };
+            sortcmChild2Header.Click += delegate { Configs.ChangeSorting(2); cm.IsOpen = false; };
+            sortcmChild2.Click += delegate { Configs.ChangeSorting(2); cm.IsOpen = false; };
             sortcmChild2.Header = sortcmChild2Header;
             sortcm.Items.Add(sortcmChild2);
 
@@ -178,8 +178,8 @@ namespace PicView
                 Content = "File extension",
                 IsChecked = Properties.Settings.Default.SortPreference == 3
             };
-            sortcmChild3Header.Click += delegate { Configs.ChangeSorting(3); };
-            sortcmChild3.Click += delegate { Configs.ChangeSorting(3); };
+            sortcmChild3Header.Click += delegate { Configs.ChangeSorting(3); cm.IsOpen = false; };
+            sortcmChild3.Click += delegate { Configs.ChangeSorting(3); cm.IsOpen = false; };
             sortcmChild3.Header = sortcmChild3Header;
             sortcm.Items.Add(sortcmChild3);
 
@@ -192,8 +192,8 @@ namespace PicView
                 Content = "Last access time",
                 IsChecked = Properties.Settings.Default.SortPreference == 4
             };
-            sortcmChild4Header.Click += delegate { Configs.ChangeSorting(4); };
-            sortcmChild4.Click += delegate { Configs.ChangeSorting(4); };
+            sortcmChild4Header.Click += delegate { Configs.ChangeSorting(4); cm.IsOpen = false; };
+            sortcmChild4.Click += delegate { Configs.ChangeSorting(4); cm.IsOpen = false; };
             sortcmChild4.Header = sortcmChild4Header;
             sortcm.Items.Add(sortcmChild4);
 
@@ -206,8 +206,8 @@ namespace PicView
                 Content = "Last write time",
                 IsChecked = Properties.Settings.Default.SortPreference == 5
             };
-            sortcmChild5Header.Click += delegate { Configs.ChangeSorting(5); };
-            sortcmChild5.Click += delegate { Configs.ChangeSorting(5); };
+            sortcmChild5Header.Click += delegate { Configs.ChangeSorting(5); cm.IsOpen = false; };
+            sortcmChild5.Click += delegate { Configs.ChangeSorting(5); cm.IsOpen = false; };
             sortcmChild5.Header = sortcmChild5Header;
             sortcm.Items.Add(sortcmChild5);
 
@@ -220,8 +220,8 @@ namespace PicView
                 Content = "Random",
                 IsChecked = Properties.Settings.Default.SortPreference == 6
             };
-            sortcmChild6Header.Click += delegate { Configs.ChangeSorting(6); };
-            sortcmChild6.Click += delegate { Configs.ChangeSorting(6); };
+            sortcmChild6Header.Click += delegate { Configs.ChangeSorting(6); cm.IsOpen = false; };
+            sortcmChild6.Click += delegate { Configs.ChangeSorting(6); cm.IsOpen = false; };
             sortcmChild6.Header = sortcmChild6Header;
             sortcm.Items.Add(sortcmChild6);
             cm.Items.Add(sortcm);

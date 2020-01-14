@@ -10,11 +10,15 @@ namespace PicView
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            if (e.Args != null && e.Args.Length > 0)
+            if (e != null)
             {
-                Properties["ArbitraryArgName"] = e.Args[0];
+                if (e.Args != null && e.Args.Length > 0)
+                {
+                    Properties["ArbitraryArgName"] = e.Args[0];
+                }
+                base.OnStartup(e);
             }
-            base.OnStartup(e);
+
             System.Runtime.ProfileOptimization.SetProfileRoot(AppDomain.CurrentDomain.BaseDirectory);
             System.Runtime.ProfileOptimization.StartProfile("Profile optimization");
         }

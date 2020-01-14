@@ -36,7 +36,7 @@ namespace PicView.Windows
 
             // Hide from alt tab
             var helper = new WindowInteropHelper(this).Handle;
-            SetWindowLong(helper, GWL_EX_STYLE, (GetWindowLong(helper, GWL_EX_STYLE) | WS_EX_TOOLWINDOW) & ~WS_EX_APPWINDOW);
+            _ = SetWindowLong(helper, GWL_EX_STYLE, (GetWindowLong(helper, GWL_EX_STYLE) | WS_EX_TOOLWINDOW) & ~WS_EX_APPWINDOW);
         }
 
         private void FakeWindow_LostFocus(object sender, RoutedEventArgs e)

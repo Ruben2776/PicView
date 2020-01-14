@@ -411,6 +411,9 @@ namespace PicView
 
         protected override void OnRenderSizeChanged(SizeChangedInfo size)
         {
+            if (size == null)
+                return;
+
             base.OnRenderSizeChanged(size);
 
             if (!FitToWindow || !size.WidthChanged && !size.HeightChanged)

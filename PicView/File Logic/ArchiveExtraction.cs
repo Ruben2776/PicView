@@ -169,7 +169,7 @@ namespace PicView
 
             mainWindow.Bar.Text = "Unzipping...";
             mainWindow.Bar.ToolTip = mainWindow.Bar.Text;
-            await Task.Delay(25);
+            await Task.Delay(25).ConfigureAwait(true);
 
             // TempZipPath is not null = images being extracted
             short count = 0;
@@ -215,19 +215,19 @@ namespace PicView
                 switch (count)
                 {
                     case 0:
-                        await Task.Delay(400);
+                        await Task.Delay(400).ConfigureAwait(true);
                         break;
 
                     case 1:
-                        await Task.Delay(600);
+                        await Task.Delay(600).ConfigureAwait(true);
                         break;
 
                     case 2:
-                        await Task.Delay(950);
+                        await Task.Delay(950).ConfigureAwait(true);
                         break;
 
                     default:
-                        await Task.Delay(1500);
+                        await Task.Delay(1500).ConfigureAwait(true);
                         break;
                 }
                 count++;

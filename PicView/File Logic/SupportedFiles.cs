@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
 
 namespace PicView
 {
@@ -14,7 +15,7 @@ namespace PicView
         /// <returns></returns>
         internal static bool? IsSupportedFile(string ext)
         {
-            ext = Path.GetExtension(ext).ToLower();
+            ext = Path.GetExtension(ext).ToLower(CultureInfo.CurrentCulture);
             switch (ext)
             {
                 // Standards
@@ -165,7 +166,7 @@ namespace PicView
         /// <returns></returns>
         internal static bool? IsSupportedFileWithArchives(string ext)
         {
-            ext = Path.GetExtension(ext).ToLower();
+            ext = Path.GetExtension(ext).ToLower(CultureInfo.CurrentCulture);
             switch (ext)
             {
                 // Archives

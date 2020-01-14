@@ -18,15 +18,17 @@ namespace PicView
         internal static string[] TitleString(int width, int height, int index)
         {
             var s1 = new StringBuilder();
-            s1.Append(AppName).Append(" - ").Append(Path.GetFileName(Pics[index])).Append(" ").Append(index + 1).Append("/").Append(Pics.Count).Append(" files")
+            s1.Append(Path.GetFileName(Pics[index])).Append(" ").Append(index + 1).Append("/").Append(Pics.Count).Append(" files")
                     .Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height)).Append(GetSizeReadable(new FileInfo(Pics[index]).Length));
 
             if (!string.IsNullOrEmpty(ZoomPercentage))
-                s1.Append(" - ").Append(ZoomPercentage);
+                s1.Append(", ").Append(ZoomPercentage);
+
+            s1.Append(" - ").Append(AppName);
 
             var array = new string[3];
             array[0] = s1.ToString();
-            s1.Remove(0, AppName.Length + 3);   // Remove AppName + " - "
+            s1.Remove(s1.Length - (AppName.Length + 3), AppName.Length + 3);   // Remove AppName + " - "
             array[1] = s1.ToString();
             s1.Replace(Path.GetFileName(Pics[index]), Pics[index]);
             array[2] = s1.ToString();
@@ -46,7 +48,7 @@ namespace PicView
             var titleString = TitleString(width, height, index);
             mainWindow.Title = titleString[0];
             mainWindow.Bar.Text = titleString[1];
-            mainWindow.Bar.ToolTip = titleString[1];
+            mainWindow.Bar.ToolTip = titleString[2];
         }
 
         /// <summary>
@@ -60,14 +62,16 @@ namespace PicView
         internal static string[] TitleString(int width, int height, string path)
         {
             var s1 = new StringBuilder();
-            s1.Append(AppName).Append(" - ").Append(path).Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height));
+            s1.Append(path).Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height));
 
             if (!string.IsNullOrEmpty(ZoomPercentage))
-                s1.Append(" - ").Append(ZoomPercentage);
+                s1.Append(", ").Append(ZoomPercentage);
+
+            s1.Append(" - ").Append(AppName);
 
             var array = new string[2];
             array[0] = s1.ToString();
-            s1.Remove(0, AppName.Length + 3);   // Remove AppName + " - "
+            s1.Remove(s1.Length - (AppName.Length + 3), AppName.Length + 3);   // Remove AppName + " - "
             array[1] = s1.ToString();
             return array;
         }

@@ -49,10 +49,12 @@ namespace PicView
             if (string.IsNullOrWhiteSpace(path))
                 return;
 
-            var p = new Process();
-            p.StartInfo.FileName = path;
-            p.StartInfo.Verb = "print";
-            p.Start();
+            using (var p = new Process())
+            {
+                p.StartInfo.FileName = path;
+                p.StartInfo.Verb = "print";
+                p.Start();
+            }
         }
 
         internal static void UpdateColor()

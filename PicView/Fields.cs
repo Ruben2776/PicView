@@ -2,6 +2,7 @@
 using PicView.UserControls.Menus;
 using System;
 using System.Collections.Generic;
+using System.Resources;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,7 +20,8 @@ namespace PicView
         internal const string ImageCopy = "Image added to clipboard";
         internal const string ImageCut = "Image added to move clipboard";
         internal const string ExpFind = "Locating in file explorer";
-        internal const string NoImage = "No image loaded";        
+        internal const string NoImage = "No image loaded";
+        internal const string BadImage = "Unable to render image";
 
         internal const string SupportedFilesFilter =
         " *.jpg *.jpeg *.jpe *.png *.bmp *.tif *.tiff *.gif *.ico *.wdp *.svg *.psd *.psb *.orf *.cr2 *.crw *.dng *.raf *.raw *.mrw *.nef *.x3f *.arw *.webp *"
