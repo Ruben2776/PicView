@@ -17,7 +17,7 @@
             Padding="12"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            FontFamily="/PicView;component/Library/Fonts/#TeX Gyre Heros"
+            FontFamily="/PicView;component/Resources/fonts/#TeX Gyre Heros"
             FontSize="16"
             FontStyle="Italic"
             FontWeight="Bold"

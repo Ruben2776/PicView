@@ -155,7 +155,7 @@ namespace PicView
             }
         }
 
-        internal static void SetBgColorEnabled(object sender, RoutedEventArgs e)
+        internal static void SetBorderColorEnabled(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.WindowBorderColorEnabled = Properties.Settings.Default.WindowBorderColorEnabled ? false : true;
         }

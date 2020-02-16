@@ -55,6 +55,9 @@ namespace PicView
             + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz"                                                        // Comics
             + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw";      // Camera files
 
+        internal const int picGalleryItem_Size = 230;
+        internal const int picGalleryItem_Size_s = 200;
+
         /// <summary>
         /// The Main Window?
         /// </summary>

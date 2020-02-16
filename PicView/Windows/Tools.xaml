@@ -6,9 +6,9 @@
     x:Name="window"
     Title="PicView Tools"
     ContentRendered="Window_ContentRendered"
-    FontFamily="/PicView;component/lib/fonts/#Aller"
+    FontFamily="/PicView;component/Resources/fonts/#Aller"
     Foreground="{StaticResource MainColorBrush}"
-    Icon="/Library/img/reflex-icon.png"
+    Icon="/Resources/img/reflex-icon.png"
     SizeToContent="WidthAndHeight"
     Style="{DynamicResource MyWindowStyle}">
 
@@ -123,7 +123,7 @@
                 x:Name="Bar"
                 Height="20"
                 Background="{x:Null}"
-                FontFamily="/PicView;component/lib/fonts/#Aller"
+                FontFamily="/PicView;component/Resources/fonts/#Aller"
                 FontSize="15"
                 FontWeight="Bold"
                 Foreground="{StaticResource MainColorBrush}"
@@ -139,7 +139,7 @@
             DockPanel.Dock="Bottom">
             <DockPanel.Background>
                 <ImageBrush
-                    ImageSource="/Library/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
+                    ImageSource="/Resources/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
                     TileMode="FlipXY"
                     Viewport="0,0,100,100"
                     ViewportUnits="Absolute" />
@@ -160,7 +160,7 @@
                 DockPanel.Dock="Left">
                 <Rectangle.Fill>
                     <ImageBrush
-                        ImageSource="/Library/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
+                        ImageSource="/Resources/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
                         TileMode="FlipXY"
                         Viewport="0,0,100,100"
                         ViewportUnits="Absolute" />
@@ -173,7 +173,7 @@
                 DockPanel.Dock="Right">
                 <Rectangle.Fill>
                     <ImageBrush
-                        ImageSource="/Library/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
+                        ImageSource="/Resources/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
                         TileMode="FlipXY"
                         Viewport="0,0,100,100"
                         ViewportUnits="Absolute" />
@@ -182,7 +182,7 @@
             <Grid x:Name="bg" AllowDrop="True">
                 <Grid.Background>
                     <ImageBrush
-                        ImageSource="/Library/img/noisy-texture-200x200-o4-d31-c-161616-t0.png"
+                        ImageSource="/Resources/img/noisy-texture-200x200-o4-d31-c-161616-t0.png"
                         TileMode="FlipXY"
                         Viewport="0,0,100,100"
                         ViewportUnits="Absolute" />

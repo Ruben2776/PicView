@@ -225,7 +225,7 @@ namespace PicView
         /// <summary>
         /// Display broken image status, without affecting file list
         /// </summary>
-        internal static void BrokenImage()
+        internal static void DisplayBrokenImage()
         {
             mainWindow.img.Source = null;
 

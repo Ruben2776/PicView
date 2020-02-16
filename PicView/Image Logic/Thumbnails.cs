@@ -1,12 +1,48 @@
 ﻿using ImageMagick;
+using PicView.PreLoading;
+using PicView.UserControls;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
+using static PicView.Fields;
 
 namespace PicView
 {
     internal static class Thumbnails
     {
+        internal static BitmapSource GetThumb()
+        {
+            var pic = Preloader.Load(Pics[FolderIndex]);
+
+            if (pic == null)
+            {
+                if (picGallery != null)
+                {
+                    if (FolderIndex < picGallery.Container.Children.Count && picGallery.Container.Children.Count == Pics.Count)
+                    {
+                        var y = picGallery.Container.Children[FolderIndex] as PicGalleryItem;
+                        pic = (BitmapSource)y.img.Source;
+                    }
+                    else
+                    {
+                        pic = GetWindowsThumbnail(Pics[FolderIndex]);
+
+                        if (pic == null)
+                            pic = GetBitmapSourceThumb(Pics[FolderIndex]);
+                    }
+                }
+                else
+                {
+                    pic = GetWindowsThumbnail(Pics[FolderIndex]);
+
+                    if (pic == null)
+                        pic = GetBitmapSourceThumb(Pics[FolderIndex]);
+                }
+            }
+
+            return pic;
+        }
+
         internal static BitmapSource GetBitmapSourceThumb(string path)
         {
             var supported = SupportedFiles.IsSupportedFile(path);

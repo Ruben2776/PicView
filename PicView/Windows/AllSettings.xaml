@@ -76,7 +76,7 @@
                     VerticalAlignment="Center"
                     Background="{x:Null}"
                     Content="Settings"
-                    FontFamily="/PicView;component/Library/fonts/#Aller"
+                    FontFamily="/PicView;component/Resources/fonts/#Aller"
                     FontSize="15"
                     FontWeight="Bold" />
                 <Button
@@ -248,15 +248,15 @@
                                 </RadioButton.Background>
                             </RadioButton>
                             <RadioButton
-                                x:Name="VioletRadio"
+                                x:Name="TealRadio"
                                 Width="100"
                                 Height="40"
                                 Margin="5,3"
                                 BorderThickness="2"
-                                Content="Violet"
+                                Content="Teal"
                                 Style="{StaticResource MetroAlphaFlatRadioButton}">
                                 <RadioButton.Background>
-                                    <SolidColorBrush x:Name="VioletBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                    <SolidColorBrush x:Name="TealBrush" Color="{StaticResource BackgroundColorAlt}" />
                                 </RadioButton.Background>
                             </RadioButton>
                             <RadioButton
@@ -383,7 +383,7 @@
                                 Width="30"
                                 Margin="5,3"
                                 HorizontalAlignment="Right"
-                                FontFamily="/PicView;component/Library/fonts/#TeX Gyre Heros"
+                                FontFamily="/PicView;component/Resources/fonts/#TeX Gyre Heros"
                                 FontSize="14"
                                 IsReadOnly="True"
                                 Text="1"

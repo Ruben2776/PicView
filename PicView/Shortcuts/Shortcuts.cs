@@ -187,7 +187,6 @@ namespace PicView
             switch (e.Key)
             {
                 // FastPicUpdate()
-                case Key.E:
                 case Key.A:
                 case Key.Right:
                 case Key.D:
@@ -213,7 +212,7 @@ namespace PicView
                     if (Properties.Settings.Default.PicGallery > 0)
                     {
                         if (PicGalleryLogic.IsOpen)
-                        { 
+                        {
                             ToggleGallery();
                             return;
                         }
@@ -287,6 +286,14 @@ namespace PicView
                 // L
                 case Key.L:
                     Configs.SetLooping(sender, e);
+                    break;
+                // E
+                case Key.E:
+                    FitToWindow = FitToWindow ? false : true; 
+                    break;
+                // T
+                case Key.T:
+                    ChangeBackground(sender, e);
                     break;
                 // Space
                 case Key.Space:

@@ -272,10 +272,9 @@ namespace PicView
             //    Fill = scbf
             //};
             //settingscmLoop.Icon = settingscmLoopIcon;
-            settingscmLoop.Click += (s, x) => { Configs.SetLooping(s, x); settingscmLoopHeader.IsChecked = (bool)settingscmLoopHeader.IsChecked ? false : true; };
+            settingscmLoop.Click += (s, x) => { Configs.SetLooping(s, x); };
+            settingscmLoopHeader.Click += (s, x) => { Configs.SetLooping(s, x); };
             settingscm.Items.Add(settingscmLoop);
-        
-
 
             ///////////////////////////
             ///   Scroll         \\\\
@@ -294,10 +293,78 @@ namespace PicView
             };
             settingscmScrollHeader.Click += Configs.SetScrolling;
             settingscmScrollHeader.Style = Application.Current.FindResource("Checkstyle") as Style;
-            settingscmScrollHeader.FontSize = 13;
+            settingscmScrollHeader.HorizontalAlignment = HorizontalAlignment.Left;
             settingscmScroll.Header = settingscmScrollHeader;
             settingscmScroll.Click += (s, x) => { Configs.SetScrolling(s, x); settingscmScrollHeader.IsChecked = (bool)settingscmScrollHeader.IsChecked ? false : true; };
             settingscm.Items.Add(settingscmScroll);
+
+            ///////////////////////////
+            ///   Fit to window    \\\\
+            ///////////////////////////
+            var fitcm = new MenuItem
+            {
+                InputGestureText = "E"
+            };
+            var fitcmHeader = new CheckBox
+            {
+                Content = "Fit to window",
+                IsChecked = Properties.Settings.Default.FitToWindow,
+                FontSize = 13,
+                Width = double.NaN,
+                Height = double.NaN
+            };
+            fitcmHeader.Click += delegate { WindowLogic.FitToWindow = WindowLogic.FitToWindow ? false : true; };
+            fitcmHeader.Style = Application.Current.FindResource("Checkstyle") as Style;
+            fitcmHeader.HorizontalAlignment = HorizontalAlignment.Left;
+            fitcm.Header = fitcmHeader;
+            fitcm.Click += delegate { WindowLogic.FitToWindow = WindowLogic.FitToWindow ? false : true; };
+            settingscm.Items.Add(fitcm);
+
+            ///////////////////////////
+            ///   Alt interface    \\\\
+            ///////////////////////////
+            var altcm = new MenuItem
+            {
+                InputGestureText = "Alt + Z"
+            };
+            var altcmHeader = new CheckBox
+            {
+                Content = "Show/hide interface",
+                IsChecked = Properties.Settings.Default.ShowInterface,
+                FontSize = 13,
+                Width = double.NaN,
+                Height = double.NaN
+            };
+            altcmHeader.Click += delegate { HideInterfaceLogic.ToggleInterface(); };
+            altcmHeader.Style = Application.Current.FindResource("Checkstyle") as Style;
+            altcmHeader.HorizontalAlignment = HorizontalAlignment.Left;
+            altcm.Header = altcmHeader;
+            altcm.Click += delegate { HideInterfaceLogic.ToggleInterface(); };
+            settingscm.Items.Add(altcm);
+
+            ///////////////////////////
+            ///   Transparent bg   \\\\
+            ///////////////////////////
+            var transcm = new MenuItem
+            {
+                InputGestureText = "T"
+            };
+            var transcmHeader = new CheckBox
+            {
+                Content = "White background",
+                ToolTip = "Change between white and transparent background for images",
+                IsChecked = Properties.Settings.Default.BgColorWhite,
+                FontSize = 13,
+                Width = double.NaN,
+                Height = double.NaN
+            };
+            transcmHeader.Click += (s,x) => { ChangeBackground(s,x); };
+            transcmHeader.Style = Application.Current.FindResource("Checkstyle") as Style;
+            transcmHeader.HorizontalAlignment = HorizontalAlignment.Left;
+            transcm.Header = transcmHeader;
+            transcm.Click += (s, x) => { ChangeBackground(s, x); };
+            settingscm.Items.Add(transcm);
+
             cm.Items.Add(new Separator());
 
             ///////////////////////////
@@ -319,8 +386,6 @@ namespace PicView
             wallcmIcon.Fill = scbf;
             wallcm.Icon = wallcmIcon;
             cm.Items.Add(wallcm);
-            cm.Items.Add(new Separator());
-
 
 
             ///////////////////////////

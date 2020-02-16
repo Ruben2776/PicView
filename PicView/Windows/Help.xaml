@@ -11,7 +11,7 @@
     Background="#99000000"
     Closing="Window_Closing"
     ContentRendered="Window_ContentRendered"
-    FontFamily="/PicView;component/Library/fonts/#Aller"
+    FontFamily="/PicView;component/Resources/fonts/#Aller"
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
@@ -79,7 +79,7 @@
                     VerticalAlignment="Center"
                     Background="{x:Null}"
                     Content="Help"
-                    FontFamily="/PicView;component/Library/fonts/#Aller"
+                    FontFamily="/PicView;component/Resources/fonts/#Aller"
                     FontSize="15"
                     FontWeight="Bold" />
                 <Button

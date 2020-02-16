@@ -5,9 +5,9 @@
     Title="Loading..."
     MinWidth="465"
     MinHeight="515"
-    FontFamily="/PicView;component/Library/fonts/#Aller"
+    FontFamily="/PicView;component/Resources/fonts/#Aller"
     Foreground="{StaticResource MainColorBrush}"
-    Icon="Library/img/reflex-icon.png"
+    Icon="Resources/img/reflex-icon.png"
     SizeToContent="WidthAndHeight"
     Style="{DynamicResource MyWindowStyle}"
     WindowStartupLocation="CenterScreen" 
@@ -20,7 +20,7 @@
             DockPanel.Dock="Top">
             <DockPanel.Background>
                 <ImageBrush
-                    ImageSource="Library/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
+                    ImageSource="Resources/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
                     TileMode="FlipXY"
                     Viewport="0,0,100,100"
                     ViewportUnits="Absolute" />
@@ -131,7 +131,7 @@
                 x:Name="Bar"
                 VerticalAlignment="Center"
                 Background="{x:Null}"
-                FontFamily="/PicView;component/Library/fonts/#Aller"
+                FontFamily="/PicView;component/Resources/fonts/#Aller"
                 FontSize="15"
                 FontWeight="Bold"
                 Foreground="{StaticResource MainColorBrush}"
@@ -146,7 +146,7 @@
             DockPanel.Dock="Bottom">
             <StackPanel.Background>
                 <ImageBrush
-                    ImageSource="Library/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
+                    ImageSource="Resources/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
                     TileMode="FlipXY"
                     Viewport="0,0,100,100"
                     ViewportUnits="Absolute" />
@@ -337,7 +337,7 @@
                 DockPanel.Dock="Left">
                 <Rectangle.Fill>
                     <ImageBrush
-                        ImageSource="Library/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
+                        ImageSource="Resources/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
                         TileMode="FlipXY"
                         Viewport="0,0,100,100"
                         ViewportUnits="Absolute" />
@@ -350,7 +350,7 @@
                 DockPanel.Dock="Right">
                 <Rectangle.Fill>
                     <ImageBrush
-                        ImageSource="Library/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
+                        ImageSource="Resources/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
                         TileMode="FlipXY"
                         Viewport="0,0,100,100"
                         ViewportUnits="Absolute" />
@@ -359,7 +359,7 @@
             <Grid x:Name="bg" AllowDrop="True">
                 <Grid.Background>
                     <ImageBrush
-                        ImageSource="Library/img/noisy-texture-200x200-o4-d31-c-161616-t0.png"
+                        ImageSource="Resources/img/noisy-texture-200x200-o4-d31-c-161616-t0.png"
                         TileMode="FlipXY"
                         Viewport="0,0,100,100"
                         ViewportUnits="Absolute" />

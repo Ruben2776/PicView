@@ -20,7 +20,7 @@
             Height="200"
             Background="{StaticResource BackgroundColorBrushAlt}"
             BorderBrush="{StaticResource BorderBrush}"
-            BorderThickness="1"
+            BorderThickness="2"
             FocusVisualStyle="{x:Null}"
             Focusable="False">
             <Image

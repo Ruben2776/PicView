@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static PicView.Fields;
 
 namespace PicView.UserControls
 {
@@ -14,8 +15,6 @@ namespace PicView.UserControls
 
         internal readonly int Id;
 
-        internal const int picGalleryItem_Size = 230;
-        internal const int picGalleryItem_Size_s = 200;
         public PicGalleryItem(BitmapSource pic, int id, bool selected = false)
         {
             InitializeComponent();
@@ -44,7 +43,10 @@ namespace PicView.UserControls
             );
 
             if (Selected)
+            {
                 border.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColorOverAlpha());
+                border.Width = border.Height = picGalleryItem_Size;
+            }
         }
 
         internal void SetSelected(bool b)
@@ -53,12 +55,15 @@ namespace PicView.UserControls
             {
                 Selected = true;
                 border.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColorOverAlpha());
+                border.Width = border.Height = picGalleryItem_Size;
             }
             else
             {
                 Selected = false;
                 if (Application.Current.Resources["BorderBrush"] is SolidColorBrush bgBrush)
                     border.BorderBrush = bgBrush;
+
+                border.Width = border.Height = picGalleryItem_Size_s;
             }
         }
     }

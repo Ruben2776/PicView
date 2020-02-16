@@ -4,7 +4,7 @@
         <Setter Property="Margin" Value="0" />
         <Setter Property="Foreground" Value="WhiteSmoke" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="FontFamily" Value="/PicView;component/Library/fonts/#TeX Gyre Heros" />
+        <Setter Property="FontFamily" Value="/PicView;component/Resources/fonts/#TeX Gyre Heros" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
@@ -76,7 +76,7 @@
         <Setter Property="Margin" Value="0" />
         <Setter Property="Foreground" Value="WhiteSmoke" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="FontFamily" Value="/PicView;component/Library/fonts/#Aller" />
+        <Setter Property="FontFamily" Value="/PicView;component/Resources/fonts/#Aller" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">
@@ -156,7 +156,7 @@
         <Setter Property="Margin" Value="0" />
         <Setter Property="Foreground" Value="WhiteSmoke" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="FontFamily" Value="/PicView;component/Library/fonts/#Aller" />
+        <Setter Property="FontFamily" Value="/PicView;component/Resources/fonts/#Aller" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">

@@ -20,65 +20,29 @@
     <Setting Name="Red" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#FFF91110</Value>
     </Setting>
-    <Setting Name="GreenMouse" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#F20D8039</Value>
-    </Setting>
-    <Setting Name="PinkMouse" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#F2F19DFA</Value>
-    </Setting>
-    <Setting Name="RedMouse" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#FFF35353</Value>
-    </Setting>
-    <Setting Name="BlueMouse" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#F200ADEE</Value>
-    </Setting>
-    <Setting Name="OrangeMouse" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#E2FF6441</Value>
-    </Setting>
-    <Setting Name="TealMouse" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#F2008080</Value>
-    </Setting>
     <Setting Name="Aqua" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#FF36E6CC</Value>
-    </Setting>
-    <Setting Name="AquaMouse" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#F209A68E</Value>
     </Setting>
     <Setting Name="Beige" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#FFE2C290</Value>
     </Setting>
-    <Setting Name="BeigeMouse" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#F2E2C290</Value>
-    </Setting>
     <Setting Name="Teal" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#FF931AF7</Value>
+      <Value Profile="(Default)">#FF44A1A0</Value>
     </Setting>
     <Setting Name="Purple" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#FFD40FD4</Value>
     </Setting>
-    <Setting Name="PurpleMouse" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#E29E46E9</Value>
-    </Setting>
     <Setting Name="Cyan" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#FF1BA1E2</Value>
     </Setting>
-    <Setting Name="CyanMouse" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#F236BBFF</Value>
-    </Setting>
     <Setting Name="Grey" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#FF5F5449</Value>
-    </Setting>
-    <Setting Name="GreyMouse" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#F25F5449</Value>
     </Setting>
     <Setting Name="CallUpgrade" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="Magenta" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#FFFF35C5</Value>
-    </Setting>
-    <Setting Name="MagentaMouse" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#E2FF55C8</Value>
     </Setting>
     <Setting Name="ScrollEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -124,6 +88,42 @@
     </Setting>
     <Setting Name="Fullscreen" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="GreenAlpha" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#F20D8039</Value>
+    </Setting>
+    <Setting Name="PinkAlpha" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#F2FF86DB</Value>
+    </Setting>
+    <Setting Name="RedAlpha" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#F2F35353</Value>
+    </Setting>
+    <Setting Name="BlueAlpha" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#F200ADEE</Value>
+    </Setting>
+    <Setting Name="OrangeAlpha" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#F2FF6441</Value>
+    </Setting>
+    <Setting Name="TealAlpha" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#F21FAE98</Value>
+    </Setting>
+    <Setting Name="AquaAlpha" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#F209A68E</Value>
+    </Setting>
+    <Setting Name="BeigeAlpha" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#F2E2C290</Value>
+    </Setting>
+    <Setting Name="PurpleAlpha" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#F29E46E9</Value>
+    </Setting>
+    <Setting Name="CyanAlpha" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#F259BAE9</Value>
+    </Setting>
+    <Setting Name="GreyAlpha" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#F25F5449</Value>
+    </Setting>
+    <Setting Name="MagentaAlpha" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#F2FF6CD4</Value>
     </Setting>
   </Settings>
 </SettingsFile>

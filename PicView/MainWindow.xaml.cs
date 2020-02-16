@@ -414,8 +414,6 @@ namespace PicView
             if (size == null)
                 return;
 
-            base.OnRenderSizeChanged(size);
-
             if (!FitToWindow || !size.WidthChanged && !size.HeightChanged)
                 return;
 
@@ -448,6 +446,8 @@ namespace PicView
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 clickArrowLeftClicked = false;
             }
+
+            base.OnRenderSizeChanged(size);
         }
 
         #endregion Changed Events

@@ -91,7 +91,7 @@
                     VerticalAlignment="Center"
                     Background="{x:Null}"
                     Content="About"
-                    FontFamily="/PicView;component/lib/fonts/#Aller"
+                    FontFamily="/PicView;component/Resources/fonts/#Aller"
                     FontSize="15"
                     FontWeight="Bold" />
                 <Button
@@ -146,7 +146,7 @@
                             VerticalAlignment="Top"
                             Content="Fonts Used:" />
                         <TextBlock
-                            FontFamily="/PicView;component/lib/Fonts/#Aller"
+                            FontFamily="/PicView;component/Resources/fonts/#Aller"
                             FontSize="16"
                             TextAlignment="Center"
                             ToolTip="http://www.fontsquirrel.com/fonts/aller">
@@ -162,7 +162,7 @@
                         </TextBlock>
 
                         <TextBlock
-                            FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros"
+                            FontFamily="/PicView;component/Resources/fonts/#TeX Gyre Heros"
                             FontSize="16"
                             TextAlignment="Center"
                             ToolTip="http://www.fontsquirrel.com/fonts/tex-gyre-heros">
@@ -182,7 +182,7 @@
                     <StackPanel Margin="0,7">
                         <Label HorizontalAlignment="Center">Icons Used:</Label>
                         <TextBlock
-                            FontFamily="/PicView;component/lib/fonts/#Aller"
+                            FontFamily="/PicView;component/Resources/fonts/#Aller"
                             FontSize="14"
                             TextAlignment="Center"
                             ToolTip="https://useiconic.com/open/">
@@ -198,7 +198,7 @@
                         </TextBlock>
                         <TextBlock
                             x:Name="FlatIcon"
-                            FontFamily="/PicView;component/lib/fonts/#Aller"
+                            FontFamily="/PicView;component/Resources/fonts/#Aller"
                             FontSize="14"
                             TextAlignment="Center"
                             ToolTip="http://www.flaticon.com/free-icon/file-folder_379">
@@ -211,7 +211,7 @@
                         </TextBlock>
                         <TextBlock
                             x:Name="Ionic"
-                            FontFamily="/PicView;component/lib/fonts/#Aller"
+                            FontFamily="/PicView;component/Resources/fonts/#Aller"
                             FontSize="14"
                             TextAlignment="Center"
                             ToolTip="http://Ionicons.com/">
@@ -224,7 +224,7 @@
                         </TextBlock>
                         <TextBlock
                             x:Name="FontAwesome"
-                            FontFamily="/PicView;component/lib/fonts/#Aller"
+                            FontFamily="/PicView;component/Resources/fonts/#Aller"
                             FontSize="14"
                             TextAlignment="Center"
                             ToolTip="http://fontawesome.io/">
@@ -242,7 +242,7 @@
                             Margin="0,2"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
-                            FontFamily="/PicView;component/lib/fonts/#Aller"
+                            FontFamily="/PicView;component/Resources/fonts/#Aller"
                             FontSize="12"
                             Text="Made by Ruben Hyldgaard Negendahl" />
                         

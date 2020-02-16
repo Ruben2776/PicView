@@ -85,22 +85,22 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Library\img\Brainleaf-Dark-Blog-Reflex.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\img\Brainleaf-Dark-Blog-Reflex.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
-    <Resource Include="Library\fonts\Aller_Rg.ttf" />
-    <Resource Include="Library\fonts\Aller_Bd.ttf" />
-    <Resource Include="Library\fonts\Aller_BdIt.ttf" />
-    <Resource Include="Library\fonts\Aller_It.ttf" />
-    <Resource Include="Library\fonts\Aller_Lt.ttf" />
-    <Resource Include="Library\fonts\Aller_LtIt.ttf" />
-    <Resource Include="Library\fonts\texgyreheros-bold.otf" />
-    <Resource Include="Library\fonts\texgyreheros-bolditalic.otf" />
-    <Resource Include="Library\fonts\texgyreheros-italic.otf" />
-    <Resource Include="Library\fonts\texgyreheros-regular.otf" />
+    <Resource Include="Resources\fonts\Aller_Rg.ttf" />
+    <Resource Include="Resources\fonts\Aller_Bd.ttf" />
+    <Resource Include="Resources\fonts\Aller_BdIt.ttf" />
+    <Resource Include="Resources\fonts\Aller_It.ttf" />
+    <Resource Include="Resources\fonts\Aller_Lt.ttf" />
+    <Resource Include="Resources\fonts\Aller_LtIt.ttf" />
+    <Resource Include="Resources\fonts\texgyreheros-bold.otf" />
+    <Resource Include="Resources\fonts\texgyreheros-bolditalic.otf" />
+    <Resource Include="Resources\fonts\texgyreheros-italic.otf" />
+    <Resource Include="Resources\fonts\texgyreheros-regular.otf" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
@@ -116,10 +116,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Library\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
-    <Resource Include="Library\img\noisy-texture-200x200-o4-d30-c-101010-t0.png" />
-    <Resource Include="Library\img\Brainleaf-Dark-Blog-Reflex.ico" />
-    <Resource Include="Library\img\reflex-icon.png" />
+    <Resource Include="Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
+    <Resource Include="Resources\img\noisy-texture-200x200-o4-d30-c-101010-t0.png" />
+    <Resource Include="Resources\img\Brainleaf-Dark-Blog-Reflex.ico" />
+    <Resource Include="Resources\img\reflex-icon.png" />
   </ItemGroup>
   <ItemGroup>
     <FileAssociation Include=".jpg">
@@ -130,7 +130,7 @@
     </FileAssociation>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Magick.NET-Q16-x64" Version="7.15.0" />
+    <PackageReference Include="Magick.NET-Q16-x64" Version="7.15.1" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.3.3" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.3.3" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-ShellExtensions" Version="1.1.3.3" />
@@ -144,6 +144,19 @@
     <PackageReference Include="System.Numerics.Vectors" Version="4.6.0-preview5.19224.8" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.0" />
     <PackageReference Include="WpfScreenHelper" Version="0.4.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

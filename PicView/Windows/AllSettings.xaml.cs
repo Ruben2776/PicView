@@ -55,11 +55,11 @@ namespace PicView.Windows
                 RedRadio.MouseLeave += RedRadio_MouseLeave;
                 RedRadio.Click += Red;
 
-                // VioletRadio
-                VioletRadio.PreviewMouseLeftButtonDown += VioletRadio_PreviewMouseLeftButtonDown;
-                VioletRadio.MouseEnter += VioletRadio_MouseEnter;
-                VioletRadio.MouseLeave += VioletRadio_MouseLeave;
-                VioletRadio.Click += Violet;
+                // TealRadio
+                TealRadio.PreviewMouseLeftButtonDown += TealRadio_PreviewMouseLeftButtonDown;
+                TealRadio.MouseEnter += TealRadio_MouseEnter;
+                TealRadio.MouseLeave += TealRadio_MouseLeave;
+                TealRadio.Click += Teal;
 
                 // AquaRadio
                 AquaRadio.PreviewMouseLeftButtonDown += AquaRadio_PreviewMouseLeftButtonDown;
@@ -124,7 +124,7 @@ namespace PicView.Windows
                 BorderRadio.PreviewMouseLeftButtonDown += BorderRadio_PreviewMouseLeftButtonDown;
                 BorderRadio.MouseEnter += BorderRadio_MouseEnter;
                 BorderRadio.MouseLeave += BorderRadio_MouseLeave;
-                BorderRadio.Click += Configs.SetBgColorEnabled;
+                BorderRadio.Click += Configs.SetBorderColorEnabled;
                 if (Properties.Settings.Default.WindowBorderColorEnabled)
                     BorderRadio.IsChecked = true;
 
@@ -152,7 +152,7 @@ namespace PicView.Windows
                         RedRadio.IsChecked = true;
                         break;
                     case 6:
-                        VioletRadio.IsChecked = true;
+                        TealRadio.IsChecked = true;
                         break;
                     case 7:
                         AquaRadio.IsChecked = true;
@@ -372,34 +372,34 @@ namespace PicView.Windows
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(RedBrush, 5);
         }
 
-        // Violet
-        void VioletRadio_MouseLeave(object sender, MouseEventArgs e)
+        // Teal
+        void TealRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
-                VioletBrush,
+                TealBrush,
                 6
             );
         }
 
-        void VioletRadio_MouseEnter(object sender, MouseEventArgs e)
+        void TealRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
-                VioletBrush,
+                TealBrush,
                 6
             );
         }
 
-        void VioletRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        void TealRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(VioletBrush, 6);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(TealBrush, 6);
         }
 
         // Aqua
@@ -701,7 +701,7 @@ namespace PicView.Windows
             Properties.Settings.Default.ColorTheme = 5;
         }
 
-        private static void Violet(object sender, RoutedEventArgs e)
+        private static void Teal(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 6;
         }

@@ -12,7 +12,7 @@ namespace PicView.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.2.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.5.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -97,78 +97,6 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#F20D8039")]
-        public global::System.Windows.Media.Color GreenMouse {
-            get {
-                return ((global::System.Windows.Media.Color)(this["GreenMouse"]));
-            }
-            set {
-                this["GreenMouse"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#F2F19DFA")]
-        public global::System.Windows.Media.Color PinkMouse {
-            get {
-                return ((global::System.Windows.Media.Color)(this["PinkMouse"]));
-            }
-            set {
-                this["PinkMouse"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#FFF35353")]
-        public global::System.Windows.Media.Color RedMouse {
-            get {
-                return ((global::System.Windows.Media.Color)(this["RedMouse"]));
-            }
-            set {
-                this["RedMouse"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#F200ADEE")]
-        public global::System.Windows.Media.Color BlueMouse {
-            get {
-                return ((global::System.Windows.Media.Color)(this["BlueMouse"]));
-            }
-            set {
-                this["BlueMouse"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#E2FF6441")]
-        public global::System.Windows.Media.Color OrangeMouse {
-            get {
-                return ((global::System.Windows.Media.Color)(this["OrangeMouse"]));
-            }
-            set {
-                this["OrangeMouse"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#F2008080")]
-        public global::System.Windows.Media.Color TealMouse {
-            get {
-                return ((global::System.Windows.Media.Color)(this["TealMouse"]));
-            }
-            set {
-                this["TealMouse"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("#FF36E6CC")]
         public global::System.Windows.Media.Color Aqua {
             get {
@@ -176,18 +104,6 @@ namespace PicView.Properties {
             }
             set {
                 this["Aqua"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#F209A68E")]
-        public global::System.Windows.Media.Color AquaMouse {
-            get {
-                return ((global::System.Windows.Media.Color)(this["AquaMouse"]));
-            }
-            set {
-                this["AquaMouse"] = value;
             }
         }
         
@@ -205,19 +121,7 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#F2E2C290")]
-        public global::System.Windows.Media.Color BeigeMouse {
-            get {
-                return ((global::System.Windows.Media.Color)(this["BeigeMouse"]));
-            }
-            set {
-                this["BeigeMouse"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#FF931AF7")]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF44A1A0")]
         public global::System.Windows.Media.Color Teal {
             get {
                 return ((global::System.Windows.Media.Color)(this["Teal"]));
@@ -241,18 +145,6 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#E29E46E9")]
-        public global::System.Windows.Media.Color PurpleMouse {
-            get {
-                return ((global::System.Windows.Media.Color)(this["PurpleMouse"]));
-            }
-            set {
-                this["PurpleMouse"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("#FF1BA1E2")]
         public global::System.Windows.Media.Color Cyan {
             get {
@@ -265,18 +157,6 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#F236BBFF")]
-        public global::System.Windows.Media.Color CyanMouse {
-            get {
-                return ((global::System.Windows.Media.Color)(this["CyanMouse"]));
-            }
-            set {
-                this["CyanMouse"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("#FF5F5449")]
         public global::System.Windows.Media.Color Grey {
             get {
@@ -284,18 +164,6 @@ namespace PicView.Properties {
             }
             set {
                 this["Grey"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#F25F5449")]
-        public global::System.Windows.Media.Color GreyMouse {
-            get {
-                return ((global::System.Windows.Media.Color)(this["GreyMouse"]));
-            }
-            set {
-                this["GreyMouse"] = value;
             }
         }
         
@@ -320,18 +188,6 @@ namespace PicView.Properties {
             }
             set {
                 this["Magenta"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#E2FF55C8")]
-        public global::System.Windows.Media.Color MagentaMouse {
-            get {
-                return ((global::System.Windows.Media.Color)(this["MagentaMouse"]));
-            }
-            set {
-                this["MagentaMouse"] = value;
             }
         }
         
@@ -512,6 +368,150 @@ namespace PicView.Properties {
             }
             set {
                 this["Fullscreen"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#F20D8039")]
+        public global::System.Windows.Media.Color GreenAlpha {
+            get {
+                return ((global::System.Windows.Media.Color)(this["GreenAlpha"]));
+            }
+            set {
+                this["GreenAlpha"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#F2FF86DB")]
+        public global::System.Windows.Media.Color PinkAlpha {
+            get {
+                return ((global::System.Windows.Media.Color)(this["PinkAlpha"]));
+            }
+            set {
+                this["PinkAlpha"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#F2F35353")]
+        public global::System.Windows.Media.Color RedAlpha {
+            get {
+                return ((global::System.Windows.Media.Color)(this["RedAlpha"]));
+            }
+            set {
+                this["RedAlpha"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#F200ADEE")]
+        public global::System.Windows.Media.Color BlueAlpha {
+            get {
+                return ((global::System.Windows.Media.Color)(this["BlueAlpha"]));
+            }
+            set {
+                this["BlueAlpha"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#F2FF6441")]
+        public global::System.Windows.Media.Color OrangeAlpha {
+            get {
+                return ((global::System.Windows.Media.Color)(this["OrangeAlpha"]));
+            }
+            set {
+                this["OrangeAlpha"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#F21FAE98")]
+        public global::System.Windows.Media.Color TealAlpha {
+            get {
+                return ((global::System.Windows.Media.Color)(this["TealAlpha"]));
+            }
+            set {
+                this["TealAlpha"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#F209A68E")]
+        public global::System.Windows.Media.Color AquaAlpha {
+            get {
+                return ((global::System.Windows.Media.Color)(this["AquaAlpha"]));
+            }
+            set {
+                this["AquaAlpha"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#F2E2C290")]
+        public global::System.Windows.Media.Color BeigeAlpha {
+            get {
+                return ((global::System.Windows.Media.Color)(this["BeigeAlpha"]));
+            }
+            set {
+                this["BeigeAlpha"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#F29E46E9")]
+        public global::System.Windows.Media.Color PurpleAlpha {
+            get {
+                return ((global::System.Windows.Media.Color)(this["PurpleAlpha"]));
+            }
+            set {
+                this["PurpleAlpha"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#F259BAE9")]
+        public global::System.Windows.Media.Color CyanAlpha {
+            get {
+                return ((global::System.Windows.Media.Color)(this["CyanAlpha"]));
+            }
+            set {
+                this["CyanAlpha"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#F25F5449")]
+        public global::System.Windows.Media.Color GreyAlpha {
+            get {
+                return ((global::System.Windows.Media.Color)(this["GreyAlpha"]));
+            }
+            set {
+                this["GreyAlpha"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#F2FF6CD4")]
+        public global::System.Windows.Media.Color MagentaAlpha {
+            get {
+                return ((global::System.Windows.Media.Color)(this["MagentaAlpha"]));
+            }
+            set {
+                this["MagentaAlpha"] = value;
             }
         }
     }

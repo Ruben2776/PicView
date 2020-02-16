@@ -23,7 +23,7 @@
             Margin="0,0,0,8">
             <Path Data="M24,11c0-0.6-0.4-1-1-1H1c-0.6,0-1,0.4-1,1v2c0,0.6,0.4,1,1,1h22c0.6,0,1-0.4,1-1V11z">
                 <Path.Fill>
-                    <SolidColorBrush x:Name="MinusFill" Color="{StaticResource MainColor}" />
+                    <SolidColorBrush x:Name="PolyFill" Color="{StaticResource MainColor}" />
                 </Path.Fill>
             </Path>
         </Viewbox>

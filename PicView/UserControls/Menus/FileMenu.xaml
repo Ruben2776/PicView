@@ -43,7 +43,7 @@
                         Width="121"
                         Height="51"
                         Padding="25,17,0,0"
-                        FontFamily="/PicView;component/lib/fonts/#Aller"
+                        FontFamily="/PicView;component/Resources/fonts/#Aller"
                         FontSize="16"
                         FontWeight="Bold"
                         Text="File Menu" />

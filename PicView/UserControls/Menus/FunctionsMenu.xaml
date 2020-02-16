@@ -45,7 +45,7 @@
                         x:Name="bar"
                         Canvas.Left="15"
                         Canvas.Top="15"
-                        FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros"
+                        FontFamily="/PicView;component/Resources/fonts/#TeX Gyre Heros"
                         FontSize="16"
                         FontWeight="Bold"
                         Text="All Functions" />

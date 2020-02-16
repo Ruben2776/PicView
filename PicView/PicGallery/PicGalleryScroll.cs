@@ -9,9 +9,6 @@ namespace PicView
 
     internal static class PicGalleryScroll
     {
-        internal const int picGalleryItem_Size = 230;
-        internal const int picGalleryItem_Size_s = 200;
-
         static int Horizontal_items
         {
             get

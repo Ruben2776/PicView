@@ -152,7 +152,7 @@ namespace PicView
                     Preloader.Clear();
                     Preloader.Add(Pics[id]);
                 }
-
+                
                 ItemClick(id);
             }
 
@@ -179,10 +179,9 @@ namespace PicView
             Pic(id);
 
             if (Properties.Settings.Default.PicGallery == 1)
+            {
                 picGallery.Visibility = Visibility.Collapsed;
-
-            // Fix annoying bug
-            ajaxLoading.Opacity = 0;
+            }
         }
 
     }

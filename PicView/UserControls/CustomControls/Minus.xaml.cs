@@ -22,6 +22,29 @@ namespace PicView.UserControls
         {
             InitializeComponent();
 
+            bb = (Color)Application.Current.Resources["BorderColor"];
+            bg = (Color)Application.Current.Resources["AltInterface"];
+            bg2 = (Color)Application.Current.Resources["AltInterfaceW"];
+            fg = (Color)Application.Current.Resources["MainColor"];
+
+            PreviewMouseLeftButtonDown += (sender, e) =>
+            {
+                if (ccAnim == null)
+                {
+                    ccAnim = new ColorAnimation
+                    {
+                        Duration = TimeSpan.FromSeconds(.32)
+                    };
+                }
+
+                var alpha = AnimationHelper.GetPrefferedColorOver();
+                ccAnim.From = alpha;
+                ccAnim.To = AnimationHelper.GetPrefferedColorDown();
+                PolyFill.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+                AnimationHelper.MouseEnterColorEvent(alpha.A, alpha.R, alpha.G, alpha.B, BorderBrushKey, true);
+
+            };
+
             MouseEnter += (sender, e) =>
             {
                 if (ccAnim == null)
@@ -34,15 +57,12 @@ namespace PicView.UserControls
                     {
                         Duration = TimeSpan.FromSeconds(.2)
                     };
-                    bb = (Color)Application.Current.Resources["BorderColor"];
-                    bg = (Color)Application.Current.Resources["AltInterface"];
-                    bg2 = (Color)Application.Current.Resources["AltInterfaceW"];
-                    fg = (Color)Application.Current.Resources["MainColor"];
+
                 }
 
-                ccAnim.From =
+                ccAnim.From = fg;
                 ccAnim.To = AnimationHelper.GetPrefferedColorOver();
-                MinusFill.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+                PolyFill.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
 
                 ccAnim2.From = bg;
                 ccAnim2.To = bg2;
@@ -52,9 +72,21 @@ namespace PicView.UserControls
             };
             MouseLeave += (sender, e) =>
             {
+                if (ccAnim == null)
+                {
+                    ccAnim = new ColorAnimation
+                    {
+                        Duration = TimeSpan.FromSeconds(.32)
+                    };
+                    ccAnim2 = new ColorAnimation
+                    {
+                        Duration = TimeSpan.FromSeconds(.2)
+                    };
+                }
+
                 ccAnim.From = AnimationHelper.GetPrefferedColorOver();
                 ccAnim.To = fg;
-                MinusFill.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+                PolyFill.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
 
                 ccAnim2.From = bg2;
                 ccAnim2.To = bg;

@@ -112,11 +112,10 @@ namespace PicView
             if (Properties.Settings.Default.PicGallery > 0)
             {
                 if (!PicGalleryLogic.IsLoading)
-                    await PicGalleryLoad.Load().ConfigureAwait(false);
+                    await PicGalleryLoad.Load().ConfigureAwait(true);
             }
 
-            if (prevPicResource != null)
-                prevPicResource = null;
+            prevPicResource = null; // Make sure to not waste memory
         }
 
         /// <summary>
@@ -175,18 +174,7 @@ namespace PicView
 
                 TryZoomFit(Pics[x]);
 
-                BitmapSource thumb;
-                if (picGallery != null)
-                {
-                    if (x < picGallery.Container.Children.Count && picGallery.Container.Children.Count == Pics.Count)
-                    {
-                        var y = picGallery.Container.Children[x] as PicGalleryItem;
-                        thumb = (BitmapSource)y.img.Source;
-                    }
-                    else thumb = GetBitmapSourceThumb(Pics[x]);
-                }
-                else
-                    thumb = GetBitmapSourceThumb(Pics[x]);
+                var thumb = GetThumb();
 
                 if (thumb != null)
                     mainWindow.img.Source = thumb;
@@ -199,8 +187,6 @@ namespace PicView
                     await Task.Run(() => pic = RenderToBitmapSource(Pics[x])).ConfigureAwait(true);
                 else
                 {
-                    //if (!Properties.Settings.Default.ShowInterface && !freshStartup)
-                    //    AjaxLoadingStart();
                     do
                     {
                         // Try again while loading?                      
@@ -225,13 +211,14 @@ namespace PicView
                             return;
                         }
 
-                        BrokenImage();
+                        DisplayBrokenImage();
                         canNavigate = true;
                         return;
                     }
                 }
             }
 
+            // Clear unsupported image window, if shown
             if (mainWindow.img.Source == null && !freshStartup)
             {
                 if (mainWindow.topLayer.Children.Count > 0)
@@ -259,14 +246,6 @@ namespace PicView
             SetTitleString(pic.PixelWidth, pic.PixelHeight, x);
             FolderIndex = x;
             AjaxLoadingEnd();
-
-            if (picGallery != null)
-            {
-                if (!PicGalleryLogic.IsLoading)
-                    PicGalleryScroll.ScrollTo();
-
-                /// TODO make this possible to be scrolled correctly, when loading, if possible?
-            }
 
             if (Pics.Count > 0)
             {
@@ -332,7 +311,7 @@ namespace PicView
             if (!canNavigate)
                 return;
 
-            // .. Or browsing PicGallery
+            // exit if browsing PicGallery
             if (picGallery != null)
             {
                 if (Properties.Settings.Default.PicGallery == 1)
@@ -401,25 +380,21 @@ namespace PicView
             // Update PicGallery selected item, if needed
             if (picGallery != null)
             {
-                // Use backup?
                 if (Properties.Settings.Default.PicGallery > 0)
                 {
-                    if (picGallery.Container.Children.Count > x)
+                    if (picGallery.Container.Children.Count > FolderIndex)
                     {
                         var prevItem = picGallery.Container.Children[x] as PicGalleryItem;
                         prevItem.SetSelected(false);
 
-                        if (picGallery.Container.Children.Count > FolderIndex)
-                        {
-                            var nextItem = picGallery.Container.Children[FolderIndex] as PicGalleryItem;
-                            nextItem.SetSelected(true);
-                        }
+                        var nextItem = picGallery.Container.Children[FolderIndex] as PicGalleryItem;
+                        nextItem.SetSelected(true);
+                        PicGalleryScroll.ScrollTo();
                     }
                     else
                     {
                         // TODO Find way to get PicGalleryItem an alternative way...
                     }
-
                 }
             }
         }
@@ -430,24 +405,13 @@ namespace PicView
         /// <param name="forwards">The direction</param>
         internal static void FastPic(bool forwards)
         {
-            //await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
-            //{
-            //    mainWindow.Bar.ToolTip =
-            //    mainWindow.Title =
-            //    mainWindow.Bar.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count;
-
-            //    mainWindow.img.Width = xWidth;
-            //    mainWindow.img.Height = xHeight;
-
-            //    mainWindow.img.Source = Preloader.Contains(Pics[FolderIndex]) ? Preloader.Load(Pics[FolderIndex]) : GetBitmapSourceThumb(Pics[FolderIndex]);
-            //}));
-            //Progress(FolderIndex, Pics.Count);
-            FastPicRunning = true;
-
             /// TODO FastPic Changes...
             /// Need solution for slowing down this thing to something useful
             /// await task delay only works once, it seems
             /// Timers doesn't deliver a proper result in my experience
+            /// 
+
+            FastPicRunning = true;
 
             if (forwards)
             {
@@ -471,16 +435,10 @@ namespace PicView
             mainWindow.Title =
             mainWindow.Bar.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count;
 
-            BitmapSource pic = Preloader.Load(Pics[FolderIndex]);
+            var thumb = GetThumb();
 
-            if (pic == null)
-                pic = GetWindowsThumbnail(Pics[FolderIndex]);
-
-            if (pic == null)
-                pic = RenderToBitmapSource(Pics[FolderIndex], 30);
-
-            if (pic != null)
-                mainWindow.img.Source = pic;
+            if (thumb != null)
+                mainWindow.img.Source = thumb;
 
             Progress(FolderIndex, Pics.Count);
         }
@@ -496,15 +454,11 @@ namespace PicView
             //fastPicTimer.Stop();
             FastPicRunning = false;
 
-            //if (!Preloader.Contains(Pics[FolderIndex]))
-            //{
-            //    PreloadCount = 0;
-            //    Preloader.Clear();
-            //}
-
-            PreloadCount = 4;
-            //if (!Preloader.Contains(Pics[FolderIndex]))
-            //    Preloader.Clear();
+            if (!Preloader.Contains(Pics[FolderIndex]))
+            {
+                PreloadCount = 0;
+                Preloader.Clear();
+            }
 
             Pic(FolderIndex);
         }

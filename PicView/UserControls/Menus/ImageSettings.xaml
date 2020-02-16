@@ -36,7 +36,7 @@
                         Width="174"
                         Height="51"
                         Padding="21,15,0,0"
-                        FontFamily="/PicView;component/lib/Fonts/#TeX Gyre Heros"
+                        FontFamily="/PicView;component/Resources/fonts/#TeX Gyre Heros"
                         FontSize="16"
                         FontWeight="Bold"
                         Foreground="{StaticResource MainColorBrush}"

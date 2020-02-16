@@ -18,7 +18,7 @@ namespace PicView
         {
             // Add events and set fields, when it's loaded.
             picGallery.Scroller.PreviewMouseWheel += ScrollTo;
-            picGallery.Scroller.MouseDown += (s, x) => mainWindow.Focus();
+            picGallery.Scroller.ScrollChanged += (s, x) => mainWindow.Focus(); // Maintain window focus when scrolling manually
             picGallery.grid.MouseLeftButtonDown += (s, x) => mainWindow.Focus();
             picGallery.x2.MouseLeftButtonUp += delegate { PicGalleryToggle.ToggleGallery(); };
 
