@@ -54,7 +54,9 @@ namespace PicView
         {
             // Don't scroll if not scrollable
             if (mainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed)
+            {
                 return;
+            }
 
             autoScrolling = true;
             autoScrollOrigin = e.GetPosition(mainWindow.Scroller);
@@ -84,7 +86,9 @@ namespace PicView
         {
             // Error checking
             if (autoScrollPos == null || autoScrollOrigin == null)
+            {
                 return;
+            }
 
             // Start in dispatcher because timer is threaded
             await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
@@ -98,8 +102,10 @@ namespace PicView
                     //    + Environment.NewLine + "offset = " + offset, false);
 
                     if (autoScrolling)
+                    {
                         // Tell the scrollviewer to scroll to calculated offset
                         mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset + offset);
+                    }
                 }
             }));
         }

@@ -26,9 +26,14 @@ namespace PicView
                     da.Completed += delegate { imageSettingsMenu.Visibility = Visibility.Hidden; };
                 }
                 else
+                {
                     da.To = 1;
+                }
+
                 if (imageSettingsMenu != null)
+                {
                     imageSettingsMenu.BeginAnimation(UIElement.OpacityProperty, da);
+                }
             }
         }
 
@@ -49,9 +54,14 @@ namespace PicView
                     da.Completed += delegate { fileMenu.Visibility = Visibility.Hidden; };
                 }
                 else
+                {
                     da.To = 1;
+                }
+
                 if (fileMenu != null)
+                {
                     fileMenu.BeginAnimation(UIElement.OpacityProperty, da);
+                }
             }
         }
 
@@ -73,9 +83,14 @@ namespace PicView
                     da.Completed += delegate { quickSettingsMenu.Visibility = Visibility.Hidden; };
                 }
                 else
+                {
                     da.To = 1;
+                }
+
                 if (quickSettingsMenu != null)
+                {
                     quickSettingsMenu.BeginAnimation(UIElement.OpacityProperty, da);
+                }
             }
         }
 
@@ -96,9 +111,14 @@ namespace PicView
                     da.Completed += delegate { functionsMenu.Visibility = Visibility.Hidden; };
                 }
                 else
+                {
                     da.To = 1;
+                }
+
                 if (functionsMenu != null)
+                {
                     functionsMenu.BeginAnimation(UIElement.OpacityProperty, da);
+                }
             }
         }
 
@@ -109,16 +129,24 @@ namespace PicView
         internal static bool UserControls_Open()
         {
             if (ImageSettingsMenuOpen)
+            {
                 return true;
+            }
 
             if (FileMenuOpen)
+            {
                 return true;
+            }
 
             if (QuickSettingsMenuOpen)
+            {
                 return true;
+            }
 
             if (FunctionsMenuOpen)
+            {
                 return true;
+            }
 
             return false;
         }
@@ -129,16 +157,24 @@ namespace PicView
         internal static void Close_UserControls()
         {
             if (ImageSettingsMenuOpen)
+            {
                 ImageSettingsMenuOpen = false;
+            }
 
             if (FileMenuOpen)
+            {
                 FileMenuOpen = false;
+            }
 
             if (QuickSettingsMenuOpen)
+            {
                 QuickSettingsMenuOpen = false;
+            }
 
             if (FunctionsMenuOpen)
+            {
                 FunctionsMenuOpen = false;
+            }
         }
 
         /// <summary>
@@ -159,13 +195,19 @@ namespace PicView
             FileMenuOpen = !FileMenuOpen;
 
             if (ImageSettingsMenuOpen)
+            {
                 ImageSettingsMenuOpen = false;
+            }
 
             if (QuickSettingsMenuOpen)
+            {
                 QuickSettingsMenuOpen = false;
+            }
 
             if (FunctionsMenuOpen)
+            {
                 FunctionsMenuOpen = false;
+            }
         }
 
         /// <summary>
@@ -178,13 +220,19 @@ namespace PicView
             ImageSettingsMenuOpen = !ImageSettingsMenuOpen;
 
             if (FileMenuOpen)
+            {
                 FileMenuOpen = false;
+            }
 
             if (QuickSettingsMenuOpen)
+            {
                 QuickSettingsMenuOpen = false;
+            }
 
             if (FunctionsMenuOpen)
+            {
                 FunctionsMenuOpen = false;
+            }
         }
 
         /// <summary>
@@ -197,13 +245,19 @@ namespace PicView
             QuickSettingsMenuOpen = !QuickSettingsMenuOpen;
 
             if (FileMenuOpen)
+            {
                 FileMenuOpen = false;
+            }
 
             if (ImageSettingsMenuOpen)
+            {
                 ImageSettingsMenuOpen = false;
+            }
 
             if (FunctionsMenuOpen)
+            {
                 FunctionsMenuOpen = false;
+            }
         }
 
         /// <summary>
@@ -216,13 +270,19 @@ namespace PicView
             FunctionsMenuOpen = !FunctionsMenuOpen;
 
             if (FileMenuOpen)
+            {
                 FileMenuOpen = false;
+            }
 
             if (ImageSettingsMenuOpen)
+            {
                 ImageSettingsMenuOpen = false;
+            }
 
             if (QuickSettingsMenuOpen)
+            {
                 QuickSettingsMenuOpen = false;
+            }
         }
     }
 }

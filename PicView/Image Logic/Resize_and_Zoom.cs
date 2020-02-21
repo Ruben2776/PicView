@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using static PicView.Fields;
+using static PicView.Helper;
 using static PicView.Navigation;
 using static PicView.Scroll;
 using static PicView.SetTitle;
@@ -14,6 +15,43 @@ namespace PicView
 {
     internal static class Resize_and_Zoom
     {
+        /// <summary>
+        /// Returns zoom percentage. if 100%, return empty string
+        /// </summary>
+        internal static string ZoomPercentage
+        {
+            get
+            {
+                var zoom = Math.Round(AspectRatio * 100);
+                if (st.ScaleX == 1)
+                {
+                    return string.Empty;
+                }
+
+                return zoom + "%";
+            }
+        }
+
+        /// <summary>
+        /// Returns aspect ratio as a formatted string
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        internal static string StringAspect(int width, int height)
+        {
+            var gcd = GCD(width, height);
+            var x = (width / gcd);
+            var y = (height / gcd);
+
+            if (x == width && y == height || x > 16 || y > 9)
+            {
+                return ") ";
+            }
+
+            return ", " + x + ":" + y + ") ";
+        }
+
         // Zoom
         /// <summary>
         /// Pan and Zoom, reset zoom and double click to reset
@@ -55,7 +93,9 @@ namespace PicView
         internal static void Bg_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
                 Move(sender, e);
+            }
         }
 
         /// <summary>
@@ -66,9 +106,13 @@ namespace PicView
         {
             // Stop autoscrolling or dragging image
             if (autoScrolling)
+            {
                 StopAutoScroll();
+            }
             else
+            {
                 mainWindow.img.ReleaseMouseCapture();
+            }
         }
 
         /// <summary>
@@ -89,7 +133,9 @@ namespace PicView
             // Don't drag when full scale
             // and don't drag it if mouse not held down on image
             if (!mainWindow.img.IsMouseCaptured || st.ScaleX == 1)
+            {
                 return;
+            }
 
             // Drag image by modifying X,Y coordinates
             var v = start - e.GetPosition(mainWindow);
@@ -123,20 +169,30 @@ namespace PicView
                     // Scroll vertical when scroll enabled
                     var zoomSpeed = 45;
                     if (e.Delta > 0)
+                    {
                         mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset - zoomSpeed);
+                    }
                     else if (e.Delta < 0)
+                    {
                         mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset + zoomSpeed);
+                    }
                 }
             }
             // Change image with shift being held down
             else if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            {
                 Pic(e.Delta > 0);
+            }
             // Scale when Ctrl being held down
             else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !autoScrolling)
+            {
                 Zoom(e.Delta, true);
+            }
             // Zoom
             else if (!autoScrolling)
+            {
                 Zoom(e.Delta, false);
+            }
         }
 
         /// <summary>
@@ -171,7 +227,9 @@ namespace PicView
         internal static void ResetZoom()
         {
             if (mainWindow.img.Source == null)
+            {
                 return;
+            }
 
             // Scale to default
             var scaletransform = new ScaleTransform();
@@ -190,10 +248,14 @@ namespace PicView
 
             // Display non-zoomed values
             if (canNavigate)
+            {
                 SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
+            }
             else
+            {
                 // Display values from web
                 SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, Pics[FolderIndex]);
+            }
 
             isZoomed = false;
         }
@@ -207,17 +269,25 @@ namespace PicView
         {
             /// Don't zoom when gallery is open
             if (picGallery != null)
+            {
                 if (PicGalleryLogic.IsOpen)
+                {
                     return;
+                }
+            }
 
             /// Scales the window with img.LayoutTransform
             if (zoomMode)
             {
                 /// Start from 1 or zoom value
                 if (isZoomed)
+                {
                     AspectRatio += i > 0 ? .01 : -.01;
+                }
                 else
+                {
                     AspectRatio = 1;
+                }
 
                 var scaletransform = new ScaleTransform();
 
@@ -237,9 +307,14 @@ namespace PicView
                 /// Determine zoom speed
                 var zoomValue = st.ScaleX > 1.3 ? .03 : .01;
                 if (st.ScaleX > 1.5)
+                {
                     zoomValue += .005;
+                }
+
                 if (st.ScaleX > 1.7)
+                {
                     zoomValue += .007;
+                }
 
                 if (st.ScaleX >= 1.0 && st.ScaleX + zoomValue >= 1.0 || st.ScaleX - zoomValue >= 1.0)
                 {
@@ -263,16 +338,24 @@ namespace PicView
 
             /// Displays zoompercentage in the center window
             if (!string.IsNullOrEmpty(ZoomPercentage))
+            {
                 ToolTipStyle(ZoomPercentage, true);
+            }
             else
+            {
                 CloseToolTipStyle();
+            }
 
             /// Display updated values
             if (canNavigate)
+            {
                 SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
+            }
             else
+            {
                 /// Display values from web
                 SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, Pics[FolderIndex]);
+            }
         }
 
         /// <summary>
@@ -281,31 +364,45 @@ namespace PicView
         internal static void TryZoomFit()
         {
             if (freshStartup)
+            {
                 return;
-            
+            }
+
             if (Pics != null)
             {
                 if (Pics.Count > FolderIndex)
                 {
                     var tmp = PreLoading.Preloader.Load(Pics[FolderIndex]);
                     if (tmp != null)
+                    {
                         ZoomFit(tmp.PixelWidth, tmp.PixelHeight);
+                    }
                     else
                     {
                         var size = ImageDecoder.ImageSize(Pics[FolderIndex]);
                         if (size.HasValue)
+                        {
                             ZoomFit(size.Value.Width, size.Value.Height);
+                        }
                         else if (mainWindow.img.Source != null)
+                        {
                             ZoomFit(mainWindow.img.Source.Width, mainWindow.img.Source.Height);
+                        }
                         else if (xWidth != 0 && xHeight != 0)
+                        {
                             ZoomFit(xWidth, xHeight);
+                        }
                     }
                 }
             }
             else if (mainWindow.img.Source != null)
+            {
                 ZoomFit(mainWindow.img.Source.Width, mainWindow.img.Source.Height);
+            }
             else if (xWidth != 0 && xHeight != 0)
+            {
                 ZoomFit(xWidth, xHeight);
+            }
         }
 
         /// <summary>
@@ -321,9 +418,13 @@ namespace PicView
 
             var size = ImageDecoder.ImageSize(source);
             if (size.HasValue)
+            {
                 ZoomFit(size.Value.Width, size.Value.Height);
-            else 
+            }
+            else
+            {
                 ZoomFit(465, 515);
+            }
         }
 
         /// <summary>
@@ -351,16 +452,20 @@ namespace PicView
                     maxWidth = Math.Min((MonitorInfo.Width - ComfySpace) - 2, width - 2);
                     maxHeight = Math.Min(MonitorInfo.Height - 2, height - 2);
                 }
-            }       
+            }
             else
             {
                 /// Get max width and height, based on window size
                 maxWidth = Math.Min(mainWindow.Width, width);
 
                 if (Properties.Settings.Default.ShowInterface)
+                {
                     maxHeight = Math.Min(mainWindow.Height - interfaceHeight, height);
+                }
                 else
+                {
                     maxHeight = Math.Min(mainWindow.Height, height);
+                }
             }
 
             AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));
@@ -397,13 +502,17 @@ namespace PicView
 
                 /// Loses position gradually if not forced to center
                 if (!Properties.Settings.Default.Fullscreen)
+                {
                     CenterWindowOnScreen();
+                }
             }
 
             if (isZoomed)
+            {
                 ResetZoom();
+            }
 
-            
+
 
             /*
 

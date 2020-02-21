@@ -68,7 +68,9 @@ namespace PicView
         internal static void Move(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton != MouseButton.Left)
+            {
                 return;
+            }
 
             if (e.ClickCount == 2)
             {
@@ -77,14 +79,18 @@ namespace PicView
                 if (bar != null)
                 {
                     if (bar.Name == "Bar")
+                    {
                         return;
+                    }
                 }
                 Maximize_Restore();
             }
             else
             {
                 if (e.LeftButton == MouseButtonState.Pressed)
+                {
                     mainWindow.DragMove();
+                }
 
                 // Update info for possible new screen, needs more engineering
                 MonitorInfo = MonitorSize.GetMonitorSize();
@@ -123,7 +129,9 @@ namespace PicView
             {
                 // Update new setting and sizing
                 if (FitToWindow)
+                {
                     FitToWindow = false;
+                }
 
                 // Tell Windows that it's maximized
                 mainWindow.WindowState = WindowState.Maximized;
@@ -150,7 +158,9 @@ namespace PicView
             if (startup || !Properties.Settings.Default.Fullscreen)
             {
                 if (!FitToWindow)
+                {
                     Properties.Settings.Default.Save();
+                }
 
                 Properties.Settings.Default.Fullscreen = true;
                 // Update new setting and sizing
@@ -192,7 +202,9 @@ namespace PicView
                     mainWindow.ResizeMode = ResizeMode.NoResize;
 
                     if (quickSettingsMenu != null)
+                    {
                         quickSettingsMenu.SetFit.IsChecked = true;
+                    }
 
                     mainWindow.WindowState = WindowState.Normal;
 
@@ -207,7 +219,9 @@ namespace PicView
                     mainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
 
                     if (quickSettingsMenu != null)
+                    {
                         quickSettingsMenu.SetCenter.IsChecked = true;
+                    }
 
                     mainWindow.Top = Properties.Settings.Default.Top;
                     mainWindow.Left = Properties.Settings.Default.Left;
@@ -236,7 +250,9 @@ namespace PicView
         internal static void CenterWindowOnScreen()
         {
             if (!FitToWindow)
+            {
                 return;
+            }
 
             //move to the centre
             mainWindow.Left = (((MonitorInfo.WorkArea.Width - (mainWindow.Width * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling));

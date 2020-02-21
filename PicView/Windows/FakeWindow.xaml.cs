@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Input;
-using static PicView.Fields;
-using static PicView.PicGalleryScroll;
-using static PicView.NativeMethods;
 using System.Windows.Interop;
+using static PicView.Fields;
+using static PicView.NativeMethods;
+using static PicView.PicGalleryScroll;
 
 namespace PicView.Windows
 {
@@ -63,9 +63,13 @@ namespace PicView.Windows
         private void FakeWindow_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
                 ScrollTo(e.Delta > 0, true);
+            }
             else
+            {
                 ScrollTo(e.Delta > 0, false, true);
+            }
         }
 
         private void MainWindow_StateChanged(object sender, EventArgs e)

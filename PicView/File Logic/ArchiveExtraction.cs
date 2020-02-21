@@ -3,10 +3,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using static PicView.DeleteFiles;
-using static PicView.Error_Handling;
 using static PicView.Fields;
-using static PicView.Tooltip;
 using static PicView.FileLists;
+using static PicView.Tooltip;
 
 namespace PicView
 {
@@ -33,7 +32,10 @@ namespace PicView
 
             var Winrar = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\WinRAR\\WinRAR.exe";
             if (!File.Exists(Winrar))
+            {
                 Winrar = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\WinRAR\\WinRAR.exe";
+            }
+
             if (File.Exists(Winrar))
             {
                 return Extract(path, Winrar, true);
@@ -41,7 +43,10 @@ namespace PicView
 
             var sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\7-Zip\\7z.exe";
             if (!File.Exists(sevenZip))
+            {
                 sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\7-Zip\\7z.exe";
+            }
+
             if (File.Exists(sevenZip))
             {
                 return Extract(path, sevenZip, false);
@@ -64,7 +69,9 @@ namespace PicView
                 Trace.WriteLine("Created temp dir: " + TempZipPath);
             }
             else
+            {
                 return false;
+            }
 #else
             if (!CreateTempDirectory(path))
                 return false;
@@ -84,21 +91,27 @@ namespace PicView
                 FileName = exe,
                 Arguments = arguments,
 
-                #if DEBUG
+#if DEBUG
                 WindowStyle = ProcessWindowStyle.Normal
-                #else
+#else
                 WindowStyle = ProcessWindowStyle.Hidden
-                #endif
+#endif
             });
             x.EnableRaisingEvents = true;
-            x.Exited += delegate {
+            x.Exited += delegate
+            {
                 SetDirectory();
-            }; 
+            };
 
             if (x == null)
+            {
                 return false;
+            }
+
             if (!x.WaitForExit(500))
+            {
                 return false;
+            }
 
             //return SetDirectory(path);
             return true;
@@ -130,13 +143,17 @@ namespace PicView
                 if (directory.Length > 0)
                 {
                     TempZipPath = directory[0];
-                }                    
+                }
 
                 var extractedFiles = FileList(TempZipPath);
                 if (extractedFiles.Count > 0)
+                {
                     Pics = extractedFiles;
+                }
                 else
+                {
                     return false;
+                }
 
                 //if (Pics.Count > 0)
                 //    Pics[FolderIndex] = Pics[0];
@@ -165,7 +182,9 @@ namespace PicView
 #endif
 
             if (Pics.Count > 0)
+            {
                 return true;
+            }
 
             mainWindow.Bar.Text = "Unzipping...";
             mainWindow.Bar.ToolTip = mainWindow.Bar.Text;
@@ -176,26 +195,33 @@ namespace PicView
             do
             {
                 if (SetDirectory())
+                {
                     return true;
+                }
 
                 if (count > 3)
                 {
                     var processed = false;
                     var getProcesses = Process.GetProcessesByName("7z");
                     if (getProcesses.Length > 0)
+                    {
                         processed = true;
+                    }
 
                     if (!processed)
                     {
                         getProcesses = Process.GetProcessesByName("Zip");
                         if (getProcesses.Length > 0)
+                        {
                             processed = true;
+                        }
                     }
 
                     if (processed)
                     {
                         // Kill it if it's asking for password
                         if (!getProcesses[0].HasExited)
+                        {
                             if (getProcesses[0].Threads[0].ThreadState == ThreadState.Wait)
                             {
 #if DEBUG
@@ -206,6 +232,7 @@ namespace PicView
                                 getProcesses[0].Kill();
                                 return false;
                             }
+                        }
                     }
                     break;
                     //Reload(true);
@@ -238,7 +265,10 @@ namespace PicView
 #endif
 
             if (SetDirectory())
+            {
                 return true;
+            }
+
             return false;
         }
     }

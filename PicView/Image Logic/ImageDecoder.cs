@@ -1,7 +1,6 @@
 ﻿using ImageMagick;
 using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -18,7 +17,9 @@ namespace PicView
         internal static BitmapSource RenderToBitmapSource(string file)
         {
             if (string.IsNullOrWhiteSpace(file) || file.Length < 2)
+            {
                 return null;
+            }
 
             using (MagickImage magick = new MagickImage())
             {
@@ -59,7 +60,9 @@ namespace PicView
         internal static BitmapSource RenderToBitmapSource(string file, int quality)
         {
             if (string.IsNullOrWhiteSpace(file) || file.Length < 2)
+            {
                 return null;
+            }
 
             using (MagickImage magick = new MagickImage())
             {
@@ -134,7 +137,10 @@ namespace PicView
 
                         // Apply transformation values
                         if (flipped)
+                        {
                             SaveImage.Flop();
+                        }
+
                         SaveImage.Rotate(rotate);
 
                         SaveImage.Write(destination);
@@ -153,7 +159,7 @@ namespace PicView
             return true;
         }
 
-        internal static Size? ImageSize (string file)
+        internal static Size? ImageSize(string file)
         {
             using (var magick = new MagickImage())
             {

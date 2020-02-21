@@ -27,7 +27,7 @@ namespace PicView
         {
             if (ajaxLoading.Opacity != 1)
             {
-                AnimationHelper.Fade( ajaxLoading, 1, TimeSpan.FromSeconds(.2));
+                AnimationHelper.Fade(ajaxLoading, 1, TimeSpan.FromSeconds(.2));
             }
         }
 

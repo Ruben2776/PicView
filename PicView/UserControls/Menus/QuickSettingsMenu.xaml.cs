@@ -25,7 +25,7 @@ namespace PicView.UserControls
             SettingsButton.MouseEnter += SettingsButtonMouseOver;
             SettingsButton.MouseLeave += SettingsButtonMouseLeave;
             SettingsButton.PreviewMouseLeftButtonDown += SettingsButtonMouseButtonDown;
-            
+
 
             // Toggle Scroll
             ToggleScroll.PreviewMouseLeftButtonDown += ToggleScroll_PreviewMouseLeftButtonDown;
@@ -36,13 +36,13 @@ namespace PicView.UserControls
             SetFit.PreviewMouseLeftButtonDown += SetFit_PreviewMouseLeftButtonDown;
             SetFit.MouseEnter += SetFit_MouseEnter;
             SetFit.MouseLeave += SetFit_MouseLeave;
-            
+
             // Fill
             Fill.PreviewMouseLeftButtonDown += Fill_PreviewMouseLeftButtonDown;
             Fill.MouseEnter += Fill_MouseEnter;
             Fill.MouseLeave += Fill_MouseLeave;
-            Fill.Click += (s,x) => SetWallpaper(Pics[FolderIndex], WallpaperStyle.Fill);
-            
+            Fill.Click += (s, x) => SetWallpaper(Pics[FolderIndex], WallpaperStyle.Fill);
+
             // Fit
             Fit.PreviewMouseLeftButtonDown += Fit_PreviewMouseLeftButtonDown;
             Fit.MouseEnter += Fit_MouseEnter;
@@ -92,7 +92,7 @@ namespace PicView.UserControls
         {
             AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
         }
-        
+
 
         // Settings Button
 
@@ -170,7 +170,7 @@ namespace PicView.UserControls
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(TileBrush, false);
         }
-        
+
         // Center Button
         void Center_MouseLeave(object sender, MouseEventArgs e)
         {

@@ -36,17 +36,22 @@ namespace PicView
                         if (PicGalleryLogic.IsOpen)
                         {
                             if (Properties.Settings.Default.PicGallery == 1)
+                            {
                                 return;
+                            }
                         }
                     }
                     if (!e.IsRepeat)
                     {
                         // Go to first if Ctrl held down
                         if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        {
                             Pic(true, true);
+                        }
                         else
+                        {
                             Pic();
-
+                        }
                     }
                     else if (canNavigate)
                     {
@@ -63,16 +68,22 @@ namespace PicView
                         if (PicGalleryLogic.IsOpen)
                         {
                             if (Properties.Settings.Default.PicGallery == 1)
+                            {
                                 return;
+                            }
                         }
                     }
                     if (!e.IsRepeat)
                     {
                         // Go to last if Ctrl held down
                         if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        {
                             Pic(false, true);
+                        }
                         else
+                        {
                             Pic(false);
+                        }
                     }
                     else if (canNavigate)
                     {
@@ -91,7 +102,10 @@ namespace PicView
                         }
                     }
                     if (Properties.Settings.Default.ScrollEnabled)
+                    {
                         mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset - 30);
+                    }
+
                     return;
 
                 case Key.PageDown:
@@ -104,7 +118,10 @@ namespace PicView
                         }
                     }
                     if (Properties.Settings.Default.ScrollEnabled)
+                    {
                         mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset + 30);
+                    }
+
                     return;
 
                 // Rotate or Scroll
@@ -113,55 +130,87 @@ namespace PicView
                     if (Properties.Settings.Default.ScrollEnabled && mainWindow.Scroller.ScrollableHeight > 0)
                     {
                         if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        {
                             return;
+                        }
                         else
+                        {
                             mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset - 30);
+                        }
                     }
                     else if (picGallery != null)
                     {
                         if (PicGalleryLogic.IsOpen)
+                        {
                             ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                        }
                         else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
+                        {
                             Rotate(false);
+                        }
                     }
                     else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
+                    {
                         Rotate(false);
+                    }
+
                     return;
                 case Key.Down:
                 case Key.S:
                     if (Properties.Settings.Default.ScrollEnabled && mainWindow.Scroller.ScrollableHeight > 0)
                     {
                         if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        {
                             return; // Save Ctrl + S fix
+                        }
                         else
+                        {
                             mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset + 30);
+                        }
                     }
                     else if (picGallery != null)
                     {
                         if (PicGalleryLogic.IsOpen)
+                        {
                             ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
-                        else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
-                                Rotate(true);
                         }
+                        else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
+                        {
+                            Rotate(true);
+                        }
+                    }
                     else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
+                    {
                         Rotate(true);
+                    }
+
                     return;
 
                 // Zoom
                 case Key.Add:
                 case Key.OemPlus:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control || IsScrollEnabled)
+                    {
                         Zoom(1, true);
+                    }
                     else
+                    {
                         Zoom(1, false);
+                    }
+
                     return;
 
                 case Key.Subtract:
                 case Key.OemMinus:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control || IsScrollEnabled)
+                    {
                         Zoom(-1, true);
+                    }
                     else
+                    {
                         Zoom(-1, false);
+                    }
+
                     return;
             }
 
@@ -170,7 +219,10 @@ namespace PicView
             if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.Z))
             {
                 if (!e.IsRepeat)
+                {
                     ToggleInterface();
+                }
+
                 return;
             }
 
@@ -178,7 +230,9 @@ namespace PicView
             else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.Enter))
             {
                 if (!e.IsRepeat)
+                {
                     Fullscreen_Restore();
+                }
             }
         }
 
@@ -230,7 +284,10 @@ namespace PicView
                 // Ctrl + Q
                 case Key.Q:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    {
                         SystemCommands.CloseWindow(mainWindow);
+                    }
+
                     break;
                 // O, Ctrl + O
                 case Key.O:
@@ -239,9 +296,14 @@ namespace PicView
                 // X, Ctrl + X
                 case Key.X:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    {
                         Cut(Pics[FolderIndex]);
+                    }
                     else
+                    {
                         Configs.SetScrolling(sender, e);
+                    }
+
                     break;
                 // F
                 case Key.F:
@@ -251,37 +313,63 @@ namespace PicView
                 case Key.Delete:
                     DeleteFile(Pics[FolderIndex], e.KeyboardDevice.Modifiers != ModifierKeys.Shift);
                     break;
-                // Ctrl + C, Ctrl + Shift + C
+                // Ctrl + C, Ctrl + Shift + C, Ctrl + Alt + C
                 case Key.C:
+                    // Ctrl + Shift + C
                     if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) == (ModifierKeys.Control | ModifierKeys.Shift))
+                    {
+                        CopyText();
+                    }
+                    // Ctrl + Alt + C
+                    if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Alt)) == (ModifierKeys.Control | ModifierKeys.Alt))
+                    {
                         CopyBitmap();
+                    }
+                    // Ctrl + C
                     else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    {
                         CopyPic();
+                    }
                     break;
                 // Ctrl + V
                 case Key.V:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    {
                         Paste();
+                    }
+
                     break;
                 // Ctrl + S
                 case Key.S:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    {
                         SaveFiles();
+                    }
+
                     break;
                 // Ctrl + I
                 case Key.I:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    {
                         NativeMethods.ShowFileProperties(Pics[FolderIndex]);
+                    }
+
                     break;
                 // Ctrl + P
                 case Key.P:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    {
                         Print(Pics[FolderIndex]);
+                    }
+
                     break;
                 // Ctrl + R
                 case Key.R:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    {
                         Reload();
+                    }
+
                     break;
                 // L
                 case Key.L:
@@ -289,7 +377,7 @@ namespace PicView
                     break;
                 // E
                 case Key.E:
-                    FitToWindow = FitToWindow ? false : true; 
+                    FitToWindow = FitToWindow ? false : true;
                     break;
                 // T
                 case Key.T:
@@ -324,7 +412,9 @@ namespace PicView
                     if (picGallery != null)
                     {
                         if (Properties.Settings.Default.PicGallery == 2)
+                        {
                             ToggleGallery(true);
+                        }
                         else
                         {
                             Properties.Settings.Default.PicGallery = 1;
@@ -337,13 +427,17 @@ namespace PicView
                     if (picGallery != null)
                     {
                         if (Properties.Settings.Default.PicGallery == 1)
+                        {
                             if (PicGalleryLogic.IsOpen)
+                            {
                                 ToggleGallery(true);
+                            }
                             else
                             {
                                 Properties.Settings.Default.PicGallery = 2;
                                 ToggleGallery();
                             }
+                        }
                         else
                         {
                             Properties.Settings.Default.PicGallery = 2;
@@ -362,9 +456,14 @@ namespace PicView
                 // F12
                 case Key.F12:
                     if (!SlideshowActive)
+                    {
                         LoadSlideshow();
+                    }
                     else
+                    {
                         UnloadSlideshow();
+                    }
+
                     break;
                 // Home
                 case Key.Home:
@@ -384,14 +483,22 @@ namespace PicView
                 case MouseButton.Right:
                 case MouseButton.Left:
                     if (autoScrolling)
+                    {
                         StopAutoScroll();
+                    }
+
                     break;
 
                 case MouseButton.Middle:
                     if (!autoScrolling)
+                    {
                         StartAutoScroll(e);
+                    }
                     else
+                    {
                         StopAutoScroll();
+                    }
+
                     break;
 
                 case MouseButton.XButton1:

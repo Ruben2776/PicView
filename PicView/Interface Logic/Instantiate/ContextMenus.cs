@@ -253,13 +253,14 @@ namespace PicView
             {
                 InputGestureText = "L"
             };
-            var settingscmLoopHeader = new CheckBox {
+            var settingscmLoopHeader = new CheckBox
+            {
                 IsChecked = Properties.Settings.Default.Looping,
                 Content = "Looping",
                 FontSize = 13,
                 Width = double.NaN,
                 Height = double.NaN
-            };            
+            };
             settingscmLoopHeader.Style = Application.Current.FindResource("Checkstyle") as Style;
             settingscmLoopHeader.HorizontalAlignment = HorizontalAlignment.Left;
             settingscmLoop.Header = settingscmLoopHeader;
@@ -358,7 +359,7 @@ namespace PicView
                 Width = double.NaN,
                 Height = double.NaN
             };
-            transcmHeader.Click += (s,x) => { ChangeBackground(s,x); };
+            transcmHeader.Click += (s, x) => { ChangeBackground(s, x); };
             transcmHeader.Style = Application.Current.FindResource("Checkstyle") as Style;
             transcmHeader.HorizontalAlignment = HorizontalAlignment.Left;
             transcm.Header = transcmHeader;

@@ -69,7 +69,9 @@ namespace PicView
             finally
             {
                 if (!ReferenceEquals(image, imageMagick))
+                {
                     image.Dispose();
+                }
             }
         }
 
@@ -141,7 +143,9 @@ namespace PicView
             finally
             {
                 if (!ReferenceEquals(imageMagick, image))
+                {
                     image.Dispose();
+                }
             }
         }
 
@@ -150,9 +154,13 @@ namespace PicView
             using (MemoryStream memStream = new MemoryStream())
             {
                 if (IsSupportedImageFormat(bitmap.RawFormat))
+                {
                     bitmap.Save(memStream, bitmap.RawFormat);
+                }
                 else
+                {
                     bitmap.Save(memStream, ImageFormat.Bmp);
+                }
 
                 memStream.Position = 0;
                 imageMagick.Read(memStream);
@@ -182,7 +190,9 @@ namespace PicView
         private static Density GetDpi(MagickImage imageMagick, BitmapDensity bitmapDensity)
         {
             if (bitmapDensity == BitmapDensity.Ignore || (imageMagick.Density.Units == DensityUnit.Undefined && imageMagick.Density.X == 0 && imageMagick.Density.Y == 0))
+            {
                 return new Density(96);
+            }
 
             return imageMagick.Density.ChangeUnits(DensityUnit.PixelsPerInch);
         }
@@ -193,19 +203,33 @@ namespace PicView
         internal static MagickFormat GetFormat(ImageFormat format)
         {
             if (format == ImageFormat.Bmp || format == ImageFormat.MemoryBmp)
+            {
                 return MagickFormat.Bmp;
+            }
             else if (format == ImageFormat.Gif)
+            {
                 return MagickFormat.Gif;
+            }
             else if (format == ImageFormat.Icon)
+            {
                 return MagickFormat.Icon;
+            }
             else if (format == ImageFormat.Jpeg)
+            {
                 return MagickFormat.Jpeg;
+            }
             else if (format == ImageFormat.Png)
+            {
                 return MagickFormat.Png;
+            }
             else if (format == ImageFormat.Tiff)
+            {
                 return MagickFormat.Tiff;
+            }
             else
+            {
                 throw new NotSupportedException("Unsupported image format: " + format.ToString());
+            }
         }
     }
 }

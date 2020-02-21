@@ -45,7 +45,7 @@ namespace PicView.Windows
             {
                 AnimationHelper.PreviewMouseLeftButtonDownColorEvent(CloseButtonBrush, true);
             };
-            
+
             KeyDown += Keys;
 
             Aller.MouseEnter += AllerMouseOver;

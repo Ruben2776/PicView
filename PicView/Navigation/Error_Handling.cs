@@ -49,7 +49,9 @@ namespace PicView
                     {
                         await Task.Run(() => pic = RenderToBitmapSource(Pics[x])).ConfigureAwait(false);
                         if (pic != null)
+                        {
                             return pic;
+                        }
                     }
                 }
                 else
@@ -62,7 +64,9 @@ namespace PicView
             {
                 await Task.Run(() => pic = RenderToBitmapSource(Pics[FolderIndex])).ConfigureAwait(false);
                 if (pic != null)
+                {
                     return pic;
+                }
                 else
                 {
                     Pics = FileList(Path.GetDirectoryName(Pics[FolderIndex]));
@@ -91,7 +95,9 @@ namespace PicView
             {
                 await Task.Run(() => pic = RenderToBitmapSource(file)).ConfigureAwait(false);
                 if (pic != null)
+                {
                     return pic;
+                }
 
                 return null;
             }
@@ -110,18 +116,26 @@ namespace PicView
 
             // Go to next image
             if (Properties.Settings.Default.Looping)
+            {
                 FolderIndex = FolderIndex == Pics.Count - 1 ? 0 : FolderIndex;
+            }
             else
+            {
                 FolderIndex = FolderIndex == Pics.Count - 1 ? Pics.Count - 2 : FolderIndex;
+            }
 
             if (File.Exists(file))
+            {
                 ToolTipStyle("File not found or unable to render, " + file, false, TimeSpan.FromSeconds(2.5));
+            }
 
             AjaxLoadingEnd();
 
             // Repeat process if the next image was not found
             if (FolderIndex > 0 && FolderIndex < Pics.Count)
+            {
                 await PicErrorFix(FolderIndex).ConfigureAwait(false);
+            }
 
             return null;
         }
@@ -137,7 +151,9 @@ namespace PicView
             {
                 // Make a backup of xPicPath and FolderIndex
                 if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]))
+                {
                     xPicPath = Pics[FolderIndex];
+                }
             }
 
             Pics.Clear();
@@ -147,7 +163,9 @@ namespace PicView
             freshStartup = true;
 
             if (Properties.Settings.Default.PicGallery > 0)
+            {
                 PicGalleryLogic.Clear();
+            }
         }
 
         /// <summary>
@@ -179,11 +197,19 @@ namespace PicView
 
                 // Reset
                 if (isZoomed)
+                {
                     ResetZoom();
+                }
+
                 if (Flipped)
+                {
                     Flip();
+                }
+
                 if (Rotateint != 0)
+                {
                     Rotate(0);
+                }
             }
             else
             {
@@ -203,7 +229,10 @@ namespace PicView
             mainWindow.img.Source = null;
             freshStartup = true;
             if (Pics != null)
+            {
                 Pics.Clear();
+            }
+
             PreloadCount = 0;
             Preloader.Clear();
             FolderIndex = 0;

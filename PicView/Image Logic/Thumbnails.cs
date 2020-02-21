@@ -10,6 +10,11 @@ namespace PicView
 {
     internal static class Thumbnails
     {
+        /// <summary>
+        /// Load thumbnail at current index
+        /// or full image if preloaded.
+        /// </summary>
+        /// <returns></returns>
         internal static BitmapSource GetThumb()
         {
             var pic = Preloader.Load(Pics[FolderIndex]);
@@ -28,7 +33,9 @@ namespace PicView
                         pic = GetWindowsThumbnail(Pics[FolderIndex]);
 
                         if (pic == null)
+                        {
                             pic = GetBitmapSourceThumb(Pics[FolderIndex]);
+                        }
                     }
                 }
                 else
@@ -36,7 +43,9 @@ namespace PicView
                     pic = GetWindowsThumbnail(Pics[FolderIndex]);
 
                     if (pic == null)
+                    {
                         pic = GetBitmapSourceThumb(Pics[FolderIndex]);
+                    }
                 }
             }
 
@@ -48,13 +57,18 @@ namespace PicView
             var supported = SupportedFiles.IsSupportedFile(path);
 
             if (!supported.HasValue)
+            {
                 return null;
+            }
 
             if (supported.Value)
+            {
                 return GetWindowsThumbnail(path);
-
+            }
             else if (!supported.Value)
+            {
                 return GetMagickImage(path, 60, 55);
+            }
 
             return null;
         }
@@ -86,7 +100,7 @@ namespace PicView
 
                     Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
                     return null;
-                    }
+                }
 #else
                 catch (MagickException) { return null; }
 #endif
@@ -104,10 +118,14 @@ namespace PicView
         internal static BitmapSource GetWindowsThumbnail(string path, bool extralarge = false)
         {
             if (!File.Exists(path))
+            {
                 return null;
+            }
 
             if (extralarge)
+            {
                 return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.ExtraLargeBitmapSource;
+            }
 
             return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
         }

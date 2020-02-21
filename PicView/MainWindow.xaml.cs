@@ -63,11 +63,16 @@ namespace PicView
                 Width = Properties.Settings.Default.Width;
 
                 if (Properties.Settings.Default.Maximized)
+                {
                     WindowState = WindowState.Maximized;
+                }
 
                 FitToWindow = false;
             }
-            else FitToWindow = true;
+            else
+            {
+                FitToWindow = true;
+            }
 
             ajaxLoading = new AjaxLoading
             {
@@ -82,7 +87,7 @@ namespace PicView
             // Update values
             AllowDrop = true;
             IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
-            Pics = new List<string>();            
+            Pics = new List<string>();
             //DataContext = this;
             MonitorInfo = MonitorSize.GetMonitorSize();
 
@@ -97,9 +102,13 @@ namespace PicView
                 Pic(Application.Current.Properties["ArbitraryArgName"].ToString());
 
                 if (Properties.Settings.Default.Fullscreen)
+                {
                     Fullscreen_Restore(true);
+                }
                 else
+                {
                     UpdateColor();
+                }
             }
 
             LoadClickArrow(true);
@@ -125,7 +134,9 @@ namespace PicView
 
             mainColor = (Color)Application.Current.Resources["MainColor"];
             if (!Properties.Settings.Default.BgColorWhite)
+            {
                 imgBorder.Background = new SolidColorBrush(Colors.Transparent);
+            }
 
             backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
 
@@ -142,7 +153,9 @@ namespace PicView
                 Panel.SetZIndex(picGallery, 999);
 
                 if (Properties.Settings.Default.PicGallery == 2 && freshStartup)
+                {
                     PicGalleryToggle.ToggleGallery();
+                }
             }
 
             // Add UserControls :)
@@ -181,7 +194,7 @@ namespace PicView
             {
                 Properties.Settings.Default.Upgrade();
                 Properties.Settings.Default.CallUpgrade = false;
-            }            
+            }
 
             AjaxLoadingEnd();
         }
@@ -369,7 +382,7 @@ namespace PicView
 
             //LocationChanged += MainWindow_LocationChanged;
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
-            
+
         }
 
 
@@ -412,10 +425,14 @@ namespace PicView
         protected override void OnRenderSizeChanged(SizeChangedInfo size)
         {
             if (size == null)
+            {
                 return;
+            }
 
             if (!FitToWindow || !size.WidthChanged && !size.HeightChanged)
+            {
                 return;
+            }
 
             //Keep position when size has changed
             Top += (size.PreviousSize.Height - size.NewSize.Height) / 2;
@@ -452,7 +469,7 @@ namespace PicView
 
         #endregion Changed Events
 
-        
+
 
         /// <summary>
         /// Save settings when closing
@@ -463,7 +480,9 @@ namespace PicView
         {
             // Close Extra windows when closing
             if (fake != null)
+            {
                 fake.Close();
+            }
 
             Hide(); // Make it feel faster
 

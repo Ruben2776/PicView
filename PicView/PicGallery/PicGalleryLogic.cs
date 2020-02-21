@@ -10,7 +10,6 @@ using System.Windows.Threading;
 using static PicView.Fields;
 using static PicView.ImageDecoder;
 using static PicView.Navigation;
-using static PicView.PicGalleryScroll;
 using static PicView.Thumbnails;
 
 
@@ -85,7 +84,9 @@ namespace PicView
             if (Properties.Settings.Default.PicGallery == 1)
             {
                 if (Preloader.Contains(Pics[id]))
+                {
                     PreviewItemClick(Preloader.Load(Pics[id]), id);
+                }
                 else
                 {
                     var z = picGallery.Container.Children[id] as PicGalleryItem;
@@ -152,7 +153,7 @@ namespace PicView
                     Preloader.Clear();
                     Preloader.Add(Pics[id]);
                 }
-                
+
                 ItemClick(id);
             }
 
@@ -166,12 +167,14 @@ namespace PicView
                 PreloadCount = 4;
                 Preloader.Clear();
                 Preloader.Add(Pics[id]);
-            }            
+            }
 
             mainWindow.img.Source = source;
             var size = ImageSize(Pics[id]);
             if (size.HasValue)
+            {
                 Resize_and_Zoom.ZoomFit(size.Value.Width, size.Value.Height);
+            }
         }
 
         internal static void ItemClick(int id)

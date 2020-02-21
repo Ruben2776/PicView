@@ -63,7 +63,9 @@ namespace PicView.PreLoading
             }
 
             if (!pic.IsFrozen)
+            {
                 pic.Freeze();
+            }
 
             Sources.TryAdd(file, pic);
             IsLoading = false;
@@ -80,7 +82,9 @@ namespace PicView.PreLoading
         internal static void Add(int i)
         {
             if (i >= Pics.Count || i < 0)
+            {
                 return;
+            }
 
             IsLoading = true;
 
@@ -108,18 +112,33 @@ namespace PicView.PreLoading
         internal static void Add(BitmapSource bmp, string key)
         {
             if (string.IsNullOrWhiteSpace(key))
+            {
                 return;
+            }
+
             if (Contains(key))
+            {
                 return;
+            }
+
             if (bmp == null)
+            {
                 return;
+            }
+
             if (!bmp.IsFrozen)
+            {
                 bmp.Freeze();
+            }
 #if DEBUG
             if (Sources.TryAdd(key, bmp))
+            {
                 Trace.WriteLine("Manually added = " + key + " to Preloader, index " + Pics.IndexOf(key));
+            }
             else
+            {
                 Trace.WriteLine("Preloader failed to add = " + key + " , index " + Pics.IndexOf(key));
+            }
 #else
             Sources.TryAdd(key, bmp);
 #endif
@@ -133,16 +152,25 @@ namespace PicView.PreLoading
         internal static void Remove(string key)
         {
             if (key == null)
+            {
                 return;
+            }
+
             if (!Contains(key))
+            {
                 return;
+            }
 
             _ = Sources[key];
 #if DEBUG
             if (Sources.TryRemove(key, out _))
+            {
                 Trace.WriteLine("Removed = " + key + " from Preloader, index " + Pics.IndexOf(key));
+            }
             else
+            {
                 Trace.WriteLine("Failed to Remove = " + key + " from Preloader, index " + Pics.IndexOf(key));
+            }
 #else
             Sources.TryRemove(key, out _);
 #endif
@@ -156,7 +184,9 @@ namespace PicView.PreLoading
         internal static void Remove(int i)
         {
             if (i >= Pics.Count || i < 0)
+            {
                 return;
+            }
 
             if (File.Exists(Pics[i]))
             {
@@ -173,7 +203,9 @@ namespace PicView.PreLoading
         internal static void Clear()
         {
             if (Sources.Count <= 0)
+            {
                 return;
+            }
 
             Sources.Clear();
             PreloadCount = 4; // Reset to make sure
@@ -190,7 +222,7 @@ namespace PicView.PreLoading
         {
             for (int i = 0; i < array.Length; i++)
             {
-                Remove(array[i]);               
+                Remove(array[i]);
 #if DEBUG
                 Trace.WriteLine("Removed = " + array[i] + " from Preloader");
 #endif
@@ -206,7 +238,9 @@ namespace PicView.PreLoading
         internal static BitmapSource Load(string key)
         {
             if (string.IsNullOrWhiteSpace(key) || !Contains(key))
+            {
                 return null;
+            }
 
             return Sources[key];
         }
@@ -219,11 +253,14 @@ namespace PicView.PreLoading
         internal static bool Contains(string key)
         {
             if (string.IsNullOrWhiteSpace(key) || Sources.Count <= 0)
+            {
                 return false;
+            }
+
             return Sources.ContainsKey(key);
         }
 
-        
+
 
         /// <summary>
         /// Starts decoding images into memory,
@@ -234,8 +271,8 @@ namespace PicView.PreLoading
         internal static Task PreLoad(int index)
         {
 #if DEBUG
-            Trace.WriteLine("Preolader started, " 
-                + string.Concat(Properties.Settings.Default.Looping ? "looping " : string.Empty) 
+            Trace.WriteLine("Preolader started, "
+                + string.Concat(Properties.Settings.Default.Looping ? "looping " : string.Empty)
                 + string.Concat(reverse ? "backwards" : "forwards"));
 #endif
 
@@ -258,14 +295,20 @@ namespace PicView.PreLoading
                         for (int i = index + 1; i < (index + 1) + toLoad; i++)
                         {
                             if (i > Pics.Count)
+                            {
                                 break;
+                            }
+
                             Add(i);
                         }
                         // Add second elements behind
                         for (int i = index - 1; i > (index - 1) - extraToLoad; i--)
                         {
                             if (i < 0)
+                            {
                                 break;
+                            }
+
                             Add(i);
                         }
 
@@ -275,9 +318,14 @@ namespace PicView.PreLoading
                             for (int i = (index - 1) - cleanUp; i < ((index - 1) - extraToLoad); i++)
                             {
                                 if (i < 0)
+                                {
                                     continue;
+                                }
+
                                 if (i > Pics.Count)
+                                {
                                     break;
+                                }
 
                                 Remove(i);
                             }
@@ -290,14 +338,20 @@ namespace PicView.PreLoading
                         for (int i = index - 1; i > (index - 1) - toLoad; i--)
                         {
                             if (i < 0)
+                            {
                                 break;
+                            }
+
                             Add(i);
                         }
                         // Add second elements
                         for (int i = index + 1; i <= (index + 1) + toLoad; i++)
                         {
                             if (i > Pics.Count)
+                            {
                                 break;
+                            }
+
                             Add(i);
                         }
 
@@ -307,15 +361,21 @@ namespace PicView.PreLoading
                             for (int i = (index + 1) + cleanUp; i > ((index + 1) + cleanUp) - extraToLoad; i--)
                             {
                                 if (i < 0)
+                                {
                                     continue;
+                                }
+
                                 if (i > Pics.Count)
+                                {
                                     break;
+                                }
+
                                 Remove(i);
                             }
                         }
                     }
                 }
-                
+
                 // Looping!
                 else
                 {
@@ -391,9 +451,9 @@ namespace PicView.PreLoading
 #endif
                 }
 
-//#if DEBUG
-//                Trace.WriteLine(nameof(PreloadCount) + " = " + PreloadCount);
-//#endif
+                //#if DEBUG
+                //                Trace.WriteLine(nameof(PreloadCount) + " = " + PreloadCount);
+                //#endif
 
             });
         }

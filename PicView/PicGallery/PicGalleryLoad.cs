@@ -1,5 +1,4 @@
-﻿using PicView.UserControls;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.Fields;
@@ -81,7 +80,9 @@ namespace PicView
                     if (pic != null)
                     {
                         if (!pic.IsFrozen)
+                        {
                             pic.Freeze();
+                        }
 
                         Add(pic, i);
                     }

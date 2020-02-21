@@ -47,7 +47,9 @@ namespace PicView
 
                 // Read each line until end of file
                 while ((line = listToRead.ReadLine()) != null)
+                {
                     MRUlist.Enqueue(line);
+                }
 
                 listToRead.Close();
             }
@@ -62,12 +64,16 @@ namespace PicView
         internal static void Add(string fileName)
         {
             // Don't add zipped files
-            if (zipped) 
+            if (zipped)
+            {
                 return;
+            }
 
             // Prevent duplication on recent list
             if (!(MRUlist.Contains(fileName)))
+            {
                 MRUlist.Enqueue(fileName);
+            }
 
             // Keep list number not exceeding max value
             while (MRUlist.Count > MRUcount)
@@ -82,7 +88,10 @@ namespace PicView
         internal static string[] LoadValues()
         {
             if (MRUlist == null)
+            {
                 return null;
+            }
+
             return MRUlist.ToArray();
         }
 
@@ -107,7 +116,10 @@ namespace PicView
         internal static void SetZipped(string zipfile, bool isZipped = true)
         {
             if (!string.IsNullOrWhiteSpace(zipfile))
+            {
                 Add(zipfile);
+            }
+
             zipped = isZipped;
         }
 
@@ -124,7 +136,9 @@ namespace PicView
             // Load values and check if succeeded
             var fileNames = RecentFiles.LoadValues();
             if (fileNames == null)
+            {
                 return;
+            }
 
             /// Update old values
             /// If items exist: replace them, else add them
@@ -136,7 +150,9 @@ namespace PicView
                     // Don't add the same item more than once
                     var item = fileNames[i];
                     if (i != 0 && fileNames[i - 1] == item)
+                    {
                         continue;
+                    }
 
                     // Change values
                     var menuItem = (MenuItem)RecentFilesMenuItem.Items[i];
@@ -158,7 +174,9 @@ namespace PicView
                 // Don't add the same item more than once
                 var item = fileNames[i];
                 if (i != 0 && fileNames[i - 1] == item)
+                {
                     continue;
+                }
 
                 var cmIcon = new System.Windows.Shapes.Path
                 {

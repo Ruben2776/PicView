@@ -2,6 +2,7 @@
 using System.Text;
 using static PicView.Fields;
 using static PicView.FileFunctions;
+using static PicView.Resize_and_Zoom;
 
 namespace PicView
 {
@@ -22,7 +23,9 @@ namespace PicView
                     .Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height)).Append(GetSizeReadable(new FileInfo(Pics[index]).Length));
 
             if (!string.IsNullOrEmpty(ZoomPercentage))
+            {
                 s1.Append(", ").Append(ZoomPercentage);
+            }
 
             s1.Append(" - ").Append(AppName);
 
@@ -65,7 +68,9 @@ namespace PicView
             s1.Append(path).Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height));
 
             if (!string.IsNullOrEmpty(ZoomPercentage))
+            {
                 s1.Append(", ").Append(ZoomPercentage);
+            }
 
             s1.Append(" - ").Append(AppName);
 

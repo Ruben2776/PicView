@@ -12,7 +12,9 @@ namespace PicView
         internal static void Rotate(int r)
         {
             if (mainWindow.img.Source == null)
+            {
                 return;
+            }
 
             var rt = new RotateTransform { Angle = Rotateint = r };
 
@@ -26,7 +28,9 @@ namespace PicView
                 mainWindow.img.LayoutTransform = tg;
             }
             else
+            {
                 mainWindow.img.LayoutTransform = rt;
+            }
 
             switch (r)
             {
@@ -73,36 +77,58 @@ namespace PicView
         internal static void Rotate(bool right)
         {
             if (mainWindow.img.Source == null || PicGalleryLogic.IsOpen)
+            {
                 return;
+            }
 
             switch (Rotateint)
             {
                 case 0:
                     if (right)
+                    {
                         Rotate(270);
+                    }
                     else
+                    {
                         Rotate(90);
+                    }
+
                     break;
 
                 case 90:
                     if (right)
+                    {
                         Rotate(0);
+                    }
                     else
+                    {
                         Rotate(180);
+                    }
+
                     break;
 
                 case 180:
                     if (right)
+                    {
                         Rotate(90);
+                    }
                     else
+                    {
                         Rotate(270);
+                    }
+
                     break;
 
                 case 270:
                     if (right)
+                    {
                         Rotate(180);
+                    }
                     else
+                    {
                         Rotate(0);
+                    }
+
                     break;
             }
         }
@@ -113,7 +139,9 @@ namespace PicView
         internal static void Flip()
         {
             if (mainWindow.img.Source == null)
+            {
                 return;
+            }
 
             var rt = new RotateTransform();
             var flip = new ScaleTransform();

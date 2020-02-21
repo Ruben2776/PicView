@@ -7,7 +7,7 @@ using static PicView.Resize_and_Zoom;
 namespace PicView
 {
     internal static class HideInterfaceLogic
-    {     
+    {
 
         /// <summary>
         /// Toggle between hidden interface and default
@@ -15,7 +15,9 @@ namespace PicView
         internal static void ToggleInterface()
         {
             if (Properties.Settings.Default.PicGallery == 2)
+            {
                 return;
+            }
 
             // Hide interface
             if (Properties.Settings.Default.ShowInterface)
@@ -26,7 +28,9 @@ namespace PicView
                 Properties.Settings.Default.ShowInterface = false;
 
                 if (activityTimer != null)
+                {
                     activityTimer.Start();
+                }
             }
             // Show interface
             else
@@ -37,7 +41,9 @@ namespace PicView
                 ShowNavigation(false);
 
                 if (activityTimer != null)
+                {
                     activityTimer.Stop();
+                }
             }
 
             TryZoomFit();
@@ -63,10 +69,16 @@ namespace PicView
             }
         }
 
+        /// <summary>
+        /// Toggle alternative layout navigation 
+        /// </summary>
+        /// <param name="show"></param>
         internal static void ShowNavigation(bool show)
         {
             if (clickArrowLeft == null && clickArrowRight == null && x2 == null && minus == null)
+            {
                 return;
+            }
 
             if (show)
             {
@@ -151,7 +163,7 @@ namespace PicView
             // Start timer when mouse leaves mainwindow
             //activityTimer.Start();
             FadeControlsAsync(false);
-        }      
+        }
 
 
     }

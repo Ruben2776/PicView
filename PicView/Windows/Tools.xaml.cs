@@ -36,17 +36,17 @@ namespace PicView.Windows
         }
 
         #region Eventhandlers
-        
+
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             Closing -= Window_Closing;
-            
+
             AnimationHelper.FadeWindow(this, 0, TimeSpan.FromSeconds(.5));
             FocusManager.SetFocusedElement(Application.Current.MainWindow, this);
-        }        
+        }
 
         #endregion
 
-        
+
     }
 }

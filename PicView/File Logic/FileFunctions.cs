@@ -11,7 +11,9 @@ namespace PicView
         internal static bool RenameFile(string path, string newPath)
         {
             if (File.Exists(path))
+            {
                 return false;
+            }
 
             try
             {
@@ -88,5 +90,5 @@ namespace PicView
         }
     }
 
-   
+
 }

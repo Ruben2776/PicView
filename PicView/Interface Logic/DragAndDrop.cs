@@ -26,8 +26,15 @@ namespace PicView
         private static bool? Drag_Drop_Check(string[] files)
         {
             // Return if file strings are null
-            if (files == null) return null;
-            if (files[0] == null) return null;
+            if (files == null)
+            {
+                return null;
+            }
+
+            if (files[0] == null)
+            {
+                return null;
+            }
 
             // Return status of useable file
             return SupportedFiles.IsSupportedFileWithArchives(Path.GetExtension(files[0]));
@@ -41,13 +48,19 @@ namespace PicView
         internal static void Image_DragEnter(object sender, DragEventArgs e)
         {
             // Error handling
-            if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                return;
+            }
+
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
             var check = Drag_Drop_Check(files);
 
             // Do nothing for invalid files
             if (!check.HasValue)
+            {
                 return;
+            }
 
             // Tell that it's succeeded
             e.Effects = DragDropEffects.Copy;
@@ -82,7 +95,9 @@ namespace PicView
         {
             // Error handling
             if (!isDraggedOver)
+            {
                 return;
+            }
 
             // Switch to previous image if available
             if (!canNavigate)
@@ -106,14 +121,19 @@ namespace PicView
         internal static void Image_Drop(object sender, DragEventArgs e)
         {
             // Error handling
-            if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                return;
+            }
 
             // Get files as strings
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
 
             // check if valid
             if (!Drag_Drop_Check(files).HasValue)
+            {
                 return;
+            }
 
             // Load it
             Pic(files[0]);

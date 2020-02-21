@@ -15,7 +15,9 @@ namespace PicView
         internal static void ChangeSorting(short sorting)
         {
             if (Properties.Settings.Default.SortPreference == sorting)
+            {
                 return;
+            }
 
             Properties.Settings.Default.SortPreference = sorting;
             var tmp = Pics[FolderIndex];

@@ -9,10 +9,10 @@ using static PicView.AjaxLoader;
 using static PicView.Error_Handling;
 using static PicView.Fields;
 using static PicView.ImageDecoder;
+using static PicView.Navigation;
 using static PicView.SetTitle;
 using static PicView.Thumbnails;
 using static PicView.Tooltip;
-using static PicView.Navigation;
 
 namespace PicView
 {
@@ -25,7 +25,9 @@ namespace PicView
         internal static async void PicWeb(string path)
         {
             if (ajaxLoading.Opacity != 1)
+            {
                 AjaxLoadingStart();
+            }
 
             mainWindow.Bar.Text = Loading;
 
@@ -78,7 +80,10 @@ namespace PicView
                 mainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                 {
                     if (pic != null)
+                    {
                         SetTitleString(pic.PixelWidth, pic.PixelHeight, address);
+                    }
+
                     canNavigate = false;
                 }));
 

@@ -20,7 +20,9 @@ namespace PicView.UserControls
             InitializeComponent();
 
             if (pic != null)
+            {
                 img.Source = pic;
+            }
 
             Selected = selected;
             Id = id;
@@ -61,7 +63,9 @@ namespace PicView.UserControls
             {
                 Selected = false;
                 if (Application.Current.Resources["BorderBrush"] is SolidColorBrush bgBrush)
+                {
                     border.BorderBrush = bgBrush;
+                }
 
                 border.Width = border.Height = picGalleryItem_Size_s;
             }

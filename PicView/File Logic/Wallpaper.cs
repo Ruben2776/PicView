@@ -35,7 +35,7 @@ namespace PicView
                     catch (Exception e)
                     {
                         Trace.WriteLine("Wallpaper exception \n" + e.Message);
-                    return;
+                        return;
                     }
 #else
                     catch (Exception) { return; }
@@ -63,7 +63,7 @@ namespace PicView
                     catch (Exception e)
                     {
                         Trace.WriteLine("Wallpaper download exception \n" + e.Message);
-                    return;
+                        return;
                     }
 #else
                     catch (Exception) { return; }

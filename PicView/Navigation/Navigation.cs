@@ -32,15 +32,22 @@ namespace PicView
             mainWindow.Title = mainWindow.Bar.Text = Loading;
             mainWindow.Bar.ToolTip = Loading;
             if (mainWindow.img.Source == null)
+            {
                 AjaxLoadingStart();
+            }
 
             // Handle if from web
             if (!File.Exists(path))
             {
                 if (Uri.IsWellFormedUriString(path, UriKind.Absolute))
+                {
                     LoadFromWeb.PicWeb(path);
+                }
                 else
+                {
                     Unload();
+                }
+
                 return;
             }
 
@@ -80,7 +87,9 @@ namespace PicView
                     if (!recovery)
                     {
                         if (sexyToolTip.Opacity == 0)
+                        {
                             ToolTipStyle("Archive could not be processed");
+                        }
 
                         Reload(true);
                         return;
@@ -97,7 +106,9 @@ namespace PicView
             if (File.Exists(Pics[FolderIndex]))
             {
                 if (!freshStartup)
+                {
                     Preloader.Clear();
+                }
 
                 // Navigate to picture using obtained index
                 Pic(FolderIndex);
@@ -106,13 +117,15 @@ namespace PicView
             {
                 Reload(true);
                 return;
-            }           
+            }
 
             // Load images for PicGallery if enabled
             if (Properties.Settings.Default.PicGallery > 0)
             {
                 if (!PicGalleryLogic.IsLoading)
+                {
                     await PicGalleryLoad.Load().ConfigureAwait(true);
+                }
             }
 
             prevPicResource = null; // Make sure to not waste memory
@@ -177,14 +190,18 @@ namespace PicView
                 var thumb = GetThumb();
 
                 if (thumb != null)
+                {
                     mainWindow.img.Source = thumb;
+                }
 
                 // Dissallow changing image while loading
                 canNavigate = false;
 
                 if (freshStartup)
+                {
                     // Load new value manually
                     await Task.Run(() => pic = RenderToBitmapSource(Pics[x])).ConfigureAwait(true);
+                }
                 else
                 {
                     do
@@ -197,7 +214,7 @@ namespace PicView
                         }
                     } while (Preloader.IsLoading);
                 }
-                
+
                 // If pic is still null, image can't be rendered
                 if (pic == null)
                 {
@@ -234,7 +251,9 @@ namespace PicView
 
             // Scroll to top if scroll enabled
             if (IsScrollEnabled)
+            {
                 mainWindow.Scroller.ScrollToTop();
+            }
 
             /// TODO Make it staying flipped a user preference 
             //// Prevent picture from being flipped if previous is
@@ -256,16 +275,14 @@ namespace PicView
                 {
                     Preloader.Add(pic, Pics[FolderIndex]);
                     await Preloader.PreLoad(x).ConfigureAwait(false);
-
-                    // Update if changed file list size
-                    if (PreloadCount == 4 && FolderIndex == x)
-                        SetTitleString(pic.PixelWidth, pic.PixelHeight, x);
                 }
             }
 
             if (!freshStartup)
+            {
                 RecentFiles.Add(Pics[x]);
-            
+            }
+
             freshStartup = false;
         }
 
@@ -281,7 +298,9 @@ namespace PicView
             Unload();
 
             if (IsScrollEnabled)
+            {
                 mainWindow.Scroller.ScrollToTop();
+            }
 
             mainWindow.img.Source = pic;
 
@@ -309,14 +328,20 @@ namespace PicView
         {
             // Exit if not intended to change picture
             if (!canNavigate)
+            {
                 return;
+            }
 
             // exit if browsing PicGallery
             if (picGallery != null)
             {
                 if (Properties.Settings.Default.PicGallery == 1)
+                {
                     if (PicGalleryLogic.IsOpen)
+                    {
                         return;
+                    }
+                }
             }
 
             // Make backup?
@@ -329,7 +354,9 @@ namespace PicView
 
                 // Reset preloader values to prevent errors
                 if (Pics.Count > 20)
+                {
                     Preloader.Clear();
+                }
 
                 PreloadCount = 4;
             }
@@ -347,7 +374,10 @@ namespace PicView
                     {
                         // Go to next if able
                         if (FolderIndex + 1 == Pics.Count)
+                        {
                             return;
+                        }
+
                         FolderIndex++;
                     }
 
@@ -365,7 +395,10 @@ namespace PicView
                     {
                         // Go to prev if able
                         if (FolderIndex - 1 < 0)
+                        {
                             return;
+                        }
+
                         FolderIndex--;
                     }
 
@@ -416,21 +449,29 @@ namespace PicView
             if (forwards)
             {
                 if (FolderIndex == Pics.Count - 1)
+                {
                     FolderIndex = 0;
+                }
                 else
+                {
                     FolderIndex++;
+                }
             }
             else
             {
                 if (FolderIndex == 0)
+                {
                     FolderIndex = Pics.Count - 1;
+                }
                 else
+                {
                     FolderIndex--;
+                }
             }
 
             mainWindow.img.Width = xWidth;
             mainWindow.img.Height = xHeight;
-            
+
             mainWindow.Bar.ToolTip =
             mainWindow.Title =
             mainWindow.Bar.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count;
@@ -438,7 +479,9 @@ namespace PicView
             var thumb = GetThumb();
 
             if (thumb != null)
+            {
                 mainWindow.img.Source = thumb;
+            }
 
             Progress(FolderIndex, Pics.Count);
         }
@@ -449,7 +492,9 @@ namespace PicView
         internal static void FastPicUpdate()
         {
             if (!FastPicRunning)
+            {
                 return;
+            }
 
             //fastPicTimer.Stop();
             FastPicRunning = false;

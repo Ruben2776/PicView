@@ -58,7 +58,9 @@ namespace PicView
             /// or some alternative way, mayhaps..?
 
             if (!Directory.Exists(path))
+            {
                 return null;
+            }
 
             var items = Directory.EnumerateFiles(path)
                 .AsParallel()
@@ -263,7 +265,9 @@ namespace PicView
                 // Set files to Pics and get index
                 Pics = FileList(Path.GetDirectoryName(path));
                 if (Pics == null)
+                {
                     return;
+                }
 
                 FolderIndex = Pics.IndexOf(path);
             });

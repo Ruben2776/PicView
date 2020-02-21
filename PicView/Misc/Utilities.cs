@@ -47,7 +47,9 @@ namespace PicView
         internal static void Print(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
+            {
                 return;
+            }
 
             using (var p = new Process())
             {
@@ -80,10 +82,14 @@ namespace PicView
         internal static void ChangeBackground(object sender, RoutedEventArgs e)
         {
             if (mainWindow.imgBorder == null)
+            {
                 return;
+            }
 
             if (!(mainWindow.imgBorder.Background is SolidColorBrush cc))
+            {
                 return;
+            }
 
             if (cc.Color == Colors.White)
             {

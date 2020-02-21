@@ -2,11 +2,11 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using static PicView.Error_Handling;
+using static PicView.Fields;
+using static PicView.FileFunctions;
 using static PicView.Navigation;
 using static PicView.Tooltip;
-using static PicView.Fields;
-using static PicView.Error_Handling;
-using static PicView.FileFunctions;
 
 namespace PicView
 {
@@ -18,7 +18,10 @@ namespace PicView
         internal static void DeleteTempFiles()
         {
             if (!Directory.Exists(TempZipPath))
+            {
                 return;
+            }
+
             try
             {
                 Array.ForEach(Directory.GetFiles(TempZipPath), File.Delete);
@@ -35,7 +38,7 @@ namespace PicView
             {
                 Directory.Delete(TempZipPath);
 #if DEBUG
-                Trace.WriteLine("Temp zip folder " + TempZipPath +  " deleted");
+                Trace.WriteLine("Temp zip folder " + TempZipPath + " deleted");
 #endif
             }
             catch (Exception)
@@ -54,7 +57,9 @@ namespace PicView
         {
             /// Need to add function to remove from PicGallery
             if (!File.Exists(file))
+            {
                 return false;
+            }
 
             try
             {
@@ -93,11 +98,17 @@ namespace PicView
 
                 // Go to next image
                 if (!reverse)
+                {
                     Pic(FolderIndex);
+                }
                 else if (FolderIndex - 2 >= 0)
+                {
                     Pic(FolderIndex - 2);
+                }
                 else
+                {
                     Unload();
+                }
             }
             else
             {

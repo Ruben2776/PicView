@@ -51,9 +51,13 @@ namespace PicView
                 Title = "Open image - PicView"
             };
             if (dlg.ShowDialog().Value)
+            {
                 Pic(dlg.FileName);
+            }
             else
+            {
                 return;
+            }
 
             Close_UserControls();
         }
@@ -77,9 +81,14 @@ namespace PicView
                 if (Savedlg.ShowDialog() == true)
                 {
                     if (!TrySaveImage(Rotateint, Flipped, Pics[FolderIndex], Savedlg.FileName))
+                    {
                         ToolTipStyle("Error, File didn't get saved");
+                    }
                 }
-                else return;
+                else
+                {
+                    return;
+                }
 
                 //Refresh the list of pictures.
                 Reload();

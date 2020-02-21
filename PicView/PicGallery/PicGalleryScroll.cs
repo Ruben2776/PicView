@@ -13,7 +13,11 @@ namespace PicView
         {
             get
             {
-                if (picGallery == null) return 0;
+                if (picGallery == null)
+                {
+                    return 0;
+                }
+
                 return (int)Math.Floor(picGallery.Width / picGalleryItem_Size);
             }
         }
@@ -22,7 +26,11 @@ namespace PicView
         {
             get
             {
-                if (picGallery == null) return 0;
+                if (picGallery == null)
+                {
+                    return 0;
+                }
+
                 return Properties.Settings.Default.PicGallery == 1 ?
                     (int)Math.Floor(picGallery.Height / picGalleryItem_Size) :
                     Pics.Count;
@@ -33,7 +41,11 @@ namespace PicView
         {
             get
             {
-                if (picGallery == null) return 0;
+                if (picGallery == null)
+                {
+                    return 0;
+                }
+
                 return Properties.Settings.Default.PicGallery == 1 ?
                     Horizontal_items * Vertical_items :
                     (int)Math.Floor(picGallery.Height / picGalleryItem_Size);
@@ -48,13 +60,13 @@ namespace PicView
             }
         }
 
-       //static int Total_pages
-       // {
-       //     get
-       //     {
-       //         return (int)Math.Floor((double)Pics.Count / Items_per_page);
-       //     }
-       // }
+        //static int Total_pages
+        // {
+        //     get
+        //     {
+        //         return (int)Math.Floor((double)Pics.Count / Items_per_page);
+        //     }
+        // }
 
         /// <summary>
         /// Scrolls to center of current item
@@ -63,17 +75,25 @@ namespace PicView
         internal static void ScrollTo()
         {
             if (Properties.Settings.Default.PicGallery == 1)
+            {
                 picGallery.Scroller.ScrollToHorizontalOffset((picGalleryItem_Size * Horizontal_items) * Current_page);
+            }
             else
+            {
                 picGallery.Scroller.ScrollToVerticalOffset((picGalleryItem_Size * Items_per_page) * Current_page);
+            }
         }
 
         internal static void ScrollTo(object sender, MouseWheelEventArgs e)
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
                 ScrollTo(e.Delta > 0);
+            }
             else
+            {
                 ScrollTo(e.Delta > 0, false);
+            }
         }
 
         /// <summary>
@@ -86,9 +106,13 @@ namespace PicView
             if (end)
             {
                 if (next)
+                {
                     picGallery.Scroller.ScrollToRightEnd();
+                }
                 else
+                {
                     picGallery.Scroller.ScrollToLeftEnd();
+                }
             }
             else
             {
@@ -140,9 +164,13 @@ namespace PicView
                     else
                     {
                         if (next)
+                        {
                             picGallery.Scroller.ScrollToVerticalOffset(picGallery.Scroller.VerticalOffset - speed);
+                        }
                         else
+                        {
                             picGallery.Scroller.ScrollToVerticalOffset(picGallery.Scroller.VerticalOffset + speed);
+                        }
                     }
                 }
             }

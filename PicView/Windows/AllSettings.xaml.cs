@@ -3,8 +3,8 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using static PicView.Helper;
 using static PicView.Fields;
+using static PicView.Helper;
 
 namespace PicView.Windows
 {
@@ -109,7 +109,8 @@ namespace PicView.Windows
                 PicGalleryRadio.MouseEnter += PicGalleryRadio_MouseEnter;
                 PicGalleryRadio.MouseLeave += PicGalleryRadio_MouseLeave;
                 PicGalleryRadio.IsChecked = Properties.Settings.Default.PicGallery > 0;
-                PicGalleryRadio.Checked += delegate {
+                PicGalleryRadio.Checked += delegate
+                {
                     if (PicGalleryRadio.IsChecked.Value)
                     {
                         Properties.Settings.Default.PicGallery = 0;
@@ -118,7 +119,7 @@ namespace PicView.Windows
                     {
                         Properties.Settings.Default.PicGallery = 1;
                     }
-                }; 
+                };
 
                 // BorderColorRadio
                 BorderRadio.PreviewMouseLeftButtonDown += BorderRadio_PreviewMouseLeftButtonDown;
@@ -126,7 +127,9 @@ namespace PicView.Windows
                 BorderRadio.MouseLeave += BorderRadio_MouseLeave;
                 BorderRadio.Click += Configs.SetBorderColorEnabled;
                 if (Properties.Settings.Default.WindowBorderColorEnabled)
+                {
                     BorderRadio.IsChecked = true;
+                }
 
                 //Slidebar
                 double value = Properties.Settings.Default.Slidetimeren;
@@ -187,7 +190,10 @@ namespace PicView.Windows
                     break;
                 case Key.Q:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    {
                         Environment.Exit(0);
+                    }
+
                     break;
                 default:
                     break;

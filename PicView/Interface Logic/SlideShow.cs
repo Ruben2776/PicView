@@ -27,7 +27,9 @@ namespace PicView
             }
 
             if (mainWindow.WindowState == WindowState.Maximized)
+            {
                 Maximize_Restore();
+            }
 
             ToggleInterface();
             mainWindow.Topmost = true;

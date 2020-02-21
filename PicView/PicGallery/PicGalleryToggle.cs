@@ -18,32 +18,44 @@ namespace PicView
             /// TODO need to get this fixed when changing between them.
             /// Is open variable stats true when it should be false, dunno why..
 
+            var picGallery = Properties.Settings.Default.PicGallery;
+
             /// Quit when not enabled
-            if (Properties.Settings.Default.PicGallery == 0)
+            if (picGallery == 0)
+            {
                 return;
+            }
 
             /// Toggle PicGallery, when not changed
             if (!change)
             {
-                if (Properties.Settings.Default.PicGallery == 1)
+                if (picGallery == 1)
                 {
                     if (!IsOpen)
+                    {
                         OpenPicGalleryOne();
+                    }
                     else
+                    {
                         ClosePicGalleryOne();
+                    }
                 }
                 else
                 {
                     if (!IsOpen)
+                    {
                         OpenPicGalleryTwo();
+                    }
                     else
+                    {
                         ClosePicGalleryTwo();
+                    }
                 }
             }
             /// Toggle PicGallery, when changed
             else
             {
-                if (Properties.Settings.Default.PicGallery == 1)
+                if (picGallery == 1)
                 {
                     ChangeToPicGalleryTwo();
                 }
@@ -54,7 +66,7 @@ namespace PicView
             }
 
 #if DEBUG
-            Trace.WriteLine("Picgallery IsOpen = " + IsOpen);
+            Trace.WriteLine(nameof(picGallery) + " " + picGallery + " IsOpen = " + IsOpen);
 #endif
         }
 
@@ -64,7 +76,8 @@ namespace PicView
         {
             LoadLayout();
 
-            var da = new DoubleAnimation {
+            var da = new DoubleAnimation
+            {
                 Duration = TimeSpan.FromSeconds(.5),
                 To = 1,
                 From = 0
@@ -130,10 +143,12 @@ namespace PicView
             Helper.UpdateColor();
 
             if (!Properties.Settings.Default.ShowInterface)
+            {
                 HideInterfaceLogic.ShowNavigation(true);
+            }
 
-            // Don't show it on next startup
-            Properties.Settings.Default.PicGallery = 1;
+            //// Don't show it on next startup
+            //Properties.Settings.Default.PicGallery = 1;
         }
 
 

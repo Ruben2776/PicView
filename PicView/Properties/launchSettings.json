@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PicView": {
+      "commandName": "Project",
+      "commandLineArgs": "\"B:\\Pictures\\Somewhat SFW Characters\\park-junkyu-2018ndc.jpg\""
+    }
+  }
+}

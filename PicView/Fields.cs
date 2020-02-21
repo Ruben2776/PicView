@@ -1,13 +1,10 @@
 ﻿using PicView.UserControls;
 using PicView.UserControls.Menus;
-using System;
 using System.Collections.Generic;
-using System.Resources;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using static PicView.Helper;
 
 namespace PicView
 {
@@ -82,39 +79,6 @@ namespace PicView
         /// File path for the extracted zip file
         /// </summary>
         internal static string TempZipFile { get; set; }
-
-        /// <summary>
-        /// Returns zoom percentage. if 100%, return empty string
-        /// </summary>
-        internal static string ZoomPercentage
-        {
-            get
-            {
-                var zoom = Math.Round(AspectRatio * 100);
-                if (st.ScaleX == 1)
-                    return string.Empty;
-
-                return zoom + "%";
-            }
-        }
-
-        /// <summary>
-        /// Returns aspect ratio as a formatted string
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <returns></returns>
-        internal static string StringAspect(int width, int height)
-        {
-            var gcd = GCD(width, height);
-            var x = (width / gcd);
-            var y = (height / gcd);
-
-            if (x == width && y == height || x > 16 || y > 9)
-                return ") ";
-
-            return ", " + x + ":" + y + ") ";
-        }
 
         internal static bool LeftbuttonClicked;
         internal static bool RightbuttonClicked;

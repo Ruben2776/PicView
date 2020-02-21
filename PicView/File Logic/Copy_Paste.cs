@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.Error_Handling;
@@ -48,11 +47,17 @@ namespace PicView
         internal static void CopyBitmap()
         {
             if (Preloader.Contains(Pics[FolderIndex]))
+            {
                 Clipboard.SetImage(Preloader.Load(Pics[FolderIndex]));
+            }
             else if (mainWindow.img.Source != null)
+            {
                 Clipboard.SetImage((BitmapSource)mainWindow.img.Source);
+            }
             else
+            {
                 return;
+            }
 
             ToolTipStyle("Copied Image to clipboard");
         }
@@ -103,7 +108,7 @@ namespace PicView
                         {
                             for (int i = 1; i < files.Length; i++)
                             {
-                                using (var n = new Process ())
+                                using (var n = new Process())
                                 {
                                     n.StartInfo.FileName = Assembly.GetExecutingAssembly().Location;
                                     n.StartInfo.Arguments = files[i];
@@ -128,10 +133,14 @@ namespace PicView
             var s = Clipboard.GetText(TextDataFormat.Text);
 
             if (string.IsNullOrEmpty(s))
+            {
                 return;
+            }
 
             if (FilePathHasInvalidChars(s))
+            {
                 MakeValidFileName(s);
+            }
 
             s = s.Replace("\"", "");
             s = s.Trim();
@@ -145,16 +154,26 @@ namespace PicView
                 ChangeFolder();
                 Pics = FileList(s);
                 if (Pics.Count > 0)
+                {
                     Pic(Pics[0]);
+                }
                 else if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]))
+                {
                     Pic(Pics[FolderIndex]);
+                }
                 else
+                {
                     Unload();
+                }
             }
             else if (Uri.IsWellFormedUriString(s, UriKind.Absolute)) // Check if from web
-               LoadFromWeb.PicWeb(s);
+            {
+                LoadFromWeb.PicWeb(s);
+            }
             else
+            {
                 ToolTipStyle("An error occured while trying to paste file");
+            }
         }
 
         /// <summary>
