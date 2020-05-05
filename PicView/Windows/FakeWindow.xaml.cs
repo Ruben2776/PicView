@@ -5,6 +5,7 @@ using System.Windows.Interop;
 using static PicView.Fields;
 using static PicView.NativeMethods;
 using static PicView.PicGalleryScroll;
+using static PicView.WindowLogic;
 
 namespace PicView.Windows
 {
@@ -89,7 +90,7 @@ namespace PicView.Windows
 
         private void FakeWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            mainWindow.Focus();
+            fake.Close();
         }
     }
 }

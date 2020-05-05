@@ -8,7 +8,6 @@ using static PicView.PicGalleryScroll;
 using static PicView.Thumbnails;
 using static PicView.WindowLogic;
 
-
 namespace PicView
 {
     internal static class PicGalleryLoad
@@ -91,6 +90,5 @@ namespace PicView
                 IsLoading = false;
             });
         }
-
     }
 }
