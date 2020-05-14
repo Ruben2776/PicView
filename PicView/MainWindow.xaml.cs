@@ -115,6 +115,7 @@ namespace PicView
             LoadClickArrow(false);
             Loadx2();
             LoadMinus();
+            LoadGalleryShortcut();
 
             // Update WindowStyle
             if (!Properties.Settings.Default.ShowInterface)
@@ -123,12 +124,14 @@ namespace PicView
                 clickArrowRight.Opacity =
                 x2.Opacity =
                 minus.Opacity =
+                galleryShortcut.Opacity = 
                 0;
 
                 clickArrowLeft.Visibility =
                 clickArrowRight.Visibility =
                 x2.Visibility =
                 minus.Visibility =
+                galleryShortcut.Visibility =
                 Visibility.Visible;
             }
 
@@ -334,6 +337,10 @@ namespace PicView
             // Minus
             minus.MouseLeftButtonUp += (s, x) => SystemCommands.MinimizeWindow(this);
             minus.MouseEnter += Interface_MouseEnter_Negative;
+
+            // GalleryShortcut
+            galleryShortcut.MouseLeftButtonUp += (s, x) => PicGalleryToggle.ToggleGallery();
+            galleryShortcut.MouseEnter += Interface_MouseEnter_Negative;
 
             // Bar
             Bar.MouseLeftButtonDown += Move;

@@ -87,6 +87,12 @@ namespace PicView
 
             picGallery.BeginAnimation(UIElement.OpacityProperty, da);
             ScrollTo();
+
+            clickArrowLeft.Visibility =
+            clickArrowRight.Visibility =
+            x2.Visibility =
+            minus.Visibility =
+            galleryShortcut.Visibility = Visibility.Hidden;
         }
 
         static void OpenPicGalleryTwo()
@@ -119,6 +125,13 @@ namespace PicView
         static void ClosePicGalleryOne()
         {
             IsOpen = false;
+
+            clickArrowLeft.Visibility =
+            clickArrowRight.Visibility =
+            x2.Visibility =
+            minus.Visibility =
+            galleryShortcut.Visibility = Visibility.Visible;
+
             var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.5) };
 
             da.To = 0;

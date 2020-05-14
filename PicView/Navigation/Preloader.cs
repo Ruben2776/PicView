@@ -440,21 +440,6 @@ namespace PicView.PreLoading
 
                 IsLoading = false; // Fixes loading erros
 
-                // Update Pics if needed
-                var tmp = FileList(Path.GetDirectoryName(Pics[index]));
-                if (tmp.Count != Pics.Count)
-                {
-                    Pics = tmp;
-                    PreloadCount = 4; // Prevent possible loading errors
-#if DEBUG
-                    Trace.WriteLine("Preloader changed Pics filelist.");
-#endif
-                }
-
-                //#if DEBUG
-                //                Trace.WriteLine(nameof(PreloadCount) + " = " + PreloadCount);
-                //#endif
-
             });
         }
     }

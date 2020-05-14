@@ -73,6 +73,22 @@ namespace PicView
         }
 
         /// <summary>
+        /// Loads GalleryShortcut and adds it to the window
+        /// </summary>
+        internal static void LoadGalleryShortcut()
+        {
+            galleryShortcut = new GalleryShortcut()
+            {
+                Focusable = false,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                Visibility = Visibility.Collapsed,
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+
+            mainWindow.bg.Children.Add(galleryShortcut);
+        }
+
+        /// <summary>
         /// Loads FileMenu and adds it to the window
         /// </summary>
         internal static void LoadFileMenu()

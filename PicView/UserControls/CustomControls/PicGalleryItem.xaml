@@ -10,12 +10,13 @@
     Focusable="False"
     mc:Ignorable="d">
     <Border
+        x:Name="outterborder"
         Width="230"
         Height="230"
         FocusVisualStyle="{x:Null}"
         Focusable="False">
         <Border
-            x:Name="border"
+            x:Name="innerborder"
             Width="200"
             Height="200"
             Background="{StaticResource BackgroundColorBrushAlt}"

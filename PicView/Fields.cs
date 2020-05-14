@@ -52,8 +52,8 @@ namespace PicView
             + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz"                                                        // Comics
             + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw";      // Camera files
 
-        internal const int picGalleryItem_Size = 230;
-        internal const int picGalleryItem_Size_s = 200;
+        internal const int picGalleryItem_Size = 260;
+        internal const int picGalleryItem_Size_s = picGalleryItem_Size - 30;
 
         /// <summary>
         /// The Main Window?
@@ -158,6 +158,7 @@ namespace PicView
         internal static X2 x2;
         internal static Minus minus;
         internal static PicGallery picGallery;
+        internal static GalleryShortcut galleryShortcut;
 
         internal static Point origin;
         internal static Point start;

@@ -1,6 +1,7 @@
 ﻿using PicView.PreLoading;
 using PicView.UserControls;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -183,9 +184,7 @@ namespace PicView
             {
                 mainWindow.Title = Loading;
                 mainWindow.Bar.Text = Loading;
-                mainWindow.Bar.ToolTip = Loading;
-
-                TryZoomFit(Pics[x]);
+                mainWindow.Bar.ToolTip = Loading;               
 
                 var thumb = GetThumb();
 
@@ -199,6 +198,8 @@ namespace PicView
 
                 if (freshStartup)
                 {
+                    TryZoomFit(Pics[x]);
+
                     // Load new value manually
                     await Task.Run(() => pic = RenderToBitmapSource(Pics[x])).ConfigureAwait(true);
                 }
@@ -236,12 +237,9 @@ namespace PicView
             }
 
             // Clear unsupported image window, if shown
-            if (mainWindow.img.Source == null && !freshStartup)
+            if (mainWindow.topLayer.Children.Count > 0)
             {
-                if (mainWindow.topLayer.Children.Count > 0)
-                {
-                    mainWindow.topLayer.Children.Clear();
-                }
+                mainWindow.topLayer.Children.Clear();
             }
 
             // Show the image! :)
@@ -326,6 +324,12 @@ namespace PicView
         /// depending on the next value</param>
         internal static void Pic(bool next = true, bool end = false)
         {
+
+#if DEBUG
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+#endif
+
             // Exit if not intended to change picture
             if (!canNavigate)
             {
@@ -430,6 +434,13 @@ namespace PicView
                     }
                 }
             }
+
+#if DEBUG
+            stopWatch.Stop();
+            var s = "Pic(); executed in " + stopWatch.Elapsed.TotalMilliseconds + " milliseconds";
+            Trace.WriteLine(s);
+            //ToolTipStyle(s);
+#endif
         }
 
         /// <summary>

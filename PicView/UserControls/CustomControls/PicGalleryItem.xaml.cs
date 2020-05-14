@@ -26,19 +26,19 @@ namespace PicView.UserControls
 
             Selected = selected;
             Id = id;
-            Loaded += PicGalleryItem_Loaded;
-        }
 
-        private void PicGalleryItem_Loaded(object sender, RoutedEventArgs e)
-        {
+            outterborder.Width = outterborder.Height = picGalleryItem_Size;
+            innerborder.Width = innerborder.Height = picGalleryItem_Size_s;
+
             img.MouseEnter += (s, y) => AnimationHelper.HoverSizeAnim(
-                border,
+                innerborder,
                 false,
                 picGalleryItem_Size_s,
                 picGalleryItem_Size
             );
+
             img.MouseLeave += (s, y) => AnimationHelper.HoverSizeAnim(
-                border,
+                innerborder,
                 true,
                 picGalleryItem_Size,
                 picGalleryItem_Size_s
@@ -46,9 +46,11 @@ namespace PicView.UserControls
 
             if (Selected)
             {
-                border.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColorOverAlpha());
-                border.Width = border.Height = picGalleryItem_Size;
+                innerborder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColorOverAlpha());
+                innerborder.Width = innerborder.Height = picGalleryItem_Size;
             }
+
+
         }
 
         internal void SetSelected(bool b)
@@ -56,18 +58,18 @@ namespace PicView.UserControls
             if (b)
             {
                 Selected = true;
-                border.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColorOverAlpha());
-                border.Width = border.Height = picGalleryItem_Size;
+                innerborder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColorOverAlpha());
+                innerborder.Width = innerborder.Height = picGalleryItem_Size;
             }
             else
             {
                 Selected = false;
                 if (Application.Current.Resources["BorderBrush"] is SolidColorBrush bgBrush)
                 {
-                    border.BorderBrush = bgBrush;
+                    innerborder.BorderBrush = bgBrush;
                 }
 
-                border.Width = border.Height = picGalleryItem_Size_s;
+                innerborder.Width = innerborder.Height = picGalleryItem_Size_s;
             }
         }
     }

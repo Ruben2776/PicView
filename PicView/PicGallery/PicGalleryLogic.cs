@@ -184,6 +184,15 @@ namespace PicView
             if (Properties.Settings.Default.PicGallery == 1)
             {
                 picGallery.Visibility = Visibility.Collapsed;
+
+                if (clickArrowLeft.Visibility != Visibility.Visible)
+                {
+                    clickArrowLeft.Visibility =
+                    clickArrowRight.Visibility =
+                    x2.Visibility =
+                    minus.Visibility =
+                    galleryShortcut.Visibility = Visibility.Visible;
+                }
             }
         }
 

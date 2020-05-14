@@ -4,15 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              Width="465"
              Height="500">
-    <StackPanel>
-        <StackPanel.Background>
+    <Grid>
+        <Grid.Background>
             <ImageBrush
                         ImageSource="../../Resources/img/noisy-texture-200x200-o4-d31-c-161616-t0.png"
                         TileMode="FlipXY"
                         Viewport="0,0,100,100"
                         ViewportUnits="Absolute" />
-        </StackPanel.Background>
-        <Canvas Width="463" Height="457">
+        </Grid.Background>
+        <Canvas Width="463" Height="457" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Path
                 x:Name="Top"
                 Data="M256 288c-45.443 0-83.675 26.076-102.205 64h204.41c-18.53-37.924-56.762-64-102.205-64z"
@@ -45,6 +45,6 @@
                 </Path.Fill>
             </Path>
         </Canvas>
-        <Label FontSize="16" HorizontalAlignment="Center" Margin="0,0,0,19" >The image could not be rendered</Label>
-    </StackPanel>
+        <Label FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,452,0,0" >The image could not be rendered</Label>
+    </Grid>
 </UserControl>

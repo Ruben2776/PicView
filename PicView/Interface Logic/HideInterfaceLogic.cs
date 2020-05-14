@@ -24,6 +24,7 @@ namespace PicView
             {
                 ShowTopandBottom(false);
                 ShowNavigation(true);
+                ShowShortcuts(true);
 
                 Properties.Settings.Default.ShowInterface = false;
 
@@ -39,6 +40,7 @@ namespace PicView
 
                 ShowTopandBottom(true);
                 ShowNavigation(false);
+                ShowShortcuts(false);
 
                 if (activityTimer != null)
                 {
@@ -93,6 +95,23 @@ namespace PicView
                 clickArrowRight.Visibility =
                 x2.Visibility =
                 minus.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        internal static void ShowShortcuts(bool show)
+        {
+            if (galleryShortcut == null)
+            {
+                return;
+            }
+
+            if (show)
+            {
+                galleryShortcut.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                galleryShortcut.Visibility = Visibility.Collapsed;
             }
         }
 

@@ -11,12 +11,11 @@ namespace PicView
         /// <param name="show"></param>
         internal static async void FadeControlsAsync(bool show, double time = .5)
         {
-            /// Might cause unnecessary cpu usage? Need to check
             await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
             {
                 if (!Properties.Settings.Default.ShowInterface | Slidetimer.Enabled == true)
                 {
-                    if (clickArrowRight != null && clickArrowLeft != null && x2 != null)
+                    if (clickArrowRight != null && clickArrowLeft != null && x2 != null && galleryShortcut != null)
                     {
                         var fadeTo = show ? 1 : 0;
                         var timespan = TimeSpan.FromSeconds(time);
@@ -25,6 +24,7 @@ namespace PicView
                         AnimationHelper.Fade(clickArrowRight, fadeTo, timespan);
                         AnimationHelper.Fade(x2, fadeTo, timespan);
                         AnimationHelper.Fade(minus, fadeTo, timespan);
+                        AnimationHelper.Fade(galleryShortcut, fadeTo, timespan);
                     }
                 }
 
