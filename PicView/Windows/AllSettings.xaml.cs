@@ -108,17 +108,10 @@ namespace PicView.Windows
                 PicGalleryRadio.PreviewMouseLeftButtonDown += PicGalleryRadio_PreviewMouseLeftButtonDown;
                 PicGalleryRadio.MouseEnter += PicGalleryRadio_MouseEnter;
                 PicGalleryRadio.MouseLeave += PicGalleryRadio_MouseLeave;
-                PicGalleryRadio.IsChecked = Properties.Settings.Default.PicGallery > 0;
-                PicGalleryRadio.Checked += delegate
+                PicGalleryRadio.IsChecked = Properties.Settings.Default.PicGallery == 1;
+                PicGalleryRadio.Click += delegate
                 {
-                    if (PicGalleryRadio.IsChecked.Value)
-                    {
-                        Properties.Settings.Default.PicGallery = 0;
-                    }
-                    else
-                    {
-                        Properties.Settings.Default.PicGallery = 1;
-                    }
+                    Properties.Settings.Default.PicGallery = Properties.Settings.Default.PicGallery == 1 ? (byte)2 : (byte)1;
                 };
 
                 // BorderColorRadio

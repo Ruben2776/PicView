@@ -90,7 +90,8 @@ namespace PicView.Windows
 
         private void FakeWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            fake.Close();
+            //fake.Close();
+            mainWindow.Focus();
         }
     }
 }

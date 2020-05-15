@@ -23,7 +23,7 @@ namespace PicView
 
         internal static async void Add(BitmapSource pic, int index)
         {
-            await mainWindow.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(() =>
+            await mainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
             {
                 var selected = index == FolderIndex;
                 var item = new PicGalleryItem(pic, index, selected);

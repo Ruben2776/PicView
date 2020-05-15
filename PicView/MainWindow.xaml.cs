@@ -263,10 +263,10 @@ namespace PicView
             imageSettingsMenu.Rotation90Button.Click += (s, x) => Rotate(90);
             imageSettingsMenu.Rotation180Button.Click += (s, x) => Rotate(180);
             imageSettingsMenu.Rotation270Button.Click += (s, x) => Rotate(270);
-            imageSettingsMenu.Rotation0Border.MouseLeftButtonDown += (s, x) => Rotate(0);
-            imageSettingsMenu.Rotation90Border.MouseLeftButtonDown += (s, x) => Rotate(90);
-            imageSettingsMenu.Rotation180Border.MouseLeftButtonDown += (s, x) => Rotate(180);
-            imageSettingsMenu.Rotation270Border.MouseLeftButtonDown += (s, x) => Rotate(270);
+            imageSettingsMenu.Rotation0Border.MouseLeftButtonUp += (s, x) => Rotate(0);
+            imageSettingsMenu.Rotation90Border.MouseLeftButtonUp += (s, x) => Rotate(90);
+            imageSettingsMenu.Rotation180Border.MouseLeftButtonUp += (s, x) => Rotate(180);
+            imageSettingsMenu.Rotation270Border.MouseLeftButtonUp += (s, x) => Rotate(270);
 
             // LeftButton
             LeftButton.PreviewMouseLeftButtonDown += LeftButtonMouseButtonDown;

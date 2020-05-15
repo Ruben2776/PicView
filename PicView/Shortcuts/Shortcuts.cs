@@ -409,40 +409,16 @@ namespace PicView
                     break;
                 // F4
                 case Key.F4:
-                    if (picGallery != null)
-                    {
-                        if (Properties.Settings.Default.PicGallery == 2)
-                        {
-                            ToggleGallery(true);
-                        }
-                        else
-                        {
-                            Properties.Settings.Default.PicGallery = 1;
-                            ToggleGallery();
-                        }
-                    }
                     break;
                 // F5
                 case Key.F5:
-                    if (picGallery != null)
+                    if (!SlideshowActive)
                     {
-                        if (Properties.Settings.Default.PicGallery == 1)
-                        {
-                            if (PicGalleryLogic.IsOpen)
-                            {
-                                ToggleGallery(true);
-                            }
-                            else
-                            {
-                                Properties.Settings.Default.PicGallery = 2;
-                                ToggleGallery();
-                            }
-                        }
-                        else
-                        {
-                            Properties.Settings.Default.PicGallery = 2;
-                            ToggleGallery();
-                        }
+                        LoadSlideshow();
+                    }
+                    else
+                    {
+                        UnloadSlideshow();
                     }
                     break;
                 // F6
@@ -455,15 +431,6 @@ namespace PicView
                     break;
                 // F12
                 case Key.F12:
-                    if (!SlideshowActive)
-                    {
-                        LoadSlideshow();
-                    }
-                    else
-                    {
-                        UnloadSlideshow();
-                    }
-
                     break;
                 // Home
                 case Key.Home:

@@ -91,6 +91,9 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="PicGallery\PicGalleryLogic.cs~RF57f3b96.TMP" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Resources\fonts\Aller_Rg.ttf" />
     <Resource Include="Resources\fonts\Aller_Bd.ttf" />
     <Resource Include="Resources\fonts\Aller_BdIt.ttf" />
@@ -162,7 +165,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
     <FileVersion>0.9.7.1</FileVersion>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
