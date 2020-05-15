@@ -66,12 +66,12 @@ namespace PicView
         /// <param name="e"></param>
         internal static async void SlideTimer_Elapsed(object server, System.Timers.ElapsedEventArgs e)
         {
-            await Application.Current.MainWindow.Dispatcher.BeginInvoke((Action)(() =>
-            {
-                AnimationHelper.Fade(mainWindow.img, 0, TimeSpan.FromSeconds(.5));
-                Pic(true, false);
-                AnimationHelper.Fade(mainWindow.img, 1, TimeSpan.FromSeconds(.5));
-            }));
+            //await Application.Current.MainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            //{
+            //    AnimationHelper.Fade(mainWindow.img, 0, TimeSpan.FromSeconds(.5));
+            //    Pic(true, false);
+            //    AnimationHelper.Fade(mainWindow.img, 1, TimeSpan.FromSeconds(.5));
+            //}));
         }
     }
 }

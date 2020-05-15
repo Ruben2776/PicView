@@ -9,8 +9,8 @@ using static PicView.HideInterfaceLogic;
 using static PicView.LoadWindows;
 using static PicView.Navigation;
 using static PicView.Open_Save;
-using static PicView.PicGalleryScroll;
-using static PicView.PicGalleryToggle;
+using static PicView.GalleryScroll;
+using static PicView.ToggleGallery;
 using static PicView.Resize_and_Zoom;
 using static PicView.Rotate_and_Flip;
 using static PicView.Scroll;
@@ -33,7 +33,7 @@ namespace PicView
                 case Key.D:
                     if (picGallery != null)
                     {
-                        if (PicGalleryLogic.IsOpen)
+                        if (GalleryMisc.IsOpen)
                         {
                             if (Properties.Settings.Default.PicGallery == 1)
                             {
@@ -65,7 +65,7 @@ namespace PicView
                 case Key.A:
                     if (picGallery != null)
                     {
-                        if (PicGalleryLogic.IsOpen)
+                        if (GalleryMisc.IsOpen)
                         {
                             if (Properties.Settings.Default.PicGallery == 1)
                             {
@@ -95,7 +95,7 @@ namespace PicView
                 case Key.PageUp:
                     if (picGallery != null)
                     {
-                        if (PicGalleryLogic.IsOpen)
+                        if (GalleryMisc.IsOpen)
                         {
                             ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
                             return;
@@ -111,7 +111,7 @@ namespace PicView
                 case Key.PageDown:
                     if (picGallery != null)
                     {
-                        if (PicGalleryLogic.IsOpen)
+                        if (GalleryMisc.IsOpen)
                         {
                             ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
                             return;
@@ -140,7 +140,7 @@ namespace PicView
                     }
                     else if (picGallery != null)
                     {
-                        if (PicGalleryLogic.IsOpen)
+                        if (GalleryMisc.IsOpen)
                         {
                             ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
                         }
@@ -170,7 +170,7 @@ namespace PicView
                     }
                     else if (picGallery != null)
                     {
-                        if (PicGalleryLogic.IsOpen)
+                        if (GalleryMisc.IsOpen)
                         {
                             ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
                         }
@@ -265,9 +265,9 @@ namespace PicView
                     }
                     if (Properties.Settings.Default.PicGallery > 0)
                     {
-                        if (PicGalleryLogic.IsOpen)
+                        if (GalleryMisc.IsOpen)
                         {
-                            ToggleGallery();
+                            Toggle();
                             return;
                         }
                     }
@@ -387,7 +387,7 @@ namespace PicView
                 case Key.Space:
                     if (picGallery != null)
                     {
-                        if (PicGalleryLogic.IsOpen)
+                        if (GalleryMisc.IsOpen)
                         {
                             ScrollTo();
                             return;

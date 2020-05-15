@@ -4,16 +4,18 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media.Animation;
 using static PicView.Fields;
-using static PicView.PicGalleryLoad;
-using static PicView.PicGalleryLogic;
-using static PicView.PicGalleryScroll;
+using static PicView.GalleryLoad;
+using static PicView.GalleryMisc;
+using static PicView.GalleryScroll;
 using static PicView.WindowLogic;
 
 namespace PicView
 {
-    internal static class PicGalleryToggle
+    internal static class ToggleGallery
     {
-        internal static void ToggleGallery(bool change = false)
+        #region Toggle 
+
+        internal static void Toggle(bool change = false)
         {
             /// TODO need to get this fixed when changing between them.
             /// Is open variable stats true when it should be false, dunno why..
@@ -70,7 +72,9 @@ namespace PicView
 #endif
         }
 
-        // Open!!!
+        #endregion
+
+        #region Open
 
         static void OpenPicGalleryOne()
         {
@@ -120,7 +124,9 @@ namespace PicView
             mainWindow.Focus();
         }
 
-        // Close!!!
+        #endregion
+
+        #region Close
 
         static void ClosePicGalleryOne()
         {
@@ -164,8 +170,9 @@ namespace PicView
             //Properties.Settings.Default.PicGallery = 1;
         }
 
+        #endregion
 
-        // Change !!
+        #region Change
 
         static void ChangeToPicGalleryOne()
         {
@@ -205,6 +212,8 @@ namespace PicView
             ScrollTo();
             mainWindow.Focus();
         }
+
+        #endregion
 
     }
 }

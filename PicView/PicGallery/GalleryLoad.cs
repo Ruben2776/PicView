@@ -3,14 +3,14 @@ using System.Windows;
 using System.Windows.Controls;
 using static PicView.Fields;
 using static PicView.HideInterfaceLogic;
-using static PicView.PicGalleryLogic;
-using static PicView.PicGalleryScroll;
+using static PicView.GalleryMisc;
+using static PicView.GalleryScroll;
 using static PicView.Thumbnails;
 using static PicView.WindowLogic;
 
 namespace PicView
 {
-    internal static class PicGalleryLoad
+    internal static class GalleryLoad
     {
         internal static void PicGallery_Loaded(object sender, RoutedEventArgs e)
         {
@@ -18,7 +18,7 @@ namespace PicView
             picGallery.Scroller.PreviewMouseWheel += ScrollTo;
             picGallery.Scroller.ScrollChanged += (s, x) => mainWindow.Focus(); // Maintain window focus when scrolling manually
             picGallery.grid.MouseLeftButtonDown += (s, x) => mainWindow.Focus();
-            picGallery.x2.MouseLeftButtonUp += delegate { PicGalleryToggle.ToggleGallery(); };
+            picGallery.x2.MouseLeftButtonUp += delegate { ToggleGallery.Toggle(); };
 
             IsLoading = IsOpen = false;
         }

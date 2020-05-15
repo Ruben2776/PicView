@@ -36,7 +36,7 @@ namespace PicView
         /// <returns></returns>
         internal static MonitorSize GetMonitorSize()
         {
-            /// TODO Get Solution to get actual screen pixzel size
+            /// TODO Get Solution to get actual screen pixel size
             /// and not just without taskbar and such... 
 
             // https://stackoverflow.com/a/32599760

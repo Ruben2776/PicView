@@ -123,9 +123,9 @@ namespace PicView
             // Load images for PicGallery if enabled
             if (Properties.Settings.Default.PicGallery > 0)
             {
-                if (!PicGalleryLogic.IsLoading)
+                if (!GalleryMisc.IsLoading)
                 {
-                    await PicGalleryLoad.Load().ConfigureAwait(true);
+                    await GalleryLoad.Load().ConfigureAwait(true);
                 }
             }
 
@@ -255,8 +255,8 @@ namespace PicView
 
             /// TODO Make it staying flipped a user preference 
             //// Prevent picture from being flipped if previous is
-            //if (Flipped)
-            //    Flip();
+            if (Flipped)
+               Rotate_and_Flip.Flip();
 
             // Update values
             canNavigate = true;
@@ -341,7 +341,7 @@ namespace PicView
             {
                 if (Properties.Settings.Default.PicGallery == 1)
                 {
-                    if (PicGalleryLogic.IsOpen)
+                    if (GalleryMisc.IsOpen)
                     {
                         return;
                     }
@@ -355,6 +355,7 @@ namespace PicView
             if (end)
             {
                 FolderIndex = next ? Pics.Count - 1 : 0;
+                x = FolderIndex;
 
                 // Reset preloader values to prevent errors
                 if (Pics.Count > 20)
@@ -419,14 +420,17 @@ namespace PicView
             {
                 if (Properties.Settings.Default.PicGallery > 0)
                 {
-                    if (picGallery.Container.Children.Count > FolderIndex)
+                    if (picGallery.Container.Children.Count > FolderIndex && picGallery.Container.Children.Count > x)
                     {
-                        var prevItem = picGallery.Container.Children[x] as PicGalleryItem;
-                        prevItem.SetSelected(false);
+                        if (x != FolderIndex)
+                        {
+                            var prevItem = picGallery.Container.Children[x] as PicGalleryItem;
+                            prevItem.SetSelected(false);
+                        }
 
                         var nextItem = picGallery.Container.Children[FolderIndex] as PicGalleryItem;
                         nextItem.SetSelected(true);
-                        PicGalleryScroll.ScrollTo();
+                        GalleryScroll.ScrollTo();
                     }
                     else
                     {

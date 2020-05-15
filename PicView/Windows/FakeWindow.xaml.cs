@@ -4,7 +4,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using static PicView.Fields;
 using static PicView.NativeMethods;
-using static PicView.PicGalleryScroll;
+using static PicView.GalleryScroll;
 using static PicView.WindowLogic;
 
 namespace PicView.Windows

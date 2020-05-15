@@ -2,7 +2,7 @@
 
     <Style x:Key="SexyBorder" TargetType="Border">
         <Setter Property="Height" Value="50" />
-        <Setter Property="Width" Value="124" />
+        <Setter Property="Width" Value="115" />
         <Setter Property="CornerRadius" Value="2" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />

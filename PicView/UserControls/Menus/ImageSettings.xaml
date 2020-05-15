@@ -4,155 +4,358 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <StackPanel>
         <Border
-            Width="280"
+            Width="257"
             Height="180"
             Background="{StaticResource BackgroundColorBrush}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1"
             CornerRadius="2">
             <Canvas>
-                    <Rectangle
-                        Canvas.Top="50"
-                        Width="278"
-                        Panel.ZIndex="1"
-                        Stroke="{StaticResource BorderBrush}"
-                        StrokeThickness="1" />
-                    <Rectangle
-                        Canvas.Left="174"
-                        Width="1"
-                        Height="51"
-                        Panel.ZIndex="1"
-                        Stroke="{StaticResource BorderBrush}"
-                        StrokeThickness="1" />
-                    <Rectangle
-                        Canvas.Left="226"
-                        Width="1"
-                        Height="51"
-                        Panel.ZIndex="1"
-                        Stroke="{DynamicResource BorderBrush}"
-                        StrokeThickness="1" />
-                    <TextBlock
-                        x:Name="bar"
-                        Width="174"
-                        Height="51"
-                        Padding="21,15,0,0"
-                        FontFamily="/PicView;component/Resources/fonts/#TeX Gyre Heros"
-                        FontSize="16"
-                        FontWeight="Bold"
-                        Foreground="{StaticResource MainColorBrush}"
-                        Text="Rotate and flip" />
+                <Rectangle
+                    Canvas.Top="50"
+                    Width="255"
+                    Panel.ZIndex="1"
+                    Stroke="{StaticResource BorderBrush}"
+                    StrokeThickness="1" />
+                <Rectangle
+                    Canvas.Left="51"
+                    Width="1"
+                    Height="51"
+                    Panel.ZIndex="1"
+                    Stroke="{StaticResource BorderBrush}"
+                    StrokeThickness="1" />
+                <Rectangle
+                    Canvas.Left="101"
+                    Width="1"
+                    Height="51"
+                    Panel.ZIndex="1"
+                    Stroke="{DynamicResource BorderBrush}"
+                    StrokeThickness="1" />
+                <Rectangle
+                    Canvas.Left="153"
+                    Width="1"
+                    Height="51"
+                    Panel.ZIndex="1"
+                    Stroke="{DynamicResource BorderBrush}"
+                    StrokeThickness="1" />
+                <Rectangle
+                    Canvas.Left="203"
+                    Width="1"
+                    Height="51"
+                    Panel.ZIndex="1"
+                    Stroke="{DynamicResource BorderBrush}"
+                    StrokeThickness="1" />
 
-                    <CheckBox
-                        x:Name="FlipButton"
-                        Canvas.Left="175"
-                        Width="51"
-                        Height="51"
-                        BorderBrush="{x:Null}"
-                        FontWeight="Bold"
-                        Foreground="{x:Null}"
-                        ToolTip="Flip image [F]">
-                        <CheckBox.Background>
-                            <SolidColorBrush x:Name="FlipButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </CheckBox.Background>
-                        <CheckBox.Content>
-                            <Path
-                                x:Name="FlipPath"
-                                Canvas.Top="19"
-                                Width="13"
-                                Height="13"
-                                Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
-                                Fill="{StaticResource MainColorBrush}"
-                                Stretch="Fill" />
-                        </CheckBox.Content>
-                    </CheckBox>
+                <Button
+                    x:Name="BgButton"
+                    Canvas.Left="0"
+                    Width="51"
+                    Height="51"
+                    BorderBrush="{x:Null}"
+                    FontWeight="Bold"
+                    Foreground="{x:Null}"
+                    ToolTip="Change between white and transparent background for images">
+                    <Button.Background>
+                        <SolidColorBrush x:Name="BgButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Button.Background>
+                    <Path
+                        Width="17"
+                        Height="17"
+                        Data="M424 64H88c-26.6 0-48 21.6-48 48v288c0 26.4 21.4 48 48 48h336c26.4 0 48-21.6 48-48V112c0-26.4-21.4-48-48-48zm0 336H88V176h336v224z"
+                        Stretch="Fill">
+                        <Path.Fill>
+                            <SolidColorBrush x:Name="BgBrush" Color="{StaticResource MainColor}" />
+                        </Path.Fill>
+                    </Path>
+                </Button>
 
-                    <Button
-                        x:Name="CloseButton"
-                        Canvas.Left="227"
-                        Width="51"
-                        Height="51"
-                        BorderThickness="0"
-                        FocusVisualStyle="{x:Null}"
-                        ToolTip="Close">
-                        <Button.Background>
-                            <SolidColorBrush x:Name="CloseButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </Button.Background>
+                <Button
+                    x:Name="GalleryButton1"
+                    Canvas.Left="51"
+                    Width="51"
+                    Height="51"
+                    BorderBrush="{x:Null}"
+                    FontWeight="Bold"
+                    Foreground="{x:Null}"
+                    ToolTip="Show image gallery 1">
+                    <Button.Background>
+                        <SolidColorBrush x:Name="GalleryButton1Brush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Button.Background>
+                    <Button.Content>
+                        <Image Width="17" Height="17">
+                            <Image.Source>
+                                <DrawingImage x:Name="image_outlineDrawingImage">
+                                    <DrawingImage.Drawing>
+                                        <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                            <GeometryDrawing>
+                                                <GeometryDrawing.Pen>
+                                                    <Pen
+                                                        x:Name="gallery1pen1"
+                                                        Brush="{StaticResource MainColorBrush}"
+                                                        EndLineCap="Flat"
+                                                        LineJoin="Round"
+                                                        StartLineCap="Flat"
+                                                        Thickness="32" />
+                                                </GeometryDrawing.Pen>
+                                                <GeometryDrawing.Geometry>
+                                                    <RectangleGeometry
+                                                        RadiusX="48"
+                                                        RadiusY="48"
+                                                        Rect="48,80,416,352" />
+                                                </GeometryDrawing.Geometry>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing>
+                                                <GeometryDrawing.Pen>
+                                                    <Pen
+                                                        x:Name="gallery1pen2"
+                                                        Brush="{StaticResource MainColorBrush}"
+                                                        EndLineCap="Flat"
+                                                        LineJoin="Miter"
+                                                        StartLineCap="Flat"
+                                                        Thickness="32" />
+                                                </GeometryDrawing.Pen>
+                                                <GeometryDrawing.Geometry>
+                                                    <EllipseGeometry
+                                                        Center="336,176"
+                                                        RadiusX="32"
+                                                        RadiusY="32" />
+                                                </GeometryDrawing.Geometry>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Geometry="F1 M512,512z M0,0z M304,335.79L213.34,245.3A32,32,0,0,0,169.47,244L48,352">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen
+                                                        x:Name="gallery1pen3"
+                                                        Brush="{StaticResource MainColorBrush}"
+                                                        EndLineCap="Round"
+                                                        LineJoin="Round"
+                                                        StartLineCap="Round"
+                                                        Thickness="32" />
+                                                </GeometryDrawing.Pen>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Geometry="F1 M512,512z M0,0z M224,432L347.34,308.66A32,32,0,0,1,390.45,306.66L464,368">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen
+                                                        x:Name="gallery1pen4"
+                                                        Brush="{StaticResource MainColorBrush}"
+                                                        EndLineCap="Round"
+                                                        LineJoin="Round"
+                                                        StartLineCap="Round"
+                                                        Thickness="32" />
+                                                </GeometryDrawing.Pen>
+                                            </GeometryDrawing>
+                                        </DrawingGroup>
+                                    </DrawingImage.Drawing>
+                                </DrawingImage>
+                            </Image.Source>
+                        </Image>
+                    </Button.Content>
+                </Button>
+
+                <Button
+                    x:Name="GalleryButton2"
+                    Canvas.Left="102"
+                    Width="51"
+                    Height="51"
+                    BorderBrush="{x:Null}"
+                    FontWeight="Bold"
+                    Foreground="{x:Null}"
+                    ToolTip="Show image gallery 2">
+                    <Button.Background>
+                        <SolidColorBrush x:Name="GalleryButton2Brush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Button.Background>
+                    <Button.Content>
+                        <Image Width="17" Height="17">
+                            <Image.Source>
+                                <DrawingImage x:Name="images_outlineDrawingImages">
+                                    <DrawingImage.Drawing>
+                                        <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                            <GeometryDrawing Geometry="F1 M512,512z M0,0z M432,112L432,96A48.14,48.14,0,0,0,384,48L64,48A48.14,48.14,0,0,0,16,96L16,352A48.14,48.14,0,0,0,64,400L80,400">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen
+                                                        x:Name="gallery2pen1"
+                                                        Brush="{StaticResource MainColorBrush}"
+                                                        EndLineCap="Flat"
+                                                        LineJoin="Round"
+                                                        StartLineCap="Flat"
+                                                        Thickness="32" />
+                                                </GeometryDrawing.Pen>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing>
+                                                <GeometryDrawing.Pen>
+                                                    <Pen
+                                                        x:Name="gallery2pen2"
+                                                        Brush="{StaticResource MainColorBrush}"
+                                                        EndLineCap="Flat"
+                                                        LineJoin="Round"
+                                                        StartLineCap="Flat"
+                                                        Thickness="32" />
+                                                </GeometryDrawing.Pen>
+                                                <GeometryDrawing.Geometry>
+                                                    <RectangleGeometry
+                                                        RadiusX="45.99"
+                                                        RadiusY="45.99"
+                                                        Rect="96,128,400,336" />
+                                                </GeometryDrawing.Geometry>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing>
+                                                <GeometryDrawing.Pen>
+                                                    <Pen
+                                                        x:Name="gallery2pen3"
+                                                        Brush="{StaticResource MainColorBrush}"
+                                                        EndLineCap="Flat"
+                                                        LineJoin="Miter"
+                                                        StartLineCap="Flat"
+                                                        Thickness="32" />
+                                                </GeometryDrawing.Pen>
+                                                <GeometryDrawing.Geometry>
+                                                    <EllipseGeometry
+                                                        Center="372.92,219.64"
+                                                        RadiusX="30.77"
+                                                        RadiusY="30.55" />
+                                                </GeometryDrawing.Geometry>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Geometry="F1 M512,512z M0,0z M342.15,372.17L255,285.78A30.93,30.93,0,0,0,212.82,284.57L96,387.64">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen
+                                                        x:Name="gallery2pen4"
+                                                        Brush="{StaticResource MainColorBrush}"
+                                                        EndLineCap="Round"
+                                                        LineJoin="Round"
+                                                        StartLineCap="Round"
+                                                        Thickness="32" />
+                                                </GeometryDrawing.Pen>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Geometry="F1 M512,512z M0,0z M265.23,464L383.82,346.27A31,31,0,0,1,425.28,344.4L496,402.91">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen
+                                                        x:Name="gallery2pen5"
+                                                        Brush="{StaticResource MainColorBrush}"
+                                                        EndLineCap="Round"
+                                                        LineJoin="Round"
+                                                        StartLineCap="Round"
+                                                        Thickness="32" />
+                                                </GeometryDrawing.Pen>
+                                            </GeometryDrawing>
+                                        </DrawingGroup>
+                                    </DrawingImage.Drawing>
+                                </DrawingImage>
+                            </Image.Source>
+                        </Image>
+                    </Button.Content>
+                </Button>
+
+
+                <CheckBox
+                    x:Name="FlipButton"
+                    Canvas.Left="153"
+                    Width="51"
+                    Height="51"
+                    BorderBrush="{x:Null}"
+                    FontWeight="Bold"
+                    Foreground="{x:Null}"
+                    ToolTip="Flip image [F]">
+                    <CheckBox.Background>
+                        <SolidColorBrush x:Name="FlipButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </CheckBox.Background>
+                    <CheckBox.Content>
                         <Path
-                            Width="10"
-                            Height="10"
-                            Data="M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z"
+                            x:Name="FlipPath"
+                            Canvas.Top="19"
+                            Width="13"
+                            Height="13"
+                            Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
                             Fill="{StaticResource MainColorBrush}"
-                            SnapsToDevicePixels="True"
                             Stretch="Fill" />
-                    </Button>
+                    </CheckBox.Content>
+                </CheckBox>
 
-                    <Border
-                        x:Name="Rotation0Border"
-                        Canvas.Left="9"
-                        Canvas.Top="58"
-                        Style="{StaticResource SexyBorder}">
-                        <RadioButton
-                            x:Name="Rotation0Button"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Content="0°"
-                            FontWeight="Bold"
-                            IsChecked="True"
-                            Style="{StaticResource MetroAlphaFlatRadioButton}" />
-                        <Border.Background>
-                            <SolidColorBrush x:Name="Rotation0BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </Border.Background>
-                    </Border>
-                    <Border
-                        x:Name="Rotation90Border"
-                        Canvas.Left="146"
-                        Canvas.Top="58"
-                        Style="{StaticResource SexyBorder}">
-                        <RadioButton
-                            x:Name="Rotation90Button"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Content="90°"
-                            FontWeight="Bold"
-                            Style="{StaticResource MetroAlphaFlatRadioButton}" />
-                        <Border.Background>
-                            <SolidColorBrush x:Name="Rotation90BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </Border.Background>
-                    </Border>
+                <Button
+                    x:Name="CloseButton"
+                    Canvas.Left="204"
+                    Width="51"
+                    Height="51"
+                    BorderThickness="0"
+                    FocusVisualStyle="{x:Null}"
+                    ToolTip="Close">
+                    <Button.Background>
+                        <SolidColorBrush x:Name="CloseButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Button.Background>
+                    <Path
+                        Width="10"
+                        Height="10"
+                        Data="M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z"
+                        Fill="{StaticResource MainColorBrush}"
+                        SnapsToDevicePixels="True"
+                        Stretch="Fill" />
+                </Button>
 
-                    <Border
-                        x:Name="Rotation180Border"
-                        Canvas.Left="146"
-                        Canvas.Top="116"
-                        Style="{StaticResource SexyBorder}">
-                        <RadioButton
-                            x:Name="Rotation180Button"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Content="180°"
-                            FontWeight="Bold"
-                            Style="{StaticResource MetroAlphaFlatRadioButton}" />
-                        <Border.Background>
-                            <SolidColorBrush x:Name="Rotation180BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </Border.Background>
-                    </Border>
-                    <Border
-                        x:Name="Rotation270Border"
-                        Canvas.Left="9"
-                        Canvas.Top="116"
-                        Style="{StaticResource SexyBorder}">
-                        <RadioButton
-                            x:Name="Rotation270Button"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Content="270°"
-                            FontWeight="Bold"
-                            Style="{StaticResource MetroAlphaFlatRadioButton}" />
-                        <Border.Background>
-                            <SolidColorBrush x:Name="Rotation270BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </Border.Background>
-                    </Border>
-                </Canvas>
+                <Border
+                    x:Name="Rotation0Border"
+                    Canvas.Left="7"
+                    Canvas.Top="58"
+                    Style="{StaticResource SexyBorder}">
+                    <RadioButton
+                        x:Name="Rotation0Button"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Content="0°"
+                        FontWeight="Bold"
+                        IsChecked="True"
+                        Style="{StaticResource MetroAlphaFlatRadioButton}" />
+                    <Border.Background>
+                        <SolidColorBrush x:Name="Rotation0BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Border.Background>
+                </Border>
+                <Border
+                    x:Name="Rotation90Border"
+                    Canvas.Left="132"
+                    Canvas.Top="58"
+                    Style="{StaticResource SexyBorder}">
+                    <RadioButton
+                        x:Name="Rotation90Button"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Content="90°"
+                        FontWeight="Bold"
+                        Style="{StaticResource MetroAlphaFlatRadioButton}" />
+                    <Border.Background>
+                        <SolidColorBrush x:Name="Rotation90BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Border.Background>
+                </Border>
+
+                <Border
+                    x:Name="Rotation180Border"
+                    Canvas.Left="132"
+                    Canvas.Top="116"
+                    Style="{StaticResource SexyBorder}">
+                    <RadioButton
+                        x:Name="Rotation180Button"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Content="180°"
+                        FontWeight="Bold"
+                        Style="{StaticResource MetroAlphaFlatRadioButton}" />
+                    <Border.Background>
+                        <SolidColorBrush x:Name="Rotation180BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Border.Background>
+                </Border>
+                <Border
+                    x:Name="Rotation270Border"
+                    Canvas.Left="7"
+                    Canvas.Top="116"
+                    Style="{StaticResource SexyBorder}">
+                    <RadioButton
+                        x:Name="Rotation270Button"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Content="270°"
+                        FontWeight="Bold"
+                        Style="{StaticResource MetroAlphaFlatRadioButton}" />
+                    <Border.Background>
+                        <SolidColorBrush x:Name="Rotation270BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Border.Background>
+                </Border>
+            </Canvas>
 
         </Border>
         <Rectangle

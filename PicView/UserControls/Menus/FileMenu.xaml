@@ -5,7 +5,7 @@
     Foreground="{StaticResource MainColorBrush}">
     <StackPanel>
         <Border
-            Width="279"
+            Width="259"
             Height="180"
             Background="{DynamicResource BackgroundColorBrush}"
             BorderBrush="{StaticResource BorderBrush}"
@@ -14,35 +14,35 @@
             <Canvas>
                     <Rectangle
                         Canvas.Top="50"
-                        Width="278"
+                        Width="258"
                         Panel.ZIndex="1"
                         Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
                     <Rectangle
-                        Canvas.Left="121"
+                        Canvas.Left="101"
                         Width="1"
                         Height="51"
                         Panel.ZIndex="1"
                         Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
                     <Rectangle
-                        Canvas.Left="173"
+                        Canvas.Left="153"
                         Width="1"
                         Height="51"
                         Panel.ZIndex="1"
                         Stroke="{DynamicResource BorderBrush}"
                         StrokeThickness="1" />
                     <Rectangle
-                        Canvas.Left="225"
+                        Canvas.Left="205"
                         Width="1"
                         Height="50"
                         Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
                     <TextBlock
                         x:Name="bar"
-                        Width="121"
+                        Width="102"
                         Height="51"
-                        Padding="25,17,0,0"
+                        Padding="16,17,0,0"
                         FontFamily="/PicView;component/Resources/fonts/#Aller"
                         FontSize="16"
                         FontWeight="Bold"
@@ -50,7 +50,7 @@
 
                     <Button
                         x:Name="CopyButton"
-                        Canvas.Left="122"
+                        Canvas.Left="102"
                         Width="51"
                         Height="51"
                         Margin="0"
@@ -70,7 +70,7 @@
 
                     <Button
                         x:Name="PasteButton"
-                        Canvas.Left="174"
+                        Canvas.Left="154"
                         Width="51"
                         Height="51"
                         Margin="0"
@@ -90,7 +90,7 @@
 
                 <Button
                         x:Name="CloseButton"
-                        Canvas.Left="226"
+                        Canvas.Left="206"
                         Width="51"
                         Height="51"
                         BorderThickness="0"
@@ -127,7 +127,7 @@
 
                     <Border
                         x:Name="Open_File_Location_Border"
-                        Canvas.Left="143"
+                        Canvas.Left="134"
                         Canvas.Top="59"
                         Style="{StaticResource SexyBorder}">
                         <Button
@@ -161,7 +161,7 @@
 
                     <Border
                         x:Name="Save_File_Location_Border"
-                        Canvas.Left="143"
+                        Canvas.Left="134"
                         Canvas.Top="116"
                         Style="{StaticResource SexyBorder}">
                         <Button

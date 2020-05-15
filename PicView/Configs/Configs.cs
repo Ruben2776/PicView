@@ -225,6 +225,8 @@ namespace PicView
                 case "15":
                     Properties.Settings.Default.Slidetimeren = 15000;
                     break;
+                default:
+                    break;
             }
         }
     }

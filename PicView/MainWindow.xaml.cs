@@ -157,7 +157,7 @@ namespace PicView
 
                 if (Properties.Settings.Default.PicGallery == 2 && freshStartup)
                 {
-                    PicGalleryToggle.ToggleGallery();
+                    ToggleGallery.Toggle();
                 }
             }
 
@@ -339,7 +339,7 @@ namespace PicView
             minus.MouseEnter += Interface_MouseEnter_Negative;
 
             // GalleryShortcut
-            galleryShortcut.MouseLeftButtonUp += (s, x) => PicGalleryToggle.ToggleGallery();
+            galleryShortcut.MouseLeftButtonUp += (s, x) => ToggleGallery.Toggle();
             galleryShortcut.MouseEnter += Interface_MouseEnter_Negative;
 
             // Bar
@@ -420,14 +420,6 @@ namespace PicView
             MonitorInfo = MonitorSize.GetMonitorSize();
             ZoomFit(img.Width, img.Height);
         }
-
-        //private void MainWindow_LocationChanged(object sender, EventArgs e)
-        //{
-        //    // TODO Need to figure out a way to handle user dragging app to a monitor, with different resolution.
-
-        //    //MonitorInfo = MonitorSize.GetMonitorSize();
-        //    //ZoomFit(img.Width, img.Height);
-        //}
 
         protected override void OnRenderSizeChanged(SizeChangedInfo size)
         {

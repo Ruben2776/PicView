@@ -270,7 +270,7 @@ namespace PicView
             /// Don't zoom when gallery is open
             if (picGallery != null)
             {
-                if (PicGalleryLogic.IsOpen)
+                if (GalleryMisc.IsOpen)
                 {
                     return;
                 }
@@ -500,7 +500,7 @@ namespace PicView
                 var interfaceSize = 220; // logo and buttons width + extra padding
                 mainWindow.Bar.MaxWidth = xWidth - interfaceSize < interfaceSize ? interfaceSize : xWidth - interfaceSize;
 
-                /// Loses position gradually if not forced to center
+                /// TODO Loses position gradually if not forced to center
                 if (!Properties.Settings.Default.Fullscreen)
                 {
                     CenterWindowOnScreen();

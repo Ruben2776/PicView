@@ -76,7 +76,7 @@ namespace PicView
         /// <param name="right"></param>
         internal static void Rotate(bool right)
         {
-            if (mainWindow.img.Source == null || PicGalleryLogic.IsOpen)
+            if (mainWindow.img.Source == null || GalleryMisc.IsOpen)
             {
                 return;
             }

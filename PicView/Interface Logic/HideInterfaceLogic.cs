@@ -14,7 +14,7 @@ namespace PicView
         /// </summary>
         internal static void ToggleInterface()
         {
-            if (Properties.Settings.Default.PicGallery == 2 && PicGalleryLogic.IsOpen)
+            if (Properties.Settings.Default.PicGallery == 2 && GalleryMisc.IsOpen)
             {
                 return;
             }

@@ -231,9 +231,6 @@ namespace PicView
                     mainWindow.bg.Width = double.NaN;
                     mainWindow.bg.Height = double.NaN;
 
-                    /// TODO need to fix not getting correct placement
-                    /// centering window does not work in this state
-                    /// suspects it needs a delay to work?
                     TryZoomFit();
                 }
 

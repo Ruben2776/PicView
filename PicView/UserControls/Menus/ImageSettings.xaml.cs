@@ -26,6 +26,18 @@ namespace PicView.UserControls
             FlipButton.Checked += FlipButton_Checked;
             FlipButton.Unchecked += FlipButton_Unchecked;
 
+            BgButton.MouseEnter += BgButtonMouseOver;
+            BgButton.MouseLeave += BgButtonMouseLeave;
+            BgButton.PreviewMouseLeftButtonDown += BgButtonMouseButtonDown;
+
+            GalleryButton1.MouseEnter += GalleryButton1MouseOver;
+            GalleryButton1.MouseLeave += GalleryButton1MouseLeave;
+            GalleryButton1.PreviewMouseLeftButtonDown += GalleryButton1MouseButtonDown;
+
+            GalleryButton2.MouseEnter += GalleryButton2MouseOver;
+            GalleryButton2.MouseLeave += GalleryButton2MouseLeave;
+            GalleryButton2.PreviewMouseLeftButtonDown += GalleryButton2MouseButtonDown;
+
             Rotation0Border.MouseEnter += Rotation0Border_MouseEnter;
             Rotation0Border.MouseLeave += Rotation0Border_MouseLeave;
             Rotation0Border.PreviewMouseLeftButtonDown += Rotation0Border_PreviewMouseLeftButtonDown;
@@ -195,6 +207,75 @@ namespace PicView.UserControls
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
                 FlipButtonBrush,
+                false
+            );
+        }
+
+        // Bg Button
+        private void BgButtonMouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, BgButtonBrush, false);
+        }
+
+        private void BgButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(BgButtonBrush, false);
+        }
+
+        private void BgButtonMouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                BgButtonBrush,
+                false
+            );
+        }
+
+        // GalleryButton1
+        private void GalleryButton1MouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, GalleryButton1Brush, false);
+        }
+
+        private void GalleryButton1MouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(GalleryButton1Brush, false);
+        }
+
+        private void GalleryButton1MouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                GalleryButton1Brush,
+                false
+            );
+        }
+
+        // GalleryButton2
+        private void GalleryButton2MouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, GalleryButton2Brush, false);
+        }
+
+        private void GalleryButton2MouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(GalleryButton2Brush, false);
+        }
+
+        private void GalleryButton2MouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                GalleryButton2Brush,
                 false
             );
         }

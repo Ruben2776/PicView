@@ -7,8 +7,10 @@ namespace PicView
 {
     // TODO Get scrolling calculation working for PicGallery 2
 
-    internal static class PicGalleryScroll
+    internal static class GalleryScroll
     {
+        #region int calculations
+
         static int Horizontal_items
         {
             get
@@ -68,6 +70,10 @@ namespace PicView
         //     }
         // }
 
+        #endregion
+
+        #region ScrollTo
+
         /// <summary>
         /// Scrolls to center of current item
         /// </summary>
@@ -101,7 +107,7 @@ namespace PicView
         /// </summary>
         /// <param name="next"></param>
         /// <param name="end"></param>
-        internal static void ScrollTo(bool next, bool end = false, bool speedUp = false, bool animate = false)
+        internal static void ScrollTo(bool next, bool end = false, bool speedUp = false)
         {
             if (end)
             {
@@ -121,60 +127,23 @@ namespace PicView
 
                 if (Properties.Settings.Default.PicGallery == 1)
                 {
-                    if (animate)
-                    {
-                        //var anim = new DoubleAnimation
-                        //{
-                        //    From = Scroller.HorizontalOffset,
-                        //    To = direction,
-                        //    Duration = TimeSpan.FromSeconds(.3),
-                        //    AccelerationRatio = 0.2,
-                        //    DecelerationRatio = 0.4
-                        //};
-
-                        //var sb = new Storyboard();
-                        //sb.Children.Add(anim);
-                        //Storyboard.SetTarget(anim, Scroller);
-                        //Storyboard.SetTargetProperty(anim, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty))
-                    }
-                    else
-                    {
-                        picGallery.Scroller.ScrollToHorizontalOffset(direction);
-                    }
+                    picGallery.Scroller.ScrollToHorizontalOffset(direction);
                 }
                 else
                 {
-                    if (animate)
+                    if (next)
                     {
-                        //DoubleAnimation verticalAnimation = new DoubleAnimation
-                        //{
-                        //    From = scrollViewer.VerticalOffset,
-                        //    To = some
-                        //};
-                        //value;
-                        //verticalAnimation.Duration = new Duration(some duration);
-
-                        //Storyboard storyboard = new Storyboard();
-
-                        //storyboard.Children.Add(verticalAnimation);
-                        //Storyboard.SetTarget(verticalAnimation, scrollViewer);
-                        //Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty)); // Attached dependency property
-                        //storyboard.Begin();
+                        picGallery.Scroller.ScrollToVerticalOffset(picGallery.Scroller.VerticalOffset - speed);
                     }
                     else
                     {
-                        if (next)
-                        {
-                            picGallery.Scroller.ScrollToVerticalOffset(picGallery.Scroller.VerticalOffset - speed);
-                        }
-                        else
-                        {
-                            picGallery.Scroller.ScrollToVerticalOffset(picGallery.Scroller.VerticalOffset + speed);
-                        }
+                        picGallery.Scroller.ScrollToVerticalOffset(picGallery.Scroller.VerticalOffset + speed);
                     }
                 }
             }
         }
+
+        #endregion
 
     }
 }

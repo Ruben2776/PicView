@@ -164,7 +164,7 @@ namespace PicView
 
             if (Properties.Settings.Default.PicGallery > 0)
             {
-                PicGalleryLogic.Clear();
+                GalleryMisc.Clear();
             }
         }
 
@@ -190,8 +190,8 @@ namespace PicView
                 Preloader.Clear();
 
                 // Need a sort method instead
-                PicGalleryLogic.Clear();
-                PicGalleryLoad.Load();
+                GalleryMisc.Clear();
+                GalleryLoad.Load();
 
                 Pic(x);
 
