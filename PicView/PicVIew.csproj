@@ -165,7 +165,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
     <FileVersion>0.9.7.1</FileVersion>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
