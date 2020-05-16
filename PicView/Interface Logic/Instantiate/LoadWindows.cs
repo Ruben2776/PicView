@@ -34,36 +34,55 @@ namespace PicView
         /// </summary>
         internal static void HelpWindow()
         {
-            Window window = new Help
+            if (help == null)
             {
-                Width = double.IsNaN(mainWindow.Width) ? 465 : mainWindow.Width,
-                Height = double.IsNaN(mainWindow.Height) ? 715 : mainWindow.Height,
-                Opacity = 0,
-                Owner = Application.Current.MainWindow,
-            };
+                help = new Info
+                {
+                    Owner = mainWindow
+                };
 
-            var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
-            window.BeginAnimation(UIElement.OpacityProperty, animation);
-            window.Show();
+                help.Show();
+            }
+            else
+            {
+                if (help.Visibility == Visibility.Visible)
+                {
+                    help.Focus();
+                }
+                else
+                {
+                    help.Show();
+                }
+
+            }
         }
 
         /// <summary>
-        /// Show All Settings window in a dialog
+        /// Show All Settings window
         /// </summary>
         internal static void AllSettingsWindow()
         {
-            Window window = new AllSettings
+            if (allSettings == null)
             {
-                Width = double.IsNaN(mainWindow.Width) ? 465 : mainWindow.Width,
-                Height = double.IsNaN(mainWindow.Height) ? 715 : mainWindow.Height,
-                Opacity = 0,
-                Owner = Application.Current.MainWindow,
-            };
+                allSettings = new AllSettings
+                {
+                    Owner = mainWindow
+                };
 
-            var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
-            window.BeginAnimation(UIElement.OpacityProperty, animation);
-
-            window.ShowDialog();
+                allSettings.Show();
+            }
+            else
+            {
+                if (allSettings.Visibility == Visibility.Visible)
+                {
+                    allSettings.Focus();
+                }
+                else
+                {
+                    allSettings.Show();
+                }
+                
+            }
         }
 
         ///// <summary>

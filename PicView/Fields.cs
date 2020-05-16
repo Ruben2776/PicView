@@ -1,5 +1,5 @@
 ﻿using PicView.UserControls;
-using PicView.UserControls.Menus;
+using PicView.Windows;
 using System.Collections.Generic;
 using System.Timers;
 using System.Windows;
@@ -148,8 +148,6 @@ namespace PicView
         // UserControls
         internal static ImageSettings imageSettingsMenu;
         internal static FileMenu fileMenu;
-        internal static QuickSettingsMenu quickSettingsMenu;
-        internal static FunctionsMenu functionsMenu;
         internal static AjaxLoading ajaxLoading;
         internal static SexyToolTip sexyToolTip;
         internal static AutoScrollSign autoScrollSign;
@@ -162,6 +160,10 @@ namespace PicView
 
         internal static Point origin;
         internal static Point start;
+
+        // Windows
+        internal static AllSettings allSettings;
+        internal static Info help;
 
         /// <summary>
         /// Starting point of AutoScroll
@@ -210,7 +212,7 @@ namespace PicView
         /// <summary>
         /// Timer used for slideshow
         /// </summary>
-        internal static Timer Slidetimer;
+        //internal static Timer Slidetimer;
 
         /// <summary>
         /// Backup of image

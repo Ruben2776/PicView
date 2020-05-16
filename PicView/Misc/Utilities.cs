@@ -61,12 +61,23 @@ namespace PicView
 
         internal static void UpdateColor()
         {
+            //TODO fix read only error
+
             Application.Current.Resources["ChosenColor"] = AnimationHelper.GetPrefferedColorOver();
 
             if (Properties.Settings.Default.WindowBorderColorEnabled)
             {
-                var bgBrush = Application.Current.Resources["WindowBackgroundColorBrush"] as System.Windows.Media.SolidColorBrush;
-                bgBrush.Color = AnimationHelper.GetPrefferedColorOver();
+                try
+                {
+                    var bgBrush = Application.Current.Resources["WindowBackgroundColorBrush"] as System.Windows.Media.SolidColorBrush;
+                    bgBrush.Color = AnimationHelper.GetPrefferedColorOver();
+                }
+                catch (System.Exception)
+                {
+
+                    //throw;
+                }
+
             }
         }
 

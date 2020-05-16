@@ -1,0 +1,24 @@
+﻿<UserControl
+    x:Class="PicView.UserControls.MinButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Button
+        x:Name="TheButton"
+        Width="33"
+        Height="33"
+        Margin="5,0,0,0"
+        VerticalAlignment="Center"
+        BorderThickness="0"
+        DockPanel.Dock="Right"
+        FocusVisualStyle="{x:Null}"
+        Focusable="False"
+        ToolTip="Minimize">
+        <Button.Background>
+            <SolidColorBrush x:Name="MinButtonBrush" />
+        </Button.Background>
+        <Path
+            Data="F1M0,6L0,9 9,9 9,6 0,6z"
+            Fill="{StaticResource MainColorBrush}"
+            SnapsToDevicePixels="True" />
+    </Button>
+</UserControl>

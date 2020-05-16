@@ -124,42 +124,6 @@ namespace PicView
             mainWindow.bg.Children.Add(imageSettingsMenu);
         }
 
-        /// <summary>
-        /// Loads QuickSettingsMenu and adds it to the window
-        /// </summary>
-        internal static void LoadQuickSettingsMenu()
-        {
-            quickSettingsMenu = new QuickSettingsMenu
-            {
-                Focusable = false,
-                Opacity = 0,
-                Visibility = Visibility.Hidden,
-                VerticalAlignment = VerticalAlignment.Bottom,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(30, 0, 0, 0)
-            };
-
-            mainWindow.bg.Children.Add(quickSettingsMenu);
-        }
-
-        /// <summary>
-        /// Loads FunctionsMenu and adds it to the window
-        /// </summary>
-        internal static void LoadFunctionsMenu()
-        {
-            functionsMenu = new UserControls.Menus.FunctionsMenu
-            {
-                Focusable = false,
-                Opacity = 0,
-                Visibility = Visibility.Hidden,
-                VerticalAlignment = VerticalAlignment.Bottom,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(70, 0, 0, 0)
-            };
-
-            mainWindow.bg.Children.Add(functionsMenu);
-        }
-
 
 
         // Tooltip

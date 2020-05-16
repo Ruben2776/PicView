@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Windows.Media;
+using System.Windows.Input;
 using static PicView.Fields;
 
 
@@ -49,53 +50,19 @@ namespace PicView
         //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(wBrush, false);
         //}
 
-        // Close Button
-
-        internal static void CloseButtonMouseOver(object sender, MouseEventArgs e)
+        internal static void ButtonMouseOver(Brush brush)
         {
-            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, mainWindow.CloseButtonBrush, false);
+            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, brush, false);
         }
 
-        internal static void CloseButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        internal static void ButtonMouseButtonDown(Brush brush)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(mainWindow.CloseButtonBrush, false);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(brush, false);
         }
 
-        internal static void CloseButtonMouseLeave(object sender, MouseEventArgs e)
+        internal static void ButtonMouseLeave(Brush brush)
         {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, mainWindow.CloseButtonBrush, false);
-        }
-
-        // MaxButton
-        internal static void MaxButtonMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, mainWindow.MaxButtonBrush, false);
-        }
-
-        internal static void MaxButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(mainWindow.MaxButtonBrush, false);
-        }
-
-        internal static void MaxButtonMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, mainWindow.MaxButtonBrush, false);
-        }
-
-        // MinButton
-        internal static void MinButtonMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, mainWindow.MinButtonBrush, false);
-        }
-
-        internal static void MinButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(mainWindow.MinButtonBrush, false);
-        }
-
-        internal static void MinButtonMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, mainWindow.MinButtonBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, brush, false);
         }
 
         // LeftButton
@@ -299,32 +266,32 @@ namespace PicView
             );
         }
 
-        // FunctionMenu
-        internal static void FunctionMenuButtonButtonMouseOver(object sender, MouseEventArgs e)
+        // InfoButton
+        internal static void InfoButtonButtonMouseOver(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
                 mainColor.A,
                 mainColor.R,
                 mainColor.G,
                 mainColor.B,
-                mainWindow.QuestionButtonFill1,
+                mainWindow.InfoButtonFill,
                 false
             );
         }
 
-        internal static void FunctionMenuButtonButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        internal static void InfoButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(mainWindow.QuestionButtonFill1, false);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(mainWindow.InfoButtonFill, false);
         }
 
-        internal static void FunctionMenuButtonButtonMouseLeave(object sender, MouseEventArgs e)
+        internal static void InfoButtonButtonMouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 mainColor.A,
                 mainColor.R,
                 mainColor.G,
                 mainColor.B,
-                mainWindow.QuestionButtonFill1,
+                mainWindow.InfoButtonFill,
                 false
             );
         }

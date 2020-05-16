@@ -32,11 +32,11 @@ namespace PicView
                     mainWindow.SizeToContent = SizeToContent.WidthAndHeight;
                     mainWindow.ResizeMode = ResizeMode.CanMinimize;
 
-                    if (quickSettingsMenu != null)
-                    {
-                        quickSettingsMenu.SetFit.IsChecked = true;
-                        quickSettingsMenu.SetCenter.IsChecked = false;
-                    }
+                    //if (quickSettingsMenu != null)
+                    //{
+                    //    quickSettingsMenu.SetFit.IsChecked = true;
+                    //    quickSettingsMenu.SetCenter.IsChecked = false;
+                    //}
 
                     mainWindow.WindowState = WindowState.Normal;
 
@@ -46,11 +46,11 @@ namespace PicView
                     mainWindow.SizeToContent = SizeToContent.Manual;
                     mainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
 
-                    if (quickSettingsMenu != null)
-                    {
-                        quickSettingsMenu.SetCenter.IsChecked = true;
-                        quickSettingsMenu.SetFit.IsChecked = false;
-                    }
+                    //if (quickSettingsMenu != null)
+                    //{
+                    //    quickSettingsMenu.SetCenter.IsChecked = true;
+                    //    quickSettingsMenu.SetFit.IsChecked = false;
+                    //}
                 }
 
                 // Resize it
@@ -168,6 +168,7 @@ namespace PicView
 
                 ShowTopandBottom(false);
                 ShowNavigation(false);
+                ShowShortcuts(false);
 
                 mainWindow.ResizeMode = ResizeMode.CanMinimize;
                 mainWindow.SizeToContent = SizeToContent.Manual;
@@ -189,11 +190,13 @@ namespace PicView
                 {
                     ShowNavigation(false);
                     ShowTopandBottom(true);
+                    ShowShortcuts(false);
                 }
                 else
                 {
                     ShowNavigation(true);
                     ShowTopandBottom(false);
+                    ShowShortcuts(true);
                 }
 
                 if (FitToWindow)
@@ -201,10 +204,10 @@ namespace PicView
                     mainWindow.SizeToContent = SizeToContent.WidthAndHeight;
                     mainWindow.ResizeMode = ResizeMode.NoResize;
 
-                    if (quickSettingsMenu != null)
-                    {
-                        quickSettingsMenu.SetFit.IsChecked = true;
-                    }
+                    //if (quickSettingsMenu != null)
+                    //{
+                    //    quickSettingsMenu.SetFit.IsChecked = true;
+                    //}
 
                     mainWindow.WindowState = WindowState.Normal;
 
@@ -218,10 +221,10 @@ namespace PicView
                     mainWindow.SizeToContent = SizeToContent.Manual;
                     mainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
 
-                    if (quickSettingsMenu != null)
-                    {
-                        quickSettingsMenu.SetCenter.IsChecked = true;
-                    }
+                    //if (quickSettingsMenu != null)
+                    //{
+                    //    quickSettingsMenu.SetCenter.IsChecked = true;
+                    //}
 
                     mainWindow.Top = Properties.Settings.Default.Top;
                     mainWindow.Left = Properties.Settings.Default.Left;

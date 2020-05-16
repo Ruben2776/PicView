@@ -13,7 +13,7 @@ namespace PicView
         {
             await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
             {
-                if (!Properties.Settings.Default.ShowInterface || Slidetimer.Enabled)
+                if (!Properties.Settings.Default.ShowInterface)
                 {
                     if (clickArrowRight != null && clickArrowLeft != null && x2 != null && galleryShortcut != null)
                     {

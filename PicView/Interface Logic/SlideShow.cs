@@ -19,44 +19,44 @@ namespace PicView
         /// </summary>
         internal static void LoadSlideshow()
         {
-            Slidetimer.Interval = Properties.Settings.Default.Slidetimeren;
-            if (!File.Exists(Pics[FolderIndex]))
-            {
-                ToolTipStyle("There was no image(s) to show.");
-                return;
-            }
+            //Slidetimer.Interval = Properties.Settings.Default.Slidetimeren;
+            //if (!File.Exists(Pics[FolderIndex]))
+            //{
+            //    ToolTipStyle("There was no image(s) to show.");
+            //    return;
+            //}
 
-            if (mainWindow.WindowState == WindowState.Maximized)
-            {
-                Maximize_Restore();
-            }
+            //if (mainWindow.WindowState == WindowState.Maximized)
+            //{
+            //    Maximize_Restore();
+            //}
 
-            ToggleInterface();
-            mainWindow.Topmost = true;
-            FitToWindow = false;
-            mainWindow.Width = mainWindow.bg.Width = SystemParameters.PrimaryScreenWidth;
-            mainWindow.Height = mainWindow.bg.Height = SystemParameters.PrimaryScreenHeight;
-            mainWindow.Top = 0;
-            mainWindow.Left = 0;
+            //ToggleInterface();
+            //mainWindow.Topmost = true;
+            //FitToWindow = false;
+            //mainWindow.Width = mainWindow.bg.Width = SystemParameters.PrimaryScreenWidth;
+            //mainWindow.Height = mainWindow.bg.Height = SystemParameters.PrimaryScreenHeight;
+            //mainWindow.Top = 0;
+            //mainWindow.Left = 0;
 
-            Mouse.OverrideCursor = Cursors.None;
-            NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
-            SlideshowActive = true;
-            Slidetimer.Start();
+            //Mouse.OverrideCursor = Cursors.None;
+            //NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
+            //SlideshowActive = true;
+            //Slidetimer.Start();
         }
 
         internal static void UnloadSlideshow()
         {
-            ToggleInterface();
-            mainWindow.Topmost = false;
-            FitToWindow = true;
-            mainWindow.bg.Width = double.NaN;
-            mainWindow.bg.Height = double.NaN;
+            //ToggleInterface();
+            //mainWindow.Topmost = false;
+            //FitToWindow = true;
+            //mainWindow.bg.Width = double.NaN;
+            //mainWindow.bg.Height = double.NaN;
 
-            Mouse.OverrideCursor = null;
-            NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
-            SlideshowActive = false;
-            Slidetimer.Stop();
+            //Mouse.OverrideCursor = null;
+            //NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
+            //SlideshowActive = false;
+            //Slidetimer.Stop();
         }
 
         /// <summary>

@@ -98,6 +98,12 @@ namespace PicView.PreLoading
                 {
                     Add(Pics[i]);
                 }
+#if DEBUG
+                else
+                {
+                    Trace.WriteLine("Skipped at index " + i);
+                }
+#endif
             }
             else
             {
@@ -174,7 +180,6 @@ namespace PicView.PreLoading
 #else
             Sources.TryRemove(key, out _);
 #endif
-            //GC.Collect(); // Need to force this, else too high memory usage?
         }
 
         /// <summary>

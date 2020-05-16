@@ -76,7 +76,7 @@ namespace PicView
 
         #region Open
 
-        static void OpenPicGalleryOne()
+        internal static void OpenPicGalleryOne()
         {
             LoadLayout();
 
@@ -99,7 +99,7 @@ namespace PicView
             galleryShortcut.Visibility = Visibility.Hidden;
         }
 
-        static void OpenPicGalleryTwo()
+        internal static void OpenPicGalleryTwo()
         {
             LoadLayout();
 
@@ -128,7 +128,7 @@ namespace PicView
 
         #region Close
 
-        static void ClosePicGalleryOne()
+        internal static void ClosePicGalleryOne()
         {
             IsOpen = false;
 
@@ -154,7 +154,7 @@ namespace PicView
             picGallery.BeginAnimation(UIElement.OpacityProperty, da);
         }
 
-        static void ClosePicGalleryTwo()
+        internal static void ClosePicGalleryTwo()
         {
             IsOpen = false;
             fake.Hide();
@@ -174,7 +174,7 @@ namespace PicView
 
         #region Change
 
-        static void ChangeToPicGalleryOne()
+        internal static void ChangeToPicGalleryOne()
         {
             Properties.Settings.Default.PicGallery = 1;
             LoadLayout();
@@ -188,7 +188,7 @@ namespace PicView
             fake.Hide();
         }
 
-        static void ChangeToPicGalleryTwo()
+        internal static void ChangeToPicGalleryTwo()
         {
             Properties.Settings.Default.PicGallery = 2;
             LoadLayout();

@@ -66,63 +66,6 @@ namespace PicView
         }
 
         /// <summary>
-        /// Toggles whether QuickSettingsMenu is open or not with a fade animation
-        /// </summary>
-        internal static bool QuickSettingsMenuOpen
-        {
-            get { return quickSettingsMenuOpen; }
-            set
-            {
-                quickSettingsMenuOpen = value;
-                quickSettingsMenu.Visibility = Visibility.Visible;
-                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
-                if (!value)
-                {
-                    Application.Current.Resources["ChosenColor"] = AnimationHelper.GetPrefferedColorOver();
-                    da.To = 0;
-                    da.Completed += delegate { quickSettingsMenu.Visibility = Visibility.Hidden; };
-                }
-                else
-                {
-                    da.To = 1;
-                }
-
-                if (quickSettingsMenu != null)
-                {
-                    quickSettingsMenu.BeginAnimation(UIElement.OpacityProperty, da);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Toggles whether FunctionsMenu is open or not with a fade animation
-        /// </summary>
-        internal static bool FunctionsMenuOpen
-        {
-            get { return functionsMenuOpen; }
-            set
-            {
-                functionsMenuOpen = value;
-                functionsMenu.Visibility = Visibility.Visible;
-                var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
-                if (!value)
-                {
-                    da.To = 0;
-                    da.Completed += delegate { functionsMenu.Visibility = Visibility.Hidden; };
-                }
-                else
-                {
-                    da.To = 1;
-                }
-
-                if (functionsMenu != null)
-                {
-                    functionsMenu.BeginAnimation(UIElement.OpacityProperty, da);
-                }
-            }
-        }
-
-        /// <summary>
         /// Check if any UserControls are open
         /// </summary>
         /// <returns></returns>
@@ -134,16 +77,6 @@ namespace PicView
             }
 
             if (FileMenuOpen)
-            {
-                return true;
-            }
-
-            if (QuickSettingsMenuOpen)
-            {
-                return true;
-            }
-
-            if (FunctionsMenuOpen)
             {
                 return true;
             }
@@ -164,16 +97,6 @@ namespace PicView
             if (FileMenuOpen)
             {
                 FileMenuOpen = false;
-            }
-
-            if (QuickSettingsMenuOpen)
-            {
-                QuickSettingsMenuOpen = false;
-            }
-
-            if (FunctionsMenuOpen)
-            {
-                FunctionsMenuOpen = false;
             }
         }
 
@@ -198,16 +121,6 @@ namespace PicView
             {
                 ImageSettingsMenuOpen = false;
             }
-
-            if (QuickSettingsMenuOpen)
-            {
-                QuickSettingsMenuOpen = false;
-            }
-
-            if (FunctionsMenuOpen)
-            {
-                FunctionsMenuOpen = false;
-            }
         }
 
         /// <summary>
@@ -222,66 +135,6 @@ namespace PicView
             if (FileMenuOpen)
             {
                 FileMenuOpen = false;
-            }
-
-            if (QuickSettingsMenuOpen)
-            {
-                QuickSettingsMenuOpen = false;
-            }
-
-            if (FunctionsMenuOpen)
-            {
-                FunctionsMenuOpen = false;
-            }
-        }
-
-        /// <summary>
-        /// Toggles whether quick settings menu is open or not
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        internal static void Toggle_quick_settings_menu(object sender, RoutedEventArgs e)
-        {
-            QuickSettingsMenuOpen = !QuickSettingsMenuOpen;
-
-            if (FileMenuOpen)
-            {
-                FileMenuOpen = false;
-            }
-
-            if (ImageSettingsMenuOpen)
-            {
-                ImageSettingsMenuOpen = false;
-            }
-
-            if (FunctionsMenuOpen)
-            {
-                FunctionsMenuOpen = false;
-            }
-        }
-
-        /// <summary>
-        /// Toggles whether functions menu is open or not
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        internal static void Toggle_Functions_menu(object sender, RoutedEventArgs e)
-        {
-            FunctionsMenuOpen = !FunctionsMenuOpen;
-
-            if (FileMenuOpen)
-            {
-                FileMenuOpen = false;
-            }
-
-            if (ImageSettingsMenuOpen)
-            {
-                ImageSettingsMenuOpen = false;
-            }
-
-            if (QuickSettingsMenuOpen)
-            {
-                QuickSettingsMenuOpen = false;
             }
         }
     }

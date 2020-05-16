@@ -154,6 +154,15 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Update="UserControls\Buttons\FullscreenButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UserControls\Buttons\MinButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UserControls\Buttons\CloseButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Update="Properties\Settings.settings">
@@ -161,10 +170,21 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Page Update="UserControls\Buttons\FullscreenButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControls\Buttons\MinButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControls\Buttons\CloseButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
-    <FileVersion>0.9.7.1</FileVersion>
+    <FileVersion>0.9.7.5</FileVersion>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
