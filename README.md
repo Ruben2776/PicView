@@ -8,7 +8,8 @@ PicView is a minimal image viewer, designed to efficiently browse through images
 
 ## Features:
 Features common viewing capabilites, including image two image galleries and scroll functions, useful for viewing downloaded manga or comic books (Supports .cbr, etc, as well, if you have 7-zip or WinRar installed).
-[All features](https://github.com/Ruben2776/PicView/wiki/Features)
+
+[View features here](https://github.com/Ruben2776/PicView/wiki/Features)
 
 ## Minimal interface design
 <img src="https://raw.githubusercontent.com/Ruben2776/PicView/master/Extra/Untitled-46.png" alt="PicView" width="775" height="1056">
