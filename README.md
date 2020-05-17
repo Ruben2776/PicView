@@ -1,6 +1,6 @@
 ## PicView
 
-PicView is a minimal image viewer, designed to efficiently browse through images supporting over 100 major file formats, including `.psd`, `.svg`, `.png` and RAW camera image files.
+PicView is an open source minimal image viewer, designed to efficiently browse through images supporting major file formats, including `.psd`, `.svg`, `.png` and RAW camera image files.
 
 <img src="https://raw.githubusercontent.com/Ruben2776/PicView/master/Extra/Screenshot2.png" alt="PicView" width="492" height="537">
 
