@@ -15,14 +15,12 @@ Features common viewing capabilites, including image two image galleries and scr
 <img src="https://raw.githubusercontent.com/Ruben2776/PicView/master/Extra/Untitled-46.png" alt="PicView" width="775" height="1056">
 Press <i>Alt + Z</i> to toggle interface style
 
-<img src="https://raw.githubusercontent.com/Ruben2776/PicView/master/Extra/gnosis.PNG" alt="PicView" width="698" height="1166">
-<i>Art is <a href="https://www.deviantart.com/noiprox/art/Gnosis-Lena-441483744">Gnosis</a> - Lena by noiprox</i>
-
 ## Installing
 Requires [.NET CORE 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1) to run.
 It is built to be portable, so just extract it and run it.
 
 ## Contributing
+Thanks for considering contributing to PicView! 😊
 
 1. `Fork` this repository
 2. Create a `branch`
@@ -31,3 +29,6 @@ It is built to be portable, so just extract it and run it.
 5. Submit a `pull request`
 
 > Please read [CONTRIBUTING.md](https://github.com/Ruben2776/PicView/blob/master/CONTRIBUTE.md) for additional details.
+
+<img src="https://raw.githubusercontent.com/Ruben2776/PicView/master/Extra/gnosis.PNG" alt="PicView" width="698" height="1166">
+<i>Art is <a href="https://www.deviantart.com/noiprox/art/Gnosis-Lena-441483744">Gnosis</a> - Lena by noiprox</i>
