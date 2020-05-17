@@ -1,6 +1,6 @@
 ## PicView
 
-Scrollable Image Viewer, optimised for manga and comic book reading.
+PicView is a minimal image viewer, designed to efficiently browse through images supporting over 100 major file formats, including `.psd`, `.svg`, `.png` and RAW camera image files. Go to https://imagemagick.org/script/formats.php for a complete list.
 
 <img src="https://raw.githubusercontent.com/Ruben2776/PicView/master/Extra/Screenshot2.png" alt="PicView" width="492" height="537">
 
@@ -20,9 +20,9 @@ Scrollable Image Viewer, optimised for manga and comic book reading.
 * Print image
 * View recent images
 
-
+## Minimal interface design
 <img src="https://raw.githubusercontent.com/Ruben2776/PicView/master/Extra/Untitled-46.png" alt="PicView" width="775" height="1056">
-<i>Alternative minimal interface style</i>
+Press <i>Alt + Z</i> to toggle interface style
 
 <img src="https://raw.githubusercontent.com/Ruben2776/PicView/master/Extra/gnosis.PNG" alt="PicView" width="698" height="1166">
 <i>Art is <a href="https://www.deviantart.com/noiprox/art/Gnosis-Lena-441483744">Gnosis</a> - Lena by noiprox</i>
@@ -39,4 +39,4 @@ It is built to be portable, so just extract it and run it.
 4. `Push` your `commits` to the `branch`
 5. Submit a `pull request`
 
-> Please read [CONTRIBUTING.md](https://github.com/Ruben2776/PicView/blob/master/CONTRIBUTE.md) for Additional details.
+> Please read [CONTRIBUTING.md](https://github.com/Ruben2776/PicView/blob/master/CONTRIBUTE.md) for additional details.
