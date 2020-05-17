@@ -27,4 +27,20 @@ Scrollable Image Viewer, optimised for manga and comic book reading.
 <img src="https://raw.githubusercontent.com/Ruben2776/PicView/master/Extra/gnosis.PNG" alt="PicView" width="698" height="1166">
 <i>Art is <a href="https://www.deviantart.com/noiprox/art/Gnosis-Lena-441483744">Gnosis</a> - Lena by noiprox</i>
 
-Built with C# WPF, using ImageMagick
+## Installing
+Requires [.NET CORE 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1) to run.
+It is built to be portable, so just extract it and run it.
+
+## Contributing
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
+
+> or if you like it simple:
+
+1. `Fork` this repository
+2. Create a `branch`
+3. `Commit` your changes
+4. `Push` your `commits` to the `branch`
+5. Submit a `pull request`
+
+Built with C# WPF .NET Core 3.1, using ImageMagick
