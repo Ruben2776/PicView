@@ -6,7 +6,7 @@ Thank you for considering contributing to PicView! It's people like you that mak
 
 I welcome any type of contribution, not only code. You can help with 
 - **QA**: Ask questions or file bug reports, in the issue section, the more details you can give the better
-- **Code**: take a look at the [open issues](https://github.com/d2phap/ImageGlass/issues). Even if you can't write code, commenting on them, showing that you care about a given issue matters. It helps us triage them.
+- **Code**: take a look at the [open issues](https://github.com/Ruben2776/PicView/issues). Even if you can't write code, commenting on them, showing that you care about a given issue matters. It helps us triage them.
 
 ## Getting started
 Work in progress, will update!
