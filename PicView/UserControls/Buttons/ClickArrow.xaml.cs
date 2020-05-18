@@ -49,7 +49,7 @@ namespace PicView.UserControls
                 ccAnim.From = alpha;
                 ccAnim.To = AnimationHelper.GetPrefferedColorDown();
                 PolyFill.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
-                AnimationHelper.MouseEnterColorEvent(alpha.A, alpha.R, alpha.G, alpha.B, BorderBrushKey, true);
+                AnimationHelper.MouseOverColorEvent(alpha.A, alpha.R, alpha.G, alpha.B, BorderBrushKey, true);
 
             };
 
@@ -75,7 +75,7 @@ namespace PicView.UserControls
                 ccAnim2.From = bg;
                 ccAnim2.To = bg2;
                 CanvasBGcolor.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim2);
-                AnimationHelper.MouseEnterColorEvent(bb.A, bb.R, bb.G, bb.B, BorderBrushKey, true);
+                AnimationHelper.MouseOverColorEvent(bb.A, bb.R, bb.G, bb.B, BorderBrushKey, true);
 
             };
             MouseLeave += (sender, e) =>

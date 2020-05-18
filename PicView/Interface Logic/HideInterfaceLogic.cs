@@ -22,35 +22,45 @@ namespace PicView
             // Hide interface
             if (Properties.Settings.Default.ShowInterface)
             {
-                ShowTopandBottom(false);
-                ShowNavigation(true);
-                ShowShortcuts(true);
-
-                Properties.Settings.Default.ShowInterface = false;
-
-                if (activityTimer != null)
-                {
-                    activityTimer.Start();
-                }
+                ShowMinimalInterface();
             }
             // Show interface
             else
             {
-                Properties.Settings.Default.ShowInterface = true;
-
-                ShowTopandBottom(true);
-                ShowNavigation(false);
-                ShowShortcuts(false);
-
-                if (activityTimer != null)
-                {
-                    activityTimer.Stop();
-                }
+                ShowStandardInterface();
             }
 
             TryZoomFit();
 
             ToggleMenus.Close_UserControls();
+        }
+
+        internal static void ShowStandardInterface()
+        {
+            Properties.Settings.Default.ShowInterface = true;
+
+            ShowTopandBottom(true);
+            ShowNavigation(false);
+            ShowShortcuts(false);
+
+            if (activityTimer != null)
+            {
+                activityTimer.Stop();
+            }
+        }
+
+        internal static void ShowMinimalInterface()
+        {
+            ShowTopandBottom(false);
+            ShowNavigation(true);
+            ShowShortcuts(true);
+
+            Properties.Settings.Default.ShowInterface = false;
+
+            if (activityTimer != null)
+            {
+                activityTimer.Start();
+            }
         }
 
         internal static void ShowTopandBottom(bool show)

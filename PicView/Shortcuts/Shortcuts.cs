@@ -22,7 +22,6 @@ namespace PicView
 {
     internal static class Shortcuts
     {
-        #region MainWindow Keyboard & Mouse Shortcuts
 
         internal static void MainWindow_KeysDown(object sender, KeyEventArgs e)
         {
@@ -253,11 +252,6 @@ namespace PicView
                         Close_UserControls();
                         return;
                     }
-                    if (SlideshowActive)
-                    {
-                        UnloadSlideshow();
-                        return;
-                    }
                     if (Properties.Settings.Default.Fullscreen)
                     {
                         Fullscreen_Restore();
@@ -267,7 +261,16 @@ namespace PicView
                     {
                         if (GalleryMisc.IsOpen)
                         {
-                            Toggle();
+                            if (Properties.Settings.Default.PicGallery == 2)
+                            {
+                                ClosePicGalleryTwo();
+                                Properties.Settings.Default.PicGallery = 1;
+                            }
+                            else
+                            {
+                                ClosePicGalleryOne();
+                            }
+                            GalleryMisc.IsOpen = false;
                             return;
                         }
                     }
@@ -401,7 +404,7 @@ namespace PicView
                     break;
                 // F2
                 case Key.F2:
-                    AboutWindow();
+                    AllSettingsWindow();
                     break;
                 // F3
                 case Key.F3:
@@ -412,14 +415,6 @@ namespace PicView
                     break;
                 // F5
                 case Key.F5:
-                    if (!SlideshowActive)
-                    {
-                        LoadSlideshow();
-                    }
-                    else
-                    {
-                        UnloadSlideshow();
-                    }
                     break;
                 // F6
                 case Key.F6:
@@ -478,6 +473,5 @@ namespace PicView
             }
         }
 
-        #endregion Keyboard & Mouse Shortcuts
     }
 }

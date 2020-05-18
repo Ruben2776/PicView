@@ -33,7 +33,7 @@ namespace PicView.Windows
 
             CloseButton.MouseEnter += (s, x) =>
             {
-                AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, CloseButtonBrush, true);
+                AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, CloseButtonBrush, true);
             };
 
             CloseButton.MouseLeave += (s, x) =>
@@ -112,7 +112,7 @@ namespace PicView.Windows
 
         private void AllerMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(
+            AnimationHelper.MouseOverColorEvent(
                 mainColor.A,
                 mainColor.R,
                 mainColor.G,
@@ -145,7 +145,7 @@ namespace PicView.Windows
 
         private void TexGyreMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(
+            AnimationHelper.MouseOverColorEvent(
                 mainColor.A,
                 mainColor.R,
                 mainColor.G,
@@ -178,7 +178,7 @@ namespace PicView.Windows
 
         private void IconicMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(
+            AnimationHelper.MouseOverColorEvent(
                 mainColor.A,
                 mainColor.R,
                 mainColor.G,
@@ -211,7 +211,7 @@ namespace PicView.Windows
 
         private void FlatIconMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(
+            AnimationHelper.MouseOverColorEvent(
                 mainColor.A,
                 mainColor.R,
                 mainColor.G,
@@ -244,7 +244,7 @@ namespace PicView.Windows
 
         private void IonicMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(
+            AnimationHelper.MouseOverColorEvent(
                 mainColor.A,
                 mainColor.R,
                 mainColor.G,
@@ -277,7 +277,7 @@ namespace PicView.Windows
 
         private void FontAwesomeMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(
+            AnimationHelper.MouseOverColorEvent(
                 mainColor.A,
                 mainColor.R,
                 mainColor.G,

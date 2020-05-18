@@ -1,0 +1,315 @@
+﻿<UserControl
+    x:Class="PicView.UserControls.FunctionsMenu"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Foreground="{StaticResource MainColorBrush}">
+    <StackPanel>
+        <Border
+            Width="350"
+            Height="170"
+            Margin="-5,0,0,0"
+            Background="{DynamicResource BackgroundColorBrush}"
+            BorderBrush="{StaticResource BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="2">
+            <Canvas>
+                <Canvas Height="51" VerticalAlignment="Top">
+                    <Rectangle
+                        Canvas.Top="50"
+                        Width="348"
+                        Panel.ZIndex="1"
+                        Stroke="{StaticResource BorderBrush}"
+                        StrokeThickness="1" />
+                    <Rectangle
+                        Canvas.Left="135"
+                        Width="1"
+                        Height="51"
+                        Panel.ZIndex="1"
+                        Stroke="{StaticResource BorderBrush}"
+                        StrokeThickness="1" />
+                    <Rectangle
+                        Canvas.Left="216"
+                        Width="1"
+                        Height="51"
+                        Panel.ZIndex="1"
+                        Stroke="{DynamicResource BorderBrush}"
+                        StrokeThickness="1" />
+                    <Rectangle
+                        Canvas.Left="296"
+                        Width="1"
+                        Height="50"
+                        Panel.ZIndex="1"
+                        Stroke="{StaticResource BorderBrush}"
+                        StrokeThickness="1" />
+                    <TextBlock
+                        x:Name="bar"
+                        Canvas.Left="15"
+                        Canvas.Top="15"
+                        FontFamily="/PicView;component/Resources/fonts/#TeX Gyre Heros"
+                        FontSize="16"
+                        FontWeight="Bold"
+                        Text="All Functions" />
+                    <Button
+                        x:Name="About"
+                        Canvas.Left="136"
+                        Width="80"
+                        Height="51"
+                        Margin="0"
+                        Padding="0"
+                        BorderThickness="0"
+                        ToolTip="Show About window">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="AboutBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Button.Background>
+                        <Canvas>
+                            <Path
+                                Canvas.Left="-26"
+                                Canvas.Top="-8"
+                                Width="9"
+                                Height="13"
+                                Data="M1216 1344v128q0 26-19 42t-42 19h-512q-26 0-42-19t-19-42v-128q0-26 19-42t42-19h64v-384h-64q-26 0-42-19t-19-42v-128q0-26 19-42t42-19h384q26 0 42 19t19 42v576h64q26 0 42 19t19 42zm-128-1152v192q0 26-19 42t-42 19h-256q-26 0-42-19t-19-42v-192q0-26 19-42t42-19h256q26 0 42 19t19 42z"
+                                Fill="{StaticResource MainColorBrush}"
+                                Stretch="Fill" />
+                            <TextBlock
+                                Canvas.Left="-8"
+                                Canvas.Top="-8"
+                                FontWeight="Bold">
+                                About
+                            </TextBlock>
+                        </Canvas>
+                    </Button>
+                    <Button
+                        x:Name="Help"
+                        Canvas.Left="217"
+                        Width="80"
+                        Height="51"
+                        Margin="0"
+                        Padding="0"
+                        BorderThickness="0"
+                        ToolTip="Show Help window">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="HelpBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Button.Background>
+                        <Canvas>
+                            <Path
+                                Canvas.Left="-27"
+                                Canvas.Top="-8"
+                                Width="13"
+                                Height="13"
+                                Data="M1088 1256v240q0 16-12 28t-28 12h-240q-16 0-28-12t-12-28v-240q0-16 12-28t28-12h240q16 0 28 12t12 28zm316-600q0 54-15.5 101t-35 76.5-55 59.5-57.5 43.5-61 35.5q-41 23-68.5 65t-27.5 67q0 17-12 32.5t-28 15.5h-240q-15 0-25.5-18.5t-10.5-37.5v-42q0-83 65-156.5t143-108.5q59-27 84-56t25-76q0-42-46.5-74t-107.5-32q-65 0-108 29-35 25-107 115-13 16-31 16-12 0-25-8l-164-125q-13-10-15.5-25t5.5-28q160-266 464-266 80 0 161 31t146 83 106 127.5 41 158.5z"
+                                Fill="{StaticResource MainColorBrush}"
+                                Stretch="Fill" />
+                            <TextBlock
+                                Canvas.Left="-6"
+                                Canvas.Top="-8"
+                                FontWeight="Bold">
+                                Help
+                            </TextBlock>
+                        </Canvas>
+                    </Button>
+                    <Button
+                        x:Name="CloseButton"
+                        Canvas.Left="297"
+                        Width="51"
+                        Height="51"
+                        BorderThickness="0"
+                        FocusVisualStyle="{x:Null}"
+                        ToolTip="Close">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="CloseButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Button.Background>
+                        <Path
+                            Width="10"
+                            Height="10"
+                            Data="M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z"
+                            Fill="{StaticResource MainColorBrush}"
+                            SnapsToDevicePixels="True"
+                            Stretch="Fill" />
+                    </Button>
+                </Canvas>
+                <WrapPanel
+                    Canvas.Left="11"
+                    Canvas.Top="61"
+                    Width="339"
+                    Height="97"
+                    VerticalAlignment="Top">
+                    <Button
+                        x:Name="DeleteButton"
+                        Width="42"
+                        Height="42"
+                        Margin="0,0,5,5"
+                        Style="{StaticResource MetroAlphaFlatButton}"
+                        ToolTip="Send image to the recycle bin [Delete]">
+                        <Path
+                            Width="30"
+                            Height="30"
+                            Data="M836 1169l-15 368-2 22-420-29q-36-3-67-31.5t-47-65.5q-11-27-14.5-55t4-65 12-55 21.5-64 19-53q78 12 509 28zm-387-586l180 379-147-92q-63 72-111.5 144.5t-72.5 125-39.5 94.5-18.5 63l-4 21-190-357q-17-26-18-56t6-47l8-18q35-63 114-188l-140-86zm1231 517l-188 359q-12 29-36.5 46.5t-43.5 20.5l-18 4q-71 7-219 12l8 164-230-367 211-362 7 173q170 16 283 5t170-33zm-785-924q-47 63-265 435l-317-187-19-12 225-356q20-31 60-42t80-10q24 2 48.5 12t42 21 41.5 33 36 34.5 36 39.5 32 35zm655 307l212 363q18 37 12.5 76t-27.5 74q-13 20-33 37t-38 28-48.5 22-47 16-51.5 14-46 12q-34-72-265-436l313-195zm-143-226l142-83-220 373-419-20 151-86q-34-89-75-166t-75.5-123.5-64.5-80-47-46.5l-17-13 405 1q31-3 58 10.5t39 28.5l11 15q39 61 112 190z"
+                            Stretch="Fill">
+                            <Path.Fill>
+                                <SolidColorBrush x:Name="DeleteBrush" Color="{StaticResource MainColor}" />
+                            </Path.Fill>
+                        </Path>
+                    </Button>
+                    <Button
+                        x:Name="DeletePermButton"
+                        Width="42"
+                        Height="42"
+                        Margin="0,0,5,5"
+                        Style="{StaticResource MetroAlphaFlatButton}"
+                        ToolTip="Permanently delete image [Shift + Delete]">
+                        <Path
+                            Width="30"
+                            Height="30"
+                            Data="M4 0c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm0 1c.66 0 1.26.21 1.75.56l-4.19 4.19c-.35-.49-.56-1.09-.56-1.75 0-1.66 1.34-3 3-3zm2.44 1.25c.35.49.56 1.09.56 1.75 0 1.66-1.34 3-3 3-.66 0-1.26-.21-1.75-.56l4.19-4.19z"
+                            Stretch="Fill">
+                            <Path.Fill>
+                                <SolidColorBrush x:Name="DeletePermBrush" Color="{StaticResource MainColor}" />
+                            </Path.Fill>
+                        </Path>
+                    </Button>
+
+                    <Button
+                        x:Name="ResetZoomButton"
+                        Width="42"
+                        Height="42"
+                        Margin="0,0,5,5"
+                        Style="{StaticResource MetroAlphaFlatButton}"
+                        ToolTip="Reset zoom value [Double click image]">
+                        <Path
+                            Width="30"
+                            Height="30"
+                            Data="M337.509,305.372h-17.501l-6.571-5.486c20.791-25.232,33.922-57.054,33.922-93.257      C347.358,127.632,283.896,64,205.135,64C127.422,64,64,127.632,64,206.629s63.422,142.628,142.225,142.628      c35.011,0,67.831-13.167,92.991-34.008l6.561,5.487v17.551L415.18,448L448,415.086L337.509,305.372z M206.225,305.372      c-54.702,0-98.463-43.887-98.463-98.743c0-54.858,43.761-98.742,98.463-98.742c54.7,0,98.462,43.884,98.462,98.742      C304.687,261.485,260.925,305.372,206.225,305.372z"
+                            Stretch="Fill">
+                            <Path.Fill>
+                                <SolidColorBrush x:Name="ResetZoomBrush" Color="{StaticResource MainColor}" />
+                            </Path.Fill>
+                        </Path>
+                    </Button>
+
+                    <Button
+                        x:Name="ClearButton"
+                        Width="42"
+                        Height="42"
+                        Margin="0,0,5,5"
+                        Style="{StaticResource MetroAlphaFlatButton}"
+                        ToolTip="Clear image">
+                        <Path
+                            Width="30"
+                            Height="30"
+                            Data="M1277 1122q0-26-19-42l-181-181 181-181q19-19 19-42 0-27-19-46l-90-90q-19-19-46-19-26 0-42 19l-181 181-181-181q-19-19-42-19-27 0-46 19l-90 90q-19 19-19 46 0 26 19 42l181 181-181 181q-19 19-19 42 0 27 19 46l90 90q19 19 46 19 26 0 42-19l181-181 181 181q19 19 42 19 27 0 46-19l90-90q19-19 19-46zm387-226q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"
+                            Stretch="Fill">
+                            <Path.Fill>
+                                <SolidColorBrush x:Name="ClearBrush" Color="{StaticResource MainColor}" />
+                            </Path.Fill>
+                        </Path>
+                    </Button>
+                    <Button
+                        x:Name="ReloadButton"
+                        Width="42"
+                        Height="42"
+                        Margin="0,0,5,5"
+                        Style="{StaticResource MetroAlphaFlatButton}"
+                        ToolTip="Reload image [Ctrl + R]">
+                        <Path
+                            Width="30"
+                            Height="30"
+                            Data="M416,352l96-111.9h-64.7c-2.3-27.9-10.5-54-23.5-77.3c-27.4-49.2-75.8-85.1-133-95.6c-0.7-0.1-1.5-0.3-2.2-0.4  c-0.5-0.1-0.9-0.2-1.4-0.2C277.1,64.9,266.6,64,256,64c-0.1,0-0.3,0-0.4,0c0,0,0,0,0,0c-90.9,0.2-167,63.6-186.7,148.6  c0,0,0,0.1,0,0.1c-0.3,1.1-0.5,2.2-0.7,3.3c-0.1,0.5-0.2,0.9-0.3,1.4c-0.1,0.7-0.3,1.4-0.4,2.1c-0.2,0.9-0.3,1.7-0.5,2.6  c-0.1,0.4-0.1,0.7-0.2,1.1c-0.2,1.2-0.4,2.4-0.6,3.6c0,0.1,0,0.1,0,0.2c-1,6.3-1.6,12.7-1.9,19.1c0,0.3,0,0.6,0,0.8  c-0.1,1.4-0.1,2.7-0.2,4.1c0,1.6-0.1,3.3-0.1,5c0,1.7,0,3.3,0.1,5c0,1.4,0.1,2.7,0.2,4.1c0,0.3,0,0.6,0,0.9c0.3,6.5,1,12.9,1.9,19.1  c0,0.1,0,0.1,0,0.2c0.2,1.2,0.4,2.4,0.6,3.6c0.1,0.4,0.1,0.7,0.2,1.1c0.2,0.9,0.3,1.8,0.5,2.6c0.1,0.7,0.3,1.4,0.4,2.1  c0.1,0.5,0.2,1,0.3,1.4c0.2,1.1,0.5,2.2,0.7,3.2c0,0,0,0.1,0,0.1c19.7,85,96.1,148.4,187.1,148.6c42.9-0.1,83.1-14.2,116.9-40.7  l7.5-5.9l-43.2-46.2l-6.2,4.6c-22.1,16.3-47.5,24.2-75,24.2c-70.6,0-128-57-128-128c0-71,57.4-128,128-128  c66.4,0,122.8,46.6,129.5,112H312L416,352z"
+                            Stretch="Fill">
+                            <Path.Fill>
+                                <SolidColorBrush x:Name="ReloadBrush" Color="{StaticResource MainColor}" />
+                            </Path.Fill>
+                        </Path>
+                    </Button>
+
+                    <Button
+                        x:Name="FileDetailsButton"
+                        Width="42"
+                        Height="42"
+                        Margin="0,0,5,5"
+                        Style="{StaticResource MetroAlphaFlatButton}"
+                        ToolTip="Show file details [Ctrl + I]">
+                        <Canvas>
+                            <Path
+                                Canvas.Left="-13"
+                                Canvas.Top="-15"
+                                Width="28"
+                                Height="30"
+                                Data="M398.6,169.2c-0.9-2.2-2-4.3-3.5-6.1l-83.8-91.7c-1.9-2.1-4.2-3.6-6.7-4.9c-2.9-1.5-6.1-2.1-9.5-2.1H135.2   c-12.4,0-22.7,10.6-22.7,23.9v335.2c0,13.4,10.3,24.9,22.7,24.9h243.1c12.4,0,22.2-11.5,22.2-24.9V179.4   C400.5,175.8,400,172.3,398.6,169.2z M160.5,178.6c0-1.5,1.8-2.1,3.4-2.1h70.8c1.6,0,2.8,0.6,2.8,2.1v10.8c0,1.4-1.1,3.1-2.8,3.1   h-70.8c-1.6,0-3.4-1.7-3.4-3.1V178.6z M160.5,306.6c0-1.5,1.8-2.1,3.4-2.1h122.2c1.6,0,2.4,0.6,2.4,2.1v10.8c0,1.4-0.7,3.1-2.4,3.1   H163.9c-1.6,0-3.4-1.7-3.4-3.1V306.6z M320.5,381.4c0,1.4-0.7,3.1-2.4,3.1H163.9c-1.6,0-3.4-1.7-3.4-3.1v-10.8   c0-1.5,1.8-2.1,3.4-2.1h154.2c1.6,0,2.4,0.6,2.4,2.1V381.4z M352.5,253.4c0,1.4-0.7,3.1-2.4,3.1H163.9c-1.6,0-3.4-1.7-3.4-3.1   v-10.8c0-1.5,1.8-2.1,3.4-2.1h186.2c1.6,0,2.4,0.6,2.4,2.1V253.4z M305.6,177.5c-5.6,0-11.1-5.2-11.1-11.3v-66l71.2,77.3H305.6"
+                                Stretch="Fill">
+                                <Path.Fill>
+                                    <SolidColorBrush x:Name="FileDetailsBrush" Color="{StaticResource MainColor}" />
+                                </Path.Fill>
+                            </Path>
+                            <Path
+                                Canvas.Left="-4"
+                                Canvas.Top="0"
+                                Width="13"
+                                Height="13"
+                                Data="M442,386.7l-84.8-85.9c13.8-24.1,21-50.9,21-77.9c0-87.6-71.2-158.9-158.6-158.9C135.2,64,64,135.3,64,222.9  c0,87.6,71.2,158.9,158.6,158.9c27.9,0,55.5-7.7,80.1-22.4l84.4,85.6c1.9,1.9,4.6,3.1,7.3,3.1c2.7,0,5.4-1.1,7.3-3.1l43.3-43.8  C449,397.1,449,390.7,442,386.7z M222.6,125.9c53.4,0,96.8,43.5,96.8,97c0,53.5-43.4,97-96.8,97c-53.4,0-96.8-43.5-96.8-97  C125.8,169.4,169.2,125.9,222.6,125.9z"
+                                Fill="{StaticResource BackgroundColorBrush}"
+                                Stretch="Fill" />
+                        </Canvas>
+                    </Button>
+
+                    <Button
+                        x:Name="SlideshowButton"
+                        Width="42"
+                        Height="42"
+                        Margin="0,0,5,5"
+                        Style="{StaticResource MetroAlphaFlatButton}"
+                        ToolTip="Start Slideshow [F11]">
+                        <Canvas>
+                            <Path
+                                Canvas.Left="-13"
+                                Canvas.Top="-15"
+                                Width="28"
+                                Height="30"
+                                Data="M20 16v16l10-8-10-8zm18-10h-28c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4v-28c0-2.21-1.79-4-4-4zm0 32h-28v-28h28v28z"
+                                Stretch="Fill">
+                                <Path.Fill>
+                                    <SolidColorBrush x:Name="SlideshowsBrush" Color="{StaticResource MainColor}" />
+                                </Path.Fill>
+                            </Path>
+                        </Canvas>
+                    </Button>
+
+                    <Button
+                        x:Name="BgButton"
+                        Width="42"
+                        Height="42"
+                        Margin="0,0,4,0"
+                        Style="{StaticResource MetroAlphaFlatButton}"
+                        ToolTip="Change between white and transparent background for images">
+                        <Canvas>
+                            <Path
+                                Canvas.Left="-13"
+                                Canvas.Top="-15"
+                                Width="28"
+                                Height="30"
+                                Data="M424 64H88c-26.6 0-48 21.6-48 48v288c0 26.4 21.4 48 48 48h336c26.4 0 48-21.6 48-48V112c0-26.4-21.4-48-48-48zm0 336H88V176h336v224z"
+                                Stretch="Fill">
+                                <Path.Fill>
+                                    <SolidColorBrush x:Name="BgBrush" Color="{StaticResource MainColor}" />
+                                </Path.Fill>
+                            </Path>
+                        </Canvas>
+                    </Button>
+
+                </WrapPanel>
+            </Canvas>
+        </Border>
+        <Rectangle
+            Width="23"
+            Height="2"
+            Margin="308,-2,0,0"
+            HorizontalAlignment="Left"
+            Fill="{StaticResource BackgroundColorBrush}" />
+        <Polygon
+            Margin="305,-7,0,0"
+            Panel.ZIndex="-1"
+            Fill="{StaticResource BackgroundColorBrush}"
+            Points="0,0 15,30, 30,0"
+            Stroke="{StaticResource BorderBrush}" />
+    </StackPanel>
+</UserControl>
+

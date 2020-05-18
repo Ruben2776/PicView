@@ -1,4 +1,5 @@
 ﻿using PicView.UserControls;
+using System;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.Fields;
@@ -11,6 +12,48 @@ namespace PicView.Windows
         public AllSettings()
         {
             InitializeComponent();
+
+            switch (Properties.Settings.Default.ColorTheme)
+            {
+                case 1:
+                    BlueRadio.IsChecked = true;
+                    break;
+                case 2:
+                    PinkRadio.IsChecked = true;
+                    break;
+                case 3:
+                    OrangeRadio.IsChecked = true;
+                    break;
+                case 4:
+                    GreenRadio.IsChecked = true;
+                    break;
+                case 5:
+                    RedRadio.IsChecked = true;
+                    break;
+                case 6:
+                    TealRadio.IsChecked = true;
+                    break;
+                case 7:
+                    AquaRadio.IsChecked = true;
+                    break;
+                case 8:
+                    BeigeRadio.IsChecked = true;
+                    break;
+                case 9:
+                    PurpleRadio.IsChecked = true;
+                    break;
+                case 10:
+                    CyanRadio.IsChecked = true;
+                    break;
+                case 11:
+                    MagentaRadio.IsChecked = true;
+                    break;
+                case 12:
+                    GreyRadio.IsChecked = true;
+                    break;
+            }
+
+            KeyUp += AllSettings_KeyUp;
 
             ContentRendered += (s, x) =>
             {
@@ -173,6 +216,25 @@ namespace PicView.Windows
                 SetCenter.MouseEnter += SetCenter_MouseEnter;
                 SetCenter.MouseLeave += SetCenter_MouseLeave;
             };
+        }
+
+        private void AllSettings_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Escape:
+                    Hide();
+                    break;
+                case Key.Q:
+                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    {
+                        Environment.Exit(0);
+                    }
+
+                    break;
+                default:
+                    break;
+            }
         }
 
 
@@ -553,7 +615,7 @@ namespace PicView.Windows
 
         void LoopRadio_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(
+            AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
@@ -583,7 +645,7 @@ namespace PicView.Windows
 
         void BorderRadio_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(
+            AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
@@ -681,7 +743,7 @@ namespace PicView.Windows
 
         void Fill_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(
+            AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
@@ -711,7 +773,7 @@ namespace PicView.Windows
 
         void Tile_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(
+            AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
@@ -741,7 +803,7 @@ namespace PicView.Windows
 
         void Center_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(
+            AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
@@ -771,7 +833,7 @@ namespace PicView.Windows
 
         void Fit_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(
+            AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
@@ -801,7 +863,7 @@ namespace PicView.Windows
 
         void Stretch_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(
+            AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
@@ -831,7 +893,7 @@ namespace PicView.Windows
 
         void SetFit_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(
+            AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
@@ -861,7 +923,7 @@ namespace PicView.Windows
 
         void SetCenter_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(
+            AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
@@ -891,7 +953,7 @@ namespace PicView.Windows
 
         void ToggleScroll_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(
+            AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,

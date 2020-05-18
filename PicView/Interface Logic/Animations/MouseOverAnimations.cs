@@ -7,7 +7,6 @@ namespace PicView
 {
     internal static class MouseOverAnimations
     {
-        #region MouseOver Button Events
 
         /*
 
@@ -15,6 +14,8 @@ namespace PicView
             Changes color depending on the users settings.
 
         */
+
+        #region logo
 
         // Logo Mouse Over
         //internal static void LogoMouseOver(object sender, MouseEventArgs e)
@@ -50,252 +51,103 @@ namespace PicView
         //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(wBrush, false);
         //}
 
-        internal static void ButtonMouseOver(Brush brush)
+        #endregion
+
+        #region 1x
+
+        internal static void PreviewMouseButtonDownAnim(Brush brush, bool alpha = false)
         {
-            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, brush, false);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(brush, alpha);
         }
 
-        internal static void ButtonMouseButtonDown(Brush brush)
+        internal static void ButtonMouseOverAnim(Brush brush, bool transparent = false, bool alpha = false)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(brush, false);
+            if (transparent)
+            {
+                AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, brush, alpha);
+            }
+            else
+            {
+                AnimationHelper.MouseOverColorEvent(
+                    mainColor.A,
+                    mainColor.R,
+                    mainColor.G,
+                    mainColor.B,
+                    brush,
+                    alpha
+                );
+            }
         }
 
-        internal static void ButtonMouseLeave(Brush brush)
+        internal static void ButtonMouseLeaveAnim(Brush brush, bool transparent = false, bool alpha = false)
         {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, brush, false);
+            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, brush, alpha);
+
+            if (transparent)
+            {
+                AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, brush, alpha);
+            }
+            else
+            {
+                AnimationHelper.MouseLeaveColorEvent(
+                    mainColor.A,
+                    mainColor.R,
+                    mainColor.G,
+                    mainColor.B,
+                    brush,
+                    alpha
+                );
+            }
         }
 
-        // LeftButton
-        internal static void LeftButtonMouseOver(object sender, MouseEventArgs e)
+        #endregion
+
+        #region 2x
+
+        internal static void PreviewMouseButtonDownAnim(Brush brush, Brush brush2, bool alpha = false)
         {
-            AnimationHelper.MouseEnterColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                mainWindow.LeftArrowFill,
-                false
-            );
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(brush, alpha);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(brush2, alpha);
         }
 
-        internal static void LeftButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        internal static void ButtonMouseOverAnim(Brush brush, Brush brush2, bool transparent = false, bool alpha = false)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(mainWindow.LeftArrowFill, false);
+            ButtonMouseOverAnim(brush, transparent, alpha);
+            ButtonMouseOverAnim(brush2, transparent, alpha);
         }
 
-        internal static void LeftButtonMouseLeave(object sender, MouseEventArgs e)
+        internal static void ButtonMouseLeaveAnim(Brush brush, Brush brush2, bool transparent = false, bool alpha = false)
         {
-            AnimationHelper.MouseLeaveColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                mainWindow.LeftArrowFill,
-                false
-            );
+            ButtonMouseLeaveAnim(brush, transparent, alpha);
+            ButtonMouseLeaveAnim(brush2, transparent, alpha);
         }
 
-        // RightButton
-        internal static void RightButtonMouseOver(object sender, MouseEventArgs e)
+        #endregion
+
+        #region 3x
+
+        internal static void PreviewMouseButtonDownAnim(Brush brush, Brush brush2, Brush brush3, bool alpha = false)
         {
-            AnimationHelper.MouseEnterColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                mainWindow.RightArrowFill,
-                false
-            );
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(brush, alpha);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(brush2, alpha);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(brush3, alpha);
         }
 
-        internal static void RightButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        internal static void ButtonMouseOverAnim(Brush brush, Brush brush2, Brush brush3, bool transparent = false, bool alpha = false)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(mainWindow.RightArrowFill, false);
+            ButtonMouseOverAnim(brush, transparent, alpha);
+            ButtonMouseOverAnim(brush2, transparent, alpha);
+            ButtonMouseOverAnim(brush3, transparent, alpha);
         }
 
-        internal static void RightButtonMouseLeave(object sender, MouseEventArgs e)
+        internal static void ButtonMouseLeaveAnim(Brush brush, Brush brush2, Brush brush3, bool transparent = false, bool alpha = false)
         {
-            AnimationHelper.MouseLeaveColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                mainWindow.RightArrowFill,
-                false
-            );
+            ButtonMouseLeaveAnim(brush, transparent, alpha);
+            ButtonMouseLeaveAnim(brush2, transparent, alpha);
+            ButtonMouseLeaveAnim(brush3, transparent, alpha);
         }
 
-        // OpenMenuButton
-        internal static void OpenMenuButtonMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseEnterColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                mainWindow.FolderFill,
-                false
-            );
-        }
+        #endregion
 
-        internal static void OpenMenuButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(mainWindow.FolderFill, false);
-        }
-
-        internal static void OpenMenuButtonMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                mainWindow.FolderFill,
-                false
-            );
-        }
-
-        // ImageButton
-        internal static void ImageButtonMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseEnterColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                mainWindow.ImagePath1Fill,
-                false
-            );
-            AnimationHelper.MouseEnterColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                mainWindow.ImagePath2Fill,
-                false
-            );
-            AnimationHelper.MouseEnterColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                mainWindow.ImagePath3Fill,
-                false
-            );
-            //AnimationHelper.MouseEnterColorEvent(
-            //    mainColor.A,
-            //    mainColor.R,
-            //    mainColor.G,
-            //    mainColor.B,
-            //    ImagePath4Fill,
-            //    false
-            //);
-        }
-
-        internal static void ImageButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(mainWindow.ImagePath1Fill, false);
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(mainWindow.ImagePath2Fill, false);
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(mainWindow.ImagePath3Fill, false);
-            //AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ImagePath4Fill, false);
-        }
-
-        internal static void ImageButtonMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                mainWindow.ImagePath1Fill,
-                false
-            );
-            AnimationHelper.MouseLeaveColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                mainWindow.ImagePath2Fill,
-                false
-            );
-            AnimationHelper.MouseLeaveColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                mainWindow.ImagePath3Fill,
-                false
-            );
-            //AnimationHelper.MouseLeaveColorEvent(
-            //    mainColor.A,
-            //    mainColor.R,
-            //    mainColor.G,
-            //    mainColor.B,
-            //    ImagePath4Fill,
-            //    false
-            //);
-        }
-
-        // SettingsButton
-        internal static void SettingsButtonButtonMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseEnterColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                mainWindow.SettingsButtonFill,
-                false
-            );
-        }
-
-        internal static void SettingsButtonButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(mainWindow.SettingsButtonFill, false);
-        }
-
-        internal static void SettingsButtonButtonMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                mainWindow.SettingsButtonFill,
-                false
-            );
-        }
-
-        // InfoButton
-        internal static void InfoButtonButtonMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseEnterColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                mainWindow.InfoButtonFill,
-                false
-            );
-        }
-
-        internal static void InfoButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(mainWindow.InfoButtonFill, false);
-        }
-
-        internal static void InfoButtonButtonMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                mainColor.A,
-                mainColor.R,
-                mainColor.G,
-                mainColor.B,
-                mainWindow.InfoButtonFill,
-                false
-            );
-        }
-
-        #endregion MouseOver Button Events
     }
 }

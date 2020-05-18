@@ -45,7 +45,7 @@ namespace PicView.UserControls
 
         private void CloseButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
+            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
         }
 
         private void CloseButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -67,7 +67,7 @@ namespace PicView.UserControls
 
         private void PasteButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, PasteButtonBrush, false);
+            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, PasteButtonBrush, false);
         }
 
         private void PasteButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -89,7 +89,7 @@ namespace PicView.UserControls
 
         private void CopyButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, CopyButtonBrush, false);
+            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, CopyButtonBrush, false);
         }
 
         private void CopyButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -159,22 +159,22 @@ namespace PicView.UserControls
 
         private void Open_File_Location_Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, OpenFileLocationBorderBrush, true);
+            AnimationHelper.MouseOverColorEvent(165, 23, 23, 23, OpenFileLocationBorderBrush, true);
         }
 
         private void Open_Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, OpenBorderBrush, true);
+            AnimationHelper.MouseOverColorEvent(165, 23, 23, 23, OpenBorderBrush, true);
         }
 
         private void Print_Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, PrintBorderBrush, true);
+            AnimationHelper.MouseOverColorEvent(165, 23, 23, 23, PrintBorderBrush, true);
         }
 
         private void Save_File_Location_Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, SaveFileLocationBorderBrush, true);
+            AnimationHelper.MouseOverColorEvent(165, 23, 23, 23, SaveFileLocationBorderBrush, true);
         }
 
         private void Open_File_Location_Border_MouseLeftButtonDown(object sender, MouseEventArgs e)

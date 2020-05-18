@@ -39,9 +39,9 @@ namespace PicView
             mainWindow.CloseButton.TheButton.Click += (s, x) => SystemCommands.CloseWindow(mainWindow);
 
             // FileMenuButton
-            mainWindow.FileMenuButton.PreviewMouseLeftButtonDown += OpenMenuButtonMouseButtonDown;
-            mainWindow.FileMenuButton.MouseEnter += OpenMenuButtonMouseOver;
-            mainWindow.FileMenuButton.MouseLeave += OpenMenuButtonMouseLeave;
+            mainWindow.FileMenuButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.FolderFill);
+            mainWindow.FileMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(mainWindow.FolderFill);
+            mainWindow.FileMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.FolderFill);
             mainWindow.FileMenuButton.Click += Toggle_open_menu;
 
             fileMenu.Open.Click += (s, x) => Open();
@@ -59,9 +59,9 @@ namespace PicView
             fileMenu.CopyButton.Click += (s, x) => CopyPic();
 
             // image_button
-            mainWindow.image_button.PreviewMouseLeftButtonDown += ImageButtonMouseButtonDown;
-            mainWindow.image_button.MouseEnter += ImageButtonMouseOver;
-            mainWindow.image_button.MouseLeave += ImageButtonMouseLeave;
+            mainWindow.image_button.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.ImagePath1Fill, mainWindow.ImagePath2Fill, mainWindow.ImagePath3Fill);
+            mainWindow.image_button.MouseEnter += (s, x) => ButtonMouseOverAnim(mainWindow.ImagePath1Fill, mainWindow.ImagePath2Fill, mainWindow.ImagePath3Fill);
+            mainWindow.image_button.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.ImagePath1Fill, mainWindow.ImagePath2Fill, mainWindow.ImagePath3Fill);
             mainWindow.image_button.Click += Toggle_image_menu;
 
             // imageSettingsMenu Buttons
@@ -77,36 +77,36 @@ namespace PicView
             imageSettingsMenu.BgButton.Click += ChangeBackground;
             imageSettingsMenu.GalleryButton1.Click += delegate {
                 Close_UserControls();
-                ToggleGallery.Toggle(Properties.Settings.Default.PicGallery != 1);
+                ToggleGallery.OpenPicGalleryOne();
             };
             imageSettingsMenu.GalleryButton2.Click += delegate {
                 Close_UserControls();
-                ToggleGallery.Toggle(Properties.Settings.Default.PicGallery != 2);
+                ToggleGallery.OpenPicGalleryTwo();
             };
 
             // LeftButton
-            mainWindow.LeftButton.PreviewMouseLeftButtonDown += LeftButtonMouseButtonDown;
-            mainWindow.LeftButton.MouseEnter += LeftButtonMouseOver;
-            mainWindow.LeftButton.MouseLeave += LeftButtonMouseLeave;
+            mainWindow.LeftButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.LeftArrowFill);
+            mainWindow.LeftButton.MouseEnter += (s, x) => ButtonMouseOverAnim(mainWindow.LeftArrowFill);
+            mainWindow.LeftButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.LeftArrowFill);
             mainWindow.LeftButton.Click += (s, x) => { LeftbuttonClicked = true; Pic(false, false); };
 
             // RightButton
-            mainWindow.RightButton.PreviewMouseLeftButtonDown += RightButtonMouseButtonDown;
-            mainWindow.RightButton.MouseEnter += RightButtonMouseOver;
-            mainWindow.RightButton.MouseLeave += RightButtonMouseLeave;
+            mainWindow.RightButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.RightArrowFill);
+            mainWindow.RightButton.MouseEnter += (s, x) => ButtonMouseOverAnim(mainWindow.RightArrowFill);
+            mainWindow.RightButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.RightArrowFill);
             mainWindow.RightButton.Click += (s, x) => { RightbuttonClicked = true; Pic(); };
 
             // SettingsButton
-            mainWindow.SettingsButton.PreviewMouseLeftButtonDown += SettingsButtonButtonMouseButtonDown;
-            mainWindow.SettingsButton.MouseEnter += SettingsButtonButtonMouseOver;
-            mainWindow.SettingsButton.MouseLeave += SettingsButtonButtonMouseLeave;
-            mainWindow.SettingsButton.Click += (s,x) => AllSettingsWindow();
+            mainWindow.SettingsButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.SettingsButtonFill);
+            mainWindow.SettingsButton.MouseEnter += (s, x) => ButtonMouseOverAnim(mainWindow.SettingsButtonFill);
+            mainWindow.SettingsButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.SettingsButtonFill);
+            mainWindow.SettingsButton.Click += Toggle_quick_settings_menu;
 
-            //InfoButton
-            mainWindow.InfoButton.PreviewMouseLeftButtonDown += InfoButtonMouseButtonDown;
-            mainWindow.InfoButton.MouseEnter += InfoButtonButtonMouseOver;
-            mainWindow.InfoButton.MouseLeave += InfoButtonButtonMouseLeave;
-            mainWindow.InfoButton.Click += (s, x) => HelpWindow();
+            //FunctionButton
+            mainWindow.FunctionMenuButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.FunctionButtonFill);
+            mainWindow.FunctionMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(mainWindow.FunctionButtonFill);
+            mainWindow.FunctionMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.FunctionButtonFill);
+            mainWindow.FunctionMenuButton.Click += Toggle_Functions_menu;
 
             // FlipButton
             imageSettingsMenu.FlipButton.Click += (s, x) => Flip();

@@ -11,9 +11,9 @@ namespace PicView.UserControls
 
             Loaded += delegate
             {
-                PreviewMouseLeftButtonDown += (s, x) => ButtonMouseButtonDown(FullscreenButtonBrush);
-                MouseEnter += (s, x) => ButtonMouseOver(FullscreenButtonBrush);
-                MouseLeave += (s, x) => ButtonMouseLeave(FullscreenButtonBrush);
+                PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(FullscreenButtonBrush);
+                MouseEnter += (s, x) => ButtonMouseOverAnim(FullscreenButtonBrush, true);
+                MouseLeave += (s, x) => ButtonMouseLeaveAnim(FullscreenButtonBrush, true);
             };
         }
     }

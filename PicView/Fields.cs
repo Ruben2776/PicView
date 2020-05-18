@@ -95,7 +95,6 @@ namespace PicView
         internal static bool autoScrolling;
         internal static bool clickArrowRightClicked;
         internal static bool clickArrowLeftClicked;
-        internal static bool SlideshowActive;
         internal static bool reverse;
         internal static bool dialogOpen;
 
@@ -148,6 +147,8 @@ namespace PicView
         // UserControls
         internal static ImageSettings imageSettingsMenu;
         internal static FileMenu fileMenu;
+        internal static QuickSettingsMenu quickSettingsMenu;
+        internal static FunctionsMenu functionsMenu;
         internal static AjaxLoading ajaxLoading;
         internal static SexyToolTip sexyToolTip;
         internal static AutoScrollSign autoScrollSign;

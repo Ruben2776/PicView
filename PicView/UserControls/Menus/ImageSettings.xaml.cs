@@ -76,7 +76,7 @@ namespace PicView.UserControls
         // Rotation0Border
         void Rotation0Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, Rotation0BorderBrush, true);
+            AnimationHelper.MouseOverColorEvent(165, 23, 23, 23, Rotation0BorderBrush, true);
         }
 
         void Rotation0Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -99,7 +99,7 @@ namespace PicView.UserControls
         // 90 border
         void Rotation90Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, Rotation90BorderBrush, true);
+            AnimationHelper.MouseOverColorEvent(165, 23, 23, 23, Rotation90BorderBrush, true);
         }
 
         void Rotation90Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -122,7 +122,7 @@ namespace PicView.UserControls
         // Rotation180Border
         void Rotation180Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, Rotation180BorderBrush, true);
+            AnimationHelper.MouseOverColorEvent(165, 23, 23, 23, Rotation180BorderBrush, true);
         }
 
         void Rotation180Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -145,7 +145,7 @@ namespace PicView.UserControls
         // Rotation270Border
         void Rotation270Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(165, 23, 23, 23, Rotation270BorderBrush, true);
+            AnimationHelper.MouseOverColorEvent(165, 23, 23, 23, Rotation270BorderBrush, true);
         }
 
         void Rotation270Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -168,7 +168,7 @@ namespace PicView.UserControls
         // Close Button
         private void CloseButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
+            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
         }
 
         private void CloseButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -191,7 +191,7 @@ namespace PicView.UserControls
         // Flip Button
         private void FlipButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, FlipButtonBrush, false);
+            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, FlipButtonBrush, false);
         }
 
         private void FlipButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -214,7 +214,7 @@ namespace PicView.UserControls
         // Bg Button
         private void BgButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, BgButtonBrush, false);
+            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, BgButtonBrush, false);
         }
 
         private void BgButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -237,7 +237,7 @@ namespace PicView.UserControls
         // GalleryButton1
         private void GalleryButton1MouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, GalleryButton1Brush, false);
+            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, GalleryButton1Brush, false);
         }
 
         private void GalleryButton1MouseButtonDown(object sender, MouseButtonEventArgs e)
@@ -260,7 +260,7 @@ namespace PicView.UserControls
         // GalleryButton2
         private void GalleryButton2MouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseEnterColorEvent(0, 0, 0, 0, GalleryButton2Brush, false);
+            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, GalleryButton2Brush, false);
         }
 
         private void GalleryButton2MouseButtonDown(object sender, MouseButtonEventArgs e)

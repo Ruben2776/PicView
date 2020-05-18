@@ -51,7 +51,7 @@ namespace PicView
             brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
         }
 
-        internal static void MouseEnterColorEvent(byte a, byte r, byte g, byte b, Brush brush, bool alpha)
+        internal static void MouseOverColorEvent(byte a, byte r, byte g, byte b, Brush brush, bool alpha)
         {
             ccAnim.From = Color.FromArgb(a, r, g, b);
             ccAnim.To = !alpha ? GetPrefferedColorOver() : GetPrefferedColorOverAlpha();

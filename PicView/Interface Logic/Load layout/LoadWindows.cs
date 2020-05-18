@@ -11,25 +11,6 @@ namespace PicView
         #region Windows
 
         /// <summary>
-        /// Show About window in a dialog
-        /// </summary>
-        internal static void AboutWindow()
-        {
-            Window window = new About
-            {
-                Width = double.IsNaN(mainWindow.Width) ? 465 : mainWindow.Width,
-                Height = double.IsNaN(mainWindow.Height) ? 715 : mainWindow.Height,
-                Opacity = 0,
-                Owner = Application.Current.MainWindow,
-            };
-
-            var animation = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
-            window.BeginAnimation(UIElement.OpacityProperty, animation);
-
-            window.ShowDialog();
-        }
-
-        /// <summary>
         /// Show Help window in a dialog
         /// </summary>
         internal static void HelpWindow()

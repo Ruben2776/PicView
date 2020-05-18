@@ -11,7 +11,7 @@ namespace PicView
     {
         internal static bool IsLoading;
 
-        internal static volatile bool IsOpen;
+        internal static bool IsOpen;
 
         internal static async void Add(BitmapSource pic, int index)
         {

@@ -78,6 +78,7 @@ namespace PicView
 
         internal static void OpenPicGalleryOne()
         {
+            Properties.Settings.Default.PicGallery = 1;
             LoadLayout();
 
             var da = new DoubleAnimation
@@ -89,32 +90,45 @@ namespace PicView
 
             IsOpen = true;
 
-            picGallery.BeginAnimation(UIElement.OpacityProperty, da);
-            ScrollTo();
+            picGallery.BeginAnimation(UIElement.OpacityProperty, da);           
 
             clickArrowLeft.Visibility =
             clickArrowRight.Visibility =
             x2.Visibility =
             minus.Visibility =
             galleryShortcut.Visibility = Visibility.Hidden;
+
+            if (fake != null)
+            {
+                if (fake.grid.Children.Contains(picGallery))
+                {
+                    fake.grid.Children.Remove(picGallery);
+                    mainWindow.bg.Children.Add(picGallery);
+                }
+            }
+
+            ScrollTo();
         }
 
         internal static void OpenPicGalleryTwo()
         {
+            Properties.Settings.Default.PicGallery = 2;
             LoadLayout();
 
-            if (fake != null)
-            {
-                if (!fake.grid.Children.Contains(picGallery))
-                {
-                    mainWindow.bg.Children.Remove(picGallery);
-                    fake.grid.Children.Add(picGallery);
-                }
+            if (fake == null)
+            {                
+                fake = new FakeWindow();
             }
-            else
+
+            if (mainWindow.bg.Children.Contains(picGallery))
             {
                 mainWindow.bg.Children.Remove(picGallery);
-                fake = new FakeWindow();
+                fake.grid.Children.Add(picGallery);
+            }
+
+            if (!fake.grid.Children.Contains(picGallery))
+            {
+                mainWindow.bg.Children.Remove(picGallery);
                 fake.grid.Children.Add(picGallery);
             }
 
@@ -132,11 +146,14 @@ namespace PicView
         {
             IsOpen = false;
 
-            clickArrowLeft.Visibility =
-            clickArrowRight.Visibility =
-            x2.Visibility =
-            minus.Visibility =
-            galleryShortcut.Visibility = Visibility.Visible;
+            if (!Properties.Settings.Default.ShowInterface)
+            {
+                clickArrowLeft.Visibility =
+                clickArrowRight.Visibility =
+                x2.Visibility =
+                minus.Visibility =
+                galleryShortcut.Visibility = Visibility.Visible;
+            }
 
             var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.5) };
 
@@ -156,18 +173,13 @@ namespace PicView
 
         internal static void ClosePicGalleryTwo()
         {
+            Properties.Settings.Default.PicGallery = 1;
             IsOpen = false;
             fake.Hide();
 
             Helper.UpdateColor();
 
-            if (!Properties.Settings.Default.ShowInterface)
-            {
-                HideInterfaceLogic.ShowNavigation(true);
-            }
-
-            //// Don't show it on next startup
-            //Properties.Settings.Default.PicGallery = 1;
+            HideInterfaceLogic.ShowStandardInterface();
         }
 
         #endregion
