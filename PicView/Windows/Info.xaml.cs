@@ -10,8 +10,6 @@ namespace PicView.Windows
 {
     public partial class Info : Window
     {
-        #region Window Logic
-
         public Info()
         {
             InitializeComponent();
@@ -26,9 +24,8 @@ namespace PicView.Windows
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            #region Add events
-
-            KeyDown += Keys;
+            KeyDown += KeysDown;
+            KeyUp += KeysUp;
 
             // CloseButton
             CloseButton.TheButton.Click += delegate { Hide(); mainWindow.Focus(); };
@@ -37,30 +34,45 @@ namespace PicView.Windows
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
 
             TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
-
-            #endregion
         }
-
-        #endregion
 
         #region Keyboard Shortcuts
 
-        private void Keys(object sender, KeyEventArgs e)
+        private void KeysDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Escape ||
-                e.Key == Key.Q && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control || e.Key == Key.F1)
+            switch (e.Key)
             {
-                Hide();
+                case Key.S:
+                case Key.Down:
+                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 10);
+                    break;
+                case Key.W:
+                case Key.U:
+                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 10);
+                    break;
+                case Key.Q:
+                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    {
+                        Environment.Exit(0);
+                    }
+                    break;
             }
+        }
 
-            else if (e.Key == Key.S || e.Key == Key.Down)
+        private void KeysUp(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
             {
-                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 10);
-            }
-
-            else if (e.Key == Key.W || e.Key == Key.Up)
-            {
-                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 10);
+                case Key.Escape:
+                    Hide();
+                    mainWindow.Focus();
+                    break;
+                case Key.Q:
+                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    {
+                        Environment.Exit(0);
+                    }
+                    break;
             }
         }
 
@@ -68,8 +80,12 @@ namespace PicView.Windows
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
-            e.Handled = true;
+            var ps = new ProcessStartInfo(e.Uri.AbsoluteUri)
+            {
+                UseShellExecute = true,
+                Verb = "open"
+            };
+            Process.Start(ps);
         }
     }
 }

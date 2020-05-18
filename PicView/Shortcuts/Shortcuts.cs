@@ -4,17 +4,16 @@ using static PicView.Copy_Paste;
 using static PicView.DeleteFiles;
 using static PicView.Error_Handling;
 using static PicView.Fields;
+using static PicView.GalleryScroll;
 using static PicView.Helper;
 using static PicView.HideInterfaceLogic;
 using static PicView.LoadWindows;
 using static PicView.Navigation;
 using static PicView.Open_Save;
-using static PicView.GalleryScroll;
-using static PicView.ToggleGallery;
 using static PicView.Resize_and_Zoom;
 using static PicView.Rotate_and_Flip;
 using static PicView.Scroll;
-using static PicView.SlideShow;
+using static PicView.ToggleGallery;
 using static PicView.ToggleMenus;
 using static PicView.WindowLogic;
 
@@ -278,6 +277,22 @@ namespace PicView
                     {
                         dialogOpen = false;
                         return;
+                    }
+                    if (infoWindow != null)
+                    {
+                        if (infoWindow.IsVisible)
+                        {
+                            infoWindow.Hide();
+                            return;
+                        }
+                    }
+                    if (allSettingsWindow != null)
+                    {
+                        if (allSettingsWindow.IsVisible)
+                        {
+                            allSettingsWindow.Hide();
+                            return;
+                        }
                     }
                     if (!cm.IsVisible)
                     {

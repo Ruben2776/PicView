@@ -15,24 +15,24 @@ namespace PicView
         /// </summary>
         internal static void HelpWindow()
         {
-            if (help == null)
+            if (infoWindow == null)
             {
-                help = new Info
+                infoWindow = new Info
                 {
                     Owner = mainWindow
                 };
 
-                help.Show();
+                infoWindow.Show();
             }
             else
             {
-                if (help.Visibility == Visibility.Visible)
+                if (infoWindow.Visibility == Visibility.Visible)
                 {
-                    help.Focus();
+                    infoWindow.Focus();
                 }
                 else
                 {
-                    help.Show();
+                    infoWindow.Show();
                 }
 
             }
@@ -43,24 +43,24 @@ namespace PicView
         /// </summary>
         internal static void AllSettingsWindow()
         {
-            if (allSettings == null)
+            if (allSettingsWindow == null)
             {
-                allSettings = new AllSettings
+                allSettingsWindow = new AllSettings
                 {
                     Owner = mainWindow
                 };
 
-                allSettings.Show();
+                allSettingsWindow.Show();
             }
             else
             {
-                if (allSettings.Visibility == Visibility.Visible)
+                if (allSettingsWindow.Visibility == Visibility.Visible)
                 {
-                    allSettings.Focus();
+                    allSettingsWindow.Focus();
                 }
                 else
                 {
-                    allSettings.Show();
+                    allSettingsWindow.Show();
                 }
                 
             }

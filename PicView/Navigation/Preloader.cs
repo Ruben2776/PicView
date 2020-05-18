@@ -119,16 +119,25 @@ namespace PicView.PreLoading
         {
             if (string.IsNullOrWhiteSpace(key))
             {
+#if DEBUG
+                Trace.WriteLine("Preloader.Add key is null");
+#endif
                 return;
             }
 
             if (Contains(key))
             {
+#if DEBUG
+                Trace.WriteLine("Preloader.Add already contains " + key);
+#endif
                 return;
             }
 
             if (bmp == null)
             {
+#if DEBUG
+                Trace.WriteLine("Preloader.Add bmp null " + key);
+#endif
                 return;
             }
 
@@ -159,11 +168,17 @@ namespace PicView.PreLoading
         {
             if (key == null)
             {
+#if DEBUG
+                Trace.WriteLine("Preloader.Remove key null, " + key);
+#endif
                 return;
             }
 
             if (!Contains(key))
             {
+#if DEBUG
+                Trace.WriteLine("Preloader.Remove does not contain " + key);
+#endif
                 return;
             }
 
@@ -283,11 +298,8 @@ namespace PicView.PreLoading
 
             return Task.Run(() =>
             {
-                /// TODO Make Preloading amount a user preference
-                /// Maybe?
-
-                var toLoad = 10;
-                var extraToLoad = toLoad / 2; // Maybe get a third instead?
+                var toLoad = 8;
+                var extraToLoad = toLoad / 2;
                 var cleanUp = toLoad + extraToLoad;
 
                 // Not looping

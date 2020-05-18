@@ -53,7 +53,8 @@ namespace PicView.Windows
                     break;
             }
 
-            KeyUp += AllSettings_KeyUp;
+            KeyUp += KeysUp;
+            KeyDown += KeysDown;
 
             ContentRendered += (s, x) =>
             {
@@ -218,21 +219,40 @@ namespace PicView.Windows
             };
         }
 
-        private void AllSettings_KeyUp(object sender, KeyEventArgs e)
+        private void KeysDown(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
-                case Key.Escape:
-                    Hide();
+                case Key.S:
+                case Key.Down:
+                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 10);
+                    break;
+                case Key.W:
+                case Key.U:
+                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 10);
                     break;
                 case Key.Q:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                     {
                         Environment.Exit(0);
                     }
-
                     break;
-                default:
+            }
+        }
+
+        private void KeysUp(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Escape:
+                    Hide();
+                    mainWindow.Focus();
+                    break;
+                case Key.Q:
+                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    {
+                        Environment.Exit(0);
+                    }
                     break;
             }
         }
