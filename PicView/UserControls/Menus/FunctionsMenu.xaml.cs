@@ -25,14 +25,10 @@ namespace PicView.UserControls
             FileDetailsButton.PreviewMouseLeftButtonDown += FileDetailsButtonMouseButtonDown;
 
             //HelpButton
-            Help.MouseEnter += HelpButtonMouseOver;
-            Help.MouseLeave += HelpButtonMouseLeave;
-            Help.PreviewMouseLeftButtonDown += HelpButtonMouseButtonDown;
-
-            //AboutButton
-            About.MouseEnter += AboutButtonMouseOver;
-            About.MouseLeave += AboutButtonMouseLeave;
-            About.PreviewMouseLeftButtonDown += AboutButtonMouseButtonDown;
+            Info.MouseEnter += HelpButtonMouseOver;
+            Info.MouseLeave += HelpButtonMouseLeave;
+            Info.PreviewMouseLeftButtonDown += HelpButtonMouseButtonDown;
+            Info.Click += delegate { LoadWindows.HelpWindow(); };
 
             // ClearButton
             ClearButton.MouseEnter += ClearButtonMouseOver;
@@ -76,69 +72,33 @@ namespace PicView.UserControls
         // Close Button
         private void CloseButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
+            MouseOverAnimations.ButtonMouseOverAnim(CloseButtonBrush, true);
         }
 
         private void CloseButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(CloseButtonBrush, false);
+            MouseOverAnimations.PreviewMouseButtonDownAnim(CloseButtonBrush);
         }
 
         private void CloseButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                CloseButtonBrush,
-                false
-            );
+            MouseOverAnimations.ButtonMouseLeaveAnimBgColor(CloseButtonBrush);
         }
 
         //Help Button
         private void HelpButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, HelpBrush, false);
+            MouseOverAnimations.ButtonMouseOverAnim(InfoBrush, true);
         }
 
         private void HelpButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(HelpBrush, false);
+            MouseOverAnimations.PreviewMouseButtonDownAnim(InfoBrush);
         }
 
         private void HelpButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                HelpBrush,
-                false
-            );
-        }
-
-        // About Button
-        private void AboutButtonMouseOver(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, AboutBrush, false);
-        }
-        private void AboutButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(AboutBrush, false);
-        }
-
-        private void AboutButtonMouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                AboutBrush,
-                false
-            );
+            MouseOverAnimations.ButtonMouseLeaveAnimBgColor(InfoBrush);
         }
 
         // Reload Button

@@ -81,8 +81,6 @@ namespace PicView
 
         internal static void ButtonMouseLeaveAnim(Brush brush, bool transparent = false, bool alpha = false)
         {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, brush, alpha);
-
             if (transparent)
             {
                 AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, brush, alpha);
@@ -98,6 +96,18 @@ namespace PicView
                     alpha
                 );
             }
+        }
+
+        internal static void ButtonMouseLeaveAnimBgColor(Brush brush, bool alpha = false)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                brush,
+                alpha
+            );
         }
 
         #endregion

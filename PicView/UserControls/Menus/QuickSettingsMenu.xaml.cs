@@ -26,6 +26,7 @@ namespace PicView.UserControls
             SettingsButton.MouseEnter += SettingsButtonMouseOver;
             SettingsButton.MouseLeave += SettingsButtonMouseLeave;
             SettingsButton.PreviewMouseLeftButtonDown += SettingsButtonMouseButtonDown;
+            SettingsButton.Click += delegate { LoadWindows.AllSettingsWindow(); };
 
 
             // Toggle Scroll
@@ -81,17 +82,17 @@ namespace PicView.UserControls
         // Close Button
         private void CloseButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
+            MouseOverAnimations.ButtonMouseOverAnim(CloseButtonBrush, true);
         }
 
         private void CloseButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(CloseButtonBrush, false);
+            MouseOverAnimations.PreviewMouseButtonDownAnim(CloseButtonBrush);
         }
 
         private void CloseButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
+            MouseOverAnimations.ButtonMouseLeaveAnimBgColor(CloseButtonBrush);
         }
 
 
@@ -99,17 +100,17 @@ namespace PicView.UserControls
 
         private void SettingsButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, SettingsButtonBrush, false);
+            MouseOverAnimations.ButtonMouseOverAnim(SettingsButtonBrush, true);
         }
 
         private void SettingsButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(SettingsButtonBrush, false);
+            MouseOverAnimations.PreviewMouseButtonDownAnim(SettingsButtonBrush);
         }
 
         private void SettingsButtonMouseLeave(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, SettingsButtonBrush, false);
+            MouseOverAnimations.ButtonMouseLeaveAnimBgColor(SettingsButtonBrush);
         }
 
         // Fill Button
