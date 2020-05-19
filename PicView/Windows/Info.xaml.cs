@@ -10,6 +10,7 @@ namespace PicView.Windows
 {
     public partial class Info : Window
     {
+        const int zoomSpeed = 45;
         public Info()
         {
             InitializeComponent();
@@ -26,6 +27,8 @@ namespace PicView.Windows
         {
             KeyDown += KeysDown;
             KeyUp += KeysUp;
+            FlowDoc.PreviewMouseWheel += Info_MouseWheel;
+            Scroller.MouseWheel += Info_MouseWheel;
 
             // CloseButton
             CloseButton.TheButton.Click += delegate { Hide(); mainWindow.Focus(); };
@@ -34,6 +37,35 @@ namespace PicView.Windows
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
 
             TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
+
+
+            Aller.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(AllerBrush); };
+            Aller.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(AllerBrush); };
+            Aller.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(AllerBrush); };
+
+            TexGyre.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(TexGyreBrush); };
+            TexGyre.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(TexGyreBrush); };
+            TexGyre.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(TexGyreBrush); };
+
+            Iconic.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(IconicBrush); };
+            Iconic.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(IconicBrush); };
+            Iconic.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(IconicBrush); };
+
+            FlatIcon.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(FlatIconBrush); };
+            FlatIcon.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(FlatIconBrush); };
+            FlatIcon.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(FlatIconBrush); };
+
+            Ionic.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(IonicBrush); };
+            Ionic.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(IonicBrush); };
+            Ionic.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(IonicBrush); };
+
+            FontAwesome.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(FontAwesomeBrush); };
+            FontAwesome.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(FontAwesomeBrush); };
+            FontAwesome.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(FontAwesomeBrush); };
+
+            GitHub.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(GitHubBrush); };
+            GitHub.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(GitHubBrush); };
+            GitHub.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(GitHubBrush); };
         }
 
         #region Keyboard Shortcuts
@@ -42,13 +74,15 @@ namespace PicView.Windows
         {
             switch (e.Key)
             {
-                case Key.S:
                 case Key.Down:
-                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 10);
+                case Key.PageDown:
+                case Key.S:
+                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + zoomSpeed);
                     break;
+                case Key.Up:
+                case Key.PageUp:
                 case Key.W:
-                case Key.U:
-                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 10);
+                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - zoomSpeed);
                     break;
                 case Key.Q:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
@@ -73,10 +107,24 @@ namespace PicView.Windows
                         Environment.Exit(0);
                     }
                     break;
+
+            }
+        }
+
+        private void Info_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Delta > 0)
+            {
+                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - zoomSpeed);
+            }
+            else if (e.Delta < 0)
+            {
+                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + zoomSpeed);
             }
         }
 
         #endregion
+
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {

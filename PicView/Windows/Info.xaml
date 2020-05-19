@@ -4,11 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uc="clr-namespace:PicView.UserControls"
     Title="PicView Info"
-    Width="465"
-    Height="550"
+    Width="560"
+    Height="650"
     FontFamily="/PicView;component/Resources/fonts/#Aller"
     Foreground="{StaticResource MainColorBrush}"
     Style="{DynamicResource MyWindowStyle}">
+
 
     <DockPanel LastChildFill="True">
         <DockPanel
@@ -41,524 +42,689 @@
                 FontSize="15"
                 FontWeight="Bold"
                 Foreground="{StaticResource MainColorBrush}"
-                Text="Info"
+                Text="Information, help and shortcuts"
                 TextAlignment="Center"
                 TextTrimming="CharacterEllipsis" />
         </DockPanel>
+
         <ScrollViewer
             x:Name="Scroller"
             Background="{StaticResource BackgroundColorBrushAlt}"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="8,0,3,5">
+            <StackPanel>
 
-                <Label Margin="0,5,0,0" FontSize="16">Shortcuts:</Label>
+                <FlowDocumentScrollViewer
+                    x:Name="FlowDoc"
+                    IsToolBarVisible="False"
+                    VerticalScrollBarVisibility="Disabled">
+                    <FlowDocument>
 
-                <Label
-                    Margin="0,2,0,2"
-                    Content="Main functions:"
-                    FontSize="15" />
+                        <Table
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="2"
+                            CellSpacing="6"
+                            FontFamily="TeX Gyre Heros"
+                            FontSize="16">
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Alt + Z</Bold>
-                        show/hide interface.</TextBlock>
-                </BulletDecorator>
+                            <Table.Columns>
+                                <TableColumn />
+                                <TableColumn />
+                            </Table.Columns>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>X</Bold>
-                        toggle scroll</TextBlock>
-                </BulletDecorator>
+                            <TableRowGroup>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>L</Bold>
-                        toggle looping</TextBlock>
-                </BulletDecorator>
+                                <!--  Title row for the table.  -->
+                                <TableRow>
+                                    <TableCell ColumnSpan="2" TextAlignment="Center">
+                                        <Paragraph FontSize="26" FontWeight="Bold">Keyboard Shortcuts</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>F4</Bold>
-                        show/hide picture gallery</TextBlock>
-                </BulletDecorator>
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>F5</Bold>
-                        show/hide fullscreen picture gallery</TextBlock>
-                </BulletDecorator>
+                                <!--  Header row for the table.  -->
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph FontSize="18" FontWeight="Bold">Key</Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph FontSize="18" FontWeight="Bold">Function</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Esc</Bold>
-                        close the currently opened element</TextBlock>
-                </BulletDecorator>
+                                <!--  Next Next Next Next Next Next Next Next Next  -->
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>A</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Navigate to previous picture</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <Label
-                    Margin="0,10,0,0"
-                    Content="Zoom:"
-                    FontSize="15" />
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Mousewheel</Bold>
-                        zoom at cursor position</TextBlock>
-                </BulletDecorator>
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Left</Bold>
+                                            arrow key</Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Navigate to previous picture</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Mousewheel</Bold>
-                        +<Bold>Ctrl</Bold>
-                        scale window size</TextBlock>
-                </BulletDecorator>
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Ctrl + A</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Navigate to first picture</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        Numpad<Bold>+</Bold>
-                        /<Bold>-</Bold>
-                        zoom in/out</TextBlock>
-                </BulletDecorator>
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Ctrl +Left</Bold>
+                                            arrow key</Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Navigate to first picture</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Ctrl +</Bold>
-                        /<Bold>-</Bold>
-                        scale window size</TextBlock>
-                </BulletDecorator>
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Double click</Bold>
-                        reset zoom</TextBlock>
-                </BulletDecorator>
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>D</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Navigate to next picture</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <Label
-                    Margin="0,2,0,2"
-                    Content="Show windows:"
-                    FontSize="15" />
+                                <!--  Prev Prev Prev Prev Prev Prev Prev Prev Prev  -->
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Right</Bold>
+                                            arrow key</Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Navigate to next picture</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>F1</Bold>
-                        show help window</TextBlock>
-                </BulletDecorator>
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Ctrl</Bold>
+                                            +<Bold>D</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Navigate to last picture</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Ctrl</Bold>
+                                            +<Bold>Right</Bold>
+                                            arrow key</Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Navigate to last picture</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>F2</Bold>
-                        show about window</TextBlock>
-                </BulletDecorator>
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>F12</Bold>
-                        show/hide slideshow</TextBlock>
-                </BulletDecorator>
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Up</Bold>
+                                            arrow key</Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Rotate left</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <Label
-                    Margin="0,10,0,0"
-                    Content="File functions:"
-                    FontSize="15" />
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>W</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Rotate left</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Ctrl</Bold>
-                        +<Bold>0</Bold>
-                        /<Bold>0</Bold>
-                        open a file</TextBlock>
-                </BulletDecorator>
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Down</Bold>
+                                            arrow key</Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Rotate right</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Ctrl</Bold>
-                        +<Bold>C</Bold>
-                        add file to clipboard.</TextBlock>
-                </BulletDecorator>
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>S</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Rotate right</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Ctrl</Bold>
-                        +<Bold>X</Bold>
-                        move file to clipboard.</TextBlock>
-                </BulletDecorator>
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>F</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Flip image</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Ctrl</Bold>
-                        +<Bold>Shift</Bold>
-                        +<Bold>C</Bold>
-                        add image to clipboard</TextBlock>
-                </BulletDecorator>
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Ctrl</Bold>
-                        +<Bold>V</Bold>
-                        paste image/file from clipboard</TextBlock>
-                </BulletDecorator>
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>E</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Toggle window resizement</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Ctrl</Bold>
-                        +<Bold>S</Bold>
-                        save image</TextBlock>
-                </BulletDecorator>
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>T</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Change between white/dark background</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Ctrl</Bold>
-                        +<Bold>I</Bold>
-                        show file details</TextBlock>
-                </BulletDecorator>
+                                <!--  Zoom Zoom Zoom Zoom Zoom Zoom Zoom Zoom Zoom  -->
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Page Up</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Zoom in</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Ctrl</Bold>
-                        +<Bold>R</Bold>
-                        reload.</TextBlock>
-                </BulletDecorator>
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Page Down</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Scroll down</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Shift</Bold>
-                        +<Bold>Del</Bold>
-                        permanently delete file</TextBlock>
-                </BulletDecorator>
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Page Up</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Scroll up</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Del</Bold>
-                        move to recycle bin</TextBlock>
-                </BulletDecorator>
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            Numpad<Bold>+</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Zoom in</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
 
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Ctrl</Bold>
+                                            numpad<Bold>+</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Increase scale</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
-                <Label
-                    Margin="0,10,0,0"
-                    Content="Navigate:"
-                    FontSize="15" />
-
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Right arrow</Bold>
-                        next image</TextBlock>
-                </BulletDecorator>
-
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>D</Bold>
-                        next image</TextBlock>
-                </BulletDecorator>
-
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Shift + Mousewheel up</Bold>
-                        next image</TextBlock>
-                </BulletDecorator>
-
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Mouse button forward</Bold>
-                        next image</TextBlock>
-                </BulletDecorator>
-
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Left arrow</Bold>
-                        to show previous image.</TextBlock>
-                </BulletDecorator>
-
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>A</Bold>
-                        to show previous image.</TextBlock>
-                </BulletDecorator>
-
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Shift + Mousewheel down</Bold>
-                        previous image</TextBlock>
-                </BulletDecorator>
-
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Mouse button backward</Bold>
-                        previous image</TextBlock>
-                </BulletDecorator>
-
-                <Label
-                    Margin="0,10,0,0"
-                    Content="Transform image:"
-                    FontSize="15" />
-
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Arrow up</Bold>
-                        rotate right</TextBlock>
-                </BulletDecorator>
-
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>W</Bold>
-                        rotate right</TextBlock>
-                </BulletDecorator>
-
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Arrow down</Bold>
-                        rotate left</TextBlock>
-                </BulletDecorator>
-
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>S</Bold>
-                        rotate left.</TextBlock>
-                </BulletDecorator>
-
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>F</Bold>
-                        flip image</TextBlock>
-                </BulletDecorator>
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            Numpad<Bold>-</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Zoom out</Paragraph>
+                                    </TableCell>
+                                </TableRow>
 
 
-                <Label
-                    Margin="0,10,0,0"
-                    Content="Misc:"
-                    FontSize="15" />
-                <BulletDecorator Margin="7,2">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="7"
-                            Height="7"
-                            Fill="{StaticResource MainColorBrush}" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock Margin="5,0,0,0">
-                        <Bold>Spacebar</Bold>
-                        center on current screen</TextBlock>
-                </BulletDecorator>
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Ctrl</Bold>
+                                            Numpad<Bold>-</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Decrease scale</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>F6</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Reset zoom</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Home</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Scroll to top</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>End</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Scroll to end</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>T</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Change between white/dark background</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Space</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Center application on current monitor</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Alt</Bold>
+                                            +<Bold>Z</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Toggle between graphical interfaces</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>
+                                                Alt
+                                                + Enter
+                                            </Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Toggle between fullscreen</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Esc</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Close current window or menu</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Ctrl +Q</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Exit the application</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Ctrl + O</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Open file dialog</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Ctrl + S</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Save file dialog</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>F3</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Open file in Windows Explorer</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Ctrl + C</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Copy file</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Ctrl + X</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Cut file</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Ctrl + V</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Paste file</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Ctrl + P</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Print image</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Ctrl + R</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Reload image</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Delete</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Send file to the recycle bin</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Shift + Delete</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Permanently delete file</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                </TableRow>
+
+                                <!--  Title row  -->
+                                <TableRow>
+                                    <TableCell ColumnSpan="2" TextAlignment="Center">
+                                        <Paragraph FontSize="26" FontWeight="Bold">Mouse Shortcuts</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                </TableRow>
+
+                                <!--  Header row for the table.  -->
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph FontSize="18" FontWeight="Bold">Key</Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph FontSize="18" FontWeight="Bold">Function</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <!--  Four data rows for the inner planets.  -->
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Mouse wheel</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Zoom</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Shift + Mouse wheel</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Change picture</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Mouse button forward</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Navigate to next picture</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Mouse button back</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Navigate to previous picture</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>Middle mouse button</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Start auto scroll</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                            </TableRowGroup>
+                        </Table>
+                    </FlowDocument>
+                </FlowDocumentScrollViewer>
 
                 <StackPanel Margin="0,7">
                     <Label
@@ -658,6 +824,21 @@
                 </StackPanel>
 
                 <StackPanel Margin="0,70,0,0">
+
+                    <TextBlock
+                        x:Name="GitHub"
+                        FontFamily="/PicView;component/Resources/fonts/#Aller"
+                        FontSize="14"
+                        TextAlignment="Center"
+                        ToolTip="https://github.com/Ruben2776/PicView">
+                        <Hyperlink NavigateUri="https://github.com/Ruben2776/PicView" RequestNavigate="Hyperlink_RequestNavigate">
+                            Github directory
+                            <Hyperlink.Foreground>
+                                <SolidColorBrush x:Name="GitHubBrush" Color="{StaticResource MainColor}" />
+                            </Hyperlink.Foreground>
+                        </Hyperlink>
+                    </TextBlock>
+
                     <TextBlock
                         Margin="0,2"
                         HorizontalAlignment="Center"
@@ -673,6 +854,7 @@
                         VerticalAlignment="Bottom"
                         Content="Version : " />
                 </StackPanel>
+
             </StackPanel>
 
         </ScrollViewer>
