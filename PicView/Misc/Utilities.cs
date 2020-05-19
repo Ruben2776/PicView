@@ -69,12 +69,14 @@ namespace PicView
             {
                 try
                 {
-                    var bgBrush = Application.Current.Resources["WindowBackgroundColorBrush"] as System.Windows.Media.SolidColorBrush;
+                    var bgBrush = Application.Current.Resources["WindowBackgroundColorBrush"] as SolidColorBrush;
                     bgBrush.Color = AnimationHelper.GetPrefferedColorOver();
                 }
-                catch (System.Exception)
+                catch (System.Exception e)
                 {
-
+#if DEBUG
+                    Trace.WriteLine(nameof(UpdateColor) + " threw exception:  " + e.Message);
+#endif
                     //throw;
                 }
 
@@ -83,11 +85,25 @@ namespace PicView
 
         internal static void RemoveBorderColor()
         {
-            if (Properties.Settings.Default.WindowBorderColorEnabled)
+            //TODO fix read only error
+
+            try
             {
-                var bgBrush = Application.Current.Resources["WindowBackgroundColorBrush"] as System.Windows.Media.SolidColorBrush;
-                bgBrush.Color = Colors.Black;
+                if (Properties.Settings.Default.WindowBorderColorEnabled)
+                {
+                    var bgBrush = Application.Current.Resources["WindowBackgroundColorBrush"] as SolidColorBrush;
+                    bgBrush.Color = Colors.Black;
+                }
             }
+            catch (System.Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine(nameof(RemoveBorderColor) + " threw exception:  " + e.Message);
+#endif
+
+                //throw;
+            }
+
         }
 
         internal static void ChangeBackground(object sender, RoutedEventArgs e)

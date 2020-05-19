@@ -83,6 +83,13 @@ namespace PicView
                 Close_UserControls();
                 ToggleGallery.OpenPicGalleryTwo();
             };
+            quickSettingsMenu.ToggleScroll.Checked += (s, x) => IsScrollEnabled = true;
+            quickSettingsMenu.ToggleScroll.Unchecked += (s, x) => IsScrollEnabled = false;
+            quickSettingsMenu.ToggleScroll.Click += Toggle_quick_settings_menu;
+
+            quickSettingsMenu.SetFit.Click += (s, x) => { FitToWindow = true; };
+            quickSettingsMenu.SetCenter.Click += (s, x) => { FitToWindow = false; };
+            quickSettingsMenu.SettingsButton.Click += (s, x) => AllSettingsWindow();
 
             // LeftButton
             mainWindow.LeftButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.LeftArrowFill);
@@ -107,6 +114,14 @@ namespace PicView
             mainWindow.FunctionMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(mainWindow.FunctionButtonFill);
             mainWindow.FunctionMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.FunctionButtonFill);
             mainWindow.FunctionMenuButton.Click += Toggle_Functions_menu;
+            functionsMenu.FileDetailsButton.Click += (s, x) => NativeMethods.ShowFileProperties(Pics[FolderIndex]);
+            functionsMenu.DeleteButton.Click += (s, x) => DeleteFile(Pics[FolderIndex], true);
+            functionsMenu.DeletePermButton.Click += (s, x) => DeleteFile(Pics[FolderIndex], false);
+            functionsMenu.ReloadButton.Click += (s, x) => Error_Handling.Reload();
+            functionsMenu.ResetZoomButton.Click += (s, x) => ResetZoom();
+            functionsMenu.ClearButton.Click += (s, x) => Error_Handling.Unload();
+            //functionsMenu.SlideshowButton.Click += (s, x) => LoadSlideshow();
+            functionsMenu.BgButton.Click += ChangeBackground;
 
             // FlipButton
             imageSettingsMenu.FlipButton.Click += (s, x) => Flip();

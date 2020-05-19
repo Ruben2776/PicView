@@ -295,6 +295,26 @@
                                     </TableCell>
                                 </TableRow>
 
+                                <TableRow>
+                                    <TableCell>
+                                        <Paragraph>
+                                            <Bold>X</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Toggle scroll</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph />
+                                    </TableCell>
+                                </TableRow>
+
                                 <!--  Zoom Zoom Zoom Zoom Zoom Zoom Zoom Zoom Zoom  -->
                                 <TableRow>
                                     <TableCell>

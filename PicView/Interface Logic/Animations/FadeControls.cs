@@ -60,19 +60,5 @@ namespace PicView
                 AnimationHelper.Fade(s, 0, TimeSpan.FromSeconds(1));
             }
         }
-
-        //internal static async void FadeCursor(double time = .5)
-        //{
-        //    /// Might cause unnecessary cpu usage? Need to check
-        //    await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
-        //    {
-        //        AnimationHelper.Fade(clickArrowLeft, 0, TimeSpan.FromSeconds(.5));
-        //        AnimationHelper.Fade(clickArrowRight, 0, TimeSpan.FromSeconds(.5));
-        //        AnimationHelper.Fade(x2, 0, TimeSpan.FromSeconds(.5));
-        //        Mouse.OverrideCursor = Cursors.None;
-
-        //        MouseIdleTimer.Stop();
-        //    }));
-        //}
     }
 }
