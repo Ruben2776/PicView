@@ -17,6 +17,7 @@ namespace PicView.UserControls
             CloseButton.MouseEnter += CloseButtonMouseOver;
             CloseButton.MouseLeave += CloseButtonMouseLeave;
             CloseButton.PreviewMouseLeftButtonDown += CloseButtonMouseButtonDown;
+            CloseButton.Click += delegate { ToggleMenus.Close_UserControls(); };
 
             // FileDetailsButton
             FileDetailsButton.MouseEnter += FileDetailsButtonMouseOver;
