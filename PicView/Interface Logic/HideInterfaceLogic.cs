@@ -134,9 +134,10 @@ namespace PicView
         /// <param name="e"></param>
         internal static void Interface_MouseEnter(object sender, MouseEventArgs e)
         {
-            // Start timer when mouse enters
-            activityTimer.Start();
-            //FadeControlsAsync(true);
+            if (!activityTimer.Enabled || autoScrolling)
+            {
+                activityTimer.Start();
+            }
         }
 
         /// <summary>
@@ -159,6 +160,11 @@ namespace PicView
         /// <param name="e"></param>
         internal static void Interface_MouseMove(object sender, MouseEventArgs e)
         {
+            if (autoScrolling)
+            {
+                return;
+            }
+
             ////If Mouse is hidden, show it and interface elements.
             //if (e.MouseDevice.OverrideCursor == Cursors.None)
             //{
@@ -168,6 +174,7 @@ namespace PicView
 
 
             // If mouse moves on mainwindow, show elements
+
             FadeControlsAsync(true);
 
 

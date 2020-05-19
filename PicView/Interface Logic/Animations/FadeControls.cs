@@ -17,8 +17,19 @@ namespace PicView
                 {
                     if (clickArrowRight != null && clickArrowLeft != null && x2 != null && galleryShortcut != null)
                     {
-                        var fadeTo = show ? 1 : 0;
-                        var timespan = TimeSpan.FromSeconds(time);
+                        int fadeTo;
+                        TimeSpan timespan;
+
+                        if (autoScrolling)
+                        {
+                            fadeTo = 0;
+                            timespan = TimeSpan.FromSeconds(0);
+                        }
+                        else
+                        {
+                            fadeTo = show ? 1 : 0;
+                            timespan = TimeSpan.FromSeconds(time);
+                        }
 
                         AnimationHelper.Fade(clickArrowLeft, fadeTo, timespan);
                         AnimationHelper.Fade(clickArrowRight, fadeTo, timespan);

@@ -237,9 +237,10 @@ namespace PicView
             }
 
             // Clear unsupported image window, if shown
-            if (mainWindow.topLayer.Children.Count > 0)
+            if (unsupported)
             {
-                mainWindow.topLayer.Children.Clear();
+                mainWindow.topLayer.Children.Remove(badImage);
+                unsupported = false;
             }
 
             // Show the image! :)

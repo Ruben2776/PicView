@@ -264,8 +264,10 @@ namespace PicView
                 Height = xHeight
             });
 
-            mainWindow.Bar.ToolTip = mainWindow.Bar.Text = BadImage;
-            mainWindow.Title = BadImage + " - " + AppName;
+            mainWindow.Bar.ToolTip = mainWindow.Bar.Text = CannotRender;
+            mainWindow.Title = CannotRender + " - " + AppName;
+
+            unsupported = true;
         }
     }
 }

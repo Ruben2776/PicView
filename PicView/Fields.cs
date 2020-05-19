@@ -18,7 +18,7 @@ namespace PicView
         internal const string ImageCut = "Image added to move clipboard";
         internal const string ExpFind = "Locating in file explorer";
         internal const string NoImage = "No image loaded";
-        internal const string BadImage = "Unable to render image";
+        internal const string CannotRender = "Unable to render image";
 
         internal const string SupportedFilesFilter =
         " *.jpg *.jpeg *.jpe *.png *.bmp *.tif *.tiff *.gif *.ico *.wdp *.svg *.psd *.psb *.orf *.cr2 *.crw *.dng *.raf *.raw *.mrw *.nef *.x3f *.arw *.webp *"
@@ -97,6 +97,7 @@ namespace PicView
         internal static bool clickArrowLeftClicked;
         internal static bool reverse;
         internal static bool dialogOpen;
+        internal static bool unsupported;
 
         /// <summary>
         /// Used to prevent overlapping in PicGallery 2
@@ -158,6 +159,7 @@ namespace PicView
         internal static Minus minus;
         internal static PicGallery picGallery;
         internal static GalleryShortcut galleryShortcut;
+        internal static BadImage badImage;
 
         internal static Point origin;
         internal static Point start;
