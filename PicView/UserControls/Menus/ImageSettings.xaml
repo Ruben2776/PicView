@@ -77,7 +77,7 @@
                     BorderBrush="{x:Null}"
                     FontWeight="Bold"
                     Foreground="{x:Null}"
-                    ToolTip="Show image gallery 1">
+                    ToolTip="Show contained image gallery">
                     <Button.Background>
                         <SolidColorBrush x:Name="GalleryButton1Brush" Color="{StaticResource BackgroundColorAlt}" />
                     </Button.Background>
@@ -159,7 +159,7 @@
                     BorderBrush="{x:Null}"
                     FontWeight="Bold"
                     Foreground="{x:Null}"
-                    ToolTip="Show image gallery 2">
+                    ToolTip="Show fullscreen image gallery">
                     <Button.Background>
                         <SolidColorBrush x:Name="GalleryButton2Brush" Color="{StaticResource BackgroundColorAlt}" />
                     </Button.Background>

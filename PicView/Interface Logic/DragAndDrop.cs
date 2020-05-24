@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using static PicView.Fields;
@@ -120,9 +121,28 @@ namespace PicView
         /// <param name="e"></param>
         internal static void Image_Drop(object sender, DragEventArgs e)
         {
-            // Error handling
-            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (e.Data.GetData(DataFormats.Html) != null)
             {
+                MemoryStream data = (MemoryStream)e.Data.GetData("text/x-moz-url");
+                string dataStr = Encoding.Unicode.GetString(data.ToArray());
+                string[] parts = dataStr.Split((char)10);
+
+                Pic(parts[0]);
+
+                if (parts.Length > 1)
+                {
+                    Parallel.For(1, parts.Length, x =>
+                    {
+                        var myProcess = new Process
+                        {
+                            StartInfo = {
+                                    FileName = Assembly.GetExecutingAssembly().Location,
+                                    Arguments = parts[0][x].ToString()
+                                }
+                        };
+                        myProcess.Start();
+                    });
+                }
                 return;
             }
 
@@ -132,7 +152,11 @@ namespace PicView
             // check if valid
             if (!Drag_Drop_Check(files).HasValue)
             {
-                return;
+                if (Path.GetExtension(files[0]) == ".url")
+                {
+                    Pic(files[0]);
+                }
+                else return;
             }
 
             // Load it

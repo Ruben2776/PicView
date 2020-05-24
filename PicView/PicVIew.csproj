@@ -92,6 +92,10 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="PicGallery\PicGalleryLogic.cs~RF57f3b96.TMP" />
+    <None Include="..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\fonts\Aller_Rg.ttf" />
@@ -186,6 +190,10 @@
     </PostBuildEvent>
     <FileVersion>0.9.7.5</FileVersion>
     <SignAssembly>false</SignAssembly>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <Copyright>Ruben Hyldgaard Negendahl</Copyright>
+    <PackageProjectUrl>https://github.com/Ruben2776/PicView</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Ruben2776/PicView</RepositoryUrl>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
