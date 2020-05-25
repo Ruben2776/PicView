@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using static PicView.Fields;
-using static PicView.Helper;
+using static PicView.Utilities;
 using static PicView.Navigation;
 using static PicView.Scroll;
 using static PicView.SetTitle;

@@ -15,6 +15,7 @@
         Foreground="{StaticResource MainColorBrush}"
         OverridesDefaultStyle="True"
         Text="Loading..."
+        ContextMenu="{x:Null}"
         TextAlignment="Center"
         UndoLimit="200">
         <TextBox.Style>
@@ -31,7 +32,7 @@
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsFocused" Value="True">
-                                    <Setter TargetName="bg" Property="BorderBrush" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
+                                    <Setter TargetName="bg" Property="BorderBrush" Value="{StaticResource ResourceKey=ChosenColorBrush}" />
                                     <Setter TargetName="bg" Property="BorderThickness" Value="1" />
                                 </Trigger>
 

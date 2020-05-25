@@ -7,7 +7,7 @@ using static PicView.AjaxLoader;
 using static PicView.ContextMenus;
 using static PicView.Error_Handling;
 using static PicView.Fields;
-using static PicView.Helper;
+using static PicView.Utilities;
 using static PicView.LoadControls;
 using static PicView.Navigation;
 using static PicView.Resize_and_Zoom;

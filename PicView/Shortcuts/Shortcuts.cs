@@ -6,7 +6,7 @@ using static PicView.DeleteFiles;
 using static PicView.Error_Handling;
 using static PicView.Fields;
 using static PicView.GalleryScroll;
-using static PicView.Helper;
+using static PicView.Utilities;
 using static PicView.HideInterfaceLogic;
 using static PicView.LoadWindows;
 using static PicView.Navigation;

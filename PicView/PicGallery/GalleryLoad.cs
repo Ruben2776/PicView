@@ -56,7 +56,7 @@ namespace PicView
                 picGallery.Container.Margin = new Thickness(0, 0, 0, 0);
                 ShowNavigation(false);
                 ShowTopandBottom(false);
-                Helper.RemoveBorderColor();
+                Utilities.UpdateColor(true);
                 FitToWindow = true;
             }
 

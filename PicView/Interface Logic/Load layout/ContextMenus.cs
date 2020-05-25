@@ -4,7 +4,7 @@ using System.Windows.Media;
 using static PicView.Copy_Paste;
 using static PicView.DeleteFiles;
 using static PicView.Fields;
-using static PicView.Helper;
+using static PicView.Utilities;
 using static PicView.Open_Save;
 using static PicView.RecentFiles;
 using static PicView.SvgIcons;

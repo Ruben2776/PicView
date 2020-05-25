@@ -687,61 +687,73 @@ namespace PicView.Windows
         private static void Blue(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 1;
+            Utilities.UpdateColor();
         }
 
         private static void Pink(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 2;
+            Utilities.UpdateColor();
         }
 
         private static void Orange(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 3;
+            Utilities.UpdateColor();
         }
 
         private static void Green(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 4;
+            Utilities.UpdateColor();
         }
 
         private static void Red(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 5;
+            Utilities.UpdateColor();
         }
 
         private static void Teal(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 6;
+            Utilities.UpdateColor();
         }
 
         private static void Aqua(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 7;
+            Utilities.UpdateColor();
         }
 
         private static void Beige(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 8;
+            Utilities.UpdateColor();
         }
 
         private static void Purple(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 9;
+            Utilities.UpdateColor();
         }
 
         private static void Cyan(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 10;
+            Utilities.UpdateColor();
         }
 
         private static void Magenta(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 11;
+            Utilities.UpdateColor();
         }
 
         private static void Grey(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 12;
+            Utilities.UpdateColor();
         }
 
         #endregion

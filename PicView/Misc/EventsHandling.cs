@@ -5,7 +5,7 @@ using static PicView.Copy_Paste;
 using static PicView.DeleteFiles;
 using static PicView.DragAndDrop;
 using static PicView.Fields;
-using static PicView.Helper;
+using static PicView.Utilities;
 using static PicView.HideInterfaceLogic;
 using static PicView.LoadWindows;
 using static PicView.MouseOverAnimations;

@@ -43,10 +43,18 @@ namespace PicView
 
         internal static void HandleRename()
         {
-            FileFunctions.RenameFile(Pics[FolderIndex], mainWindow.Bar.Text);
-            Pics[FolderIndex] = mainWindow.Bar.Text;
-            Refocus();
-            Error_Handling.Reload(); // TODO proper renaming of window title, tooltip, etc.
+            if (FileFunctions.RenameFile(Pics[FolderIndex], mainWindow.Bar.Text))
+            {
+                Pics[FolderIndex] = mainWindow.Bar.Text;
+                Refocus();
+                Error_Handling.Reload(); // TODO proper renaming of window title, tooltip, etc.
+            }
+            else
+            {
+                Tooltip.ToolTipStyle("An error occured moving file");
+                Refocus();
+            }
+
         }
 
         internal static void Refocus()

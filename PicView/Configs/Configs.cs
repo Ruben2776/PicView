@@ -121,7 +121,7 @@ namespace PicView
 
         internal static void SetScrolling(object sender, RoutedEventArgs e)
         {
-            var settingscm = cm.Items[6] as MenuItem;
+            var settingscm = cm.Items[7] as MenuItem;
             var scrollcm = settingscm.Items[1] as MenuItem;
             var scrollcmHeader = scrollcm.Header as CheckBox;
 
@@ -159,7 +159,9 @@ namespace PicView
 
         internal static void SetBorderColorEnabled(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.WindowBorderColorEnabled = Properties.Settings.Default.WindowBorderColorEnabled ? false : true;
+            bool value = Properties.Settings.Default.WindowBorderColorEnabled ? false : true;
+            Properties.Settings.Default.WindowBorderColorEnabled = value;
+            Utilities.UpdateColor(!value);
         }
 
         internal static void SetSlidetimer()

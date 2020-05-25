@@ -10,7 +10,7 @@ using static PicView.ArchiveExtraction;
 using static PicView.Error_Handling;
 using static PicView.Fields;
 using static PicView.FileLists;
-using static PicView.Helper;
+using static PicView.Utilities;
 using static PicView.ImageDecoder;
 using static PicView.Resize_and_Zoom;
 using static PicView.Scroll;

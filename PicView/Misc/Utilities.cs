@@ -6,7 +6,7 @@ using static PicView.Fields;
 
 namespace PicView
 {
-    internal static class Helper
+    internal static class Utilities
     {
         /// <summary>
         /// Greatest Common Divisor
@@ -59,18 +59,24 @@ namespace PicView
             }
         }
 
-        internal static void UpdateColor()
+        internal static void UpdateColor(bool remove = false)
         {
-            //TODO fix read only error
+            if (remove)
+            {
+                Application.Current.Resources["WindowBackgroundColorBrush"] = new SolidColorBrush(Colors.Black);
+                return;
+            }
 
             Application.Current.Resources["ChosenColor"] = AnimationHelper.GetPrefferedColorOver();
+            Application.Current.Resources["ChosenColorBrush"] = new SolidColorBrush(AnimationHelper.GetPrefferedColorOver());
 
             if (Properties.Settings.Default.WindowBorderColorEnabled)
             {
                 try
                 {
-                    var bgBrush = Application.Current.Resources["WindowBackgroundColorBrush"] as SolidColorBrush;
-                    bgBrush.Color = AnimationHelper.GetPrefferedColorOver();
+                    //var bgBrush = Application.Current.Resources["WindowBackgroundColorBrush"] as SolidColorBrush;
+                    //bgBrush.Color = AnimationHelper.GetPrefferedColorOver();
+                    Application.Current.Resources["WindowBackgroundColorBrush"] = new SolidColorBrush(AnimationHelper.GetPrefferedColorOver());
                 }
                 catch (System.Exception e)
                 {
@@ -81,29 +87,6 @@ namespace PicView
                 }
 
             }
-        }
-
-        internal static void RemoveBorderColor()
-        {
-            //TODO fix read only error
-
-            try
-            {
-                if (Properties.Settings.Default.WindowBorderColorEnabled)
-                {
-                    var bgBrush = Application.Current.Resources["WindowBackgroundColorBrush"] as SolidColorBrush;
-                    bgBrush.Color = Colors.Black;
-                }
-            }
-            catch (System.Exception e)
-            {
-#if DEBUG
-                Trace.WriteLine(nameof(RemoveBorderColor) + " threw exception:  " + e.Message);
-#endif
-
-                //throw;
-            }
-
         }
 
         internal static void ChangeBackground(object sender, RoutedEventArgs e)

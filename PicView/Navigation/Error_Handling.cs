@@ -8,7 +8,7 @@ using static PicView.AjaxLoader;
 using static PicView.DeleteFiles;
 using static PicView.Fields;
 using static PicView.FileLists;
-using static PicView.Helper;
+using static PicView.Utilities;
 using static PicView.ImageDecoder;
 using static PicView.Navigation;
 using static PicView.Resize_and_Zoom;

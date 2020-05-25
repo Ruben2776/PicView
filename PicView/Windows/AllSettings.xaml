@@ -215,8 +215,8 @@
                     VerticalAlignment="Center"
                     Content="Misc Settings"
                     Foreground="{StaticResource MainColorBrush}" />
+
                 <WrapPanel
-                    Width="332"
                     Margin="0,3,0,8"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Top"
@@ -324,9 +324,11 @@
                     HorizontalAlignment="Center"
                     Content="Image Stretching"
                     Foreground="{StaticResource MainColorBrush}" />
-                <StackPanel
-                    Width="320"
-                    Margin="0,3,0,10"
+
+                <WrapPanel
+                    Margin="0,3,0,8"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
                     Orientation="Horizontal">
                     <CheckBox
                         x:Name="ToggleScroll"
@@ -370,15 +372,8 @@
                             <SolidColorBrush x:Name="SetCenterBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </RadioButton.Background>
                     </RadioButton>
-                </StackPanel>
+                </WrapPanel>
 
-
-                <TextBlock
-                    Margin="0,5"
-                    FontStyle="Italic"
-                    TextAlignment="Center">
-                    Context menu hover color effects may require a restart to take effect
-                </TextBlock>
             </StackPanel>
         </ScrollViewer>
     </DockPanel>

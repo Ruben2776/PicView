@@ -177,7 +177,7 @@ namespace PicView
             IsOpen = false;
             fake.Hide();
 
-            Helper.UpdateColor();
+            Utilities.UpdateColor();
 
             HideInterfaceLogic.ShowStandardInterface();
         }
