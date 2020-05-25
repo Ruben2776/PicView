@@ -32,23 +32,28 @@ namespace PicView
             mainWindow.Bar.Text = Loading;
 
             BitmapSource pic;
+            if (Pics != null)
+            {
+                xPicPath = Pics[FolderIndex];
+            }
+
             try
             {
                 pic = await LoadImageWebAsync(path).ConfigureAwait(true);
             }
-#if DEBUG
+
             catch (Exception e)
             {
+#if DEBUG
                 Trace.WriteLine("PicWeb caught exception, message = " + e.Message);
+#endif
+                ToolTipStyle(e.Message, true);
                 pic = null;
             }
-#else
-            catch (Exception) { pic = null; }
-#endif
+
             if (pic == null)
             {
                 Reload(true);
-                ToolTipStyle("Unable to load image");
                 AjaxLoadingEnd();
                 return;
             }

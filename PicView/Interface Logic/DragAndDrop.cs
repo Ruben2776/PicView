@@ -124,26 +124,14 @@ namespace PicView
             if (e.Data.GetData(DataFormats.Html) != null)
             {
                 MemoryStream data = (MemoryStream)e.Data.GetData("text/x-moz-url");
-                string dataStr = Encoding.Unicode.GetString(data.ToArray());
-                string[] parts = dataStr.Split((char)10);
-
-                Pic(parts[0]);
-
-                if (parts.Length > 1)
+                if (data != null)
                 {
-                    Parallel.For(1, parts.Length, x =>
-                    {
-                        var myProcess = new Process
-                        {
-                            StartInfo = {
-                                    FileName = Assembly.GetExecutingAssembly().Location,
-                                    Arguments = parts[0][x].ToString()
-                                }
-                        };
-                        myProcess.Start();
-                    });
+                    string dataStr = Encoding.Unicode.GetString(data.ToArray());
+                    string[] parts = dataStr.Split((char)10);
+
+                    Pic(parts[0]);
+                    return;
                 }
-                return;
             }
 
             // Get files as strings
