@@ -155,6 +155,8 @@ namespace PicView
 
             // Bar
             mainWindow.Bar.MouseLeftButtonDown += Move;
+            mainWindow.Bar.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
+            mainWindow.Bar.Bar.PreviewKeyDown += CustomTextBox_KeyDown;
 
             // img
             mainWindow.img.MouseLeftButtonDown += Zoom_img_MouseLeftButtonDown;

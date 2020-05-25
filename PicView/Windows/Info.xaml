@@ -761,7 +761,8 @@
                     <Label
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
-                        Content="Fonts Used:" />
+                        Content="Fonts Used:"
+                        FontSize="16" />
                     <TextBlock
                         FontFamily="/PicView;component/Resources/fonts/#Aller"
                         FontSize="16"
@@ -797,7 +798,7 @@
 
 
                 <StackPanel Margin="0,7">
-                    <Label HorizontalAlignment="Center">Icons Used:</Label>
+                    <Label HorizontalAlignment="Center" FontSize="16">Icons Used:</Label>
                     <TextBlock
                         FontFamily="/PicView;component/Resources/fonts/#Aller"
                         FontSize="14"
@@ -826,6 +827,8 @@
                             </Hyperlink.Foreground>
                         </Hyperlink>
                     </TextBlock>
+
+
                     <TextBlock
                         x:Name="Ionic"
                         FontFamily="/PicView;component/Resources/fonts/#Aller"
@@ -839,6 +842,8 @@
                             </Hyperlink.Foreground>
                         </Hyperlink>
                     </TextBlock>
+
+
                     <TextBlock
                         x:Name="FontAwesome"
                         FontFamily="/PicView;component/Resources/fonts/#Aller"
@@ -852,6 +857,22 @@
                             </Hyperlink.Foreground>
                         </Hyperlink>
                     </TextBlock>
+
+                    <TextBlock
+                        x:Name="zondicons"
+                        FontFamily="/PicView;component/Resources/fonts/#Aller"
+                        FontSize="14"
+                        TextAlignment="Center"
+                        ToolTip="http://www.zondicons.com/icons.html">
+                        <Hyperlink NavigateUri="http://www.zondicons.com/icons.html" RequestNavigate="Hyperlink_RequestNavigate">
+                            Zondicons
+                            <Hyperlink.Foreground>
+                                <SolidColorBrush x:Name="zondiconsBrush" Color="{StaticResource MainColor}" />
+                            </Hyperlink.Foreground>
+                        </Hyperlink>
+                    </TextBlock>
+
+
                 </StackPanel>
 
                 <StackPanel Margin="0,70,0,0">

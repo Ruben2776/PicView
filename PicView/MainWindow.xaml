@@ -36,17 +36,16 @@
                 x:Name="MinButton"
                 VerticalAlignment="Center"
                 DockPanel.Dock="Right" />
-            <TextBlock
+
+            <uc:CustomTextBox
                 x:Name="Bar"
                 VerticalAlignment="Center"
                 Background="{x:Null}"
                 FontFamily="/PicView;component/Resources/fonts/#Aller"
                 FontSize="15"
                 FontWeight="Bold"
-                Foreground="{StaticResource MainColorBrush}"
-                Text="Loading..."
-                TextAlignment="Center"
-                TextTrimming="CharacterEllipsis" />
+                Foreground="{StaticResource MainColorBrush}"/>
+
         </DockPanel>
         <StackPanel
             x:Name="LowerBar"

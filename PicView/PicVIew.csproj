@@ -188,7 +188,7 @@
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
-    <FileVersion>0.9.7.5</FileVersion>
+    <FileVersion>0.9.7.7</FileVersion>
     <SignAssembly>false</SignAssembly>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <Copyright>Ruben Hyldgaard Negendahl</Copyright>

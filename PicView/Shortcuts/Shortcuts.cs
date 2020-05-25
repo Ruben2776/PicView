@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 using System.Windows.Input;
 using static PicView.Copy_Paste;
 using static PicView.DeleteFiles;
@@ -24,6 +25,11 @@ namespace PicView
 
         internal static void MainWindow_KeysDown(object sender, KeyEventArgs e)
         {
+            if (mainWindow.Bar.IsKeyboardFocusWithin)
+            {
+                return;
+            }
+
             switch (e.Key)
             {
                 case Key.BrowserForward:
@@ -236,6 +242,11 @@ namespace PicView
 
         internal static void MainWindow_KeysUp(object sender, KeyEventArgs e)
         {
+            if (mainWindow.Bar.IsFocused)
+            {
+                return;
+            }
+
             switch (e.Key)
             {
                 // FastPicUpdate()
@@ -422,7 +433,7 @@ namespace PicView
                     break;
                 // F2
                 case Key.F2:
-                    AllSettingsWindow();
+                    EditTitleBar.EditTitleBar_Text();
                     break;
                 // F3
                 case Key.F3:
@@ -430,6 +441,7 @@ namespace PicView
                     break;
                 // F4
                 case Key.F4:
+                    AllSettingsWindow();
                     break;
                 // F5
                 case Key.F5:
@@ -487,6 +499,20 @@ namespace PicView
 
                 case MouseButton.XButton2:
                     Pic();
+                    break;
+            }
+        }
+
+        internal static void CustomTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Enter:
+                    EditTitleBar.HandleRename();
+                    break;
+                case Key.Escape:
+                    EditTitleBar.Refocus();
+                    dialogOpen = true; // Hack to make escape not fall through
                     break;
             }
         }

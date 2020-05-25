@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -10,17 +11,15 @@ namespace PicView
 
         internal static bool RenameFile(string path, string newPath)
         {
-            if (File.Exists(path))
-            {
-                return false;
-            }
-
             try
             {
                 File.Move(path, newPath);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+#if DEBUG
+                Trace.WriteLine(e.Message);
+#endif
                 return false;
             }
             return true;
@@ -29,9 +28,10 @@ namespace PicView
 
 
         /// <summary>
-        /// Return file size in a readable format
+        /// Returns the human-readable file size for an arbitrary, 64-bit file size 
+        /// The default format is "0.### XB", e.g. "4.2 KB" or "1.434 GB"
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="i">FileInfo.Length</param>
         /// <returns></returns>
         /// Credits to http://www.somacon.com/p576.php
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]

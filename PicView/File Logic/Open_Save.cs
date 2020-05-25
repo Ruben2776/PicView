@@ -46,7 +46,7 @@ namespace PicView
         {
             dialogOpen = true;
 
-            var dlg = new Microsoft.Win32.OpenFileDialog()
+            var dlg = new OpenFileDialog()
             {
                 Filter = FilterFiles,
                 Title = "Open image - PicView"
@@ -64,8 +64,9 @@ namespace PicView
         }
 
         /// <summary>
-        /// Open a file dialog where user can select a supported file
+        /// Start Windows "Open With" function
         /// </summary>
+        /// <param name="file">The absolute path to the file</param>
         internal static void OpenWith(string file)
         {
             using (var process = new Process())                      

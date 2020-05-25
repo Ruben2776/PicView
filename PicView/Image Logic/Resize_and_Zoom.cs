@@ -60,6 +60,9 @@ namespace PicView
         /// <param name="e"></param>
         internal static void Zoom_img_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            // Fix focus
+            EditTitleBar.Refocus();
+
             // Move window when Ctrl is being held down
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
@@ -92,6 +95,9 @@ namespace PicView
 
         internal static void Bg_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            // Fix focus
+            EditTitleBar.Refocus();
+
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
                 Move(sender, e);
