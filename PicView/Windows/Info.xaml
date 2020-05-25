@@ -276,7 +276,7 @@
                                 <TableRow>
                                     <TableCell>
                                         <Paragraph>
-                                            <Bold>E</Bold>
+                                            <Bold>1</Bold>
                                         </Paragraph>
                                     </TableCell>
                                     <TableCell>
@@ -564,6 +564,17 @@
                                 <TableRow>
                                     <TableCell>
                                         <Paragraph>
+                                            <Bold>E</Bold>
+                                        </Paragraph>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Paragraph>Open with</Paragraph>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow Background="{StaticResource BorderBrush}">
+                                    <TableCell>
+                                        <Paragraph>
                                             <Bold>Ctrl + C</Bold>
                                         </Paragraph>
                                     </TableCell>
@@ -583,7 +594,7 @@
                                     </TableCell>
                                 </TableRow>
 
-                                <TableRow Background="{StaticResource BorderBrush}">
+                                <TableRow>
                                     <TableCell>
                                         <Paragraph>
                                             <Bold>Ctrl + V</Bold>
@@ -594,7 +605,7 @@
                                     </TableCell>
                                 </TableRow>
 
-                                <TableRow>
+                                <TableRow Background="{StaticResource BorderBrush}">
                                     <TableCell>
                                         <Paragraph>
                                             <Bold>Ctrl + P</Bold>
@@ -605,7 +616,7 @@
                                     </TableCell>
                                 </TableRow>
 
-                                <TableRow Background="{StaticResource BorderBrush}">
+                                <TableRow>
                                     <TableCell>
                                         <Paragraph>
                                             <Bold>Ctrl + R</Bold>
@@ -616,7 +627,7 @@
                                     </TableCell>
                                 </TableRow>
 
-                                <TableRow>
+                                <TableRow Background="{StaticResource BorderBrush}">
                                     <TableCell>
                                         <Paragraph />
                                     </TableCell>
@@ -625,7 +636,7 @@
                                     </TableCell>
                                 </TableRow>
 
-                                <TableRow Background="{StaticResource BorderBrush}">
+                                <TableRow>
                                     <TableCell>
                                         <Paragraph>
                                             <Bold>Delete</Bold>
@@ -636,7 +647,7 @@
                                     </TableCell>
                                 </TableRow>
 
-                                <TableRow>
+                                <TableRow Background="{StaticResource BorderBrush}">
                                     <TableCell>
                                         <Paragraph>
                                             <Bold>Shift + Delete</Bold>

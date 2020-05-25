@@ -87,6 +87,27 @@ namespace PicView
             printcm.Click += (s, x) => Print(Pics[FolderIndex]);
             cm.Items.Add(printcm);
 
+            ///////////////////////////
+            ///////////////////////////
+            ///     Open With      \\\\
+            ///////////////////////////
+            ///////////////////////////
+            var openwcm = new MenuItem
+            {
+                Header = "Open with...",
+                InputGestureText = "E"
+            };
+            var openwIcon = new System.Windows.Shapes.Path
+            {
+                Data = Geometry.Parse(SVGiconSend),
+                Stretch = Stretch.Fill
+            };
+            openwIcon.Width = openwIcon.Height = 12;
+            openwIcon.Fill = scbf;
+            openwcm.Icon = openwIcon;
+            openwcm.Click += (s, x) => OpenWith(Pics[FolderIndex]);
+            cm.Items.Add(openwcm);
+
 
             ///////////////////////////
             ///////////////////////////
@@ -304,7 +325,7 @@ namespace PicView
             ///////////////////////////
             var fitcm = new MenuItem
             {
-                InputGestureText = "E"
+                InputGestureText = "1"
             };
             var fitcmHeader = new CheckBox
             {

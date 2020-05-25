@@ -395,7 +395,7 @@ namespace PicView
                     break;
                 // E
                 case Key.E:
-                    FitToWindow = FitToWindow ? false : true;
+                    OpenWith(Pics[FolderIndex]);
                     break;
                 // T
                 case Key.T:
@@ -412,6 +412,9 @@ namespace PicView
                         }
                     }
                     CenterWindowOnScreen();
+                    break;
+                case Key.D1:
+                    FitToWindow = FitToWindow ? false : true;
                     break;
                 // F1
                 case Key.F1:

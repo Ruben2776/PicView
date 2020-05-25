@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Diagnostics;
 using System.IO;
 using static PicView.Error_Handling;
@@ -63,13 +64,39 @@ namespace PicView
         }
 
         /// <summary>
+        /// Open a file dialog where user can select a supported file
+        /// </summary>
+        internal static void OpenWith(string file)
+        {
+            using (var process = new Process())                      
+            {
+                process.StartInfo.FileName = "openwith";
+                process.StartInfo.Arguments = $"\"{file}\"";
+                process.StartInfo.ErrorDialog = true;
+                try
+                {
+                    process.Start();
+                }
+                catch (Exception e)
+                {
+#if DEBUG
+                    Trace.WriteLine("OpenWith exception \n" + e.Message);
+
+#endif
+                    ToolTipStyle(e.Message, true);
+                }
+                
+            }
+        }
+
+        /// <summary>
         /// Open a File Dialog, where the user can save a supported file type.
         /// </summary>
         internal static void SaveFiles()
         {
             dialogOpen = true;
 
-            var Savedlg = new Microsoft.Win32.SaveFileDialog()
+            var Savedlg = new SaveFileDialog()
             {
                 Filter = FilterFiles,
                 Title = "Save image - PicView",
@@ -78,7 +105,7 @@ namespace PicView
 
             if (!string.IsNullOrEmpty(Pics[FolderIndex]))
             {
-                if (Savedlg.ShowDialog() == true)
+                if (Savedlg.ShowDialog().Value)
                 {
                     if (!TrySaveImage(Rotateint, Flipped, Pics[FolderIndex], Savedlg.FileName))
                     {
