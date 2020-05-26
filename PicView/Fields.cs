@@ -215,7 +215,7 @@ namespace PicView
         /// <summary>
         /// Timer used for slideshow
         /// </summary>
-        //internal static Timer Slidetimer;
+        internal static Timer SlideTimer;
 
         /// <summary>
         /// Backup of image

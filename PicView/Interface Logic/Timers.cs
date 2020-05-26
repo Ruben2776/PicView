@@ -35,13 +35,6 @@ namespace PicView
             //};
             //fastPicTimer.Elapsed += FastPic;
 
-            //Slidetimer = new Timer()
-            //{
-            //    Interval = Properties.Settings.Default.Slidetimeren,
-            //    Enabled = false
-            //};
-            //Slidetimer.Elapsed += SlideShow.SlideTimer_Elapsed;
-
             //HideCursorTimer = new Timer()
             //{
             //    Interval = 2500,

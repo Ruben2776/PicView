@@ -241,13 +241,13 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10000")]
-        public double Slidetimeren {
+        [global::System.Configuration.DefaultSettingValueAttribute("7000")]
+        public double SlideTimer {
             get {
-                return ((double)(this["Slidetimeren"]));
+                return ((double)(this["SlideTimer"]));
             }
             set {
-                this["Slidetimeren"] = value;
+                this["SlideTimer"] = value;
             }
         }
         

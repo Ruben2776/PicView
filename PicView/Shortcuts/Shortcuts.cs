@@ -264,7 +264,17 @@ namespace PicView
                     }
                     if (Properties.Settings.Default.Fullscreen)
                     {
-                        Fullscreen_Restore();
+                        if (SlideTimer != null)
+                        {
+                            if (SlideTimer.Enabled)
+                            {
+                                SlideShow.StopSlideshow();
+                            }
+                        }
+                        else
+                        {
+                            Fullscreen_Restore();
+                        }
                         return;
                     }
                     if (Properties.Settings.Default.PicGallery > 0)
@@ -452,10 +462,11 @@ namespace PicView
                     break;
                 // F11
                 case Key.F11:
-                    Fullscreen_Restore();
+                    SlideShow.StartSlideshow();
                     break;
                 // F12
                 case Key.F12:
+                    Fullscreen_Restore();
                     break;
                 // Home
                 case Key.Home:

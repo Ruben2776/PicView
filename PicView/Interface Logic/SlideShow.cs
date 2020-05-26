@@ -1,11 +1,8 @@
 ﻿using System;
-using System.IO;
-using System.Windows;
-using System.Windows.Input;
+using System.Timers;
+using System.Windows.Threading;
 using static PicView.Fields;
-using static PicView.HideInterfaceLogic;
 using static PicView.Navigation;
-using static PicView.Tooltip;
 using static PicView.WindowLogic;
 
 namespace PicView
@@ -17,46 +14,48 @@ namespace PicView
         /// <summary>
         /// Maximize and removes Interface and start timer for slideshow.
         /// </summary>
-        internal static void LoadSlideshow()
+        internal static void StartSlideshow()
         {
-            //Slidetimer.Interval = Properties.Settings.Default.Slidetimeren;
-            //if (!File.Exists(Pics[FolderIndex]))
-            //{
-            //    ToolTipStyle("There was no image(s) to show.");
-            //    return;
-            //}
+            if (Pics.Count == 0)
+            {
+                return;
+            }
 
-            //if (mainWindow.WindowState == WindowState.Maximized)
-            //{
-            //    Maximize_Restore();
-            //}
+            if (SlideTimer == null)
+            {
+                SlideTimer = new Timer()
+                {
+                    //Interval = 3000,
+                    Interval = Properties.Settings.Default.SlideTimer,
+                    Enabled = true
+                };
+                SlideTimer.Elapsed += SlideTimer_Elapsed;
+                SlideTimer.Start();
+            }
+            else
+            {
+                StopSlideshow();
+                return;
+            }
 
-            //ToggleInterface();
-            //mainWindow.Topmost = true;
-            //FitToWindow = false;
-            //mainWindow.Width = mainWindow.bg.Width = SystemParameters.PrimaryScreenWidth;
-            //mainWindow.Height = mainWindow.bg.Height = SystemParameters.PrimaryScreenHeight;
-            //mainWindow.Top = 0;
-            //mainWindow.Left = 0;
+            if (!Properties.Settings.Default.Fullscreen)
+            {
+                Fullscreen_Restore(true);
+            }
 
-            //Mouse.OverrideCursor = Cursors.None;
-            //NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED);
-            //SlideshowActive = true;
-            //Slidetimer.Start();
+            _ = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED); // Stop screensaver when running
         }
 
-        internal static void UnloadSlideshow()
+        internal static void StopSlideshow()
         {
-            //ToggleInterface();
-            //mainWindow.Topmost = false;
-            //FitToWindow = true;
-            //mainWindow.bg.Width = double.NaN;
-            //mainWindow.bg.Height = double.NaN;
+            SlideTimer.Stop();
 
-            //Mouse.OverrideCursor = null;
-            //NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
-            //SlideshowActive = false;
-            //Slidetimer.Stop();
+            if (Properties.Settings.Default.Fullscreen)
+            {
+                Fullscreen_Restore();
+            }
+
+            _ = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS); // Allow screensaver again
         }
 
         /// <summary>
@@ -64,14 +63,15 @@ namespace PicView
         /// </summary>
         /// <param name="server"></param>
         /// <param name="e"></param>
-        internal static async void SlideTimer_Elapsed(object server, System.Timers.ElapsedEventArgs e)
+        internal static async void SlideTimer_Elapsed(object server, ElapsedEventArgs e)
         {
-            //await Application.Current.MainWindow.Dispatcher.BeginInvoke((Action)(() =>
-            //{
-            //    AnimationHelper.Fade(mainWindow.img, 0, TimeSpan.FromSeconds(.5));
-            //    Pic(true, false);
-            //    AnimationHelper.Fade(mainWindow.img, 1, TimeSpan.FromSeconds(.5));
-            //}));
+            await mainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+            {
+                // TODO make fancy pants animations work
+                //AnimationHelper.Fade(mainWindow.img, TimeSpan.FromSeconds(0.6), TimeSpan.FromSeconds(1), 1, 0);
+                //AnimationHelper.Fade(mainWindow.img, TimeSpan.FromSeconds(0.6), TimeSpan.FromSeconds(1), 0, 1);
+                Pic();
+            }));
         }
     }
 }

@@ -161,11 +161,13 @@ namespace PicView.Windows
                 ToggleScroll.PreviewMouseLeftButtonDown += ToggleScroll_PreviewMouseLeftButtonDown;
                 ToggleScroll.MouseEnter += ToggleScroll_MouseEnter;
                 ToggleScroll.MouseLeave += ToggleScroll_MouseLeave;
+                ToggleScroll.IsChecked = Properties.Settings.Default.ScrollEnabled;
 
                 // Set Fit
                 SetFit.PreviewMouseLeftButtonDown += SetFit_PreviewMouseLeftButtonDown;
                 SetFit.MouseEnter += SetFit_MouseEnter;
                 SetFit.MouseLeave += SetFit_MouseLeave;
+                SetFit.IsChecked = Properties.Settings.Default.FitToWindow;
 
                 // Fill
                 Fill.PreviewMouseLeftButtonDown += Fill_PreviewMouseLeftButtonDown;
@@ -216,7 +218,15 @@ namespace PicView.Windows
                 SetCenter.PreviewMouseLeftButtonDown += SetCenter_PreviewMouseLeftButtonDown;
                 SetCenter.MouseEnter += SetCenter_MouseEnter;
                 SetCenter.MouseLeave += SetCenter_MouseLeave;
+
+                SlideshowSlider.Value = Properties.Settings.Default.SlideTimer / 1000;
+                SlideshowSlider.ValueChanged += SlideshowSlider_ValueChanged;
             };
+        }
+
+        private void SlideshowSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Properties.Settings.Default.SlideTimer = e.NewValue * 1000;
         }
 
         private void KeysDown(object sender, KeyEventArgs e)
