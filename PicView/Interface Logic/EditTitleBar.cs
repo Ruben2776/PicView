@@ -8,8 +8,21 @@ namespace PicView
     {
         private static string backupTitle;
 
+        internal static void Bar_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // Disable focus when unloaded
+            if (Pics.Count == 0)
+            {
+                e.Handled = true;
+            }
+        }
+
         internal static void EditTitleBar_Text()
         {
+            if (!Properties.Settings.Default.ShowInterface)
+            {
+                return;
+            }
             if (!mainWindow.Bar.IsFocused)
             {
                 mainWindow.Bar.Bar.Focus();
@@ -18,12 +31,11 @@ namespace PicView
             {
                 Refocus();
             }
-            
         }
 
         internal static void EditTitleBar_Text(object sender, KeyboardFocusChangedEventArgs e)
         {
-            if (Pics == null)
+            if (Pics == null || !Properties.Settings.Default.ShowInterface)
             {
                 return;
             }
@@ -54,7 +66,6 @@ namespace PicView
                 Tooltip.ToolTipStyle("An error occured moving file");
                 Refocus();
             }
-
         }
 
         internal static void Refocus()
