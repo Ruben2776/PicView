@@ -27,7 +27,7 @@ namespace PicView
                 PreloadCount = 4;
                 Pic(Pics.IndexOf(tmp));
             }
-            var sortcm = cm.Items[5] as MenuItem;
+            var sortcm = cm.Items[6] as MenuItem;
 
             var sort0 = sortcm.Items[0] as MenuItem;
             var sort0Header = sort0.Header as RadioButton;

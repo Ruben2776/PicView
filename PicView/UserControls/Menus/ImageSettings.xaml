@@ -47,202 +47,134 @@
                     StrokeThickness="1" />
 
                 <Button
-                    x:Name="BgButton"
+                    x:Name="SlideshowButton"
                     Canvas.Left="0"
                     Width="51"
                     Height="51"
                     BorderBrush="{x:Null}"
                     FontWeight="Bold"
                     Foreground="{x:Null}"
-                    ToolTip="Change between white and transparent background for images">
+                    ToolTip="Start Slideshow [F11]">
                     <Button.Background>
-                        <SolidColorBrush x:Name="BgButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        <SolidColorBrush x:Name="SlideshowButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Button.Background>
                     <Path
                         Width="17"
                         Height="17"
-                        Data="M424 64H88c-26.6 0-48 21.6-48 48v288c0 26.4 21.4 48 48 48h336c26.4 0 48-21.6 48-48V112c0-26.4-21.4-48-48-48zm0 336H88V176h336v224z"
+                        Data="M20 16v16l10-8-10-8zm18-10h-28c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4v-28c0-2.21-1.79-4-4-4zm0 32h-28v-28h28v28z"
                         Stretch="Fill">
                         <Path.Fill>
-                            <SolidColorBrush x:Name="BgBrush" Color="{StaticResource MainColor}" />
+                            <SolidColorBrush x:Name="SlideshowBrush" Color="{StaticResource MainColor}" />
                         </Path.Fill>
                     </Path>
                 </Button>
 
                 <Button
-                    x:Name="GalleryButton1"
+                    x:Name="RotateLeftButton"
                     Canvas.Left="51"
                     Width="51"
                     Height="51"
                     BorderBrush="{x:Null}"
                     FontWeight="Bold"
                     Foreground="{x:Null}"
-                    ToolTip="Show contained image gallery">
+                    ToolTip="Rotate left">
                     <Button.Background>
-                        <SolidColorBrush x:Name="GalleryButton1Brush" Color="{StaticResource BackgroundColorAlt}" />
+                        <SolidColorBrush x:Name="RotateLeftButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Button.Background>
-                    <Button.Content>
-                        <Image Width="17" Height="17">
-                            <Image.Source>
-                                <DrawingImage x:Name="image_outlineDrawingImage">
-                                    <DrawingImage.Drawing>
-                                        <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                            <GeometryDrawing>
-                                                <GeometryDrawing.Pen>
-                                                    <Pen
-                                                        x:Name="gallery1pen1"
-                                                        Brush="{StaticResource MainColorBrush}"
-                                                        EndLineCap="Flat"
-                                                        LineJoin="Round"
-                                                        StartLineCap="Flat"
-                                                        Thickness="32" />
-                                                </GeometryDrawing.Pen>
-                                                <GeometryDrawing.Geometry>
-                                                    <RectangleGeometry
-                                                        RadiusX="48"
-                                                        RadiusY="48"
-                                                        Rect="48,80,416,352" />
-                                                </GeometryDrawing.Geometry>
-                                            </GeometryDrawing>
-                                            <GeometryDrawing>
-                                                <GeometryDrawing.Pen>
-                                                    <Pen
-                                                        x:Name="gallery1pen2"
-                                                        Brush="{StaticResource MainColorBrush}"
-                                                        EndLineCap="Flat"
-                                                        LineJoin="Miter"
-                                                        StartLineCap="Flat"
-                                                        Thickness="32" />
-                                                </GeometryDrawing.Pen>
-                                                <GeometryDrawing.Geometry>
-                                                    <EllipseGeometry
-                                                        Center="336,176"
-                                                        RadiusX="32"
-                                                        RadiusY="32" />
-                                                </GeometryDrawing.Geometry>
-                                            </GeometryDrawing>
-                                            <GeometryDrawing Geometry="F1 M512,512z M0,0z M304,335.79L213.34,245.3A32,32,0,0,0,169.47,244L48,352">
-                                                <GeometryDrawing.Pen>
-                                                    <Pen
-                                                        x:Name="gallery1pen3"
-                                                        Brush="{StaticResource MainColorBrush}"
-                                                        EndLineCap="Round"
-                                                        LineJoin="Round"
-                                                        StartLineCap="Round"
-                                                        Thickness="32" />
-                                                </GeometryDrawing.Pen>
-                                            </GeometryDrawing>
-                                            <GeometryDrawing Geometry="F1 M512,512z M0,0z M224,432L347.34,308.66A32,32,0,0,1,390.45,306.66L464,368">
-                                                <GeometryDrawing.Pen>
-                                                    <Pen
-                                                        x:Name="gallery1pen4"
-                                                        Brush="{StaticResource MainColorBrush}"
-                                                        EndLineCap="Round"
-                                                        LineJoin="Round"
-                                                        StartLineCap="Round"
-                                                        Thickness="32" />
-                                                </GeometryDrawing.Pen>
-                                            </GeometryDrawing>
-                                        </DrawingGroup>
-                                    </DrawingImage.Drawing>
-                                </DrawingImage>
-                            </Image.Source>
-                        </Image>
-                    </Button.Content>
+                    <Image
+                        Canvas.Left="79"
+                        Canvas.Top="-8"
+                        Width="17"
+                        Height="17">
+                        <Image.Source>
+                            <DrawingImage>
+                                <DrawingImage.Drawing>
+                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M320,146C320,146,344.36,134,256,134A160,160,0,1,0,416,294">
+                                            <GeometryDrawing.Pen>
+                                                <Pen
+                                                    Brush="{StaticResource MainColorBrush}"
+                                                    EndLineCap="Round"
+                                                    LineJoin="Miter"
+                                                    StartLineCap="Round"
+                                                    Thickness="32" />
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M256,58L256,58 336,138 256,218">
+                                            <GeometryDrawing.Pen>
+                                                <Pen
+                                                    Brush="{StaticResource MainColorBrush}"
+                                                    EndLineCap="Round"
+                                                    LineJoin="Round"
+                                                    StartLineCap="Round"
+                                                    Thickness="32" />
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                    </DrawingGroup>
+                                </DrawingImage.Drawing>
+                            </DrawingImage>
+                        </Image.Source>
+                    </Image>
                 </Button>
 
                 <Button
-                    x:Name="GalleryButton2"
+                    x:Name="RotateRightButton"
                     Canvas.Left="102"
                     Width="51"
                     Height="51"
                     BorderBrush="{x:Null}"
                     FontWeight="Bold"
                     Foreground="{x:Null}"
-                    ToolTip="Show fullscreen image gallery">
+                    ToolTip="Rotate right">
                     <Button.Background>
-                        <SolidColorBrush x:Name="GalleryButton2Brush" Color="{StaticResource BackgroundColorAlt}" />
+                        <SolidColorBrush x:Name="RotateRightButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Button.Background>
-                    <Button.Content>
-                        <Image Width="17" Height="17">
-                            <Image.Source>
-                                <DrawingImage x:Name="images_outlineDrawingImages">
-                                    <DrawingImage.Drawing>
-                                        <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                            <GeometryDrawing Geometry="F1 M512,512z M0,0z M432,112L432,96A48.14,48.14,0,0,0,384,48L64,48A48.14,48.14,0,0,0,16,96L16,352A48.14,48.14,0,0,0,64,400L80,400">
-                                                <GeometryDrawing.Pen>
-                                                    <Pen
-                                                        x:Name="gallery2pen1"
-                                                        Brush="{StaticResource MainColorBrush}"
-                                                        EndLineCap="Flat"
-                                                        LineJoin="Round"
-                                                        StartLineCap="Flat"
-                                                        Thickness="32" />
-                                                </GeometryDrawing.Pen>
-                                            </GeometryDrawing>
-                                            <GeometryDrawing>
-                                                <GeometryDrawing.Pen>
-                                                    <Pen
-                                                        x:Name="gallery2pen2"
-                                                        Brush="{StaticResource MainColorBrush}"
-                                                        EndLineCap="Flat"
-                                                        LineJoin="Round"
-                                                        StartLineCap="Flat"
-                                                        Thickness="32" />
-                                                </GeometryDrawing.Pen>
-                                                <GeometryDrawing.Geometry>
-                                                    <RectangleGeometry
-                                                        RadiusX="45.99"
-                                                        RadiusY="45.99"
-                                                        Rect="96,128,400,336" />
-                                                </GeometryDrawing.Geometry>
-                                            </GeometryDrawing>
-                                            <GeometryDrawing>
-                                                <GeometryDrawing.Pen>
-                                                    <Pen
-                                                        x:Name="gallery2pen3"
-                                                        Brush="{StaticResource MainColorBrush}"
-                                                        EndLineCap="Flat"
-                                                        LineJoin="Miter"
-                                                        StartLineCap="Flat"
-                                                        Thickness="32" />
-                                                </GeometryDrawing.Pen>
-                                                <GeometryDrawing.Geometry>
-                                                    <EllipseGeometry
-                                                        Center="372.92,219.64"
-                                                        RadiusX="30.77"
-                                                        RadiusY="30.55" />
-                                                </GeometryDrawing.Geometry>
-                                            </GeometryDrawing>
-                                            <GeometryDrawing Geometry="F1 M512,512z M0,0z M342.15,372.17L255,285.78A30.93,30.93,0,0,0,212.82,284.57L96,387.64">
-                                                <GeometryDrawing.Pen>
-                                                    <Pen
-                                                        x:Name="gallery2pen4"
-                                                        Brush="{StaticResource MainColorBrush}"
-                                                        EndLineCap="Round"
-                                                        LineJoin="Round"
-                                                        StartLineCap="Round"
-                                                        Thickness="32" />
-                                                </GeometryDrawing.Pen>
-                                            </GeometryDrawing>
-                                            <GeometryDrawing Geometry="F1 M512,512z M0,0z M265.23,464L383.82,346.27A31,31,0,0,1,425.28,344.4L496,402.91">
-                                                <GeometryDrawing.Pen>
-                                                    <Pen
-                                                        x:Name="gallery2pen5"
-                                                        Brush="{StaticResource MainColorBrush}"
-                                                        EndLineCap="Round"
-                                                        LineJoin="Round"
-                                                        StartLineCap="Round"
-                                                        Thickness="32" />
-                                                </GeometryDrawing.Pen>
-                                            </GeometryDrawing>
-                                        </DrawingGroup>
-                                    </DrawingImage.Drawing>
-                                </DrawingImage>
-                            </Image.Source>
-                        </Image>
-                    </Button.Content>
+                    <Image
+                        Canvas.Left="79"
+                        Canvas.Top="-8"
+                        Width="17"
+                        Height="17"
+                        RenderTransformOrigin="0.5,0.5">
+                        <Image.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="-1" />
+                                <SkewTransform />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Image.RenderTransform>
+                        <Image.Source>
+                            <DrawingImage>
+                                <DrawingImage.Drawing>
+                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M320,146C320,146,344.36,134,256,134A160,160,0,1,0,416,294">
+                                            <GeometryDrawing.Pen>
+                                                <Pen
+                                                    Brush="{StaticResource MainColorBrush}"
+                                                    EndLineCap="Round"
+                                                    LineJoin="Miter"
+                                                    StartLineCap="Round"
+                                                    Thickness="32" />
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M256,58L256,58 336,138 256,218">
+                                            <GeometryDrawing.Pen>
+                                                <Pen
+                                                    Brush="{StaticResource MainColorBrush}"
+                                                    EndLineCap="Round"
+                                                    LineJoin="Round"
+                                                    StartLineCap="Round"
+                                                    Thickness="32" />
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                    </DrawingGroup>
+                                </DrawingImage.Drawing>
+                            </DrawingImage>
+                        </Image.Source>
+                    </Image>
                 </Button>
+
+
 
 
                 <CheckBox
@@ -290,82 +222,222 @@
                 </Button>
 
                 <Border
-                    x:Name="Rotation0Border"
-                    Canvas.Left="7"
-                    Canvas.Top="58"
+                    x:Name="Fullscreen_Gallery_Border"
+                    Canvas.Left="9"
+                    Canvas.Top="59"
+                    Width="240"
                     Style="{StaticResource SexyBorder}">
-                    <RadioButton
-                        x:Name="Rotation0Button"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Content="0°"
+                    <Button
+                        x:Name="Fullscreen_Gallery"
+                        FocusVisualStyle="{x:Null}"
+                        FontSize="14"
                         FontWeight="Bold"
-                        IsChecked="True"
-                        Style="{StaticResource MetroAlphaFlatRadioButton}" />
+                        ToolTip="Show fullscreen image gallery">
+                        <Canvas>
+                            <Image
+                                Canvas.Left="79"
+                                Canvas.Top="-8"
+                                Width="17"
+                                Height="17">
+                                <Image.Source>
+                                    <DrawingImage x:Name="images_outlineDrawingImages">
+                                        <DrawingImage.Drawing>
+                                            <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                                <GeometryDrawing Geometry="F1 M512,512z M0,0z M432,112L432,96A48.14,48.14,0,0,0,384,48L64,48A48.14,48.14,0,0,0,16,96L16,352A48.14,48.14,0,0,0,64,400L80,400">
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            x:Name="gallery2pen1"
+                                                            Brush="{StaticResource MainColorBrush}"
+                                                            EndLineCap="Flat"
+                                                            LineJoin="Round"
+                                                            StartLineCap="Flat"
+                                                            Thickness="32" />
+                                                    </GeometryDrawing.Pen>
+                                                </GeometryDrawing>
+                                                <GeometryDrawing>
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            x:Name="gallery2pen2"
+                                                            Brush="{StaticResource MainColorBrush}"
+                                                            EndLineCap="Flat"
+                                                            LineJoin="Round"
+                                                            StartLineCap="Flat"
+                                                            Thickness="32" />
+                                                    </GeometryDrawing.Pen>
+                                                    <GeometryDrawing.Geometry>
+                                                        <RectangleGeometry
+                                                            RadiusX="45.99"
+                                                            RadiusY="45.99"
+                                                            Rect="96,128,400,336" />
+                                                    </GeometryDrawing.Geometry>
+                                                </GeometryDrawing>
+                                                <GeometryDrawing>
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            x:Name="gallery2pen3"
+                                                            Brush="{StaticResource MainColorBrush}"
+                                                            EndLineCap="Flat"
+                                                            LineJoin="Miter"
+                                                            StartLineCap="Flat"
+                                                            Thickness="32" />
+                                                    </GeometryDrawing.Pen>
+                                                    <GeometryDrawing.Geometry>
+                                                        <EllipseGeometry
+                                                            Center="372.92,219.64"
+                                                            RadiusX="30.77"
+                                                            RadiusY="30.55" />
+                                                    </GeometryDrawing.Geometry>
+                                                </GeometryDrawing>
+                                                <GeometryDrawing Geometry="F1 M512,512z M0,0z M342.15,372.17L255,285.78A30.93,30.93,0,0,0,212.82,284.57L96,387.64">
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            x:Name="gallery2pen4"
+                                                            Brush="{StaticResource MainColorBrush}"
+                                                            EndLineCap="Round"
+                                                            LineJoin="Round"
+                                                            StartLineCap="Round"
+                                                            Thickness="32" />
+                                                    </GeometryDrawing.Pen>
+                                                </GeometryDrawing>
+                                                <GeometryDrawing Geometry="F1 M512,512z M0,0z M265.23,464L383.82,346.27A31,31,0,0,1,425.28,344.4L496,402.91">
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            x:Name="gallery2pen5"
+                                                            Brush="{StaticResource MainColorBrush}"
+                                                            EndLineCap="Round"
+                                                            LineJoin="Round"
+                                                            StartLineCap="Round"
+                                                            Thickness="32" />
+                                                    </GeometryDrawing.Pen>
+                                                </GeometryDrawing>
+                                            </DrawingGroup>
+                                        </DrawingImage.Drawing>
+                                    </DrawingImage>
+                                </Image.Source>
+                            </Image>
+                            <TextBlock
+                                Canvas.Left="-89"
+                                Canvas.Top="-9"
+                                FontSize="14"
+                                FontWeight="Bold"
+                                Text="Show fullscreen gallery" />
+                        </Canvas>
+                    </Button>
                     <Border.Background>
-                        <SolidColorBrush x:Name="Rotation0BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
-                    </Border.Background>
-                </Border>
-                <Border
-                    x:Name="Rotation90Border"
-                    Canvas.Left="132"
-                    Canvas.Top="58"
-                    Style="{StaticResource SexyBorder}">
-                    <RadioButton
-                        x:Name="Rotation90Button"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Content="90°"
-                        FontWeight="Bold"
-                        Style="{StaticResource MetroAlphaFlatRadioButton}" />
-                    <Border.Background>
-                        <SolidColorBrush x:Name="Rotation90BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        <SolidColorBrush x:Name="FullscreenBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Border.Background>
                 </Border>
 
                 <Border
-                    x:Name="Rotation180Border"
-                    Canvas.Left="132"
+                    x:Name="Contained_Gallery_Border"
+                    Canvas.Left="9"
                     Canvas.Top="116"
+                    Width="240"
                     Style="{StaticResource SexyBorder}">
-                    <RadioButton
-                        x:Name="Rotation180Button"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Content="180°"
+                    <Button
+                        x:Name="Contained_Gallery"
+                        FocusVisualStyle="{x:Null}"
+                        FontSize="14"
                         FontWeight="Bold"
-                        Style="{StaticResource MetroAlphaFlatRadioButton}" />
+                        ToolTip="Show fullscreen image gallery">
+                        <Canvas>
+                            <Image
+                                Canvas.Left="79"
+                                Canvas.Top="-8"
+                                Width="17"
+                                Height="17">
+                                <Image.Source>
+                                    <DrawingImage x:Name="image_outlineDrawingImage">
+                                        <DrawingImage.Drawing>
+                                            <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                                <GeometryDrawing>
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            x:Name="gallery1pen1"
+                                                            Brush="{StaticResource MainColorBrush}"
+                                                            EndLineCap="Flat"
+                                                            LineJoin="Round"
+                                                            StartLineCap="Flat"
+                                                            Thickness="32" />
+                                                    </GeometryDrawing.Pen>
+                                                    <GeometryDrawing.Geometry>
+                                                        <RectangleGeometry
+                                                            RadiusX="48"
+                                                            RadiusY="48"
+                                                            Rect="48,80,416,352" />
+                                                    </GeometryDrawing.Geometry>
+                                                </GeometryDrawing>
+                                                <GeometryDrawing>
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            x:Name="gallery1pen2"
+                                                            Brush="{StaticResource MainColorBrush}"
+                                                            EndLineCap="Flat"
+                                                            LineJoin="Miter"
+                                                            StartLineCap="Flat"
+                                                            Thickness="32" />
+                                                    </GeometryDrawing.Pen>
+                                                    <GeometryDrawing.Geometry>
+                                                        <EllipseGeometry
+                                                            Center="336,176"
+                                                            RadiusX="32"
+                                                            RadiusY="32" />
+                                                    </GeometryDrawing.Geometry>
+                                                </GeometryDrawing>
+                                                <GeometryDrawing Geometry="F1 M512,512z M0,0z M304,335.79L213.34,245.3A32,32,0,0,0,169.47,244L48,352">
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            x:Name="gallery1pen3"
+                                                            Brush="{StaticResource MainColorBrush}"
+                                                            EndLineCap="Round"
+                                                            LineJoin="Round"
+                                                            StartLineCap="Round"
+                                                            Thickness="32" />
+                                                    </GeometryDrawing.Pen>
+                                                </GeometryDrawing>
+                                                <GeometryDrawing Geometry="F1 M512,512z M0,0z M224,432L347.34,308.66A32,32,0,0,1,390.45,306.66L464,368">
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            x:Name="gallery1pen4"
+                                                            Brush="{StaticResource MainColorBrush}"
+                                                            EndLineCap="Round"
+                                                            LineJoin="Round"
+                                                            StartLineCap="Round"
+                                                            Thickness="32" />
+                                                    </GeometryDrawing.Pen>
+                                                </GeometryDrawing>
+                                            </DrawingGroup>
+                                        </DrawingImage.Drawing>
+                                    </DrawingImage>
+                                </Image.Source>
+                            </Image>
+                            <TextBlock
+                                Canvas.Left="-89"
+                                Canvas.Top="-9"
+                                FontSize="14"
+                                FontWeight="Bold"
+                                Text="Show contained gallery" />
+                        </Canvas>
+                    </Button>
                     <Border.Background>
-                        <SolidColorBrush x:Name="Rotation180BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        <SolidColorBrush x:Name="ContainedBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Border.Background>
                 </Border>
-                <Border
-                    x:Name="Rotation270Border"
-                    Canvas.Left="7"
-                    Canvas.Top="116"
-                    Style="{StaticResource SexyBorder}">
-                    <RadioButton
-                        x:Name="Rotation270Button"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Content="270°"
-                        FontWeight="Bold"
-                        Style="{StaticResource MetroAlphaFlatRadioButton}" />
-                    <Border.Background>
-                        <SolidColorBrush x:Name="Rotation270BorderBrush" Color="{StaticResource BackgroundColorAlt}" />
-                    </Border.Background>
-                </Border>
+
+
+
+
             </Canvas>
 
         </Border>
         <Rectangle
             Width="22"
             Height="2"
-            Margin="54,-2,0,0"
+            Margin="33,-2,0,0"
             HorizontalAlignment="Left"
             Fill="{StaticResource BackgroundColorBrush}" />
         <Polygon
-            Margin="50,-7,0,0"
+            Margin="30,-7,0,0"
             Panel.ZIndex="-1"
             Fill="{StaticResource BackgroundColorBrush}"
             Points="0,0 15,30, 30,0"

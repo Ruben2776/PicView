@@ -12,171 +12,209 @@
             BorderThickness="1"
             CornerRadius="2">
             <Canvas>
-                    <Rectangle
-                        Canvas.Top="50"
-                        Width="258"
-                        Panel.ZIndex="1"
-                        Stroke="{StaticResource BorderBrush}"
-                        StrokeThickness="1" />
-                    <Rectangle
-                        Canvas.Left="101"
-                        Width="1"
-                        Height="51"
-                        Panel.ZIndex="1"
-                        Stroke="{StaticResource BorderBrush}"
-                        StrokeThickness="1" />
-                    <Rectangle
-                        Canvas.Left="153"
-                        Width="1"
-                        Height="51"
-                        Panel.ZIndex="1"
-                        Stroke="{DynamicResource BorderBrush}"
-                        StrokeThickness="1" />
-                    <Rectangle
-                        Canvas.Left="205"
-                        Width="1"
-                        Height="50"
-                        Stroke="{StaticResource BorderBrush}"
-                        StrokeThickness="1" />
-                    <TextBlock
-                        x:Name="bar"
-                        Width="102"
-                        Height="51"
-                        Padding="16,17,0,0"
-                        FontFamily="/PicView;component/Resources/fonts/#Aller"
-                        FontSize="16"
-                        FontWeight="Bold"
-                        Text="File Menu" />
-
-                    <Button
-                        x:Name="CopyButton"
-                        Canvas.Left="102"
-                        Width="51"
-                        Height="51"
-                        Margin="0"
-                        BorderThickness="0"
-                        FontWeight="Bold"
-                        ToolTip="Copy image to clipholder">
-                        <Button.Background>
-                            <SolidColorBrush x:Name="CopyButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </Button.Background>
-                        <Path
-                            Width="16"
-                            Height="16"
-                            Data="M1696 384q40 0 68 28t28 68v1216q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-288h-544q-40 0-68-28t-28-68v-672q0-40 20-88t48-76l408-408q28-28 76-48t88-20h416q40 0 68 28t28 68v328q68-40 128-40h416zm-544 213l-299 299h299v-299zm-640-384l-299 299h299v-299zm196 647l316-316v-416h-384v416q0 40-28 68t-68 28h-416v640h512v-256q0-40 20-88t48-76zm956 804v-1152h-384v416q0 40-28 68t-68 28h-416v640h896z"
-                            Fill="{StaticResource MainColorBrush}"
-                            Stretch="Fill" />
-                    </Button>
-
-                    <Button
-                        x:Name="PasteButton"
-                        Canvas.Left="154"
-                        Width="51"
-                        Height="51"
-                        Margin="0"
-                        BorderThickness="0"
-                        FontWeight="Bold"
-                        ToolTip="Paste image from clipholder">
-                        <Button.Background>
-                            <SolidColorBrush x:Name="PasteButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </Button.Background>
-                        <Path
-                            Width="16"
-                            Height="16"
-                            Data="M768 1664h896v-640h-416q-40 0-68-28t-28-68v-416h-384v1152zm256-1440v-64q0-13-9.5-22.5t-22.5-9.5h-704q-13 0-22.5 9.5t-9.5 22.5v64q0 13 9.5 22.5t22.5 9.5h704q13 0 22.5-9.5t9.5-22.5zm256 672h299l-299-299v299zm512 128v672q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-544q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h1088q40 0 68 28t28 68v328q21 13 36 28l408 408q28 28 48 76t20 88z"
-                            Fill="{StaticResource MainColorBrush}"
-                            Stretch="Fill" />
-                    </Button>
+                <Rectangle
+                    Canvas.Top="50"
+                    Width="258"
+                    Panel.ZIndex="1"
+                    Stroke="{StaticResource BorderBrush}"
+                    StrokeThickness="1" />
+                <Rectangle
+                    Canvas.Left="51"
+                    Width="1"
+                    Height="51"
+                    Panel.ZIndex="1"
+                    Stroke="{StaticResource BorderBrush}"
+                    StrokeThickness="1" />
+                <Rectangle
+                    Canvas.Left="102"
+                    Width="1"
+                    Height="51"
+                    Panel.ZIndex="1"
+                    Stroke="{StaticResource BorderBrush}"
+                    StrokeThickness="1" />
+                <Rectangle
+                    Canvas.Left="153"
+                    Width="1"
+                    Height="51"
+                    Panel.ZIndex="1"
+                    Stroke="{DynamicResource BorderBrush}"
+                    StrokeThickness="1" />
+                <Rectangle
+                    Canvas.Left="205"
+                    Width="1"
+                    Height="50"
+                    Stroke="{StaticResource BorderBrush}"
+                    StrokeThickness="1" />
 
                 <Button
-                        x:Name="CloseButton"
-                        Canvas.Left="206"
-                        Width="51"
-                        Height="51"
-                        BorderThickness="0"
-                        FocusVisualStyle="{x:Null}"
-                        ToolTip="Close">
+                    x:Name="ReloadButton"
+                    Canvas.Left="0"
+                    Width="51"
+                    Height="51"
+                    Margin="0"
+                    BorderThickness="0"
+                    FontWeight="Bold"
+                    ToolTip="Reload image [Ctrl + R]">
+                    <Button.Background>
+                        <SolidColorBrush x:Name="ReloadButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Button.Background>
+                    <Path
+                        Width="16"
+                        Height="16"
+                        Data="M416,352l96-111.9h-64.7c-2.3-27.9-10.5-54-23.5-77.3c-27.4-49.2-75.8-85.1-133-95.6c-0.7-0.1-1.5-0.3-2.2-0.4  c-0.5-0.1-0.9-0.2-1.4-0.2C277.1,64.9,266.6,64,256,64c-0.1,0-0.3,0-0.4,0c0,0,0,0,0,0c-90.9,0.2-167,63.6-186.7,148.6  c0,0,0,0.1,0,0.1c-0.3,1.1-0.5,2.2-0.7,3.3c-0.1,0.5-0.2,0.9-0.3,1.4c-0.1,0.7-0.3,1.4-0.4,2.1c-0.2,0.9-0.3,1.7-0.5,2.6  c-0.1,0.4-0.1,0.7-0.2,1.1c-0.2,1.2-0.4,2.4-0.6,3.6c0,0.1,0,0.1,0,0.2c-1,6.3-1.6,12.7-1.9,19.1c0,0.3,0,0.6,0,0.8  c-0.1,1.4-0.1,2.7-0.2,4.1c0,1.6-0.1,3.3-0.1,5c0,1.7,0,3.3,0.1,5c0,1.4,0.1,2.7,0.2,4.1c0,0.3,0,0.6,0,0.9c0.3,6.5,1,12.9,1.9,19.1  c0,0.1,0,0.1,0,0.2c0.2,1.2,0.4,2.4,0.6,3.6c0.1,0.4,0.1,0.7,0.2,1.1c0.2,0.9,0.3,1.8,0.5,2.6c0.1,0.7,0.3,1.4,0.4,2.1  c0.1,0.5,0.2,1,0.3,1.4c0.2,1.1,0.5,2.2,0.7,3.2c0,0,0,0.1,0,0.1c19.7,85,96.1,148.4,187.1,148.6c42.9-0.1,83.1-14.2,116.9-40.7  l7.5-5.9l-43.2-46.2l-6.2,4.6c-22.1,16.3-47.5,24.2-75,24.2c-70.6,0-128-57-128-128c0-71,57.4-128,128-128  c66.4,0,122.8,46.6,129.5,112H312L416,352z"
+                        Fill="{StaticResource MainColorBrush}"
+                        Stretch="Fill" />
+                </Button>
+                
+                <Button
+                    x:Name="RecycleButton"
+                    Canvas.Left="51"
+                    Width="51"
+                    Height="51"
+                    Margin="0"
+                    BorderThickness="0"
+                    FontWeight="Bold"
+                    ToolTip="Copy image to clipholder">
+                    <Button.Background>
+                        <SolidColorBrush x:Name="RecycleButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Button.Background>
+                    <Path
+                        Width="16"
+                        Height="16"
+                        Data="M836 1169l-15 368-2 22-420-29q-36-3-67-31.5t-47-65.5q-11-27-14.5-55t4-65 12-55 21.5-64 19-53q78 12 509 28zm-387-586l180 379-147-92q-63 72-111.5 144.5t-72.5 125-39.5 94.5-18.5 63l-4 21-190-357q-17-26-18-56t6-47l8-18q35-63 114-188l-140-86zm1231 517l-188 359q-12 29-36.5 46.5t-43.5 20.5l-18 4q-71 7-219 12l8 164-230-367 211-362 7 173q170 16 283 5t170-33zm-785-924q-47 63-265 435l-317-187-19-12 225-356q20-31 60-42t80-10q24 2 48.5 12t42 21 41.5 33 36 34.5 36 39.5 32 35zm655 307l212 363q18 37 12.5 76t-27.5 74q-13 20-33 37t-38 28-48.5 22-47 16-51.5 14-46 12q-34-72-265-436l313-195zm-143-226l142-83-220 373-419-20 151-86q-34-89-75-166t-75.5-123.5-64.5-80-47-46.5l-17-13 405 1q31-3 58 10.5t39 28.5l11 15q39 61 112 190z"
+                        Fill="{StaticResource MainColorBrush}"
+                        Stretch="Fill" />
+                </Button>
+                
+                <Button
+                    x:Name="CopyButton"
+                    Canvas.Left="102"
+                    Width="51"
+                    Height="51"
+                    Margin="0"
+                    BorderThickness="0"
+                    FontWeight="Bold"
+                    ToolTip="Copy image to clipholder">
+                    <Button.Background>
+                        <SolidColorBrush x:Name="CopyButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Button.Background>
+                    <Path
+                        Width="16"
+                        Height="16"
+                        Data="M1696 384q40 0 68 28t28 68v1216q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-288h-544q-40 0-68-28t-28-68v-672q0-40 20-88t48-76l408-408q28-28 76-48t88-20h416q40 0 68 28t28 68v328q68-40 128-40h416zm-544 213l-299 299h299v-299zm-640-384l-299 299h299v-299zm196 647l316-316v-416h-384v416q0 40-28 68t-68 28h-416v640h512v-256q0-40 20-88t48-76zm956 804v-1152h-384v416q0 40-28 68t-68 28h-416v640h896z"
+                        Fill="{StaticResource MainColorBrush}"
+                        Stretch="Fill" />
+                </Button>
+
+                <Button
+                    x:Name="PasteButton"
+                    Canvas.Left="154"
+                    Width="51"
+                    Height="51"
+                    Margin="0"
+                    BorderThickness="0"
+                    FontWeight="Bold"
+                    ToolTip="Paste image from clipholder">
+                    <Button.Background>
+                        <SolidColorBrush x:Name="PasteButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Button.Background>
+                    <Path
+                        Width="16"
+                        Height="16"
+                        Data="M768 1664h896v-640h-416q-40 0-68-28t-28-68v-416h-384v1152zm256-1440v-64q0-13-9.5-22.5t-22.5-9.5h-704q-13 0-22.5 9.5t-9.5 22.5v64q0 13 9.5 22.5t22.5 9.5h704q13 0 22.5-9.5t9.5-22.5zm256 672h299l-299-299v299zm512 128v672q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-544q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h1088q40 0 68 28t28 68v328q21 13 36 28l408 408q28 28 48 76t20 88z"
+                        Fill="{StaticResource MainColorBrush}"
+                        Stretch="Fill" />
+                </Button>
+
+                <Button
+                    x:Name="CloseButton"
+                    Canvas.Left="206"
+                    Width="51"
+                    Height="51"
+                    BorderThickness="0"
+                    FocusVisualStyle="{x:Null}"
+                    ToolTip="Close">
                     <Button.Background>
                         <SolidColorBrush x:Name="CloseButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Button.Background>
                     <Path
-                            Width="10"
-                            Height="10"
-                            Data="M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z"
-                            Fill="{StaticResource MainColorBrush}"
-                            SnapsToDevicePixels="True"
-                            Stretch="Fill" />
+                        Width="10"
+                        Height="10"
+                        Data="M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z"
+                        Fill="{StaticResource MainColorBrush}"
+                        SnapsToDevicePixels="True"
+                        Stretch="Fill" />
                 </Button>
-                
+
                 <Border
-                        x:Name="Open_Border"
-                        Canvas.Left="9"
-                        Canvas.Top="59"
-                        Style="{StaticResource SexyBorder}">
-                        <Button
-                            x:Name="Open"
-                            Content="Open"
-                            FocusVisualStyle="{x:Null}"
-                            FontSize="14"
-                            FontWeight="Bold"
-                            ToolTip="Open a file" />
-                        <Border.Background>
-                            <SolidColorBrush x:Name="OpenBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </Border.Background>
-                    </Border>
+                    x:Name="Open_Border"
+                    Canvas.Left="9"
+                    Canvas.Top="59"
+                    Style="{StaticResource SexyBorder}">
+                    <Button
+                        x:Name="Open"
+                        Content="Open"
+                        FocusVisualStyle="{x:Null}"
+                        FontSize="14"
+                        FontWeight="Bold"
+                        ToolTip="Open a file" />
+                    <Border.Background>
+                        <SolidColorBrush x:Name="OpenBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Border.Background>
+                </Border>
 
-                    <Border
-                        x:Name="Open_File_Location_Border"
-                        Canvas.Left="134"
-                        Canvas.Top="59"
-                        Style="{StaticResource SexyBorder}">
-                        <Button
-                            x:Name="Open_File_Location"
-                            Content="Find on Disk"
-                            FocusVisualStyle="{x:Null}"
-                            FontSize="14"
-                            FontWeight="Bold"
-                            ToolTip="Shows current image in your file system" />
-                        <Border.Background>
-                            <SolidColorBrush x:Name="OpenFileLocationBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </Border.Background>
-                    </Border>
+                <Border
+                    x:Name="Open_File_Location_Border"
+                    Canvas.Left="134"
+                    Canvas.Top="59"
+                    Style="{StaticResource SexyBorder}">
+                    <Button
+                        x:Name="Open_File_Location"
+                        Content="Find on Disk"
+                        FocusVisualStyle="{x:Null}"
+                        FontSize="14"
+                        FontWeight="Bold"
+                        ToolTip="Shows current image in your file system" />
+                    <Border.Background>
+                        <SolidColorBrush x:Name="OpenFileLocationBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Border.Background>
+                </Border>
 
-                    <Border
-                        x:Name="Print_Border"
-                        Canvas.Left="9"
-                        Canvas.Top="116"
-                        Style="{StaticResource SexyBorder}">
-                        <Button
-                            x:Name="Print"
-                            Content="Print"
-                            FocusVisualStyle="{x:Null}"
-                            FontSize="14"
-                            FontWeight="Bold"
-                            ToolTip="Print the current image" />
-                        <Border.Background>
-                            <SolidColorBrush x:Name="PrintBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </Border.Background>
-                    </Border>
+                <Border
+                    x:Name="Print_Border"
+                    Canvas.Left="9"
+                    Canvas.Top="116"
+                    Style="{StaticResource SexyBorder}">
+                    <Button
+                        x:Name="Print"
+                        Content="Print"
+                        FocusVisualStyle="{x:Null}"
+                        FontSize="14"
+                        FontWeight="Bold"
+                        ToolTip="Print the current image" />
+                    <Border.Background>
+                        <SolidColorBrush x:Name="PrintBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Border.Background>
+                </Border>
 
-                    <Border
-                        x:Name="Save_File_Location_Border"
-                        Canvas.Left="134"
-                        Canvas.Top="116"
-                        Style="{StaticResource SexyBorder}">
-                        <Button
-                            x:Name="Save_File"
-                            Content="Save"
-                            FocusVisualStyle="{x:Null}"
-                            FontSize="14"
-                            FontWeight="Bold"
-                            ToolTip="Saves current image in your file system" />
-                        <Border.Background>
-                            <SolidColorBrush x:Name="SaveFileLocationBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </Border.Background>
-                    </Border>
+                <Border
+                    x:Name="Save_File_Location_Border"
+                    Canvas.Left="134"
+                    Canvas.Top="116"
+                    Style="{StaticResource SexyBorder}">
+                    <Button
+                        x:Name="Save_File"
+                        Content="Save"
+                        FocusVisualStyle="{x:Null}"
+                        FontSize="14"
+                        FontWeight="Bold"
+                        ToolTip="Saves current image in your file system" />
+                    <Border.Background>
+                        <SolidColorBrush x:Name="SaveFileLocationBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Border.Background>
+                </Border>
 
-                </Canvas>
+            </Canvas>
 
         </Border>
         <Rectangle

@@ -86,7 +86,7 @@
                     Height="35"
                     FocusVisualStyle="{x:Null}"
                     Focusable="False"
-                    ToolTip="Rotate and flip menu">
+                    ToolTip="Image menu">
                     <Canvas Width="28" Height="31">
                         <Path
                             x:Name="ImagePath1"

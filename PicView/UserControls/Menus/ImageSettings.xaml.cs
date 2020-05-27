@@ -26,33 +26,27 @@ namespace PicView.UserControls
             FlipButton.Checked += FlipButton_Checked;
             FlipButton.Unchecked += FlipButton_Unchecked;
 
-            BgButton.MouseEnter += BgButtonMouseOver;
-            BgButton.MouseLeave += BgButtonMouseLeave;
-            BgButton.PreviewMouseLeftButtonDown += BgButtonMouseButtonDown;
+            SlideshowButton.MouseEnter += SlideshowButtonMouseOver;
+            SlideshowButton.MouseLeave += SlideshowButtonMouseLeave;
+            SlideshowButton.PreviewMouseLeftButtonDown += SlideshowButtonMouseButtonDown;
 
-            GalleryButton1.MouseEnter += GalleryButton1MouseOver;
-            GalleryButton1.MouseLeave += GalleryButton1MouseLeave;
-            GalleryButton1.PreviewMouseLeftButtonDown += GalleryButton1MouseButtonDown;
+            RotateLeftButton.MouseEnter += RotateLeftButtonMouseOver;
+            RotateLeftButton.MouseLeave += RotateLeftButtonMouseLeave;
+            RotateLeftButton.PreviewMouseLeftButtonDown += RotateLeftButtonMouseButtonDown;
+            RotateLeftButton.Click += (s, x) => Rotate_and_Flip.Rotate(false);
 
-            GalleryButton2.MouseEnter += GalleryButton2MouseOver;
-            GalleryButton2.MouseLeave += GalleryButton2MouseLeave;
-            GalleryButton2.PreviewMouseLeftButtonDown += GalleryButton2MouseButtonDown;
+            RotateRightButton.MouseEnter += RotateRightButtonMouseOver;
+            RotateRightButton.MouseLeave += RotateRightButtonMouseLeave;
+            RotateRightButton.PreviewMouseLeftButtonDown += RotateRightButtonMouseButtonDown;
+            RotateRightButton.Click += (s, x) => Rotate_and_Flip.Rotate(true);
 
-            Rotation0Border.MouseEnter += Rotation0Border_MouseEnter;
-            Rotation0Border.MouseLeave += Rotation0Border_MouseLeave;
-            Rotation0Border.PreviewMouseLeftButtonDown += Rotation0Border_PreviewMouseLeftButtonDown;
+            Fullscreen_Gallery.MouseEnter += Fullscreen_GalleryMouseOver;
+            Fullscreen_Gallery.MouseLeave += Fullscreen_GalleryMouseLeave;
+            Fullscreen_Gallery.PreviewMouseLeftButtonDown += Fullscreen_GalleryMouseButtonDown;
 
-            Rotation90Border.MouseEnter += Rotation90Border_MouseEnter;
-            Rotation90Border.MouseLeave += Rotation90Border_MouseLeave;
-            Rotation90Border.PreviewMouseLeftButtonDown += Rotation90Border_PreviewMouseLeftButtonDown;
-
-            Rotation180Border.MouseEnter += Rotation180Border_MouseEnter;
-            Rotation180Border.MouseLeave += Rotation180Border_MouseLeave;
-            Rotation180Border.PreviewMouseLeftButtonDown += Rotation180Border_PreviewMouseLeftButtonDown;
-
-            Rotation270Border.MouseEnter += Rotation270Border_MouseEnter;
-            Rotation270Border.MouseLeave += Rotation270Border_MouseLeave;
-            Rotation270Border.PreviewMouseLeftButtonDown += Rotation270Border_PreviewMouseLeftButtonDown;
+            Contained_Gallery.MouseEnter += Contained_GalleryMouseOver;
+            Contained_Gallery.MouseLeave += Contained_GalleryMouseLeave;
+            Contained_Gallery.PreviewMouseLeftButtonDown += Contained_GalleryMouseButtonDown;
 
             #endregion
 
@@ -73,99 +67,6 @@ namespace PicView.UserControls
             FlipPath.Data = Geometry.Parse("M448,192l-128,96v-64H128v128h248c4.4,0,8,3.6,8,8v48c0,4.4-3.6,8-8,8H72c-4.4,0-8-3.6-8-8V168c0-4.4,3.6-8,8-8h248V96 L448, 192z");
         }
 
-        // Rotation0Border
-        void Rotation0Border_MouseEnter(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseOverColorEvent(165, 23, 23, 23, Rotation0BorderBrush, true);
-        }
-
-        void Rotation0Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(Rotation0BorderBrush, true);
-        }
-
-        private void Rotation0Border_MouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                Rotation0BorderBrush,
-                true
-            );
-        }
-
-        // 90 border
-        void Rotation90Border_MouseEnter(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseOverColorEvent(165, 23, 23, 23, Rotation90BorderBrush, true);
-        }
-
-        void Rotation90Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(Rotation90BorderBrush, true);
-        }
-
-        private void Rotation90Border_MouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                Rotation90BorderBrush,
-                true
-            );
-        }
-
-        // Rotation180Border
-        void Rotation180Border_MouseEnter(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseOverColorEvent(165, 23, 23, 23, Rotation180BorderBrush, true);
-        }
-
-        void Rotation180Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(Rotation180BorderBrush, true);
-        }
-
-        private void Rotation180Border_MouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                Rotation180BorderBrush,
-                true
-            );
-        }
-
-        // Rotation270Border
-        void Rotation270Border_MouseEnter(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseOverColorEvent(165, 23, 23, 23, Rotation270BorderBrush, true);
-        }
-
-        void Rotation270Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(Rotation270BorderBrush, true);
-        }
-
-        private void Rotation270Border_MouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                Rotation270BorderBrush,
-                true
-            );
-        }
-
-        // Close Button
         private void CloseButtonMouseOver(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, CloseButtonBrush, false);
@@ -211,71 +112,118 @@ namespace PicView.UserControls
             );
         }
 
-        // Bg Button
-        private void BgButtonMouseOver(object sender, MouseEventArgs e)
+        // RotateLeftButton
+        private void RotateLeftButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, BgButtonBrush, false);
+            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, RotateLeftButtonBrush, false);
         }
 
-        private void BgButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        private void RotateLeftButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(BgButtonBrush, false);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(RotateLeftButtonBrush, false);
         }
 
-        private void BgButtonMouseLeave(object sender, MouseEventArgs e)
+        private void RotateLeftButtonMouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
-                BgButtonBrush,
+                RotateLeftButtonBrush,
                 false
             );
         }
 
-        // GalleryButton1
-        private void GalleryButton1MouseOver(object sender, MouseEventArgs e)
+        // RotateRightButton
+        private void RotateRightButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, GalleryButton1Brush, false);
+            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, RotateRightButtonBrush, false);
         }
 
-        private void GalleryButton1MouseButtonDown(object sender, MouseButtonEventArgs e)
+        private void RotateRightButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(GalleryButton1Brush, false);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(RotateRightButtonBrush, false);
         }
 
-        private void GalleryButton1MouseLeave(object sender, MouseEventArgs e)
+        private void RotateRightButtonMouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
-                GalleryButton1Brush,
+                RotateRightButtonBrush,
                 false
             );
         }
 
-        // GalleryButton2
-        private void GalleryButton2MouseOver(object sender, MouseEventArgs e)
+        // Slideshow Button
+        private void SlideshowButtonMouseOver(object sender, MouseEventArgs e)
         {
-            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, GalleryButton2Brush, false);
+            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, SlideshowButtonBrush, false);
         }
 
-        private void GalleryButton2MouseButtonDown(object sender, MouseButtonEventArgs e)
+        private void SlideshowButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(GalleryButton2Brush, false);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(SlideshowButtonBrush, false);
         }
 
-        private void GalleryButton2MouseLeave(object sender, MouseEventArgs e)
+        private void SlideshowButtonMouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
-                GalleryButton2Brush,
+                SlideshowButtonBrush,
+                false
+            );
+        }
+
+
+        // Fullscreen_Gallery
+        private void Fullscreen_GalleryMouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, FullscreenBorderBrush, false);
+        }
+
+        private void Fullscreen_GalleryMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(FullscreenBorderBrush, false);
+        }
+
+        private void Fullscreen_GalleryMouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                FullscreenBorderBrush,
+                false
+            );
+        }
+
+        //// Contained_Gallery
+        private void Contained_GalleryMouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, ContainedBorderBrush, false);
+        }
+
+        private void Contained_GalleryMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ContainedBorderBrush, false);
+        }
+
+        private void Contained_GalleryMouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                ContainedBorderBrush,
                 false
             );
         }

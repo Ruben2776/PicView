@@ -66,20 +66,21 @@ namespace PicView
 
             // imageSettingsMenu Buttons
             imageSettingsMenu.CloseButton.Click += Close_UserControls;
-            imageSettingsMenu.Rotation0Button.Click += (s, x) => Rotate(0);
-            imageSettingsMenu.Rotation90Button.Click += (s, x) => Rotate(90);
-            imageSettingsMenu.Rotation180Button.Click += (s, x) => Rotate(180);
-            imageSettingsMenu.Rotation270Button.Click += (s, x) => Rotate(270);
-            imageSettingsMenu.Rotation0Border.MouseLeftButtonUp += (s, x) => Rotate(0);
-            imageSettingsMenu.Rotation90Border.MouseLeftButtonUp += (s, x) => Rotate(90);
-            imageSettingsMenu.Rotation180Border.MouseLeftButtonUp += (s, x) => Rotate(180);
-            imageSettingsMenu.Rotation270Border.MouseLeftButtonUp += (s, x) => Rotate(270);
-            imageSettingsMenu.BgButton.Click += ChangeBackground;
-            imageSettingsMenu.GalleryButton1.Click += delegate {
+
+            //imageSettingsMenu.Rotation0Button.Click += (s, x) => Rotate(0);
+            //imageSettingsMenu.Rotation90Button.Click += (s, x) => Rotate(90);
+            //imageSettingsMenu.Rotation180Button.Click += (s, x) => Rotate(180);
+            //imageSettingsMenu.Rotation270Button.Click += (s, x) => Rotate(270);
+            //imageSettingsMenu.Rotation0Border.MouseLeftButtonUp += (s, x) => Rotate(0);
+            //imageSettingsMenu.Rotation90Border.MouseLeftButtonUp += (s, x) => Rotate(90);
+            //imageSettingsMenu.Rotation180Border.MouseLeftButtonUp += (s, x) => Rotate(180);
+            //imageSettingsMenu.Rotation270Border.MouseLeftButtonUp += (s, x) => Rotate(270);
+
+            imageSettingsMenu.Contained_Gallery.Click += delegate {
                 Close_UserControls();
                 ToggleGallery.OpenPicGalleryOne();
             };
-            imageSettingsMenu.GalleryButton2.Click += delegate {
+            imageSettingsMenu.Fullscreen_Gallery.Click += delegate {
                 Close_UserControls();
                 ToggleGallery.OpenPicGalleryTwo();
             };
@@ -114,14 +115,14 @@ namespace PicView
             mainWindow.FunctionMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(mainWindow.FunctionButtonFill);
             mainWindow.FunctionMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.FunctionButtonFill);
             mainWindow.FunctionMenuButton.Click += Toggle_Functions_menu;
-            functionsMenu.FileDetailsButton.Click += (s, x) => NativeMethods.ShowFileProperties(Pics[FolderIndex]);
-            functionsMenu.DeleteButton.Click += (s, x) => DeleteFile(Pics[FolderIndex], true);
-            functionsMenu.DeletePermButton.Click += (s, x) => DeleteFile(Pics[FolderIndex], false);
-            functionsMenu.ReloadButton.Click += (s, x) => Error_Handling.Reload();
-            functionsMenu.ResetZoomButton.Click += (s, x) => ResetZoom();
-            functionsMenu.ClearButton.Click += (s, x) => Error_Handling.Unload();
-            //functionsMenu.SlideshowButton.Click += (s, x) => LoadSlideshow();
-            functionsMenu.BgButton.Click += ChangeBackground;
+            //functionsMenu.FileDetailsButton.Click += (s, x) => NativeMethods.ShowFileProperties(Pics[FolderIndex]);
+            //functionsMenu.DeleteButton.Click += (s, x) => DeleteFile(Pics[FolderIndex], true);
+            //functionsMenu.DeletePermButton.Click += (s, x) => DeleteFile(Pics[FolderIndex], false);
+            //functionsMenu.ReloadButton.Click += (s, x) => Error_Handling.Reload();
+            //functionsMenu.ResetZoomButton.Click += (s, x) => ResetZoom();
+            //functionsMenu.ClearButton.Click += (s, x) => Error_Handling.Unload();
+            ////functionsMenu.SlideshowButton.Click += (s, x) => LoadSlideshow();
+            //functionsMenu.BgButton.Click += ChangeBackground;
 
             // FlipButton
             imageSettingsMenu.FlipButton.Click += (s, x) => Flip();

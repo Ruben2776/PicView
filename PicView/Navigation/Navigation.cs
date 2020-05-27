@@ -166,11 +166,6 @@ namespace PicView
             {
                 pic = await PicErrorFix(x).ConfigureAwait(true);
             }
-            //if (!canNavigate)
-            //{
-            //    Reload(true);
-            //    return;
-            //}
             else
             {
                 /// Add "pic" as local variable used for the image.
@@ -186,7 +181,7 @@ namespace PicView
                 mainWindow.Bar.Text = Loading;
                 mainWindow.Bar.ToolTip = Loading;               
 
-                var thumb = GetThumb();
+                var thumb = GetThumb(x);
 
                 if (thumb != null)
                 {
@@ -262,8 +257,6 @@ namespace PicView
             // Update values
             canNavigate = true;
             SetTitleString(pic.PixelWidth, pic.PixelHeight, x);
-            FolderIndex = x;
-            AjaxLoadingEnd();
 
             if (Pics.Count > 0)
             {
@@ -272,8 +265,12 @@ namespace PicView
                 // Preload images \\
                 if (Preloader.StartPreload())
                 {
-                    Preloader.Add(pic, Pics[FolderIndex]);
                     await Preloader.PreLoad(x).ConfigureAwait(false);
+
+                    if (!Preloader.Contains(Pics[x]))
+                    {
+                        Preloader.Add(pic, Pics[x]);
+                    }
                 }
             }
 
@@ -281,7 +278,7 @@ namespace PicView
             {
                 RecentFiles.Add(Pics[x]);
             }
-
+            
             freshStartup = false;
         }
 
@@ -349,7 +346,7 @@ namespace PicView
                 }
             }
 
-            // Make backup?
+            // Make backup
             var x = FolderIndex;
 
             // Go to first or last
@@ -419,24 +416,21 @@ namespace PicView
             // Update PicGallery selected item, if needed
             if (picGallery != null)
             {
-                if (Properties.Settings.Default.PicGallery > 0)
+                if (picGallery.Container.Children.Count > FolderIndex && picGallery.Container.Children.Count > x)
                 {
-                    if (picGallery.Container.Children.Count > FolderIndex && picGallery.Container.Children.Count > x)
+                    if (x != FolderIndex)
                     {
-                        if (x != FolderIndex)
-                        {
-                            var prevItem = picGallery.Container.Children[x] as PicGalleryItem;
-                            prevItem.SetSelected(false);
-                        }
+                        var prevItem = picGallery.Container.Children[x] as PicGalleryItem;
+                        prevItem.SetSelected(false);
+                    }
 
-                        var nextItem = picGallery.Container.Children[FolderIndex] as PicGalleryItem;
-                        nextItem.SetSelected(true);
-                        GalleryScroll.ScrollTo();
-                    }
-                    else
-                    {
-                        // TODO Find way to get PicGalleryItem an alternative way...
-                    }
+                    var nextItem = picGallery.Container.Children[FolderIndex] as PicGalleryItem;
+                    nextItem.SetSelected(true);
+                    GalleryScroll.ScrollTo();
+                }
+                else
+                {
+                    // TODO Find way to get PicGalleryItem an alternative way...
                 }
             }
 
@@ -492,7 +486,7 @@ namespace PicView
             mainWindow.Title =
             mainWindow.Bar.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count;
 
-            var thumb = GetThumb();
+            var thumb = GetThumb(FolderIndex);
 
             if (thumb != null)
             {

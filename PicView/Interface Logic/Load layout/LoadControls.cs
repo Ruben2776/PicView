@@ -100,7 +100,7 @@ namespace PicView
                 Visibility = Visibility.Hidden,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 0, 152, 0)
+                Margin = new Thickness(0, 0, 190, 0)
             };
 
             mainWindow.bg.Children.Add(fileMenu);

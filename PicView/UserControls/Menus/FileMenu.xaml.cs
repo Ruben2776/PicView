@@ -25,6 +25,14 @@ namespace PicView.UserControls
             CopyButton.MouseLeave += CopyButtonMouseLeave;
             CopyButton.PreviewMouseLeftButtonDown += CopyButtonMouseButtonDown;
 
+            ReloadButton.MouseEnter += ReloadButtonMouseOver;
+            ReloadButton.MouseLeave += ReloadButtonMouseLeave;
+            ReloadButton.PreviewMouseLeftButtonDown += ReloadButtonMouseButtonDown;
+
+            RecycleButton.MouseEnter += RecycleButtonMouseOver;
+            RecycleButton.MouseLeave += RecycleButtonMouseLeave;
+            RecycleButton.PreviewMouseLeftButtonDown += RecycleButtonMouseButtonDown;
+
             Open_Border.MouseEnter += Open_Border_MouseEnter;
             Print_Border.MouseEnter += Print_Border_MouseEnter;
             Open_File_Location_Border.MouseEnter += Open_File_Location_Border_MouseEnter;
@@ -105,6 +113,50 @@ namespace PicView.UserControls
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
                 CopyButtonBrush,
+                false
+            );
+        }
+
+        private void RecycleButtonMouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, RecycleButtonBrush, false);
+        }
+
+        private void RecycleButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(RecycleButtonBrush, false);
+        }
+
+        private void RecycleButtonMouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                RecycleButtonBrush,
+                false
+            );
+        }
+
+        private void ReloadButtonMouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, ReloadButtonBrush, false);
+        }
+
+        private void ReloadButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ReloadButtonBrush, false);
+        }
+
+        private void ReloadButtonMouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                ReloadButtonBrush,
                 false
             );
         }

@@ -11,42 +11,30 @@ namespace PicView
     internal static class Thumbnails
     {
         /// <summary>
-        /// Load thumbnail at current index
+        /// Load thumbnail at provided index
         /// or full image if preloaded.
         /// </summary>
         /// <returns></returns>
-        internal static BitmapSource GetThumb()
+        internal static BitmapSource GetThumb(int x)
         {
-            var pic = Preloader.Load(Pics[FolderIndex]);
+            var pic = Preloader.Load(Pics[x]);
 
             if (pic == null)
             {
-                if (picGallery != null)
+                if (x < picGallery.Container.Children.Count && picGallery.Container.Children.Count == Pics.Count)
                 {
-                    if (FolderIndex < picGallery.Container.Children.Count && picGallery.Container.Children.Count == Pics.Count)
-                    {
-                        var y = picGallery.Container.Children[FolderIndex] as PicGalleryItem;
-                        pic = (BitmapSource)y.img.Source;
-                    }
-                    else
-                    {
-                        pic = GetWindowsThumbnail(Pics[FolderIndex]);
-
-                        if (pic == null)
-                        {
-                            pic = GetBitmapSourceThumb(Pics[FolderIndex]);
-                        }
-                    }
+                    var y = picGallery.Container.Children[x] as PicGalleryItem;
+                    pic = (BitmapSource)y.img.Source;
                 }
                 else
                 {
-                    pic = GetWindowsThumbnail(Pics[FolderIndex]);
-
-                    if (pic == null)
-                    {
-                        pic = GetBitmapSourceThumb(Pics[FolderIndex]);
-                    }
+                    pic = GetBitmapSourceThumb(Pics[x]);
                 }
+            }
+
+            if (!pic.IsFrozen)
+            {
+                pic.Freeze();
             }
 
             return pic;
@@ -67,7 +55,7 @@ namespace PicView
             }
             else if (!supported.Value)
             {
-                return GetMagickImage(path, 60, 55);
+                return GetMagickImageThumb(path);
             }
 
             return null;
@@ -80,7 +68,7 @@ namespace PicView
         /// <param name="quality"></param>
         /// <param name="size"></param>
         /// <returns></returns>
-        internal static BitmapSource GetMagickImage(string file, byte quality, short size)
+        internal static BitmapSource GetMagickImageThumb(string file, byte quality = 100, short size = 256)
         {
             BitmapSource pic;
 
@@ -92,7 +80,6 @@ namespace PicView
                 {
                     magick.Read(file);
                     magick.AdaptiveResize(size, size);
-
                 }
 #if DEBUG
                 catch (MagickException e)

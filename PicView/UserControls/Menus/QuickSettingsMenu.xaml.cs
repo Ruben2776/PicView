@@ -26,13 +26,39 @@ namespace PicView.UserControls
             SettingsButton.MouseEnter += SettingsButtonMouseOver;
             SettingsButton.MouseLeave += SettingsButtonMouseLeave;
             SettingsButton.PreviewMouseLeftButtonDown += SettingsButtonMouseButtonDown;
-            SettingsButton.Click += delegate { LoadWindows.AllSettingsWindow(); };
+            SettingsButton.Click += delegate {
+                ToggleMenus.Close_UserControls();
+                LoadWindows.AllSettingsWindow();
+            };
 
+            // InfoButton
+            InfoButton.MouseEnter += InfoButtonMouseOver;
+            InfoButton.MouseLeave += InfoButtonMouseLeave;
+            InfoButton.PreviewMouseLeftButtonDown += InfoButtonMouseButtonDown;
+            InfoButton.Click += delegate {
+                ToggleMenus.Close_UserControls();
+                LoadWindows.HelpWindow();
+            };
+
+            // Zoom button
+            ZoomButton.MouseEnter += ZoomButtonMouseOver;
+            ZoomButton.MouseLeave += ZoomButtonMouseLeave;
+            ZoomButton.PreviewMouseLeftButtonDown += ZoomButtonMouseButtonDown;
+            ZoomButton.Click += delegate {
+                ToggleMenus.Close_UserControls();
+                Resize_and_Zoom.ResetZoom();
+            };
 
             // Toggle Scroll
             ToggleScroll.PreviewMouseLeftButtonDown += ToggleScroll_PreviewMouseLeftButtonDown;
             ToggleScroll.MouseEnter += ToggleScroll_MouseEnter;
             ToggleScroll.MouseLeave += ToggleScroll_MouseLeave;
+
+            // BgButton
+            BgButton.PreviewMouseLeftButtonDown += BgButton_PreviewMouseLeftButtonDown;
+            BgButton.MouseEnter += BgButton_MouseEnter;
+            BgButton.MouseLeave += BgButton_MouseLeave;
+            BgButton.Click += Utilities.ChangeBackground;
 
             // Set Fit
             SetFit.PreviewMouseLeftButtonDown += SetFit_PreviewMouseLeftButtonDown;
@@ -74,6 +100,8 @@ namespace PicView.UserControls
             SetCenter.MouseEnter += SetCenter_MouseEnter;
             SetCenter.MouseLeave += SetCenter_MouseLeave;
 
+
+
             #endregion
         }
 
@@ -111,6 +139,23 @@ namespace PicView.UserControls
         private void SettingsButtonMouseLeave(object sender, MouseEventArgs e)
         {
             MouseOverAnimations.ButtonMouseLeaveAnimBgColor(SettingsButtonBrush);
+        }
+
+        // Info Button
+
+        private void InfoButtonMouseOver(object sender, MouseEventArgs e)
+        {
+            MouseOverAnimations.ButtonMouseOverAnim(InfoButtonBrush, true);
+        }
+
+        private void InfoButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            MouseOverAnimations.PreviewMouseButtonDownAnim(InfoButtonBrush);
+        }
+
+        private void InfoButtonMouseLeave(object sender, MouseEventArgs e)
+        {
+            MouseOverAnimations.ButtonMouseLeaveAnimBgColor(InfoButtonBrush);
         }
 
         // Fill Button
@@ -323,6 +368,36 @@ namespace PicView.UserControls
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(SetCenterBrush, false);
         }
 
+        // BgButton
+        void BgButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                BgButtonBrush,
+                false
+            );
+        }
+
+        void BgButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseOverColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                BgButtonBrush,
+                false
+            );
+        }
+
+        void BgButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(BgButtonBrush, false);
+        }
+
         // ToggleScroll
         void ToggleScroll_MouseLeave(object sender, MouseEventArgs e)
         {
@@ -351,6 +426,30 @@ namespace PicView.UserControls
         void ToggleScroll_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ToggleScrollBrush, false);
+        }
+
+
+        // Zoom Button
+        private void ZoomButtonMouseOver(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, ZoomButtonBrush, false);
+        }
+
+        private void ZoomButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ZoomButtonBrush, false);
+        }
+
+        private void ZoomButtonMouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                ZoomButtonBrush,
+                false
+            );
         }
 
         #endregion
