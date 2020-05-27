@@ -192,6 +192,11 @@ namespace PicView
         /// <param name="e"></param>
         internal static void Toggle_open_menu(object sender, RoutedEventArgs e)
         {
+            if (GalleryMisc.IsOpen)
+            {
+                return;
+            }
+
             FileMenuOpen = !FileMenuOpen;
 
             if (ImageSettingsMenuOpen)
@@ -217,6 +222,11 @@ namespace PicView
         /// <param name="e"></param>
         internal static void Toggle_image_menu(object sender, RoutedEventArgs e)
         {
+            if (GalleryMisc.IsOpen)
+            {
+                return;
+            }
+
             ImageSettingsMenuOpen = !ImageSettingsMenuOpen;
 
             if (FileMenuOpen)
@@ -242,6 +252,11 @@ namespace PicView
         /// <param name="e"></param>
         internal static void Toggle_quick_settings_menu(object sender, RoutedEventArgs e)
         {
+            if (GalleryMisc.IsOpen)
+            {
+                return;
+            }
+
             QuickSettingsMenuOpen = !QuickSettingsMenuOpen;
 
             if (FileMenuOpen)
@@ -267,6 +282,11 @@ namespace PicView
         /// <param name="e"></param>
         internal static void Toggle_Functions_menu(object sender, RoutedEventArgs e)
         {
+            if (GalleryMisc.IsOpen)
+            {
+                return;
+            }
+
             FunctionsMenuOpen = !FunctionsMenuOpen;
 
             if (FileMenuOpen)

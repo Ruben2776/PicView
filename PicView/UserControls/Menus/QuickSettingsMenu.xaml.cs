@@ -16,12 +16,6 @@ namespace PicView.UserControls
 
             #region Register events
 
-            // CloseButton
-            CloseButton.MouseEnter += CloseButtonMouseOver;
-            CloseButton.MouseLeave += CloseButtonMouseLeave;
-            CloseButton.PreviewMouseLeftButtonDown += CloseButtonMouseButtonDown;
-            CloseButton.Click += delegate { ToggleMenus.Close_UserControls(); };
-
             // SettingsButton
             SettingsButton.MouseEnter += SettingsButtonMouseOver;
             SettingsButton.MouseLeave += SettingsButtonMouseLeave;
@@ -106,22 +100,6 @@ namespace PicView.UserControls
         }
 
         #region Mouseover Events
-
-        // Close Button
-        private void CloseButtonMouseOver(object sender, MouseEventArgs e)
-        {
-            MouseOverAnimations.ButtonMouseOverAnim(CloseButtonBrush, true);
-        }
-
-        private void CloseButtonMouseButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            MouseOverAnimations.PreviewMouseButtonDownAnim(CloseButtonBrush);
-        }
-
-        private void CloseButtonMouseLeave(object sender, MouseEventArgs e)
-        {
-            MouseOverAnimations.ButtonMouseLeaveAnimBgColor(CloseButtonBrush);
-        }
 
 
         // Settings Button

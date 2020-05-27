@@ -249,8 +249,6 @@ namespace PicView
                 mainWindow.Scroller.ScrollToTop();
             }
 
-            /// TODO Make it staying flipped a user preference 
-            //// Prevent picture from being flipped if previous is
             if (Flipped)
                Rotate_and_Flip.Flip();
 
@@ -440,6 +438,52 @@ namespace PicView
             Trace.WriteLine(s);
             //ToolTipStyle(s);
 #endif
+        }
+
+        internal static void PicButton(bool arrow , bool right)
+        {
+            if (arrow)
+            {
+                if (!canNavigate)
+                {
+                    return;
+                }
+
+                if (right)
+                {
+                    clickArrowRightClicked = true;
+                    Pic();
+                }
+                else
+                {
+                    clickArrowLeftClicked = true;
+                    Pic(false, false);
+                }
+            }
+            else
+            {
+                if (GalleryMisc.IsOpen)
+                {
+                    GalleryScroll.ScrollTo(!right);
+                    return;
+                }
+
+                if (!canNavigate)
+                {
+                    return;
+                }
+
+                if (right)
+                {
+                    RightbuttonClicked = true;
+                    Pic();
+                }
+                else
+                {
+                    LeftbuttonClicked = true;
+                    Pic(false, false);
+                }
+            }
         }
 
         /// <summary>

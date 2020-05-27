@@ -1,5 +1,6 @@
 ﻿using Microsoft.WindowsAPICodePack.Taskbar;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using static PicView.Fields;
@@ -44,11 +45,16 @@ namespace PicView
         /// Sends the file to Windows print system
         /// </summary>
         /// <param name="path">The file path</param>
-        internal static void Print(string path)
+        internal static bool Print(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
-                return;
+                return false;
+            }
+
+            if (!File.Exists(path))
+            {
+                return false;
             }
 
             using (var p = new Process())
@@ -57,6 +63,7 @@ namespace PicView
                 p.StartInfo.Verb = "print";
                 p.Start();
             }
+            return true;
         }
 
         internal static void UpdateColor(bool remove = false)

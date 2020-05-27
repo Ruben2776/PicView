@@ -45,16 +45,15 @@ namespace PicView
             mainWindow.FileMenuButton.Click += Toggle_open_menu;
 
             fileMenu.Open.Click += (s, x) => Open();
-            fileMenu.Open_File_Location.Click += (s, x) => Open_In_Explorer();
+            fileMenu.FileLocation.Click += (s, x) => Open_In_Explorer();
             fileMenu.Print.Click += (s, x) => Print(Pics[FolderIndex]);
-            fileMenu.Save_File.Click += (s, x) => SaveFiles();
+            fileMenu.SaveBorder.Click += (s, x) => SaveFiles();
 
-            fileMenu.Open_Border.MouseLeftButtonUp += (s, x) => Open();
-            fileMenu.Open_File_Location_Border.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
-            fileMenu.Print_Border.MouseLeftButtonUp += (s, x) => Print(Pics[FolderIndex]);
+            fileMenu.OpenBorder.MouseLeftButtonUp += (s, x) => Open();
+            fileMenu.FileLocationBorder.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
+            fileMenu.PrintBorder.MouseLeftButtonUp += (s, x) => Print(Pics[FolderIndex]);
             fileMenu.Save_File_Location_Border.MouseLeftButtonUp += (s, x) => SaveFiles();
 
-            fileMenu.CloseButton.Click += Close_UserControls;
             fileMenu.PasteButton.Click += (s, x) => Paste();
             fileMenu.CopyButton.Click += (s, x) => CopyPic();
 
@@ -65,25 +64,21 @@ namespace PicView
             mainWindow.image_button.Click += Toggle_image_menu;
 
             // imageSettingsMenu Buttons
-            imageSettingsMenu.CloseButton.Click += Close_UserControls;
-
-            //imageSettingsMenu.Rotation0Button.Click += (s, x) => Rotate(0);
-            //imageSettingsMenu.Rotation90Button.Click += (s, x) => Rotate(90);
-            //imageSettingsMenu.Rotation180Button.Click += (s, x) => Rotate(180);
-            //imageSettingsMenu.Rotation270Button.Click += (s, x) => Rotate(270);
-            //imageSettingsMenu.Rotation0Border.MouseLeftButtonUp += (s, x) => Rotate(0);
-            //imageSettingsMenu.Rotation90Border.MouseLeftButtonUp += (s, x) => Rotate(90);
-            //imageSettingsMenu.Rotation180Border.MouseLeftButtonUp += (s, x) => Rotate(180);
-            //imageSettingsMenu.Rotation270Border.MouseLeftButtonUp += (s, x) => Rotate(270);
+            imageSettingsMenu.RotateRightButton.Click += (s, x) => Rotate(true);
+            imageSettingsMenu.RotateLeftButton.Click += (s, x) => Rotate(false);
 
             imageSettingsMenu.Contained_Gallery.Click += delegate {
                 Close_UserControls();
+                //ShowMinimalInterface();
                 ToggleGallery.OpenPicGalleryOne();
             };
             imageSettingsMenu.Fullscreen_Gallery.Click += delegate {
                 Close_UserControls();
                 ToggleGallery.OpenPicGalleryTwo();
             };
+
+
+            // Quick settings menu
             quickSettingsMenu.ToggleScroll.Checked += (s, x) => IsScrollEnabled = true;
             quickSettingsMenu.ToggleScroll.Unchecked += (s, x) => IsScrollEnabled = false;
             quickSettingsMenu.ToggleScroll.Click += Toggle_quick_settings_menu;
@@ -96,13 +91,13 @@ namespace PicView
             mainWindow.LeftButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.LeftArrowFill);
             mainWindow.LeftButton.MouseEnter += (s, x) => ButtonMouseOverAnim(mainWindow.LeftArrowFill);
             mainWindow.LeftButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.LeftArrowFill);
-            mainWindow.LeftButton.Click += (s, x) => { LeftbuttonClicked = true; Pic(false, false); };
+            mainWindow.LeftButton.Click += (s, x) => PicButton(false, false);
 
             // RightButton
             mainWindow.RightButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.RightArrowFill);
             mainWindow.RightButton.MouseEnter += (s, x) => ButtonMouseOverAnim(mainWindow.RightArrowFill);
             mainWindow.RightButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.RightArrowFill);
-            mainWindow.RightButton.Click += (s, x) => { RightbuttonClicked = true; Pic(); };
+            mainWindow.RightButton.Click += (s, x) => PicButton(false, true);
 
             // SettingsButton
             mainWindow.SettingsButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.SettingsButtonFill);
@@ -115,31 +110,15 @@ namespace PicView
             mainWindow.FunctionMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(mainWindow.FunctionButtonFill);
             mainWindow.FunctionMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.FunctionButtonFill);
             mainWindow.FunctionMenuButton.Click += Toggle_Functions_menu;
-            //functionsMenu.FileDetailsButton.Click += (s, x) => NativeMethods.ShowFileProperties(Pics[FolderIndex]);
-            //functionsMenu.DeleteButton.Click += (s, x) => DeleteFile(Pics[FolderIndex], true);
-            //functionsMenu.DeletePermButton.Click += (s, x) => DeleteFile(Pics[FolderIndex], false);
-            //functionsMenu.ReloadButton.Click += (s, x) => Error_Handling.Reload();
-            //functionsMenu.ResetZoomButton.Click += (s, x) => ResetZoom();
-            //functionsMenu.ClearButton.Click += (s, x) => Error_Handling.Unload();
-            ////functionsMenu.SlideshowButton.Click += (s, x) => LoadSlideshow();
-            //functionsMenu.BgButton.Click += ChangeBackground;
 
             // FlipButton
             imageSettingsMenu.FlipButton.Click += (s, x) => Flip();
 
             // ClickArrows
-            clickArrowLeft.MouseLeftButtonUp += (s, x) =>
-            {
-                clickArrowLeftClicked = true;
-                Pic(false, false);
-            };
+            clickArrowLeft.MouseLeftButtonUp += (s, x) => PicButton(true, false);
             clickArrowLeft.MouseEnter += Interface_MouseEnter_Negative;
 
-            clickArrowRight.MouseLeftButtonUp += (s, x) =>
-            {
-                clickArrowRightClicked = true;
-                Pic();
-            };
+            clickArrowRight.MouseLeftButtonUp += (s, x) => PicButton(true, true);
             clickArrowRight.MouseEnter += Interface_MouseEnter_Negative;
 
             // x2
@@ -193,14 +172,6 @@ namespace PicView
             // This
             mainWindow.Closing += Window_Closing;
             mainWindow.StateChanged += MainWindow_StateChanged;
-            //Activated += delegate
-            //{
-            //    if (Properties.Settings.Default.PicGallery == 2)
-            //    {
-            //        fake.Focus();
-            //        Focus();
-            //    }
-            //};
 
             //LocationChanged += MainWindow_LocationChanged;
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
@@ -256,6 +227,7 @@ namespace PicView
                 Properties.Settings.Default.Maximized = mainWindow.WindowState == WindowState.Maximized;
             }
 
+            // TODO write DEBUG log from output window to txt file
             Properties.Settings.Default.Save();
             DeleteTempFiles();
             RecentFiles.WriteToFile();

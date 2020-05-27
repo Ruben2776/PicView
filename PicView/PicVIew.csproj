@@ -158,6 +158,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Update="UserControls\Buttons\MenuCloseButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="UserControls\Buttons\FullscreenButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -175,6 +178,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="UserControls\Buttons\MenuCloseButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="UserControls\Buttons\FullscreenButton.xaml">
       <SubType>Designer</SubType>
     </Page>

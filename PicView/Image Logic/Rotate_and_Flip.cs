@@ -32,41 +32,6 @@ namespace PicView
                 mainWindow.img.LayoutTransform = rt;
             }
 
-            //switch (r)
-            //{
-            //    case 0:
-            //        imageSettingsMenu.Rotation0Button.IsChecked = true;
-            //        imageSettingsMenu.Rotation90Button.IsChecked = false;
-            //        imageSettingsMenu.Rotation180Button.IsChecked = false;
-            //        imageSettingsMenu.Rotation270Button.IsChecked = false;
-            //        break;
-
-            //    case 180:
-            //        imageSettingsMenu.Rotation180Button.IsChecked = true;
-            //        imageSettingsMenu.Rotation90Button.IsChecked = false;
-            //        imageSettingsMenu.Rotation0Button.IsChecked = false;
-            //        imageSettingsMenu.Rotation270Button.IsChecked = false;
-            //        break;
-
-            //    case 90:
-            //        imageSettingsMenu.Rotation90Button.IsChecked = true;
-            //        imageSettingsMenu.Rotation0Button.IsChecked = false;
-            //        imageSettingsMenu.Rotation180Button.IsChecked = false;
-            //        imageSettingsMenu.Rotation270Button.IsChecked = false;
-            //        break;
-
-            //    case 270:
-            //        imageSettingsMenu.Rotation270Button.IsChecked = true;
-            //        imageSettingsMenu.Rotation90Button.IsChecked = false;
-            //        imageSettingsMenu.Rotation180Button.IsChecked = false;
-            //        imageSettingsMenu.Rotation0Button.IsChecked = false;
-            //        break;
-
-            //    default:
-            //        imageSettingsMenu.Rotation0Button.IsChecked = true;
-            //        break;
-            //}
-
             // TODO Make a way to respect monitor height at 90 and 270 degrees
         }
 
