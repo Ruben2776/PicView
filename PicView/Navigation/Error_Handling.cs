@@ -161,11 +161,7 @@ namespace PicView
             DeleteTempFiles();
             PreloadCount = 0;
             freshStartup = true;
-
-            if (Properties.Settings.Default.PicGallery > 0)
-            {
-                GalleryMisc.Clear();
-            }
+            GalleryMisc.Clear();
         }
 
         /// <summary>
@@ -235,6 +231,7 @@ namespace PicView
 
             PreloadCount = 0;
             Preloader.Clear();
+            GalleryMisc.Clear();
             FolderIndex = 0;
             mainWindow.img.Width = mainWindow.Scroller.Width = mainWindow.Scroller.Height =
             mainWindow.img.Height = double.NaN;

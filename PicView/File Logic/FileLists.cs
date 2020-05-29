@@ -231,8 +231,6 @@ namespace PicView
         {
             return Task.Run(() =>
             {
-                // Determine if archive to be extracted or not
-                bool zipped = false;
                 var extension = Path.GetExtension(path);
                 extension = extension.ToLower(CultureInfo.CurrentCulture);
                 switch (extension)
@@ -253,11 +251,9 @@ namespace PicView
                     case ".wim":
                     case ".iso":
                     case ".cab":
-                        zipped = Extract(path);
-                        if (!zipped)
+                        if (!Extract(path))
                         {
-                            Pics = new List<string>();
-                            FolderIndex = -1;
+                            Error_Handling.Reload(true);
                         }
                         return;
                 }

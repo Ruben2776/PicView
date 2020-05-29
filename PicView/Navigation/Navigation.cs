@@ -95,6 +95,11 @@ namespace PicView
                         Reload(true);
                         return;
                     }
+                    else
+                    {
+                        mainWindow.Bar.Text = "Unzipping...";
+                        mainWindow.Bar.ToolTip = mainWindow.Bar.Text;
+                    }
                     mainWindow.Focus();
                 }
             }
@@ -120,8 +125,7 @@ namespace PicView
                 return;
             }
 
-            // Load images for PicGallery if enabled
-            if (Properties.Settings.Default.PicGallery > 0)
+            if (Pics.Count > 1)
             {
                 if (!GalleryMisc.IsLoading)
                 {
@@ -130,6 +134,8 @@ namespace PicView
             }
 
             prevPicResource = null; // Make sure to not waste memory
+
+            AjaxLoadingEnd();
         }
 
         /// <summary>
@@ -151,6 +157,11 @@ namespace PicView
                         ToolTipStyle("Archive could not be processed");
                         Reload(true);
                         return;
+                    }
+                    else
+                    {
+                        mainWindow.Bar.Text = "Unzipping...";
+                        mainWindow.Bar.ToolTip = mainWindow.Bar.Text;
                     }
                 }
 
@@ -255,8 +266,9 @@ namespace PicView
             // Update values
             canNavigate = true;
             SetTitleString(pic.PixelWidth, pic.PixelHeight, x);
+            FolderIndex = x;
 
-            if (Pics.Count > 0)
+            if (Pics.Count > 1)
             {
                 Progress(x, Pics.Count);
 
@@ -418,12 +430,10 @@ namespace PicView
                 {
                     if (x != FolderIndex)
                     {
-                        var prevItem = picGallery.Container.Children[x] as PicGalleryItem;
-                        prevItem.SetSelected(false);
+                        GalleryMisc.SetUnselected(x);
                     }
 
-                    var nextItem = picGallery.Container.Children[FolderIndex] as PicGalleryItem;
-                    nextItem.SetSelected(true);
+                    GalleryMisc.SetSelected(FolderIndex);
                     GalleryScroll.ScrollTo();
                 }
                 else

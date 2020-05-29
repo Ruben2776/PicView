@@ -277,22 +277,10 @@ namespace PicView
                         }
                         return;
                     }
-                    if (Properties.Settings.Default.PicGallery > 0)
+                    if (GalleryMisc.IsOpen)
                     {
-                        if (GalleryMisc.IsOpen)
-                        {
-                            if (Properties.Settings.Default.PicGallery == 2)
-                            {
-                                ClosePicGalleryTwo();
-                                Properties.Settings.Default.PicGallery = 1;
-                            }
-                            else
-                            {
-                                ClosePicGalleryOne();
-                            }
-                            GalleryMisc.IsOpen = false;
-                            return;
-                        }
+                        Toggle();
+                        return;
                     }
                     if (dialogOpen)
                     {

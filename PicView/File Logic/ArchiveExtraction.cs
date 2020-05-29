@@ -52,6 +52,10 @@ namespace PicView
                 return Extract(path, sevenZip, false);
             }
 
+#if DEBUG
+            Trace.WriteLine(nameof(Extract) +  " returned false");
+#endif
+
             return false;
         }
 
@@ -105,15 +109,23 @@ namespace PicView
 
             if (x == null)
             {
+#if DEBUG
+                Trace.WriteLine(nameof(Extract) + " returned false, process null");
+#endif
                 return false;
             }
 
-            if (!x.WaitForExit(500))
+            if (!x.WaitForExit(1000))
             {
+#if DEBUG
+                Trace.WriteLine(nameof(Extract) + " returned false, wait for exit");
+#endif
                 return false;
             }
 
-            //return SetDirectory(path);
+#if DEBUG
+            Trace.WriteLine(nameof(Extract) + " returned true");
+#endif
             return true;
         }
 
@@ -183,12 +195,13 @@ namespace PicView
 
             if (Pics.Count > 0)
             {
+#if DEBUG
+                Trace.WriteLine("Exited RecoverFailedArchiveAsync early");
+#endif
                 return true;
             }
 
-            mainWindow.Bar.Text = "Unzipping...";
-            mainWindow.Bar.ToolTip = mainWindow.Bar.Text;
-            await Task.Delay(25).ConfigureAwait(true);
+            await Task.Delay(200).ConfigureAwait(true);
 
             // TempZipPath is not null = images being extracted
             short count = 0;
@@ -196,6 +209,9 @@ namespace PicView
             {
                 if (SetDirectory())
                 {
+#if DEBUG
+                    Trace.WriteLine("SetDirectory returned true");
+#endif
                     return true;
                 }
 
@@ -257,6 +273,9 @@ namespace PicView
                         await Task.Delay(1500).ConfigureAwait(true);
                         break;
                 }
+#if DEBUG
+                Trace.WriteLine("RecoverFailedArchiveAsync count of " + count);
+#endif
                 count++;
             } while (Pics.Count < 1);
 
@@ -266,6 +285,9 @@ namespace PicView
 
             if (SetDirectory())
             {
+#if DEBUG
+                Trace.WriteLine("SetDirectory returned true");
+#endif
                 return true;
             }
 

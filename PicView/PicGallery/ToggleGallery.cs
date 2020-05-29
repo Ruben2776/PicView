@@ -19,14 +19,14 @@ namespace PicView
         {
             /// TODO need to get this fixed when changing between them.
             /// Is open variable stats true when it should be false, dunno why..
+            /// 
 
-            var picGallery = Properties.Settings.Default.PicGallery;
-
-            /// Quit when not enabled
-            if (picGallery == 0)
+            if (Pics.Count < 1)
             {
                 return;
             }
+
+            var picGallery = Properties.Settings.Default.PicGallery;
 
             /// Toggle PicGallery, when not changed
             if (!change)
@@ -35,22 +35,22 @@ namespace PicView
                 {
                     if (!IsOpen)
                     {
-                        OpenPicGalleryOne();
+                        OpenContainedGallery();
                     }
                     else
                     {
-                        ClosePicGalleryOne();
+                        CloseContainedGallery();
                     }
                 }
                 else
                 {
                     if (!IsOpen)
                     {
-                        OpenPicGalleryTwo();
+                        OpenFullscreenGallery();
                     }
                     else
                     {
-                        ClosePicGalleryTwo();
+                        CloseFullscreenGallery();
                     }
                 }
             }
@@ -68,7 +68,7 @@ namespace PicView
             }
 
 #if DEBUG
-            Trace.WriteLine(nameof(picGallery) + " " + picGallery + " IsOpen = " + IsOpen);
+            Trace.WriteLine(nameof(picGallery) + "  IsOpen = " + IsOpen + " " + nameof(Toggle));
 #endif
         }
 
@@ -76,8 +76,13 @@ namespace PicView
 
         #region Open
 
-        internal static void OpenPicGalleryOne()
+        internal static void OpenContainedGallery()
         {
+            if (Pics.Count < 1)
+            {
+                return;
+            }
+
             Properties.Settings.Default.PicGallery = 1;
             LoadLayout();
 
@@ -87,8 +92,6 @@ namespace PicView
                 To = 1,
                 From = 0
             };
-
-            IsOpen = true;
 
             picGallery.BeginAnimation(UIElement.OpacityProperty, da);           
 
@@ -108,10 +111,20 @@ namespace PicView
             }
 
             ScrollTo();
+            IsOpen = true;
+
+#if DEBUG
+            Trace.WriteLine(nameof(picGallery) + "  IsOpen = " + IsOpen + " " + nameof(OpenContainedGallery));
+#endif
         }
 
-        internal static void OpenPicGalleryTwo()
+        internal static void OpenFullscreenGallery()
         {
+            if (Pics.Count < 1)
+            {
+                return;
+            }
+
             Properties.Settings.Default.PicGallery = 2;
             LoadLayout();
 
@@ -126,23 +139,29 @@ namespace PicView
                 fake.grid.Children.Add(picGallery);
             }
 
-            if (!fake.grid.Children.Contains(picGallery))
+            else if (!fake.grid.Children.Contains(picGallery))
             {
                 mainWindow.bg.Children.Remove(picGallery);
                 fake.grid.Children.Add(picGallery);
             }
 
+            picGallery.Opacity = 1;
+
             fake.Show();
             IsOpen = true;
             ScrollTo();
             mainWindow.Focus();
+
+#if DEBUG
+            Trace.WriteLine(nameof(picGallery) + "  IsOpen = " + IsOpen + " " + nameof(OpenFullscreenGallery));
+#endif
         }
 
         #endregion
 
         #region Close
 
-        internal static void ClosePicGalleryOne()
+        internal static void CloseContainedGallery()
         {
             IsOpen = false;
 
@@ -161,17 +180,13 @@ namespace PicView
             da.From = 1;
             da.Completed += delegate
             {
-                //if (IsOpen && Properties.Settings.Default.PicGallery == 1)
-                //{
-                //    picGallery.Visibility = Visibility.Collapsed;
-                //}
                 picGallery.Visibility = Visibility.Collapsed;
             };
 
             picGallery.BeginAnimation(UIElement.OpacityProperty, da);
         }
 
-        internal static void ClosePicGalleryTwo()
+        internal static void CloseFullscreenGallery()
         {
             Properties.Settings.Default.PicGallery = 1;
             IsOpen = false;

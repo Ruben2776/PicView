@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -11,7 +12,7 @@ namespace PicView.UserControls
     /// </summary>
     public partial class PicGalleryItem : UserControl
     {
-        internal bool Selected { get; set; }
+        //internal bool Selected { get; set; }
 
         internal readonly int Id;
 
@@ -24,7 +25,7 @@ namespace PicView.UserControls
                 img.Source = pic;
             }
 
-            Selected = selected;
+            //Selected = selected;
             Id = id;
 
             outterborder.Width = outterborder.Height = picGalleryItem_Size;
@@ -44,33 +45,41 @@ namespace PicView.UserControls
                 picGalleryItem_Size_s
             );
 
-            if (Selected)
+            if (selected)
             {
                 innerborder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColorOverAlpha());
                 innerborder.Width = innerborder.Height = picGalleryItem_Size;
             }
-
-
         }
 
-        internal void SetSelected(bool b)
-        {
-            if (b)
-            {
-                Selected = true;
-                innerborder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColorOverAlpha());
-                innerborder.Width = innerborder.Height = picGalleryItem_Size;
-            }
-            else
-            {
-                Selected = false;
-                if (Application.Current.Resources["BorderBrush"] is SolidColorBrush bgBrush)
-                {
-                    innerborder.BorderBrush = bgBrush;
-                }
+//        private void SelectedStyle()
+//        {
+//            Selected = true;
+//            innerborder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColorOverAlpha());
+//            innerborder.Width = innerborder.Height = picGalleryItem_Size;
+//        }
 
-                innerborder.Width = innerborder.Height = picGalleryItem_Size_s;
-            }
-        }
+//        private void Unselect()
+//        {
+//            Selected = false;
+//            innerborder.BorderBrush = new SolidColorBrush(Colors.Yellow);
+//            innerborder.Width = innerborder.Height = picGalleryItem_Size_s;
+//        }
+
+//        internal void SetSelected(bool b)
+//        {
+//            if (b)
+//            {
+//                SelectedStyle();
+//            }
+//            else
+//            {
+//                Unselect();
+//            }
+
+//#if DEBUG
+//            Trace.WriteLine(nameof(SetSelected) + " [" + FolderIndex + "] = " + b);
+//#endif
+//        }
     }
 }

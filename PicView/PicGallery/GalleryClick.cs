@@ -21,7 +21,6 @@ namespace PicView
         {
             mainWindow.Focus();
 
-
             if (Properties.Settings.Default.PicGallery == 1)
             {
                 if (Preloader.Contains(Pics[id]))
@@ -97,8 +96,6 @@ namespace PicView
 
                 ItemClick(id);
             }
-
-            IsOpen = false;
         }
 
         internal static void PreviewItemClick(ImageSource source, int id)
@@ -120,13 +117,18 @@ namespace PicView
 
         internal static void ItemClick(int id)
         {
+            // Deselect current item
+            SetUnselected(FolderIndex);
+
+            // Change image
             Pic(id);
 
             if (Properties.Settings.Default.PicGallery == 1)
             {
-                picGallery.Visibility = Visibility.Collapsed;
+                picGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
 
-                if (clickArrowLeft.Visibility != Visibility.Visible)
+                // Restore interface elements if needed
+                if (!Properties.Settings.Default.ShowInterface)
                 {
                     clickArrowLeft.Visibility =
                     clickArrowRight.Visibility =
@@ -135,6 +137,9 @@ namespace PicView
                     galleryShortcut.Visibility = Visibility.Visible;
                 }
             }
+
+            // Select next item
+            SetSelected(id);
         }
 
     }

@@ -94,6 +94,12 @@ namespace PicView
                 filename = filename.Length >= 25 ? Shorten(filename, 21) : filename;
                 ToolTipStyle(Recyclebin ? "Sent " + filename + " to the recyle bin" : "Deleted " + filename);
 
+                if (Pics.Count == 0)
+                {
+                    Unload();
+                    return;
+                }
+
                 PreloadCount = reverse ? PreloadCount - 1 : PreloadCount + 1;
 
                 // Go to next image

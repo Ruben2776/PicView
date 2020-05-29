@@ -70,11 +70,11 @@ namespace PicView
             imageSettingsMenu.Contained_Gallery.Click += delegate {
                 Close_UserControls();
                 //ShowMinimalInterface();
-                ToggleGallery.OpenPicGalleryOne();
+                ToggleGallery.OpenContainedGallery();
             };
             imageSettingsMenu.Fullscreen_Gallery.Click += delegate {
                 Close_UserControls();
-                ToggleGallery.OpenPicGalleryTwo();
+                ToggleGallery.OpenFullscreenGallery();
             };
 
 
