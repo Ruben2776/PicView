@@ -32,6 +32,11 @@ namespace PicView
                 }
             }
 
+            if (pic == null)
+            {
+                return null;
+            }
+
             if (!pic.IsFrozen)
             {
                 pic.Freeze();

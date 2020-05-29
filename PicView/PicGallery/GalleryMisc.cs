@@ -31,6 +31,11 @@ namespace PicView
 
         internal static void Clear()
         {
+            if (picGallery == null)
+            {
+                return;
+            }
+
             IsLoading = IsOpen = false;
             picGallery.Container.Children.Clear();
         }

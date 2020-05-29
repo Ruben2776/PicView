@@ -90,6 +90,7 @@ namespace PicView
                         || file.ToLower(CultureInfo.CurrentCulture).EndsWith("arw", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower(CultureInfo.CurrentCulture).EndsWith("webp", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower(CultureInfo.CurrentCulture).EndsWith("aai", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower(CultureInfo.CurrentCulture).EndsWith("jfif", StringComparison.OrdinalIgnoreCase)
                         //|| file.ToLower(CultureInfo.CurrentCulture).EndsWith("ai", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower(CultureInfo.CurrentCulture).EndsWith("art", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower(CultureInfo.CurrentCulture).EndsWith("bgra", StringComparison.OrdinalIgnoreCase)

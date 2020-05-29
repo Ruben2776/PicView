@@ -29,6 +29,7 @@ namespace PicView
                 case ".gif":
                 case ".ico":
                 case ".wdp":
+                case ".jfif":
                     return true;
 
                 // Non-standards
@@ -316,6 +317,7 @@ namespace PicView
                 case ".gif":
                 case ".ico":
                 case ".wdp":
+                case ".jfif":
                     return true;
 
                 // Non supported
