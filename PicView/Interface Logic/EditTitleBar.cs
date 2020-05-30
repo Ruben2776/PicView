@@ -10,11 +10,16 @@ namespace PicView
 
         internal static void Bar_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // Disable focus when unloaded
-            if (Pics.Count == 0)
-            {
-                e.Handled = true;
-            }
+            e.Handled = true;
+
+            WindowLogic.Move(sender, e);
+
+            //// Disable focus when unloaded
+            //if (Pics.Count == 0)
+            //{
+            //    e.Handled = true;
+            //}
+            
         }
 
         internal static void EditTitleBar_Text()

@@ -87,11 +87,7 @@ namespace PicView
                     var recovery = await RecoverFailedArchiveAsync().ConfigureAwait(true);
                     if (!recovery)
                     {
-                        if (sexyToolTip.Opacity == 0)
-                        {
-                            ToolTipStyle("Archive could not be processed");
-                        }
-
+                        ToolTipStyle("Archive could not be processed");
                         Reload(true);
                         return;
                     }
@@ -149,22 +145,6 @@ namespace PicView
             // Additional error checking
             if (Pics.Count <= x)
             {
-                if (x == 0)
-                {
-                    var recovery = await RecoverFailedArchiveAsync().ConfigureAwait(true);
-                    if (!recovery)
-                    {
-                        ToolTipStyle("Archive could not be processed");
-                        Reload(true);
-                        return;
-                    }
-                    else
-                    {
-                        mainWindow.Bar.Text = "Unzipping...";
-                        mainWindow.Bar.ToolTip = mainWindow.Bar.Text;
-                    }
-                }
-
                 // Untested code
                 pic = await PicErrorFix(x).ConfigureAwait(true);
                 if (pic == null)

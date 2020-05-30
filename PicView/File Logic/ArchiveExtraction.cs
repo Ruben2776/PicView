@@ -52,10 +52,6 @@ namespace PicView
                 return Extract(path, sevenZip, false);
             }
 
-#if DEBUG
-            Trace.WriteLine(nameof(Extract) +  " returned false");
-#endif
-
             return false;
         }
 
@@ -96,9 +92,9 @@ namespace PicView
                 Arguments = arguments,
 
 #if DEBUG
-                WindowStyle = ProcessWindowStyle.Normal
+                CreateNoWindow = false
 #else
-                WindowStyle = ProcessWindowStyle.Hidden
+                CreateNoWindow = true
 #endif
             });
             x.EnableRaisingEvents = true;
@@ -109,23 +105,11 @@ namespace PicView
 
             if (x == null)
             {
-#if DEBUG
-                Trace.WriteLine(nameof(Extract) + " returned false, process null");
-#endif
                 return false;
             }
 
-            if (!x.WaitForExit(1000))
-            {
-#if DEBUG
-                Trace.WriteLine(nameof(Extract) + " returned false, wait for exit");
-#endif
-                return false;
-            }
 
-#if DEBUG
-            Trace.WriteLine(nameof(Extract) + " returned true");
-#endif
+            //return SetDirectory(path);
             return true;
         }
 
@@ -167,11 +151,6 @@ namespace PicView
                     return false;
                 }
 
-                //if (Pics.Count > 0)
-                //    Pics[FolderIndex] = Pics[0];
-                //else
-                //    return false;
-
                 // Start at first file
                 FolderIndex = 0;
 
@@ -195,13 +174,12 @@ namespace PicView
 
             if (Pics.Count > 0)
             {
-#if DEBUG
-                Trace.WriteLine("Exited RecoverFailedArchiveAsync early");
-#endif
                 return true;
             }
 
-            await Task.Delay(200).ConfigureAwait(true);
+            mainWindow.Bar.Text = "Unzipping...";
+            mainWindow.Bar.ToolTip = mainWindow.Bar.Text;
+            await Task.Delay(100).ConfigureAwait(true);
 
             // TempZipPath is not null = images being extracted
             short count = 0;
@@ -209,9 +187,6 @@ namespace PicView
             {
                 if (SetDirectory())
                 {
-#if DEBUG
-                    Trace.WriteLine("SetDirectory returned true");
-#endif
                     return true;
                 }
 
@@ -258,24 +233,21 @@ namespace PicView
                 switch (count)
                 {
                     case 0:
-                        await Task.Delay(400).ConfigureAwait(true);
+                        await Task.Delay(200).ConfigureAwait(true);
                         break;
 
                     case 1:
-                        await Task.Delay(600).ConfigureAwait(true);
+                        await Task.Delay(400).ConfigureAwait(true);
                         break;
 
                     case 2:
-                        await Task.Delay(950).ConfigureAwait(true);
+                        await Task.Delay(700).ConfigureAwait(true);
                         break;
 
                     default:
                         await Task.Delay(1500).ConfigureAwait(true);
                         break;
                 }
-#if DEBUG
-                Trace.WriteLine("RecoverFailedArchiveAsync count of " + count);
-#endif
                 count++;
             } while (Pics.Count < 1);
 
@@ -285,9 +257,6 @@ namespace PicView
 
             if (SetDirectory())
             {
-#if DEBUG
-                Trace.WriteLine("SetDirectory returned true");
-#endif
                 return true;
             }
 
