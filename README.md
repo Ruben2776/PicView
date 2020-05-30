@@ -7,9 +7,9 @@ PicView is an open source minimal image viewer, designed to efficiently browse t
 [![Total Downloads](https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=downloads&style=for-the-badge)](https://github.com/Ruben2776/PicView/releases)
 
 ## Features:
-Features common viewing capabilites, including image two image galleries and scroll functions, useful for viewing downloaded manga or comic books (Supports .cbr, etc, as well, if you have 7-zip or WinRar installed).
+Features common viewing capabilites, including two image galleries and scroll functions, useful for viewing downloaded manga or comic books (Supports .cbr, etc, as well, if you have 7-zip or WinRar installed).
 
-[View features here](https://github.com/Ruben2776/PicView/wiki/Features)
+[View a list of features](https://github.com/Ruben2776/PicView/wiki/Features)
 <br>
 [View shortcuts](https://github.com/Ruben2776/PicView/wiki/Keyboard-and-mouse-shortcuts)
 
@@ -27,7 +27,7 @@ It is built to be portable, so just extract it and run it.
 ![Windows OS](https://img.shields.io/badge/OS-Windows%207+-00adef.svg?maxAge=3600)
 
 ## Contributing
-Thanks for considering contributing to PicView! 😊
+Feedback and questions are always appreciated. Create an issue or take a look at an existing one if you have something on your mind! 😊
 
 I am currently in need of help with this project.
 
