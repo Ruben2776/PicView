@@ -33,122 +33,59 @@ namespace PicView
                     return true;
 
                 // Non-standards
-                case ".svg":
+
+                // Photoshop
                 case ".psd":
                 case ".psb":
-                case ".orf":
+
+                // Web
+                case ".svg":
+                case ".webp":
+
+                // Raw Camera
+                case ".3fr":
+                case ".arw":
                 case ".cr2":
                 case ".crw":
+                case ".dcr":
                 case ".dng":
-                case ".raf":
-                case ".raw":
+                case ".erf":
+                case ".kdc":
+                case ".mdc":
+                case ".mef":
+                case ".mos":
                 case ".mrw":
                 case ".nef":
-                case ".x3f":
-                case ".arw":
-                case ".webp":
-                case ".aai":
-                case ".ai":
-                case ".art":
-                case ".bgra":
-                case ".bgro":
-                case ".canvas":
-                case ".cin":
-                case ".cmyk":
-                case ".cmyka":
-                case ".cur":
-                case ".cut":
-                case ".dcm":
-                case ".dcr":
-                case ".dcx":
-                case ".dds":
-                case ".dfont":
-                case ".dlib":
-                case ".dpx":
-                case ".dxt1":
-                case ".dxt5":
-                case ".emf":
-                case ".epi":
-                case ".eps":
-                case ".ept":
-                case ".ept2":
-                case ".ept3":
-                case ".exr":
-                case ".fax":
-                case ".fits":
-                case ".flif":
-                case ".g3":
-                case ".g4":
-                case ".gif87":
-                case ".gradient":
-                case ".gray":
-                case ".group4":
-                case ".hald":
-                case ".hdr":
-                case ".hrz":
-                case ".icb":
-                case ".icon":
-                case ".ipl":
-                case ".jc2":
-                case ".j2k":
-                case ".jng":
-                case ".jnx":
-                case ".jpm":
-                case ".jps":
-                case ".jpt":
-                case ".kdc":
-                case ".label":
-                case ".map":
                 case ".nrw":
-                case ".otb":
-                case ".otf":
-                case ".pbm":
-                case ".pcd":
-                case ".pcds":
-                case ".pcl":
-                case ".pct":
-                case ".pcx":
-                case ".pfa":
-                case ".pfb":
-                case ".pfm":
-                case ".picon":
-                case ".pict":
-                case ".pix":
-                case ".pjpeg":
-                case ".png00":
-                case ".png24":
-                case ".png32":
-                case ".png48":
-                case ".png64":
-                case ".png8":
-                case ".pnm":
+                case ".orf":
+                case ".pef":
+                case ".pgm":
                 case ".ppm":
-                case ".ps":
-                case ".radialgradient":
-                case ".ras":
-                case ".rgb":
-                case ".rgba":
-                case ".rgbo":
-                case ".rla":
-                case ".rle":
-                case ".scr":
-                case ".screenshot":
-                case ".sgi":
+                case ".raf":
+                case ".raw":
+                case ".rw2":
                 case ".srf":
-                case ".sun":
-                case ".svgz":
-                case ".tiff64":
-                case ".ttf":
-                case ".vda":
-                case ".vicar":
-                case ".vid":
-                case ".viff":
-                case ".vst":
-                case ".vmf":
-                case ".wpg":
-                case ".xbm":
-                case ".xcf":
-                case ".yuv":
+                case ".x3f":
+
+
+                // Obscure
+                
+                case ".bpg": // untested
+                case ".cur": 
+                case ".cut": // untested
+                case ".dib": // untested
+                case ".emf": // untested
+                case ".exif": // untested
+                case ".exr": 
+                case ".hdr": 
+                case ".heic": 
+                case ".pcx":
+                case ".tga":
+                case ".wmf": // untested
+                case ".wpg": 
+                case ".xbm": 
+                case ".xpm": 
+
                     return false;
 
                 // Non supported
@@ -188,122 +125,59 @@ namespace PicView
                 case ".cab":
 
                 // Non-standards
-                case ".svg":
+
+                // Photoshop
                 case ".psd":
                 case ".psb":
-                case ".orf":
+
+                // Web
+                case ".svg":
+                case ".webp":
+
+                // Raw Camera
+                case ".3fr":
+                case ".arw":
                 case ".cr2":
                 case ".crw":
+                case ".dcr":
                 case ".dng":
-                case ".raf":
-                case ".raw":
+                case ".erf":
+                case ".kdc":
+                case ".mdc":
+                case ".mef":
+                case ".mos":
                 case ".mrw":
                 case ".nef":
-                case ".x3f":
-                case ".arw":
-                case ".webp":
-                case ".aai":
-                case ".ai":
-                case ".art":
-                case ".bgra":
-                case ".bgro":
-                case ".canvas":
-                case ".cin":
-                case ".cmyk":
-                case ".cmyka":
-                case ".cur":
-                case ".cut":
-                case ".dcm":
-                case ".dcr":
-                case ".dcx":
-                case ".dds":
-                case ".dfont":
-                case ".dlib":
-                case ".dpx":
-                case ".dxt1":
-                case ".dxt5":
-                case ".emf":
-                case ".epi":
-                case ".eps":
-                case ".ept":
-                case ".ept2":
-                case ".ept3":
-                case ".exr":
-                case ".fax":
-                case ".fits":
-                case ".flif":
-                case ".g3":
-                case ".g4":
-                case ".gif87":
-                case ".gradient":
-                case ".gray":
-                case ".group4":
-                case ".hald":
-                case ".hdr":
-                case ".hrz":
-                case ".icb":
-                case ".icon":
-                case ".ipl":
-                case ".jc2":
-                case ".j2k":
-                case ".jng":
-                case ".jnx":
-                case ".jpm":
-                case ".jps":
-                case ".jpt":
-                case ".kdc":
-                case ".label":
-                case ".map":
                 case ".nrw":
-                case ".otb":
-                case ".otf":
-                case ".pbm":
-                case ".pcd":
-                case ".pcds":
-                case ".pcl":
-                case ".pct":
-                case ".pcx":
-                case ".pfa":
-                case ".pfb":
-                case ".pfm":
-                case ".picon":
-                case ".pict":
-                case ".pix":
-                case ".pjpeg":
-                case ".png00":
-                case ".png24":
-                case ".png32":
-                case ".png48":
-                case ".png64":
-                case ".png8":
-                case ".pnm":
+                case ".orf":
+                case ".pef":
+                case ".pgm":
                 case ".ppm":
-                case ".ps":
-                case ".radialgradient":
-                case ".ras":
-                case ".rgb":
-                case ".rgba":
-                case ".rgbo":
-                case ".rla":
-                case ".rle":
-                case ".scr":
-                case ".screenshot":
-                case ".sgi":
+                case ".raf":
+                case ".raw":
+                case ".rw2":
                 case ".srf":
-                case ".sun":
-                case ".svgz":
-                case ".tiff64":
-                case ".ttf":
-                case ".vda":
-                case ".vicar":
-                case ".vid":
-                case ".viff":
-                case ".vst":
-                case ".vmf":
+                case ".x3f":
+
+
+                // Obscure
+
+                case ".bpg": // untested
+                case ".cur":
+                case ".cut": // untested
+                case ".dib": // untested
+                case ".emf": // untested
+                case ".exif": // untested
+                case ".exr":
+                case ".hdr":
+                case ".heic":
+                case ".pcx":
+                case ".tga":
+                case ".wmf": // untested
                 case ".wpg":
                 case ".xbm":
-                case ".xcf":
-                case ".yuv":
+                case ".xpm":
+
                     return false;
 
                 // Standards

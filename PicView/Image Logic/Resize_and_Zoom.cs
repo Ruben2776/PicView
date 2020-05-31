@@ -418,7 +418,6 @@ namespace PicView
         {
             if (string.IsNullOrWhiteSpace(source))
             {
-                ZoomFit(mainWindow.MinWidth, mainWindow.MinHeight);
                 return;
             }
 
@@ -426,10 +425,6 @@ namespace PicView
             if (size.HasValue)
             {
                 ZoomFit(size.Value.Width, size.Value.Height);
-            }
-            else
-            {
-                ZoomFit(mainWindow.MinWidth, mainWindow.MinHeight);
             }
         }
 

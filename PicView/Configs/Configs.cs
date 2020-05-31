@@ -139,7 +139,7 @@ namespace PicView
 
         internal static void SetLooping(object sender, RoutedEventArgs e)
         {
-            var settingscm = cm.Items[6] as MenuItem;
+            var settingscm = cm.Items[7] as MenuItem;
             var loopcm = settingscm.Items[0] as MenuItem;
             var loopcmHeader = loopcm.Header as CheckBox;
 

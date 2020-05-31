@@ -152,6 +152,7 @@ namespace PicView
 
             // Don't show drop message any longer
             CloseToolTipStyle();
+            AjaxLoader.AjaxLoadingEnd();
 
             // Start multiple clients if user drags multiple files
             if (files.Length > 0)

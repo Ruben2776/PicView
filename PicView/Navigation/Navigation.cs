@@ -1,5 +1,4 @@
 ﻿using PicView.PreLoading;
-using PicView.UserControls;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -10,13 +9,13 @@ using static PicView.ArchiveExtraction;
 using static PicView.Error_Handling;
 using static PicView.Fields;
 using static PicView.FileLists;
-using static PicView.Utilities;
 using static PicView.ImageDecoder;
 using static PicView.Resize_and_Zoom;
 using static PicView.Scroll;
 using static PicView.SetTitle;
 using static PicView.Thumbnails;
 using static PicView.Tooltip;
+using static PicView.Utilities;
 
 namespace PicView
 {
@@ -105,21 +104,13 @@ namespace PicView
                 return;
             }
 
-            if (File.Exists(Pics[FolderIndex]))
+            if (!freshStartup)
             {
-                if (!freshStartup)
-                {
-                    Preloader.Clear();
-                }
+                Preloader.Clear();
+            }
 
-                // Navigate to picture using obtained index
-                Pic(FolderIndex);
-            }
-            else
-            {
-                Reload(true);
-                return;
-            }
+            // Navigate to picture using obtained index
+            Pic(FolderIndex);
 
             if (Pics.Count > 1)
             {
@@ -142,20 +133,28 @@ namespace PicView
         {
             BitmapSource pic;
 
+            // Clear unsupported image window, if shown
+            if (unsupported)
+            {
+                mainWindow.topLayer.Children.Remove(badImage);
+                badImage = null;
+                unsupported = false;
+            }
+
             // Additional error checking
+            if (x == -1)
+            {
+                await GetValues(Pics[0]).ConfigureAwait(true);
+            }
+            
             if (Pics.Count <= x)
             {
-                // Untested code
                 pic = await PicErrorFix(x).ConfigureAwait(true);
                 if (pic == null)
                 {
                     Reload(true);
                     return;
                 }
-            }
-            if (x < 0)
-            {
-                pic = await PicErrorFix(x).ConfigureAwait(true);
             }
             else
             {
@@ -165,14 +164,13 @@ namespace PicView
                 pic = Preloader.Load(Pics[x]);
             }
 
-
             if (pic == null)
             {
                 mainWindow.Title = Loading;
                 mainWindow.Bar.Text = Loading;
                 mainWindow.Bar.ToolTip = Loading;               
 
-                var thumb = GetThumb(x);
+                var thumb = GetThumb(x, true);
 
                 if (thumb != null)
                 {
@@ -191,15 +189,16 @@ namespace PicView
                 }
                 else
                 {
+                    AjaxLoadingStart();
+
                     do
                     {
-                        // Try again while loading?                      
-                        await Task.Delay(20).ConfigureAwait(true);
-                        if (x < Pics.Count)
-                        {
-                            pic = Preloader.Load(Pics[x]);
-                        }
+                        // Try again while loading                                             
+                        pic = Preloader.Load(Pics[x]);
+                        await Task.Delay(50).ConfigureAwait(true);
                     } while (Preloader.IsLoading);
+
+                    AjaxLoadingEnd();
                 }
 
                 // If pic is still null, image can't be rendered
@@ -220,13 +219,6 @@ namespace PicView
                         return;
                     }
                 }
-            }
-
-            // Clear unsupported image window, if shown
-            if (unsupported)
-            {
-                mainWindow.topLayer.Children.Remove(badImage);
-                unsupported = false;
             }
 
             // Show the image! :)
@@ -255,18 +247,23 @@ namespace PicView
                 // Preload images \\
                 if (Preloader.StartPreload())
                 {
-                    await Preloader.PreLoad(x).ConfigureAwait(false);
-
                     if (!Preloader.Contains(Pics[x]))
                     {
                         Preloader.Add(pic, Pics[x]);
                     }
+
+                    await Preloader.PreLoad(x).ConfigureAwait(false);
                 }
             }
 
             if (!freshStartup)
             {
                 RecentFiles.Add(Pics[x]);
+
+                if (prevPicResource != null)
+                {
+                    prevPicResource = null;
+                }
             }
             
             freshStartup = false;

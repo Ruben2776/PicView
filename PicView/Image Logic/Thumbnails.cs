@@ -11,6 +11,34 @@ namespace PicView
     internal static class Thumbnails
     {
         /// <summary>
+        /// Returns thumb for common images
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="startup"></param>
+        /// <returns></returns>
+        internal static BitmapSource GetThumb(int x, bool startup)
+        {
+            if (!startup)
+            {
+                return GetThumb(x);
+            }
+
+            var supported = SupportedFiles.IsSupportedFile(Pics[x]);
+
+            if (!supported.HasValue)
+            {
+                return null;
+            }
+
+            if (supported.Value)
+            {
+                return GetThumb(x);
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Load thumbnail at provided index
         /// or full image if preloaded.
         /// </summary>

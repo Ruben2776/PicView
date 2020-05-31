@@ -35,6 +35,11 @@ namespace PicView
                 return null;
             }
 
+            if (x == -1)
+            {
+                await GetValues(Pics[0]).ConfigureAwait(false);
+            }
+
             if (Pics.Count < 0)
             {
                 ToolTipStyle("Unexpected error", true, TimeSpan.FromSeconds(3));
@@ -255,11 +260,21 @@ namespace PicView
         {
             mainWindow.img.Source = null;
 
-            mainWindow.topLayer.Children.Add(new UserControls.BadImage
+            if (badImage == null)
             {
-                Width = xWidth,
-                Height = xHeight
-            });
+                badImage = new UserControls.BadImage
+                {
+                    Width = xWidth,
+                    Height = xHeight
+                };
+            }
+            else
+            {
+                badImage.Width = xWidth;
+                badImage.Height = xHeight;
+            }
+
+            mainWindow.topLayer.Children.Add(badImage);
 
             mainWindow.Bar.ToolTip = mainWindow.Bar.Text = CannotRender;
             mainWindow.Title = CannotRender + " - " + AppName;
