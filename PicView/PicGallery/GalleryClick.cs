@@ -47,7 +47,7 @@ namespace PicView
                 // Need to add border for background to pictures with transparent background
                 var border = new Border()
                 {
-                    Background = Properties.Settings.Default.BgColorWhite ? new SolidColorBrush(Colors.White) : Application.Current.Resources["BackgroundColorBrush"] as SolidColorBrush
+                    Background = Utilities.GetBackgroundColorBrush()
                 };
                 border.Child = img;
                 picGallery.grid.Children.Add(border);

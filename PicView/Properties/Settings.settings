@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="PicView.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="ColorTheme" Type="System.Int16" Scope="User">
+    <Setting Name="ColorTheme" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">10</Value>
     </Setting>
     <Setting Name="Blue" Type="System.Windows.Media.Color" Scope="User">
@@ -50,7 +50,7 @@
     <Setting Name="ShowInterface" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="SortPreference" Type="System.Int16" Scope="User">
+    <Setting Name="SortPreference" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="PicGallery" Type="System.Byte" Scope="User">
@@ -65,7 +65,7 @@
     <Setting Name="WindowBorderColorEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="BgColorWhite" Type="System.Boolean" Scope="User">
+    <Setting Name="BgColorChoice" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="FitToWindow" Type="System.Boolean" Scope="User">

@@ -371,20 +371,20 @@ namespace PicView
             {
                 InputGestureText = "T"
             };
-            var transcmHeader = new CheckBox
+            var transcmHeader = new Button
             {
-                Content = "White background",
-                ToolTip = "Change between white and transparent background for images",
-                IsChecked = Properties.Settings.Default.BgColorWhite,
+                Content = "Change background",
+                ToolTip = "Change between background color for images with transparent background",
+                //IsChecked = Properties.Settings.Default.BgColorChoice,
                 FontSize = 13,
                 Width = double.NaN,
-                Height = double.NaN
+                Height = double.NaN,
+                Margin = new Thickness(15.5, 0, 0, 0)
             };
-            transcmHeader.Click += (s, x) => { ChangeBackground(s, x); };
-            transcmHeader.Style = Application.Current.FindResource("Checkstyle") as Style;
+            transcmHeader.Click += ChangeBackground;
             transcmHeader.HorizontalAlignment = HorizontalAlignment.Left;
             transcm.Header = transcmHeader;
-            transcm.Click += (s, x) => { ChangeBackground(s, x); };
+            transcm.Click += ChangeBackground;
             settingscm.Items.Add(transcm);
 
             cm.Items.Add(new Separator());

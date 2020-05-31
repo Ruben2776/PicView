@@ -44,7 +44,7 @@
                 FontFamily="/PicView;component/Resources/fonts/#Aller"
                 FontSize="15"
                 FontWeight="Bold"
-                Foreground="{StaticResource MainColorBrush}"/>
+                Foreground="{StaticResource MainColorBrush}" />
 
         </DockPanel>
         <StackPanel
@@ -312,7 +312,6 @@
                         x:Name="imgBorder"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Background="White"
                         Focusable="False">
                         <Image
                             x:Name="img"

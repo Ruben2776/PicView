@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using static PicView.AjaxLoader;
 using static PicView.ContextMenus;
 using static PicView.Error_Handling;
 using static PicView.Fields;
-using static PicView.Utilities;
 using static PicView.LoadControls;
 using static PicView.Navigation;
 using static PicView.Resize_and_Zoom;
 using static PicView.Scroll;
 using static PicView.Timers;
+using static PicView.Utilities;
 using static PicView.WindowLogic;
 
 namespace PicView
@@ -112,13 +111,7 @@ namespace PicView
                 Visibility.Visible;
             }
 
-            mainColor = (Color)Application.Current.Resources["MainColor"];
-            if (!Properties.Settings.Default.BgColorWhite)
-            {
-                mainWindow.imgBorder.Background = new SolidColorBrush(Colors.Transparent);
-            }
-
-            backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
+            SetColors();
 
             // Load PicGallery, if needed
             if (Properties.Settings.Default.PicGallery > 0)

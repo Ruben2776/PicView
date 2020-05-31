@@ -26,9 +26,9 @@ namespace PicView.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public short ColorTheme {
+        public int ColorTheme {
             get {
-                return ((short)(this["ColorTheme"]));
+                return ((int)(this["ColorTheme"]));
             }
             set {
                 this["ColorTheme"] = value;
@@ -218,9 +218,9 @@ namespace PicView.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public short SortPreference {
+        public int SortPreference {
             get {
-                return ((short)(this["SortPreference"]));
+                return ((int)(this["SortPreference"]));
             }
             set {
                 this["SortPreference"] = value;
@@ -277,13 +277,13 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool BgColorWhite {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int BgColorChoice {
             get {
-                return ((bool)(this["BgColorWhite"]));
+                return ((int)(this["BgColorChoice"]));
             }
             set {
-                this["BgColorWhite"] = value;
+                this["BgColorChoice"] = value;
             }
         }
         
