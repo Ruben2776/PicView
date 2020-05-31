@@ -131,25 +131,25 @@
                     Canvas.Left="97"
                     Width="200"
                     Height="35"
-                    Background="#131313">
+                    Background="{StaticResource BackgroundColorBrush}">
                     <Rectangle
                         Canvas.Left="102"
                         Canvas.Top="0"
                         Width="1"
                         Height="35"
-                        Fill="{StaticResource BorderBrushAlt}" />
+                        Fill="{StaticResource BorderBrush}" />
                     <Rectangle
                         Canvas.Left="0"
                         Canvas.Top="0"
                         Width="1"
                         Height="35"
-                        Fill="{StaticResource BorderBrushAlt}" />
+                        Fill="{StaticResource BorderBrush}" />
                     <Rectangle
                         Canvas.Left="200"
                         Canvas.Top="0"
                         Width="1"
                         Height="38"
-                        Fill="{StaticResource BorderBrushAlt}" />
+                        Fill="{StaticResource BorderBrush}" />
                     <Button
                         x:Name="LeftButton"
                         Width="100"

@@ -77,43 +77,40 @@ namespace PicView
 
                 if (files != null)
                 {
-                    if (files.Length >= 1)
+                    var x = files[0];
+
+                    if (Pics.Count != 0)
                     {
-                        var x = files[0];
-
-                        if (Pics.Count != 0)
+                        // If from same folder
+                        if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]) && Path.GetDirectoryName(x) == Path.GetDirectoryName(Pics[FolderIndex]))
                         {
-                            // If from same folder
-                            if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]) && Path.GetDirectoryName(x) == Path.GetDirectoryName(Pics[FolderIndex]))
+                            if (!Preloader.Contains(x))
                             {
-                                if (!Preloader.Contains(x))
-                                {
-                                    PreloadCount = 4;
-                                    Preloader.Add(x);
-                                }
+                                PreloadCount = 4;
+                                Preloader.Add(x);
+                            }
 
-                                Pic(Pics.IndexOf(x));
-                            }
-                            else
-                            {
-                                Pic(x);
-                            }
+                            Pic(Pics.IndexOf(x));
                         }
                         else
                         {
                             Pic(x);
                         }
+                    }
+                    else
+                    {
+                        Pic(x);
+                    }
 
-                        if (files.Length > 1)
+                    if (files.Length > 1)
+                    {
+                        for (int i = 1; i < files.Length; i++)
                         {
-                            for (int i = 1; i < files.Length; i++)
+                            using (var n = new Process())
                             {
-                                using (var n = new Process())
-                                {
-                                    n.StartInfo.FileName = Assembly.GetExecutingAssembly().Location;
-                                    n.StartInfo.Arguments = files[i];
-                                    n.Start();
-                                }
+                                n.StartInfo.FileName = Assembly.GetExecutingAssembly().Location;
+                                n.StartInfo.Arguments = files[i];
+                                n.Start();
                             }
                         }
                     }

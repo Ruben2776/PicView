@@ -38,11 +38,12 @@ namespace PicView
 
                 var img = new Image()
                 {
-                    Source = GetBitmapSourceThumb(Pics[id]),
+                    Source = GetThumb(id),
                     Stretch = Stretch.Fill,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
                 };
+
                 // Need to add border for background to pictures with transparent background
                 var border = new Border()
                 {
@@ -80,6 +81,7 @@ namespace PicView
                     ItemClick(id);
                     picGallery.grid.Children.Remove(border);
                     IsOpen = false;
+                    img = null;
                 };
 
                 border.BeginAnimation(FrameworkElement.WidthProperty, da);

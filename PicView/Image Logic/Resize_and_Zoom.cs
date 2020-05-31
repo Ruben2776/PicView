@@ -418,7 +418,7 @@ namespace PicView
         {
             if (string.IsNullOrWhiteSpace(source))
             {
-                ZoomFit(465, 515); // Numbers for min width and height for mainWindow
+                ZoomFit(mainWindow.MinWidth, mainWindow.MinHeight);
                 return;
             }
 
@@ -429,7 +429,7 @@ namespace PicView
             }
             else
             {
-                ZoomFit(465, 515);
+                ZoomFit(mainWindow.MinWidth, mainWindow.MinHeight);
             }
         }
 
@@ -450,12 +450,12 @@ namespace PicView
                 if (Properties.Settings.Default.ShowInterface)
                 {
                     maxWidth = Math.Min(MonitorInfo.Width - ComfySpace, width);
-                    maxHeight = Math.Min((MonitorInfo.Height - interfaceHeight), height);
+                    maxHeight = Math.Min(MonitorInfo.Height - interfaceHeight, height);
                 }
                 /// - 2 for window border
                 else
                 {
-                    maxWidth = Math.Min((MonitorInfo.Width - ComfySpace) - 2, width - 2);
+                    maxWidth = Math.Min(MonitorInfo.Width - ComfySpace - 2, width - 2);
                     maxHeight = Math.Min(MonitorInfo.Height - 2, height - 2);
                 }
             }
@@ -474,7 +474,7 @@ namespace PicView
                 }
             }
 
-            AspectRatio = Math.Min((maxWidth / width), (maxHeight / height));
+            AspectRatio = Math.Min(maxWidth / width, (maxHeight / height));
 
             if (IsScrollEnabled)
             {
