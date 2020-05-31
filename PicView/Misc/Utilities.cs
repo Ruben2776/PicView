@@ -61,6 +61,7 @@ namespace PicView
             {
                 p.StartInfo.FileName = path;
                 p.StartInfo.Verb = "print";
+                p.StartInfo.UseShellExecute = true;
                 p.Start();
             }
             return true;
