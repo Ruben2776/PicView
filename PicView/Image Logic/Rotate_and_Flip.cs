@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System;
+using System.Windows.Media;
 using static PicView.Fields;
 
 namespace PicView
@@ -18,6 +19,8 @@ namespace PicView
 
             var rt = new RotateTransform { Angle = Rotateint = r };
 
+            Resize_and_Zoom.TryZoomFit();
+
             // If it's flipped, keep it flipped when rotating
             if (Flipped)
             {
@@ -32,13 +35,14 @@ namespace PicView
                 mainWindow.img.LayoutTransform = rt;
             }
 
-            // TODO Make a way to respect monitor height at 90 and 270 degrees
+            
         }
 
         /// <summary>
         /// Rotates left or right
         /// </summary>
         /// <param name="right"></param>
+        // https://stackoverflow.com/a/62136307/13646636
         internal static void Rotate(bool right)
         {
             if (mainWindow.img.Source == null || GalleryMisc.IsOpen)
@@ -46,56 +50,18 @@ namespace PicView
                 return;
             }
 
-            switch (Rotateint)
+            if (right)
             {
-                case 0:
-                    if (right)
-                    {
-                        Rotate(270);
-                    }
-                    else
-                    {
-                        Rotate(90);
-                    }
-
-                    break;
-
-                case 90:
-                    if (right)
-                    {
-                        Rotate(0);
-                    }
-                    else
-                    {
-                        Rotate(180);
-                    }
-
-                    break;
-
-                case 180:
-                    if (right)
-                    {
-                        Rotate(90);
-                    }
-                    else
-                    {
-                        Rotate(270);
-                    }
-
-                    break;
-
-                case 270:
-                    if (right)
-                    {
-                        Rotate(180);
-                    }
-                    else
-                    {
-                        Rotate(0);
-                    }
-
-                    break;
+                Rotateint -= 90;
+                if (Rotateint < 0) { Rotateint += 360; }
             }
+            else
+            {
+                Rotateint += 90;
+                if (Rotateint >= 360) { Rotateint -= 360; }
+            }
+
+            Rotate(Rotateint);
         }
 
         /// <summary>

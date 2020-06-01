@@ -437,7 +437,7 @@ namespace PicView
         internal static void ZoomFit(double width, double height)
         {
             double maxWidth, maxHeight;
-            var interfaceHeight = 90; /// TopBar + mainWindow.LowerBar height + extra padding
+            var interfaceHeight = 90;
 
             if (FitToWindow)
             {
@@ -469,7 +469,16 @@ namespace PicView
                 }
             }
 
-            AspectRatio = Math.Min(maxWidth / width, (maxHeight / height));
+            if (Rotateint == 0 || Rotateint == 180)
+            {
+                AspectRatio = Math.Min(maxWidth / width, (maxHeight / height));
+            }
+            else
+            {
+                AspectRatio = Math.Min(MonitorInfo.Width / height, (MonitorInfo.Height - interfaceHeight) / width);
+            }
+
+            
 
             if (IsScrollEnabled)
             {
