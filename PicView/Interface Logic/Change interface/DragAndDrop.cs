@@ -94,6 +94,8 @@ namespace PicView
         /// <param name="e"></param>
         internal static void Image_DragLeave(object sender, DragEventArgs e)
         {
+            // TODO fix base64 image not returning to normal
+
             // Error handling
             if (!isDraggedOver)
             {

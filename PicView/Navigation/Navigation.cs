@@ -297,6 +297,34 @@ namespace PicView
             canNavigate = false;
         }
 
+        /// <summary>
+        /// Load a picture from a base64
+        /// </summary>
+        /// <param name="pic"></param>
+        /// <param name="imageName"></param>
+        internal static void Pic64(string base64string)
+        {
+            var pic = Base64.Base64StringToBitmap(base64string);
+
+            Unload();
+
+            if (IsScrollEnabled)
+            {
+                mainWindow.Scroller.ScrollToTop();
+            }
+
+            mainWindow.img.Source = pic;
+
+            ZoomFit(pic.PixelWidth, pic.PixelHeight);
+            CloseToolTipStyle();
+
+            SetTitleString(pic.PixelWidth, pic.PixelHeight, "Base64 image");
+
+            NoProgress();
+
+            canNavigate = false;
+        }
+
         #endregion
 
         #region Change Image

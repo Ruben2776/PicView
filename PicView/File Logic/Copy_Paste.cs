@@ -134,6 +134,12 @@ namespace PicView
                 return;
             }
 
+            if (Base64.IsBase64String(s))
+            {
+                Pic64(s);
+                return;
+            }
+
             if (FilePathHasInvalidChars(s))
             {
                 MakeValidFileName(s);
