@@ -145,12 +145,14 @@ namespace PicView
                 fake.grid.Children.Add(picGallery);
             }
 
-            picGallery.Opacity = 1;
+            
 
             fake.Show();
             IsOpen = true;
             ScrollTo();
             mainWindow.Focus();
+
+            VisualStateManager.GoToElementState(picGallery, "Opacity", false);
 
 #if DEBUG
             Trace.WriteLine(nameof(picGallery) + "  IsOpen = " + IsOpen + " " + nameof(OpenFullscreenGallery));
@@ -174,13 +176,16 @@ namespace PicView
                 galleryShortcut.Visibility = Visibility.Visible;
             }
 
-            var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.5) };
-
-            da.To = 0;
-            da.From = 1;
+            var da = new DoubleAnimation {
+                Duration = TimeSpan.FromSeconds(.5),
+                From = 1,
+                To = 0,
+                FillBehavior = FillBehavior.Stop
+            };
             da.Completed += delegate
             {
                 picGallery.Visibility = Visibility.Collapsed;
+                picGallery.Opacity = 1;
             };
 
             picGallery.BeginAnimation(UIElement.OpacityProperty, da);
