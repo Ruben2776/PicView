@@ -437,20 +437,21 @@ namespace PicView
         internal static void ZoomFit(double width, double height)
         {
             double maxWidth, maxHeight;
-            var interfaceHeight = 90;
+            int verticalPadding = 90;
+            int horizontalPadding = 520;
 
             if (FitToWindow)
             {
                 /// Get max width and height, based on user's screen
                 if (Properties.Settings.Default.ShowInterface)
                 {
-                    maxWidth = Math.Min(MonitorInfo.Width - ComfySpace, width);
-                    maxHeight = Math.Min(MonitorInfo.Height - interfaceHeight, height);
+                    maxWidth = Math.Min(MonitorInfo.Width - horizontalPadding, width);
+                    maxHeight = Math.Min(MonitorInfo.Height - verticalPadding, height);
                 }
                 /// - 2 for window border
                 else
                 {
-                    maxWidth = Math.Min(MonitorInfo.Width - ComfySpace - 2, width - 2);
+                    maxWidth = Math.Min(MonitorInfo.Width - horizontalPadding - 2, width - 2);
                     maxHeight = Math.Min(MonitorInfo.Height - 2, height - 2);
                 }
             }
@@ -461,7 +462,7 @@ namespace PicView
 
                 if (Properties.Settings.Default.ShowInterface)
                 {
-                    maxHeight = Math.Min(mainWindow.Height - interfaceHeight, height);
+                    maxHeight = Math.Min(mainWindow.Height - verticalPadding, height);
                 }
                 else
                 {
@@ -473,12 +474,19 @@ namespace PicView
             {
                 AspectRatio = Math.Min(maxWidth / width, (maxHeight / height));
             }
-            else
+            else 
             {
-                AspectRatio = Math.Min(MonitorInfo.Width / height, (MonitorInfo.Height - interfaceHeight) / width);
+                // Rotated aspect ratio calculation
+                if (FitToWindow)
+                {
+                    AspectRatio = Math.Min(MonitorInfo.Width / height, (MonitorInfo.Height - verticalPadding) / width);
+                }
+                else
+                {
+                    AspectRatio = Math.Min(mainWindow.Width / height, (mainWindow.Height - verticalPadding) / width);
+                }
+                
             }
-
-            
 
             if (IsScrollEnabled)
             {

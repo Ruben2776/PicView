@@ -100,12 +100,6 @@ namespace PicView
         internal static bool unsupported;
 
         /// <summary>
-        /// Used to prevent overlapping in PicGallery 2
-        /// and as a comfortable space for standard viewing
-        /// </summary>
-        internal const int ComfySpace = 520;
-
-        /// <summary>
         /// Backup of Width data
         /// </summary>
         internal static double xWidth;

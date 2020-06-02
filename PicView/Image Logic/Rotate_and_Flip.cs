@@ -34,8 +34,6 @@ namespace PicView
             {
                 mainWindow.img.LayoutTransform = rt;
             }
-
-            
         }
 
         /// <summary>
