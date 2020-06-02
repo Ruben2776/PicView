@@ -6,7 +6,7 @@ namespace PicView
 {
     internal static class Base64
     {
-        public static BitmapImage Base64StringToBitmap(string base64String)
+        internal static BitmapImage Base64StringToBitmap(string base64String)
         {
             byte[] binaryData = Convert.FromBase64String(base64String);
 
@@ -21,7 +21,13 @@ namespace PicView
         internal static bool IsBase64String(string base64)
         {
             Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
-            return Convert.TryFromBase64String(base64, buffer, out int bytesParsed);
+            return Convert.TryFromBase64String(base64, buffer, out _);
+        }
+
+        internal static string ConvertToBase64(string path)
+        {
+            byte[] imageArray = File.ReadAllBytes(path);
+            return Convert.ToBase64String(imageArray);
         }
     }
 }

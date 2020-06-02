@@ -342,20 +342,29 @@ namespace PicView
                     break;
                 // Ctrl + C, Ctrl + Shift + C, Ctrl + Alt + C
                 case Key.C:
-                    // Ctrl + Shift + C
-                    if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) == (ModifierKeys.Control | ModifierKeys.Shift))
+                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                     {
-                        CopyText();
+                        if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+                        {
+                            var base64 = Base64.ConvertToBase64(Pics[FolderIndex]);
+                            if (!string.IsNullOrWhiteSpace(base64))
+                            {
+                                Clipboard.SetText(base64);
+                                Tooltip.ToolTipStyle("Converted to base 64");
+                            }
+                        }
+                        else if ((Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
+                        {
+                            CopyBitmap();
+                        }
+                        else
+                        {
+                            Copyfile();
+                        }
                     }
-                    // Ctrl + Alt + C
-                    if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Alt)) == (ModifierKeys.Control | ModifierKeys.Alt))
+                    else
                     {
-                        CopyBitmap();
-                    }
-                    // Ctrl + C
-                    else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        CopyPic();
+                        // TODO add crop function
                     }
                     break;
                 // Ctrl + V

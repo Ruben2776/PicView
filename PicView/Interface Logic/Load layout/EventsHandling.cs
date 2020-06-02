@@ -55,7 +55,7 @@ namespace PicView
             fileMenu.Save_File_Location_Border.MouseLeftButtonUp += (s, x) => SaveFiles();
 
             fileMenu.PasteButton.Click += (s, x) => Paste();
-            fileMenu.CopyButton.Click += (s, x) => CopyPic();
+            fileMenu.CopyButton.Click += (s, x) => Copyfile();
 
             // image_button
             mainWindow.image_button.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.ImagePath1Fill, mainWindow.ImagePath2Fill, mainWindow.ImagePath3Fill);

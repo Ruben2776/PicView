@@ -473,7 +473,7 @@ namespace PicView
             cppcmIcon.Width = cppcmIcon.Height = 12;
             cppcmIcon.Fill = scbf;
             cppcm.Icon = cppcmIcon;
-            cppcm.Click += (s, x) => CopyPic();
+            cppcm.Click += (s, x) => Copyfile();
             cm.Items.Add(cppcm);
 
             ///////////////////////////

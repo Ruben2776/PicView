@@ -27,10 +27,21 @@ namespace PicView
         }
 
         /// <summary>
-        /// Add image to clipboard
+        /// Add file to clipboard
         /// </summary>
-        internal static void CopyPic()
+        internal static void Copyfile()
         {
+            if (Pics == null)
+            {
+                return;
+            }
+
+            if (Pics.Count == 0)
+            {
+                CopyBitmap();
+                return;
+            }
+
             // Copy pic if from web
             if (string.IsNullOrWhiteSpace(Pics[FolderIndex]) || Uri.IsWellFormedUriString(Pics[FolderIndex], UriKind.Absolute))
             {
@@ -38,15 +49,27 @@ namespace PicView
             }
             else
             {
-                var paths = new System.Collections.Specialized.StringCollection { Pics[FolderIndex] };
-                Clipboard.SetFileDropList(paths);
-                ToolTipStyle(FileCopy);
+                Copyfile(Pics[FolderIndex]);
             }
+        }
+
+        /// <summary>
+        /// Add file to clipboard
+        /// </summary>
+        internal static void Copyfile(string path)
+        {
+            var paths = new System.Collections.Specialized.StringCollection { path };
+            Clipboard.SetFileDropList(paths);
+            ToolTipStyle(FileCopy);
         }
 
         internal static void CopyBitmap()
         {
-            if (Preloader.Contains(Pics[FolderIndex]))
+            if (Pics.Count == 0 && mainWindow.img.Source != null)
+            {
+                Clipboard.SetImage((BitmapSource)mainWindow.img.Source);
+            }
+            else if (Preloader.Contains(Pics[FolderIndex]))
             {
                 Clipboard.SetImage(Preloader.Load(Pics[FolderIndex]));
             }

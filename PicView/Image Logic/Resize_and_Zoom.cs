@@ -451,7 +451,7 @@ namespace PicView
                 /// - 2 for window border
                 else
                 {
-                    maxWidth = Math.Min(MonitorInfo.Width - horizontalPadding - 2, width - 2);
+                    maxWidth = Math.Min(MonitorInfo.Width - horizontalPadding, width - 2);
                     maxHeight = Math.Min(MonitorInfo.Height - 2, height - 2);
                 }
             }
