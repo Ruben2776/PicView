@@ -97,6 +97,22 @@ namespace PicView
             }
         }
 
+        /// <summary>
+        /// Move alternative window
+        /// </summary>
+        internal static void MoveAlt(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton != MouseButton.Left)
+            {
+                return;
+            }
+
+            if (!Properties.Settings.Default.ShowInterface && !FitToWindow && e.LeftButton == MouseButtonState.Pressed)
+            {
+                mainWindow.DragMove();
+            }
+        }
+
 
         /// <summary>
         /// Function made to restore and drag window from maximized windowstate

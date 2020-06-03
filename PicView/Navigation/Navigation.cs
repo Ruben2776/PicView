@@ -392,7 +392,7 @@ namespace PicView
                 if (next)
                 {
                     // loop next
-                    if (Properties.Settings.Default.Looping)
+                    if (Properties.Settings.Default.Looping || SlideTimer != null && SlideTimer.Enabled)
                     {
                         FolderIndex = FolderIndex == Pics.Count - 1 ? 0 : FolderIndex + 1;
                     }
@@ -413,7 +413,7 @@ namespace PicView
                 else
                 {
                     // Loop prev
-                    if (Properties.Settings.Default.Looping)
+                    if (Properties.Settings.Default.Looping || SlideTimer != null && SlideTimer.Enabled)
                     {
                         FolderIndex = FolderIndex == 0 ? Pics.Count - 1 : FolderIndex - 1;
                     }

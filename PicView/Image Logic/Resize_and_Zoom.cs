@@ -60,6 +60,12 @@ namespace PicView
         /// <param name="e"></param>
         internal static void Zoom_img_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (!isZoomed)
+            {
+                MoveAlt(sender, e);
+                return;
+            }
+
             // Fix focus
             EditTitleBar.Refocus();
 
@@ -129,6 +135,7 @@ namespace PicView
         /// <param name="e"></param>
         internal static void Zoom_img_MouseMove(object sender, MouseEventArgs e)
         {
+
             if (autoScrolling)
             {
                 // Start automainWindow.Scroller and report position

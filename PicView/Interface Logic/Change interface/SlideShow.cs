@@ -19,11 +19,12 @@ namespace PicView
                 return;
             }
 
+            ToggleMenus.Close_UserControls();
+
             if (SlideTimer == null)
             {
                 SlideTimer = new Timer()
                 {
-                    //Interval = 3000,
                     Interval = Properties.Settings.Default.SlideTimer,
                     Enabled = true
                 };
@@ -32,8 +33,7 @@ namespace PicView
             }
             else
             {
-                StopSlideshow();
-                return;
+                SlideTimer.Start();
             }
 
             if (!Properties.Settings.Default.Fullscreen)
