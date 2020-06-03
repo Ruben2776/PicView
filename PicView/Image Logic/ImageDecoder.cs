@@ -16,12 +16,11 @@ namespace PicView
         /// <summary>
         /// Decodes image from file to BitMapSource
         /// </summary>
-        /// <param name="file">Full path of the file</param>
+        /// <param name="file">Absolute path of the file</param>
         /// <returns></returns>
         internal static async Task<BitmapSource> RenderToBitmapSource(string file)
         {
-            var data = await File.ReadAllBytesAsync(file).ConfigureAwait(false);
-            using (MemoryStream memStream = new MemoryStream(data))
+            using (var filestream = new FileStream(file, FileMode.Open, FileAccess.Read))
             {
                 var ext = Path.GetExtension(file).ToLower(CultureInfo.CurrentCulture);
                 switch (ext)
@@ -44,14 +43,19 @@ namespace PicView
 
                         try
                         {
-                            memStream.Seek(0, SeekOrigin.Begin);
+                            using (var memStream = new MemoryStream())
+                            {
+                                await filestream.CopyToAsync(memStream).ConfigureAwait(true);
+                                memStream.Seek(0, SeekOrigin.Begin);
 
-                            var sKBitmap = SKBitmap.Decode(memStream);
-                            if (sKBitmap == null) { return null; }
+                                var sKBitmap = SKBitmap.Decode(memStream);
+                                if (sKBitmap == null) { return null; }
 
-                            var pic = sKBitmap.ToWriteableBitmap();
-                            pic.Freeze();
-                            return pic;
+                                var pic = sKBitmap.ToWriteableBitmap();
+                                pic.Freeze();
+                                return pic;
+                            }
+
                         }
                         catch (Exception e)
                         {
@@ -73,7 +77,7 @@ namespace PicView
 
                             try
                             {
-                                magick.Read(memStream, mrs);
+                                magick.Read(filestream, mrs);
                             }
 
                             catch (MagickException e)
