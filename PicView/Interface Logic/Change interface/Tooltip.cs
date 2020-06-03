@@ -15,6 +15,11 @@ namespace PicView
         /// <param name="time">How long until it fades away</param>
         internal static void ToolTipStyle(object message, bool center, TimeSpan time)
         {
+            if (sexyToolTip == null)
+            {
+                return;
+            }
+
             sexyToolTip.Visibility = Visibility.Visible;
 
             if (center)

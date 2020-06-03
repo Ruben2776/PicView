@@ -45,8 +45,6 @@ namespace PicView
         }
 
         // Auto scroll
-        // TODO fix auto scrolling not showing icon
-
 
         /// <summary>
         /// Starts the auto scroll feature and shows the sign on the ui

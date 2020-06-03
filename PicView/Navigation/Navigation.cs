@@ -109,6 +109,11 @@ namespace PicView
                 Preloader.Clear();
             }
 
+#if DEBUG
+            if (freshStartup)
+                Trace.WriteLine("Pic(string path) entering Pic(int x)");
+#endif
+
             // Navigate to picture using obtained index
             Pic(FolderIndex);
 
@@ -182,6 +187,9 @@ namespace PicView
 
                 if (freshStartup)
                 {
+#if DEBUG
+                    Trace.WriteLine("Pic(int x) loading new pic manually");
+#endif
                     TryZoomFit(Pics[x]);
 
                     // Load new value manually

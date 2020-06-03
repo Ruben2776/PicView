@@ -1,7 +1,6 @@
 ﻿using PicView.Windows;
-using System;
+using System.Diagnostics;
 using System.Windows;
-using System.Windows.Media.Animation;
 using static PicView.Fields;
 
 namespace PicView
@@ -34,8 +33,11 @@ namespace PicView
                 {
                     infoWindow.Show();
                 }
-
             }
+
+#if DEBUG
+            Trace.WriteLine("HelpWindow loaded ");
+#endif
         }
 
         /// <summary>
@@ -62,8 +64,11 @@ namespace PicView
                 {
                     allSettingsWindow.Show();
                 }
-                
             }
+
+#if DEBUG
+            Trace.WriteLine("HelpWindow loaded ");
+#endif
         }
 
         ///// <summary>

@@ -17,6 +17,7 @@ using static PicView.Scroll;
 using static PicView.Shortcuts;
 using static PicView.ToggleMenus;
 using static PicView.WindowLogic;
+using System.Diagnostics;
 
 namespace PicView
 {
@@ -168,6 +169,7 @@ namespace PicView
 
             // Lower Bar
             mainWindow.LowerBar.Drop += Image_Drop;
+            mainWindow.LowerBar.MouseLeftButtonDown += Move;
 
             // This
             mainWindow.Closing += Window_Closing;
@@ -175,6 +177,10 @@ namespace PicView
 
             //LocationChanged += MainWindow_LocationChanged;
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
+
+#if DEBUG
+            Trace.WriteLine("Events loaded");
+#endif
         }
 
         #region Changed Events
@@ -227,10 +233,15 @@ namespace PicView
                 Properties.Settings.Default.Maximized = mainWindow.WindowState == WindowState.Maximized;
             }
 
-            // TODO write DEBUG log from output window to txt file
             Properties.Settings.Default.Save();
             DeleteTempFiles();
             RecentFiles.WriteToFile();
+
+#if DEBUG
+            Trace.Unindent();
+            Trace.WriteLine("Goodbye cruel world!");
+            Trace.Flush();
+#endif
             Environment.Exit(0);
         }
 

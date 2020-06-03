@@ -1,4 +1,5 @@
 ﻿using PicView.UserControls;
+using System.Diagnostics;
 using System.Windows;
 using static PicView.Fields;
 
@@ -36,6 +37,10 @@ namespace PicView
                 };
 
                 mainWindow.bg.Children.Add(clickArrowLeft);
+
+#if DEBUG
+                Trace.WriteLine("LoadClickArrow loaded " + right);
+#endif
             }
         }
 
@@ -53,6 +58,10 @@ namespace PicView
             };
 
             mainWindow.bg.Children.Add(x2);
+
+#if DEBUG
+            Trace.WriteLine("Loadx2 loaded ");
+#endif
         }
 
         /// <summary>
@@ -70,6 +79,10 @@ namespace PicView
             };
 
             mainWindow.bg.Children.Add(minus);
+
+#if DEBUG
+            Trace.WriteLine("LoadMinus loaded ");
+#endif
         }
 
         /// <summary>
@@ -86,6 +99,10 @@ namespace PicView
             };
 
             mainWindow.bg.Children.Add(galleryShortcut);
+
+#if DEBUG
+            Trace.WriteLine("LoadGalleryShortcut loaded ");
+#endif
         }
 
         /// <summary>
@@ -104,6 +121,10 @@ namespace PicView
             };
 
             mainWindow.bg.Children.Add(fileMenu);
+
+#if DEBUG
+            Trace.WriteLine("LoadFileMenu loaded ");
+#endif
         }
 
         /// <summary>
@@ -122,6 +143,10 @@ namespace PicView
             };
 
             mainWindow.bg.Children.Add(imageSettingsMenu);
+
+#if DEBUG
+            Trace.WriteLine("LoadImageSettingsMenu loaded ");
+#endif
         }
 
         /// <summary>
@@ -149,6 +174,10 @@ namespace PicView
             }
 
             mainWindow.bg.Children.Add(quickSettingsMenu);
+
+#if DEBUG
+            Trace.WriteLine("LoadQuickSettingsMenu loaded ");
+#endif
         }
 
         /// <summary>
@@ -167,6 +196,10 @@ namespace PicView
             };
 
             mainWindow.bg.Children.Add(functionsMenu);
+
+#if DEBUG
+            Trace.WriteLine("LoadFunctionsMenu loaded ");
+#endif
         }
 
 
@@ -186,6 +219,10 @@ namespace PicView
             };
 
             mainWindow.bg.Children.Add(sexyToolTip);
+
+#if DEBUG
+            Trace.WriteLine("LoadTooltipStyle loaded ");
+#endif
         }
 
         /// <summary>
@@ -203,6 +240,10 @@ namespace PicView
             };
 
             mainWindow.topLayer.Children.Add(autoScrollSign);
+
+#if DEBUG
+            Trace.WriteLine("LoadAutoScrollSign loaded ");
+#endif
         }
     }
 }

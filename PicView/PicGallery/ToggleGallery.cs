@@ -17,10 +17,6 @@ namespace PicView
 
         internal static void Toggle(bool change = false)
         {
-            /// TODO need to get this fixed when changing between them.
-            /// Is open variable stats true when it should be false, dunno why..
-            /// 
-
             if (Pics.Count < 1)
             {
                 return;

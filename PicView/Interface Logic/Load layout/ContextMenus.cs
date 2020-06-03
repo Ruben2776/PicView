@@ -9,6 +9,7 @@ using static PicView.Open_Save;
 using static PicView.RecentFiles;
 using static PicView.SvgIcons;
 using static PicView.Wallpaper;
+using System.Diagnostics;
 
 namespace PicView
 {
@@ -666,6 +667,10 @@ namespace PicView
             }
 
             cm.Opened += (tt, yy) => Recentcm_MouseEnter(recentcm);
+
+#if DEBUG
+            Trace.WriteLine("Contextmenu loaded");
+#endif
         }
     }
 }

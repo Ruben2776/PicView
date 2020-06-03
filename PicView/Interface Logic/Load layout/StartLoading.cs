@@ -1,5 +1,7 @@
 ﻿using PicView.UserControls;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.AjaxLoader;
@@ -20,6 +22,12 @@ namespace PicView
     {
         internal static void PreStart()
         {
+#if DEBUG
+            Trace.Listeners.Add(new TextWriterTraceListener("Debug.log"));
+            Trace.Unindent();
+            Trace.WriteLine(AppName + " started at " + DateTime.Now);
+#endif
+
             freshStartup = true;
 
             if (!Properties.Settings.Default.ShowInterface)
@@ -60,11 +68,11 @@ namespace PicView
 
         internal static void Start()
         {
-            // Update values
-            mainWindow.AllowDrop = true;
-            IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
+
+#if DEBUG
+            Trace.WriteLine("ContentRendered started");
+#endif
             Pics = new List<string>();
-            //DataContext = this;
             MonitorInfo = MonitorSize.GetMonitorSize();
 
             // Load image if possible
@@ -86,6 +94,10 @@ namespace PicView
                     UpdateColor();
                 }
             }
+
+            // Update values
+            mainWindow.AllowDrop = true;
+            IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
 
             LoadClickArrow(true);
             LoadClickArrow(false);
@@ -155,6 +167,10 @@ namespace PicView
                 Properties.Settings.Default.CallUpgrade = false;
             }
             AjaxLoadingEnd();
+
+#if DEBUG
+            Trace.WriteLine("Start Completed ");
+#endif
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -164,9 +165,9 @@ namespace PicView
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        internal static Task GetValues(string path)
+        internal static async Task GetValues(string path)
         {
-            return Task.Run(() =>
+            await Task.Run(() =>
             {
                 var extension = Path.GetExtension(path);
                 extension = extension.ToLower(CultureInfo.CurrentCulture);
@@ -203,7 +204,12 @@ namespace PicView
                 }
 
                 FolderIndex = Pics.IndexOf(path);
-            });
+
+#if DEBUG
+                Trace.WriteLine("Getvalues completed ");
+#endif
+
+            }).ConfigureAwait(false);
         }
     }
 }
