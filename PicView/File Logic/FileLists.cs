@@ -86,6 +86,8 @@ namespace PicView
                         // Web
                         || file.ToLower(CultureInfo.CurrentCulture).EndsWith("svg", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower(CultureInfo.CurrentCulture).EndsWith("webp", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower(CultureInfo.CurrentCulture).EndsWith("ktx", StringComparison.OrdinalIgnoreCase)
+                        || file.ToLower(CultureInfo.CurrentCulture).EndsWith("wbmp", StringComparison.OrdinalIgnoreCase)
 
                         // Raw Camera
                         || file.ToLower(CultureInfo.CurrentCulture).EndsWith("3fr", StringComparison.OrdinalIgnoreCase)

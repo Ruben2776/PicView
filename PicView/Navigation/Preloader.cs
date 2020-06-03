@@ -40,26 +40,24 @@ namespace PicView.PreLoading
         internal static bool IsLoading;
 
         //internal static int Count { get { return Sources.Count; } }
-
         /// <summary>
         /// Add file to prelader
         /// </summary>
         /// <param name="file">file path</param>
-        internal static void Add(string file)
+        internal static async Task<bool> Add(string file)
         {
-            if (Contains(file))
+            if (Contains(file) || Pics.Count == 0 || Pics.IndexOf(file) == -1)
             {
-                IsLoading = false;
-                return;
+                return IsLoading = false;
             }
+
 
             IsLoading = true;
 
-            var pic = ImageDecoder.RenderToBitmapSource(file);
+            var pic = await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(true);
             if (pic == null)
             {
-                IsLoading = false;
-                return;
+                return IsLoading = false;
             }
 
             if (!pic.IsFrozen)
@@ -67,51 +65,57 @@ namespace PicView.PreLoading
                 pic.Freeze();
             }
 
-            Sources.TryAdd(file, pic);
             IsLoading = false;
 
 #if DEBUG
-            Trace.WriteLine("Added = " + file + " to Preloader, index " + Pics.IndexOf(file));
+            Trace.WriteLine("Add string file = " + file + " to Preloader, index " + Pics.IndexOf(file));
 #endif
+
+            return Sources.TryAdd(file, pic);
+
         }
 
         /// <summary>
         /// Add file to preloader from index
         /// </summary>
         /// <param name="i">Index of Pics</param>
-        internal static void Add(int i)
+        internal static async Task<bool> Add(int i)
         {
             if (i >= Pics.Count || i < 0)
             {
-                return;
+                return false;
             }
 
             IsLoading = true;
 
             //#if DEBUG
-            //System.Threading.Thread.Sleep(500);
+            //System.Threading.Thread.Sleep(5000);
             //#endif
 
             if (File.Exists(Pics[i]))
             {
                 if (!Contains(Pics[i]))
                 {
-                    Add(Pics[i]);
+                    return await Add(Pics[i]).ConfigureAwait(true);
                 }
-#if DEBUG
+
                 else
                 {
+#if DEBUG
                     Trace.WriteLine("Skipped at index " + i);
-                }
 #endif
+                    return false;
+                }
+
             }
             else
             {
                 Pics.Remove(Pics[i]);
-                IsLoading = false;
+                
 #if DEBUG
                 Trace.WriteLine("Preloader removed = " + Pics[i] + " from Pics, index " + i);
 #endif
+                return IsLoading = false;
             }
         }
 

@@ -1,7 +1,11 @@
 ﻿using ImageMagick;
+using SkiaSharp;
+using SkiaSharp.Views.WPF;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
@@ -14,41 +18,81 @@ namespace PicView
         /// </summary>
         /// <param name="file">Full path of the file</param>
         /// <returns></returns>
-        internal static BitmapSource RenderToBitmapSource(string file)
+        internal static async Task<BitmapSource> RenderToBitmapSource(string file)
         {
-            if (string.IsNullOrWhiteSpace(file) || file.Length < 2)
+            var data = await File.ReadAllBytesAsync(file).ConfigureAwait(false);
+            using (MemoryStream memStream = new MemoryStream(data))
             {
-                return null;
-            }
-
-            using (MagickImage magick = new MagickImage())
-            {
-                var mrs = new MagickReadSettings()
+                var ext = Path.GetExtension(file).ToLower(CultureInfo.CurrentCulture);
+                switch (ext)
                 {
-                    Density = new Density(300, 300),
-                    BackgroundColor = MagickColors.Transparent,
-                };
+                    // Skia supports? https://docs.microsoft.com/en-us/dotnet/api/skiasharp.skimageencodeformat?view=skiasharp-1.59.3
+                    case ".jpg":
+                    case ".jpeg":
+                    case ".jpe":
+                    case ".png":
+                    case ".bmp":
+                    case ".tif":
+                    case ".tiff":
+                    case ".gif":
+                    case ".ico":
+                    case ".wdp":
+                    case ".jfif":
+                    case ".ktx":
+                    case ".webp":
+                    case ".wbmp":
 
-                try
-                {
-                    magick.Read(file, mrs);
-                }
+                        try
+                        {
+                            memStream.Seek(0, SeekOrigin.Begin);
+
+                            var sKBitmap = SKBitmap.Decode(memStream);
+                            if (sKBitmap == null) { return null; }
+
+                            var pic = sKBitmap.ToWriteableBitmap();
+                            pic.Freeze();
+                            return pic;
+                        }
+                        catch (Exception e)
+                        {
 #if DEBUG
-                catch (MagickException e)
-                {
-                    Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
-                    return null;
-                }
-#else
-                catch (MagickException) { return null; }
+                            Trace.WriteLine("RenderToBitmapSource exception: " + e.Message);
 #endif
-                // Set values for maximum quality
-                magick.Quality = 100;
-                magick.ColorSpace = ColorSpace.Transparent;
+                            return null;
+                        }
 
-                var pic = magick.ToBitmapSource();
-                pic.Freeze();
-                return pic;
+                    default:
+
+                        using (MagickImage magick = new MagickImage())
+                        {
+                            var mrs = new MagickReadSettings()
+                            {
+                                Density = new Density(300, 300),
+                                BackgroundColor = MagickColors.Transparent,
+                            };
+
+                            try
+                            {
+                                magick.Read(memStream, mrs);
+                            }
+
+                            catch (MagickException e)
+                            {
+#if DEBUG
+                                Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
+#endif
+                                return null;
+                            }
+
+                            // Set values for maximum quality
+                            magick.Quality = 100;
+                            magick.ColorSpace = ColorSpace.Transparent;
+
+                            var pic = magick.ToBitmapSource();
+                            pic.Freeze();
+                            return pic;
+                        }
+                };
             }
         }
 
@@ -86,7 +130,6 @@ namespace PicView
                 return pic;
             }
         }
-
 
         internal static BitmapSource GetMagickImage(Stream s)
         {
@@ -172,22 +215,28 @@ namespace PicView
                     case ".JPE":
                         magick.Format = MagickFormat.Jpg;
                         break;
+
                     case ".PNG":
                         magick.Format = MagickFormat.Png;
                         break;
+
                     case ".BMP":
                         magick.Format = MagickFormat.Bmp;
                         break;
+
                     case ".TIF":
                     case ".TIFF":
                         magick.Format = MagickFormat.Tif;
                         break;
+
                     case ".GIF":
                         magick.Format = MagickFormat.Gif;
                         break;
+
                     case ".ICO":
                         magick.Format = MagickFormat.Ico;
                         break;
+
                     default: return null;
                 }
 
@@ -208,6 +257,5 @@ namespace PicView
                 return new Size(magick.Width, magick.Height);
             }
         }
-
     }
 }

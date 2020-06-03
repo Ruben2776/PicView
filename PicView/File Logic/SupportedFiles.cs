@@ -41,6 +41,8 @@ namespace PicView
                 // Web
                 case ".svg":
                 case ".webp":
+                case ".ktx":
+                case ".wbmp":
 
                 // Raw Camera
                 case ".3fr":
@@ -133,6 +135,8 @@ namespace PicView
                 // Web
                 case ".svg":
                 case ".webp":
+                case ".ktx":
+                case ".wbmp":
 
                 // Raw Camera
                 case ".3fr":

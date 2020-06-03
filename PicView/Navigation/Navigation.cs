@@ -185,7 +185,7 @@ namespace PicView
                     TryZoomFit(Pics[x]);
 
                     // Load new value manually
-                    await Task.Run(() => pic = RenderToBitmapSource(Pics[x])).ConfigureAwait(true);
+                    pic = await RenderToBitmapSource(Pics[x]).ConfigureAwait(true);
                 }
                 else
                 {
@@ -302,9 +302,9 @@ namespace PicView
         /// </summary>
         /// <param name="pic"></param>
         /// <param name="imageName"></param>
-        internal static void Pic64(string base64string)
+        internal static async void Pic64(string base64string)
         {
-            var pic = Base64.Base64StringToBitmap(base64string);
+            var pic = await Base64.Base64StringToBitmap(base64string).ConfigureAwait(true);
 
             Unload();
 

@@ -1,21 +1,50 @@
-﻿using System;
+﻿using ImageMagick;
+using System;
+using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
 namespace PicView
 {
     internal static class Base64
     {
-        internal static BitmapImage Base64StringToBitmap(string base64String)
+        internal static async Task<BitmapSource> Base64StringToBitmap(string base64String)
         {
-            byte[] binaryData = Convert.FromBase64String(base64String);
+            return await Task.Run(() =>
+            {
+                byte[] binaryData = Convert.FromBase64String(base64String);
 
-            BitmapImage bi = new BitmapImage();
-            bi.BeginInit();
-            bi.StreamSource = new MemoryStream(binaryData);
-            bi.EndInit();
+                using (MagickImage magick = new MagickImage())
+                {
+                    var mrs = new MagickReadSettings()
+                    {
+                        Density = new Density(300, 300),
+                        BackgroundColor = MagickColors.Transparent,
+                    };
 
-            return bi;
+                    try
+                    {
+                        magick.Read(new MemoryStream(binaryData), mrs);
+                    }
+#if DEBUG
+                    catch (MagickException e)
+                    {
+                        Trace.WriteLine("ase64StringToBitmap " + base64String + " null, \n" + e.Message);
+                        return null;
+                    }
+#else
+                catch (MagickException) { return null; }
+#endif
+                    // Set values for maximum quality
+                    magick.Quality = 100;
+                    magick.ColorSpace = ColorSpace.Transparent;
+
+                    var pic = magick.ToBitmapSource();
+                    pic.Freeze();
+                    return pic;
+                }
+            }).ConfigureAwait(true);
         }
 
         internal static bool IsBase64String(string base64)

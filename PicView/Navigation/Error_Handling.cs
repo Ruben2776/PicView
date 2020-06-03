@@ -52,7 +52,7 @@ namespace PicView
                 {
                     if (x < Pics.Count)
                     {
-                        await Task.Run(() => pic = RenderToBitmapSource(Pics[x])).ConfigureAwait(false);
+                        pic = await RenderToBitmapSource(Pics[x]).ConfigureAwait(false);
                         if (pic != null)
                         {
                             return pic;
@@ -67,7 +67,7 @@ namespace PicView
             }
             else if (x < 0)
             {
-                await Task.Run(() => pic = RenderToBitmapSource(Pics[FolderIndex])).ConfigureAwait(false);
+                pic = await RenderToBitmapSource(Pics[FolderIndex]).ConfigureAwait(false);
                 if (pic != null)
                 {
                     return pic;
@@ -98,7 +98,7 @@ namespace PicView
             // Retry if exists, fixes rare error
             if (File.Exists(file))
             {
-                await Task.Run(() => pic = RenderToBitmapSource(file)).ConfigureAwait(false);
+                pic = await RenderToBitmapSource(file).ConfigureAwait(false);
                 if (pic != null)
                 {
                     return pic;
