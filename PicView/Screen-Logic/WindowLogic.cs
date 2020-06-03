@@ -249,11 +249,6 @@ namespace PicView
         /// </summary>
         internal static void CenterWindowOnScreen()
         {
-            if (!FitToWindow)
-            {
-                return;
-            }
-
             //move to the centre
             mainWindow.Left = (((MonitorInfo.WorkArea.Width - (mainWindow.Width * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling));
             mainWindow.Top = ((MonitorInfo.WorkArea.Height - (mainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);

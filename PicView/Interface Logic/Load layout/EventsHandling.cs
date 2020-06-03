@@ -174,6 +174,10 @@ namespace PicView
             // This
             mainWindow.Closing += Window_Closing;
             mainWindow.StateChanged += MainWindow_StateChanged;
+            mainWindow.SizeChanged += MainWindow_SizeChanged;
+            mainWindow.PreviewMouseLeftButtonDown += delegate {
+                Resize_and_Zoom.TryZoomFit();
+            };
 
             //LocationChanged += MainWindow_LocationChanged;
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
@@ -181,6 +185,11 @@ namespace PicView
 #if DEBUG
             Trace.WriteLine("Events loaded");
 #endif
+        }
+
+        private static void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Tooltip.ToolTipStyle("Changed?");
         }
 
         #region Changed Events

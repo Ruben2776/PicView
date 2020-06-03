@@ -524,6 +524,11 @@ namespace PicView
                     CenterWindowOnScreen();
                 }
             }
+            else
+            {
+                mainWindow.Bar.MaxWidth = mainWindow.ActualWidth - 95;
+            }
+
 
             if (isZoomed)
             {

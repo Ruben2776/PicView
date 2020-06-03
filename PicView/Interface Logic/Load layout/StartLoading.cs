@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using static PicView.AjaxLoader;
 using static PicView.ContextMenus;
 using static PicView.Error_Handling;
@@ -27,6 +28,9 @@ namespace PicView
             Trace.Unindent();
             Trace.WriteLine(AppName + " started at " + DateTime.Now);
 #endif
+            // this two line have to be exactly onload
+            HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(mainWindow).Handle);
+            source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
 
             freshStartup = true;
 

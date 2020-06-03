@@ -88,5 +88,43 @@ namespace PicView
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern uint SetThreadExecutionState([In] uint esFlags);
 
+        // https://stackoverflow.com/a/60938929/13646636
+        const int WM_SIZING = 0x214;
+        const int WM_EXITSIZEMOVE = 0x232;
+        private static bool WindowWasResized = false;
+
+
+        public static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg == WM_SIZING)
+            {
+
+                if (WindowWasResized == false)
+                {
+
+                    //    'indicate the the user is resizing and not moving the window
+                    WindowWasResized = true;
+                }
+            }
+
+            if (msg == WM_EXITSIZEMOVE)
+            {
+
+                // 'check that this is the end of resize and not move operation          
+                if (WindowWasResized == true)
+                {
+
+                    // your stuff to do 
+                    Resize_and_Zoom.TryZoomFit();
+
+                    // 'set it back to false for the next resize/move
+                    WindowWasResized = false;
+                }
+            }
+
+            return IntPtr.Zero;
+        }
+
+
     }
 }
