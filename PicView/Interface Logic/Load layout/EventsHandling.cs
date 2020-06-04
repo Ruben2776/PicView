@@ -219,9 +219,9 @@ namespace PicView
         private static void Window_Closing(object sender, CancelEventArgs e)
         {
             // Close Extra windows when closing
-            if (fake != null)
+            if (fakeWindow != null)
             {
-                fake.Close();
+                fakeWindow.Close();
             }
 
             mainWindow.Hide(); // Make it feel faster

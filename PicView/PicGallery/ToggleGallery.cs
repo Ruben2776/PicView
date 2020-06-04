@@ -97,11 +97,11 @@ namespace PicView
             minus.Visibility =
             galleryShortcut.Visibility = Visibility.Hidden;
 
-            if (fake != null)
+            if (fakeWindow != null)
             {
-                if (fake.grid.Children.Contains(picGallery))
+                if (fakeWindow.grid.Children.Contains(picGallery))
                 {
-                    fake.grid.Children.Remove(picGallery);
+                    fakeWindow.grid.Children.Remove(picGallery);
                     mainWindow.bg.Children.Add(picGallery);
                 }
             }
@@ -124,26 +124,26 @@ namespace PicView
             Properties.Settings.Default.PicGallery = 2;
             LoadLayout();
 
-            if (fake == null)
+            if (fakeWindow == null)
             {                
-                fake = new FakeWindow();
+                fakeWindow = new FakeWindow();
             }
 
             if (mainWindow.bg.Children.Contains(picGallery))
             {
                 mainWindow.bg.Children.Remove(picGallery);
-                fake.grid.Children.Add(picGallery);
+                fakeWindow.grid.Children.Add(picGallery);
             }
 
-            else if (!fake.grid.Children.Contains(picGallery))
+            else if (!fakeWindow.grid.Children.Contains(picGallery))
             {
                 mainWindow.bg.Children.Remove(picGallery);
-                fake.grid.Children.Add(picGallery);
+                fakeWindow.grid.Children.Add(picGallery);
             }
 
             
 
-            fake.Show();
+            fakeWindow.Show();
             IsOpen = true;
             ScrollTo();
             mainWindow.Focus();
@@ -191,7 +191,7 @@ namespace PicView
         {
             Properties.Settings.Default.PicGallery = 1;
             IsOpen = false;
-            fake.Hide();
+            fakeWindow.Hide();
 
             Utilities.UpdateColor();
 
@@ -207,13 +207,13 @@ namespace PicView
             Properties.Settings.Default.PicGallery = 1;
             LoadLayout();
 
-            if (fake.grid.Children.Contains(picGallery))
+            if (fakeWindow.grid.Children.Contains(picGallery))
             {
-                fake.grid.Children.Remove(picGallery);
+                fakeWindow.grid.Children.Remove(picGallery);
                 mainWindow.bg.Children.Add(picGallery);
             }
 
-            fake.Hide();
+            fakeWindow.Hide();
         }
 
         internal static void ChangeToPicGalleryTwo()
@@ -221,22 +221,22 @@ namespace PicView
             Properties.Settings.Default.PicGallery = 2;
             LoadLayout();
 
-            if (fake != null)
+            if (fakeWindow != null)
             {
-                if (!fake.grid.Children.Contains(picGallery))
+                if (!fakeWindow.grid.Children.Contains(picGallery))
                 {
                     mainWindow.bg.Children.Remove(picGallery);
-                    fake.grid.Children.Add(picGallery);
+                    fakeWindow.grid.Children.Add(picGallery);
                 }
             }
             else
             {
                 mainWindow.bg.Children.Remove(picGallery);
-                fake = new FakeWindow();
-                fake.grid.Children.Add(picGallery);
+                fakeWindow = new FakeWindow();
+                fakeWindow.grid.Children.Add(picGallery);
             }
 
-            fake.Show();
+            fakeWindow.Show();
             ScrollTo();
             mainWindow.Focus();
         }

@@ -45,17 +45,13 @@ namespace PicView
             // If normal window style
             if (!Properties.Settings.Default.FitToWindow)
             {
-                mainWindow.Top = Properties.Settings.Default.Top;
-                mainWindow.Left = Properties.Settings.Default.Left;
-                mainWindow.Height = Properties.Settings.Default.Height;
-                mainWindow.Width = Properties.Settings.Default.Width;
-
-                if (Properties.Settings.Default.Maximized)
+                if (Properties.Settings.Default.Width != 0)
                 {
-                    mainWindow.WindowState = WindowState.Maximized;
+                    mainWindow.Top = Properties.Settings.Default.Top;
+                    mainWindow.Left = Properties.Settings.Default.Left;
+                    mainWindow.Height = Properties.Settings.Default.Height;
+                    mainWindow.Width = Properties.Settings.Default.Width;
                 }
-
-                FitToWindow = false;
             }
             else
             {
@@ -83,7 +79,14 @@ namespace PicView
             if (Application.Current.Properties["ArbitraryArgName"] == null)
             {
                 Unload();
-                UpdateColor();
+                if (Properties.Settings.Default.Maximized)
+                {
+                    Maximize();
+                }
+                else
+                {
+                    UpdateColor();
+                }
             }
             else
             {
@@ -92,6 +95,10 @@ namespace PicView
                 if (Properties.Settings.Default.Fullscreen)
                 {
                     Fullscreen_Restore(true);
+                }
+                else if (Properties.Settings.Default.Maximized)
+                {
+                    Maximize();
                 }
                 else
                 {

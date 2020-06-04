@@ -12,7 +12,7 @@ namespace PicView
 {
     internal static class WindowLogic
     {
-        internal static FakeWindow fake;
+        internal static FakeWindow fakeWindow;
 
         /// <summary>
         /// Set whether to fit window to image or image to window
@@ -123,7 +123,6 @@ namespace PicView
         {
             if (mainWindow.WindowState == WindowState.Maximized && e.LeftButton == MouseButtonState.Pressed)
             {
-                //Maximize_Restore();
                 try
                 {
                     mainWindow.DragMove();
@@ -143,27 +142,39 @@ namespace PicView
             // Maximize
             if (mainWindow.WindowState == WindowState.Normal)
             {
-                // Update new setting and sizing
-                if (FitToWindow)
-                {
-                    FitToWindow = false;
-                }
-
-                // Tell Windows that it's maximized
-                mainWindow.WindowState = WindowState.Maximized;
-                SystemCommands.MaximizeWindow(mainWindow);
+                Maximize();
             }
 
             // Restore
             else if (mainWindow.WindowState == WindowState.Maximized)
             {
-                // Update new setting and sizing
-                FitToWindow = true;
-
-                // Tell Windows that it's normal
-                mainWindow.WindowState = WindowState.Normal;
-                SystemCommands.RestoreWindow(mainWindow);
+                Restore();
             }
+        }
+
+        internal static void Maximize()
+        {
+            // Update new setting and sizing
+            FitToWindow = false;
+            Properties.Settings.Default.Maximized = true;
+
+            // Tell Windows that it's maximized
+            mainWindow.WindowState = WindowState.Maximized;
+            SystemCommands.MaximizeWindow(mainWindow);
+            mainWindow.LowerBar.Height = 44; // Seems to fix UI going below Windows taskbar
+        }
+
+        internal static void Restore()
+        {
+            // Update new setting and sizing
+            FitToWindow = true;
+            Properties.Settings.Default.Maximized = false;
+
+            // Tell Windows that it's normal
+            mainWindow.WindowState = WindowState.Normal;
+            SystemCommands.RestoreWindow(mainWindow);
+            mainWindow.LowerBar.Height = 35; // Set it back
+            UpdateColor();
         }
 
         /// <summary>
