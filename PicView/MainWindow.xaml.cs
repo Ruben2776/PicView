@@ -46,17 +46,17 @@ namespace PicView
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 LeftbuttonClicked = false;
             }
-            else if (clickArrowRightClicked)
+            else if (ClickArrowRightClicked)
             {
                 Point p = clickArrowRight.PointToScreen(new Point(25, 30));
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
-                clickArrowRightClicked = false;
+                ClickArrowRightClicked = false;
             }
-            else if (clickArrowLeftClicked)
+            else if (ClickArrowLeftClicked)
             {
                 Point p = clickArrowLeft.PointToScreen(new Point(25, 30));
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
-                clickArrowLeftClicked = false;
+                ClickArrowLeftClicked = false;
             }
 
             base.OnRenderSizeChanged(size);

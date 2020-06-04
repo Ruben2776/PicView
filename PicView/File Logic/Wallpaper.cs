@@ -23,7 +23,7 @@ namespace PicView
 
         internal static void SetWallpaper(string path, WallpaperStyle style)
         {
-            if (canNavigate)
+            if (CanNavigate)
             {
                 if (File.Exists(path))
                 {

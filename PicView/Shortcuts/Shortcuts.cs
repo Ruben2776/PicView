@@ -57,7 +57,7 @@ namespace PicView
                             Pic();
                         }
                     }
-                    else if (canNavigate)
+                    else if (CanNavigate)
                     {
                         FastPic(true);
                     }
@@ -89,7 +89,7 @@ namespace PicView
                             Pic(false);
                         }
                     }
-                    else if (canNavigate)
+                    else if (CanNavigate)
                     {
                         FastPic(false);
                     }
@@ -282,9 +282,9 @@ namespace PicView
                         Toggle();
                         return;
                     }
-                    if (dialogOpen)
+                    if (IsDialogOpen)
                     {
-                        dialogOpen = false;
+                        IsDialogOpen = false;
                         return;
                     }
                     if (infoWindow != null)
@@ -482,7 +482,7 @@ namespace PicView
             {
                 case MouseButton.Right:
                 case MouseButton.Left:
-                    if (autoScrolling)
+                    if (AutoScrolling)
                     {
                         StopAutoScroll();
                     }
@@ -490,7 +490,7 @@ namespace PicView
                     break;
 
                 case MouseButton.Middle:
-                    if (!autoScrolling)
+                    if (!AutoScrolling)
                     {
                         StartAutoScroll(e);
                     }
@@ -520,7 +520,7 @@ namespace PicView
                     break;
                 case Key.Escape:
                     EditTitleBar.Refocus();
-                    dialogOpen = true; // Hack to make escape not fall through
+                    IsDialogOpen = true; // Hack to make escape not fall through
                     break;
             }
         }

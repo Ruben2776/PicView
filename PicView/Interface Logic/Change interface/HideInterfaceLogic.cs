@@ -134,7 +134,7 @@ namespace PicView
         /// <param name="e"></param>
         internal static void Interface_MouseEnter(object sender, MouseEventArgs e)
         {
-            if (!activityTimer.Enabled || autoScrolling)
+            if (!activityTimer.Enabled || AutoScrolling)
             {
                 activityTimer.Start();
             }
@@ -160,7 +160,7 @@ namespace PicView
         /// <param name="e"></param>
         internal static void Interface_MouseMove(object sender, MouseEventArgs e)
         {
-            if (autoScrolling)
+            if (AutoScrolling)
             {
                 return;
             }

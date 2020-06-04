@@ -52,7 +52,7 @@ namespace PicView
             }
 
             // If count not correct or just started, get values
-            if (Pics.Count <= FolderIndex || FolderIndex < 0 || freshStartup)
+            if (Pics.Count <= FolderIndex || FolderIndex < 0 || FreshStartup)
             {
                 await GetValues(path).ConfigureAwait(true);
             }
@@ -104,13 +104,13 @@ namespace PicView
                 return;
             }
 
-            if (!freshStartup)
+            if (!FreshStartup)
             {
                 Preloader.Clear();
             }
 
 #if DEBUG
-            if (freshStartup)
+            if (FreshStartup)
                 Trace.WriteLine("Pic(string path) entering Pic(int x)");
 #endif
 
@@ -139,11 +139,11 @@ namespace PicView
             BitmapSource pic;
 
             // Clear unsupported image window, if shown
-            if (unsupported)
+            if (IsUnsupported)
             {
                 mainWindow.topLayer.Children.Remove(badImage);
                 badImage = null;
-                unsupported = false;
+                IsUnsupported = false;
             }
 
             // Additional error checking
@@ -183,9 +183,9 @@ namespace PicView
                 }
 
                 // Dissallow changing image while loading
-                canNavigate = false;
+                CanNavigate = false;
 
-                if (freshStartup)
+                if (FreshStartup)
                 {
 #if DEBUG
                     Trace.WriteLine("Pic(int x) loading new pic manually");
@@ -223,7 +223,7 @@ namespace PicView
                         }
 
                         DisplayBrokenImage();
-                        canNavigate = true;
+                        CanNavigate = true;
                         return;
                     }
                 }
@@ -240,11 +240,8 @@ namespace PicView
                 mainWindow.Scroller.ScrollToTop();
             }
 
-            if (Flipped)
-               Rotate_and_Flip.Flip();
-
             // Update values
-            canNavigate = true;
+            CanNavigate = true;
             SetTitleString(pic.PixelWidth, pic.PixelHeight, x);
             FolderIndex = x;
 
@@ -264,7 +261,7 @@ namespace PicView
                 }
             }
 
-            if (!freshStartup)
+            if (!FreshStartup)
             {
                 RecentFiles.Add(Pics[x]);
 
@@ -274,7 +271,7 @@ namespace PicView
                 }
             }
             
-            freshStartup = false;
+            FreshStartup = false;
         }
 
         /// <summary>
@@ -302,7 +299,7 @@ namespace PicView
 
             NoProgress();
 
-            canNavigate = false;
+            CanNavigate = false;
         }
 
         /// <summary>
@@ -330,7 +327,7 @@ namespace PicView
 
             NoProgress();
 
-            canNavigate = false;
+            CanNavigate = false;
         }
 
         #endregion
@@ -352,7 +349,7 @@ namespace PicView
 #endif
 
             // Exit if not intended to change picture
-            if (!canNavigate)
+            if (!CanNavigate)
             {
                 return;
             }
@@ -408,7 +405,7 @@ namespace PicView
                     }
 
                     PreloadCount++;
-                    reverse = false;
+                    Reverse = false;
                 }
                 else
                 {
@@ -429,7 +426,7 @@ namespace PicView
                     }
 
                     PreloadCount--;
-                    reverse = true;
+                    Reverse = true;
                 }
             }
 
@@ -467,19 +464,19 @@ namespace PicView
         {
             if (arrow)
             {
-                if (!canNavigate)
+                if (!CanNavigate)
                 {
                     return;
                 }
 
                 if (right)
                 {
-                    clickArrowRightClicked = true;
+                    ClickArrowRightClicked = true;
                     Pic();
                 }
                 else
                 {
-                    clickArrowLeftClicked = true;
+                    ClickArrowLeftClicked = true;
                     Pic(false, false);
                 }
             }
@@ -491,7 +488,7 @@ namespace PicView
                     return;
                 }
 
-                if (!canNavigate)
+                if (!CanNavigate)
                 {
                     return;
                 }

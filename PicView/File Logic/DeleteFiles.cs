@@ -100,10 +100,10 @@ namespace PicView
                     return;
                 }
 
-                PreloadCount = reverse ? PreloadCount - 1 : PreloadCount + 1;
+                PreloadCount = Reverse ? PreloadCount - 1 : PreloadCount + 1;
 
                 // Go to next image
-                if (!reverse)
+                if (!Reverse)
                 {
                     Pic(FolderIndex);
                 }

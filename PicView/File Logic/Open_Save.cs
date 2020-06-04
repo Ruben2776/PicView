@@ -44,7 +44,7 @@ namespace PicView
         /// </summary>
         internal static void Open()
         {
-            dialogOpen = true;
+            IsDialogOpen = true;
 
             var dlg = new OpenFileDialog()
             {
@@ -95,7 +95,7 @@ namespace PicView
         /// </summary>
         internal static void SaveFiles()
         {
-            dialogOpen = true;
+            IsDialogOpen = true;
 
             var Savedlg = new SaveFileDialog()
             {
@@ -122,7 +122,7 @@ namespace PicView
                 Reload();
 
                 Close_UserControls();
-                dialogOpen = false;
+                IsDialogOpen = false;
             }
         }
     }

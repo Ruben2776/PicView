@@ -80,24 +80,19 @@ namespace PicView
         /// </summary>
         internal static string TempZipFile { get; set; }
 
-        internal static bool LeftbuttonClicked;
-        internal static bool RightbuttonClicked;
-        internal static bool imageSettingsMenuOpen;
-        internal static bool fileMenuOpen;
-        internal static bool quickSettingsMenuOpen;
-        internal static bool functionsMenuOpen;
-        internal static bool FastPicRunning;
-        internal static bool isZoomed;
-        internal static bool Flipped;
-        internal static bool canNavigate;
-        internal static bool isDraggedOver;
-        internal static bool freshStartup;
-        internal static bool autoScrolling;
-        internal static bool clickArrowRightClicked;
-        internal static bool clickArrowLeftClicked;
-        internal static bool reverse;
-        internal static bool dialogOpen;
-        internal static bool unsupported;
+        internal static bool LeftbuttonClicked { get; set; }
+        internal static bool RightbuttonClicked { get; set; }
+        internal static bool FastPicRunning { get; set; }
+        internal static bool isZoomed { get; set; }
+        internal static bool Flipped { get; set; }
+        internal static bool CanNavigate { get; set; }
+        internal static bool FreshStartup { get; set; }
+        internal static bool AutoScrolling { get; set; }
+        internal static bool ClickArrowRightClicked { get; set; }
+        internal static bool ClickArrowLeftClicked { get; set; }
+        internal static bool Reverse { get; set; }
+        internal static bool IsDialogOpen { get; set; }
+        internal static bool IsUnsupported { get; set; }
 
         /// <summary>
         /// Backup of Width data

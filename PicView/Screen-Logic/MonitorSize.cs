@@ -6,23 +6,23 @@ namespace PicView
     /// <summary>
     /// Logic for the current monitor's screen resolution 
     /// </summary>
-    internal class MonitorSize
+    internal readonly struct MonitorSize
     {
-        internal int Width { get; set; }
-        internal int Height { get; set; }
+        internal readonly int Width { get; }
+        internal readonly int Height { get; }
 
-        internal double DpiScaling { get; set; }
+        internal readonly double DpiScaling { get; }
 
-        internal Rect WorkArea { get; set; }
+        internal readonly Rect WorkArea { get; }
 
         /// <summary>
         /// Store current monitor info
         /// </summary>
-        /// <param name="width">The Pixel Width</param>
-        /// <param name="height">The Pixel Height</param>
+        /// <param name="width">The WorkArea Pixel Width</param>
+        /// <param name="height">The WorkArea Pixel Height</param>
         /// <param name="dpiScaling"></param>
         /// <param name="workArea"></param>
-        internal MonitorSize(int width, int height, double dpiScaling, Rect workArea)
+        private MonitorSize(int width, int height, double dpiScaling, Rect workArea)
         {
             Width = width;
             Height = height;

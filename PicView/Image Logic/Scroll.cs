@@ -58,7 +58,7 @@ namespace PicView
                 return;
             }
 
-            autoScrolling = true;
+            AutoScrolling = true;
             autoScrollOrigin = e.GetPosition(mainWindow.Scroller);
 
             ShowAutoScrollSign();
@@ -72,7 +72,7 @@ namespace PicView
             autoScrollTimer.Stop();
             //window.ReleaseMouseCapture();
             autoScrollTimer.Enabled = false;
-            autoScrolling = false;
+            AutoScrolling = false;
             autoScrollOrigin = null;
             HideAutoScrollSign();
         }
@@ -101,7 +101,7 @@ namespace PicView
                     //ToolTipStyle("pos = " + autoScrollPos.Y.ToString() + " origin = " + autoScrollOrigin.Value.Y.ToString()
                     //    + Environment.NewLine + "offset = " + offset, false);
 
-                    if (autoScrolling)
+                    if (AutoScrolling)
                     {
                         // Tell the scrollviewer to scroll to calculated offset
                         mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset + offset);

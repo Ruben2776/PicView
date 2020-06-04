@@ -32,7 +32,7 @@ namespace PicView
             HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(mainWindow).Handle);
             source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
 
-            freshStartup = true;
+            FreshStartup = true;
 
             if (!Properties.Settings.Default.ShowInterface)
             {
@@ -148,7 +148,7 @@ namespace PicView
                 mainWindow.bg.Children.Add(picGallery);
                 Panel.SetZIndex(picGallery, 999);
 
-                if (Properties.Settings.Default.PicGallery == 2 && freshStartup)
+                if (Properties.Settings.Default.PicGallery == 2 && FreshStartup)
                 {
                     ToggleGallery.Toggle();
                 }

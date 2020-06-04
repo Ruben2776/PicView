@@ -76,7 +76,7 @@ namespace PicView
                 return;
             }
             // Logic for auto scrolling
-            if (autoScrolling)
+            if (AutoScrolling)
             {
                 // Report position and enable autoscrolltimer
                 autoScrollOrigin = e.GetPosition(mainWindow);
@@ -117,7 +117,7 @@ namespace PicView
         internal static void Zoom_img_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             // Stop autoscrolling or dragging image
-            if (autoScrolling)
+            if (AutoScrolling)
             {
                 StopAutoScroll();
             }
@@ -136,7 +136,7 @@ namespace PicView
         internal static void Zoom_img_MouseMove(object sender, MouseEventArgs e)
         {
 
-            if (autoScrolling)
+            if (AutoScrolling)
             {
                 // Start automainWindow.Scroller and report position
                 autoScrollPos = e.GetPosition(mainWindow.Scroller);
@@ -167,7 +167,7 @@ namespace PicView
             // Disable normal scroll, so we can use our own values
             e.Handled = true;
 
-            if (Properties.Settings.Default.ScrollEnabled && !autoScrolling)
+            if (Properties.Settings.Default.ScrollEnabled && !AutoScrolling)
             {
                 if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                 {
@@ -197,12 +197,12 @@ namespace PicView
                 Pic(e.Delta > 0);
             }
             // Scale when Ctrl being held down
-            else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !autoScrolling)
+            else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !AutoScrolling)
             {
                 Zoom(e.Delta, true);
             }
             // Zoom
-            else if (!autoScrolling)
+            else if (!AutoScrolling)
             {
                 Zoom(e.Delta, false);
             }
@@ -260,7 +260,7 @@ namespace PicView
             TryZoomFit();
 
             // Display non-zoomed values
-            if (canNavigate)
+            if (CanNavigate)
             {
                 SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
             }
@@ -360,7 +360,7 @@ namespace PicView
             }
 
             /// Display updated values
-            if (canNavigate)
+            if (CanNavigate)
             {
                 SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
             }
@@ -376,7 +376,7 @@ namespace PicView
         /// </summary>
         internal static void TryZoomFit()
         {
-            if (freshStartup)
+            if (FreshStartup)
             {
                 return;
             }

@@ -174,6 +174,22 @@ namespace PicView
             mainWindow.WindowState = WindowState.Normal;
             SystemCommands.RestoreWindow(mainWindow);
             mainWindow.LowerBar.Height = 35; // Set it back
+
+            if (!Properties.Settings.Default.FitToWindow)
+            {
+                if (Properties.Settings.Default.Width != 0)
+                {
+                    mainWindow.Top = Properties.Settings.Default.Top;
+                    mainWindow.Left = Properties.Settings.Default.Left;
+                    mainWindow.Height = Properties.Settings.Default.Height;
+                    mainWindow.Width = Properties.Settings.Default.Width;
+                }
+            }
+            else
+            {
+                CenterWindowOnScreen();
+            }
+            
             UpdateColor();
         }
 

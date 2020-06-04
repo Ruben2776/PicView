@@ -60,7 +60,7 @@ namespace PicView
 
             Pic(pic, path);
             RecentFiles.Add(path);
-            canNavigate = false;
+            CanNavigate = false;
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace PicView
         /// <returns></returns>
         internal static async Task<BitmapSource> LoadImageWebAsync(string address)
         {
-            canNavigate = false;
+            CanNavigate = false;
             BitmapSource pic = null;
             await Task.Run(async () =>
             {
@@ -89,7 +89,7 @@ namespace PicView
                         SetTitleString(pic.PixelWidth, pic.PixelHeight, address);
                     }
 
-                    canNavigate = false;
+                    CanNavigate = false;
                 }));
 
                 var bytes = await client.DownloadDataTaskAsync(new Uri(address)).ConfigureAwait(false);

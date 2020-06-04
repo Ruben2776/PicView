@@ -65,7 +65,7 @@ namespace PicView
 
             // Tell that it's succeeded
             e.Effects = DragDropEffects.Copy;
-            isDraggedOver = e.Handled = true;
+            e.Handled = true;
             ToolTipStyle(DragOverString, true);
 
             if (check.Value)
@@ -96,14 +96,8 @@ namespace PicView
         {
             // TODO fix base64 image not returning to normal
 
-            // Error handling
-            if (!isDraggedOver)
-            {
-                return;
-            }
-
             // Switch to previous image if available
-            if (!canNavigate)
+            if (!CanNavigate)
             {
                 mainWindow.img.Source = null;
             }
@@ -111,9 +105,6 @@ namespace PicView
             {
                 mainWindow.img.Source = prevPicResource;
             }
-
-            // Update status
-            isDraggedOver = false;
         }
 
         /// <summary>

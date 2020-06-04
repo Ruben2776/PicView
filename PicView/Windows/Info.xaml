@@ -10,915 +10,922 @@
     Foreground="{StaticResource MainColorBrush}"
     Style="{DynamicResource MyWindowStyle}">
 
-
-    <DockPanel LastChildFill="True">
-        <DockPanel
-            x:Name="TitleBar"
-            Height="33"
-            DockPanel.Dock="Top">
-            <DockPanel.Background>
-                <ImageBrush
-                    ImageSource="/Resources/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
-                    TileMode="FlipXY"
-                    Viewport="0,0,100,100"
-                    ViewportUnits="Absolute" />
-            </DockPanel.Background>
-            <uc:Logo />
-            <uc:CloseButton
-                x:Name="CloseButton"
-                VerticalAlignment="Center"
-                DockPanel.Dock="Right" />
-
-            <uc:MinButton
-                x:Name="MinButton"
-                VerticalAlignment="Center"
-                DockPanel.Dock="Right" />
-
-            <TextBlock
-                x:Name="Bar"
-                VerticalAlignment="Center"
-                Background="{x:Null}"
-                FontFamily="/PicView;component/Resources/fonts/#Aller"
-                FontSize="15"
-                FontWeight="Bold"
-                Foreground="{StaticResource MainColorBrush}"
-                Text="Information, help and shortcuts"
-                TextAlignment="Center"
-                TextTrimming="CharacterEllipsis" />
-        </DockPanel>
-
-        <ScrollViewer
-            x:Name="Scroller"
-            Background="{StaticResource BackgroundColorBrushAlt}"
-            HorizontalScrollBarVisibility="Disabled"
-            VerticalScrollBarVisibility="Auto">
-            <StackPanel>
-
-                <FlowDocumentScrollViewer
-                    x:Name="FlowDoc"
-                    IsToolBarVisible="False"
-                    VerticalScrollBarVisibility="Disabled">
-                    <FlowDocument>
-
-                        <Table
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="2"
-                            CellSpacing="6"
-                            FontFamily="TeX Gyre Heros"
-                            FontSize="16">
-
-                            <Table.Columns>
-                                <TableColumn />
-                                <TableColumn />
-                            </Table.Columns>
-
-                            <TableRowGroup>
-
-                                <!--  Title row for the table.  -->
-                                <TableRow>
-                                    <TableCell ColumnSpan="2" TextAlignment="Center">
-                                        <Paragraph FontSize="26" FontWeight="Bold">Keyboard Shortcuts</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                </TableRow>
-
-                                <!--  Header row for the table.  -->
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph FontSize="18" FontWeight="Bold">Key</Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph FontSize="18" FontWeight="Bold">Function</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <!--  Next Next Next Next Next Next Next Next Next  -->
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>A</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Navigate to previous picture</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Left</Bold>
-                                            arrow key</Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Navigate to previous picture</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Ctrl + A</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Navigate to first picture</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Ctrl +Left</Bold>
-                                            arrow key</Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Navigate to first picture</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>D</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Navigate to next picture</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <!--  Prev Prev Prev Prev Prev Prev Prev Prev Prev  -->
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Right</Bold>
-                                            arrow key</Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Navigate to next picture</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Ctrl</Bold>
-                                            +<Bold>D</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Navigate to last picture</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Ctrl</Bold>
-                                            +<Bold>Right</Bold>
-                                            arrow key</Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Navigate to last picture</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Up</Bold>
-                                            arrow key</Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Rotate left</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>W</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Rotate left</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Down</Bold>
-                                            arrow key</Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Rotate right</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>S</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Rotate right</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>F</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Flip image</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>1</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Toggle window resizement</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>T</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Change between white/dark background</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>X</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Toggle scroll</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                </TableRow>
-
-                                <!--  Zoom Zoom Zoom Zoom Zoom Zoom Zoom Zoom Zoom  -->
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Page Up</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Zoom in</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Page Down</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Scroll down</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Page Up</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Scroll up</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            Numpad<Bold>+</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Zoom in</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Ctrl</Bold>
-                                            numpad<Bold>+</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Increase scale</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            Numpad<Bold>-</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Zoom out</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Ctrl</Bold>
-                                            Numpad<Bold>-</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Decrease scale</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>F6</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Reset zoom</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Home</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Scroll to top</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>End</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Scroll to end</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>T</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Change between white/dark background</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Space</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Center application on current monitor</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Alt</Bold>
-                                            +<Bold>Z</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Toggle between graphical interfaces</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>
-                                                Alt
-                                                + Enter
-                                            </Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Toggle between fullscreen</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Esc</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Close current window or menu</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Ctrl +Q</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Exit the application</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Ctrl + O</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Open file dialog</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Ctrl + S</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Save file dialog</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>F3</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Open file in Windows Explorer</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>E</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Open with</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Ctrl + C</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Copy file</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Ctrl + X</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Cut file</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Ctrl + V</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Paste file</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Ctrl + P</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Print image</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Ctrl + R</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Reload image</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Delete</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Send file to the recycle bin</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Shift + Delete</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Permanently delete file</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                </TableRow>
-
-                                <!--  Title row  -->
-                                <TableRow>
-                                    <TableCell ColumnSpan="2" TextAlignment="Center">
-                                        <Paragraph FontSize="26" FontWeight="Bold">Mouse Shortcuts</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph />
-                                    </TableCell>
-                                </TableRow>
-
-                                <!--  Header row for the table.  -->
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph FontSize="18" FontWeight="Bold">Key</Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph FontSize="18" FontWeight="Bold">Function</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <!--  Four data rows for the inner planets.  -->
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Mouse wheel</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Zoom</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Shift + Mouse wheel</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Change picture</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Mouse button forward</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Navigate to next picture</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-
-                                <TableRow Background="{StaticResource BorderBrush}">
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Mouse button back</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Navigate to previous picture</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell>
-                                        <Paragraph>
-                                            <Bold>Middle mouse button</Bold>
-                                        </Paragraph>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Paragraph>Start auto scroll</Paragraph>
-                                    </TableCell>
-                                </TableRow>
-
-                            </TableRowGroup>
-                        </Table>
-                    </FlowDocument>
-                </FlowDocumentScrollViewer>
-
-                <StackPanel Margin="0,7">
-                    <Label
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
-                        Content="Fonts Used:"
-                        FontSize="16" />
-                    <TextBlock
-                        FontFamily="/PicView;component/Resources/fonts/#Aller"
-                        FontSize="16"
-                        TextAlignment="Center"
-                        ToolTip="http://www.fontsquirrel.com/fonts/aller">
-                        <Hyperlink
-                            x:Name="Aller"
-                            NavigateUri="http://www.fontsquirrel.com/fonts/aller"
-                            RequestNavigate="Hyperlink_RequestNavigate">
-                            Aller
-                            <Hyperlink.Foreground>
-                                <SolidColorBrush x:Name="AllerBrush" Color="{StaticResource MainColor}" />
-                            </Hyperlink.Foreground>
-                        </Hyperlink>
-                    </TextBlock>
-
-                    <TextBlock
-                        FontFamily="/PicView;component/Resources/fonts/#TeX Gyre Heros"
-                        FontSize="16"
-                        TextAlignment="Center"
-                        ToolTip="http://www.fontsquirrel.com/fonts/tex-gyre-heros">
-                        <Hyperlink
-                            x:Name="TexGyre"
-                            NavigateUri="http://www.fontsquirrel.com/fonts/tex-gyre-heros"
-                            RequestNavigate="Hyperlink_RequestNavigate">
-                            Tex Gyre Heros
-                            <Hyperlink.Foreground>
-                                <SolidColorBrush x:Name="TexGyreBrush" Color="{StaticResource MainColor}" />
-                            </Hyperlink.Foreground>
-                        </Hyperlink>
-                    </TextBlock>
-                </StackPanel>
-
-
-                <StackPanel Margin="0,7">
-                    <Label HorizontalAlignment="Center" FontSize="16">Icons Used:</Label>
-                    <TextBlock
-                        FontFamily="/PicView;component/Resources/fonts/#Aller"
-                        FontSize="14"
-                        TextAlignment="Center"
-                        ToolTip="https://useiconic.com/open/">
-                        <Hyperlink
-                            x:Name="Iconic"
-                            NavigateUri="https://useiconic.com/open/"
-                            RequestNavigate="Hyperlink_RequestNavigate">
-                            Iconic
-                            <Hyperlink.Foreground>
-                                <SolidColorBrush x:Name="IconicBrush" Color="{StaticResource MainColor}" />
-                            </Hyperlink.Foreground>
-                        </Hyperlink>
-                    </TextBlock>
-                    <TextBlock
-                        x:Name="FlatIcon"
-                        FontFamily="/PicView;component/Resources/fonts/#Aller"
-                        FontSize="14"
-                        TextAlignment="Center"
-                        ToolTip="http://www.flaticon.com/free-icon/file-folder_379">
-                        <Hyperlink NavigateUri="http://www.flaticon.com/free-icon/file-folder_379" RequestNavigate="Hyperlink_RequestNavigate">
-                            Flaticon
-                            <Hyperlink.Foreground>
-                                <SolidColorBrush x:Name="FlatIconBrush" Color="{StaticResource MainColor}" />
-                            </Hyperlink.Foreground>
-                        </Hyperlink>
-                    </TextBlock>
-
-
-                    <TextBlock
-                        x:Name="Ionic"
-                        FontFamily="/PicView;component/Resources/fonts/#Aller"
-                        FontSize="14"
-                        TextAlignment="Center"
-                        ToolTip="http://Ionicons.com/">
-                        <Hyperlink NavigateUri="http://Ionicons.com/" RequestNavigate="Hyperlink_RequestNavigate">
-                            Ioinicons
-                            <Hyperlink.Foreground>
-                                <SolidColorBrush x:Name="IonicBrush" Color="{StaticResource MainColor}" />
-                            </Hyperlink.Foreground>
-                        </Hyperlink>
-                    </TextBlock>
-
-
-                    <TextBlock
-                        x:Name="FontAwesome"
-                        FontFamily="/PicView;component/Resources/fonts/#Aller"
-                        FontSize="14"
-                        TextAlignment="Center"
-                        ToolTip="http://fontawesome.io/">
-                        <Hyperlink NavigateUri="http://fontawesome.io/" RequestNavigate="Hyperlink_RequestNavigate">
-                            FontAwesome
-                            <Hyperlink.Foreground>
-                                <SolidColorBrush x:Name="FontAwesomeBrush" Color="{StaticResource MainColor}" />
-                            </Hyperlink.Foreground>
-                        </Hyperlink>
-                    </TextBlock>
-
-                    <TextBlock
-                        x:Name="zondicons"
-                        FontFamily="/PicView;component/Resources/fonts/#Aller"
-                        FontSize="14"
-                        TextAlignment="Center"
-                        ToolTip="http://www.zondicons.com/icons.html">
-                        <Hyperlink NavigateUri="http://www.zondicons.com/icons.html" RequestNavigate="Hyperlink_RequestNavigate">
-                            Zondicons
-                            <Hyperlink.Foreground>
-                                <SolidColorBrush x:Name="zondiconsBrush" Color="{StaticResource MainColor}" />
-                            </Hyperlink.Foreground>
-                        </Hyperlink>
-                    </TextBlock>
-
-
-                </StackPanel>
-
-                <StackPanel Margin="0,70,0,0">
-
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+    <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+        <DockPanel LastChildFill="True">
+            <DockPanel
+                x:Name="TitleBar"
+                Height="33"
+                DockPanel.Dock="Top">
+                <DockPanel.Background>
+                    <ImageBrush
+                        ImageSource="/Resources/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
+                        TileMode="FlipXY"
+                        Viewport="0,0,100,100"
+                        ViewportUnits="Absolute" />
+                </DockPanel.Background>
+                <uc:Logo />
+                <uc:CloseButton
+                    x:Name="CloseButton"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Right" />
+
+                <uc:MinButton
+                    x:Name="MinButton"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Right" />
+
+                <TextBlock
+                    x:Name="Bar"
+                    VerticalAlignment="Center"
+                    Background="{x:Null}"
+                    FontFamily="/PicView;component/Resources/fonts/#Aller"
+                    FontSize="15"
+                    FontWeight="Bold"
+                    Foreground="{StaticResource MainColorBrush}"
+                    Text="Information, help and shortcuts"
+                    TextAlignment="Center"
+                    TextTrimming="CharacterEllipsis" />
+            </DockPanel>
+
+            <Rectangle Height="1" DockPanel.Dock="Top">
+                <Rectangle.Fill>
+                    <SolidColorBrush Color="{StaticResource BorderColor}" />
+                </Rectangle.Fill>
+            </Rectangle>
+
+            <ScrollViewer
+                x:Name="Scroller"
+                Background="{StaticResource BackgroundColorBrushAlt}"
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+
+                    <FlowDocumentScrollViewer
+                        x:Name="FlowDoc"
+                        IsToolBarVisible="False"
+                        VerticalScrollBarVisibility="Disabled">
+                        <FlowDocument>
+
+                            <Table
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="2"
+                                CellSpacing="6"
+                                FontFamily="TeX Gyre Heros"
+                                FontSize="16">
+
+                                <Table.Columns>
+                                    <TableColumn />
+                                    <TableColumn />
+                                </Table.Columns>
+
+                                <TableRowGroup>
+
+                                    <!--  Title row for the table.  -->
+                                    <TableRow>
+                                        <TableCell ColumnSpan="2" TextAlignment="Center">
+                                            <Paragraph FontSize="26" FontWeight="Bold">Keyboard Shortcuts</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <!--  Header row for the table.  -->
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph FontSize="18" FontWeight="Bold">Key</Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph FontSize="18" FontWeight="Bold">Function</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <!--  Next Next Next Next Next Next Next Next Next  -->
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>A</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Navigate to previous picture</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Left</Bold>
+                                                arrow key</Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Navigate to previous picture</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Ctrl + A</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Navigate to first picture</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Ctrl +Left</Bold>
+                                                arrow key</Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Navigate to first picture</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>D</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Navigate to next picture</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <!--  Prev Prev Prev Prev Prev Prev Prev Prev Prev  -->
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Right</Bold>
+                                                arrow key</Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Navigate to next picture</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Ctrl</Bold>
+                                                +<Bold>D</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Navigate to last picture</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Ctrl</Bold>
+                                                +<Bold>Right</Bold>
+                                                arrow key</Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Navigate to last picture</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Up</Bold>
+                                                arrow key</Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Rotate left</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>W</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Rotate left</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Down</Bold>
+                                                arrow key</Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Rotate right</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>S</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Rotate right</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>F</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Flip image</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>1</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Toggle window resizement</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>T</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Change between white/dark background</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>X</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Toggle scroll</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <!--  Zoom Zoom Zoom Zoom Zoom Zoom Zoom Zoom Zoom  -->
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Page Up</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Zoom in</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Page Down</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Scroll down</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Page Up</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Scroll up</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                Numpad<Bold>+</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Zoom in</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Ctrl</Bold>
+                                                numpad<Bold>+</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Increase scale</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                Numpad<Bold>-</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Zoom out</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Ctrl</Bold>
+                                                Numpad<Bold>-</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Decrease scale</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>F6</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Reset zoom</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Home</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Scroll to top</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>End</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Scroll to end</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>T</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Change between white/dark background</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Space</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Center application on current monitor</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Alt</Bold>
+                                                +<Bold>Z</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Toggle between graphical interfaces</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>
+                                                    Alt
+                                                    + Enter
+                                                </Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Toggle between fullscreen</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Esc</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Close current window or menu</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Ctrl +Q</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Exit the application</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Ctrl + O</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Open file dialog</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Ctrl + S</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Save file dialog</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>F3</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Open file in Windows Explorer</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>E</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Open with</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Ctrl + C</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Copy file</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Ctrl + X</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Cut file</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Ctrl + V</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Paste file</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Ctrl + P</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Print image</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Ctrl + R</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Reload image</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Delete</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Send file to the recycle bin</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Shift + Delete</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Permanently delete file</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <!--  Title row  -->
+                                    <TableRow>
+                                        <TableCell ColumnSpan="2" TextAlignment="Center">
+                                            <Paragraph FontSize="26" FontWeight="Bold">Mouse Shortcuts</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph />
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <!--  Header row for the table.  -->
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph FontSize="18" FontWeight="Bold">Key</Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph FontSize="18" FontWeight="Bold">Function</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <!--  Four data rows for the inner planets.  -->
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Mouse wheel</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Zoom</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Shift + Mouse wheel</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Change picture</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Mouse button forward</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Navigate to next picture</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+
+                                    <TableRow Background="{StaticResource BorderBrush}">
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Mouse button back</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Navigate to previous picture</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
+                                        <TableCell>
+                                            <Paragraph>
+                                                <Bold>Middle mouse button</Bold>
+                                            </Paragraph>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Paragraph>Start auto scroll</Paragraph>
+                                        </TableCell>
+                                    </TableRow>
+
+                                </TableRowGroup>
+                            </Table>
+                        </FlowDocument>
+                    </FlowDocumentScrollViewer>
+
+                    <StackPanel Margin="0,7">
+                        <Label
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Top"
+                            Content="Fonts Used:"
+                            FontSize="16" />
                         <TextBlock
-                            x:Name="GitHub"
                             FontFamily="/PicView;component/Resources/fonts/#Aller"
-                            FontSize="14"
+                            FontSize="16"
                             TextAlignment="Center"
-                            ToolTip="https://github.com/Ruben2776/PicView">
-                            <Hyperlink NavigateUri="https://github.com/Ruben2776/PicView" RequestNavigate="Hyperlink_RequestNavigate">
-                                Github directory
+                            ToolTip="http://www.fontsquirrel.com/fonts/aller">
+                            <Hyperlink
+                                x:Name="Aller"
+                                NavigateUri="http://www.fontsquirrel.com/fonts/aller"
+                                RequestNavigate="Hyperlink_RequestNavigate">
+                                Aller
                                 <Hyperlink.Foreground>
-                                    <SolidColorBrush x:Name="GitHubBrush" Color="{StaticResource MainColor}" />
+                                    <SolidColorBrush x:Name="AllerBrush" Color="{StaticResource MainColor}" />
                                 </Hyperlink.Foreground>
                             </Hyperlink>
                         </TextBlock>
-                        <Path
-                            Width="16"
-                            Height="16"
-                            Margin="3,0,0,0"
-                            Data="M256,32C132.3,32,32,134.9,32,261.7c0,101.5,64.2,187.5,153.2,217.9a17.56,17.56,0,0,0,3.8.4c8.3,0,11.5-6.1,11.5-11.4,0-5.5-.2-19.9-.3-39.1a102.4,102.4,0,0,1-22.6,2.7c-43.1,0-52.9-33.5-52.9-33.5-10.2-26.5-24.9-33.6-24.9-33.6-19.5-13.7-.1-14.1,1.4-14.1h.1c22.5,2,34.3,23.8,34.3,23.8,11.2,19.6,26.2,25.1,39.6,25.1a63,63,0,0,0,25.6-6c2-14.8,7.8-24.9,14.2-30.7-49.7-5.8-102-25.5-102-113.5,0-25.1,8.7-45.6,23-61.6-2.3-5.8-10-29.2,2.2-60.8a18.64,18.64,0,0,1,5-.5c8.1,0,26.4,3.1,56.6,24.1a208.21,208.21,0,0,1,112.2,0c30.2-21,48.5-24.1,56.6-24.1a18.64,18.64,0,0,1,5,.5c12.2,31.6,4.5,55,2.2,60.8,14.3,16.1,23,36.6,23,61.6,0,88.2-52.4,107.6-102.3,113.3,8,7.1,15.2,21.1,15.2,42.5,0,30.7-.3,55.5-.3,63,0,5.4,3.1,11.5,11.4,11.5a19.35,19.35,0,0,0,4-.4C415.9,449.2,480,363.1,480,261.7,480,134.9,379.7,32,256,32Z"
-                            Fill="{StaticResource MainColorBrush}"
-                            Stretch="Fill" />
+
+                        <TextBlock
+                            FontFamily="/PicView;component/Resources/fonts/#TeX Gyre Heros"
+                            FontSize="16"
+                            TextAlignment="Center"
+                            ToolTip="http://www.fontsquirrel.com/fonts/tex-gyre-heros">
+                            <Hyperlink
+                                x:Name="TexGyre"
+                                NavigateUri="http://www.fontsquirrel.com/fonts/tex-gyre-heros"
+                                RequestNavigate="Hyperlink_RequestNavigate">
+                                Tex Gyre Heros
+                                <Hyperlink.Foreground>
+                                    <SolidColorBrush x:Name="TexGyreBrush" Color="{StaticResource MainColor}" />
+                                </Hyperlink.Foreground>
+                            </Hyperlink>
+                        </TextBlock>
                     </StackPanel>
 
-                    <TextBlock
-                        Margin="0,2"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Bottom"
-                        FontFamily="/PicView;component/Resources/fonts/#Aller"
-                        FontSize="12"
-                        Text="Made by Ruben Hyldgaard Negendahl" />
 
-                    <Label
-                        x:Name="appVersion"
-                        Margin="0,2"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Bottom"
-                        Content="Version : " />
+                    <StackPanel Margin="0,7">
+                        <Label HorizontalAlignment="Center" FontSize="16">Icons Used:</Label>
+                        <TextBlock
+                            FontFamily="/PicView;component/Resources/fonts/#Aller"
+                            FontSize="14"
+                            TextAlignment="Center"
+                            ToolTip="https://useiconic.com/open/">
+                            <Hyperlink
+                                x:Name="Iconic"
+                                NavigateUri="https://useiconic.com/open/"
+                                RequestNavigate="Hyperlink_RequestNavigate">
+                                Iconic
+                                <Hyperlink.Foreground>
+                                    <SolidColorBrush x:Name="IconicBrush" Color="{StaticResource MainColor}" />
+                                </Hyperlink.Foreground>
+                            </Hyperlink>
+                        </TextBlock>
+                        <TextBlock
+                            x:Name="FlatIcon"
+                            FontFamily="/PicView;component/Resources/fonts/#Aller"
+                            FontSize="14"
+                            TextAlignment="Center"
+                            ToolTip="http://www.flaticon.com/free-icon/file-folder_379">
+                            <Hyperlink NavigateUri="http://www.flaticon.com/free-icon/file-folder_379" RequestNavigate="Hyperlink_RequestNavigate">
+                                Flaticon
+                                <Hyperlink.Foreground>
+                                    <SolidColorBrush x:Name="FlatIconBrush" Color="{StaticResource MainColor}" />
+                                </Hyperlink.Foreground>
+                            </Hyperlink>
+                        </TextBlock>
+
+
+                        <TextBlock
+                            x:Name="Ionic"
+                            FontFamily="/PicView;component/Resources/fonts/#Aller"
+                            FontSize="14"
+                            TextAlignment="Center"
+                            ToolTip="http://Ionicons.com/">
+                            <Hyperlink NavigateUri="http://Ionicons.com/" RequestNavigate="Hyperlink_RequestNavigate">
+                                Ioinicons
+                                <Hyperlink.Foreground>
+                                    <SolidColorBrush x:Name="IonicBrush" Color="{StaticResource MainColor}" />
+                                </Hyperlink.Foreground>
+                            </Hyperlink>
+                        </TextBlock>
+
+
+                        <TextBlock
+                            x:Name="FontAwesome"
+                            FontFamily="/PicView;component/Resources/fonts/#Aller"
+                            FontSize="14"
+                            TextAlignment="Center"
+                            ToolTip="http://fontawesome.io/">
+                            <Hyperlink NavigateUri="http://fontawesome.io/" RequestNavigate="Hyperlink_RequestNavigate">
+                                FontAwesome
+                                <Hyperlink.Foreground>
+                                    <SolidColorBrush x:Name="FontAwesomeBrush" Color="{StaticResource MainColor}" />
+                                </Hyperlink.Foreground>
+                            </Hyperlink>
+                        </TextBlock>
+
+                        <TextBlock
+                            x:Name="zondicons"
+                            FontFamily="/PicView;component/Resources/fonts/#Aller"
+                            FontSize="14"
+                            TextAlignment="Center"
+                            ToolTip="http://www.zondicons.com/icons.html">
+                            <Hyperlink NavigateUri="http://www.zondicons.com/icons.html" RequestNavigate="Hyperlink_RequestNavigate">
+                                Zondicons
+                                <Hyperlink.Foreground>
+                                    <SolidColorBrush x:Name="zondiconsBrush" Color="{StaticResource MainColor}" />
+                                </Hyperlink.Foreground>
+                            </Hyperlink>
+                        </TextBlock>
+
+
+                    </StackPanel>
+
+                    <StackPanel Margin="0,70,0,0">
+
+                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                            <TextBlock
+                                x:Name="GitHub"
+                                FontFamily="/PicView;component/Resources/fonts/#Aller"
+                                FontSize="14"
+                                TextAlignment="Center"
+                                ToolTip="https://github.com/Ruben2776/PicView">
+                                <Hyperlink NavigateUri="https://github.com/Ruben2776/PicView" RequestNavigate="Hyperlink_RequestNavigate">
+                                    Github directory
+                                    <Hyperlink.Foreground>
+                                        <SolidColorBrush x:Name="GitHubBrush" Color="{StaticResource MainColor}" />
+                                    </Hyperlink.Foreground>
+                                </Hyperlink>
+                            </TextBlock>
+                            <Path
+                                Width="16"
+                                Height="16"
+                                Margin="3,0,0,0"
+                                Data="M256,32C132.3,32,32,134.9,32,261.7c0,101.5,64.2,187.5,153.2,217.9a17.56,17.56,0,0,0,3.8.4c8.3,0,11.5-6.1,11.5-11.4,0-5.5-.2-19.9-.3-39.1a102.4,102.4,0,0,1-22.6,2.7c-43.1,0-52.9-33.5-52.9-33.5-10.2-26.5-24.9-33.6-24.9-33.6-19.5-13.7-.1-14.1,1.4-14.1h.1c22.5,2,34.3,23.8,34.3,23.8,11.2,19.6,26.2,25.1,39.6,25.1a63,63,0,0,0,25.6-6c2-14.8,7.8-24.9,14.2-30.7-49.7-5.8-102-25.5-102-113.5,0-25.1,8.7-45.6,23-61.6-2.3-5.8-10-29.2,2.2-60.8a18.64,18.64,0,0,1,5-.5c8.1,0,26.4,3.1,56.6,24.1a208.21,208.21,0,0,1,112.2,0c30.2-21,48.5-24.1,56.6-24.1a18.64,18.64,0,0,1,5,.5c12.2,31.6,4.5,55,2.2,60.8,14.3,16.1,23,36.6,23,61.6,0,88.2-52.4,107.6-102.3,113.3,8,7.1,15.2,21.1,15.2,42.5,0,30.7-.3,55.5-.3,63,0,5.4,3.1,11.5,11.4,11.5a19.35,19.35,0,0,0,4-.4C415.9,449.2,480,363.1,480,261.7,480,134.9,379.7,32,256,32Z"
+                                Fill="{StaticResource MainColorBrush}"
+                                Stretch="Fill" />
+                        </StackPanel>
+
+                        <TextBlock
+                            Margin="0,2"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Bottom"
+                            FontFamily="/PicView;component/Resources/fonts/#Aller"
+                            FontSize="12"
+                            Text="Made by Ruben Hyldgaard Negendahl" />
+
+                        <Label
+                            x:Name="appVersion"
+                            Margin="0,2"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Bottom"
+                            Content="Version : " />
+                    </StackPanel>
+
                 </StackPanel>
 
-            </StackPanel>
+            </ScrollViewer>
 
-        </ScrollViewer>
-
-    </DockPanel>
+        </DockPanel>
+    </Border>
 </Window>

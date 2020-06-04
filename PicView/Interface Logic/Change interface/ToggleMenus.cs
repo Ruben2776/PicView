@@ -7,6 +7,11 @@ namespace PicView
 {
     internal static class ToggleMenus
     {
+        private static bool imageSettingsMenuOpen;
+        private static bool fileMenuOpen;
+        private static bool quickSettingsMenuOpen;
+        private static bool functionsMenuOpen;
+
         // Toggle open close menus
 
         /// <summary>

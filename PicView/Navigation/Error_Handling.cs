@@ -165,7 +165,7 @@ namespace PicView
             Preloader.Clear();
             DeleteTempFiles();
             PreloadCount = 0;
-            freshStartup = true;
+            FreshStartup = true;
             GalleryMisc.Clear();
         }
 
@@ -185,7 +185,7 @@ namespace PicView
             if (File.Exists(x))
             {
                 // Force reloading values by setting freshStartup to true
-                freshStartup = true;
+                FreshStartup = true;
 
                 // Clear Preloader, to avoid errors by FolderIndex changing location because of re-sorting
                 Preloader.Clear();
@@ -226,9 +226,9 @@ namespace PicView
         {
             mainWindow.Bar.ToolTip = mainWindow.Bar.Text = NoImage;
             mainWindow.Title = NoImage + " - " + AppName;
-            canNavigate = false;
+            CanNavigate = false;
             mainWindow.img.Source = null;
-            freshStartup = true;
+            FreshStartup = true;
             if (Pics != null)
             {
                 Pics.Clear();
@@ -279,7 +279,7 @@ namespace PicView
             mainWindow.Bar.ToolTip = mainWindow.Bar.Text = CannotRender;
             mainWindow.Title = CannotRender + " - " + AppName;
 
-            unsupported = true;
+            IsUnsupported = true;
         }
     }
 }

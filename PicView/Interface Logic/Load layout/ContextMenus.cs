@@ -620,16 +620,16 @@ namespace PicView
             //clickArrowLeft.ContextMenu = cmLeft;
 
             // Add Title contextMenu
-            var cmTitle = new ContextMenu();
+            //var cmTitle = new ContextMenu();
 
-            var clTc = new MenuItem
-            {
-                Header = "Copy path to clipboard"
-            };
-            clTc.Click += (s, x) => CopyText();
-            cmTitle.Items.Add(clTc);
+            //var clTc = new MenuItem
+            //{
+            //    Header = "Copy path to clipboard"
+            //};
+            //clTc.Click += (s, x) => CopyText();
+            //cmTitle.Items.Add(clTc);
 
-            mainWindow.Bar.ContextMenu = cmTitle;
+            //mainWindow.Bar.ContextMenu = cmTitle;
 
             switch (Properties.Settings.Default.SortPreference)
             {

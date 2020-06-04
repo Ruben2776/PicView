@@ -23,6 +23,9 @@ namespace PicView
 {
     internal static class Eventshandling
     {
+        /// <summary>
+        /// Start adding events
+        /// </summary>
         internal static void Go()
         {
             // keyboard and Mouse_Keys Keys

@@ -20,7 +20,7 @@ namespace PicView
                         int fadeTo;
                         TimeSpan timespan;
 
-                        if (autoScrolling)
+                        if (AutoScrolling)
                         {
                             fadeTo = 0;
                             timespan = TimeSpan.FromSeconds(0);
