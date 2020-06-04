@@ -289,13 +289,13 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool FitToWindow {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoFit {
             get {
-                return ((bool)(this["FitToWindow"]));
+                return ((bool)(this["AutoFit"]));
             }
             set {
-                this["FitToWindow"] = value;
+                this["AutoFit"] = value;
             }
         }
         

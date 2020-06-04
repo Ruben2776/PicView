@@ -421,11 +421,11 @@ namespace PicView
         /// <summary>
         /// Tries to call Zoomfit with specified path
         /// </summary>
-        internal static void TryZoomFit(string source)
+        internal static Size? TryZoomFit(string source)
         {
             if (string.IsNullOrWhiteSpace(source))
             {
-                return;
+                return null;
             }
 
             var size = ImageDecoder.ImageSize(source);
@@ -433,6 +433,8 @@ namespace PicView
             {
                 ZoomFit(size.Value.Width, size.Value.Height);
             }
+
+            return size;
         }
 
         /// <summary>
@@ -447,7 +449,7 @@ namespace PicView
             int verticalPadding = 90;
             int horizontalPadding = 520;
 
-            if (FitToWindow)
+            if (AutoFit)
             {
                 /// Get max width and height, based on user's screen
                 if (Properties.Settings.Default.ShowInterface)
@@ -484,7 +486,7 @@ namespace PicView
             else 
             {
                 // Rotated aspect ratio calculation
-                if (FitToWindow)
+                if (AutoFit)
                 {
                     AspectRatio = Math.Min(MonitorInfo.Width / height, (MonitorInfo.Height - verticalPadding) / width);
                 }
@@ -519,7 +521,7 @@ namespace PicView
                 mainWindow.img.Height = xHeight = (height * AspectRatio);
             }
 
-            if (FitToWindow)
+            if (AutoFit)
             {
                 /// Update mainWindow.TitleBar width to dynamically fit new size
                 var interfaceSize = 220; // logo and buttons width + extra padding

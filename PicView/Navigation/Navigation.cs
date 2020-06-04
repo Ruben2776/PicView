@@ -117,17 +117,18 @@ namespace PicView
             // Navigate to picture using obtained index
             Pic(FolderIndex);
 
+            AjaxLoadingEnd();
+
             if (Pics.Count > 1)
             {
                 if (!GalleryMisc.IsLoading)
                 {
-                    await GalleryLoad.Load().ConfigureAwait(true);
+                    await GalleryLoad.Load().ConfigureAwait(false);
                 }
             }
 
             prevPicResource = null; // Make sure to not waste memory
 
-            AjaxLoadingEnd();
         }
 
         /// <summary>
@@ -190,7 +191,7 @@ namespace PicView
 #if DEBUG
                     Trace.WriteLine("Pic(int x) loading new pic manually");
 #endif
-                    TryZoomFit(Pics[x]);
+                    var size = TryZoomFit(Pics[x]);
 
                     // Load new value manually
                     pic = await RenderToBitmapSource(Pics[x]).ConfigureAwait(true);

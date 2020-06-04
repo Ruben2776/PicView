@@ -164,7 +164,7 @@ namespace PicView
                 Margin = new Thickness(30, 0, 0, 0)
             };
 
-            if (Properties.Settings.Default.FitToWindow)
+            if (Properties.Settings.Default.AutoFit)
             {
                 quickSettingsMenu.SetFit.IsChecked = true;
             }

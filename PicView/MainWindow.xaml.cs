@@ -24,7 +24,7 @@ namespace PicView
                 return;
             }
 
-            if (!FitToWindow || !size.WidthChanged && !size.HeightChanged)
+            if (!AutoFit || !size.WidthChanged && !size.HeightChanged)
             {
                 return;
             }

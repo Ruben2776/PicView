@@ -57,7 +57,7 @@ namespace PicView
                 ShowNavigation(false);
                 ShowTopandBottom(false);
                 Utilities.UpdateColor(true);
-                FitToWindow = true;
+                AutoFit = true;
             }
 
             picGallery.Visibility = Visibility.Visible;

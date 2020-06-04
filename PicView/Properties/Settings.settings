@@ -66,10 +66,10 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="BgColorChoice" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="FitToWindow" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+    <Setting Name="AutoFit" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="Top" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>

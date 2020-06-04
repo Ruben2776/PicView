@@ -17,15 +17,15 @@ namespace PicView
         /// <summary>
         /// Set whether to fit window to image or image to window
         /// </summary>
-        internal static bool FitToWindow
+        internal static bool AutoFit
         {
             get
             {
-                return Properties.Settings.Default.FitToWindow;
+                return Properties.Settings.Default.AutoFit;
             }
             set
             {
-                Properties.Settings.Default.FitToWindow = value;
+                Properties.Settings.Default.AutoFit = value;
 
                 if (value)
                 {
@@ -107,7 +107,7 @@ namespace PicView
                 return;
             }
 
-            if (!Properties.Settings.Default.ShowInterface && !FitToWindow && e.LeftButton == MouseButtonState.Pressed)
+            if (!Properties.Settings.Default.ShowInterface && !AutoFit && e.LeftButton == MouseButtonState.Pressed)
             {
                 mainWindow.DragMove();
             }
@@ -155,7 +155,7 @@ namespace PicView
         internal static void Maximize()
         {
             // Update new setting and sizing
-            FitToWindow = false;
+            AutoFit = false;
             Properties.Settings.Default.Maximized = true;
 
             // Tell Windows that it's maximized
@@ -167,7 +167,7 @@ namespace PicView
         internal static void Restore()
         {
             // Update new setting and sizing
-            FitToWindow = true;
+            AutoFit = true;
             Properties.Settings.Default.Maximized = false;
 
             // Tell Windows that it's normal
@@ -175,7 +175,7 @@ namespace PicView
             SystemCommands.RestoreWindow(mainWindow);
             mainWindow.LowerBar.Height = 35; // Set it back
 
-            if (!Properties.Settings.Default.FitToWindow)
+            if (!Properties.Settings.Default.AutoFit)
             {
                 if (Properties.Settings.Default.Width != 0)
                 {
@@ -200,7 +200,7 @@ namespace PicView
         {
             if (startup || !Properties.Settings.Default.Fullscreen)
             {
-                if (!FitToWindow)
+                if (!AutoFit)
                 {
                     Properties.Settings.Default.Save();
                 }
@@ -242,7 +242,7 @@ namespace PicView
                     ShowShortcuts(true);
                 }
 
-                if (FitToWindow)
+                if (AutoFit)
                 {
                     mainWindow.SizeToContent = SizeToContent.WidthAndHeight;
                     mainWindow.ResizeMode = ResizeMode.NoResize;

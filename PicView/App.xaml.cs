@@ -9,7 +9,7 @@ namespace PicView
     public partial class App : Application
     {
         protected override void OnStartup(StartupEventArgs e)
-            {
+        {
             if (e != null)
             {
                 if (e.Args != null && e.Args.Length > 0)

@@ -201,6 +201,7 @@
     <PackageLicenseExpression>GPL-3.0</PackageLicenseExpression>
     <AssemblyOriginatorKeyFile>PicViewKeyFile.pfx</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

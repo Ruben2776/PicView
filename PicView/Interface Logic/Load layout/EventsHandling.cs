@@ -88,8 +88,8 @@ namespace PicView
             quickSettingsMenu.ToggleScroll.Unchecked += (s, x) => IsScrollEnabled = false;
             quickSettingsMenu.ToggleScroll.Click += Toggle_quick_settings_menu;
 
-            quickSettingsMenu.SetFit.Click += (s, x) => { FitToWindow = true; };
-            quickSettingsMenu.SetCenter.Click += (s, x) => { FitToWindow = false; };
+            quickSettingsMenu.SetFit.Click += (s, x) => { AutoFit = true; };
+            quickSettingsMenu.SetCenter.Click += (s, x) => { AutoFit = false; };
             quickSettingsMenu.SettingsButton.Click += (s, x) => AllSettingsWindow();
 
             // LeftButton
@@ -195,7 +195,7 @@ namespace PicView
             switch (mainWindow.WindowState)
             {
                 case WindowState.Maximized:
-                    FitToWindow = false;
+                    AutoFit = false;
                     break;
                 case WindowState.Normal:
                     break;
@@ -229,7 +229,7 @@ namespace PicView
 
             mainWindow.Hide(); // Make it feel faster
 
-            if (!Properties.Settings.Default.FitToWindow && !Properties.Settings.Default.Fullscreen)
+            if (!Properties.Settings.Default.AutoFit && !Properties.Settings.Default.Fullscreen)
             {
                 Properties.Settings.Default.Top = mainWindow.Top;
                 Properties.Settings.Default.Left = mainWindow.Left;

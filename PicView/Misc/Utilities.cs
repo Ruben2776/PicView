@@ -75,8 +75,11 @@ namespace PicView
                 return;
             }
 
-            Application.Current.Resources["ChosenColor"] = AnimationHelper.GetPrefferedColorOver();
-            Application.Current.Resources["ChosenColorBrush"] = new SolidColorBrush(AnimationHelper.GetPrefferedColorOver());
+            var getColor = AnimationHelper.GetPrefferedColorOver();
+            var getColorBrush = new SolidColorBrush(getColor);
+
+            Application.Current.Resources["ChosenColor"] = getColor;
+            Application.Current.Resources["ChosenColorBrush"] = getColorBrush;
 
             if (Properties.Settings.Default.WindowBorderColorEnabled)
             {
@@ -84,7 +87,7 @@ namespace PicView
                 {
                     //var bgBrush = Application.Current.Resources["WindowBackgroundColorBrush"] as SolidColorBrush;
                     //bgBrush.Color = AnimationHelper.GetPrefferedColorOver();
-                    Application.Current.Resources["WindowBackgroundColorBrush"] = new SolidColorBrush(AnimationHelper.GetPrefferedColorOver());
+                    Application.Current.Resources["WindowBackgroundColorBrush"] = getColorBrush;
                 }
                 catch (System.Exception e)
                 {

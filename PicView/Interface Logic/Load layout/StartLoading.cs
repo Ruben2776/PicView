@@ -42,21 +42,6 @@ namespace PicView
                 mainWindow.RightBorderRectangle.Visibility
                 = Visibility.Collapsed;
             }
-            // If normal window style
-            if (!Properties.Settings.Default.FitToWindow)
-            {
-                if (Properties.Settings.Default.Width != 0)
-                {
-                    mainWindow.Top = Properties.Settings.Default.Top;
-                    mainWindow.Left = Properties.Settings.Default.Left;
-                    mainWindow.Height = Properties.Settings.Default.Height;
-                    mainWindow.Width = Properties.Settings.Default.Width;
-                }
-            }
-            else
-            {
-                FitToWindow = true;
-            }
 
             ajaxLoading = new AjaxLoading
             {
@@ -72,8 +57,29 @@ namespace PicView
 #if DEBUG
             Trace.WriteLine("ContentRendered started");
 #endif
-            Pics = new List<string>();
             MonitorInfo = MonitorSize.GetMonitorSize();
+            AutoFit = Properties.Settings.Default.AutoFit;
+
+            // If normal window style
+            if (!AutoFit)
+            {
+                if (Properties.Settings.Default.Width != 0)
+                {
+                    mainWindow.Top = Properties.Settings.Default.Top;
+                    mainWindow.Left = Properties.Settings.Default.Left;
+                    mainWindow.Width = Properties.Settings.Default.Width;
+                    mainWindow.Height = Properties.Settings.Default.Height;
+                }
+                else
+                {
+                    // Execute logic for first time startup
+                    mainWindow.Width = 815;
+                    mainWindow.Height = 1015;
+                    CenterWindowOnScreen();
+                }
+            }
+
+            Pics = new List<string>();
 
             // Load image if possible
             if (Application.Current.Properties["ArbitraryArgName"] == null)
@@ -107,6 +113,7 @@ namespace PicView
             }
 
             // Update values
+            SetColors();
             mainWindow.AllowDrop = true;
             IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
 
@@ -133,8 +140,6 @@ namespace PicView
                 galleryShortcut.Visibility =
                 Visibility.Visible;
             }
-
-            SetColors();
 
             // Load PicGallery, if needed
             if (Properties.Settings.Default.PicGallery > 0)

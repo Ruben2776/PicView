@@ -432,7 +432,7 @@ namespace PicView
                     CenterWindowOnScreen();
                     break;
                 case Key.D1:
-                    FitToWindow = FitToWindow ? false : true;
+                    AutoFit = AutoFit ? false : true;
                     break;
                 // F1
                 case Key.F1:

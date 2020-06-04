@@ -40,7 +40,7 @@
                                     <Border
                                         BorderBrush="{DynamicResource WindowBackgroundColorBrush}"
                                         BorderThickness="1"
-                                        Opacity=".4"
+                                        Opacity=".9"
                                         Visibility="{Binding IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource bool2VisibilityConverter}}" />
                                 </Grid>
                             </Border>
