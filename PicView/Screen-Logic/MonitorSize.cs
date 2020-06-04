@@ -38,6 +38,9 @@ namespace PicView
         {
             /// TODO Get Solution to get actual screen pixel size
             /// and not just without taskbar and such... 
+            /// Needs to get updated when dragging to different screen
+            /// Window.LocationChanged Event https://docs.microsoft.com/en-us/dotnet/api/system.windows.window.locationchanged?redirectedfrom=MSDN&view=netcore-3.1
+            /// is not proper, since it also fires on Left and Top property changes
 
             // https://stackoverflow.com/a/32599760
             var currentMonitor = WpfScreenHelper.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow).Handle);
