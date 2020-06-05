@@ -1,9 +1,9 @@
 ﻿<Window
-    x:Class="PicView.Windows.Effects"
+    x:Class="PicView.Windows.ResizeAndOptimize"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uc="clr-namespace:PicView.UserControls"
-    Title="HLSL Picture FX"
+    Title="Batch resize &amp; optimize"
     Width="560"
     Height="650"
     FontFamily="/PicView;component/Resources/fonts/#Aller"
@@ -58,7 +58,9 @@
                 Background="{StaticResource BackgroundColorBrushAlt}"
                 HorizontalScrollBarVisibility="Disabled"
                 VerticalScrollBarVisibility="Auto">
-                <WrapPanel Orientation="Horizontal" />
+                <WrapPanel Orientation="Horizontal">
+                    <Label Content="Coming soon" />
+                </WrapPanel>
             </ScrollViewer>
 
         </DockPanel>

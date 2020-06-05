@@ -6,11 +6,18 @@
     Foreground="{StaticResource MainColorBrush}">
     <StackPanel>
         <Border
-            Width="430"
-            Background="{DynamicResource BackgroundColorBrush}"
+            Width="432"
+            Background="{StaticResource BackgroundColorBrush}"
             BorderBrush="{StaticResource BorderBrush}"
-            BorderThickness="1"
+            BorderThickness="2"
             CornerRadius="2">
+            <Border.Effect>
+                <DropShadowEffect
+                    BlurRadius="12"
+                    Direction="85"
+                    ShadowDepth="5"
+                    Color="{StaticResource AltInterfaceW}" />
+            </Border.Effect>
             <Grid>
                 <Canvas Height="51" VerticalAlignment="Top">
                     <Rectangle
@@ -234,7 +241,7 @@
                         Content="Scaling behaviour"
                         Foreground="{StaticResource MainColorBrush}" />
                     <StackPanel
-                        Width="400"
+                        Width="402"
                         Margin="0,3,0,12"
                         Orientation="Horizontal">
                         <CheckBox
@@ -265,9 +272,10 @@
                                 <SolidColorBrush x:Name="SetFitBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
+
                         <RadioButton
                             x:Name="SetCenter"
-                            Width="178"
+                            Width="180"
                             Height="40"
                             Margin="3,3,0,3"
                             BorderBrush="{StaticResource BorderBrush}"
@@ -287,7 +295,7 @@
         <Rectangle
             Width="23"
             Height="2"
-            Margin="0,-2,89,0"
+            Margin="0,-2,92,0"
             HorizontalAlignment="Right"
             Fill="{StaticResource BackgroundColorBrush}" />
         <Polygon
@@ -295,6 +303,7 @@
             Panel.ZIndex="-1"
             Fill="{StaticResource BackgroundColorBrush}"
             Points="0,0 15,30, 30,0"
-            Stroke="{StaticResource BorderBrush}" />
+            Stroke="{StaticResource BorderBrush}"
+            StrokeThickness="2" />
     </StackPanel>
 </UserControl>

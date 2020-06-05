@@ -1,6 +1,4 @@
-﻿using System.Windows.Input;
-using System.Windows.Media;
-using static PicView.Fields;
+﻿using System.Windows.Media;
 using static PicView.MouseOverAnimations;
 
 namespace PicView.UserControls

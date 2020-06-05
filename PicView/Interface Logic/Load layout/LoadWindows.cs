@@ -7,6 +7,11 @@ namespace PicView
 {
     internal static class LoadWindows
     {
+        internal static AllSettings allSettingsWindow;
+        internal static Info infoWindow;
+        internal static Effects effects;
+        internal static ResizeAndOptimize resizeAndOptimize;
+
         #region Windows
 
         /// <summary>
@@ -71,13 +76,67 @@ namespace PicView
 #endif
         }
 
-        ///// <summary>
-        ///// Show Tools window
-        ///// </summary>
-        //internal static void ToolsWindow()
-        //{
-        //    new Tools().Show();
-        //}
+        /// <summary>
+        /// Show Effects window
+        /// </summary>
+        internal static void EffectsWindow()
+        {
+            if (effects == null)
+            {
+                effects = new Effects
+                {
+                    Owner = mainWindow
+                };
+
+                effects.Show();
+            }
+            else
+            {
+                if (effects.Visibility == Visibility.Visible)
+                {
+                    effects.Focus();
+                }
+                else
+                {
+                    effects.Show();
+                }
+            }
+
+#if DEBUG
+            Trace.WriteLine("EffectsWindow loaded ");
+#endif
+        }
+
+        /// <summary>
+        /// Show Effects window
+        /// </summary>
+        internal static void ResizeAndOptimizeWindow()
+        {
+            if (resizeAndOptimize == null)
+            {
+                resizeAndOptimize = new ResizeAndOptimize
+                {
+                    Owner = mainWindow
+                };
+
+                resizeAndOptimize.Show();
+            }
+            else
+            {
+                if (resizeAndOptimize.Visibility == Visibility.Visible)
+                {
+                    resizeAndOptimize.Focus();
+                }
+                else
+                {
+                    resizeAndOptimize.Show();
+                }
+            }
+
+#if DEBUG
+            Trace.WriteLine("EffectsWindow loaded ");
+#endif
+        }
 
         #endregion Windows
     }

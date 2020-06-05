@@ -6,12 +6,19 @@
     Foreground="{StaticResource MainColorBrush}">
     <StackPanel>
         <Border
-            Width="259"
+            Width="261"
             Height="180"
-            Background="{DynamicResource BackgroundColorBrush}"
+            Background="{StaticResource BackgroundColorBrush}"
             BorderBrush="{StaticResource BorderBrush}"
-            BorderThickness="1"
+            BorderThickness="2"
             CornerRadius="2">
+            <Border.Effect>
+                <DropShadowEffect
+                    BlurRadius="12"
+                    Direction="105"
+                    ShadowDepth="6"
+                    Color="{StaticResource AltInterface}" />
+            </Border.Effect>
             <Canvas>
                 <Rectangle
                     Canvas.Top="50"
@@ -75,7 +82,7 @@
                     Margin="0"
                     BorderThickness="0"
                     FontWeight="Bold"
-                    ToolTip="Copy image to clipholder">
+                    ToolTip="Send image to recycle bin">
                     <Button.Background>
                         <SolidColorBrush x:Name="RecycleButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Button.Background>
@@ -202,8 +209,8 @@
         </Border>
         <Rectangle
             Width="22"
-            Height="1"
-            Margin="29,-1,0,0"
+            Height="2"
+            Margin="29,-2,0,0"
             HorizontalAlignment="Left"
             Fill="{StaticResource BackgroundColorBrush}" />
         <Polygon
@@ -211,6 +218,7 @@
             Panel.ZIndex="-1"
             Fill="{StaticResource BackgroundColorBrush}"
             Points="0,0 15,30, 30,0"
-            Stroke="{StaticResource BorderBrush}" />
+            Stroke="{StaticResource BorderBrush}"
+            StrokeThickness="2" />
     </StackPanel>
 </UserControl>

@@ -138,10 +138,6 @@ namespace PicView
         internal static Point origin;
         internal static Point start;
 
-        // Windows
-        internal static AllSettings allSettingsWindow;
-        internal static Info infoWindow;
-
         /// <summary>
         /// Starting point of AutoScroll
         /// </summary>

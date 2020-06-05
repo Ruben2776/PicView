@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uc="clr-namespace:PicView.UserControls"
-    Title="PicView Info"
+    Title="Information, help &amp; shortcuts"
     Width="560"
     Height="650"
     FontFamily="/PicView;component/Resources/fonts/#Aller"
@@ -42,7 +42,7 @@
                     FontSize="15"
                     FontWeight="Bold"
                     Foreground="{StaticResource MainColorBrush}"
-                    Text="Information, help and shortcuts"
+                    Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
                     TextAlignment="Center"
                     TextTrimming="CharacterEllipsis" />
             </DockPanel>
