@@ -6,7 +6,6 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!--<ResourceDictionary Source="Configs\Styles\Backgrounds.xaml" />-->
                 <ResourceDictionary Source="Configs\Styles\Colors.xaml" />
                 <ResourceDictionary Source="Configs\Styles\Menu.xaml" />
                 <ResourceDictionary Source="Configs\Styles\Button.xaml" />
@@ -14,7 +13,6 @@
                 <ResourceDictionary Source="Configs\Styles\ToggleButton.xaml" />
                 <ResourceDictionary Source="Configs\Styles\ToolTip.xaml" />
                 <ResourceDictionary Source="Configs\Styles\ScrollBar.xaml" />
-                <!--<ResourceDictionary Source="Configs\Styles\TabControl.xaml" />-->
                 <ResourceDictionary Source="Configs\Styles\RadioButton.xaml" />
                 <ResourceDictionary Source="Configs\Styles\Label.xaml" />
             </ResourceDictionary.MergedDictionaries>

@@ -10,7 +10,6 @@ namespace PicView.Windows
 {
     public partial class Info : Window
     {
-        const int zoomSpeed = 45;
         public Info()
         {
             InitializeComponent();

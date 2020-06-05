@@ -14,7 +14,7 @@ namespace PicView.UserControls
                 PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(CloseButtonBrush);
                 MouseEnter += (s, x) => ButtonMouseOverAnim(CloseButtonBrush, true);
                 MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(CloseButtonBrush, false);
-                TheButton.Click += delegate { ToggleMenus.Close_UserControls(); };
+                TheButton.Click += delegate { UC.Close_UserControls(); };
             };
         }
     }

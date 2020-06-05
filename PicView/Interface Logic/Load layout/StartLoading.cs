@@ -16,6 +16,7 @@ using static PicView.Scroll;
 using static PicView.Timers;
 using static PicView.Utilities;
 using static PicView.WindowLogic;
+using static PicView.UC;
 
 namespace PicView
 {
@@ -164,7 +165,7 @@ namespace PicView
             LoadFileMenu();
             LoadImageSettingsMenu();
             LoadQuickSettingsMenu();
-            LoadFunctionsMenu();
+            LoadToolsAndEffectsMenu();
             LoadAutoScrollSign();
 
             // Initilize Things!

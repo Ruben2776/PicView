@@ -11,8 +11,8 @@ using static PicView.Fields;
 using static PicView.ImageDecoder;
 using static PicView.Navigation;
 using static PicView.SetTitle;
-using static PicView.Thumbnails;
 using static PicView.Tooltip;
+using static PicView.UC;
 
 namespace PicView
 {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 using static PicView.Fields;
+using static PicView.UC;
 
 
 namespace PicView

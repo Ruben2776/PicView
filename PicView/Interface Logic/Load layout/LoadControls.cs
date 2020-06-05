@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 using static PicView.Fields;
+using static PicView.UC;
 
 namespace PicView
 {
@@ -183,9 +184,9 @@ namespace PicView
         /// <summary>
         /// Loads FunctionsMenu and adds it to the window
         /// </summary>
-        internal static void LoadFunctionsMenu()
+        internal static void LoadToolsAndEffectsMenu()
         {
-            functionsMenu = new UserControls.FunctionsMenu
+            toolsAndEffectsMenu = new UserControls.ToolsAndEffectsMenu
             {
                 Focusable = false,
                 Opacity = 0,
@@ -195,7 +196,7 @@ namespace PicView
                 Margin = new Thickness(70, 0, 0, 0)
             };
 
-            mainWindow.bg.Children.Add(functionsMenu);
+            mainWindow.bg.Children.Add(toolsAndEffectsMenu);
 
 #if DEBUG
             Trace.WriteLine("LoadFunctionsMenu loaded ");

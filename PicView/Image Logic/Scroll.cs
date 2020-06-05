@@ -5,6 +5,7 @@ using System.Windows.Input;
 using static PicView.Fields;
 using static PicView.Resize_and_Zoom;
 using static PicView.Tooltip;
+using static PicView.UC;
 
 namespace PicView
 {

@@ -7,6 +7,7 @@ using static PicView.Fields;
 using static PicView.GalleryLoad;
 using static PicView.GalleryMisc;
 using static PicView.GalleryScroll;
+using static PicView.UC;
 using static PicView.WindowLogic;
 
 namespace PicView

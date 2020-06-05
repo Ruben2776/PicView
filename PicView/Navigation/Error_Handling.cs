@@ -8,12 +8,13 @@ using static PicView.AjaxLoader;
 using static PicView.DeleteFiles;
 using static PicView.Fields;
 using static PicView.FileLists;
-using static PicView.Utilities;
 using static PicView.ImageDecoder;
 using static PicView.Navigation;
 using static PicView.Resize_and_Zoom;
 using static PicView.Rotate_and_Flip;
 using static PicView.Tooltip;
+using static PicView.UC;
+using static PicView.Utilities;
 
 namespace PicView
 {
@@ -42,7 +43,7 @@ namespace PicView
 
             if (Pics.Count < 0)
             {
-                ToolTipStyle("Unexpected error", true, TimeSpan.FromSeconds(3));
+                ShowTooltipMessage("Unexpected error", true, TimeSpan.FromSeconds(3));
                 Unload();
                 return null;
             }
@@ -90,7 +91,7 @@ namespace PicView
 
             if (file == null)
             {
-                ToolTipStyle("Unexpected error", true, TimeSpan.FromSeconds(3));
+                ShowTooltipMessage("Unexpected error", true, TimeSpan.FromSeconds(3));
                 Unload();
                 return null;
             }
@@ -113,7 +114,7 @@ namespace PicView
             // Check if there's still images in folder
             if (Pics.Count < 0)
             {
-                ToolTipStyle("No images in folder", true, TimeSpan.FromSeconds(3));
+                ShowTooltipMessage("No images in folder", true, TimeSpan.FromSeconds(3));
                 Unload();
 
                 return null;
@@ -131,7 +132,7 @@ namespace PicView
 
             if (File.Exists(file))
             {
-                ToolTipStyle("File not found or unable to render, " + file, false, TimeSpan.FromSeconds(2.5));
+                ShowTooltipMessage("File not found or unable to render, " + file, false, TimeSpan.FromSeconds(2.5));
             }
 
             AjaxLoadingEnd();

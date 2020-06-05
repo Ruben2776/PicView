@@ -1,5 +1,5 @@
 ﻿using System;
-using static PicView.Fields;
+using static PicView.UC;
 
 namespace PicView
 {

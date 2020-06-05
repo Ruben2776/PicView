@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
 using static PicView.Fields;
+using static PicView.UC;
 
 namespace PicView
 {

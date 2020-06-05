@@ -16,6 +16,7 @@ using static PicView.SetTitle;
 using static PicView.Thumbnails;
 using static PicView.Tooltip;
 using static PicView.Utilities;
+using static PicView.UC;
 
 namespace PicView
 {
@@ -294,7 +295,7 @@ namespace PicView
             mainWindow.img.Source = pic;
 
             ZoomFit(pic.PixelWidth, pic.PixelHeight);
-            CloseToolTipStyle();
+            CloseToolTipMessage();
 
             SetTitleString(pic.PixelWidth, pic.PixelHeight, imageName);
 
@@ -322,7 +323,7 @@ namespace PicView
             mainWindow.img.Source = pic;
 
             ZoomFit(pic.PixelWidth, pic.PixelHeight);
-            CloseToolTipStyle();
+            CloseToolTipMessage();
 
             SetTitleString(pic.PixelWidth, pic.PixelHeight, "Base64 image");
 

@@ -4,11 +4,12 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using static PicView.Fields;
-using static PicView.Utilities;
 using static PicView.Navigation;
 using static PicView.Scroll;
 using static PicView.SetTitle;
 using static PicView.Tooltip;
+using static PicView.UC;
+using static PicView.Utilities;
 using static PicView.WindowLogic;
 
 namespace PicView
@@ -249,7 +250,7 @@ namespace PicView
             tt.X = tt.Y = 0;
             mainWindow.img.RenderTransformOrigin = new Point(0.5, 0.5);
 
-            CloseToolTipStyle();
+            CloseToolTipMessage();
             isZoomed = false;
 
             // Reset size
@@ -352,7 +353,7 @@ namespace PicView
             }
             else
             {
-                CloseToolTipStyle();
+                CloseToolTipMessage();
             }
 
             /// Display updated values

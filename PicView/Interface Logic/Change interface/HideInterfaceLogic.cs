@@ -3,6 +3,7 @@ using System.Windows.Input;
 using static PicView.FadeControls;
 using static PicView.Fields;
 using static PicView.Resize_and_Zoom;
+using static PicView.UC;
 
 namespace PicView
 {
@@ -32,7 +33,7 @@ namespace PicView
 
             TryZoomFit();
 
-            ToggleMenus.Close_UserControls();
+            Close_UserControls();
         }
 
         internal static void ShowStandardInterface()

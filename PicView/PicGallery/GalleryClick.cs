@@ -10,6 +10,7 @@ using static PicView.GalleryMisc;
 using static PicView.ImageDecoder;
 using static PicView.Navigation;
 using static PicView.Thumbnails;
+using static PicView.UC;
 
 
 namespace PicView

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Media;
 using static PicView.Copy_Paste;
 using static PicView.DeleteFiles;
 using static PicView.DragAndDrop;
 using static PicView.Fields;
-using static PicView.Utilities;
 using static PicView.HideInterfaceLogic;
 using static PicView.LoadWindows;
 using static PicView.MouseOverAnimations;
@@ -15,10 +16,9 @@ using static PicView.Resize_and_Zoom;
 using static PicView.Rotate_and_Flip;
 using static PicView.Scroll;
 using static PicView.Shortcuts;
-using static PicView.ToggleMenus;
+using static PicView.UC;
+using static PicView.Utilities;
 using static PicView.WindowLogic;
-using System.Diagnostics;
-using System.Windows.Media;
 
 namespace PicView
 {

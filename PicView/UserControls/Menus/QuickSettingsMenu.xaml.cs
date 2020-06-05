@@ -21,7 +21,7 @@ namespace PicView.UserControls
             SettingsButton.MouseLeave += SettingsButtonMouseLeave;
             SettingsButton.PreviewMouseLeftButtonDown += SettingsButtonMouseButtonDown;
             SettingsButton.Click += delegate {
-                ToggleMenus.Close_UserControls();
+                UC.Close_UserControls();
                 LoadWindows.AllSettingsWindow();
             };
 
@@ -30,7 +30,7 @@ namespace PicView.UserControls
             InfoButton.MouseLeave += InfoButtonMouseLeave;
             InfoButton.PreviewMouseLeftButtonDown += InfoButtonMouseButtonDown;
             InfoButton.Click += delegate {
-                ToggleMenus.Close_UserControls();
+                UC.Close_UserControls();
                 LoadWindows.HelpWindow();
             };
 
@@ -39,7 +39,7 @@ namespace PicView.UserControls
             ZoomButton.MouseLeave += ZoomButtonMouseLeave;
             ZoomButton.PreviewMouseLeftButtonDown += ZoomButtonMouseButtonDown;
             ZoomButton.Click += delegate {
-                ToggleMenus.Close_UserControls();
+                UC.Close_UserControls();
                 Resize_and_Zoom.ResetZoom();
             };
 

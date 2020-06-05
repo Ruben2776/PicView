@@ -12,7 +12,7 @@ using static PicView.Resize_and_Zoom;
 using static PicView.Rotate_and_Flip;
 using static PicView.Scroll;
 using static PicView.ToggleGallery;
-using static PicView.ToggleMenus;
+using static PicView.UC;
 using static PicView.Utilities;
 using static PicView.WindowLogic;
 

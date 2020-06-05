@@ -1,16 +1,34 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Windows;
 using System.Windows.Media.Animation;
-using static PicView.Fields;
+using PicView.UserControls;
 
 namespace PicView
 {
-    internal static class ToggleMenus
+    internal static class UC
     {
+        internal static ImageSettings imageSettingsMenu;
+        internal static FileMenu fileMenu;
+        internal static QuickSettingsMenu quickSettingsMenu;
+        internal static ToolsAndEffectsMenu toolsAndEffectsMenu;
+        internal static AjaxLoading ajaxLoading;
+        internal static SexyToolTip sexyToolTip;
+        internal static AutoScrollSign autoScrollSign;
+        internal static ClickArrow clickArrowLeft;
+        internal static ClickArrow clickArrowRight;
+        internal static X2 x2;
+        internal static Minus minus;
+        internal static PicGallery picGallery;
+        internal static GalleryShortcut galleryShortcut;
+        internal static BadImage badImage;
+
+
         private static bool imageSettingsMenuOpen;
         private static bool fileMenuOpen;
         private static bool quickSettingsMenuOpen;
-        private static bool functionsMenuOpen;
+        private static bool toolsAndEffectsMenuOpen;
 
         // Toggle open close menus
 
@@ -102,27 +120,27 @@ namespace PicView
         /// <summary>
         /// Toggles whether FunctionsMenu is open or not with a fade animation
         /// </summary>
-        internal static bool FunctionsMenuOpen
+        internal static bool ToolsAndEffectsMenuOpen
         {
-            get { return functionsMenuOpen; }
+            get { return toolsAndEffectsMenuOpen; }
             set
             {
-                functionsMenuOpen = value;
-                functionsMenu.Visibility = Visibility.Visible;
+                toolsAndEffectsMenuOpen = value;
+                toolsAndEffectsMenu.Visibility = Visibility.Visible;
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
                 if (!value)
                 {
                     da.To = 0;
-                    da.Completed += delegate { functionsMenu.Visibility = Visibility.Hidden; };
+                    da.Completed += delegate { toolsAndEffectsMenu.Visibility = Visibility.Hidden; };
                 }
                 else
                 {
                     da.To = 1;
                 }
 
-                if (functionsMenu != null)
+                if (toolsAndEffectsMenu != null)
                 {
-                    functionsMenu.BeginAnimation(UIElement.OpacityProperty, da);
+                    toolsAndEffectsMenu.BeginAnimation(UIElement.OpacityProperty, da);
                 }
             }
         }
@@ -148,7 +166,7 @@ namespace PicView
                 return true;
             }
 
-            if (FunctionsMenuOpen)
+            if (ToolsAndEffectsMenuOpen)
             {
                 return true;
             }
@@ -176,9 +194,9 @@ namespace PicView
                 QuickSettingsMenuOpen = false;
             }
 
-            if (FunctionsMenuOpen)
+            if (ToolsAndEffectsMenuOpen)
             {
-                FunctionsMenuOpen = false;
+                ToolsAndEffectsMenuOpen = false;
             }
         }
 
@@ -214,9 +232,9 @@ namespace PicView
                 QuickSettingsMenuOpen = false;
             }
 
-            if (FunctionsMenuOpen)
+            if (ToolsAndEffectsMenuOpen)
             {
-                FunctionsMenuOpen = false;
+                ToolsAndEffectsMenuOpen = false;
             }
         }
 
@@ -244,9 +262,9 @@ namespace PicView
                 QuickSettingsMenuOpen = false;
             }
 
-            if (FunctionsMenuOpen)
+            if (ToolsAndEffectsMenuOpen)
             {
-                FunctionsMenuOpen = false;
+                ToolsAndEffectsMenuOpen = false;
             }
         }
 
@@ -274,9 +292,9 @@ namespace PicView
                 ImageSettingsMenuOpen = false;
             }
 
-            if (FunctionsMenuOpen)
+            if (ToolsAndEffectsMenuOpen)
             {
-                FunctionsMenuOpen = false;
+                ToolsAndEffectsMenuOpen = false;
             }
         }
 
@@ -292,7 +310,7 @@ namespace PicView
                 return;
             }
 
-            FunctionsMenuOpen = !FunctionsMenuOpen;
+            ToolsAndEffectsMenuOpen = !ToolsAndEffectsMenuOpen;
 
             if (FileMenuOpen)
             {
@@ -309,5 +327,6 @@ namespace PicView
                 QuickSettingsMenuOpen = false;
             }
         }
+
     }
 }

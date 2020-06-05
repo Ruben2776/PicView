@@ -6,9 +6,9 @@ namespace PicView.UserControls
     /// <summary>
     /// Menu to open functions
     /// </summary>
-    public partial class FunctionsMenu : UserControl
+    public partial class ToolsAndEffectsMenu : UserControl
     {
-        public FunctionsMenu()
+        public ToolsAndEffectsMenu()
         {
             InitializeComponent();
 

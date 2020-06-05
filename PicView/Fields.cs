@@ -1,5 +1,4 @@
-﻿using PicView.UserControls;
-using PicView.Windows;
+﻿using PicView.Windows;
 using System.Collections.Generic;
 using System.Timers;
 using System.Windows;
@@ -54,6 +53,8 @@ namespace PicView
 
         internal const int picGalleryItem_Size = 260;
         internal const int picGalleryItem_Size_s = picGalleryItem_Size - 30;
+
+        internal const int zoomSpeed = 45;
 
         /// <summary>
         /// The Main Window?
@@ -133,22 +134,6 @@ namespace PicView
         /// Used to get and set monitor size
         /// </summary>
         internal static MonitorSize MonitorInfo { get; set; }
-
-        // UserControls
-        internal static ImageSettings imageSettingsMenu;
-        internal static FileMenu fileMenu;
-        internal static QuickSettingsMenu quickSettingsMenu;
-        internal static FunctionsMenu functionsMenu;
-        internal static AjaxLoading ajaxLoading;
-        internal static SexyToolTip sexyToolTip;
-        internal static AutoScrollSign autoScrollSign;
-        internal static ClickArrow clickArrowLeft;
-        internal static ClickArrow clickArrowRight;
-        internal static X2 x2;
-        internal static Minus minus;
-        internal static PicGallery picGallery;
-        internal static GalleryShortcut galleryShortcut;
-        internal static BadImage badImage;
 
         internal static Point origin;
         internal static Point start;

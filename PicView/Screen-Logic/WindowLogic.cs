@@ -4,9 +4,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static PicView.Fields;
-using static PicView.Utilities;
 using static PicView.HideInterfaceLogic;
 using static PicView.Resize_and_Zoom;
+using static PicView.UC;
+using static PicView.Utilities;
 
 namespace PicView
 {

@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="PicView.UserControls.FunctionsMenu"
+    x:Class="PicView.UserControls.ToolsAndEffectsMenu"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uc="clr-namespace:PicView.UserControls"
@@ -40,9 +40,6 @@
 
                     <uc:MenuCloseButton x:Name="CloseButton" Canvas.Left="297" />
                 </Canvas>
-                <StackPanel Margin="14,60,0,0" Orientation="Horizontal">
-                    <Label Content="Beta version; more to be added later.." />
-                </StackPanel>
             </Canvas>
         </Border>
         <Rectangle

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Media.Animation;
-using static PicView.Fields;
+using static PicView.UC;
 
 namespace PicView
 {
@@ -13,7 +13,7 @@ namespace PicView
         /// <param name="message">The message to display</param>
         /// <param name="center">If centered or on bottom</param>
         /// <param name="time">How long until it fades away</param>
-        internal static void ToolTipStyle(object message, bool center, TimeSpan time)
+        internal static void ShowTooltipMessage(object message, bool center, TimeSpan time)
         {
             if (sexyToolTip == null)
             {
@@ -46,13 +46,13 @@ namespace PicView
         /// <param name="message">The message to display</param>
         internal static void ToolTipStyle(object message, bool center = false)
         {
-            ToolTipStyle(message, center, TimeSpan.FromSeconds(1));
+            ShowTooltipMessage(message, center, TimeSpan.FromSeconds(1));
         }
 
         /// <summary>
         /// Hides the Messagebox ToolTipStyle
         /// </summary>
-        internal static void CloseToolTipStyle()
+        internal static void CloseToolTipMessage()
         {
             sexyToolTip.Visibility = Visibility.Hidden;
         }

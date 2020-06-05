@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.Fields;
+using static PicView.UC;
 
 
 namespace PicView

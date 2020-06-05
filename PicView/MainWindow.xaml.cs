@@ -1,6 +1,6 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using static PicView.Fields;
+using static PicView.UC;
 using static PicView.WindowLogic;
 
 namespace PicView

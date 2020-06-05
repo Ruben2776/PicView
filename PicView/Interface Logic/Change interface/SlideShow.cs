@@ -19,7 +19,7 @@ namespace PicView
                 return;
             }
 
-            ToggleMenus.Close_UserControls();
+            UC.Close_UserControls();
 
             if (SlideTimer == null)
             {

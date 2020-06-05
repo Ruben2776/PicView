@@ -2,10 +2,11 @@
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.Fields;
-using static PicView.HideInterfaceLogic;
 using static PicView.GalleryMisc;
 using static PicView.GalleryScroll;
+using static PicView.HideInterfaceLogic;
 using static PicView.Thumbnails;
+using static PicView.UC;
 using static PicView.WindowLogic;
 
 namespace PicView
