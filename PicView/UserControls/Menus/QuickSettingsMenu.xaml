@@ -7,7 +7,7 @@
     <StackPanel>
         <Border
             Width="432"
-            Background="{StaticResource BackgroundColorBrush}"
+            Background="{StaticResource NoisyBg}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="2"
             CornerRadius="2">

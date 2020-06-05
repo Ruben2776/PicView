@@ -17,6 +17,13 @@
                 <ResourceDictionary Source="Configs\Styles\Label.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <ImageBrush
+                x:Key="NoisyBg"
+                ImageSource="\Resources/img/noisy-texture-200x200-o4-d31-c-161616-t0.png"
+                TileMode="FlipXY"
+                Viewport="0,0,100,100"
+                ViewportUnits="Absolute" />
+
             <BooleanToVisibilityConverter x:Key="bool2VisibilityConverter" />
             <Style x:Key="MyWindowStyle" TargetType="Window">
                 <Setter Property="UseLayoutRounding" Value="True" />

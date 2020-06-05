@@ -14,7 +14,7 @@
             Width="360"
             Height="178"
             Margin="-5,0,0,0"
-            Background="{StaticResource BackgroundColorBrush}"
+            Background="{StaticResource NoisyBg}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="2"
             CornerRadius="2">

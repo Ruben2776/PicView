@@ -118,7 +118,7 @@ namespace PicView
                 Visibility = Visibility.Hidden,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 0, 190, 0)
+                Margin = new Thickness(0, 0, 188, 0)
             };
 
             mainWindow.bg.Children.Add(fileMenu);
@@ -140,7 +140,7 @@ namespace PicView
                 Visibility = Visibility.Hidden,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 0, 112, 0)
+                Margin = new Thickness(0, 0, 95, 0)
             };
 
             mainWindow.bg.Children.Add(imageSettingsMenu);
@@ -162,7 +162,7 @@ namespace PicView
                 Visibility = Visibility.Hidden,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(30, 0, 0, 0)
+                Margin = new Thickness(36, 0, 0, 0)
             };
 
             if (Properties.Settings.Default.AutoFit)
@@ -186,14 +186,14 @@ namespace PicView
         /// </summary>
         internal static void LoadToolsAndEffectsMenu()
         {
-            toolsAndEffectsMenu = new UserControls.ToolsAndEffectsMenu
+            toolsAndEffectsMenu = new ToolsAndEffectsMenu
             {
                 Focusable = false,
                 Opacity = 0,
                 Visibility = Visibility.Hidden,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(70, 0, 0, 0)
+                Margin = new Thickness(87, 0, 0, 0)
             };
 
             mainWindow.bg.Children.Add(toolsAndEffectsMenu);
@@ -202,8 +202,6 @@ namespace PicView
             Trace.WriteLine("LoadFunctionsMenu loaded ");
 #endif
         }
-
-
 
         // Tooltip
 

@@ -33,13 +33,6 @@ namespace PicView
             };
             element.BeginAnimation(UIElement.OpacityProperty, da);
         }
-
-        //internal static void FadeWindow(Window window, Double to, Duration duration)
-        //{
-        //    var anim = new DoubleAnimation(to, duration);
-        //    anim.Completed += (s, _) => SystemCommands.CloseWindow(window);
-        //    window.BeginAnimation(UIElement.OpacityProperty, anim);
-        //}
         #endregion
 
         #region Color Events
@@ -73,7 +66,7 @@ namespace PicView
             brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
         }
 
-        internal static void MouseLeaveColorEvent(byte a, byte r, byte g, byte b, Brush brush, short colortheme)
+        internal static void MouseLeaveColorEvent(byte a, byte r, byte g, byte b, Brush brush, int colortheme)
         {
             switch (colortheme)
             {
@@ -119,7 +112,7 @@ namespace PicView
             brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
         }
 
-        internal static void MouseEnterColorEvent(byte a, byte r, byte g, byte b, Brush brush, short colortheme)
+        internal static void MouseEnterColorEvent(byte a, byte r, byte g, byte b, Brush brush, int colortheme)
         {
             ccAnim.From = Color.FromArgb(a, r, g, b);
             switch (colortheme)
@@ -165,7 +158,7 @@ namespace PicView
             brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
         }
 
-        internal static void PreviewMouseLeftButtonDownColorEvent(Brush brush, short colortheme)
+        internal static void PreviewMouseLeftButtonDownColorEvent(Brush brush, int colortheme)
         {
             switch (colortheme)
             {
@@ -219,6 +212,34 @@ namespace PicView
                     ccAnim.To = Properties.Settings.Default.GreyAlpha;
                     break;
             }
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+        }
+
+        internal static void MouseEnterBgColor(Brush brush)
+        {
+            ccAnim.From = Color.FromArgb(0, 0, 0, 0);
+            ccAnim.To = Fields.backgroundBorderColor;
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+        }
+
+        internal static void MouseLeaveBgColor(Brush brush)
+        {
+            ccAnim.From = Fields.backgroundBorderColor;
+            ccAnim.To = Color.FromArgb(0, 0, 0, 0);
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+        }
+
+        internal static void MouseEnterBgTexColor(Brush brush)
+        {
+            ccAnim.From = Color.FromArgb(0, 0, 0, 0);
+            ccAnim.To = Color.FromArgb(100, 75, 75, 75);
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+        }
+
+        internal static void MouseLeaveBgTexColor(Brush brush)
+        {
+            ccAnim.From = Color.FromArgb(100, 75, 75, 75);
+            ccAnim.To = Color.FromArgb(0, 0, 0, 0);
             brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
         }
 

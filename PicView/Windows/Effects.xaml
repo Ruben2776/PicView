@@ -58,7 +58,8 @@
                 Background="{StaticResource BackgroundColorBrushAlt}"
                 HorizontalScrollBarVisibility="Disabled"
                 VerticalScrollBarVisibility="Auto">
-                <WrapPanel Orientation="Horizontal" />
+                <WrapPanel Orientation="Horizontal" >
+                    <Label>Coming soon...</Label></WrapPanel>
             </ScrollViewer>
 
         </DockPanel>

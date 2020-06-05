@@ -27,17 +27,45 @@
                 <DockPanel.Background>
                     <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
                 </DockPanel.Background>
+                
                 <uc:Logo />
+
+                <Rectangle
+                    Width="1"
+                    Height="35"
+                    Margin="4,0,0,0"
+                    Fill="{StaticResource BorderBrush}" />
+
                 <uc:CloseButton
                     x:Name="CloseButton"
                     VerticalAlignment="Center"
                     DockPanel.Dock="Right" />
+
+                <Rectangle
+                    Width="1"
+                    Height="35"
+                    DockPanel.Dock="Right"
+                    Fill="{StaticResource BorderBrush}" />
+
                 <uc:FullscreenButton x:Name="FullscreenButton" DockPanel.Dock="Right" />
+
+                <Rectangle
+                    Width="1"
+                    Height="35"
+                    DockPanel.Dock="Right"
+                    Fill="{StaticResource BorderBrush}" />
 
                 <uc:MinButton
                     x:Name="MinButton"
                     VerticalAlignment="Center"
                     DockPanel.Dock="Right" />
+
+                <Rectangle
+                    Width="1"
+                    Height="35"
+                    Margin="0,0,-8,0"
+                    DockPanel.Dock="Right"
+                    Fill="{StaticResource BorderBrush}" />
 
                 <uc:CustomTextBox
                     x:Name="Bar"
@@ -54,19 +82,29 @@
                 x:Name="LowerBar"
                 Height="35"
                 MinWidth="444"
+                Background="{StaticResource BackgroundColorBrushAltW}"
                 DockPanel.Dock="Bottom">
-                <StackPanel.Background>
-                    <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
-                </StackPanel.Background>
-                <Canvas Width="395" HorizontalAlignment="Center">
+
+                <Canvas
+                    Width="429"
+                    Height="35"
+                    HorizontalAlignment="Center">
+
+                    <Rectangle
+                        Width="1"
+                        Height="35"
+                        Fill="{StaticResource BorderBrush}" />
+
                     <Button
                         x:Name="FileMenuButton"
-                        Canvas.Left="-15"
+                        Canvas.Left="1"
                         Width="55"
                         Height="35"
                         FocusVisualStyle="{x:Null}"
-                        Focusable="False"
-                        ToolTip="File menu">
+                        Focusable="False">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="FileMenuBg" Color="{StaticResource BackgroundColorAltW}" />
+                        </Button.Background>
                         <Path
                             x:Name="FolderPath"
                             Width="25.112"
@@ -78,15 +116,28 @@
                             </Path.Fill>
                         </Path>
                     </Button>
+
+                    <Rectangle
+                        Canvas.Left="56"
+                        Canvas.Top="0"
+                        Width="1"
+                        Height="35"
+                        Fill="{StaticResource BorderBrush}" />
+
                     <Button
                         x:Name="image_button"
-                        Canvas.Left="41"
+                        Canvas.Left="57"
                         Width="55"
                         Height="35"
                         FocusVisualStyle="{x:Null}"
-                        Focusable="False"
-                        ToolTip="Image menu">
-                        <Canvas Width="28" Height="31">
+                        Focusable="False">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="ImageMenuBg" Color="{StaticResource BackgroundColorAltW}" />
+                        </Button.Background>
+                        <Canvas
+                            Width="28"
+                            Height="31"
+                            Margin="14,0,0,0">
                             <Path
                                 x:Name="ImagePath1"
                                 Canvas.Left="0.233"
@@ -126,13 +177,14 @@
                             </Path>
                         </Canvas>
                     </Button>
+
                     <Canvas
-                        Canvas.Left="97"
+                        Canvas.Left="113"
                         Width="200"
                         Height="35"
-                        Background="{StaticResource BackgroundColorBrush}">
+                        Background="{StaticResource NoisyBg}">
                         <Rectangle
-                            Canvas.Left="102"
+                            Canvas.Left="100"
                             Canvas.Top="0"
                             Width="1"
                             Height="35"
@@ -143,12 +195,14 @@
                             Width="1"
                             Height="35"
                             Fill="{StaticResource BorderBrush}" />
+
                         <Rectangle
                             Canvas.Left="200"
                             Canvas.Top="0"
                             Width="1"
                             Height="38"
                             Fill="{StaticResource BorderBrush}" />
+
                         <Button
                             x:Name="LeftButton"
                             Width="100"
@@ -156,8 +210,10 @@
                             FocusVisualStyle="{x:Null}"
                             Focusable="False"
                             KeyboardNavigation.DirectionalNavigation="None"
-                            KeyboardNavigation.TabNavigation="None"
-                            ToolTip="Previous picture. You can also press A or Left">
+                            KeyboardNavigation.TabNavigation="None">
+                            <Button.Background>
+                                <SolidColorBrush x:Name="LeftButtonBrush" Color="Transparent" />
+                            </Button.Background>
                             <Path
                                 x:Name="LeftArrow"
                                 Width="19.669"
@@ -169,6 +225,7 @@
                                 </Path.Fill>
                             </Path>
                         </Button>
+
                         <Button
                             x:Name="RightButton"
                             Canvas.Left="100"
@@ -177,8 +234,10 @@
                             FocusVisualStyle="{x:Null}"
                             Focusable="False"
                             KeyboardNavigation.DirectionalNavigation="None"
-                            KeyboardNavigation.TabNavigation="None"
-                            ToolTip="Next picture. You can also press D or Right">
+                            KeyboardNavigation.TabNavigation="None">
+                            <Button.Background>
+                                <SolidColorBrush x:Name="RightButtonBrush" Color="Transparent" />
+                            </Button.Background>
                             <Path
                                 x:Name="RightArrow"
                                 Width="19.669"
@@ -190,16 +249,28 @@
                                 </Path.Fill>
                             </Path>
                         </Button>
+
                     </Canvas>
+
+
+                    <Rectangle
+                        Canvas.Left="372"
+                        Canvas.Top="0"
+                        Width="1"
+                        Height="35"
+                        Fill="{StaticResource BorderBrush}" />
+
                     <Button
                         x:Name="SettingsButton"
-                        Canvas.Left="298"
+                        Canvas.Left="316"
                         Width="55"
                         Height="35"
                         Margin="0"
                         FocusVisualStyle="{x:Null}"
-                        Focusable="False"
-                        ToolTip="Quick Settings Menu">
+                        Focusable="False">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="SettingsMenuBg" Color="{StaticResource BackgroundColorAltW}" />
+                        </Button.Background>
                         <Path
                             x:Name="SettingsPath"
                             Width="23.779"
@@ -211,20 +282,19 @@
                             </Path.Fill>
                         </Path>
                     </Button>
+
                     <Button
                         x:Name="FunctionMenuButton"
-                        Canvas.Left="354"
+                        Canvas.Left="373"
                         Canvas.Top="1"
                         Width="55"
                         Height="35"
-                        Margin="0"
                         FocusVisualStyle="{x:Null}"
-                        Focusable="False"
-                        ToolTip="Image effects and tools menu">
-                        <Image
-                            Width="23.779"
-                            Height="23.779"
-                            Margin="0,0,15,3">
+                        Focusable="False">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="EffectsMenuBg" Color="{StaticResource BackgroundColorAltW}" />
+                        </Button.Background>
+                        <Image Width="23.779" Height="23.779">
                             <Image.Source>
                                 <DrawingImage>
                                     <DrawingImage.Drawing>
@@ -328,9 +398,19 @@
                             </Image.Source>
                         </Image>
                     </Button>
+
+                    <Rectangle
+                        Canvas.Left="429"
+                        Canvas.Top="0"
+                        Width="1"
+                        Height="35"
+                        Fill="{StaticResource BorderBrush}" />
+
                 </Canvas>
             </StackPanel>
+
             <DockPanel LastChildFill="True">
+
                 <Rectangle
                     x:Name="LeftBorderRectangle"
                     Width="7"
@@ -351,14 +431,12 @@
                 </Rectangle>
 
                 <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
-                    <Grid x:Name="bg" AllowDrop="True">
-                        <Grid.Background>
-                            <ImageBrush
-                                ImageSource="Resources/img/noisy-texture-200x200-o4-d31-c-161616-t0.png"
-                                TileMode="FlipXY"
-                                Viewport="0,0,100,100"
-                                ViewportUnits="Absolute" />
-                        </Grid.Background>
+
+                    <Grid
+                        x:Name="bg"
+                        AllowDrop="True"
+                        Background="{StaticResource NoisyBg}">
+
                         <ScrollViewer
                             x:Name="Scroller"
                             CanContentScroll="False"
