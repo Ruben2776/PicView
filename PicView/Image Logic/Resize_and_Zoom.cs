@@ -135,7 +135,6 @@ namespace PicView
         /// <param name="e"></param>
         internal static void Zoom_img_MouseMove(object sender, MouseEventArgs e)
         {
-
             if (AutoScrolling)
             {
                 // Start automainWindow.Scroller and report position
@@ -239,10 +238,7 @@ namespace PicView
         /// </summary>
         internal static void ResetZoom()
         {
-            if (mainWindow.img.Source == null)
-            {
-                return;
-            }
+            if (mainWindow.img.Source == null) { return; }
 
             // Scale to default
             var scaletransform = new ScaleTransform();
@@ -376,19 +372,16 @@ namespace PicView
         /// </summary>
         internal static void TryZoomFit()
         {
-            if (FreshStartup)
-            {
-                return;
-            }
+            if (FreshStartup) { return; }
 
             if (Pics != null)
             {
                 if (Pics.Count > FolderIndex)
                 {
-                    var tmp = PreLoading.Preloader.Load(Pics[FolderIndex]);
-                    if (tmp != null)
+                    var pic = PreLoading.Preloader.Load(Pics[FolderIndex]);
+                    if (pic != null)
                     {
-                        ZoomFit(tmp.PixelWidth, tmp.PixelHeight);
+                        ZoomFit(pic.PixelWidth, pic.PixelHeight);
                     }
                     else
                     {
@@ -421,20 +414,15 @@ namespace PicView
         /// <summary>
         /// Tries to call Zoomfit with specified path
         /// </summary>
-        internal static Size? TryZoomFit(string source)
+        internal static void TryZoomFit(string source)
         {
-            if (string.IsNullOrWhiteSpace(source))
-            {
-                return null;
-            }
+            if (string.IsNullOrWhiteSpace(source)) { return; }
 
             var size = ImageDecoder.ImageSize(source);
             if (size.HasValue)
             {
                 ZoomFit(size.Value.Width, size.Value.Height);
             }
-
-            return size;
         }
 
         /// <summary>
@@ -448,29 +436,30 @@ namespace PicView
             double maxWidth, maxHeight;
             int verticalPadding = 90;
             int horizontalPadding = 520;
+            int minVerticalSpace = 6;
 
-            if (AutoFit)
+            if (AutoFit) /// Get max width and height, based on user's screen
             {
-                /// Get max width and height, based on user's screen
                 if (Properties.Settings.Default.ShowInterface)
                 {
+                    /// Use padding for shown interface
                     maxWidth = Math.Min(MonitorInfo.Width - horizontalPadding, width);
                     maxHeight = Math.Min(MonitorInfo.Height - verticalPadding, height);
                 }
-                /// - 2 for window border
                 else
                 {
-                    maxWidth = Math.Min(MonitorInfo.Width - horizontalPadding, width - 2);
-                    maxHeight = Math.Min(MonitorInfo.Height - 2, height - 2);
+                    /// Fill users screen
+                    maxWidth = Math.Min(MonitorInfo.Width - horizontalPadding, width - minVerticalSpace);
+                    maxHeight = Math.Min(MonitorInfo.Height - minVerticalSpace, height - minVerticalSpace);
                 }
             }
-            else
+            else  /// Get max width and height, based on window size
             {
-                /// Get max width and height, based on window size
                 maxWidth = Math.Min(mainWindow.Width, width);
 
                 if (Properties.Settings.Default.ShowInterface)
                 {
+                    /// Use padding for shown interface
                     maxHeight = Math.Min(mainWindow.Height - verticalPadding, height);
                 }
                 else
@@ -479,19 +468,20 @@ namespace PicView
                 }
             }
 
-            if (Rotateint == 0 || Rotateint == 180)
+            if (Rotateint == 0 || Rotateint == 180) // Standard aspect ratio calculation
             {
                 AspectRatio = Math.Min(maxWidth / width, (maxHeight / height));
             }
-            else 
+            else  // Rotated aspect ratio calculation
             {
-                // Rotated aspect ratio calculation
                 if (AutoFit)
                 {
+                    /// Calculate to screen size
                     AspectRatio = Math.Min(MonitorInfo.Width / height, (MonitorInfo.Height - verticalPadding) / width);
                 }
                 else
                 {
+                    /// Center in window
                     AspectRatio = Math.Min(mainWindow.Width / height, (mainWindow.Height - verticalPadding) / width);
                 }
                 
@@ -535,6 +525,7 @@ namespace PicView
             }
             else
             {
+                /// Fix title width to window size
                 mainWindow.Bar.MaxWidth = mainWindow.ActualWidth - 95;
             }
 

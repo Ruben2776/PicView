@@ -53,7 +53,7 @@
                             CaptionHeight="0"
                             CornerRadius="0"
                             GlassFrameThickness="1"
-                            ResizeBorderThickness="6"
+                            ResizeBorderThickness="9"
                             UseAeroCaptionButtons="False" />
                     </Setter.Value>
                 </Setter>

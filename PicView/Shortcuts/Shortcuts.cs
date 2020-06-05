@@ -1,13 +1,10 @@
-﻿using System.IO;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using static PicView.Copy_Paste;
 using static PicView.DeleteFiles;
 using static PicView.Error_Handling;
 using static PicView.Fields;
 using static PicView.GalleryScroll;
-using static PicView.Utilities;
-using static PicView.HideInterfaceLogic;
 using static PicView.LoadWindows;
 using static PicView.Navigation;
 using static PicView.Open_Save;
@@ -16,19 +13,19 @@ using static PicView.Rotate_and_Flip;
 using static PicView.Scroll;
 using static PicView.ToggleGallery;
 using static PicView.ToggleMenus;
+using static PicView.Utilities;
 using static PicView.WindowLogic;
 
 namespace PicView
 {
     internal static class Shortcuts
     {
-
         internal static void MainWindow_KeysDown(object sender, KeyEventArgs e)
         {
-            if (mainWindow.Bar.IsKeyboardFocusWithin)
-            {
-                return;
-            }
+            // Don't allow keys when typing in text
+            if (mainWindow.Bar.IsKeyboardFocusWithin) { return; }
+
+            #region Keys where it can be held down
 
             switch (e.Key)
             {
@@ -159,18 +156,16 @@ namespace PicView
                     }
 
                     return;
+
                 case Key.Down:
                 case Key.S:
-                    if (Properties.Settings.Default.ScrollEnabled && mainWindow.Scroller.ScrollableHeight > 0)
+                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                     {
-                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                        {
-                            return; // Save Ctrl + S fix
-                        }
-                        else
-                        {
-                            mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset + 30);
-                        }
+                        SaveFiles();
+                    }
+                    else if (Properties.Settings.Default.ScrollEnabled && mainWindow.Scroller.ScrollableHeight > 0)
+                    {
+                        mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset + 30);
                     }
                     else if (picGallery != null)
                     {
@@ -214,9 +209,262 @@ namespace PicView
                     {
                         Zoom(-1, false);
                     }
-
                     return;
             }
+
+            #endregion Keys where it can be held down
+
+            #region Key is not held down
+
+            if (!e.IsRepeat)
+            {
+                switch (e.Key)
+                {
+                    // Esc
+                    case Key.Escape:
+                        if (UserControls_Open())
+                        {
+                            Close_UserControls();
+                            return;
+                        }
+                        if (Properties.Settings.Default.Fullscreen)
+                        {
+                            if (SlideTimer != null)
+                            {
+                                if (SlideTimer.Enabled)
+                                {
+                                    SlideShow.StopSlideshow();
+                                }
+                            }
+                            else
+                            {
+                                Fullscreen_Restore();
+                            }
+                            return;
+                        }
+                        if (GalleryMisc.IsOpen)
+                        {
+                            Toggle();
+                            return;
+                        }
+                        if (IsDialogOpen)
+                        {
+                            IsDialogOpen = false;
+                            return;
+                        }
+                        if (infoWindow != null)
+                        {
+                            if (infoWindow.IsVisible)
+                            {
+                                infoWindow.Hide();
+                                return;
+                            }
+                        }
+                        if (allSettingsWindow != null)
+                        {
+                            if (allSettingsWindow.IsVisible)
+                            {
+                                allSettingsWindow.Hide();
+                                return;
+                            }
+                        }
+                        if (!cm.IsVisible)
+                        {
+                            SystemCommands.CloseWindow(mainWindow);
+                        }
+                        break;
+
+                    // Ctrl + Q
+                    case Key.Q:
+                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        {
+                            SystemCommands.CloseWindow(mainWindow);
+                        }
+
+                        break;
+
+                    // O, Ctrl + O
+                    case Key.O:
+                        Open();
+                        break;
+
+                    // X, Ctrl + X
+                    case Key.X:
+                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        {
+                            Cut(Pics[FolderIndex]);
+                        }
+                        else
+                        {
+                            Configs.SetScrolling(sender, e);
+                        }
+                        break;
+                    // F
+                    case Key.F:
+                        Flip();
+                        break;
+
+                    // Delete, Shift + Delete
+                    case Key.Delete:
+                        DeleteFile(Pics[FolderIndex], e.KeyboardDevice.Modifiers != ModifierKeys.Shift);
+                        break;
+
+                    // Ctrl + C, Ctrl + Shift + C, Ctrl + Alt + C
+                    case Key.C:
+                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        {
+                            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+                            {
+                                var base64 = Base64.ConvertToBase64(Pics[FolderIndex]);
+                                if (!string.IsNullOrWhiteSpace(base64))
+                                {
+                                    Clipboard.SetText(base64);
+                                    Tooltip.ToolTipStyle("Converted to base 64");
+                                }
+                            }
+                            else if ((Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
+                            {
+                                CopyBitmap();
+                            }
+                            else
+                            {
+                                Copyfile();
+                            }
+                        }
+                        else
+                        {
+                            // TODO add crop function
+                        }
+                        break;
+
+                    // Ctrl + V
+                    case Key.V:
+                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        {
+                            Paste();
+                        }
+
+                        break;
+
+                    // Ctrl + I
+                    case Key.I:
+                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        {
+                            NativeMethods.ShowFileProperties(Pics[FolderIndex]);
+                        }
+
+                        break;
+
+                    // Ctrl + P
+                    case Key.P:
+                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        {
+                            Print(Pics[FolderIndex]);
+                        }
+
+                        break;
+
+                    // Ctrl + R
+                    case Key.R:
+                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        {
+                            Reload();
+                        }
+
+                        break;
+
+                    // L
+                    case Key.L:
+                        Configs.SetLooping(sender, e);
+                        break;
+
+                    // E
+                    case Key.E:
+                        OpenWith(Pics[FolderIndex]);
+                        break;
+
+                    // T
+                    case Key.T:
+                        ChangeBackground(sender, e);
+                        break;
+
+                    // Space
+                    case Key.Space:
+                        if (picGallery != null)
+                        {
+                            if (GalleryMisc.IsOpen)
+                            {
+                                ScrollTo();
+                                return;
+                            }
+                        }
+                        CenterWindowOnScreen();
+                        break;
+
+                    // 1
+                    case Key.D1:
+                        AutoFit = false;
+                        break;
+
+                    // 2
+                    case Key.D2:
+                        AutoFit = true;
+                        break;
+
+                    // F1
+                    case Key.F1:
+                        HelpWindow();
+                        break;
+
+                    // F2
+                    case Key.F2:
+                        EditTitleBar.EditTitleBar_Text();
+                        break;
+
+                    // F3
+                    case Key.F3:
+                        Open_In_Explorer();
+                        break;
+
+                    // F4
+                    case Key.F4:
+                        AllSettingsWindow();
+                        break;
+
+                    // F5
+                    case Key.F5:
+                        break;
+
+                    // F6
+                    case Key.F6:
+                        ResetZoom();
+                        break;
+
+                    // F11
+                    case Key.F11:
+                        SlideShow.StartSlideshow();
+                        break;
+
+                    // F12
+                    case Key.F12:
+                        Fullscreen_Restore();
+                        break;
+
+                    // Home
+                    case Key.Home:
+                        mainWindow.Scroller.ScrollToHome();
+                        break;
+
+                    // End
+                    case Key.End:
+                        mainWindow.Scroller.ScrollToEnd();
+                        break;
+                }
+            }
+
+            #endregion Key is not held down
+
+            #region Alt + keys
 
             // Alt doesn't work in switch? Waiting for key up is confusing in this case
             // Alt + Z
@@ -224,10 +472,9 @@ namespace PicView
             {
                 if (!e.IsRepeat)
                 {
-                    ToggleInterface();
+                    HideInterfaceLogic.ToggleInterface();
                 }
-
-                return;
+                e.Handled = true;
             }
 
             // Alt + Enter
@@ -237,242 +484,26 @@ namespace PicView
                 {
                     Fullscreen_Restore();
                 }
+                e.Handled = true;
             }
+
+            #endregion Alt + keys
         }
 
         internal static void MainWindow_KeysUp(object sender, KeyEventArgs e)
         {
-            if (mainWindow.Bar.IsFocused)
-            {
-                return;
-            }
+            // Don't allow keys when typing in text
+            if (mainWindow.Bar.IsKeyboardFocusWithin) { return; }
 
             switch (e.Key)
             {
-                // FastPicUpdate()
+                #region FastPicUpdate()
                 case Key.A:
                 case Key.Right:
                 case Key.D:
                     FastPicUpdate();
                     break;
-                // Esc
-                case Key.Escape:
-                    if (UserControls_Open())
-                    {
-                        Close_UserControls();
-                        return;
-                    }
-                    if (Properties.Settings.Default.Fullscreen)
-                    {
-                        if (SlideTimer != null)
-                        {
-                            if (SlideTimer.Enabled)
-                            {
-                                SlideShow.StopSlideshow();
-                            }
-                        }
-                        else
-                        {
-                            Fullscreen_Restore();
-                        }
-                        return;
-                    }
-                    if (GalleryMisc.IsOpen)
-                    {
-                        Toggle();
-                        return;
-                    }
-                    if (IsDialogOpen)
-                    {
-                        IsDialogOpen = false;
-                        return;
-                    }
-                    if (infoWindow != null)
-                    {
-                        if (infoWindow.IsVisible)
-                        {
-                            infoWindow.Hide();
-                            return;
-                        }
-                    }
-                    if (allSettingsWindow != null)
-                    {
-                        if (allSettingsWindow.IsVisible)
-                        {
-                            allSettingsWindow.Hide();
-                            return;
-                        }
-                    }
-                    if (!cm.IsVisible)
-                    {
-                        SystemCommands.CloseWindow(mainWindow);
-                    }
-                    break;
-                // Ctrl + Q
-                case Key.Q:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        SystemCommands.CloseWindow(mainWindow);
-                    }
-
-                    break;
-                // O, Ctrl + O
-                case Key.O:
-                    Open();
-                    break;
-                // X, Ctrl + X
-                case Key.X:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        Cut(Pics[FolderIndex]);
-                    }
-                    else
-                    {
-                        Configs.SetScrolling(sender, e);
-                    }
-
-                    break;
-                // F
-                case Key.F:
-                    Flip();
-                    break;
-                // Delete, Shift + Delete
-                case Key.Delete:
-                    DeleteFile(Pics[FolderIndex], e.KeyboardDevice.Modifiers != ModifierKeys.Shift);
-                    break;
-                // Ctrl + C, Ctrl + Shift + C, Ctrl + Alt + C
-                case Key.C:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
-                        {
-                            var base64 = Base64.ConvertToBase64(Pics[FolderIndex]);
-                            if (!string.IsNullOrWhiteSpace(base64))
-                            {
-                                Clipboard.SetText(base64);
-                                Tooltip.ToolTipStyle("Converted to base 64");
-                            }
-                        }
-                        else if ((Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
-                        {
-                            CopyBitmap();
-                        }
-                        else
-                        {
-                            Copyfile();
-                        }
-                    }
-                    else
-                    {
-                        // TODO add crop function
-                    }
-                    break;
-                // Ctrl + V
-                case Key.V:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        Paste();
-                    }
-
-                    break;
-                // Ctrl + S
-                case Key.S:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        SaveFiles();
-                    }
-
-                    break;
-                // Ctrl + I
-                case Key.I:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        NativeMethods.ShowFileProperties(Pics[FolderIndex]);
-                    }
-
-                    break;
-                // Ctrl + P
-                case Key.P:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        Print(Pics[FolderIndex]);
-                    }
-
-                    break;
-                // Ctrl + R
-                case Key.R:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        Reload();
-                    }
-
-                    break;
-                // L
-                case Key.L:
-                    Configs.SetLooping(sender, e);
-                    break;
-                // E
-                case Key.E:
-                    OpenWith(Pics[FolderIndex]);
-                    break;
-                // T
-                case Key.T:
-                    ChangeBackground(sender, e);
-                    break;
-                // Space
-                case Key.Space:
-                    if (picGallery != null)
-                    {
-                        if (GalleryMisc.IsOpen)
-                        {
-                            ScrollTo();
-                            return;
-                        }
-                    }
-                    CenterWindowOnScreen();
-                    break;
-                case Key.D1:
-                    AutoFit = AutoFit ? false : true;
-                    break;
-                // F1
-                case Key.F1:
-                    HelpWindow();
-                    break;
-                // F2
-                case Key.F2:
-                    EditTitleBar.EditTitleBar_Text();
-                    break;
-                // F3
-                case Key.F3:
-                    Open_In_Explorer();
-                    break;
-                // F4
-                case Key.F4:
-                    AllSettingsWindow();
-                    break;
-                // F5
-                case Key.F5:
-                    break;
-                // F6
-                case Key.F6:
-                    ResetZoom();
-                    break;
-                // F11
-                case Key.F11:
-                    SlideShow.StartSlideshow();
-                    break;
-                // F12
-                case Key.F12:
-                    Fullscreen_Restore();
-                    break;
-                // Home
-                case Key.Home:
-                    mainWindow.Scroller.ScrollToHome();
-                    break;
-                // End
-                case Key.End:
-                    mainWindow.Scroller.ScrollToEnd();
-                    break;
+                    #endregion
             }
         }
 
@@ -518,12 +549,12 @@ namespace PicView
                 case Key.Enter:
                     EditTitleBar.HandleRename();
                     break;
+
                 case Key.Escape:
                     EditTitleBar.Refocus();
                     IsDialogOpen = true; // Hack to make escape not fall through
                     break;
             }
         }
-
     }
 }

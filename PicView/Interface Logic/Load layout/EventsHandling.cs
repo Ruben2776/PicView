@@ -18,6 +18,7 @@ using static PicView.Shortcuts;
 using static PicView.ToggleMenus;
 using static PicView.WindowLogic;
 using System.Diagnostics;
+using System.Windows.Media;
 
 namespace PicView
 {
@@ -111,31 +112,32 @@ namespace PicView
             mainWindow.SettingsButton.Click += Toggle_quick_settings_menu;
 
             //FunctionButton
-            mainWindow.FunctionMenuButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.FunctionButtonFill);
-            mainWindow.FunctionMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(mainWindow.FunctionButtonFill);
-            mainWindow.FunctionMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.FunctionButtonFill);
+            var MagicBrush = mainWindow.TryFindResource("MagicBrush") as SolidColorBrush;
+            mainWindow.FunctionMenuButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(MagicBrush);
+            mainWindow.FunctionMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(MagicBrush);
+            mainWindow.FunctionMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(MagicBrush);
             mainWindow.FunctionMenuButton.Click += Toggle_Functions_menu;
 
             // FlipButton
             imageSettingsMenu.FlipButton.Click += (s, x) => Flip();
 
             // ClickArrows
-            clickArrowLeft.MouseLeftButtonUp += (s, x) => PicButton(true, false);
+            clickArrowLeft.MouseLeftButtonDown += (s, x) => PicButton(true, false);
             clickArrowLeft.MouseEnter += Interface_MouseEnter_Negative;
 
-            clickArrowRight.MouseLeftButtonUp += (s, x) => PicButton(true, true);
+            clickArrowRight.MouseLeftButtonDown += (s, x) => PicButton(true, true);
             clickArrowRight.MouseEnter += Interface_MouseEnter_Negative;
 
             // x2
-            x2.MouseLeftButtonUp += (x, xx) => SystemCommands.CloseWindow(mainWindow);
+            x2.MouseLeftButtonDown += (x, xx) => SystemCommands.CloseWindow(mainWindow);
             x2.MouseEnter += Interface_MouseEnter_Negative;
 
             // Minus
-            minus.MouseLeftButtonUp += (s, x) => SystemCommands.MinimizeWindow(mainWindow);
+            minus.MouseLeftButtonDown += (s, x) => SystemCommands.MinimizeWindow(mainWindow);
             minus.MouseEnter += Interface_MouseEnter_Negative;
 
             // GalleryShortcut
-            galleryShortcut.MouseLeftButtonUp += (s, x) => ToggleGallery.Toggle();
+            galleryShortcut.MouseLeftButtonDown += (s, x) => ToggleGallery.Toggle();
             galleryShortcut.MouseEnter += Interface_MouseEnter_Negative;
 
             // Bar
@@ -182,6 +184,7 @@ namespace PicView
 
             //LocationChanged += MainWindow_LocationChanged;
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
+
 
 #if DEBUG
             Trace.WriteLine("Events loaded");

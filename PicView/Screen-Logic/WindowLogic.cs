@@ -93,6 +93,7 @@ namespace PicView
                 }
 
                 // Update info for possible new screen, needs more engineering
+                // Seems to work
                 MonitorInfo = MonitorSize.GetMonitorSize();
             }
         }

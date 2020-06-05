@@ -191,7 +191,7 @@ namespace PicView
 #if DEBUG
                     Trace.WriteLine("Pic(int x) loading new pic manually");
 #endif
-                    var size = TryZoomFit(Pics[x]);
+                    TryZoomFit(Pics[x]);
 
                     // Load new value manually
                     pic = await RenderToBitmapSource(Pics[x]).ConfigureAwait(true);

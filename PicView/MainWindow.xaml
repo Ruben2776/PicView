@@ -12,6 +12,11 @@
     SizeToContent="WidthAndHeight"
     Style="{DynamicResource MyWindowStyle}"
     WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="MagicBrush" Color="{StaticResource MainColor}" />
+    </Window.Resources>
+
     <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
         <DockPanel LastChildFill="True">
             <DockPanel
@@ -61,7 +66,7 @@
                         Height="35"
                         FocusVisualStyle="{x:Null}"
                         Focusable="False"
-                        ToolTip="Open file menu">
+                        ToolTip="File menu">
                         <Path
                             x:Name="FolderPath"
                             Width="25.112"
@@ -215,20 +220,113 @@
                         Margin="0"
                         FocusVisualStyle="{x:Null}"
                         Focusable="False"
-                        ToolTip="Open Menu">
-                        <Canvas>
-                            <Path
-                                Canvas.Left="-11"
-                                Canvas.Top="-11"
-                                Width="22"
-                                Height="22"
-                                Data="M1664 1344v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45z"
-                                Stretch="Fill">
-                                <Path.Fill>
-                                    <SolidColorBrush x:Name="FunctionButtonFill" Color="{StaticResource MainColor}" />
-                                </Path.Fill>
-                            </Path>
-                        </Canvas>
+                        ToolTip="Image effects and tools menu">
+                        <Image
+                            Width="23.779"
+                            Height="23.779"
+                            Margin="0,0,15,3">
+                            <Image.Source>
+                                <DrawingImage>
+                                    <DrawingImage.Drawing>
+                                        <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                            <DrawingGroup Transform="0.707106781186548,-0.707106781186547,0.707106781186547,0.707106781186548,-129.23,312">
+                                                <GeometryDrawing>
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            Brush="{StaticResource MagicBrush}"
+                                                            EndLineCap="Flat"
+                                                            LineJoin="Miter"
+                                                            StartLineCap="Flat"
+                                                            Thickness="32" />
+                                                    </GeometryDrawing.Pen>
+                                                    <GeometryDrawing.Geometry>
+                                                        <RectangleGeometry
+                                                            RadiusX="10"
+                                                            RadiusY="10"
+                                                            Rect="280.48,122.9,63.03,378.2" />
+                                                    </GeometryDrawing.Geometry>
+                                                </GeometryDrawing>
+                                            </DrawingGroup>
+                                            <DrawingGroup Transform="0.707106781186548,-0.707106781186547,0.707106781186547,0.707106781186548,-87.81,212">
+                                                <GeometryDrawing Brush="{StaticResource MagicBrush}">
+                                                    <GeometryDrawing.Geometry>
+                                                        <RectangleGeometry
+                                                            RadiusX="0"
+                                                            RadiusY="0"
+                                                            Rect="180.35,164.45,63.29,95.1" />
+                                                    </GeometryDrawing.Geometry>
+                                                </GeometryDrawing>
+                                            </DrawingGroup>
+                                            <GeometryDrawing Brush="{StaticResource MagicBrush}">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen
+                                                        Brush="{StaticResource MagicBrush}"
+                                                        EndLineCap="Round"
+                                                        LineJoin="Miter"
+                                                        StartLineCap="Round"
+                                                        Thickness="32" />
+                                                </GeometryDrawing.Pen>
+                                                <GeometryDrawing.Geometry>
+                                                    <LineGeometry StartPoint="48,192" EndPoint="96,192" />
+                                                </GeometryDrawing.Geometry>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Brush="{StaticResource MagicBrush}">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen
+                                                        Brush="{StaticResource MagicBrush}"
+                                                        EndLineCap="Round"
+                                                        LineJoin="Miter"
+                                                        StartLineCap="Round"
+                                                        Thickness="32" />
+                                                </GeometryDrawing.Pen>
+                                                <GeometryDrawing.Geometry>
+                                                    <LineGeometry StartPoint="90.18,90.18" EndPoint="124.12,124.12" />
+                                                </GeometryDrawing.Geometry>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Brush="{StaticResource MagicBrush}">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen
+                                                        Brush="{StaticResource MagicBrush}"
+                                                        EndLineCap="Round"
+                                                        LineJoin="Miter"
+                                                        StartLineCap="Round"
+                                                        Thickness="32" />
+                                                </GeometryDrawing.Pen>
+                                                <GeometryDrawing.Geometry>
+                                                    <LineGeometry StartPoint="192,48" EndPoint="192,96" />
+                                                </GeometryDrawing.Geometry>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Brush="{StaticResource MagicBrush}">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen
+                                                        Brush="{StaticResource MagicBrush}"
+                                                        EndLineCap="Round"
+                                                        LineJoin="Miter"
+                                                        StartLineCap="Round"
+                                                        Thickness="32" />
+                                                </GeometryDrawing.Pen>
+                                                <GeometryDrawing.Geometry>
+                                                    <LineGeometry StartPoint="293.82,90.18" EndPoint="259.88,124.12" />
+                                                </GeometryDrawing.Geometry>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Brush="{StaticResource MagicBrush}">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen
+                                                        Brush="{StaticResource MagicBrush}"
+                                                        EndLineCap="Round"
+                                                        LineJoin="Miter"
+                                                        StartLineCap="Round"
+                                                        Thickness="32" />
+                                                </GeometryDrawing.Pen>
+                                                <GeometryDrawing.Geometry>
+                                                    <LineGeometry StartPoint="124.12,259.88" EndPoint="90.18,293.82" />
+                                                </GeometryDrawing.Geometry>
+                                            </GeometryDrawing>
+                                        </DrawingGroup>
+                                    </DrawingImage.Drawing>
+                                </DrawingImage>
+                            </Image.Source>
+                        </Image>
                     </Button>
                 </Canvas>
             </StackPanel>
