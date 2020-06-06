@@ -8,13 +8,17 @@
 <img src="/.github/Annotation%202020-06-06%20070000.png" align="left" width="350x"/>
 <img align="left" width="0" height="192px" hspace="10"/>
 
-Open Source Image Viewer for Windows, designed to efficiently and quickly browse through images supporting all common file formats, including `.heic`, `.hdr`, `.png`, `.jpg` & RAW camera image files.
+PicView is an Open Source Image Viewer for Windows, designed to efficiently and quickly browse through images supporting all common file formats, including `.heic`, `.hdr`, `.png`, `.jpg` & RAW camera image files.
 
  **Features:**
  - [View a list of features](https://github.com/Ruben2776/PicView/wiki/Features)
+ 
  - [View file support](https://github.com/Ruben2776/PicView/wiki/File-support)
+ 
  - [HLSL Image Effects](https://github.com/Ruben2776/PicView/wiki/HLSL-Image-Effects)
+ 
  - [Batch Resizing Tool](https://github.com/Ruben2776/PicView/wiki/Batch-Resizing-Tool)
+ 
  - [View shortcuts](https://github.com/Ruben2776/PicView/wiki/Keyboard-and-mouse-shortcuts)
 
 
@@ -25,5 +29,3 @@ I am currently in need of help with this project.
 
 > Please read [CONTRIBUTING.md](https://github.com/Ruben2776/PicView/blob/master/CONTRIBUTE.md) for additional details.
 
-<img src="https://raw.githubusercontent.com/Ruben2776/PicView/master/Extra/gnosis.PNG" alt="PicView" width="698" height="1166">
-<i>Art is <a href="https://www.deviantart.com/noiprox/art/Gnosis-Lena-441483744">Gnosis</a> - Lena by noiprox</i>
