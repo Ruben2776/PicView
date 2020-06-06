@@ -24,11 +24,16 @@ PicView is an Open Source Image Viewer for Windows, designed to efficiently and 
 
 
 
-## Contributing
+### Contributing
 I am just a single developer working on this in my spare time. So if you like what I have created please star it to show your support, as it would motive me to keep working on it!
 Feedback and questions are always appreciated. Create an issue or take a look at an existing one if you want to report a bug or request a feature, or have something on your mind! 😊
 
-I am currently in need of help with this project.
 
-> Please read [CONTRIBUTING.md](https://github.com/Ruben2776/PicView/blob/master/CONTRIBUTE.md) for additional details.
+## Fullscreen Image Gallery:
 
+
+## Contained Image Gallery:
+
+
+## Minimal Interface Design:
+![Minimal Interface Design](/.github/Screenshot%20(29)-min.png)
