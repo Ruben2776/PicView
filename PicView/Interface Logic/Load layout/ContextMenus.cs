@@ -322,15 +322,15 @@ namespace PicView
             settingscm.Items.Add(settingscmScroll);
 
             ///////////////////////////
-            ///   Fit to window    \\\\
+            ///   Auto fit         \\\\
             ///////////////////////////
             var fitcm = new MenuItem
             {
-                InputGestureText = "1"
+                InputGestureText = "1 || 2"
             };
             var fitcmHeader = new CheckBox
             {
-                Content = "Fit to window",
+                Content = "Fit to window/image",
                 IsChecked = Properties.Settings.Default.AutoFit,
                 FontSize = 13,
                 Width = double.NaN,
@@ -376,7 +376,6 @@ namespace PicView
             {
                 Content = "Change background",
                 ToolTip = "Change between background color for images with transparent background",
-                //IsChecked = Properties.Settings.Default.BgColorChoice,
                 FontSize = 13,
                 Width = double.NaN,
                 Height = double.NaN,
@@ -458,33 +457,80 @@ namespace PicView
 
             ///////////////////////////
             ///////////////////////////
-            ///   Copy Picture     \\\\
+            ///   Copy             \\\\
             ///////////////////////////
             ///////////////////////////
-            var cppcm = new MenuItem
+            var cpm = new MenuItem
             {
-                Header = "Copy picture",
-                InputGestureText = "Ctrl + C"
+                Header = "Copy",
             };
-            var cppcmIcon = new System.Windows.Shapes.Path
+
+            var cpmIcon = new System.Windows.Shapes.Path
             {
                 Data = Geometry.Parse(SVGiconCopy),
                 Stretch = Stretch.Fill
             };
-            cppcmIcon.Width = cppcmIcon.Height = 12;
-            cppcmIcon.Fill = scbf;
-            cppcm.Icon = cppcmIcon;
+            cpmIcon.Width = cpmIcon.Height = 12;
+            cpmIcon.Fill = scbf;
+            cpm.Icon = cpmIcon;
+            
+
+            ///////////////////////////
+            ///   Copy file        \\\\
+            ///////////////////////////
+            var cppcm = new MenuItem
+            {
+                Header = "Copy file",
+                ToolTip = "Copy file to clipboard holder [Ctrl + C]",
+            };
             cppcm.Click += (s, x) => Copyfile();
-            cm.Items.Add(cppcm);
+            cpm.Items.Add(cppcm);
+
+            ///////////////////////////
+            ///   Copy base64      \\\\
+            ///////////////////////////
+            var cpxcm = new MenuItem
+            {
+                Header = "Copy base64",
+                ToolTip = "Copy as base64 clipboard holder [Ctrl + Shift + C]",
+            };
+            cpxcm.Click += (s, x) => Base64.SendToClipboard();
+            cpm.Items.Add(cpxcm);
+
+            ///////////////////////////
+            ///   Copy bitmap      \\\\
+            ///////////////////////////
+            var cpxbm = new MenuItem
+            {
+                Header = "Copy image",
+                ToolTip = "Copy as Windows clipboard image [Ctrl + Alt + C]",
+            };
+            cpxbm.Click += (s, x) => Base64.SendToClipboard();
+            cpm.Items.Add(cpxbm);
+
+            ///////////////////////////
+            ///   Copy file path   \\\\
+            ///////////////////////////
+            var cppfm = new MenuItem
+            {
+                Header = "Copy file path",
+                ToolTip = "Copy file path to clipboard holder",
+            };
+            cppfm.Click += (s, x) => CopyText();
+            cpm.Items.Add(cppfm);
+
+
+
+            cm.Items.Add(cpm);
 
             ///////////////////////////
             ///////////////////////////
-            ///   Cut Picture      \\\\
+            ///   Cut File         \\\\
             ///////////////////////////
             ///////////////////////////
             var cpccm = new MenuItem
             {
-                Header = "Cut picture",
+                Header = "Cut file",
                 InputGestureText = "Ctrl + X"
             };
             var cpccmIcon = new System.Windows.Shapes.Path
@@ -500,12 +546,12 @@ namespace PicView
 
             ///////////////////////////
             ///////////////////////////
-            ///   Paste Picture    \\\\
+            ///   Paste File       \\\\
             ///////////////////////////
             ///////////////////////////
             var pastecm = new MenuItem
             {
-                Header = "Paste picture",
+                Header = "Paste file",
                 InputGestureText = "Ctrl + V"
             };
             var pastecmIcon = new System.Windows.Shapes.Path
@@ -522,12 +568,12 @@ namespace PicView
 
             ///////////////////////////
             ///////////////////////////
-            ///   Delete Picture   \\\\
+            ///   Delete File      \\\\
             ///////////////////////////
             ///////////////////////////
             var MovetoRecycleBin = new MenuItem
             {
-                Header = "Delete picture",
+                Header = "Delete file",
                 InputGestureText = "Delete"
             };
             var MovetoRecycleBinIcon = new System.Windows.Shapes.Path
