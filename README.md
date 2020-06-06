@@ -10,16 +10,16 @@
 
 PicView is an Open Source Image Viewer for Windows, designed to efficiently and quickly browse through images supporting all common file formats, including `.heic`, `.hdr`, `.png`, `.jpg` & RAW camera image files.
 
- **Features:**
- - [View a list of features](https://github.com/Ruben2776/PicView/wiki/Features)
- 
- - [View file support](https://github.com/Ruben2776/PicView/wiki/File-support)
- 
- - [HLSL Image Effects](https://github.com/Ruben2776/PicView/wiki/HLSL-Image-Effects)
- 
- - [Batch Resizing Tool](https://github.com/Ruben2776/PicView/wiki/Batch-Resizing-Tool)
- 
- - [View shortcuts](https://github.com/Ruben2776/PicView/wiki/Keyboard-and-mouse-shortcuts)
+## Features:
+[View a list of features](https://github.com/Ruben2776/PicView/wiki/Features)
+<br>
+[View file support](https://github.com/Ruben2776/PicView/wiki/File-support)
+<br>
+[HLSL Image Effects](https://github.com/Ruben2776/PicView/wiki/HLSL-Image-Effects)
+<br>
+[Batch Resizing Tool](https://github.com/Ruben2776/PicView/wiki/Batch-Resizing-Tool)
+<br>
+[View shortcuts](https://github.com/Ruben2776/PicView/wiki/Keyboard-and-mouse-shortcuts)
 
 
 ## Contributing
