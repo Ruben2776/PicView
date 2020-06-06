@@ -30,7 +30,7 @@ Feedback and questions are always appreciated. Create an issue or take a look at
 
 
 ## Fullscreen Image Gallery:
-
+![Minimal Interface Design](/.github/Screenshot%20(30)-min.png)
 
 ## Contained Image Gallery:
 ![Minimal Interface Design](/.github/Annotation%202020-06-06%20070001-min.png)
