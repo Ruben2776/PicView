@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Imaging;
 
 namespace PicView
@@ -57,6 +58,16 @@ namespace PicView
         {
             byte[] imageArray = File.ReadAllBytes(path);
             return Convert.ToBase64String(imageArray);
+        }
+
+        internal static void SendToClipboard()
+        {
+            var base64 = ConvertToBase64(Fields.Pics[Fields.FolderIndex]);
+            if (!string.IsNullOrWhiteSpace(base64))
+            {
+                Clipboard.SetText(base64);
+                Tooltip.ToolTipStyle("Converted to base 64");
+            }
         }
     }
 }

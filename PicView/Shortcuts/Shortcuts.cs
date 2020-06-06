@@ -315,12 +315,7 @@ namespace PicView
                         {
                             if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
                             {
-                                var base64 = Base64.ConvertToBase64(Pics[FolderIndex]);
-                                if (!string.IsNullOrWhiteSpace(base64))
-                                {
-                                    Clipboard.SetText(base64);
-                                    Tooltip.ToolTipStyle("Converted to base 64");
-                                }
+                                Base64.SendToClipboard();
                             }
                             else if ((Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
                             {
