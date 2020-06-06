@@ -33,7 +33,10 @@ Feedback and questions are always appreciated. Create an issue or take a look at
 
 
 ## Contained Image Gallery:
+![Minimal Interface Design](/.github/Annotation%202020-06-06%20070001-min.png)
 
 
 ## Minimal Interface Design:
 ![Minimal Interface Design](/.github/Screenshot%20(29)-min.png)
+
+ > Press `Alt + Z` to toggle interfaces
