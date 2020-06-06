@@ -4,13 +4,12 @@
 ![.NET Core 3.1](https://img.shields.io/badge/.NET-Core%203.1-lightgrey.svg?maxAge=3600)
 ![Windows OS](https://img.shields.io/badge/OS-Windows%207+-00adef.svg?maxAge=3600)
 
-<img src="/.github/Annotation%202020-06-06%20061908-min.png" align="left" width="320x"/>
+<img src="/.github/Annotation%202020-06-06%20061908-min.png" align="left" width="310x"/>
 <img align="left" width="0" height="192px" hspace="10"/>
+
 PicView is an open source minimal image viewer, designed to efficiently browse through images supporting major file formats, including `.psd`, `.svg`, `.png`, `.jpg` and RAW camera image files.
 
-<img src="https://raw.githubusercontent.com/Ruben2776/PicView/master/Extra/Screenshot2.png" alt="PicView" width="492" height="537">
-
-## Features:
+ **Features:**
  * [View a list of features](https://github.com/Ruben2776/PicView/wiki/Features)
  * [View file support](https://github.com/Ruben2776/PicView/wiki/File-support)
  * [View shortcuts](https://github.com/Ruben2776/PicView/wiki/Keyboard-and-mouse-shortcuts)
