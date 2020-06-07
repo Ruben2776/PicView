@@ -92,7 +92,7 @@ namespace PicView
                 Pics.Remove(filename);
 
                 filename = filename.Length >= 25 ? Shorten(filename, 21) : filename;
-                ToolTipStyle(Recyclebin ? "Sent " + filename + " to the recyle bin" : "Deleted " + filename);
+                ShowTooltipMessage(Recyclebin ? "Sent " + filename + " to the recyle bin" : "Deleted " + filename);
 
                 if (Pics.Count == 0)
                 {
@@ -118,7 +118,7 @@ namespace PicView
             }
             else
             {
-                ToolTipStyle("An error occured when deleting " + file);
+                ShowTooltipMessage("An error occured when deleting " + file);
             }
         }
     }

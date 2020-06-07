@@ -44,7 +44,7 @@ namespace PicView
         /// Shows a black tooltip on screen for a small time
         /// </summary>
         /// <param name="message">The message to display</param>
-        internal static void ToolTipStyle(object message, bool center = false)
+        internal static void ShowTooltipMessage(object message, bool center = false)
         {
             ShowTooltipMessage(message, center, TimeSpan.FromSeconds(1));
         }

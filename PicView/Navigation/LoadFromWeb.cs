@@ -47,7 +47,7 @@ namespace PicView
 #if DEBUG
                 Trace.WriteLine("PicWeb caught exception, message = " + e.Message);
 #endif
-                ToolTipStyle(e.Message, true);
+                ShowTooltipMessage(e.Message, true);
                 pic = null;
             }
 

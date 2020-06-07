@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Media.Animation;
 using static PicView.Fields;
 using static PicView.GalleryLoad;
-using static PicView.GalleryMisc;
+using static PicView.GalleryFunctions;
 using static PicView.GalleryScroll;
 using static PicView.UC;
 using static PicView.WindowLogic;
@@ -63,10 +63,6 @@ namespace PicView
                     ChangeToPicGalleryOne();
                 }
             }
-
-#if DEBUG
-            Trace.WriteLine(nameof(picGallery) + "  IsOpen = " + IsOpen + " " + nameof(Toggle));
-#endif
         }
 
         #endregion
@@ -108,11 +104,6 @@ namespace PicView
             }
 
             ScrollTo();
-            IsOpen = true;
-
-#if DEBUG
-            Trace.WriteLine(nameof(picGallery) + "  IsOpen = " + IsOpen + " " + nameof(OpenContainedGallery));
-#endif
         }
 
         internal static void OpenFullscreenGallery()
@@ -145,15 +136,10 @@ namespace PicView
             
 
             fakeWindow.Show();
-            IsOpen = true;
             ScrollTo();
             mainWindow.Focus();
 
             VisualStateManager.GoToElementState(picGallery, "Opacity", false);
-
-#if DEBUG
-            Trace.WriteLine(nameof(picGallery) + "  IsOpen = " + IsOpen + " " + nameof(OpenFullscreenGallery));
-#endif
         }
 
         #endregion

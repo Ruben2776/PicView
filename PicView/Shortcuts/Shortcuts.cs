@@ -34,7 +34,7 @@ namespace PicView
                 case Key.D:
                     if (picGallery != null)
                     {
-                        if (GalleryMisc.IsOpen)
+                        if (GalleryFunctions.IsOpen)
                         {
                             if (Properties.Settings.Default.PicGallery == 1)
                             {
@@ -66,7 +66,7 @@ namespace PicView
                 case Key.A:
                     if (picGallery != null)
                     {
-                        if (GalleryMisc.IsOpen)
+                        if (GalleryFunctions.IsOpen)
                         {
                             if (Properties.Settings.Default.PicGallery == 1)
                             {
@@ -96,7 +96,7 @@ namespace PicView
                 case Key.PageUp:
                     if (picGallery != null)
                     {
-                        if (GalleryMisc.IsOpen)
+                        if (GalleryFunctions.IsOpen)
                         {
                             ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
                             return;
@@ -112,7 +112,7 @@ namespace PicView
                 case Key.PageDown:
                     if (picGallery != null)
                     {
-                        if (GalleryMisc.IsOpen)
+                        if (GalleryFunctions.IsOpen)
                         {
                             ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
                             return;
@@ -141,7 +141,7 @@ namespace PicView
                     }
                     else if (picGallery != null)
                     {
-                        if (GalleryMisc.IsOpen)
+                        if (GalleryFunctions.IsOpen)
                         {
                             ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
                         }
@@ -169,7 +169,7 @@ namespace PicView
                     }
                     else if (picGallery != null)
                     {
-                        if (GalleryMisc.IsOpen)
+                        if (GalleryFunctions.IsOpen)
                         {
                             ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
                         }
@@ -242,7 +242,7 @@ namespace PicView
                             }
                             return;
                         }
-                        if (GalleryMisc.IsOpen)
+                        if (GalleryFunctions.IsOpen)
                         {
                             Toggle();
                             return;
@@ -365,7 +365,6 @@ namespace PicView
                         {
                             Reload();
                         }
-
                         break;
 
                     // L
@@ -387,7 +386,7 @@ namespace PicView
                     case Key.Space:
                         if (picGallery != null)
                         {
-                            if (GalleryMisc.IsOpen)
+                            if (GalleryFunctions.IsOpen)
                             {
                                 ScrollTo();
                                 return;
@@ -398,11 +397,13 @@ namespace PicView
 
                     // 1
                     case Key.D1:
+                        Tooltip.ShowTooltipMessage("Set to center image in window");
                         AutoFit = false;
                         break;
 
                     // 2
                     case Key.D2:
+                        Tooltip.ShowTooltipMessage("Set to fit application to screen");
                         AutoFit = true;
                         break;
 
@@ -469,7 +470,7 @@ namespace PicView
                 {
                     HideInterfaceLogic.ToggleInterface();
                 }
-                e.Handled = true;
+                //e.Handled = true;
             }
 
             // Alt + Enter
@@ -479,7 +480,7 @@ namespace PicView
                 {
                     Fullscreen_Restore();
                 }
-                e.Handled = true;
+                //e.Handled = true;
             }
 
             #endregion Alt + keys

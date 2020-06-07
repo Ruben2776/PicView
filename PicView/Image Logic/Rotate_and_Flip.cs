@@ -7,7 +7,7 @@ namespace PicView
     internal static class Rotate_and_Flip
     {
         /// <summary>
-        /// Rotates the image the specified degrees and updates imageSettingsMenu value
+        /// Rotates the image the specified degrees
         /// </summary>
         /// <param name="r"></param>
         internal static void Rotate(int r)
@@ -43,7 +43,7 @@ namespace PicView
         // https://stackoverflow.com/a/62136307/13646636
         internal static void Rotate(bool right)
         {
-            if (mainWindow.img.Source == null || GalleryMisc.IsOpen)
+            if (mainWindow.img.Source == null || GalleryFunctions.IsOpen)
             {
                 return;
             }

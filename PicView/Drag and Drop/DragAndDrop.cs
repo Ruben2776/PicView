@@ -66,7 +66,7 @@ namespace PicView
             // Tell that it's succeeded
             e.Effects = DragDropEffects.Copy;
             e.Handled = true;
-            ToolTipStyle(DragOverString, true);
+            ShowTooltipMessage(DragOverString, true);
 
             if (check.Value)
             {

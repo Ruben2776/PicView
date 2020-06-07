@@ -75,7 +75,7 @@ namespace PicView
                 {
                     // Execute logic for first time startup
                     mainWindow.Width = 815;
-                    mainWindow.Height = 1000;
+                    mainWindow.Height = 970;
                     CenterWindowOnScreen();
                 }
             }

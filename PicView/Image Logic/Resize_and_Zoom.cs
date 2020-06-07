@@ -280,7 +280,7 @@ namespace PicView
             /// Don't zoom when gallery is open
             if (picGallery != null)
             {
-                if (GalleryMisc.IsOpen)
+                if (GalleryFunctions.IsOpen)
                 {
                     return;
                 }
@@ -349,7 +349,7 @@ namespace PicView
             /// Displays zoompercentage in the center window
             if (!string.IsNullOrEmpty(ZoomPercentage))
             {
-                ToolTipStyle(ZoomPercentage, true);
+                ShowTooltipMessage(ZoomPercentage, true);
             }
             else
             {
@@ -435,23 +435,29 @@ namespace PicView
         internal static void ZoomFit(double width, double height)
         {
             double maxWidth, maxHeight;
-            int verticalPadding = 90;
-            int horizontalPadding = 520;
-            int minVerticalSpace = 6;
+            int verticalPadding = 90; // Padding to make it feel more comfortable
+            int borderSpaceHeight = 6; // Based on UI vertical borders
+            int borderSpaceWidth = 20; // Based on UI horizontal borders
+
+            width -= borderSpaceWidth;
+            height -= borderSpaceHeight;
+            double monitorWidth = MonitorInfo.Width - borderSpaceWidth;
+            double monitorHeight = MonitorInfo.Height - borderSpaceHeight;
+
 
             if (AutoFit) /// Get max width and height, based on user's screen
             {
+                maxWidth = Math.Min(monitorWidth, width - borderSpaceWidth);
+
                 if (Properties.Settings.Default.ShowInterface)
                 {
                     /// Use padding for shown interface
-                    maxWidth = Math.Min(MonitorInfo.Width - horizontalPadding, width);
-                    maxHeight = Math.Min(MonitorInfo.Height - verticalPadding, height);
+                    maxHeight = Math.Min(monitorHeight - verticalPadding, height);
                 }
                 else
                 {
                     /// Fill users screen
-                    maxWidth = Math.Min(MonitorInfo.Width - horizontalPadding, width - minVerticalSpace);
-                    maxHeight = Math.Min(MonitorInfo.Height - minVerticalSpace, height - minVerticalSpace);
+                    maxHeight = Math.Min(monitorHeight, height - borderSpaceHeight);
                 }
             }
             else  /// Get max width and height, based on window size
@@ -478,14 +484,13 @@ namespace PicView
                 if (AutoFit)
                 {
                     /// Calculate to screen size
-                    AspectRatio = Math.Min(MonitorInfo.Width / height, (MonitorInfo.Height - verticalPadding) / width);
+                    AspectRatio = Math.Min(monitorWidth / height, monitorHeight / width);
                 }
                 else
                 {
                     /// Center in window
-                    AspectRatio = Math.Min(mainWindow.Width / height, (mainWindow.Height - verticalPadding) / width);
+                    AspectRatio = Math.Min(mainWindow.Width / height, (mainWindow.Height) / width);
                 }
-                
             }
 
             if (IsScrollEnabled)
@@ -527,7 +532,7 @@ namespace PicView
             else
             {
                 /// Fix title width to window size
-                mainWindow.Bar.MaxWidth = mainWindow.ActualWidth - 95;
+                mainWindow.Bar.MaxWidth = mainWindow.ActualWidth - 95; // 95 = logo and window buttons + padding
             }
 
 

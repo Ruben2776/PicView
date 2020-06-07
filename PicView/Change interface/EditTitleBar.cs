@@ -68,7 +68,7 @@ namespace PicView
             }
             else
             {
-                Tooltip.ToolTipStyle("An error occured moving file");
+                Tooltip.ShowTooltipMessage("An error occured moving file");
                 Refocus();
             }
         }

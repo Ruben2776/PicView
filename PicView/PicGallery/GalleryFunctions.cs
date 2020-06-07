@@ -1,5 +1,6 @@
 ﻿using PicView.UserControls;
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -10,11 +11,21 @@ using static PicView.UC;
 
 namespace PicView
 {
-    internal static class GalleryMisc
+    internal static class GalleryFunctions
     {
-        internal static bool IsLoading;
+        internal static bool IsLoading { get; set; }
 
-        internal static bool IsOpen;
+        static bool Open;
+        internal static bool IsOpen 
+        { 
+            get { return Open; }
+            set {
+                Open = value;
+#if DEBUG
+                Trace.WriteLine("IsOpen changed value to: " + IsOpen);
+#endif
+            }
+        }
 
         internal static async void Add(BitmapSource pic, int id)
         {
@@ -37,7 +48,7 @@ namespace PicView
                 return;
             }
 
-            IsLoading = IsOpen = false;
+            IsLoading = false;
             picGallery.Container.Children.Clear();
         }
 

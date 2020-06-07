@@ -147,13 +147,13 @@ namespace PicView
             {
                 Properties.Settings.Default.Looping = false;
                 loopcmHeader.IsChecked = false;
-                ToolTipStyle("Looping disabled");
+                ShowTooltipMessage("Looping disabled");
             }
             else
             {
                 Properties.Settings.Default.Looping = true;
                 loopcmHeader.IsChecked = true;
-                ToolTipStyle("Looping enabled");
+                ShowTooltipMessage("Looping enabled");
             }
         }
 

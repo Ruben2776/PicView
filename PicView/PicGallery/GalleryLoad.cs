@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.Fields;
-using static PicView.GalleryMisc;
+using static PicView.GalleryFunctions;
 using static PicView.GalleryScroll;
 using static PicView.HideInterfaceLogic;
 using static PicView.Thumbnails;
@@ -20,8 +20,6 @@ namespace PicView
             picGallery.Scroller.ScrollChanged += (s, x) => mainWindow.Focus(); // Maintain window focus when scrolling manually
             picGallery.grid.MouseLeftButtonDown += (s, x) => mainWindow.Focus();
             picGallery.x2.MouseLeftButtonUp += delegate { ToggleGallery.CloseContainedGallery(); };
-
-            IsLoading = IsOpen = false;
         }
 
         internal static void LoadLayout()
@@ -50,20 +48,26 @@ namespace PicView
             {
                 picGallery.Width = picGalleryItem_Size + 19; // 17 for scrollbar width + 2 for borders
                 picGallery.Height = MonitorInfo.Height;
+
                 picGallery.HorizontalAlignment = HorizontalAlignment.Right;
                 picGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
                 picGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
                 picGallery.x2.Visibility = Visibility.Collapsed;
                 picGallery.Container.Margin = new Thickness(0, 0, 0, 0);
+
                 ShowNavigation(false);
                 ShowTopandBottom(false);
                 Utilities.UpdateColor(true);
-                AutoFit = true;
+                //AutoFit = true;
+
+                mainWindow.Margin = new Thickness(0, 0, - picGallery.Width, 0);
             }
 
             picGallery.Visibility = Visibility.Visible;
             picGallery.Opacity = 1;
             picGallery.Container.Orientation = Orientation.Vertical;
+
+            IsOpen = true;
         }
 
         internal static Task Load()

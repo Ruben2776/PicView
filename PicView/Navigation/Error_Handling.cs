@@ -167,7 +167,7 @@ namespace PicView
             DeleteTempFiles();
             PreloadCount = 0;
             FreshStartup = true;
-            GalleryMisc.Clear();
+            GalleryFunctions.Clear();
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace PicView
                 Preloader.Clear();
 
                 // Need a sort method instead
-                GalleryMisc.Clear();
+                GalleryFunctions.Clear();
                 GalleryLoad.Load();
 
                 Pic(x);
@@ -216,7 +216,7 @@ namespace PicView
             else
             {
                 Unload();
-                ToolTipStyle("Unknown error occured");
+                ShowTooltipMessage("Unknown error occured");
             }
         }
 
@@ -237,7 +237,7 @@ namespace PicView
 
             PreloadCount = 0;
             Preloader.Clear();
-            GalleryMisc.Clear();
+            GalleryFunctions.Clear();
             FolderIndex = 0;
             mainWindow.img.Width = mainWindow.Scroller.Width = mainWindow.Scroller.Height =
             mainWindow.img.Height = double.NaN;

@@ -67,6 +67,10 @@ namespace PicView
             return true;
         }
 
+        /// <summary>
+        /// Update color values for brushes and window border
+        /// </summary>
+        /// <param name="remove">Remove border?</param>
         internal static void UpdateColor(bool remove = false)
         {
             if (remove)
@@ -85,8 +89,6 @@ namespace PicView
             {
                 try
                 {
-                    //var bgBrush = Application.Current.Resources["WindowBackgroundColorBrush"] as SolidColorBrush;
-                    //bgBrush.Color = AnimationHelper.GetPrefferedColorOver();
                     Application.Current.Resources["WindowBackgroundColorBrush"] = getColorBrush;
                 }
                 catch (System.Exception e)

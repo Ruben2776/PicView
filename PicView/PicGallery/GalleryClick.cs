@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using static PicView.Fields;
-using static PicView.GalleryMisc;
+using static PicView.GalleryFunctions;
 using static PicView.ImageDecoder;
 using static PicView.Navigation;
 using static PicView.Thumbnails;
@@ -17,6 +17,13 @@ namespace PicView
 {
     internal static class GalleryClick
     {
+        static async void PreloaderFix(int id)
+        {
+            PreloadCount = 4;
+            Preloader.Clear();
+            await Preloader.Add(Pics[id]).ConfigureAwait(true);
+        }
+
 
         internal static void Click(int id)
         {
@@ -92,9 +99,7 @@ namespace PicView
             {
                 if (!Preloader.Contains(Pics[id]))
                 {
-                    PreloadCount = 4;
-                    Preloader.Clear();
-                    Preloader.Add(Pics[id]);
+                    PreloaderFix(id);
                 }
 
                 ItemClick(id);
@@ -105,9 +110,7 @@ namespace PicView
         {
             if (!Preloader.Contains(Pics[id]))
             {
-                PreloadCount = 4;
-                Preloader.Clear();
-                Preloader.Add(Pics[id]);
+                PreloaderFix(id);
             }
 
             mainWindow.img.Source = source;

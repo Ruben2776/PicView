@@ -23,7 +23,7 @@ namespace PicView
         internal static void CopyText()
         {
             Clipboard.SetText(Pics[FolderIndex]);
-            ToolTipStyle(TxtCopy);
+            ShowTooltipMessage(TxtCopy);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace PicView
         {
             var paths = new System.Collections.Specialized.StringCollection { path };
             Clipboard.SetFileDropList(paths);
-            ToolTipStyle(FileCopy);
+            ShowTooltipMessage(FileCopy);
         }
 
         internal static void CopyBitmap()
@@ -82,7 +82,7 @@ namespace PicView
                 return;
             }
 
-            ToolTipStyle("Copied Image to clipboard");
+            ShowTooltipMessage("Copied Image to clipboard");
         }
 
 
@@ -198,7 +198,7 @@ namespace PicView
             }
             else
             {
-                ToolTipStyle("An error occured while trying to paste file");
+                ShowTooltipMessage("An error occured while trying to paste file");
             }
         }
 
@@ -228,7 +228,7 @@ namespace PicView
             // Force Preloader to add new images, to minimize slowdown errors
             PreloadCount = 4;
 
-            ToolTipStyle(ImageCut);
+            ShowTooltipMessage(ImageCut);
         }
     }
 }

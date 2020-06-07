@@ -24,7 +24,7 @@ namespace PicView
                 if (Pics != null)
                 {
                     TryZoomFit();
-                    ToolTipStyle(value ? "Scrolling enabled" : "Scrolling disabled");
+                    ShowTooltipMessage(value ? "Scrolling enabled" : "Scrolling disabled");
                 }
             }
         }

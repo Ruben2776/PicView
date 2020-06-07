@@ -218,7 +218,7 @@ namespace PicView
 #if DEBUG
                                 Trace.WriteLine("Process killed");
 #endif
-                                ToolTipStyle("Password protected archive not supported");
+                                ShowTooltipMessage("Password protected archive not supported");
                                 //Reload(true);
                                 getProcesses[0].Kill();
                                 return false;

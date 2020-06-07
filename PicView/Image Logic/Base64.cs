@@ -66,7 +66,7 @@ namespace PicView
             if (!string.IsNullOrWhiteSpace(base64))
             {
                 Clipboard.SetText(base64);
-                Tooltip.ToolTipStyle("Converted to base 64");
+                Tooltip.ShowTooltipMessage("Converted to base 64");
             }
         }
     }

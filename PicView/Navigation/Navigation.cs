@@ -87,7 +87,7 @@ namespace PicView
                     var recovery = await RecoverFailedArchiveAsync().ConfigureAwait(true);
                     if (!recovery)
                     {
-                        ToolTipStyle("Archive could not be processed");
+                        ShowTooltipMessage("Archive could not be processed");
                         Reload(true);
                         return;
                     }
@@ -122,7 +122,7 @@ namespace PicView
 
             if (Pics.Count > 1)
             {
-                if (!GalleryMisc.IsLoading)
+                if (!GalleryFunctions.IsLoading)
                 {
                     await GalleryLoad.Load().ConfigureAwait(false);
                 }
@@ -361,7 +361,7 @@ namespace PicView
             {
                 if (Properties.Settings.Default.PicGallery == 1)
                 {
-                    if (GalleryMisc.IsOpen)
+                    if (GalleryFunctions.IsOpen)
                     {
                         return;
                     }
@@ -442,10 +442,10 @@ namespace PicView
                 {
                     if (x != FolderIndex)
                     {
-                        GalleryMisc.SetUnselected(x);
+                        GalleryFunctions.SetUnselected(x);
                     }
 
-                    GalleryMisc.SetSelected(FolderIndex);
+                    GalleryFunctions.SetSelected(FolderIndex);
                     GalleryScroll.ScrollTo();
                 }
                 else
@@ -484,7 +484,7 @@ namespace PicView
             }
             else
             {
-                if (GalleryMisc.IsOpen)
+                if (GalleryFunctions.IsOpen)
                 {
                     GalleryScroll.ScrollTo(!right);
                     return;

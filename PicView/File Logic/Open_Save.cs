@@ -20,13 +20,13 @@ namespace PicView
         {
             if (!File.Exists(Pics[FolderIndex]) || mainWindow.img.Source == null)
             {
-                ToolTipStyle("Error, File does not exist, or something went wrong...");
+                ShowTooltipMessage("Error, File does not exist, or something went wrong...");
                 return;
             }
             try
             {
                 Close_UserControls();
-                ToolTipStyle(ExpFind);
+                ShowTooltipMessage(ExpFind);
                 Process.Start("explorer.exe", "/select,\"" + Pics[FolderIndex] + "\"");
             }
 #if DEBUG
@@ -84,7 +84,7 @@ namespace PicView
                     Trace.WriteLine("OpenWith exception \n" + e.Message);
 
 #endif
-                    ToolTipStyle(e.Message, true);
+                    ShowTooltipMessage(e.Message, true);
                 }
                 
             }
@@ -110,7 +110,7 @@ namespace PicView
                 {
                     if (!TrySaveImage(Rotateint, Flipped, Pics[FolderIndex], Savedlg.FileName))
                     {
-                        ToolTipStyle("Error, File didn't get saved");
+                        ShowTooltipMessage("Error, File didn't get saved");
                     }
                 }
                 else
