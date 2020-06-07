@@ -174,11 +174,14 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Misc\PsEffects\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
     <FileVersion>0.9.8.5</FileVersion>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
     <PackageLicenseFile></PackageLicenseFile>
     <Copyright>Ruben Hyldgaard Negendahl</Copyright>
     <PackageProjectUrl>https://github.com/Ruben2776/PicView</PackageProjectUrl>
@@ -201,4 +204,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+
 </Project>

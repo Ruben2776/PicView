@@ -5,7 +5,7 @@
     xmlns:uc="clr-namespace:PicView.UserControls"
     Title="HLSL Picture FX"
     Width="555"
-    Height="556"
+    Height="565"
     FontFamily="/PicView;component/Resources/fonts/#Aller"
     Foreground="{StaticResource MainColorBrush}"
     Style="{DynamicResource MyWindowStyle}">
@@ -101,7 +101,7 @@
                     <WrapPanel Margin="10,5" Orientation="Horizontal">
 
                         <RadioButton
-                            x:Name="Negative"
+                            x:Name="NegativeButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -109,7 +109,7 @@
                             Content="Negative Colors" />
 
                         <RadioButton
-                            x:Name="blackwhite"
+                            x:Name="GrayscaleButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -117,7 +117,7 @@
                             Content="Black &amp; White" />
 
                         <RadioButton
-                            x:Name="ColorTone"
+                            x:Name="ColorToneButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -125,7 +125,7 @@
                             Content="Color Tone" />
 
                         <RadioButton
-                            x:Name="OldMovie"
+                            x:Name="OldMovieButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -133,7 +133,7 @@
                             Content="Old Movie" />
 
                         <RadioButton
-                            x:Name="Bloom"
+                            x:Name="BloomButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -141,7 +141,7 @@
                             Content="Bloom" />
 
                         <RadioButton
-                            x:Name="Gloom"
+                            x:Name="GloomButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -149,7 +149,7 @@
                             Content="Gloom" />
 
                         <RadioButton
-                            x:Name="Monochrome"
+                            x:Name="MonochromeButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -157,7 +157,7 @@
                             Content="Monochrome" />
 
                         <RadioButton
-                            x:Name="Wavewarper"
+                            x:Name="WavewarperButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -165,7 +165,7 @@
                             Content="Wave Warper" />
 
                         <RadioButton
-                            x:Name="Underwater"
+                            x:Name="UnderwaterButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -173,7 +173,7 @@
                             Content="Underwater" />
 
                         <RadioButton
-                            x:Name="BandedSwirl"
+                            x:Name="BandedSwirlButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -181,7 +181,7 @@
                             Content="Banded Swirl" />
 
                         <RadioButton
-                            x:Name="Ripple"
+                            x:Name="RippleButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -189,7 +189,7 @@
                             Content="Ripple" />
 
                         <RadioButton
-                            x:Name="RippleAlt"
+                            x:Name="RippleAltButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -197,7 +197,7 @@
                             Content="Ripple Alt" />
 
                         <RadioButton
-                            x:Name="Blur"
+                            x:Name="BlurButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -205,7 +205,7 @@
                             Content="Blur" />
 
                         <RadioButton
-                            x:Name="DirectionalBlur"
+                            x:Name="DirectionalBlurButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -213,7 +213,7 @@
                             Content="Directional Blur" />
 
                         <RadioButton
-                            x:Name="TelescopicBlur"
+                            x:Name="TelescopicBlurButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -221,7 +221,7 @@
                             Content="Telescopic Blur" />
 
                         <RadioButton
-                            x:Name="Pixelate"
+                            x:Name="PixelateButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -229,7 +229,7 @@
                             Content="Pixelate" />
 
                         <RadioButton
-                            x:Name="Embossed"
+                            x:Name="EmbossedButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -237,7 +237,7 @@
                             Content="Embossed" />
 
                         <RadioButton
-                            x:Name="SmoothMagnify"
+                            x:Name="SmoothMagnifyButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -245,7 +245,7 @@
                             Content="Smooth Magnify" />
 
                         <RadioButton
-                            x:Name="Pivot"
+                            x:Name="PivotButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -253,7 +253,7 @@
                             Content="Pivot" />
 
                         <RadioButton
-                            x:Name="Paperfold"
+                            x:Name="PaperfoldButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -261,7 +261,7 @@
                             Content="Paper fold" />
 
                         <RadioButton
-                            x:Name="PencilSketch"
+                            x:Name="PencilSketchButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -270,7 +270,7 @@
 
 
                         <RadioButton
-                            x:Name="Sketch"
+                            x:Name="SketchButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -278,7 +278,7 @@
                             Content="Sketch" />
 
                         <RadioButton
-                            x:Name="Tonemapping"
+                            x:Name="TonemappingButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -287,16 +287,15 @@
 
 
                         <RadioButton
-                            x:Name="FrostyOutline"
+                            x:Name="FrostyOutlineButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
                             Background="{StaticResource BackgroundColorBrush}"
                             Content="Frosty Outline" />
 
-
                         <RadioButton
-                            x:Name="Bands"
+                            x:Name="BandsButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -305,7 +304,7 @@
 
 
                         <RadioButton
-                            x:Name="GlasTile"
+                            x:Name="GlasTileButton"
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
@@ -313,10 +312,10 @@
                             Content="Glass Tile" />
 
                     </WrapPanel>
-                    <Button
-                        x:Name="RemoveEffects"
-                        Content="Remove Effects"
-                        Style="{StaticResource MetroAlphaFlatButton}" />
+
+                    <Label HorizontalAlignment="Center" Content="Click button to add specified shader effect to image" />
+                    <Label HorizontalAlignment="Center" Content="Uncheck to remove effect" />
+
                 </StackPanel>
             </ScrollViewer>
         </Border>
