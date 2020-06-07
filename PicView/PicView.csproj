@@ -67,21 +67,6 @@
     <StartupObject>PicView.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>38C58B28C178F5682598C8BE2A2BC2642D86745B</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestKeyFile>Nepharia_TemporaryKey.pfx</ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateManifests>false</GenerateManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignManifests>false</SignManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <TargetZone>LocalIntranet</TargetZone>
-  </PropertyGroup>
-  <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
@@ -192,7 +177,7 @@
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
-    <FileVersion>0.9.8.0</FileVersion>
+    <FileVersion>0.9.8.5</FileVersion>
     <SignAssembly>false</SignAssembly>
     <PackageLicenseFile></PackageLicenseFile>
     <Copyright>Ruben Hyldgaard Negendahl</Copyright>

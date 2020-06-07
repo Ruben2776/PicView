@@ -4,64 +4,321 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uc="clr-namespace:PicView.UserControls"
     Title="HLSL Picture FX"
-    Width="560"
-    Height="650"
+    Width="555"
+    Height="556"
     FontFamily="/PicView;component/Resources/fonts/#Aller"
     Foreground="{StaticResource MainColorBrush}"
     Style="{DynamicResource MyWindowStyle}">
 
-    <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
-        <DockPanel LastChildFill="True">
-            <DockPanel
-                x:Name="TitleBar"
-                Height="33"
-                DockPanel.Dock="Top">
-                <DockPanel.Background>
-                    <ImageBrush
-                        ImageSource="/Resources/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
-                        TileMode="FlipXY"
-                        Viewport="0,0,100,100"
-                        ViewportUnits="Absolute" />
-                </DockPanel.Background>
-                <uc:Logo />
-                <uc:CloseButton
-                    x:Name="CloseButton"
-                    VerticalAlignment="Center"
-                    DockPanel.Dock="Right" />
+    <DockPanel LastChildFill="True">
+        <DockPanel
+            x:Name="TitleBar"
+            Height="33"
+            Background="{StaticResource BackgroundColorBrushAltW}"
+            DockPanel.Dock="Top">
 
-                <uc:MinButton
-                    x:Name="MinButton"
-                    VerticalAlignment="Center"
-                    DockPanel.Dock="Right" />
+            <uc:Logo />
 
-                <TextBlock
-                    x:Name="Bar"
-                    VerticalAlignment="Center"
-                    Background="{x:Null}"
-                    FontFamily="/PicView;component/Resources/fonts/#Aller"
-                    FontSize="15"
-                    FontWeight="Bold"
-                    Foreground="{StaticResource MainColorBrush}"
-                    Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                    TextAlignment="Center"
-                    TextTrimming="CharacterEllipsis" />
-            </DockPanel>
+            <Rectangle
+                Width="1"
+                Height="35"
+                Margin="6,0,0,0"
+                Fill="{StaticResource BorderBrush}" />
 
-            <Rectangle Height="1" DockPanel.Dock="Top">
-                <Rectangle.Fill>
-                    <SolidColorBrush Color="{StaticResource BorderColor}" />
-                </Rectangle.Fill>
-            </Rectangle>
+            <uc:CloseButton
+                x:Name="CloseButton"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Right" />
 
+            <Rectangle
+                Width="1"
+                Height="35"
+                DockPanel.Dock="Right"
+                Fill="{StaticResource BorderBrush}" />
+
+            <uc:MinButton
+                x:Name="MinButton"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Right" />
+
+            <Rectangle
+                Width="1"
+                Height="35"
+                DockPanel.Dock="Right"
+                Fill="{StaticResource BorderBrush}" />
+
+
+            <TextBlock
+                x:Name="Bar"
+                VerticalAlignment="Center"
+                Background="{x:Null}"
+                FontFamily="/PicView;component/Resources/fonts/#Aller"
+                FontSize="15"
+                FontWeight="Bold"
+                Foreground="{StaticResource MainColorBrush}"
+                Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                TextAlignment="Center"
+                TextTrimming="CharacterEllipsis" />
+        </DockPanel>
+
+        <Rectangle
+            x:Name="LeftBorderRectangle"
+            Width="7"
+            DockPanel.Dock="Left">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <Rectangle
+            x:Name="RightBorderRectangle"
+            Width="7"
+            Margin="-1,0,0,0"
+            DockPanel.Dock="Right">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <Rectangle
+            x:Name="BottomBorderRectangle"
+            Height="7"
+            Margin="-1,0,0,0"
+            DockPanel.Dock="Bottom">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
             <ScrollViewer
                 x:Name="Scroller"
-                Background="{StaticResource BackgroundColorBrushAlt}"
+                Background="{StaticResource NoisyBg}"
                 HorizontalScrollBarVisibility="Disabled"
                 VerticalScrollBarVisibility="Auto">
-                <WrapPanel Orientation="Horizontal" >
-                    <Label>Coming soon...</Label></WrapPanel>
-            </ScrollViewer>
 
-        </DockPanel>
-    </Border>
+                <StackPanel>
+                    <WrapPanel Margin="10,5" Orientation="Horizontal">
+
+                        <RadioButton
+                            x:Name="Negative"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Negative Colors" />
+
+                        <RadioButton
+                            x:Name="blackwhite"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Black &amp; White" />
+
+                        <RadioButton
+                            x:Name="ColorTone"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Color Tone" />
+
+                        <RadioButton
+                            x:Name="OldMovie"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Old Movie" />
+
+                        <RadioButton
+                            x:Name="Bloom"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Bloom" />
+
+                        <RadioButton
+                            x:Name="Gloom"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Gloom" />
+
+                        <RadioButton
+                            x:Name="Monochrome"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Monochrome" />
+
+                        <RadioButton
+                            x:Name="Wavewarper"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Wave Warper" />
+
+                        <RadioButton
+                            x:Name="Underwater"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Underwater" />
+
+                        <RadioButton
+                            x:Name="BandedSwirl"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Banded Swirl" />
+
+                        <RadioButton
+                            x:Name="Ripple"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Ripple" />
+
+                        <RadioButton
+                            x:Name="RippleAlt"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Ripple Alt" />
+
+                        <RadioButton
+                            x:Name="Blur"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Blur" />
+
+                        <RadioButton
+                            x:Name="DirectionalBlur"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Directional Blur" />
+
+                        <RadioButton
+                            x:Name="TelescopicBlur"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Telescopic Blur" />
+
+                        <RadioButton
+                            x:Name="Pixelate"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Pixelate" />
+
+                        <RadioButton
+                            x:Name="Embossed"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Embossed" />
+
+                        <RadioButton
+                            x:Name="SmoothMagnify"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Smooth Magnify" />
+
+                        <RadioButton
+                            x:Name="Pivot"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Pivot" />
+
+                        <RadioButton
+                            x:Name="Paperfold"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Paper fold" />
+
+                        <RadioButton
+                            x:Name="PencilSketch"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Pencil Sketch" />
+
+
+                        <RadioButton
+                            x:Name="Sketch"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Sketch" />
+
+                        <RadioButton
+                            x:Name="Tonemapping"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Tone mapping" />
+
+
+                        <RadioButton
+                            x:Name="FrostyOutline"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Frosty Outline" />
+
+
+                        <RadioButton
+                            x:Name="Bands"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Bands" />
+
+
+                        <RadioButton
+                            x:Name="GlasTile"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            Content="Glass Tile" />
+
+                    </WrapPanel>
+                    <Button
+                        x:Name="RemoveEffects"
+                        Content="Remove Effects"
+                        Style="{StaticResource MetroAlphaFlatButton}" />
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </DockPanel>
 </Window>

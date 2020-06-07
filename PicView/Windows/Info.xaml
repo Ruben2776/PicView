@@ -10,52 +10,90 @@
     Foreground="{StaticResource MainColorBrush}"
     Style="{DynamicResource MyWindowStyle}">
 
-    <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
-        <DockPanel LastChildFill="True">
-            <DockPanel
-                x:Name="TitleBar"
-                Height="33"
-                DockPanel.Dock="Top">
-                <DockPanel.Background>
-                    <ImageBrush
-                        ImageSource="/Resources/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
-                        TileMode="FlipXY"
-                        Viewport="0,0,100,100"
-                        ViewportUnits="Absolute" />
-                </DockPanel.Background>
-                <uc:Logo />
-                <uc:CloseButton
-                    x:Name="CloseButton"
-                    VerticalAlignment="Center"
-                    DockPanel.Dock="Right" />
+    <DockPanel LastChildFill="True">
+        <DockPanel
+            x:Name="TitleBar"
+            Height="33"
+            Background="{StaticResource BackgroundColorBrushAltW}"
+            DockPanel.Dock="Top">
 
-                <uc:MinButton
-                    x:Name="MinButton"
-                    VerticalAlignment="Center"
-                    DockPanel.Dock="Right" />
+            <uc:Logo />
 
-                <TextBlock
-                    x:Name="Bar"
-                    VerticalAlignment="Center"
-                    Background="{x:Null}"
-                    FontFamily="/PicView;component/Resources/fonts/#Aller"
-                    FontSize="15"
-                    FontWeight="Bold"
-                    Foreground="{StaticResource MainColorBrush}"
-                    Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                    TextAlignment="Center"
-                    TextTrimming="CharacterEllipsis" />
-            </DockPanel>
+            <Rectangle
+                Width="1"
+                Height="35"
+                Margin="6,0,0,0"
+                Fill="{StaticResource BorderBrush}" />
 
-            <Rectangle Height="1" DockPanel.Dock="Top">
-                <Rectangle.Fill>
-                    <SolidColorBrush Color="{StaticResource BorderColor}" />
-                </Rectangle.Fill>
-            </Rectangle>
+            <uc:CloseButton
+                x:Name="CloseButton"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Right" />
 
+            <Rectangle
+                Width="1"
+                Height="35"
+                DockPanel.Dock="Right"
+                Fill="{StaticResource BorderBrush}" />
+
+            <uc:MinButton
+                x:Name="MinButton"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Right" />
+
+            <Rectangle
+                Width="1"
+                Height="35"
+                DockPanel.Dock="Right"
+                Fill="{StaticResource BorderBrush}" />
+
+
+            <TextBlock
+                x:Name="Bar"
+                VerticalAlignment="Center"
+                Background="{x:Null}"
+                FontFamily="/PicView;component/Resources/fonts/#Aller"
+                FontSize="15"
+                FontWeight="Bold"
+                Foreground="{StaticResource MainColorBrush}"
+                Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                TextAlignment="Center"
+                TextTrimming="CharacterEllipsis" />
+        </DockPanel>
+
+        <Rectangle
+            x:Name="LeftBorderRectangle"
+            Width="7"
+            DockPanel.Dock="Left">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <Rectangle
+            x:Name="RightBorderRectangle"
+            Width="7"
+            Margin="-1,0,0,0"
+            DockPanel.Dock="Right">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <Rectangle
+            x:Name="BottomBorderRectangle"
+            Height="7"
+            Margin="-1,0,0,0"
+            DockPanel.Dock="Bottom">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
             <ScrollViewer
                 x:Name="Scroller"
-                Background="{StaticResource BackgroundColorBrushAlt}"
+                Background="{StaticResource NoisyBg}"
                 HorizontalScrollBarVisibility="Disabled"
                 VerticalScrollBarVisibility="Auto">
                 <StackPanel>
@@ -925,7 +963,7 @@
                 </StackPanel>
 
             </ScrollViewer>
+        </Border>
 
-        </DockPanel>
-    </Border>
+    </DockPanel>
 </Window>

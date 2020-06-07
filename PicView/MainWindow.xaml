@@ -23,11 +23,9 @@
                 x:Name="TitleBar"
                 Height="33"
                 MinWidth="444"
+                Background="{StaticResource BackgroundColorBrushAltW}"
                 DockPanel.Dock="Top">
-                <DockPanel.Background>
-                    <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
-                </DockPanel.Background>
-                
+
                 <uc:Logo />
 
                 <Rectangle
@@ -103,7 +101,7 @@
                         FocusVisualStyle="{x:Null}"
                         Focusable="False">
                         <Button.Background>
-                            <SolidColorBrush x:Name="FileMenuBg" Color="{StaticResource BackgroundColorAltW}" />
+                            <SolidColorBrush x:Name="FileMenuBg" Color="#00000000" />
                         </Button.Background>
                         <Path
                             x:Name="FolderPath"
@@ -132,7 +130,7 @@
                         FocusVisualStyle="{x:Null}"
                         Focusable="False">
                         <Button.Background>
-                            <SolidColorBrush x:Name="ImageMenuBg" Color="{StaticResource BackgroundColorAltW}" />
+                            <SolidColorBrush x:Name="ImageMenuBg" Color="#00000000" />
                         </Button.Background>
                         <Canvas
                             Width="28"
@@ -269,7 +267,7 @@
                         FocusVisualStyle="{x:Null}"
                         Focusable="False">
                         <Button.Background>
-                            <SolidColorBrush x:Name="SettingsMenuBg" Color="{StaticResource BackgroundColorAltW}" />
+                            <SolidColorBrush x:Name="SettingsMenuBg" Color="#00000000" />
                         </Button.Background>
                         <Path
                             x:Name="SettingsPath"
@@ -292,7 +290,7 @@
                         FocusVisualStyle="{x:Null}"
                         Focusable="False">
                         <Button.Background>
-                            <SolidColorBrush x:Name="EffectsMenuBg" Color="{StaticResource BackgroundColorAltW}" />
+                            <SolidColorBrush x:Name="EffectsMenuBg" Color="#00000000" />
                         </Button.Background>
                         <Image Width="23.779" Height="23.779">
                             <Image.Source>

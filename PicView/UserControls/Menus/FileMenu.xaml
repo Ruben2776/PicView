@@ -8,8 +8,8 @@
         <Border
             Width="261"
             Height="180"
-            BorderBrush="{StaticResource BorderBrush}"
             Background="{StaticResource NoisyBg}"
+            BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="2"
             CornerRadius="2">
             <Border.Effect>
@@ -19,7 +19,16 @@
                     ShadowDepth="6"
                     Color="{StaticResource AltInterface}" />
             </Border.Effect>
+
             <Canvas>
+                <Canvas.Effect>
+                    <DropShadowEffect
+                        BlurRadius="1"
+                        Direction="265"
+                        ShadowDepth="1"
+                        Color="Black" />
+                </Canvas.Effect>
+
                 <Rectangle
                     Canvas.Top="50"
                     Width="258"

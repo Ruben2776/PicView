@@ -18,8 +18,18 @@
                     ShadowDepth="5"
                     Color="{StaticResource AltInterfaceW}" />
             </Border.Effect>
+            
             <Grid>
+                
                 <Canvas Height="51" VerticalAlignment="Top">
+                    <Canvas.Effect>
+                        <DropShadowEffect
+                            BlurRadius="4"
+                            Direction="268"
+                            ShadowDepth="1"
+                            Color="Black" />
+                    </Canvas.Effect>
+                    
                     <Rectangle
                         Canvas.Top="50"
                         Width="428"
@@ -250,7 +260,6 @@
                             Height="40"
                             Margin="0,3,3,3"
                             BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1"
                             Content="Scroll"
                             Style="{StaticResource Checkstyle}"
                             ToolTip="Great for manga/comic reading">

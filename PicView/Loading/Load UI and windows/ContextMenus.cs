@@ -155,6 +155,8 @@ namespace PicView
             var sortcmChild0Header = new RadioButton
             {
                 Content = "File name",
+                BorderThickness = new Thickness(0, 0, 0, 0),
+                MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 0
             };
             sortcmChild0Header.Click += delegate { Configs.ChangeSorting(0); cm.IsOpen = false; };
@@ -169,6 +171,8 @@ namespace PicView
             var sortcmChild1Header = new RadioButton
             {
                 Content = "File Size",
+                BorderThickness = new Thickness(0, 0, 0, 0),
+                MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 1
             };
             sortcmChild1Header.Click += delegate { Configs.ChangeSorting(1); cm.IsOpen = false; };
@@ -183,6 +187,8 @@ namespace PicView
             var sortcmChild2Header = new RadioButton
             {
                 Content = "Creation time",
+                BorderThickness = new Thickness(0, 0, 0, 0),
+                MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 2
 
             };
@@ -198,6 +204,8 @@ namespace PicView
             var sortcmChild3Header = new RadioButton
             {
                 Content = "File extension",
+                BorderThickness = new Thickness(0, 0, 0, 0),
+                MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 3
             };
             sortcmChild3Header.Click += delegate { Configs.ChangeSorting(3); cm.IsOpen = false; };
@@ -212,6 +220,8 @@ namespace PicView
             var sortcmChild4Header = new RadioButton
             {
                 Content = "Last access time",
+                BorderThickness = new Thickness(0, 0, 0, 0),
+                MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 4
             };
             sortcmChild4Header.Click += delegate { Configs.ChangeSorting(4); cm.IsOpen = false; };
@@ -226,6 +236,8 @@ namespace PicView
             var sortcmChild5Header = new RadioButton
             {
                 Content = "Last write time",
+                BorderThickness = new Thickness(0, 0, 0, 0),
+                MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 5
             };
             sortcmChild5Header.Click += delegate { Configs.ChangeSorting(5); cm.IsOpen = false; };
@@ -240,6 +252,8 @@ namespace PicView
             var sortcmChild6Header = new RadioButton
             {
                 Content = "Random",
+                BorderThickness = new Thickness(0, 0, 0, 0),
+                MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 6
             };
             sortcmChild6Header.Click += delegate { Configs.ChangeSorting(6); cm.IsOpen = false; };
@@ -280,11 +294,11 @@ namespace PicView
                 IsChecked = Properties.Settings.Default.Looping,
                 Content = "Looping",
                 FontSize = 13,
+                MinWidth = 125,
+                HorizontalAlignment = HorizontalAlignment.Left,
                 Width = double.NaN,
                 Height = double.NaN
             };
-            settingscmLoopHeader.Style = Application.Current.FindResource("Checkstyle") as Style;
-            settingscmLoopHeader.HorizontalAlignment = HorizontalAlignment.Left;
             settingscmLoop.Header = settingscmLoopHeader;
             //var settingscmLoopIcon = new System.Windows.Shapes.Path
             //{
@@ -311,12 +325,12 @@ namespace PicView
                 IsChecked = Properties.Settings.Default.ScrollEnabled,
                 Content = "Scrolling",
                 FontSize = 13,
+                MinWidth = 125,
+                HorizontalAlignment = HorizontalAlignment.Left,
                 Width = double.NaN,
                 Height = double.NaN
             };
             settingscmScrollHeader.Click += Configs.SetScrolling;
-            settingscmScrollHeader.Style = Application.Current.FindResource("Checkstyle") as Style;
-            settingscmScrollHeader.HorizontalAlignment = HorizontalAlignment.Left;
             settingscmScroll.Header = settingscmScrollHeader;
             settingscmScroll.Click += (s, x) => { Configs.SetScrolling(s, x); settingscmScrollHeader.IsChecked = (bool)settingscmScrollHeader.IsChecked ? false : true; };
             settingscm.Items.Add(settingscmScroll);
@@ -333,12 +347,12 @@ namespace PicView
                 Content = "Fit to window/image",
                 IsChecked = Properties.Settings.Default.AutoFit,
                 FontSize = 13,
+                MinWidth = 125,
+                HorizontalAlignment = HorizontalAlignment.Left,
                 Width = double.NaN,
                 Height = double.NaN
             };
             fitcmHeader.Click += delegate { WindowLogic.AutoFit = WindowLogic.AutoFit ? false : true; };
-            fitcmHeader.Style = Application.Current.FindResource("Checkstyle") as Style;
-            fitcmHeader.HorizontalAlignment = HorizontalAlignment.Left;
             fitcm.Header = fitcmHeader;
             fitcm.Click += delegate { WindowLogic.AutoFit = WindowLogic.AutoFit ? false : true; };
             settingscm.Items.Add(fitcm);
@@ -355,12 +369,12 @@ namespace PicView
                 Content = "Show/hide interface",
                 IsChecked = Properties.Settings.Default.ShowInterface,
                 FontSize = 13,
+                MinWidth = 125,
+                HorizontalAlignment = HorizontalAlignment.Left,
                 Width = double.NaN,
                 Height = double.NaN
             };
             altcmHeader.Click += delegate { HideInterfaceLogic.ToggleInterface(); };
-            altcmHeader.Style = Application.Current.FindResource("Checkstyle") as Style;
-            altcmHeader.HorizontalAlignment = HorizontalAlignment.Left;
             altcm.Header = altcmHeader;
             altcm.Click += delegate { HideInterfaceLogic.ToggleInterface(); };
             settingscm.Items.Add(altcm);
@@ -379,10 +393,9 @@ namespace PicView
                 FontSize = 13,
                 Width = double.NaN,
                 Height = double.NaN,
-                Margin = new Thickness(15.5, 0, 0, 0)
+                HorizontalAlignment = HorizontalAlignment.Left
             };
             transcmHeader.Click += ChangeBackground;
-            transcmHeader.HorizontalAlignment = HorizontalAlignment.Left;
             transcm.Header = transcmHeader;
             transcm.Click += ChangeBackground;
             settingscm.Items.Add(transcm);
@@ -473,7 +486,7 @@ namespace PicView
             cpmIcon.Width = cpmIcon.Height = 12;
             cpmIcon.Fill = scbf;
             cpm.Icon = cpmIcon;
-            
+
 
             ///////////////////////////
             ///   Copy file        \\\\

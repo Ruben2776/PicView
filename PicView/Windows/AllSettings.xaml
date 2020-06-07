@@ -4,216 +4,214 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uc="clr-namespace:PicView.UserControls"
     Title="PicView settings"
-    Width="465"
+    Width="500"
     Height="620"
     FontFamily="/PicView;component/Resources/fonts/#Aller"
     Foreground="{StaticResource MainColorBrush}"
     SizeToContent="Height"
     Style="{DynamicResource MyWindowStyle}">
-    <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
-        <DockPanel LastChildFill="True">
-            <DockPanel
-                x:Name="TitleBar"
-                Height="33"
-                DockPanel.Dock="Top">
-                <DockPanel.Background>
-                    <ImageBrush
-                        ImageSource="/Resources/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
-                        TileMode="FlipXY"
-                        Viewport="0,0,100,100"
-                        ViewportUnits="Absolute" />
-                </DockPanel.Background>
-                <uc:Logo />
-                <uc:CloseButton
-                    x:Name="CloseButton"
-                    VerticalAlignment="Center"
-                    DockPanel.Dock="Right" />
+    <DockPanel LastChildFill="True">
+        <DockPanel
+            x:Name="TitleBar"
+            Height="33"
+            Background="{StaticResource BackgroundColorBrushAltW}"
+            DockPanel.Dock="Top">
 
-                <uc:MinButton
-                    x:Name="MinButton"
-                    VerticalAlignment="Center"
-                    DockPanel.Dock="Right" />
+            <uc:Logo />
 
-                <TextBlock
-                    x:Name="Bar"
-                    VerticalAlignment="Center"
-                    Background="{x:Null}"
-                    FontFamily="/PicView;component/Resources/fonts/#Aller"
-                    FontSize="15"
-                    FontWeight="Bold"
-                    Foreground="{StaticResource MainColorBrush}"
-                    Text="Settings"
-                    TextAlignment="Center"
-                    TextTrimming="CharacterEllipsis" />
-            </DockPanel>
+            <Rectangle
+                Width="1"
+                Height="35"
+                Margin="6,0,0,0"
+                Fill="{StaticResource BorderBrush}" />
 
-            <Rectangle Height="1" DockPanel.Dock="Top">
-                <Rectangle.Fill>
-                    <SolidColorBrush Color="{StaticResource BorderColor}" />
-                </Rectangle.Fill>
-            </Rectangle>
+            <uc:CloseButton
+                x:Name="CloseButton"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Right" />
 
+            <Rectangle
+                Width="1"
+                Height="35"
+                DockPanel.Dock="Right"
+                Fill="{StaticResource BorderBrush}" />
+
+            <uc:MinButton
+                x:Name="MinButton"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Right" />
+
+            <Rectangle
+                Width="1"
+                Height="35"
+                DockPanel.Dock="Right"
+                Fill="{StaticResource BorderBrush}" />
+
+
+            <TextBlock
+                x:Name="Bar"
+                VerticalAlignment="Center"
+                Background="{x:Null}"
+                FontFamily="/PicView;component/Resources/fonts/#Aller"
+                FontSize="15"
+                FontWeight="Bold"
+                Foreground="{StaticResource MainColorBrush}"
+                Text="Settings"
+                TextAlignment="Center"
+                TextTrimming="CharacterEllipsis" />
+        </DockPanel>
+
+        <Rectangle
+            x:Name="LeftBorderRectangle"
+            Width="7"
+            DockPanel.Dock="Left">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <Rectangle
+            x:Name="RightBorderRectangle"
+            Width="7"
+            Margin="-1,0,0,0"
+            DockPanel.Dock="Right">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <Rectangle
+            x:Name="BottomBorderRectangle"
+            Height="7"
+            Margin="-1,0,0,0"
+            DockPanel.Dock="Bottom">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
             <ScrollViewer
                 x:Name="Scroller"
-                Background="{StaticResource BackgroundColorBrush}"
+                Background="{StaticResource NoisyBg}"
                 HorizontalScrollBarVisibility="Disabled"
                 VerticalScrollBarVisibility="Auto">
+
                 <StackPanel>
+
                     <Label
                         Margin="0,3,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Content="Color Themes"
                         Foreground="{StaticResource MainColorBrush}" />
+
                     <WrapPanel
                         Margin="0,3,0,8"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
                         Orientation="Horizontal">
+
                         <RadioButton
                             x:Name="BlueRadio"
-                            Width="100"
-                            Height="40"
-                            Margin="5,3"
-                            BorderThickness="2"
                             Content="Blue"
-                            Style="{StaticResource MetroAlphaFlatRadioButton}">
+                            Style="{StaticResource MetroFlatRadioButton}">
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="BlueBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
+
                         <RadioButton
                             x:Name="CyanRadio"
-                            Width="100"
-                            Height="40"
-                            Margin="5,3"
-                            BorderThickness="2"
                             Content="Cyan"
-                            Style="{StaticResource MetroAlphaFlatRadioButton}">
+                            Style="{StaticResource MetroFlatRadioButton}">
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="CyanBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
+
                         <RadioButton
                             x:Name="AquaRadio"
-                            Width="100"
-                            Height="40"
-                            Margin="5,3"
-                            BorderThickness="2"
                             Content="Aqua"
-                            Style="{StaticResource MetroAlphaFlatRadioButton}">
+                            Style="{StaticResource MetroFlatRadioButton}">
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="AquaBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
                         <RadioButton
                             x:Name="GreenRadio"
-                            Width="100"
-                            Height="40"
-                            Margin="5"
-                            BorderThickness="2"
                             Content="Green"
-                            Style="{StaticResource MetroAlphaFlatRadioButton}">
+                            Style="{StaticResource MetroFlatRadioButton}">
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="GreenBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
                         <RadioButton
                             x:Name="MagentaRadio"
-                            Width="100"
-                            Height="40"
-                            Margin="5"
-                            BorderThickness="2"
                             Content="Magenta"
-                            Style="{StaticResource MetroAlphaFlatRadioButton}">
+                            Style="{StaticResource MetroFlatRadioButton}">
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="MagentaBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
                         <RadioButton
                             x:Name="PinkRadio"
-                            Width="100"
-                            Height="40"
-                            Margin="5"
-                            BorderThickness="2"
                             Content="Pink"
-                            Style="{StaticResource MetroAlphaFlatRadioButton}">
+                            Style="{StaticResource MetroFlatRadioButton}">
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="PinkBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
                         <RadioButton
                             x:Name="PurpleRadio"
-                            Width="100"
-                            Height="40"
-                            Margin="5"
-                            BorderThickness="2"
                             Content="Purple"
-                            Style="{StaticResource MetroAlphaFlatRadioButton}">
+                            Style="{StaticResource MetroFlatRadioButton}">
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="PurpleBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
                         <RadioButton
                             x:Name="TealRadio"
-                            Width="100"
-                            Height="40"
-                            Margin="5,3"
-                            BorderThickness="2"
                             Content="Teal"
-                            Style="{StaticResource MetroAlphaFlatRadioButton}">
+                            Style="{StaticResource MetroFlatRadioButton}">
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="TealBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
                         <RadioButton
                             x:Name="RedRadio"
-                            Width="100"
-                            Height="40"
-                            Margin="5,3"
-                            BorderThickness="2"
                             Content="Red"
-                            Style="{StaticResource MetroAlphaFlatRadioButton}">
+                            Style="{StaticResource MetroFlatRadioButton}">
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="RedBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
                         <RadioButton
                             x:Name="OrangeRadio"
-                            Width="100"
-                            Height="40"
-                            Margin="5,3"
-                            BorderThickness="2"
                             Content="Orange"
-                            Style="{StaticResource MetroAlphaFlatRadioButton}">
+                            Style="{StaticResource MetroFlatRadioButton}">
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="OrangeBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
                         <RadioButton
                             x:Name="GreyRadio"
-                            Width="100"
-                            Height="40"
-                            Margin="5,3"
-                            BorderThickness="2"
                             Content="Grey"
-                            Style="{StaticResource MetroAlphaFlatRadioButton}">
+                            Style="{StaticResource MetroFlatRadioButton}">
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="GreyBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
                         <RadioButton
                             x:Name="BeigeRadio"
-                            Width="100"
-                            Height="40"
-                            Margin="5,3"
-                            BorderThickness="2"
                             Content="Beige"
-                            Style="{StaticResource MetroAlphaFlatRadioButton}">
+                            Style="{StaticResource MetroFlatRadioButton}">
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="BeigeBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
+
+
                     </WrapPanel>
                     <Label
                         Margin="0,3,0,0"
@@ -267,9 +265,7 @@
 
                         <Button
                             x:Name="Fill"
-                            Canvas.Left="0"
-                            Canvas.Top="0"
-                            Margin="0,0,3,3"
+                            Margin="0,0,5,5"
                             Content="Fill"
                             Style="{StaticResource MetroAlphaFlatButton}">
                             <Button.Background>
@@ -279,9 +275,7 @@
 
                         <Button
                             x:Name="Center"
-                            Canvas.Left="106"
-                            Canvas.Top="0"
-                            Margin="0,0,3,3"
+                            Margin="0,0,5,5"
                             Content="Center"
                             Style="{StaticResource MetroAlphaFlatButton}">
                             <Button.Background>
@@ -291,9 +285,7 @@
 
                         <Button
                             x:Name="Fit"
-                            Canvas.Left="212"
-                            Canvas.Top="0"
-                            Margin="0,0,3,3"
+                            Margin="0,0,5,5"
                             Content="Fit"
                             Style="{StaticResource MetroAlphaFlatButton}">
                             <Button.Background>
@@ -303,9 +295,7 @@
 
                         <Button
                             x:Name="Tile"
-                            Canvas.Left="0"
-                            Canvas.Top="46"
-                            Margin="0,0,3,3"
+                            Margin="0,0,5,5"
                             Content="Tile"
                             Style="{StaticResource MetroAlphaFlatButton}">
                             <Button.Background>
@@ -315,9 +305,7 @@
 
                         <Button
                             x:Name="Stretch"
-                            Canvas.Left="106"
-                            Canvas.Top="46"
-                            Margin="0,0,3,3"
+                            Margin="0,0,5,5"
                             Content="Stretch"
                             Style="{StaticResource MetroAlphaFlatButton}">
                             <Button.Background>
@@ -419,6 +407,6 @@
 
                 </StackPanel>
             </ScrollViewer>
-        </DockPanel>
-    </Border>
+        </Border>
+    </DockPanel>
 </Window>

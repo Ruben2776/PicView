@@ -7,9 +7,9 @@
         Margin="0,0,0,95"
         HorizontalAlignment="Center"
         VerticalAlignment="Bottom"
-        Background="{StaticResource AltInterfaceBrush}"
+        Background="{StaticResource AltInterfaceWBrush}"
         BorderBrush="{StaticResource BorderBrush}"
-        BorderThickness="1"
+        BorderThickness="2"
         CornerRadius="7">
         <TextBlock
             x:Name="SexyToolTipText"

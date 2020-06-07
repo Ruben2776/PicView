@@ -18,7 +18,16 @@
                     ShadowDepth="5"
                     Color="{StaticResource AltInterfaceW}" />
             </Border.Effect>
+
             <Canvas>
+                <Canvas.Effect>
+                    <DropShadowEffect
+                        BlurRadius="4"
+                        Direction="268"
+                        ShadowDepth="1"
+                        Color="Black" />
+                </Canvas.Effect>
+
                 <Rectangle
                     Canvas.Top="50"
                     Width="255"
@@ -147,9 +156,9 @@
                     <CheckBox.Content>
                         <Path
                             x:Name="FlipPath"
-                            Canvas.Top="19"
                             Width="13"
                             Height="13"
+                            Margin="19,17,0,0"
                             Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
                             Fill="{StaticResource MainColorBrush}"
                             Stretch="Fill" />

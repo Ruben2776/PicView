@@ -25,8 +25,19 @@
                     ShadowDepth="5"
                     Color="{StaticResource AltInterfaceW}" />
             </Border.Effect>
+
             <Canvas>
-                <Canvas Height="51" VerticalAlignment="Top">
+                <Canvas
+                    Width="358"
+                    Height="51"
+                    VerticalAlignment="Top">
+                    <Canvas.Effect>
+                        <DropShadowEffect
+                            BlurRadius="4"
+                            Direction="268"
+                            ShadowDepth="1"
+                            Color="Black" />
+                    </Canvas.Effect>
                     <Rectangle
                         Canvas.Top="50"
                         Width="358"

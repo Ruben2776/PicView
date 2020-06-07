@@ -56,23 +56,6 @@
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             RecognizesAccessKey="True" />
                     </Border>
-                    <!--<ControlTemplate.Triggers>
-                        <Trigger Property="IsPressed"
-                                 Value="True">
-                            <Setter Property="Foreground"
-                                    Value="#FFF7F4F4" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled"
-                                 Value="False">
-                            <Setter Property="Foreground"
-                                    Value="#FFF7F4F4" />
-                        </Trigger>
-                        <Trigger Property="IsMouseOver"
-                                 Value="True">
-                            <Setter Property="Background"
-                                    Value="#007acc" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>-->
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -87,6 +70,15 @@
         <Setter Property="Height" Value="40" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect
+                    BlurRadius="4"
+                    Direction="268"
+                    ShadowDepth="1"
+                    Color="Black" />
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -103,23 +95,6 @@
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             RecognizesAccessKey="True" />
                     </Border>
-                    <!--<ControlTemplate.Triggers>
-                        <Trigger Property="IsPressed"
-                                 Value="True">
-                            <Setter Property="Foreground"
-                                    Value="#FFF7F4F4" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled"
-                                 Value="False">
-                            <Setter Property="Foreground"
-                                    Value="#FFF7F4F4" />
-                        </Trigger>
-                        <Trigger Property="IsMouseOver"
-                                 Value="True">
-                            <Setter Property="Background"
-                                    Value="#007acc" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>-->
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
