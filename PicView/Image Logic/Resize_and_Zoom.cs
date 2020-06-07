@@ -434,10 +434,12 @@ namespace PicView
         /// <param name="height">The pixel height of the image</param>
         internal static void ZoomFit(double width, double height)
         {
+            var showInterface = Properties.Settings.Default.ShowInterface;
+
             double maxWidth, maxHeight;
-            int verticalPadding = 90; // Padding to make it feel more comfortable
-            int borderSpaceHeight = 6; // Based on UI vertical borders
-            int borderSpaceWidth = 20; // Based on UI horizontal borders
+            var padding = 25; // Padding to make it feel more comfortable
+            var borderSpaceHeight = showInterface ? mainWindow.LowerBar.Height + mainWindow.TitleBar.Height + 6 : 6;
+            var borderSpaceWidth = 20; // Based on UI borders
 
             width -= borderSpaceWidth;
             height -= borderSpaceHeight;
@@ -447,16 +449,16 @@ namespace PicView
 
             if (AutoFit) /// Get max width and height, based on user's screen
             {
-                maxWidth = Math.Min(monitorWidth, width - borderSpaceWidth);
-
-                if (Properties.Settings.Default.ShowInterface)
+                if (showInterface)
                 {
                     /// Use padding for shown interface
-                    maxHeight = Math.Min(monitorHeight - verticalPadding, height);
+                    maxWidth = Math.Min(monitorWidth - padding, (width - padding) - borderSpaceWidth);
+                    maxHeight = Math.Min(monitorHeight - padding, height);
                 }
                 else
                 {
                     /// Fill users screen
+                    maxWidth = Math.Min(monitorWidth, width - borderSpaceWidth);
                     maxHeight = Math.Min(monitorHeight, height - borderSpaceHeight);
                 }
             }
@@ -464,10 +466,10 @@ namespace PicView
             {
                 maxWidth = Math.Min(mainWindow.Width, width);
 
-                if (Properties.Settings.Default.ShowInterface)
+                if (showInterface)
                 {
                     /// Use padding for shown interface
-                    maxHeight = Math.Min(mainWindow.Height - verticalPadding, height);
+                    maxHeight = Math.Min(mainWindow.Height - padding, height);
                 }
                 else
                 {
