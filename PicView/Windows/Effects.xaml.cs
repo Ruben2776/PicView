@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 using static PicView.Fields;
+using static PicView.MouseOverAnimations;
 using PicView.HlslEffects;
 
 namespace PicView.Windows
@@ -33,80 +34,184 @@ namespace PicView.Windows
             NegativeButton.Click += Negative;
             NegativeButton.Unchecked += Remove_Effects;
 
+            NegativeButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(NegativeBrush);
+            NegativeButton.MouseEnter += (s, x) => ButtonMouseOverAnim(NegativeBrush, true);
+            NegativeButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(NegativeBrush, false);
+
             GrayscaleButton.Click += GraySceale;
             GrayscaleButton.Unchecked += Remove_Effects;
+
+            GrayscaleButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(GrayscaleBrush);
+            GrayscaleButton.MouseEnter += (s, x) => ButtonMouseOverAnim(GrayscaleBrush, true);
+            GrayscaleButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(GrayscaleBrush, false);
 
             ColorToneButton.Click += ColorToneEffect;
             ColorToneButton.Unchecked += Remove_Effects;
 
+            ColorToneButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ColortoneBrush);
+            ColorToneButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ColortoneBrush, true);
+            ColorToneButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ColortoneBrush, false);
+
             OldMovieButton.Click += OldMovieEffect;
             OldMovieButton.Unchecked += Remove_Effects;
+
+            OldMovieButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(OldMovieBrush);
+            OldMovieButton.MouseEnter += (s, x) => ButtonMouseOverAnim(OldMovieBrush, true);
+            OldMovieButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(OldMovieBrush, false);
 
             BloomButton.Click += Bloom;
             BloomButton.Unchecked += Remove_Effects;
 
+            BloomButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(BloomBrush);
+            BloomButton.MouseEnter += (s, x) => ButtonMouseOverAnim(BloomBrush, true);
+            BloomButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(BloomBrush, false);
+
             GloomButton.Click += Gloom;
             GloomButton.Unchecked += Remove_Effects;
+
+            GloomButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(GloomBrush);
+            GloomButton.MouseEnter += (s, x) => ButtonMouseOverAnim(GloomBrush, true);
+            GloomButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(GloomBrush, false);
 
             MonochromeButton.Click += Monochrome;
             MonochromeButton.Unchecked += Remove_Effects;
 
+            MonochromeButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(MonocromeBrush);
+            MonochromeButton.MouseEnter += (s, x) => ButtonMouseOverAnim(MonocromeBrush, true);
+            MonochromeButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(MonocromeBrush, false);
+
             WavewarperButton.Click += WaveWarperEffect;
             WavewarperButton.Unchecked += Remove_Effects;
+
+            WavewarperButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(WavewarperBrush);
+            WavewarperButton.MouseEnter += (s, x) => ButtonMouseOverAnim(WavewarperBrush, true);
+            WavewarperButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(WavewarperBrush, false);
 
             UnderwaterButton.Click += UnderWaterEffect;
             UnderwaterButton.Unchecked += Remove_Effects;
 
+            UnderwaterButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(UnderwaterBrush);
+            UnderwaterButton.MouseEnter += (s, x) => ButtonMouseOverAnim(UnderwaterBrush, true);
+            UnderwaterButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(UnderwaterBrush, false);
+
             BandedSwirlButton.Click += BandedSwirlEffect;
             BandedSwirlButton.Unchecked += Remove_Effects;
+
+            BandedSwirlButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(BandedSwirlBrush);
+            BandedSwirlButton.MouseEnter += (s, x) => ButtonMouseOverAnim(BandedSwirlBrush, true);
+            BandedSwirlButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(BandedSwirlBrush, false);
 
             RippleButton.Click += RippleEffect1;
             RippleButton.Unchecked += Remove_Effects;
 
+            RippleButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(RippleBrush);
+            RippleButton.MouseEnter += (s, x) => ButtonMouseOverAnim(RippleBrush, true);
+            RippleButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(RippleBrush, false);
+
             RippleAltButton.Click += RippleEffect2;
             RippleAltButton.Unchecked += Remove_Effects;
+
+            RippleAltButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(RippleAltBrush);
+            RippleAltButton.MouseEnter += (s, x) => ButtonMouseOverAnim(RippleAltBrush, true);
+            RippleAltButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(RippleAltBrush, false);
 
             BlurButton.Click += Poison_blur;
             BlurButton.Unchecked += Remove_Effects;
 
+            BlurButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(BlurBrush);
+            BlurButton.MouseEnter += (s, x) => ButtonMouseOverAnim(BlurBrush, true);
+            BlurButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(BlurBrush, false);
+
             DirectionalBlurButton.Click += Dir_blur;
             DirectionalBlurButton.Unchecked += Remove_Effects;
+
+            DirectionalBlurButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(DirectionalBlurBrush);
+            DirectionalBlurButton.MouseEnter += (s, x) => ButtonMouseOverAnim(DirectionalBlurBrush, true);
+            DirectionalBlurButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(DirectionalBlurBrush, false);
 
             TelescopicBlurButton.Click += Teleskopisk_blur;
             TelescopicBlurButton.Unchecked += Remove_Effects;
 
+            TelescopicBlurButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TelescopicBlurBrush);
+            TelescopicBlurButton.MouseEnter += (s, x) => ButtonMouseOverAnim(TelescopicBlurBrush, true);
+            TelescopicBlurButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(TelescopicBlurBrush, false);
+
             PixelateButton.Click += PixelateEffect;
             PixelateButton.Unchecked += Remove_Effects;
+
+            PixelateButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(PixelateBrush);
+            PixelateButton.MouseEnter += (s, x) => ButtonMouseOverAnim(PixelateBrush, true);
+            PixelateButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(PixelateBrush, false);
 
             EmbossedButton.Click += Embossed;
             EmbossedButton.Unchecked += Remove_Effects;
 
+            EmbossedButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(EmbossedBrush);
+            EmbossedButton.MouseEnter += (s, x) => ButtonMouseOverAnim(EmbossedBrush, true);
+            EmbossedButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(EmbossedBrush, false);
+
             SmoothMagnifyButton.Click += MagnifySmoothEffect;
             SmoothMagnifyButton.Unchecked += Remove_Effects;
+
+            SmoothMagnifyButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(SmoothMagnifyBrush);
+            SmoothMagnifyButton.MouseEnter += (s, x) => ButtonMouseOverAnim(SmoothMagnifyBrush, true);
+            SmoothMagnifyButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(SmoothMagnifyBrush, false);
 
             PivotButton.Click += PivotEffect;
             PivotButton.Unchecked += Remove_Effects;
 
+            PivotButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(PivotBrush);
+            PivotButton.MouseEnter += (s, x) => ButtonMouseOverAnim(PivotBrush, true);
+            PivotButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(PivotBrush, false);
+
             PaperfoldButton.Click += PaperFoldEffect;
             PaperfoldButton.Unchecked += Remove_Effects;
+
+            PaperfoldButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(PaperfoldBrush);
+            PaperfoldButton.MouseEnter += (s, x) => ButtonMouseOverAnim(PaperfoldBrush, true);
+            PaperfoldButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(PaperfoldBrush, false);
 
             PencilSketchButton.Click += SketchPencilStrokeEffect;
             PencilSketchButton.Unchecked += Remove_Effects;
 
+            PencilSketchButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(PencilSketchBrush);
+            PencilSketchButton.MouseEnter += (s, x) => ButtonMouseOverAnim(PencilSketchBrush, true);
+            PencilSketchButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(PencilSketchBrush, false);
+
             SketchButton.Click += Sketch;
             SketchButton.Unchecked += Remove_Effects;
+
+            SketchButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(SketchBrush);
+            SketchButton.MouseEnter += (s, x) => ButtonMouseOverAnim(SketchBrush, true);
+            SketchButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(SketchBrush, false);
 
             TonemappingButton.Click += ToneMapping;
             TonemappingButton.Unchecked += Remove_Effects;
 
+            TonemappingButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TonemappingBrush);
+            TonemappingButton.MouseEnter += (s, x) => ButtonMouseOverAnim(TonemappingBrush, true);
+            TonemappingButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(TonemappingBrush, false);
+
             BandsButton.Click += bands;
             BandsButton.Unchecked += Remove_Effects;
+
+            BandsButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(BandsBrush);
+            BandsButton.MouseEnter += (s, x) => ButtonMouseOverAnim(BandsBrush, true);
+            BandsButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(BandsBrush, false);
 
             GlasTileButton.Click += GlasTileEffect;
             GlasTileButton.Unchecked += Remove_Effects;
 
+            GlasTileButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(GlasTileBrush);
+            GlasTileButton.MouseEnter += (s, x) => ButtonMouseOverAnim(GlasTileBrush, true);
+            GlasTileButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(GlasTileBrush, false);
+
             FrostyOutlineButton.Click += FrostyOutlineEffect;
             FrostyOutlineButton.Unchecked += Remove_Effects;
+
+            FrostyOutlineButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(FrostyOutlineBrush);
+            FrostyOutlineButton.MouseEnter += (s, x) => ButtonMouseOverAnim(FrostyOutlineBrush, true);
+            FrostyOutlineButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(FrostyOutlineBrush, false);
         }
 
         #region Keyboard Shortcuts

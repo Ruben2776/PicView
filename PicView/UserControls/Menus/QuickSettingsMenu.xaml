@@ -18,9 +18,9 @@
                     ShadowDepth="5"
                     Color="{StaticResource AltInterfaceW}" />
             </Border.Effect>
-            
+
             <Grid>
-                
+
                 <Canvas Height="51" VerticalAlignment="Top">
                     <Canvas.Effect>
                         <DropShadowEffect
@@ -29,7 +29,7 @@
                             ShadowDepth="1"
                             Color="Black" />
                     </Canvas.Effect>
-                    
+
                     <Rectangle
                         Canvas.Top="50"
                         Width="428"
@@ -178,11 +178,12 @@
                 </Canvas>
 
                 <StackPanel Margin="0,51,0,0">
+
                     <Label
-                        Margin="0,5,0,2"
+                        Margin="0,5,0,3"
                         HorizontalAlignment="Center"
-                        Content="Set as wallpaper"
-                        Foreground="{StaticResource MainColorBrush}" />
+                        Content="Set as wallpaper" />
+
                     <Canvas Width="400" Height="50">
 
                         <Button

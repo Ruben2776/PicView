@@ -64,31 +64,23 @@
         <Rectangle
             x:Name="LeftBorderRectangle"
             Width="7"
-            DockPanel.Dock="Left">
-            <Rectangle.Fill>
-                <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
-            </Rectangle.Fill>
-        </Rectangle>
+            Panel.ZIndex="1"
+            DockPanel.Dock="Left"
+            Fill="{StaticResource BackgroundColorBrushAltW}" />
 
         <Rectangle
             x:Name="RightBorderRectangle"
             Width="7"
-            Margin="-1,0,0,0"
-            DockPanel.Dock="Right">
-            <Rectangle.Fill>
-                <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
-            </Rectangle.Fill>
-        </Rectangle>
+            Panel.ZIndex="1"
+            DockPanel.Dock="Right"
+            Fill="{StaticResource BackgroundColorBrushAltW}" />
 
         <Rectangle
             x:Name="BottomBorderRectangle"
             Height="7"
-            Margin="-1,0,0,0"
-            DockPanel.Dock="Bottom">
-            <Rectangle.Fill>
-                <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
-            </Rectangle.Fill>
-        </Rectangle>
+            Panel.ZIndex="1"
+            DockPanel.Dock="Bottom"
+            Fill="{StaticResource BackgroundColorBrushAltW}" />
 
         <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
             <ScrollViewer
@@ -104,7 +96,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Content="Color Themes"
-                        Foreground="{StaticResource MainColorBrush}" />
+                        Style="{StaticResource LabelShadow}" />
 
                     <WrapPanel
                         Margin="0,3,0,8"
@@ -256,7 +248,8 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Content="Set as wallpaper"
-                        Foreground="{StaticResource MainColorBrush}" />
+                        Style="{StaticResource LabelShadow}" />
+
                     <WrapPanel
                         Margin="0,3,0,8"
                         HorizontalAlignment="Center"
@@ -317,7 +310,7 @@
                     <Label
                         HorizontalAlignment="Center"
                         Content="Image Stretching"
-                        Foreground="{StaticResource MainColorBrush}" />
+                        Style="{StaticResource LabelShadow}" />
 
                     <WrapPanel
                         Margin="0,3,0,8"
@@ -372,7 +365,8 @@
                         Margin="0,3,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Content="Adjust timing for slideshow" />
+                        Content="Adjust timing for slideshow"
+                        Style="{StaticResource LabelShadow}" />
 
                     <StackPanel
                         Margin="0,3,0,10"
@@ -401,7 +395,7 @@
                             TextAlignment="Center"
                             ToolTip="Enter the slideshow amount in seconds." />
 
-                        <Label Content="Sec." />
+                        <Label Content="Sec." Style="{StaticResource LabelShadow}" />
 
                     </StackPanel>
 
