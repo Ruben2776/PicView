@@ -167,42 +167,29 @@ namespace PicView
         /// <returns></returns>
         internal static bool TrySaveImage(int rotate, bool flipped, string path, string destination)
         {
-            if (File.Exists(path))
+            try
             {
-                try
+                using var SaveImage = new MagickImage();
+                // Set maximum quality
+                var mrs = new MagickReadSettings()
                 {
-                    using (var SaveImage = new MagickImage())
-                    {
-                        // Set maximum quality
-                        var mrs = new MagickReadSettings()
-                        {
-                            Density = new Density(300, 300),
-                        };
-                        SaveImage.Quality = 100;
+                    Density = new Density(300, 300),
+                };
+                SaveImage.Quality = 100;
 
-                        SaveImage.Read(path, mrs);
+                SaveImage.Read(path, mrs);
 
-                        // Apply transformation values
-                        if (flipped)
-                        {
-                            SaveImage.Flop();
-                        }
-
-                        SaveImage.Rotate(rotate);
-
-                        SaveImage.Write(destination);
-                    }
-                }
-                catch (Exception)
+                // Apply transformation values
+                if (flipped)
                 {
-                    return false;
+                    SaveImage.Flop();
                 }
-            }
-            else
-            {
-                return false;
-            }
 
+                SaveImage.Rotate(rotate);
+
+                SaveImage.Write(destination);
+            }
+            catch (Exception) { return false; }
             return true;
         }
 

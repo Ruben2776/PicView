@@ -285,6 +285,16 @@ namespace PicView.PreLoading
         }
 
 
+        internal static async void PreloaderFix(string file)
+        {
+            if (!Contains(file))
+            {
+                PreloadCount = 4;
+                await Add(file).ConfigureAwait(false);
+            }
+        }
+
+
 
         /// <summary>
         /// Starts decoding images into memory,
@@ -300,7 +310,7 @@ namespace PicView.PreLoading
                 + string.Concat(Reverse ? "backwards" : "forwards"));
 #endif
 
-            return Task.Run(() =>
+            return Task.Run(async() =>
             {
                 var toLoad = 8;
                 var extraToLoad = toLoad / 2;
@@ -320,7 +330,7 @@ namespace PicView.PreLoading
                                 break;
                             }
 
-                            Add(i);
+                            await Add(i).ConfigureAwait(false);
                         }
                         // Add second elements behind
                         for (int i = index - 1; i > (index - 1) - extraToLoad; i--)
@@ -330,7 +340,7 @@ namespace PicView.PreLoading
                                 break;
                             }
 
-                            Add(i);
+                            await Add(i).ConfigureAwait(false);
                         }
 
                         //Clean up behind
@@ -363,7 +373,7 @@ namespace PicView.PreLoading
                                 break;
                             }
 
-                            Add(i);
+                            await Add(i).ConfigureAwait(false);
                         }
                         // Add second elements
                         for (int i = index + 1; i <= (index + 1) + toLoad; i++)
@@ -373,7 +383,7 @@ namespace PicView.PreLoading
                                 break;
                             }
 
-                            Add(i);
+                            await Add(i).ConfigureAwait(false);
                         }
 
                         //Clean up infront
@@ -406,12 +416,12 @@ namespace PicView.PreLoading
                         // Add first elements
                         for (int i = index + 1; i < (index + 1) + toLoad; i++)
                         {
-                            Add(i % Pics.Count);
+                            await Add(i % Pics.Count).ConfigureAwait(false);
                         }
                         // Add second elements behind
                         for (int i = index - 1; i > (index - 1) - extraToLoad; i--)
                         {
-                            Add(i % Pics.Count);
+                            await Add(i % Pics.Count).ConfigureAwait(false);
                         }
 
                         //Clean up behind
@@ -435,17 +445,17 @@ namespace PicView.PreLoading
                             {
                                 for (int x = Pics.Count - 1; x >= Pics.Count - y; x--)
                                 {
-                                    Add(x);
+                                    await Add(x).ConfigureAwait(false);
                                 }
                                 break;
                             }
-                            Add(i);
+                            await Add(i).ConfigureAwait(false);
                         }
 
                         // Add second elements
                         for (int i = index + 1; i <= (index + 1) + toLoad; i++)
                         {
-                            Add(i % Pics.Count);
+                            await Add(i % Pics.Count).ConfigureAwait(false);
                         }
 
                         //Clean up infront

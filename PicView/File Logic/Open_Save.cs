@@ -20,7 +20,6 @@ namespace PicView
         {
             if (!File.Exists(Pics[FolderIndex]) || mainWindow.img.Source == null)
             {
-                ShowTooltipMessage("Error, File does not exist, or something went wrong...");
                 return;
             }
             try
@@ -95,7 +94,7 @@ namespace PicView
         /// </summary>
         internal static void SaveFiles()
         {
-            IsDialogOpen = true;
+            if (string.IsNullOrEmpty(Pics[FolderIndex])) return;
 
             var Savedlg = new SaveFileDialog()
             {
@@ -104,26 +103,23 @@ namespace PicView
                 FileName = Path.GetFileName(Pics[FolderIndex])
             };
 
-            if (!string.IsNullOrEmpty(Pics[FolderIndex]))
-            {
-                if (Savedlg.ShowDialog().Value)
-                {
-                    if (!TrySaveImage(Rotateint, Flipped, Pics[FolderIndex], Savedlg.FileName))
-                    {
-                        ShowTooltipMessage("Error, File didn't get saved");
-                    }
-                }
-                else
-                {
-                    return;
-                }
+            if (!Savedlg.ShowDialog().Value) return;
 
+            IsDialogOpen = true;
+
+            if (!TrySaveImage(Rotateint, Flipped, Pics[FolderIndex], Savedlg.FileName))
+            {
+                ShowTooltipMessage("Saving file failed");
+            }
+
+            else if (Savedlg.FileName == Pics[FolderIndex])
+            {
                 //Refresh the list of pictures.
                 Reload();
-
-                Close_UserControls();
-                IsDialogOpen = false;
             }
+
+            Close_UserControls();
+            IsDialogOpen = false;
         }
     }
 }

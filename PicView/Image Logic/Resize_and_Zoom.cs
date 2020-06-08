@@ -486,7 +486,7 @@ namespace PicView
                 if (AutoFit)
                 {
                     /// Calculate to screen size
-                    AspectRatio = Math.Min(monitorWidth / height, monitorHeight / width);
+                    AspectRatio = Math.Min(maxWidth / height, maxHeight / width);
                 }
                 else
                 {

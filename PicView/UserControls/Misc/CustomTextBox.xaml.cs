@@ -14,6 +14,6 @@ namespace PicView.UserControls
 
         public string Text { get { return Bar.Text; } set { Bar.Text = value; } }
 
-        public bool IsFocused { get { return Bar.IsFocused; } }
+        public new bool IsFocused { get { return Bar.IsFocused; } }
     }
 }

@@ -107,11 +107,7 @@ namespace PicView
                         // If from same folder
                         if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]) && Path.GetDirectoryName(x) == Path.GetDirectoryName(Pics[FolderIndex]))
                         {
-                            if (!Preloader.Contains(x))
-                            {
-                                PreloadCount = 4;
-                                Preloader.Add(x);
-                            }
+
 
                             Pic(Pics.IndexOf(x));
                         }
