@@ -167,7 +167,7 @@ namespace PicView.Windows
                 SetFit.PreviewMouseLeftButtonDown += SetFit_PreviewMouseLeftButtonDown;
                 SetFit.MouseEnter += SetFit_MouseEnter;
                 SetFit.MouseLeave += SetFit_MouseLeave;
-                SetFit.IsChecked = Properties.Settings.Default.AutoFit;
+                SetFit.IsChecked = Properties.Settings.Default.WindowBehaviour;
 
                 // Fill
                 Fill.PreviewMouseLeftButtonDown += Fill_PreviewMouseLeftButtonDown;

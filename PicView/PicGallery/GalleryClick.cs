@@ -9,6 +9,7 @@ using static PicView.Fields;
 using static PicView.GalleryFunctions;
 using static PicView.ImageDecoder;
 using static PicView.Navigation;
+using static PicView.ScaleImage;
 using static PicView.Thumbnails;
 using static PicView.UC;
 
@@ -117,7 +118,7 @@ namespace PicView
             var size = ImageSize(Pics[id]);
             if (size.HasValue)
             {
-                Resize_and_Zoom.ZoomFit(size.Value.Width, size.Value.Height);
+                FitImage(size.Value.Width, size.Value.Height);
             }
         }
 

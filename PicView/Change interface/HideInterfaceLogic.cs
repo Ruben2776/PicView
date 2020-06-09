@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using static PicView.FadeControls;
 using static PicView.Fields;
-using static PicView.Resize_and_Zoom;
+using static PicView.ScaleImage;
 using static PicView.UC;
 
 namespace PicView
@@ -31,7 +31,7 @@ namespace PicView
                 ShowStandardInterface();
             }
 
-            TryZoomFit();
+            TryFitImage();
 
             Close_UserControls();
         }

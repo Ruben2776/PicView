@@ -2,7 +2,7 @@
 using System.Text;
 using static PicView.Fields;
 using static PicView.FileFunctions;
-using static PicView.Resize_and_Zoom;
+using static PicView.Pan_and_Zoom;
 
 namespace PicView
 {

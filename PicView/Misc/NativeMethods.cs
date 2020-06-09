@@ -115,7 +115,7 @@ namespace PicView
                 {
 
                     // your stuff to do
-                    Resize_and_Zoom.TryZoomFit();
+                    ScaleImage.TryFitImage();
 
                     // 'set it back to false for the next resize/move
                     WindowWasResized = false;

@@ -345,16 +345,16 @@ namespace PicView
             var fitcmHeader = new CheckBox
             {
                 Content = "Fit to window/image",
-                IsChecked = Properties.Settings.Default.AutoFit,
+                IsChecked = Properties.Settings.Default.WindowBehaviour,
                 FontSize = 13,
                 MinWidth = 125,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Width = double.NaN,
                 Height = double.NaN
             };
-            fitcmHeader.Click += delegate { WindowLogic.AutoFit = WindowLogic.AutoFit ? false : true; };
+            fitcmHeader.Click += delegate { WindowLogic.SetWindowBehaviour = WindowLogic.SetWindowBehaviour ? false : true; };
             fitcm.Header = fitcmHeader;
-            fitcm.Click += delegate { WindowLogic.AutoFit = WindowLogic.AutoFit ? false : true; };
+            fitcm.Click += delegate { WindowLogic.SetWindowBehaviour = WindowLogic.SetWindowBehaviour ? false : true; };
             settingscm.Items.Add(fitcm);
 
             ///////////////////////////

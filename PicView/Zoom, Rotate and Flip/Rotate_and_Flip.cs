@@ -19,7 +19,7 @@ namespace PicView
 
             var rt = new RotateTransform { Angle = Rotateint = r };
 
-            Resize_and_Zoom.TryZoomFit();
+            ScaleImage.TryFitImage();
 
             // If it's flipped, keep it flipped when rotating
             if (Flipped)

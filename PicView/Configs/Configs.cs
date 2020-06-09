@@ -129,12 +129,20 @@ namespace PicView
             {
                 IsScrollEnabled = false;
                 scrollcmHeader.IsChecked = false;
+                UC.quickSettingsMenu.ToggleScroll.IsChecked = false;
             }
             else
             {
                 IsScrollEnabled = true;
                 scrollcmHeader.IsChecked = true;
+                UC.quickSettingsMenu.ToggleScroll.IsChecked = true;
             }
+        }
+
+        internal static void SetScrolling(bool value)
+        {
+            Properties.Settings.Default.ScrollEnabled = value;
+            SetScrolling(null, null);
         }
 
         internal static void SetLooping(object sender, RoutedEventArgs e)
@@ -155,6 +163,43 @@ namespace PicView
                 loopcmHeader.IsChecked = true;
                 ShowTooltipMessage("Looping enabled");
             }
+        }
+
+        internal static void SetAutoFit(object sender, RoutedEventArgs e)
+        {
+            SetScalingBehaviour(!Properties.Settings.Default.WindowBehaviour, Properties.Settings.Default.FillImage);
+        }
+
+        internal static void SetAutoFill(object sender, RoutedEventArgs e)
+        {
+            SetScalingBehaviour(Properties.Settings.Default.WindowBehaviour, !Properties.Settings.Default.FillImage);
+        }
+
+        internal static void SetScalingBehaviour(bool windowBehaviour, bool fill)
+        {
+            if (windowBehaviour)
+            {
+                WindowLogic.SetWindowBehaviour = true;
+                UC.quickSettingsMenu.SetFit.IsChecked = true;
+            }
+            else
+            {
+                WindowLogic.SetWindowBehaviour = false;
+                UC.quickSettingsMenu.SetFit.IsChecked = false;
+            }
+
+            if (fill)
+            {
+                Properties.Settings.Default.FillImage = true;
+                UC.quickSettingsMenu.ToggleFill.IsChecked = true;
+            }
+            else
+            {
+                Properties.Settings.Default.FillImage = false;
+                UC.quickSettingsMenu.ToggleFill.IsChecked = false;
+            }
+
+            ScaleImage.TryFitImage();
         }
 
         internal static void SetBorderColorEnabled(object sender, RoutedEventArgs e)

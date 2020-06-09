@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static PicView.Fields;
-using static PicView.Resize_and_Zoom;
+using static PicView.ScaleImage;
 using static PicView.Tooltip;
 using static PicView.UC;
 
@@ -23,7 +23,7 @@ namespace PicView
                 mainWindow.Scroller.VerticalScrollBarVisibility = value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
                 if (Pics != null)
                 {
-                    TryZoomFit();
+                    TryFitImage();
                     ShowTooltipMessage(value ? "Scrolling enabled" : "Scrolling disabled");
                 }
             }

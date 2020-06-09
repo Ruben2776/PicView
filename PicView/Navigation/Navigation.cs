@@ -10,13 +10,13 @@ using static PicView.Error_Handling;
 using static PicView.Fields;
 using static PicView.FileLists;
 using static PicView.ImageDecoder;
-using static PicView.Resize_and_Zoom;
+using static PicView.ScaleImage;
 using static PicView.Scroll;
 using static PicView.SetTitle;
 using static PicView.Thumbnails;
 using static PicView.Tooltip;
-using static PicView.Utilities;
 using static PicView.UC;
+using static PicView.Utilities;
 
 namespace PicView
 {
@@ -192,7 +192,7 @@ namespace PicView
 #if DEBUG
                     Trace.WriteLine("Pic(int x) loading new pic manually");
 #endif
-                    TryZoomFit(Pics[x]);
+                    TryFitImage(Pics[x]);
 
                     // Load new value manually
                     pic = await RenderToBitmapSource(Pics[x]).ConfigureAwait(true);
@@ -234,7 +234,7 @@ namespace PicView
             // Show the image! :)
             mainWindow.img.Source = pic;
 
-            ZoomFit(pic.PixelWidth, pic.PixelHeight);
+            FitImage(pic.PixelWidth, pic.PixelHeight);
 
             // Scroll to top if scroll enabled
             if (IsScrollEnabled)
@@ -294,7 +294,7 @@ namespace PicView
 
             mainWindow.img.Source = pic;
 
-            ZoomFit(pic.PixelWidth, pic.PixelHeight);
+            FitImage(pic.PixelWidth, pic.PixelHeight);
             CloseToolTipMessage();
 
             SetTitleString(pic.PixelWidth, pic.PixelHeight, imageName);
@@ -322,7 +322,7 @@ namespace PicView
 
             mainWindow.img.Source = pic;
 
-            ZoomFit(pic.PixelWidth, pic.PixelHeight);
+            FitImage(pic.PixelWidth, pic.PixelHeight);
             CloseToolTipMessage();
 
             SetTitleString(pic.PixelWidth, pic.PixelHeight, "Base64 image");

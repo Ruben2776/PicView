@@ -11,7 +11,7 @@ using static PicView.Error_Handling;
 using static PicView.Fields;
 using static PicView.LoadControls;
 using static PicView.Navigation;
-using static PicView.Resize_and_Zoom;
+using static PicView.Pan_and_Zoom;
 using static PicView.Scroll;
 using static PicView.Timers;
 using static PicView.Utilities;
@@ -59,10 +59,10 @@ namespace PicView
             Trace.WriteLine("ContentRendered started");
 #endif
             MonitorInfo = MonitorSize.GetMonitorSize();
-            AutoFit = Properties.Settings.Default.AutoFit;
+            SetWindowBehaviour = Properties.Settings.Default.WindowBehaviour;
 
             // If normal window style
-            if (!AutoFit)
+            if (!SetWindowBehaviour)
             {
                 if (Properties.Settings.Default.Width != 0)
                 {

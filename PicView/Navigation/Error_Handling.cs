@@ -10,7 +10,7 @@ using static PicView.Fields;
 using static PicView.FileLists;
 using static PicView.ImageDecoder;
 using static PicView.Navigation;
-using static PicView.Resize_and_Zoom;
+using static PicView.Pan_and_Zoom;
 using static PicView.Rotate_and_Flip;
 using static PicView.Tooltip;
 using static PicView.UC;

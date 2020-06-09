@@ -5,9 +5,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using static PicView.Fields;
 using static PicView.HideInterfaceLogic;
-using static PicView.Resize_and_Zoom;
 using static PicView.UC;
 using static PicView.Utilities;
+using static PicView.ScaleImage;
 
 namespace PicView
 {
@@ -18,15 +18,15 @@ namespace PicView
         /// <summary>
         /// Set whether to fit window to image or image to window
         /// </summary>
-        internal static bool AutoFit
+        internal static bool SetWindowBehaviour
         {
             get
             {
-                return Properties.Settings.Default.AutoFit;
+                return Properties.Settings.Default.WindowBehaviour;
             }
             set
             {
-                Properties.Settings.Default.AutoFit = value;
+                Properties.Settings.Default.WindowBehaviour = value;
 
                 if (value)
                 {
@@ -35,8 +35,7 @@ namespace PicView
 
                     if (quickSettingsMenu != null)
                     {
-                        quickSettingsMenu.SetFit.IsChecked = true;
-                        quickSettingsMenu.SetCenter.IsChecked = false;
+                        quickSettingsMenu.SetFit.IsChecked = value;
                     }
 
                     mainWindow.WindowState = WindowState.Normal;
@@ -49,13 +48,12 @@ namespace PicView
 
                     if (quickSettingsMenu != null)
                     {
-                        quickSettingsMenu.SetCenter.IsChecked = true;
-                        quickSettingsMenu.SetFit.IsChecked = false;
+                        quickSettingsMenu.SetFit.IsChecked = value;
                     }
                 }
 
                 // Resize it
-                TryZoomFit();
+                TryFitImage();
             }
         }
 
@@ -109,7 +107,7 @@ namespace PicView
                 return;
             }
 
-            if (!Properties.Settings.Default.ShowInterface && !AutoFit && e.LeftButton == MouseButtonState.Pressed)
+            if (!Properties.Settings.Default.ShowInterface && !SetWindowBehaviour && e.LeftButton == MouseButtonState.Pressed)
             {
                 mainWindow.DragMove();
             }
@@ -157,7 +155,7 @@ namespace PicView
         internal static void Maximize()
         {
             // Update new setting and sizing
-            AutoFit = false;
+            SetWindowBehaviour = false;
             Properties.Settings.Default.Maximized = true;
 
             // Tell Windows that it's maximized
@@ -169,7 +167,7 @@ namespace PicView
         internal static void Restore()
         {
             // Update new setting and sizing
-            AutoFit = true;
+            SetWindowBehaviour = true;
             Properties.Settings.Default.Maximized = false;
 
             // Tell Windows that it's normal
@@ -177,7 +175,7 @@ namespace PicView
             SystemCommands.RestoreWindow(mainWindow);
             mainWindow.LowerBar.Height = 35; // Set it back
 
-            if (!Properties.Settings.Default.AutoFit)
+            if (!Properties.Settings.Default.WindowBehaviour)
             {
                 if (Properties.Settings.Default.Width != 0)
                 {
@@ -202,7 +200,7 @@ namespace PicView
         {
             if (startup || !Properties.Settings.Default.Fullscreen)
             {
-                if (!AutoFit)
+                if (!SetWindowBehaviour)
                 {
                     Properties.Settings.Default.Save();
                 }
@@ -244,7 +242,7 @@ namespace PicView
                     ShowShortcuts(true);
                 }
 
-                if (AutoFit)
+                if (SetWindowBehaviour)
                 {
                     mainWindow.SizeToContent = SizeToContent.WidthAndHeight;
                     mainWindow.ResizeMode = ResizeMode.NoResize;
@@ -268,7 +266,7 @@ namespace PicView
 
                     if (quickSettingsMenu != null)
                     {
-                        quickSettingsMenu.SetCenter.IsChecked = true;
+                        quickSettingsMenu.SetFit.IsChecked = false;
                     }
 
                     mainWindow.Top = Properties.Settings.Default.Top;
@@ -279,7 +277,7 @@ namespace PicView
                     mainWindow.bg.Width = double.NaN;
                     mainWindow.bg.Height = double.NaN;
 
-                    TryZoomFit();
+                    TryFitImage();
                 }
 
                 UpdateColor(); // Regain border              

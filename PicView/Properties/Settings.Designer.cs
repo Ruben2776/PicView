@@ -290,12 +290,24 @@ namespace PicView.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AutoFit {
+        public bool WindowBehaviour {
             get {
-                return ((bool)(this["AutoFit"]));
+                return ((bool)(this["WindowBehaviour"]));
             }
             set {
-                this["AutoFit"] = value;
+                this["WindowBehaviour"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool FillImage {
+            get {
+                return ((bool)(this["FillImage"]));
+            }
+            set {
+                this["FillImage"] = value;
             }
         }
         

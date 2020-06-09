@@ -12,8 +12,9 @@ using static PicView.LoadWindows;
 using static PicView.MouseOverAnimations;
 using static PicView.Navigation;
 using static PicView.Open_Save;
-using static PicView.Resize_and_Zoom;
+using static PicView.Pan_and_Zoom;
 using static PicView.Rotate_and_Flip;
+using static PicView.ScaleImage;
 using static PicView.Scroll;
 using static PicView.Shortcuts;
 using static PicView.UC;
@@ -85,16 +86,6 @@ namespace PicView
                 ToggleGallery.OpenFullscreenGallery();
             };
             imageSettingsMenu.SlideshowButton.Click += delegate { SlideShow.StartSlideshow(); };
-
-
-            // Quick settings menu
-            quickSettingsMenu.ToggleScroll.Checked += (s, x) => IsScrollEnabled = true;
-            quickSettingsMenu.ToggleScroll.Unchecked += (s, x) => IsScrollEnabled = false;
-            quickSettingsMenu.ToggleScroll.Click += Toggle_quick_settings_menu;
-
-            quickSettingsMenu.SetFit.Click += (s, x) => { AutoFit = true; };
-            quickSettingsMenu.SetCenter.Click += (s, x) => { AutoFit = false; };
-            quickSettingsMenu.SettingsButton.Click += (s, x) => AllSettingsWindow();
 
             // LeftButton
             mainWindow.LeftButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.LeftArrowFill);
@@ -209,7 +200,7 @@ namespace PicView
             switch (mainWindow.WindowState)
             {
                 case WindowState.Maximized:
-                    AutoFit = false;
+                    SetWindowBehaviour = false;
                     break;
                 case WindowState.Normal:
                     break;
@@ -223,7 +214,7 @@ namespace PicView
             // Update size when screen resulution changes
 
             MonitorInfo = MonitorSize.GetMonitorSize();
-            TryZoomFit();
+            TryFitImage();
         }
 
         #endregion Changed Events
@@ -243,7 +234,7 @@ namespace PicView
 
             mainWindow.Hide(); // Make it feel faster
 
-            if (!Properties.Settings.Default.AutoFit && !Properties.Settings.Default.Fullscreen)
+            if (!Properties.Settings.Default.WindowBehaviour && !Properties.Settings.Default.Fullscreen)
             {
                 Properties.Settings.Default.Top = mainWindow.Top;
                 Properties.Settings.Default.Left = mainWindow.Left;
