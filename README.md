@@ -29,8 +29,8 @@ Feedback and questions are always appreciated. Create an issue or take a look at
 
 
 <h2>Configurable Interface Design</h2>
-<img src="/.github/Screenshot%20(29)-min.png" align="left" width="455"/>
-<img src="/.github/Annotation%202020-06-09%20102711.png" align="right" width="415"/>
+<img src="/.github/Screenshot%20(29)-min.png" align="left" width="450"/>
+<img src="/.github/Annotation%202020-06-09%20102711.png" align="right" width="420"/>
 
 <br>
 
