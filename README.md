@@ -32,7 +32,7 @@ Feedback and questions are always appreciated. Create an issue or take a look at
 <img src="/.github/Screenshot%20(29)-min.png" align="left" width="430"/>
 <img src="/.github/Annotation%202020-06-09%20102711.png" align="right" width="425"/>
 
-
+<br>
  > Press `Alt + Z` to toggle interfaces
 
 ## Fullscreen Image Gallery:
