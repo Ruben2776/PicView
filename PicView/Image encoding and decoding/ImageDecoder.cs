@@ -43,18 +43,16 @@ namespace PicView
 
                         try
                         {
-                            using (var memStream = new MemoryStream())
-                            {
-                                await filestream.CopyToAsync(memStream).ConfigureAwait(true);
-                                memStream.Seek(0, SeekOrigin.Begin);
+                            using var memStream = new MemoryStream();
+                            await filestream.CopyToAsync(memStream).ConfigureAwait(false);
+                            memStream.Seek(0, SeekOrigin.Begin);
 
-                                var sKBitmap = SKBitmap.Decode(memStream);
-                                if (sKBitmap == null) { return null; }
+                            var sKBitmap = SKBitmap.Decode(memStream);
+                            if (sKBitmap == null) { return null; }
 
-                                var pic = sKBitmap.ToWriteableBitmap();
-                                pic.Freeze();
-                                return pic;
-                            }
+                            var pic = sKBitmap.ToWriteableBitmap();
+                            pic.Freeze();
+                            return pic;
 
                         }
                         catch (Exception e)

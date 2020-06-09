@@ -1,6 +1,7 @@
 ﻿using PicView.PreLoading;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -22,7 +23,7 @@ namespace PicView
 {
     internal static class Navigation
     {
-        #region Update Pic
+        #region Update Image values
         /// <summary>
         /// Loads a picture from a given file path and does extra error checking
         /// </summary>
@@ -118,6 +119,8 @@ namespace PicView
             // Navigate to picture using obtained index
             Pic(FolderIndex);
 
+            quickSettingsMenu.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
+
             AjaxLoadingEnd();
 
             if (Pics.Count > 1)
@@ -205,7 +208,7 @@ namespace PicView
                     {
                         // Try again while loading                                             
                         pic = Preloader.Load(Pics[x]);
-                        await Task.Delay(50).ConfigureAwait(true);
+                        await Task.Delay(15).ConfigureAwait(true);
                     } while (Preloader.IsLoading);
 
                     AjaxLoadingEnd();
@@ -334,7 +337,7 @@ namespace PicView
 
         #endregion
 
-        #region Change Image
+        #region Change navigation values 
 
         /// <summary>
         /// Goes to next, previous, first or last file in folder
@@ -572,7 +575,6 @@ namespace PicView
                 return;
             }
 
-            //fastPicTimer.Stop();
             FastPicRunning = false;
 
             if (!Preloader.Contains(Pics[FolderIndex]))

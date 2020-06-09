@@ -7,7 +7,7 @@
     <StackPanel>
         <Border
             Width="432"
-            Height="200"
+            Height="168"
             Background="{StaticResource NoisyBg}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="2"
@@ -174,17 +174,10 @@
                     Canvas.Left="377"
                     ToolTip="Close" />
 
-
-                <Label
-                    Canvas.Left="163"
-                    Canvas.Top="56"
-                    Content="Qucik Settings"
-                    Foreground="{StaticResource MainColorBrush}" />
-
                 <CheckBox
                     x:Name="SetFit"
                     Canvas.Left="8"
-                    Canvas.Top="91"
+                    Canvas.Top="61"
                     Width="135"
                     Height="40"
                     BorderThickness="1"
@@ -199,7 +192,7 @@
                 <CheckBox
                     x:Name="ToggleFill"
                     Canvas.Left="148"
-                    Canvas.Top="91"
+                    Canvas.Top="61"
                     Width="135"
                     Height="40"
                     Content="Fill image height"
@@ -213,7 +206,7 @@
                 <CheckBox
                     x:Name="ToggleScroll"
                     Canvas.Left="289"
-                    Canvas.Top="91"
+                    Canvas.Top="61"
                     Width="135"
                     Height="40"
                     Content="Toggle Scroll"
@@ -227,7 +220,7 @@
                 <CheckBox
                     x:Name="ToggleLooping"
                     Canvas.Left="8"
-                    Canvas.Top="141"
+                    Canvas.Top="112"
                     Width="135"
                     Height="40"
                     Content="Toggle looping"
@@ -238,18 +231,41 @@
                     </CheckBox.Background>
                 </CheckBox>
 
+
                 <Button
                     x:Name="GoToPic"
                     Canvas.Left="148"
-                    Canvas.Top="141"
+                    Canvas.Top="112"
                     Width="135"
                     Height="40"
-                    Content="Go to..."
                     Style="{StaticResource MetroAlphaFlatButton}"
                     ToolTip="Go to image at specified index [Not Implemented]">
                     <Button.Background>
                         <SolidColorBrush x:Name="GoToPicBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Button.Background>
+                    <Button.Content>
+                        <Canvas>
+                            <Label Canvas.Left="-58" Canvas.Top="-13">Go to...</Label>
+                            <TextBox
+                                x:Name="GoToPicBox"
+                                Canvas.Left="-2"
+                                Canvas.Top="-10"
+                                Width="42"
+                                Height="18"
+                                Panel.ZIndex="1"
+                                AcceptsTab="False"
+                                Background="{StaticResource BackgroundColorBrushAlt}"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1"
+                                CaretBrush="{StaticResource MainColorBrush}"
+                                FontFamily="TeX Gyre Heros"
+                                FontSize="14"
+                                Foreground="{StaticResource MainColorBrush}"
+                                IsTabStop="False"
+                                Text="42"
+                                TextAlignment="Center" />
+                        </Canvas>
+                    </Button.Content>
                 </Button>
 
             </Canvas>

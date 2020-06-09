@@ -86,40 +86,27 @@ namespace PicView
         /// <param name="Recyclebin"></param>
         internal static void DeleteFile(string file, bool Recyclebin)
         {
-            if (TryDeleteFile(file, Recyclebin))
+            if (!TryDeleteFile(file, Recyclebin))
             {
-                var filename = Path.GetFileName(file);
-                Pics.Remove(filename);
-
-                filename = filename.Length >= 25 ? Shorten(filename, 21) : filename;
-                ShowTooltipMessage(Recyclebin ? "Sent " + filename + " to the recyle bin" : "Deleted " + filename);
-
-                if (Pics.Count == 0)
-                {
-                    Unload();
-                    return;
-                }
-
-                PreloadCount = Reverse ? PreloadCount - 1 : PreloadCount + 1;
-
-                // Go to next image
-                if (!Reverse)
-                {
-                    Pic(FolderIndex);
-                }
-                else if (FolderIndex - 2 >= 0)
-                {
-                    Pic(FolderIndex - 2);
-                }
-                else
-                {
-                    Unload();
-                }
+                ShowTooltipMessage("An error occured when deleting \n" + file);
+                return;
             }
-            else
+
+            var filename = Path.GetFileName(file);
+
+            filename = filename.Length >= 25 ? Shorten(filename, 21) : filename;
+            ShowTooltipMessage(Recyclebin ? "Sent " + filename + " to the recyle bin" : "Deleted " + filename);
+
+            if (Pics.Count <= 0)
             {
-                ShowTooltipMessage("An error occured when deleting " + file);
+                Unload();
+                return;
             }
+
+            PreloadCount = Reverse ? PreloadCount - 1 : PreloadCount + 1;
+
+            Pic(Reverse);
+
         }
     }
 }

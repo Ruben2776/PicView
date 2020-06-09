@@ -397,24 +397,28 @@ namespace PicView
 
                     // 1
                     case Key.D1:
+                        if (QuickSettingsMenuOpen) { break; }
                         Tooltip.ShowTooltipMessage("Set to center image in window");
                         Configs.SetScalingBehaviour(false, false);
                         break;
 
                     // 2
                     case Key.D2:
+                        if (QuickSettingsMenuOpen) { break; }
                         Tooltip.ShowTooltipMessage("Center image in window, fill height");
                         Configs.SetScalingBehaviour(false, true);
                         break;
 
                     // 3
                     case Key.D3:
+                        if (QuickSettingsMenuOpen) { break; }
                         Tooltip.ShowTooltipMessage("Center application to window");
                         Configs.SetScalingBehaviour(true, false);
                         break;
 
                     // 4
                     case Key.D4:
+                        if (QuickSettingsMenuOpen) { break; }
                         Tooltip.ShowTooltipMessage("Center application to window, fill height");
                         Configs.SetScalingBehaviour(true, true);
                         break;

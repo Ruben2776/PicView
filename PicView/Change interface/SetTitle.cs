@@ -18,7 +18,7 @@ namespace PicView
         /// <returns></returns>
         internal static string[] TitleString(int width, int height, int index)
         {
-            var s1 = new StringBuilder();
+            var s1 = new StringBuilder(90);
             s1.Append(Path.GetFileName(Pics[index])).Append(" ").Append(index + 1).Append("/").Append(Pics.Count).Append(" files")
                     .Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height)).Append(GetSizeReadable(new FileInfo(Pics[index]).Length));
 

@@ -1,5 +1,9 @@
 ﻿using System.Windows.Controls;
+using System.Windows.Media;
+using static PicView.Fields;
+using static PicView.GoToLogic;
 using static PicView.MouseOverAnimations;
+using static PicView.UC;
 
 namespace PicView.UserControls
 {
@@ -14,21 +18,21 @@ namespace PicView.UserControls
 
             ToggleScroll.IsChecked = Properties.Settings.Default.ScrollEnabled;
             ToggleScroll.Click += (s, x) => Configs.SetScrolling(Properties.Settings.Default.ScrollEnabled);
-            
+
             SettingsButton.Click += (s, x) => LoadWindows.AllSettingsWindow();
 
             ZoomButton.Click += delegate {
-                UC.Close_UserControls();
+                Close_UserControls();
                 Pan_and_Zoom.ResetZoom();
             };
 
             SettingsButton.Click += delegate {
-                UC.Close_UserControls();
+                Close_UserControls();
                 LoadWindows.AllSettingsWindow();
             };
 
             InfoButton.Click += delegate {
-                UC.Close_UserControls();
+                Close_UserControls();
                 LoadWindows.HelpWindow();
             };
 
@@ -40,6 +44,12 @@ namespace PicView.UserControls
 
             SetFit.IsChecked = Properties.Settings.Default.WindowBehaviour;
             SetFit.Click += Configs.SetAutoFit;
+
+            GoToPic.Click += GoToPicEvent;
+            GoToPicBox.PreviewMouseLeftButtonDown += delegate {
+                GoToPicBox.CaretBrush = new SolidColorBrush(mainColor);
+            };
+            GoToPicBox.PreviewKeyDown += GotoPicsShortcuts.GoToPicPreviewKeys;
 
             #region Animation events
 
@@ -87,7 +97,7 @@ namespace PicView.UserControls
             ToggleFill.MouseEnter += (s, x) => ButtonMouseOverAnim(ToggleFillBrush, true);
             ToggleFill.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ToggleFillBrush, false);
 
-            // Fit
+            // GoToPic
             GoToPic.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(GoToPicBrush);
             GoToPic.MouseEnter += (s, x) => ButtonMouseOverAnim(GoToPicBrush, true);
             GoToPic.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(GoToPicBrush, false);

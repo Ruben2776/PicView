@@ -4,7 +4,6 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using static PicView.Fields;
-using static PicView.FileLists;
 
 namespace PicView.PreLoading
 {
@@ -88,9 +87,9 @@ namespace PicView.PreLoading
 
             IsLoading = true;
 
-            //#if DEBUG
-            //System.Threading.Thread.Sleep(5000);
-            //#endif
+//#if DEBUG
+//            System.Threading.Thread.Sleep(1000);
+//#endif
 
             if (File.Exists(Pics[i]))
             {
