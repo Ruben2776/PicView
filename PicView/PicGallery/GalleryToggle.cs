@@ -12,7 +12,7 @@ using static PicView.WindowLogic;
 
 namespace PicView
 {
-    internal static class ToggleGallery
+    internal static class GalleryToggle
     {
         #region Toggle 
 
@@ -108,11 +108,6 @@ namespace PicView
 
         internal static void OpenFullscreenGallery()
         {
-            if (Pics.Count < 1)
-            {
-                return;
-            }
-
             Properties.Settings.Default.PicGallery = 2;
             LoadLayout();
 
@@ -132,8 +127,6 @@ namespace PicView
                 mainWindow.bg.Children.Remove(picGallery);
                 fakeWindow.grid.Children.Add(picGallery);
             }
-
-            
 
             fakeWindow.Show();
             ScrollTo();

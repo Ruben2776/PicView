@@ -79,11 +79,11 @@ namespace PicView
 
             imageSettingsMenu.Contained_Gallery.Click += delegate {
                 Close_UserControls();
-                ToggleGallery.OpenContainedGallery();
+                GalleryToggle.OpenContainedGallery();
             };
             imageSettingsMenu.Fullscreen_Gallery.Click += delegate {
                 Close_UserControls();
-                ToggleGallery.OpenFullscreenGallery();
+                GalleryToggle.OpenFullscreenGallery();
             };
             imageSettingsMenu.SlideshowButton.Click += delegate { SlideShow.StartSlideshow(); };
 
@@ -139,13 +139,13 @@ namespace PicView
             minus.MouseEnter += Interface_MouseEnter_Negative;
 
             // GalleryShortcut
-            galleryShortcut.MouseLeftButtonDown += (s, x) => ToggleGallery.Toggle();
+            galleryShortcut.MouseLeftButtonDown += (s, x) => GalleryToggle.Toggle();
             galleryShortcut.MouseEnter += Interface_MouseEnter_Negative;
 
             // Bar
             mainWindow.Bar.MouseLeftButtonDown += Move;
             mainWindow.Bar.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
-            mainWindow.Bar.Bar.PreviewKeyDown += CustomTextBox_KeyDown;
+            mainWindow.Bar.Bar.PreviewKeyDown += CustomTextBoxShortcuts.CustomTextBox_KeyDown; 
             mainWindow.Bar.PreviewMouseLeftButtonDown += EditTitleBar.Bar_PreviewMouseLeftButtonDown;
 
             // img
@@ -234,7 +234,7 @@ namespace PicView
 
             mainWindow.Hide(); // Make it feel faster
 
-            if (!Properties.Settings.Default.WindowBehaviour && !Properties.Settings.Default.Fullscreen)
+            if (!Properties.Settings.Default.AutoFitWindow && !Properties.Settings.Default.Fullscreen)
             {
                 Properties.Settings.Default.Top = mainWindow.Top;
                 Properties.Settings.Default.Left = mainWindow.Left;

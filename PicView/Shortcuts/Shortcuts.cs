@@ -11,7 +11,7 @@ using static PicView.Open_Save;
 using static PicView.Pan_and_Zoom;
 using static PicView.Rotate_and_Flip;
 using static PicView.Scroll;
-using static PicView.ToggleGallery;
+using static PicView.GalleryToggle;
 using static PicView.UC;
 using static PicView.Utilities;
 using static PicView.WindowLogic;
@@ -24,6 +24,10 @@ namespace PicView
         {
             // Don't allow keys when typing in text
             if (mainWindow.Bar.IsKeyboardFocusWithin) { return; }
+
+            var ctrlDown = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
+            var altDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
+            var shiftDown = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
 
             #region Keys where it can be held down
 
@@ -45,7 +49,7 @@ namespace PicView
                     if (!e.IsRepeat)
                     {
                         // Go to first if Ctrl held down
-                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        if (ctrlDown)
                         {
                             Pic(true, true);
                         }
@@ -60,7 +64,6 @@ namespace PicView
                     }
                     return;
 
-                // Prev
                 case Key.BrowserBack:
                 case Key.Left:
                 case Key.A:
@@ -77,7 +80,7 @@ namespace PicView
                     if (!e.IsRepeat)
                     {
                         // Go to last if Ctrl held down
-                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        if (ctrlDown)
                         {
                             Pic(false, true);
                         }
@@ -92,13 +95,12 @@ namespace PicView
                     }
                     return;
 
-                // Scroll
                 case Key.PageUp:
                     if (picGallery != null)
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            ScrollTo(true, ctrlDown);
                             return;
                         }
                     }
@@ -125,12 +127,11 @@ namespace PicView
 
                     return;
 
-                // Rotate or Scroll
                 case Key.Up:
                 case Key.W:
                     if (Properties.Settings.Default.ScrollEnabled && mainWindow.Scroller.ScrollableHeight > 0)
                     {
-                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        if (ctrlDown)
                         {
                             return;
                         }
@@ -143,14 +144,26 @@ namespace PicView
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            if (Properties.Settings.Default.PicGallery == 1)
+                            {
+                                ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                                return;
+                            }
+                            if (ctrlDown) 
+                            {
+                                Rotate(false);
+                            }
+                            else
+                            {
+                                Pic(false);
+                            }
                         }
-                        else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
+                        else
                         {
                             Rotate(false);
                         }
                     }
-                    else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
+                    else
                     {
                         Rotate(false);
                     }
@@ -159,7 +172,7 @@ namespace PicView
 
                 case Key.Down:
                 case Key.S:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    if (ctrlDown && picGallery != null && !GalleryFunctions.IsOpen)
                     {
                         SaveFiles();
                     }
@@ -171,14 +184,26 @@ namespace PicView
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            ScrollTo(true, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            if (Properties.Settings.Default.PicGallery == 1)
+                            {
+                                ScrollTo(true, ctrlDown);
+                                return;
+                            }
+                            if (ctrlDown)
+                            {
+                                Rotate(true);
+                            }
+                            else
+                            {
+                                Pic();
+                            }
                         }
-                        else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
+                        else
                         {
                             Rotate(true);
                         }
                     }
-                    else if (!e.IsRepeat && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
+                    else
                     {
                         Rotate(true);
                     }
@@ -188,27 +213,12 @@ namespace PicView
                 // Zoom
                 case Key.Add:
                 case Key.OemPlus:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control || IsScrollEnabled)
-                    {
-                        Zoom(1, true);
-                    }
-                    else
-                    {
-                        Zoom(1, false);
-                    }
-
+                        Zoom(1, ctrlDown);
                     return;
 
                 case Key.Subtract:
                 case Key.OemMinus:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control || IsScrollEnabled)
-                    {
-                        Zoom(-1, true);
-                    }
-                    else
-                    {
-                        Zoom(-1, false);
-                    }
+                        Zoom(-1, ctrlDown);
                     return;
             }
 
@@ -276,7 +286,7 @@ namespace PicView
 
                     // Ctrl + Q
                     case Key.Q:
-                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        if (ctrlDown)
                         {
                             SystemCommands.CloseWindow(mainWindow);
                         }
@@ -290,7 +300,7 @@ namespace PicView
 
                     // X, Ctrl + X
                     case Key.X:
-                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        if (ctrlDown)
                         {
                             Cut(Pics[FolderIndex]);
                         }
@@ -306,18 +316,18 @@ namespace PicView
 
                     // Delete, Shift + Delete
                     case Key.Delete:
-                        DeleteFile(Pics[FolderIndex], e.KeyboardDevice.Modifiers != ModifierKeys.Shift);
+                        DeleteFile(Pics[FolderIndex], !shiftDown);
                         break;
 
                     // Ctrl + C, Ctrl + Shift + C, Ctrl + Alt + C
                     case Key.C:
-                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        if (ctrlDown)
                         {
-                            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+                            if (shiftDown)
                             {
                                 Base64.SendToClipboard();
                             }
-                            else if ((Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
+                            else if (altDown)
                             {
                                 CopyBitmap();
                             }
@@ -334,7 +344,7 @@ namespace PicView
 
                     // Ctrl + V
                     case Key.V:
-                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        if (ctrlDown)
                         {
                             Paste();
                         }
@@ -343,7 +353,7 @@ namespace PicView
 
                     // Ctrl + I
                     case Key.I:
-                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        if (ctrlDown)
                         {
                             NativeMethods.ShowFileProperties(Pics[FolderIndex]);
                         }
@@ -352,7 +362,7 @@ namespace PicView
 
                     // Ctrl + P
                     case Key.P:
-                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        if (ctrlDown)
                         {
                             Print(Pics[FolderIndex]);
                         }
@@ -361,7 +371,7 @@ namespace PicView
 
                     // Ctrl + R
                     case Key.R:
-                        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                        if (ctrlDown)
                         {
                             Reload();
                         }
@@ -397,28 +407,28 @@ namespace PicView
 
                     // 1
                     case Key.D1:
-                        if (QuickSettingsMenuOpen) { break; }
+                        if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen) { break; }
                         Tooltip.ShowTooltipMessage("Set to center image in window");
                         Configs.SetScalingBehaviour(false, false);
                         break;
 
                     // 2
                     case Key.D2:
-                        if (QuickSettingsMenuOpen) { break; }
+                        if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen) { break; }
                         Tooltip.ShowTooltipMessage("Center image in window, fill height");
                         Configs.SetScalingBehaviour(false, true);
                         break;
 
                     // 3
                     case Key.D3:
-                        if (QuickSettingsMenuOpen) { break; }
+                        if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen) { break; }
                         Tooltip.ShowTooltipMessage("Center application to window");
                         Configs.SetScalingBehaviour(true, false);
                         break;
 
                     // 4
                     case Key.D4:
-                        if (QuickSettingsMenuOpen) { break; }
+                        if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen) { break; }
                         Tooltip.ShowTooltipMessage("Center application to window, fill height");
                         Configs.SetScalingBehaviour(true, true);
                         break;
@@ -480,7 +490,7 @@ namespace PicView
 
             // Alt doesn't work in switch? Waiting for key up is confusing in this case
             // Alt + Z
-            if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.Z))
+            if (altDown && (e.SystemKey == Key.Z))
             {
                 if (!e.IsRepeat)
                 {
@@ -490,7 +500,7 @@ namespace PicView
             }
 
             // Alt + Enter
-            else if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && (e.SystemKey == Key.Enter))
+            else if (altDown && (e.SystemKey == Key.Enter))
             {
                 if (!e.IsRepeat)
                 {
@@ -554,19 +564,6 @@ namespace PicView
             }
         }
 
-        internal static void CustomTextBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Enter:
-                    EditTitleBar.HandleRename();
-                    break;
 
-                case Key.Escape:
-                    EditTitleBar.Refocus();
-                    IsDialogOpen = true; // Hack to make escape not fall through
-                    break;
-            }
-        }
     }
 }

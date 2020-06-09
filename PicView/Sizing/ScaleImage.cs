@@ -82,11 +82,10 @@ namespace PicView
 
             width -= borderSpaceWidth;
             height -= borderSpaceHeight;
-            double monitorWidth = MonitorInfo.Width - borderSpaceWidth;
-            double monitorHeight = MonitorInfo.Height - borderSpaceHeight;
+            var monitorWidth = MonitorInfo.Width - borderSpaceWidth;
+            var monitorHeight = MonitorInfo.Height - borderSpaceHeight;
 
-
-            if (Properties.Settings.Default.WindowBehaviour) // If non resizeable behaviour
+            if (Properties.Settings.Default.AutoFitWindow) // If non resizeable behaviour
             {
                 if (Properties.Settings.Default.FillImage) // Max to monitor height if scaling enabled, else go by min pixel width
                 {
@@ -95,7 +94,13 @@ namespace PicView
                 }
                 else
                 {
-                    if (showInterface)
+                    if (Properties.Settings.Default.PicGallery == 2)
+                    {
+                        padding += picGalleryItem_Size; // Fixes Math.Min returning incorrectly
+                        maxWidth = Math.Min(monitorWidth - padding, width);
+                        maxHeight = Math.Min(monitorHeight, height);
+                    }
+                    else if (showInterface)
                     {
                         /// Use padding for shown interface
                         maxWidth = Math.Min(monitorWidth - padding, (width - padding) - borderSpaceWidth);
@@ -165,22 +170,33 @@ namespace PicView
                 mainWindow.img.Height = xHeight = height * AspectRatio;
             }
 
-            if (Properties.Settings.Default.WindowBehaviour)
+            /// Update TitleBar
+            var interfaceSize = 220; // logo and buttons width + extra padding
+            if (Properties.Settings.Default.AutoFitWindow)
             {
                 /// Update mainWindow.TitleBar width to dynamically fit new size
-                var interfaceSize = 220; // logo and buttons width + extra padding
-                mainWindow.Bar.MaxWidth = xWidth - interfaceSize < interfaceSize ? interfaceSize : xWidth - interfaceSize;
+                var x = Rotateint == 0 || Rotateint == 180 ? xWidth : xHeight;
+                mainWindow.Bar.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
 
-                /// TODO Loses position gradually if not forced to center
+                // TODO Loses position gradually if not forced to center
                 if (!Properties.Settings.Default.Fullscreen)
                 {
-                    CenterWindowOnScreen();
+                    if (Properties.Settings.Default.PicGallery == 2 && xWidth >= monitorWidth - (picGalleryItem_Size + padding))
+                    {
+                        mainWindow.Left = (((MonitorInfo.WorkArea.Width - picGalleryItem_Size) - (mainWindow.Width * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
+                        mainWindow.Top = ((MonitorInfo.WorkArea.Height - (mainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
+                    }
+                    else
+                    {
+                        CenterWindowOnScreen();
+                    }
                 }
+
             }
             else
             {
                 /// Fix title width to window size
-                mainWindow.Bar.MaxWidth = mainWindow.ActualWidth - 95; // 95 = logo and window buttons + padding
+                mainWindow.Bar.MaxWidth = mainWindow.ActualWidth - interfaceSize; 
             }
 
             if (isZoomed)

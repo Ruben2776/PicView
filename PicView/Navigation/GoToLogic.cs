@@ -28,6 +28,7 @@ namespace PicView
             Close_UserControls();
             Keyboard.ClearFocus();
             mainWindow.Focus();
+            AjaxLoader.AjaxLoadingEnd();
         }
     }
 }

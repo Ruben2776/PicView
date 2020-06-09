@@ -20,117 +20,80 @@ namespace PicView
         /// <returns></returns>
         internal static async Task<BitmapSource> RenderToBitmapSource(string file)
         {
-            using (var filestream = new FileStream(file, FileMode.Open, FileAccess.Read))
+            using var filestream = new FileStream(file, FileMode.Open, FileAccess.Read);
+            var ext = Path.GetExtension(file).ToLower(CultureInfo.CurrentCulture);
+            switch (ext)
             {
-                var ext = Path.GetExtension(file).ToLower(CultureInfo.CurrentCulture);
-                switch (ext)
-                {
-                    // Skia supports? https://docs.microsoft.com/en-us/dotnet/api/skiasharp.skimageencodeformat?view=skiasharp-1.59.3
-                    case ".jpg":
-                    case ".jpeg":
-                    case ".jpe":
-                    case ".png":
-                    case ".bmp":
-                    case ".tif":
-                    case ".tiff":
-                    case ".gif":
-                    case ".ico":
-                    case ".wdp":
-                    case ".jfif":
-                    case ".ktx":
-                    case ".webp":
-                    case ".wbmp":
+                // Skia supports? https://docs.microsoft.com/en-us/dotnet/api/skiasharp.skimageencodeformat?view=skiasharp-1.59.3
+                case ".jpg":
+                case ".jpeg":
+                case ".jpe":
+                case ".png":
+                case ".bmp":
+                case ".tif":
+                case ".tiff":
+                case ".gif":
+                case ".ico":
+                case ".wdp":
+                case ".jfif":
+                case ".ktx":
+                case ".webp":
+                case ".wbmp":
+
+                    try
+                    {
+                        using var memStream = new MemoryStream();
+                        await filestream.CopyToAsync(memStream).ConfigureAwait(true);
+                        memStream.Seek(0, SeekOrigin.Begin);
+
+                        var sKBitmap = SKBitmap.Decode(memStream);
+                        if (sKBitmap == null) { return null; }
+
+                        var pic = sKBitmap.ToWriteableBitmap();
+                        pic.Freeze();
+                        return pic;
+
+                    }
+                    catch (Exception e)
+                    {
+#if DEBUG
+                        Trace.WriteLine("RenderToBitmapSource exception: " + e.Message);
+#endif
+                        return null;
+                    }
+
+                default:
+
+                    using (MagickImage magick = new MagickImage())
+                    {
+                        var mrs = new MagickReadSettings()
+                        {
+                            Density = new Density(300, 300),
+                            BackgroundColor = MagickColors.Transparent,
+                        };
 
                         try
                         {
-                            using var memStream = new MemoryStream();
-                            await filestream.CopyToAsync(memStream).ConfigureAwait(false);
-                            memStream.Seek(0, SeekOrigin.Begin);
-
-                            var sKBitmap = SKBitmap.Decode(memStream);
-                            if (sKBitmap == null) { return null; }
-
-                            var pic = sKBitmap.ToWriteableBitmap();
-                            pic.Freeze();
-                            return pic;
-
+                            magick.Read(filestream, mrs);
                         }
-                        catch (Exception e)
+
+                        catch (MagickException e)
                         {
 #if DEBUG
-                            Trace.WriteLine("RenderToBitmapSource exception: " + e.Message);
+                            Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
 #endif
                             return null;
                         }
 
-                    default:
+                        // Set values for maximum quality
+                        magick.Quality = 100;
+                        magick.ColorSpace = ColorSpace.Transparent;
 
-                        using (MagickImage magick = new MagickImage())
-                        {
-                            var mrs = new MagickReadSettings()
-                            {
-                                Density = new Density(300, 300),
-                                BackgroundColor = MagickColors.Transparent,
-                            };
-
-                            try
-                            {
-                                magick.Read(filestream, mrs);
-                            }
-
-                            catch (MagickException e)
-                            {
-#if DEBUG
-                                Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
-#endif
-                                return null;
-                            }
-
-                            // Set values for maximum quality
-                            magick.Quality = 100;
-                            magick.ColorSpace = ColorSpace.Transparent;
-
-                            var pic = magick.ToBitmapSource();
-                            pic.Freeze();
-                            return pic;
-                        }
-                };
-            }
-        }
-
-        /// <summary>
-        /// Decodes image from file to BitMapSource
-        /// </summary>
-        /// <param name="file">Full path of the file</param>
-        /// <returns></returns>
-        internal static BitmapSource RenderToBitmapSource(string file, int quality)
-        {
-            if (string.IsNullOrWhiteSpace(file) || file.Length < 2)
-            {
-                return null;
-            }
-
-            using (MagickImage magick = new MagickImage())
-            {
-                try
-                {
-                    magick.Read(file);
-                }
-#if DEBUG
-                catch (MagickException e)
-                {
-                    Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
-                    return null;
-                }
-#else
-                catch (MagickException) { return null; }
-#endif
-                magick.Quality = quality;
-
-                var pic = magick.ToBitmapSource();
-                pic.Freeze();
-                return pic;
-            }
+                        var pic = magick.ToBitmapSource();
+                        pic.Freeze();
+                        return pic;
+                    }
+            };
         }
 
         internal static BitmapSource GetMagickImage(Stream s)
@@ -140,10 +103,6 @@ namespace PicView
             using (MagickImage magick = new MagickImage())
             {
                 magick.Quality = 100;
-                //var mrs = new MagickReadSettings()
-                //{
-                //    Density = new Density(300)
-                //};
 
                 magick.Read(s);
                 magick.ColorSpace = ColorSpace.Transparent;

@@ -22,11 +22,11 @@ namespace PicView
         {
             get
             {
-                return Properties.Settings.Default.WindowBehaviour;
+                return Properties.Settings.Default.AutoFitWindow;
             }
             set
             {
-                Properties.Settings.Default.WindowBehaviour = value;
+                Properties.Settings.Default.AutoFitWindow = value;
 
                 if (value)
                 {
@@ -175,7 +175,7 @@ namespace PicView
             SystemCommands.RestoreWindow(mainWindow);
             mainWindow.LowerBar.Height = 35; // Set it back
 
-            if (!Properties.Settings.Default.WindowBehaviour)
+            if (!Properties.Settings.Default.AutoFitWindow)
             {
                 if (Properties.Settings.Default.Width != 0)
                 {

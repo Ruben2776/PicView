@@ -345,7 +345,7 @@ namespace PicView
             var fitcmHeader = new CheckBox
             {
                 Content = "Fit to window/image",
-                IsChecked = Properties.Settings.Default.WindowBehaviour,
+                IsChecked = Properties.Settings.Default.AutoFitWindow,
                 FontSize = 13,
                 MinWidth = 125,
                 HorizontalAlignment = HorizontalAlignment.Left,
@@ -374,7 +374,14 @@ namespace PicView
                 Width = double.NaN,
                 Height = double.NaN
             };
-            altcmHeader.Click += delegate { HideInterfaceLogic.ToggleInterface(); };
+            altcmHeader.Click += delegate {
+                if (GalleryFunctions.IsOpen) 
+                {
+                    altcmHeader.IsChecked = altcmHeader.IsChecked;
+                    return;
+                }
+                HideInterfaceLogic.ToggleInterface();
+            };
             altcm.Header = altcmHeader;
             altcm.Click += delegate { HideInterfaceLogic.ToggleInterface(); };
             settingscm.Items.Add(altcm);

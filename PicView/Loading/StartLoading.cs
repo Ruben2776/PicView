@@ -59,7 +59,7 @@ namespace PicView
             Trace.WriteLine("ContentRendered started");
 #endif
             MonitorInfo = MonitorSize.GetMonitorSize();
-            SetWindowBehaviour = Properties.Settings.Default.WindowBehaviour;
+            SetWindowBehaviour = Properties.Settings.Default.AutoFitWindow;
 
             // If normal window style
             if (!SetWindowBehaviour)
@@ -154,9 +154,9 @@ namespace PicView
                 mainWindow.bg.Children.Add(picGallery);
                 Panel.SetZIndex(picGallery, 999);
 
-                if (Properties.Settings.Default.PicGallery == 2 && FreshStartup)
+                if (Properties.Settings.Default.PicGallery == 2)
                 {
-                    ToggleGallery.Toggle();
+                    GalleryToggle.OpenFullscreenGallery();
                 }
             }
 

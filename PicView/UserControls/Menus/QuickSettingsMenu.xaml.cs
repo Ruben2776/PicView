@@ -42,7 +42,7 @@ namespace PicView.UserControls
             ToggleLooping.IsChecked = Properties.Settings.Default.Looping;
             ToggleLooping.Click += Configs.SetLooping;
 
-            SetFit.IsChecked = Properties.Settings.Default.WindowBehaviour;
+            SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
             SetFit.Click += Configs.SetAutoFit;
 
             GoToPic.Click += GoToPicEvent;

@@ -290,12 +290,12 @@ namespace PicView.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool WindowBehaviour {
+        public bool AutoFitWindow {
             get {
-                return ((bool)(this["WindowBehaviour"]));
+                return ((bool)(this["AutoFitWindow"]));
             }
             set {
-                this["WindowBehaviour"] = value;
+                this["AutoFitWindow"] = value;
             }
         }
         

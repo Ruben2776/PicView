@@ -36,10 +36,7 @@ namespace PicView
         /// </summary>
         internal static void AjaxLoadingEnd()
         {
-            if (ajaxLoading.Opacity != 0)
-            {
-                AnimationHelper.Fade(ajaxLoading, 0, TimeSpan.FromSeconds(.2));
-            }
+            AnimationHelper.Fade(ajaxLoading, 0, TimeSpan.FromSeconds(.2));
         }
     }
 }

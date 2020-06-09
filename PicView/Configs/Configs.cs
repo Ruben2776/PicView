@@ -167,12 +167,14 @@ namespace PicView
 
         internal static void SetAutoFit(object sender, RoutedEventArgs e)
         {
-            SetScalingBehaviour(!Properties.Settings.Default.WindowBehaviour, Properties.Settings.Default.FillImage);
+            if (GalleryFunctions.IsOpen) { return; }
+            SetScalingBehaviour(!Properties.Settings.Default.AutoFitWindow, Properties.Settings.Default.FillImage);
         }
 
         internal static void SetAutoFill(object sender, RoutedEventArgs e)
         {
-            SetScalingBehaviour(Properties.Settings.Default.WindowBehaviour, !Properties.Settings.Default.FillImage);
+            if (GalleryFunctions.IsOpen) { return; }
+            SetScalingBehaviour(Properties.Settings.Default.AutoFitWindow, !Properties.Settings.Default.FillImage);
         }
 
         internal static void SetScalingBehaviour(bool windowBehaviour, bool fill)
