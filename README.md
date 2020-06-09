@@ -30,7 +30,9 @@ Feedback and questions are always appreciated. Create an issue or take a look at
 ## Configurable Interface Design:
 <img src="/.github/Screenshot%20(29)-min.png" align="left" width="460"/>
 <img src="/.github/Annotation%202020-06-09%20102711.png" align="right" width="410"/>
+<br/><br/>
 
+> Press `Alt + Z` to toggle interfaces
 
 # Fullscreen Image Gallery:
 ![Minimal Interface Design](/.github/Screenshot%20(30)-min.png)
