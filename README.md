@@ -29,12 +29,12 @@ Feedback and questions are always appreciated. Create an issue or take a look at
 
 
 <h2>Configurable Interface Design</h2>
-<img src="/.github/Screenshot%20(29)-min.png" align="left" width="455"/>
+<img src="/.github/Screenshot%20(29)-min.png" align="left" width="460"/>
 <img src="/.github/Annotation%202020-06-09%20102711.png" align="right" width="415"/>
 
 <br>
 
-The interface can be toggled by pressing `Alt + Z`. <br> For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
+The interface can be toggled by pressing `Alt + Z`. For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
 
 
 <h2>Fullscreen Image Gallery:</h2>
