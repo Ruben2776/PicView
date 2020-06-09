@@ -8,7 +8,7 @@ PicView is an Open Source Image Viewer for Windows, designed to efficiently and 
 ![.NET Core 3.1](https://img.shields.io/badge/.NET-Core%203.1-lightgrey.svg?maxAge=3600)
 ![Windows OS](https://img.shields.io/badge/OS-Windows%207+-00adef.svg?maxAge=3600)
  
- <img src="/.github/Annotation%202020-06-06%20070000.png" align="left" width="350x"/>
+ <img src="/.github/Annotation%202020-06-06%20070000.png" align="left" width="350"/>
 
 ### Features:
 
@@ -18,7 +18,7 @@ PicView is an Open Source Image Viewer for Windows, designed to efficiently and 
 <br>
 [HLSL Image Effects](https://github.com/Ruben2776/PicView/wiki/HLSL-Image-Effects)
 <br>
-[Batch Resizing Tool](https://github.com/Ruben2776/PicView/wiki/Batch-Resizing-Tool)
+[Batch Resizing Tool](https://github.com/Ruben2776/PicView/wiki/Batch-Resizing-Tool) _Coming soon!_
 <br>
 [View shortcuts](https://github.com/Ruben2776/PicView/wiki/Keyboard-and-mouse-shortcuts)
 
@@ -28,6 +28,12 @@ PicView is an Open Source Image Viewer for Windows, designed to efficiently and 
 I am just a single developer working on this in my spare time. So if you like what I have created please star it to show your support, as it would motive me to keep working on it! <br>
 Feedback and questions are always appreciated. Create an issue or take a look at an existing one if you want to report a bug or request a feature, or have something on your mind! 😊
 
+## Configurable Interface Design:
+<img src="/.github/Screenshot%20(29)-min.png" align="left" width="450"/>
+<img src="/.github/Annotation%202020-06-09%20102711.png" align="right" width="425"/>
+
+
+ > Press `Alt + Z` to toggle interfaces
 
 ## Fullscreen Image Gallery:
 ![Minimal Interface Design](/.github/Screenshot%20(30)-min.png)
@@ -36,7 +42,3 @@ Feedback and questions are always appreciated. Create an issue or take a look at
 ![Minimal Interface Design](/.github/Annotation%202020-06-06%20070001-min.png)
 
 
-## Minimal Interface Design:
-![Minimal Interface Design](/.github/Screenshot%20(29)-min.png)
-
- > Press `Alt + Z` to toggle interfaces
