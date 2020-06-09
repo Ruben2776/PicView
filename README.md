@@ -8,7 +8,7 @@ PicView is an Open Source Image Viewer for Windows, designed to efficiently and 
 ![.NET Core 3.1](https://img.shields.io/badge/.NET-Core%203.1-lightgrey.svg?maxAge=3600)
 ![Windows OS](https://img.shields.io/badge/OS-Windows%207+-00adef.svg?maxAge=3600)
  
- <img src="/.github/Annotation%202020-06-06%20070000.png" align="left" width="350"/>
+<img src="/.github/Annotation%202020-06-06%20070000.png" align="left" width="350"/>
 
 ### Features:
 
@@ -23,7 +23,6 @@ PicView is an Open Source Image Viewer for Windows, designed to efficiently and 
 [View shortcuts](https://github.com/Ruben2776/PicView/wiki/Keyboard-and-mouse-shortcuts)
 
 
-
 ### Contributing
 I am just a single developer working on this in my spare time. So if you like what I have created please star it to show your support, as it would motive me to keep working on it! <br>
 Feedback and questions are always appreciated. Create an issue or take a look at an existing one if you want to report a bug or request a feature, or have something on your mind! 😊
@@ -32,8 +31,9 @@ Feedback and questions are always appreciated. Create an issue or take a look at
 <img src="/.github/Screenshot%20(29)-min.png" align="left" width="430"/>
 <img src="/.github/Annotation%202020-06-09%20102711.png" align="right" width="425"/>
 
-<br>
  > Press `Alt + Z` to toggle interfaces
+ 
+<br>
 
 ## Fullscreen Image Gallery:
 ![Minimal Interface Design](/.github/Screenshot%20(30)-min.png)
