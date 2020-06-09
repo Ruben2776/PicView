@@ -33,7 +33,7 @@ Feedback and questions are always appreciated. Create an issue or take a look at
 
  > Press `Alt + Z` to toggle interfaces
  
-<br>
+<br><br>
 
 ## Fullscreen Image Gallery:
 ![Minimal Interface Design](/.github/Screenshot%20(30)-min.png)
