@@ -29,7 +29,7 @@ I am just a single developer working on this in my spare time. So if you like wh
 Feedback and questions are always appreciated. Create an issue or take a look at an existing one if you want to report a bug or request a feature, or have something on your mind! 😊
 
 ## Configurable Interface Design:
-<img src="/.github/Screenshot%20(29)-min.png" align="left" width="450"/>
+<img src="/.github/Screenshot%20(29)-min.png" align="left" width="430"/>
 <img src="/.github/Annotation%202020-06-09%20102711.png" align="right" width="425"/>
 
 
