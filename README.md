@@ -27,11 +27,13 @@ PicView is an Open Source Image Viewer for Windows, designed to efficiently and 
 I am just a single developer working on this in my spare time. So if you like what I have created please star it to show your support, as it would motive me to keep working on it! <br>
 Feedback and questions are always appreciated. Create an issue or take a look at an existing one if you want to report a bug or request a feature, or have something on your mind! 😊
 
-<br/>
+
 <h2>Configurable Interface Design</h2>
 <img src="/.github/Screenshot%20(29)-min.png" align="left" width="450"/>
 <img src="/.github/Annotation%202020-06-09%20102711.png" align="right" width="410"/>
-<p></p>
+
+<br>
+Press `Alt + Z` to toggle interface design
 
 
 <h2>Fullscreen Image Gallery:</h2>
@@ -39,5 +41,3 @@ Feedback and questions are always appreciated. Create an issue or take a look at
 
 <h2>Contained Image Gallery:</h2>
 <img src="/.github/Annotation%202020-06-06%20070001-min.png"/>
-
-
