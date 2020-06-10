@@ -73,6 +73,8 @@ namespace PicView
         /// <param name="height">The pixel height of the image</param>
         internal static void FitImage(double width, double height)
         {
+            if (width <= 0 || height <= 0) { return; }
+
             var showInterface = Properties.Settings.Default.ShowInterface;
 
             double maxWidth, maxHeight;
@@ -80,8 +82,6 @@ namespace PicView
             var borderSpaceHeight = showInterface ? mainWindow.LowerBar.Height + mainWindow.TitleBar.Height + 6 : 6;
             var borderSpaceWidth = 20; // Based on UI borders
 
-            width -= borderSpaceWidth;
-            height -= borderSpaceHeight;
             var monitorWidth = MonitorInfo.Width - borderSpaceWidth;
             var monitorHeight = MonitorInfo.Height - borderSpaceHeight;
 
@@ -104,14 +104,14 @@ namespace PicView
                     else if (showInterface)
                     {
                         /// Use padding for shown interface
-                        maxWidth = Math.Min(monitorWidth - padding, (width - padding) - borderSpaceWidth);
+                        maxWidth = Math.Min(monitorWidth - padding, width);
                         maxHeight = Math.Min(monitorHeight - padding, height);
                     }
                     else
                     {
                         /// Fill users screen
-                        maxWidth = Math.Min(monitorWidth, width - borderSpaceWidth);
-                        maxHeight = Math.Min(monitorHeight, height - borderSpaceHeight);
+                        maxWidth = Math.Min(monitorWidth, width);
+                        maxHeight = Math.Min(monitorHeight, height);
                     }
                 }
             }
@@ -185,8 +185,10 @@ namespace PicView
                     if (Properties.Settings.Default.PicGallery == 2 && xWidth >= monitorWidth - (picGalleryItem_Size + padding))
                     {
                         // Offset window to not overlap gallery
-                        mainWindow.Left = (((MonitorInfo.WorkArea.Width - picGalleryItem_Size) - (mainWindow.Width * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
-                        mainWindow.Top = ((MonitorInfo.WorkArea.Height - (mainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
+                        mainWindow.Left = ((MonitorInfo.WorkArea.Width - picGalleryItem_Size - (mainWindow.Width * MonitorInfo.DpiScaling)) / 2)
+                                          + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
+                        mainWindow.Top = ((MonitorInfo.WorkArea.Height
+                                           - (mainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
                     }
                     else
                     {
