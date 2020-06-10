@@ -9,13 +9,16 @@
         AcceptsTab="True"
         AutoWordSelection="True"
         Background="{x:Null}"
+        CaretBrush="{StaticResource MainColorBrush}"
+        ContextMenu="{x:Null}"
         FontFamily="/PicView;component/Resources/fonts/#Aller"
         FontSize="15"
         FontWeight="Bold"
         Foreground="{StaticResource MainColorBrush}"
         OverridesDefaultStyle="True"
+        SelectionBrush="{DynamicResource ChosenColorBrush}"
+        SelectionTextBrush="{StaticResource MainColorBrush}"
         Text="Loading..."
-        ContextMenu="{x:Null}"
         TextAlignment="Center"
         UndoLimit="200">
         <TextBox.Style>

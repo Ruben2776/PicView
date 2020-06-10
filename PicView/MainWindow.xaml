@@ -67,6 +67,7 @@
 
                 <uc:CustomTextBox
                     x:Name="Bar"
+                    HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Background="{x:Null}"
                     FontFamily="/PicView;component/Resources/fonts/#Aller"

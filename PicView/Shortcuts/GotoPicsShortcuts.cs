@@ -9,6 +9,7 @@ namespace PicView
 {
     internal static class GotoPicsShortcuts
     {
+
         internal static void GoToPicPreviewKeys(object sender, KeyEventArgs e)
         {
             switch (e.Key)
@@ -35,19 +36,32 @@ namespace PicView
                 case Key.NumPad9:
                 case Key.Back:
                 case Key.Delete:
-                    break;
-                case Key.Escape:
+                    break;  // Allow these keys
+                case Key.A:
+                case Key.C:
+                case Key.X:
+                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    {
+                        // Allow Ctrl + A, Ctrl + C, Ctrl + X
+                        break;
+                    }
+                    else
+                    {
+                        e.Handled = true;// only allowed on ctrl
+                        return;
+                    }
+                case Key.Escape: // Escape logic
                     quickSettingsMenu.GoToPicBox.Text = FolderIndex.ToString(CultureInfo.CurrentCulture);
                     quickSettingsMenu.GoToPicBox.CaretBrush = new SolidColorBrush(Colors.Transparent);
                     Close_UserControls();
                     Keyboard.ClearFocus();
                     mainWindow.Focus();
                     break;
-                case Key.Enter:
+                case Key.Enter: // Execute it!
                     GoToPicEvent(sender, e);
                     break;
-                default: // Don't allow other keys
-                    e.Handled = true;
+                default: 
+                    e.Handled = true; // Don't allow other keys
                     break;
             }
         }

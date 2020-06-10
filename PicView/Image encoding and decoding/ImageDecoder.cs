@@ -97,6 +97,9 @@ namespace PicView
             };
         }
 
+        /// <summary>Gets the magick image.</summary>
+        /// <param name="s">The stream</param>
+        /// <returns></returns>
         internal static BitmapSource GetMagickImage(Stream s)
         {
             BitmapSource pic;

@@ -71,18 +71,26 @@ namespace PicView
                 return;
             }
 
+            if (mainWindow.Bar.Bar.IsFocused)
+            {
+                if (e.ClickCount == 2)
+                {
+                    Maximize_Restore();
+                    //EditTitleBar.Refocus();
+                    //e.Handled = true;
+                }
+                //if (e.ClickCount == 2)
+                //{
+                //    mainWindow.Bar.Bar.SelectAll();
+                //}
+                return;
+            }
+
+
             if (e.ClickCount == 2)
             {
-                // Prevent method from being called twice
-                var bar = sender as TextBlock;
-                if (bar != null)
-                {
-                    if (bar.Name == "Bar")
-                    {
-                        return;
-                    }
-                }
                 Maximize_Restore();
+                e.Handled = true;
             }
             else
             {
