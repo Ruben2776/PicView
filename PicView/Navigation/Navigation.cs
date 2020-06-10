@@ -190,8 +190,9 @@ namespace PicView
                 // Dissallow changing image while loading
                 CanNavigate = false;
 
-                if (FreshStartup)
+                if (FreshStartup || Preloader.IsReset)
                 {
+                    Preloader.IsReset = false;
 #if DEBUG
                     Trace.WriteLine("Pic(int x) loading new pic manually");
 #endif

@@ -38,6 +38,11 @@ namespace PicView.PreLoading
         /// </summary>
         internal static bool IsLoading;
 
+        /// <summary>
+        /// Used for manual loading fix
+        /// </summary>
+        internal static bool IsReset;
+
         //internal static int Count { get { return Sources.Count; } }
         /// <summary>
         /// Add file to prelader
@@ -289,10 +294,10 @@ namespace PicView.PreLoading
             if (!Contains(file))
             {
                 PreloadCount = 4;
+                IsReset = true;
                 await Add(file).ConfigureAwait(false);
             }
         }
-
 
 
         /// <summary>

@@ -96,6 +96,7 @@ namespace PicView
                 {
                     if (Properties.Settings.Default.PicGallery == 2)
                     {
+                        /// Extra padding for picgallery required
                         padding += picGalleryItem_Size; // Fixes Math.Min returning incorrectly
                         maxWidth = Math.Min(monitorWidth - padding, width);
                         maxHeight = Math.Min(monitorHeight, height);
@@ -183,6 +184,7 @@ namespace PicView
                 {
                     if (Properties.Settings.Default.PicGallery == 2 && xWidth >= monitorWidth - (picGalleryItem_Size + padding))
                     {
+                        // Offset window to not overlap gallery
                         mainWindow.Left = (((MonitorInfo.WorkArea.Width - picGalleryItem_Size) - (mainWindow.Width * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
                         mainWindow.Top = ((MonitorInfo.WorkArea.Height - (mainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
                     }
@@ -191,7 +193,6 @@ namespace PicView
                         CenterWindowOnScreen();
                     }
                 }
-
             }
             else
             {

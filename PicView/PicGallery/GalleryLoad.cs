@@ -7,7 +7,6 @@ using static PicView.GalleryScroll;
 using static PicView.HideInterfaceLogic;
 using static PicView.Thumbnails;
 using static PicView.UC;
-using static PicView.WindowLogic;
 
 namespace PicView
 {
@@ -58,7 +57,6 @@ namespace PicView
                 ShowNavigation(false);
                 ShowTopandBottom(false);
                 Utilities.UpdateColor(true);
-                //AutoFit = true;
 
                 mainWindow.Margin = new Thickness(0, 0, - picGallery.Width, 0);
             }

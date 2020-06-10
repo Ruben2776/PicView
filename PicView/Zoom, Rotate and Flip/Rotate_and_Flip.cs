@@ -43,10 +43,10 @@ namespace PicView
         // https://stackoverflow.com/a/62136307/13646636
         internal static void Rotate(bool right)
         {
-            if (mainWindow.img.Source == null || GalleryFunctions.IsOpen)
-            {
-                return;
-            }
+            if (mainWindow.img.Source == null ||
+                Properties.Settings.Default.PicGallery == 1 && GalleryFunctions.IsOpen)
+            { return; }
+            
 
             if (right)
             {

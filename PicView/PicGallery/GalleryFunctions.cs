@@ -54,6 +54,8 @@ namespace PicView
 
         internal static void SetSelected(int x)
         {
+            if (x > picGallery.Container.Children.Count) { return; }
+
             // Select next item
             var nextItem = picGallery.Container.Children[x] as PicGalleryItem;
             nextItem.innerborder.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
@@ -62,6 +64,8 @@ namespace PicView
 
         internal static void SetUnselected(int x)
         {
+            if (x > picGallery.Container.Children.Count) { return; }
+
             // Deselect current item
             var prevItem = picGallery.Container.Children[x] as PicGalleryItem;
             prevItem.innerborder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;

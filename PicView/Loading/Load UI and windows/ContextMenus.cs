@@ -377,7 +377,7 @@ namespace PicView
             altcmHeader.Click += delegate {
                 if (GalleryFunctions.IsOpen) 
                 {
-                    altcmHeader.IsChecked = altcmHeader.IsChecked;
+                    altcmHeader.IsChecked = Properties.Settings.Default.ShowInterface;
                     return;
                 }
                 HideInterfaceLogic.ToggleInterface();

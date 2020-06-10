@@ -132,6 +132,12 @@ namespace PicView
             ScrollTo();
             mainWindow.Focus();
 
+            if (!FreshStartup)
+            {
+                ScaleImage.TryFitImage();
+            }            
+
+            // Fix not showing up opacity bug.. 
             VisualStateManager.GoToElementState(picGallery, "Opacity", false);
         }
 

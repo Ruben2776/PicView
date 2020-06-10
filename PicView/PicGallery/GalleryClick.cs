@@ -18,14 +18,6 @@ namespace PicView
 {
     internal static class GalleryClick
     {
-        static async void PreloaderFix(int id)
-        {
-            PreloadCount = 4;
-            Preloader.Clear();
-            await Preloader.Add(Pics[id]).ConfigureAwait(true);
-        }
-
-
         internal static void Click(int id)
         {
             mainWindow.Focus();
@@ -98,11 +90,7 @@ namespace PicView
             }
             else
             {
-                if (!Preloader.Contains(Pics[id]))
-                {
-                    PreloaderFix(id);
-                }
-
+                Preloader.PreloaderFix(Pics[id]);
                 ItemClick(id);
             }
         }
@@ -111,7 +99,7 @@ namespace PicView
         {
             if (!Preloader.Contains(Pics[id]))
             {
-                PreloaderFix(id);
+                Preloader.PreloaderFix(Pics[id]);
             }
 
             mainWindow.img.Source = source;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PicView.UserControls;
+using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -484,8 +485,13 @@ namespace PicView
 
         #region Size Animation
 
-        internal static void HoverSizeAnim(UIElement element, bool unHover, double from, double to)
+        internal static void HoverSizeAnim(PicGalleryItem item, bool unHover, double from, double to)
         {
+            if (item.Id == Fields.FolderIndex)
+            {
+                return;
+            }
+
             var da = new DoubleAnimation();
             if (unHover)
             {
@@ -502,8 +508,8 @@ namespace PicView
             da.AccelerationRatio = 0.4;
             da.DecelerationRatio = 0.6;
 
-            element.BeginAnimation(Rectangle.WidthProperty, da);
-            element.BeginAnimation(Rectangle.HeightProperty, da);
+            item.innerborder.BeginAnimation(FrameworkElement.WidthProperty, da);
+            item.innerborder.BeginAnimation(FrameworkElement.HeightProperty, da);
         }
 
         #endregion

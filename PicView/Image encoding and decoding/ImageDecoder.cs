@@ -43,6 +43,7 @@ namespace PicView
                     try
                     {
                         using var memStream = new MemoryStream();
+                        // Have to wait for it, or it will produce an unfinished image
                         await filestream.CopyToAsync(memStream).ConfigureAwait(true);
                         memStream.Seek(0, SeekOrigin.Begin);
 
