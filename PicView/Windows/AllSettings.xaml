@@ -378,8 +378,10 @@
                             x:Name="SlideshowSlider"
                             Width="200"
                             Height="30"
+                            IsSnapToTickEnabled="True"
                             Maximum="15"
                             Minimum="1"
+                            TickFrequency="1"
                             TickPlacement="BottomRight"
                             Value="7" />
 
@@ -388,8 +390,6 @@
                             Width="35"
                             Margin="5,3"
                             HorizontalAlignment="Right"
-                            FontFamily="/PicView;component/Resources/fonts/#TeX Gyre Heros"
-                            FontSize="14"
                             IsReadOnly="True"
                             Text="{Binding ElementName=SlideshowSlider, Path=Value}"
                             TextAlignment="Center"

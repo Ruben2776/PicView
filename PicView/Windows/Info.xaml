@@ -44,6 +44,7 @@
             <Rectangle
                 Width="1"
                 Height="35"
+                Margin="0,0,-8,0"
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 

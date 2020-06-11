@@ -44,6 +44,7 @@
             <Rectangle
                 Width="1"
                 Height="35"
+                Margin="0,0,-8,0"
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
@@ -238,7 +239,7 @@
                             MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="Blur" >
+                            Content="Blur">
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="BlurBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>

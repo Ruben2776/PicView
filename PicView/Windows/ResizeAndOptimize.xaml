@@ -44,6 +44,7 @@
             <Rectangle
                 Width="1"
                 Height="35"
+                Margin="0,0,-8,0"
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
@@ -95,9 +96,99 @@
                 Background="{StaticResource NoisyBg}"
                 HorizontalScrollBarVisibility="Disabled"
                 VerticalScrollBarVisibility="Auto">
-                <WrapPanel Orientation="Horizontal">
-                    <Label Content="Coming soon" />
-                </WrapPanel>
+                <StackPanel>
+
+                    <WrapPanel
+                        Margin="0,3,0,8"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Orientation="Horizontal">
+                        <Label Margin="0,4,0,0" Content="Resize Image:" />
+                        <Label Margin="5,4,5,0" Content="Width" />
+                        <TextBox
+                            x:Name="WidthValueBox"
+                            Margin="5,0,0,0"
+                            Padding="5,4,5,0"
+                            Text="420" />
+                        <Label Margin="5,4,5,0" Content="Height" />
+                        <TextBox
+                            x:Name="HeightValueBox"
+                            Margin="5,0,5,0"
+                            Padding="5,4,5,0"
+                            Text="360" />
+                        <CheckBox
+                            Margin="5,0,0,0"
+                            Padding="8"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderThickness="1"
+                            Content="Maintain Aspect Ratio"
+                            IsChecked="True" />
+                    </WrapPanel>
+
+                    <WrapPanel
+                        Margin="0,3,0,8"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Orientation="Horizontal">
+                        <CheckBox
+                            Padding="8"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderThickness="1"
+                            Content="Optimize image file size"
+                            IsChecked="True" />
+                    </WrapPanel>
+
+                    <WrapPanel
+                        Margin="0,3,0,8"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Orientation="Horizontal">
+                        <Label Content="Rotate:" />
+                        <Slider
+                            x:Name="RotationSlider"
+                            Width="200"
+                            Height="30"
+                            IsSnapToTickEnabled="True"
+                            Maximum="359"
+                            Minimum="0"
+                            TickFrequency="1"
+                            TickPlacement="BottomRight"
+                            Value="0" />
+                        <TextBox
+                            x:Name="RotSlide"
+                            Width="35"
+                            Margin="5,3"
+                            HorizontalAlignment="Right"
+                            IsReadOnly="True"
+                            Text="{Binding ElementName=RotationSlider, Path=Value}"
+                            TextAlignment="Center"
+                            ToolTip="Enter rotation value" />
+                    </WrapPanel>
+
+                    <WrapPanel HorizontalAlignment="Center" Orientation="Horizontal">
+
+                        <RadioButton
+                            x:Name="OneRadio"
+                            Padding="8,8,6,8"
+                            Content="Currently selected Image"
+                            IsChecked="True"
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="CyanBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="AllRadio"
+                            Padding="24,8,24,8"
+                            Content="All Images in Folder"
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="AquaBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+                    </WrapPanel>
+                </StackPanel>
             </ScrollViewer>
         </Border>
     </DockPanel>
