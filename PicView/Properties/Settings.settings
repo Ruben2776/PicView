@@ -68,7 +68,7 @@
     <Setting Name="BgColorChoice" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="WindowBehaviour" Type="System.Boolean" Scope="User">
+    <Setting Name="AutoFitWindow" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="FillImage" Type="System.Boolean" Scope="User">
