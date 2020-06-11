@@ -15,12 +15,21 @@ namespace PicView.UserControls
             ResizeButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ResizeButtonBrush);
             ResizeButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ResizeButtonBrush, true);
             ResizeButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ResizeButtonBrush, false);
-            ResizeButton.Click += (s, x) => LoadWindows.ResizeAndOptimizeWindow();
+            ResizeButton.Click += delegate 
+            { 
+                UC.Close_UserControls();
+                LoadWindows.ResizeAndOptimizeWindow();
+                LoadWindows.resizeAndOptimize.UpdateValues();
+            };
 
             EffectsButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(EffectsButtonBrush);
             EffectsButton.MouseEnter += (s, x) => ButtonMouseOverAnim(EffectsButtonBrush, true);
             EffectsButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(EffectsButtonBrush, false);
-            EffectsButton.Click += (s, x) => LoadWindows.EffectsWindow();
+            EffectsButton.Click += delegate
+            {
+                UC.Close_UserControls();
+                LoadWindows.EffectsWindow();
+            };
 
         }
     }

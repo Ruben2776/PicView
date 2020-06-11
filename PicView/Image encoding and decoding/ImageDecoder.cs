@@ -8,6 +8,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using static PicView.Fields;
 
 namespace PicView
 {
@@ -154,60 +155,70 @@ namespace PicView
             return true;
         }
 
-        internal static Size? ImageSize(string file)
+        internal static Size? ImageSize(string file, bool usePreloader = false, bool advancedFormats = false)
         {
-            using (var magick = new MagickImage())
+            if (usePreloader)
             {
-                var ext = Path.GetExtension(file).ToUpperInvariant();
-                switch (ext)
+                var pic = PreLoading.Preloader.Load(Pics[FolderIndex]);
+                if (pic != null)
                 {
-                    // Standards
-                    case ".JPG":
-                    case ".JPEG":
-                    case ".JPE":
-                        magick.Format = MagickFormat.Jpg;
-                        break;
-
-                    case ".PNG":
-                        magick.Format = MagickFormat.Png;
-                        break;
-
-                    case ".BMP":
-                        magick.Format = MagickFormat.Bmp;
-                        break;
-
-                    case ".TIF":
-                    case ".TIFF":
-                        magick.Format = MagickFormat.Tif;
-                        break;
-
-                    case ".GIF":
-                        magick.Format = MagickFormat.Gif;
-                        break;
-
-                    case ".ICO":
-                        magick.Format = MagickFormat.Ico;
-                        break;
-
-                    default: return null;
+                    return new Size(pic.PixelWidth, pic.PixelHeight);
                 }
+            }
 
-                try
-                {
-                    magick.Read(file);
-                }
+            using var magick = new MagickImage();
+            var ext = Path.GetExtension(file).ToUpperInvariant();
+            switch (ext)
+            {
+                // Standards
+                case ".JPG":
+                case ".JPEG":
+                case ".JPE":
+                    magick.Format = MagickFormat.Jpg;
+                    break;
+
+                case ".PNG":
+                    magick.Format = MagickFormat.Png;
+                    break;
+
+                case ".BMP":
+                    magick.Format = MagickFormat.Bmp;
+                    break;
+
+                case ".TIF":
+                case ".TIFF":
+                    magick.Format = MagickFormat.Tif;
+                    break;
+
+                case ".GIF":
+                    magick.Format = MagickFormat.Gif;
+                    break;
+
+                case ".ICO":
+                    magick.Format = MagickFormat.Ico;
+                    break;
+
+                default:
+                    if (!advancedFormats) { return null; }
+
+                    break;
+            }
+
+            try
+            {
+                magick.Read(file);
+            }
 #if DEBUG
-                catch (MagickException e)
-                {
-                    Trace.WriteLine("ImageSize returned " + file + " null, \n" + e.Message);
-                    return null;
-                }
+            catch (MagickException e)
+            {
+                Trace.WriteLine("ImageSize returned " + file + " null, \n" + e.Message);
+                return null;
+            }
 #else
                 catch (MagickException) { return null; }
 #endif
 
-                return new Size(magick.Width, magick.Height);
-            }
+            return new Size(magick.Width, magick.Height);
         }
     }
 }

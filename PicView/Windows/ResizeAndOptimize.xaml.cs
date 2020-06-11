@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.Fields;
@@ -21,6 +23,8 @@ namespace PicView.Windows
             KeyUp += KeysUp;
             Scroller.MouseWheel += Info_MouseWheel;
 
+
+
             // CloseButton
             CloseButton.TheButton.Click += delegate { Hide(); mainWindow.Focus(); };
 
@@ -28,9 +32,22 @@ namespace PicView.Windows
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
 
             TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
-
-
         }
+
+        internal void UpdateValues()
+        {
+            RenameBoxText.Text = Path.GetFileName(Pics[FolderIndex]);
+            MoveBoxText.Text = SpecBoxText.Text = Path.GetDirectoryName(Pics[FolderIndex]);
+
+            var dimensions = ImageDecoder.ImageSize(Pics[FolderIndex], true, true);
+
+            if (dimensions.HasValue)
+            {
+                WidthBoxText.Text = dimensions.Value.Width.ToString(CultureInfo.CurrentCulture);
+                HeightBoxText.Text = dimensions.Value.Height.ToString(CultureInfo.CurrentCulture);
+            }
+        }
+
 
         #region Keyboard Shortcuts
 
