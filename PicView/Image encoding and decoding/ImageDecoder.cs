@@ -105,17 +105,17 @@ namespace PicView
         {
             BitmapSource pic;
 
-            using (MagickImage magick = new MagickImage())
+            using MagickImage magick = new MagickImage
             {
-                magick.Quality = 100;
+                Quality = 100
+            };
 
-                magick.Read(s);
-                magick.ColorSpace = ColorSpace.Transparent;
-                pic = magick.ToBitmapSource();
+            magick.Read(s);
+            magick.ColorSpace = ColorSpace.Transparent;
+            pic = magick.ToBitmapSource();
 
-                pic.Freeze();
-                return pic;
-            }
+            pic.Freeze();
+            return pic;
         }
 
         /// <summary>
@@ -219,6 +219,97 @@ namespace PicView
 #endif
 
             return new Size(magick.Width, magick.Height);
+        }
+
+        internal static string TransformImage(string path,
+                                            bool resize,
+                                            int width,
+                                            int height,
+                                            bool aspectRatio,
+                                            int rotation,
+                                            int quality,
+                                            bool optimize,
+                                            bool flip,
+                                            string name,
+                                            string destination)
+        {
+            using MagickImage magick = new MagickImage
+            {
+                Quality = quality,
+            };
+
+            magick.Read(path);
+
+            if (rotation != 0)
+            {
+                try
+                {
+                    magick.Rotate(rotation);
+                }
+                catch (Exception e)
+                {
+                    var errorMessage = "TransformImage caught exception \n" + e.Message;
+#if DEBUG
+                    Trace.WriteLine(errorMessage);
+#endif
+                    return errorMessage;
+                }
+            }
+
+            if (resize)
+            {
+                var size = new MagickGeometry(width, height)
+                {
+                    IgnoreAspectRatio = !aspectRatio
+                };
+                magick.Resize(size);
+            }
+
+            if (optimize)
+            {
+                try
+                {
+                    magick.Strip();
+                }
+                catch (Exception e)
+                {
+                    var errorMessage = "TransformImage caught exception \n" + e.Message;
+#if DEBUG
+                    Trace.WriteLine(errorMessage);
+#endif
+                    return errorMessage;
+                }
+            }
+
+            if (flip)
+            {
+                try
+                {
+                    magick.Flop();
+                }
+                catch (Exception e)
+                {
+                    var errorMessage = "TransformImage caught exception \n" + e.Message;
+#if DEBUG
+                    Trace.WriteLine(errorMessage);
+#endif
+                    return errorMessage;
+                }
+            }
+
+            try
+            {
+                magick.Write(destination + "\\" + Path.GetFileName(path));
+                return "Written " + path + " to " + destination;
+            }
+            catch (Exception e)
+            {
+                var errorMessage = "TransformImage caught exception \n" + e.Message;
+#if DEBUG
+                Trace.WriteLine(errorMessage);
+#endif
+                return errorMessage;
+            }
         }
     }
 }
