@@ -2,11 +2,14 @@
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 using static PicView.Fields;
 
@@ -221,6 +224,34 @@ namespace PicView
             return new Size(magick.Width, magick.Height);
         }
 
+        internal static async Task TransformImagesAsync(List<string> files, IProgress<string> progress, CancellationToken cancellationToken,
+                                            bool resize,
+                                            int width,
+                                            int height,
+                                            bool aspectRatio,
+                                            int rotation,
+                                            int quality,
+                                            bool optimize,
+                                            bool flip,
+                                            string name,
+                                            string destination)
+        {
+            await Task.Run(() =>
+            Parallel.For(0, files.Count, (i, state) =>
+            {
+                try
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    var x = TransformImage(files[i], resize, width, height, aspectRatio, rotation, quality, optimize, flip, name, destination);
+                    progress.Report(x);
+                }
+                catch (Exception)
+                {
+                    return;
+                }
+            })).ConfigureAwait(false);
+        }
+
         internal static string TransformImage(string path,
                                             bool resize,
                                             int width,
@@ -299,8 +330,9 @@ namespace PicView
 
             try
             {
-                magick.Write(destination + "\\" + Path.GetFileName(path));
-                return "Written " + path + " to " + destination;
+                var result = destination + "\\" + Path.GetFileName(path);
+                magick.Write(result);
+                return "Written " + result;
             }
             catch (Exception e)
             {

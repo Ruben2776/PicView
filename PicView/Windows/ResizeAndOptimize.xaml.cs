@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -11,6 +12,10 @@ namespace PicView.Windows
 {
     public partial class ResizeAndOptimize : Window
     {
+        int rotation, quality, width, height, total;
+        bool rename, aspectRatio, optimize, flip, resize = false;
+        string name, destinationFolder, sourceFolder;
+        private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
         public ResizeAndOptimize()
         {
@@ -46,16 +51,69 @@ namespace PicView.Windows
 
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            int rotation, quality, width, height;
-            bool rotate, rename, resize = false;
-            string name, destination;
+            if (StartButton.Content.ToString() == "Stop")
+            {
+                StartButton.Content = "Cancelled";
+                cts.Cancel();
+            }
+
             string file = Pics[FolderIndex];
 
-            OutputlogBox.Text = "Starting!";
+            UIprogressbar.Value = 0;
 
+            GatherData();
+
+            if (AllRadio.IsChecked.Value)
+            {
+                OutputlogBox.Text = "Starting!" + Environment.NewLine;
+                var progress = new Progress<string>();
+                progress.ProgressChanged += Progress_ProgressChanged;
+
+                var currentFolder = Path.GetDirectoryName(Pics[FolderIndex]);
+                List<string> tempFileList;
+
+                if (currentFolder != sourceFolder)
+                {
+                    tempFileList = FileLists.FileList(sourceFolder);
+                }
+                else
+                {
+                    tempFileList = Pics;
+                }
+                total = tempFileList.Count;
+
+                StartButton.Content = "Stop";
+
+                await ImageDecoder.TransformImagesAsync(tempFileList, progress, cts.Token, resize, width, height, aspectRatio, rotation, quality, optimize, flip, name, destinationFolder).ConfigureAwait(false);
+                return;
+            }
+
+            await Task.Run(() => ImageDecoder.TransformImage(file, resize, width, height, aspectRatio, rotation, quality, optimize, flip, name, destinationFolder)).ConfigureAwait(false);
+        }
+
+        private void Progress_ProgressChanged(object sender, string e)
+        {
+            UIprogressbar.Value = UIprogressbar.Value * 100 / total;
+
+            OutputlogBox.Text += e + Environment.NewLine;
+
+            //for (int i = 0; i < results.Count; i++)
+            //{
+            //    OutputlogBox.Text += results[i] + Environment.NewLine;
+            //}
+
+            //await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            //{
+            //    OutputlogBox.Text += s + Environment.NewLine;
+            //    UIprogressbar.Value = UIprogressbar.Value * 100 / total;
+            //}));
+        }
+
+        private void GatherData()
+        {
             if (!string.IsNullOrWhiteSpace(RotBox.Text))
             {
-                rotate = int.TryParse(RotBox.Text, out rotation);
+                _ = int.TryParse(RotBox.Text, out rotation);
             }
             else
             {
@@ -64,7 +122,7 @@ namespace PicView.Windows
 
             if (!string.IsNullOrWhiteSpace(QualityBox.Text))
             {
-                quality = int.Parse(QualityBox.Text);
+                _ = int.TryParse(QualityBox.Text, out quality);
             }
             else
             {
@@ -73,78 +131,62 @@ namespace PicView.Windows
 
             if (!string.IsNullOrWhiteSpace(DestinationBox.Text))
             {
-                destination = DestinationBox.Text;
+                destinationFolder = DestinationBox.Text;
             }
             else
             {
-                destination = Path.GetDirectoryName(file);
+                destinationFolder = Path.GetDirectoryName(Pics[FolderIndex]);
             }
 
-            if (RenameCheckBox.IsChecked.Value)
+            if (!string.IsNullOrWhiteSpace(SourceBox.Text))
             {
-                rename = true;
-                name = Path.GetFileName(file);
+                sourceFolder = SourceBox.Text;
             }
             else
             {
-                name = Path.GetFileName(file);
+                sourceFolder = Path.GetDirectoryName(Pics[FolderIndex]);
             }
+
+            //if (RenameCheckBox.IsChecked.Value)
+            //{
+            //    rename = true;
+            //    name = Path.GetFileName(file);
+            //}
+            //else
+            //{
+            //    name = Path.GetFileName(file);
+            //}
 
             if (!string.IsNullOrWhiteSpace(WidthValueBox.Text))
             {
-                int.TryParse(WidthValueBox.Text, out width);
+                _ = int.TryParse(WidthValueBox.Text, out width);
                 resize = true;
             }
             else
             {
-                int.TryParse(WidthBoxText.Text, out width);
+                _ = int.TryParse(WidthBoxText.Text, out width);
             }
 
             if (!string.IsNullOrWhiteSpace(HeightValueBox.Text))
             {
-                int.TryParse(HeightValueBox.Text, out height);
+                _ = int.TryParse(HeightValueBox.Text, out height);
                 resize = true;
             }
             else
             {
-                int.TryParse(HeightBoxText.Text, out height);
+                _ = int.TryParse(HeightBoxText.Text, out height);
             }
-            OutputlogBox.Text += ImageDecoder.TransformImage(file, resize, width, height, AspectRatioBox.IsChecked.Value, rotation, quality, OptimizeBox.IsChecked.Value, FlipBox.IsChecked.Value, name, destination);
 
-
-            //if (AllRadio.IsChecked.Value)
-            //{
-            //    var currentFolder = Path.GetDirectoryName(Pics[FolderIndex]);
-            //    var destinationFolder = Path.GetDirectoryName(AllBox.Text);
-            //    if (destinationFolder != null && destinationFolder.Length != 0)
-            //    {
-            //        if (currentFolder != destinationFolder)
-            //        {
-            //            var tempFileList = FileLists.FileList(destinationFolder);
-
-            //            Parallel.For(0, tempFileList.Count, (i, state) =>
-            //            {
-            //                ExecuteLogic(tempFileList[i]);
-            //            });
-            //        }
-            //        return;
-            //    }
-
-            //    Parallel.For(0, Pics.Count, (i, state) =>
-            //    {
-            //        ExecuteLogic(Pics[i]);
-            //    });
-            //    return;
-            //}
-
-            //ExecuteLogic(Pics[FolderIndex]);
+            aspectRatio = AspectRatioBox.IsChecked.Value;
+            optimize = OptimizeBox.IsChecked.Value;
+            flip = FlipBox.IsChecked.Value;
         }
 
         internal void UpdateValues()
         {
             RenameBoxText.Text = Path.GetFileName(Pics[FolderIndex]);
             RenameBoxText.Text += " [Not implemented]";
-            DestinationBoxText.Text = AllBoxText.Text = Path.GetDirectoryName(Pics[FolderIndex]);
+            DestinationBoxText.Text = SourceBoxText.Text = Path.GetDirectoryName(Pics[FolderIndex]);
 
             var dimensions = ImageDecoder.ImageSize(Pics[FolderIndex], true, true);
 

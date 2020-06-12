@@ -488,7 +488,7 @@
                     </Border>
                     <Grid>
                         <TextBox
-                            x:Name="AllBox"
+                            x:Name="SourceBox"
                             Width="218"
                             Height="37"
                             Margin="7,0,0,0"
@@ -503,7 +503,7 @@
                             </TextBox.Effect>
                         </TextBox>
                         <TextBlock
-                            x:Name="AllBoxText"
+                            x:Name="SourceBoxText"
                             Margin="18,0,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
@@ -514,7 +514,7 @@
                                 <Style TargetType="{x:Type TextBlock}">
                                     <Setter Property="Visibility" Value="Collapsed" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Text, ElementName=AllBox}" Value="">
+                                        <DataTrigger Binding="{Binding Text, ElementName=SourceBox}" Value="">
                                             <Setter Property="Visibility" Value="Visible" />
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -544,6 +544,7 @@
                 </TextBox>
 
                 <ProgressBar
+                    x:Name="UIprogressbar"
                     Height="15"
                     Margin="10"
                     Background="{StaticResource BackgroundColorBrush}"
