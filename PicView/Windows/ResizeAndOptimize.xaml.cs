@@ -19,9 +19,9 @@ namespace PicView.Windows
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            KeyDown += KeysDown;
+            //KeyDown += KeysDown;
             KeyUp += KeysUp;
-            Scroller.MouseWheel += Info_MouseWheel;
+            //Scroller.MouseWheel += Info_MouseWheel;
 
 
 
@@ -51,28 +51,28 @@ namespace PicView.Windows
 
         #region Keyboard Shortcuts
 
-        private void KeysDown(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Down:
-                case Key.PageDown:
-                case Key.S:
-                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + zoomSpeed);
-                    break;
-                case Key.Up:
-                case Key.PageUp:
-                case Key.W:
-                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - zoomSpeed);
-                    break;
-                case Key.Q:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        Environment.Exit(0);
-                    }
-                    break;
-            }
-        }
+        //private void KeysDown(object sender, KeyEventArgs e)
+        //{
+        //    switch (e.Key)
+        //    {
+        //        case Key.Down:
+        //        case Key.PageDown:
+        //        case Key.S:
+        //            Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + zoomSpeed);
+        //            break;
+        //        case Key.Up:
+        //        case Key.PageUp:
+        //        case Key.W:
+        //            Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - zoomSpeed);
+        //            break;
+        //        case Key.Q:
+        //            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+        //            {
+        //                Environment.Exit(0);
+        //            }
+        //            break;
+        //    }
+        //}
 
         private void KeysUp(object sender, KeyEventArgs e)
         {
@@ -92,17 +92,17 @@ namespace PicView.Windows
             }
         }
 
-        private void Info_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            if (e.Delta > 0)
-            {
-                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - zoomSpeed);
-            }
-            else if (e.Delta < 0)
-            {
-                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + zoomSpeed);
-            }
-        }
+        //private void Info_MouseWheel(object sender, MouseWheelEventArgs e)
+        //{
+        //    if (e.Delta > 0)
+        //    {
+        //        Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - zoomSpeed);
+        //    }
+        //    else if (e.Delta < 0)
+        //    {
+        //        Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + zoomSpeed);
+        //    }
+        //}
 
         #endregion
 

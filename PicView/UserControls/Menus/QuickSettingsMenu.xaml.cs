@@ -21,7 +21,7 @@ namespace PicView.UserControls
 
             SettingsButton.Click += (s, x) => LoadWindows.AllSettingsWindow();
 
-            ZoomButton.Click += delegate {
+            ResetZoomButton.Click += delegate {
                 Close_UserControls();
                 Pan_and_Zoom.ResetZoom();
             };
@@ -65,10 +65,10 @@ namespace PicView.UserControls
             InfoButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(InfoButtonBrush, false);
 
 
-            // Zoom button
-            ZoomButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ZoomButtonBrush);
-            ZoomButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ZoomButtonBrush, true);
-            ZoomButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ZoomButtonBrush, false);
+            // ResetZoom button
+            ResetZoomButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ResetZoomBrush);
+            ResetZoomButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ResetZoomBrush, true);
+            ResetZoomButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ResetZoomBrush, false);
 
 
             // Toggle Scroll

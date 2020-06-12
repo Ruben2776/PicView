@@ -5,7 +5,7 @@
     xmlns:uc="clr-namespace:PicView.UserControls"
     Title="Batch resize &amp; optimize"
     Width="530"
-    Height="580"
+    Height="520"
     FontFamily="/PicView;component/Resources/fonts/#Aller"
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="CanMinimize"
@@ -93,345 +93,419 @@
         </Rectangle>
 
         <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
-            <ScrollViewer
-                x:Name="Scroller"
-                Background="{StaticResource NoisyBg}"
-                HorizontalScrollBarVisibility="Disabled"
-                VerticalScrollBarVisibility="Auto">
-                <StackPanel>
+            <StackPanel Background="{StaticResource NoisyBg}">
 
-                    <StackPanel
-                        Margin="0,8,0,8"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
-                        Orientation="Horizontal">
-                        <Label
-                            Height="27"
-                            Margin="0,4,0,10"
-                            Content="Resize Image:" />
-                        <Label
-                            Height="27"
-                            Margin="5,4,5,10"
-                            Content="Width:" />
-                        <Grid>
-                            <TextBox
-                            x:Name="WidthValueBox"
-                            Height="27"
-                            Margin="5,0,0,7"
-                            Padding="5,2,5,0" />
-                            <TextBlock
-                                x:Name="WidthBoxText"
-                                Margin="11,0,5,7"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                IsHitTestVisible="False"
-                                Text="1920">
-                                <TextBlock.Style>
-                                    <Style TargetType="{x:Type TextBlock}">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Text, ElementName=WidthValueBox}" Value="">
-                                                <Setter Property="Visibility" Value="Visible" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </Grid>
-                        
-                        <Label
-                            Height="27"
-                            Margin="5,4,5,10"
-                            Content="Height:" />
+                <StackPanel
+                    Margin="7,3,0,8"
+                    VerticalAlignment="Top"
+                    Orientation="Horizontal">
+                    <Label Margin="0,6,0,0" Content="Rotate:" />
 
-                        <Grid>
-                            <TextBox
-                            x:Name="HeightValueBox"
-                            Height="27"
-                            Margin="5,0,0,7"
-                            Padding="5,2,5,0"/>
-                            <TextBlock
-                                x:Name="HeightBoxText"
-                                Margin="11,0,5,7"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                IsHitTestVisible="False"
-                                Text="1080">
-                                <TextBlock.Style>
-                                    <Style TargetType="{x:Type TextBlock}">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Text, ElementName=HeightValueBox}" Value="">
-                                                <Setter Property="Visibility" Value="Visible" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </Grid>
-
-                        <CheckBox Height="27"
-                            Margin="8,0,0,7"
-                            Padding="5,0,5,-9"
-                            Background="{StaticResource BackgroundColorBrushAlt}"
-                            BorderThickness="2"
-                            Content="Maintain aspect ratio"
-                            IsChecked="True" />
-                    </StackPanel>
-
-                    <StackPanel
-                        Margin="0,3,0,8"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
-                        Orientation="Horizontal">
-                        <CheckBox
-                            Padding="8"
-                            Background="{StaticResource BackgroundColorBrushAlt}"
-                            BorderThickness="2"
-                            Content="Optimize image file size"
-                            IsChecked="True" />
-                    </StackPanel>
-
-                    <WrapPanel
-                        Margin="0,3,0,8"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
-                        Orientation="Horizontal">
-                        <Label Content="Rotate:" />
-                        <Slider
-                            x:Name="RotationSlider"
-                            Width="200"
-                            Height="30"
-                            IsSnapToTickEnabled="True"
-                            Maximum="359"
-                            Minimum="0"
-                            TickFrequency="1"
-                            TickPlacement="BottomRight"
-                            Value="0" />
+                    <Grid Margin="37,3,5,3">
                         <TextBox
-                            x:Name="RotSlide"
-                            Width="35"
-                            Margin="5,3"
+                            x:Name="RotBox"
+                            Width="55"
+                            Height="28"
                             HorizontalAlignment="Right"
                             IsReadOnly="True"
-                            Text="{Binding ElementName=RotationSlider, Path=Value}"
                             TextAlignment="Center"
-                            ToolTip="Enter rotation value" />
-                        <Label Margin="-7,-4,-6,0" Content="º" />
-                    </WrapPanel>
-
-                    <StackPanel
-                        Margin="0,3,0,8"
-                        HorizontalAlignment="Center"
-                        Orientation="Horizontal">
-                        <Label
-                            MinWidth="86"
-                            Margin="0,4,0,0"
-                            Content="Rename to: " />
-                        <Grid>
-                            <TextBox
-                                x:Name="RenameBox"
-                                Width="376"
-                                Margin="5,0,8,0"
-                                Padding="5,4,5,0">
-                                <TextBox.Effect>
-                                    <DropShadowEffect
-                                        BlurRadius="4"
-                                        Direction="268"
-                                        ShadowDepth="1"
-                                        Color="Black" />
-                                </TextBox.Effect>
-                            </TextBox>
-                            <TextBlock
-                                x:Name="RenameBoxText"
-                                Margin="15,0,0,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                IsHitTestVisible="False"
-                                Text="Filename.jpg">
-                                <TextBlock.Style>
-                                    <Style TargetType="{x:Type TextBlock}">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Text, ElementName=RenameBox}" Value="">
-                                                <Setter Property="Visibility" Value="Visible" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </Grid>
-                        <CheckBox
-                            x:Name="RenameCheckBox"
-                            Margin="-5,0,0,0"
-                            Padding="0,0,3,0"
-                            Background="{StaticResource BackgroundColorBrushAlt}"
-                            BorderThickness="1"
-                            IsChecked="False">
-                            <CheckBox.Effect>
+                            ToolTip="Rotation angle">
+                            <TextBox.Effect>
                                 <DropShadowEffect
                                     BlurRadius="4"
-                                    Direction="-19"
-                                    ShadowDepth="2"
+                                    Direction="268"
+                                    ShadowDepth="1"
                                     Color="Black" />
-                            </CheckBox.Effect>
-                        </CheckBox>
-                    </StackPanel>
-
-                    <StackPanel
-                        Margin="0,3,0,8"
-                        HorizontalAlignment="Center"
-                        Orientation="Horizontal">
-                        <Label
-                            MinWidth="86"
-                            Margin="0,4,0,0"
-                            Content="Move to: " />
-                        <Grid>
-                            <TextBox
-                                x:Name="MoveBox"
-                                Width="376"
-                                Margin="5,0,8,0"
-                                Padding="5,4,5,0">
-                                <TextBox.Effect>
-                                    <DropShadowEffect
-                                        BlurRadius="4"
-                                        Direction="268"
-                                        ShadowDepth="1"
-                                        Color="Black" />
-                                </TextBox.Effect>
-                            </TextBox>
-                            <TextBlock
-                                x:Name="MoveBoxText"
-                                Margin="15,0,0,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                IsHitTestVisible="False"
-                                Text="Folder name">
-                                <TextBlock.Style>
-                                    <Style TargetType="{x:Type TextBlock}">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Text, ElementName=MoveBox}" Value="">
-                                                <Setter Property="Visibility" Value="Visible" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </Grid>
-                        <CheckBox
-                            x:Name="MoveCheckBox"
-                            Margin="-5,0,0,0"
-                            Padding="0,0,3,0"
-                            Background="{StaticResource BackgroundColorBrushAlt}"
-                            BorderThickness="1"
-                            IsChecked="False">
-                            <CheckBox.Effect>
-                                <DropShadowEffect
-                                    BlurRadius="4"
-                                    Direction="-19"
-                                    ShadowDepth="2"
-                                    Color="Black" />
-                            </CheckBox.Effect>
-                        </CheckBox>
-                    </StackPanel>
-
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                        <RadioButton
-                            x:Name="SelectedRadio"
-                            Margin="0,5,5,5"
-                            Padding="6,8,6,8"
+                            </TextBox.Effect>
+                        </TextBox>
+                        <TextBlock
+                            x:Name="RotateBoxText"
+                            Margin="10,0,0,0"
                             HorizontalAlignment="Left"
-                            Content="Selected image"
-                            IsChecked="True"
-                            Style="{StaticResource MetroFlatRadioButton}">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="SelectedBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                        </RadioButton>
+                            VerticalAlignment="Center"
+                            Foreground="{StaticResource MainColorFadedBrush}"
+                            IsHitTestVisible="False"
+                            Text="0">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=RotBox}" Value="">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                    <Label Margin="-7,-4,-6,0" Content="º" />
 
+                    <Label Margin="10,5,0,0" Content="Misc:" />
 
-
-                        <RadioButton
-                            x:Name="SpecificRadio"
-                            Padding="7,8,8,8"
-                            HorizontalAlignment="Left"
-                            Content="From folder :"
-                            Style="{StaticResource MetroFlatRadioButton}">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="SpecificBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                        </RadioButton>
-                        <Grid>
-                            <TextBox
-                                x:Name="SpecBox"
-                                Width="230"
-                                Height="37"
-                                Margin="7,0,0,0"
-                                Padding="7,8,18,8"
-                                Text="">
-                                <TextBox.Effect>
-                                    <DropShadowEffect
-                                        BlurRadius="4"
-                                        Direction="268"
-                                        ShadowDepth="1"
-                                        Color="Black" />
-                                </TextBox.Effect>
-                            </TextBox>
-                            <TextBlock
-                                x:Name="SpecBoxText"
-                                Margin="16,0,0,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                IsHitTestVisible="False"
-                                Text="Folder name">
-                                <TextBlock.Style>
-                                    <Style TargetType="{x:Type TextBlock}">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Text, ElementName=SpecBox}" Value="">
-                                                <Setter Property="Visibility" Value="Visible" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </Grid>
-                    </StackPanel>
-
-                    <TextBox
-                        x:Name="OutputlogBox"
-                        Height="130"
-                        Margin="10"
-                        AcceptsReturn="False"
-                        IsReadOnly="True" />
-
-                    <ProgressBar
-                        Height="15"
-                        Margin="10"
-                        Background="{StaticResource BackgroundColorBrush}"
+                    <Border
+                        Height="28"
+                        Margin="15,3,5,3"
+                        Padding="3,3,0,3"
+                        Background="{StaticResource BackgroundColorBrushAlt}"
                         BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="2" />
-
-                    <Button
-                        x:Name="StartButton"
-                        Margin="5"
-                        HorizontalAlignment="Center"
-                        Content="Start"
-                        Style="{StaticResource MetroAlphaFlatButton}"
-                        ToolTip=" [Not Implemented]">
-                        <Button.Background>
-                            <SolidColorBrush x:Name="StartBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </Button.Background>
-                    </Button>
+                        BorderThickness="1">
+                        <Border.Effect>
+                            <DropShadowEffect
+                                BlurRadius="4"
+                                Direction="268"
+                                ShadowDepth="1"
+                                Color="Black" />
+                        </Border.Effect>
+                        <CheckBox
+                            Padding="5,0,5,0"
+                            Content="Optimize file size"
+                            IsChecked="True" />
+                    </Border>
 
                 </StackPanel>
-            </ScrollViewer>
+
+                <StackPanel
+                    Margin="7,0,0,0"
+                    HorizontalAlignment="Left"
+                    Orientation="Horizontal">
+                    <Label Margin="0,4,0,10" Content="Resize:" />
+
+                    <Grid Margin="34,0,0,0">
+                        <TextBox
+                            x:Name="WidthValueBox"
+                            Width="55"
+                            Height="28"
+                            Margin="4,0,-4,7"
+                            ToolTip="Width">
+                            <TextBox.Effect>
+                                <DropShadowEffect
+                                    BlurRadius="4"
+                                    Direction="268"
+                                    ShadowDepth="1"
+                                    Color="Black" />
+                            </TextBox.Effect>
+                        </TextBox>
+                        <TextBlock
+                            x:Name="WidthBoxText"
+                            Margin="13,0,5,7"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Foreground="{StaticResource MainColorFadedBrush}"
+                            IsHitTestVisible="False"
+                            Text="1920">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=WidthValueBox}" Value="">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+
+                    <Label Margin="3,4,-5,10" Content="x" />
+
+                    <Grid>
+                        <TextBox
+                            x:Name="HeightValueBox"
+                            Width="55"
+                            Height="28"
+                            Margin="4,0,-4,7"
+                            ToolTip="Height">
+                            <TextBox.Effect>
+                                <DropShadowEffect
+                                    BlurRadius="4"
+                                    Direction="268"
+                                    ShadowDepth="1"
+                                    Color="Black" />
+                            </TextBox.Effect>
+                        </TextBox>
+                        <TextBlock
+                            x:Name="HeightBoxText"
+                            Margin="13,0,5,7"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Foreground="{StaticResource MainColorFadedBrush}"
+                            IsHitTestVisible="False"
+                            Text="1080">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=HeightValueBox}" Value="">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+
+                    <Border
+                        Height="28"
+                        Margin="11,0,0,7"
+                        Padding="2,3,2,3"
+                        Background="{StaticResource BackgroundColorBrushAlt}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1">
+                        <Border.Effect>
+                            <DropShadowEffect
+                                BlurRadius="4"
+                                Direction="268"
+                                ShadowDepth="1"
+                                Color="Black" />
+                        </Border.Effect>
+                        <CheckBox
+                            Padding="7,0,1,0"
+                            Content="Keep aspect ratio"
+                            IsChecked="True" />
+                    </Border>
+
+
+
+                </StackPanel>
+
+                <StackPanel
+                    Margin="6,3,0,8"
+                    HorizontalAlignment="Left"
+                    Orientation="Horizontal">
+                    <Label
+                        MinWidth="86"
+                        Margin="0,4,4,0"
+                        Content="Rename to:" />
+                    <Grid>
+                        <TextBox
+                            x:Name="RenameBox"
+                            Width="376"
+                            Margin="5,0,2,0"
+                            Padding="5,4,5,0">
+                            <TextBox.Effect>
+                                <DropShadowEffect
+                                    BlurRadius="4"
+                                    Direction="268"
+                                    ShadowDepth="1"
+                                    Color="Black" />
+                            </TextBox.Effect>
+                        </TextBox>
+                        <TextBlock
+                            x:Name="RenameBoxText"
+                            Margin="15,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Foreground="{StaticResource MainColorFadedBrush}"
+                            IsHitTestVisible="False"
+                            Text="Filename.jpg">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=RenameBox}" Value="">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                    <Border
+                        Padding="6,0,3,0"
+                        Background="{StaticResource BackgroundColorBrushAlt}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1">
+                        <CheckBox x:Name="RenameCheckBox" IsChecked="False" />
+                        <Border.Effect>
+                            <DropShadowEffect
+                                BlurRadius="4"
+                                Direction="-19"
+                                ShadowDepth="2"
+                                Color="Black" />
+                        </Border.Effect>
+                    </Border>
+
+                </StackPanel>
+
+                <StackPanel
+                    Margin="7,3,0,8"
+                    HorizontalAlignment="Left"
+                    Orientation="Horizontal">
+                    <Label
+                        MinWidth="86"
+                        Margin="0,4,0,0"
+                        Content="Destination:" />
+                    <Grid>
+                        <TextBox
+                            x:Name="MoveBox"
+                            Width="376"
+                            Margin="5,0,2,0"
+                            Padding="5,4,5,0">
+                            <TextBox.Effect>
+                                <DropShadowEffect
+                                    BlurRadius="4"
+                                    Direction="268"
+                                    ShadowDepth="1"
+                                    Color="Black" />
+                            </TextBox.Effect>
+                        </TextBox>
+                        <TextBlock
+                            x:Name="MoveBoxText"
+                            Margin="15,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Foreground="{StaticResource MainColorFadedBrush}"
+                            IsHitTestVisible="False"
+                            Text="Folder name">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=MoveBox}" Value="">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                    <Border
+                        Padding="6,0,3,0"
+                        Background="{StaticResource BackgroundColorBrushAlt}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1">
+                        <CheckBox x:Name="MoveCheckBox" IsChecked="False" />
+                        <Border.Effect>
+                            <DropShadowEffect
+                                BlurRadius="4"
+                                Direction="-19"
+                                ShadowDepth="2"
+                                Color="Black" />
+                        </Border.Effect>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+
+                    <Border
+                        Margin="0,5,5,5"
+                        Padding="12,9,7,9"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1">
+                        <RadioButton
+                            x:Name="SelectedRadio"
+                            HorizontalAlignment="Left"
+                            BorderThickness="0"
+                            Content="Selected image  "
+                            IsChecked="True" />
+                        <Border.Effect>
+                            <DropShadowEffect
+                                BlurRadius="4"
+                                Direction="268"
+                                ShadowDepth="1"
+                                Color="Black" />
+                        </Border.Effect>
+                        <Border.Background>
+                            <SolidColorBrush x:Name="SelectedBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Border.Background>
+                    </Border>
+
+
+
+                    <Border
+                        Margin="0,5,5,5"
+                        Padding="12,9,7,9"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1">
+                        <Border.Effect>
+                            <DropShadowEffect
+                                BlurRadius="4"
+                                Direction="268"
+                                ShadowDepth="1"
+                                Color="Black" />
+                        </Border.Effect>
+                        <RadioButton
+                            x:Name="SpecificRadio"
+                            HorizontalAlignment="Left"
+                            BorderThickness="0"
+                            Content="From folder:  " />
+                        <Border.Background>
+                            <SolidColorBrush x:Name="SpecificBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Border.Background>
+                    </Border>
+                    <Grid>
+                        <TextBox
+                            x:Name="SpecBox"
+                            Width="218"
+                            Height="37"
+                            Margin="7,0,0,0"
+                            Padding="7,8,18,8"
+                            Text="">
+                            <TextBox.Effect>
+                                <DropShadowEffect
+                                    BlurRadius="4"
+                                    Direction="268"
+                                    ShadowDepth="1"
+                                    Color="Black" />
+                            </TextBox.Effect>
+                        </TextBox>
+                        <TextBlock
+                            x:Name="SpecBoxText"
+                            Margin="18,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Foreground="{StaticResource MainColorFadedBrush}"
+                            IsHitTestVisible="False"
+                            Text="Folder name">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=SpecBox}" Value="">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </StackPanel>
+
+                <TextBox
+                    x:Name="OutputlogBox"
+                    Height="130"
+                    Margin="10"
+                    AcceptsReturn="False"
+                    IsReadOnly="True">
+                    <TextBox.Effect>
+                        <DropShadowEffect
+                            BlurRadius="3"
+                            Direction="292"
+                            ShadowDepth="2"
+                            Color="Black" />
+                    </TextBox.Effect>
+                </TextBox>
+
+                <ProgressBar
+                    Height="15"
+                    Margin="10"
+                    Background="{StaticResource BackgroundColorBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="2" />
+
+                <Button
+                    x:Name="StartButton"
+                    Margin="5"
+                    HorizontalAlignment="Center"
+                    Content="Start"
+                    Style="{StaticResource MetroAlphaFlatButton}"
+                    ToolTip=" [Not Implemented]">
+                    <Button.Background>
+                        <SolidColorBrush x:Name="StartBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Button.Background>
+                </Button>
+
+            </StackPanel>
         </Border>
     </DockPanel>
 </Window>
