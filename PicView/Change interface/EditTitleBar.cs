@@ -10,10 +10,7 @@ namespace PicView
 
         internal static void Bar_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ClickCount == 4)
-            {
-                mainWindow.Bar.Bar.SelectAll();
-            }
+
         }
 
         internal static void EditTitleBar_Text()
@@ -25,6 +22,7 @@ namespace PicView
             if (!mainWindow.Bar.IsFocused)
             {
                 mainWindow.Bar.Bar.Focus();
+                SelectFileName();
             }
             else
             {
@@ -41,13 +39,14 @@ namespace PicView
 
             e.Handled = true;
 
-            var absolutePath = Pics[FolderIndex];
-
             backupTitle = mainWindow.Bar.Text;
-            mainWindow.Bar.Text = absolutePath;
+            mainWindow.Bar.Text = Pics[FolderIndex];
+        }
 
-            var filename = Path.GetFileName(absolutePath);
-            var start = absolutePath.Length - filename.Length;
+        internal static void SelectFileName()
+        {
+            var filename = Path.GetFileName(Pics[FolderIndex]);
+            var start = Pics[FolderIndex].Length - filename.Length;
             var end = Path.GetFileNameWithoutExtension(filename).Length;
             mainWindow.Bar.Bar.Select(start, end);
         }

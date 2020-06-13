@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using System.Windows.Input;
-using System.Windows.Media;
 using static PicView.Fields;
 using static PicView.GoToLogic;
 using static PicView.UC;
@@ -52,13 +51,11 @@ namespace PicView
                     }
                 case Key.Escape: // Escape logic
                     quickSettingsMenu.GoToPicBox.Text = FolderIndex.ToString(CultureInfo.CurrentCulture);
-                    quickSettingsMenu.GoToPicBox.CaretBrush = new SolidColorBrush(Colors.Transparent);
-                    Close_UserControls();
-                    Keyboard.ClearFocus();
-                    mainWindow.Focus();
+                    ClearGoTo();
                     break;
                 case Key.Enter: // Execute it!
                     GoToPicEvent(sender, e);
+                    ClearGoTo();
                     break;
                 default: 
                     e.Handled = true; // Don't allow other keys

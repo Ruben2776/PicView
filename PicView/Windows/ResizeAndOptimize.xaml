@@ -344,6 +344,7 @@
                         <TextBox
                             x:Name="RenameBox"
                             Width="375"
+                            MaxWidth="375"
                             Margin="5,0,2,0"
                             Padding="5,4,5,0">
                             <TextBox.Effect>
@@ -356,12 +357,14 @@
                         </TextBox>
                         <TextBlock
                             x:Name="RenameBoxText"
+                            MaxWidth="360"
                             Margin="15,0,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             Foreground="{StaticResource MainColorFadedBrush}"
                             IsHitTestVisible="False"
-                            Text="Filename.jpg">
+                            Text="Filename.jpg"
+                            TextTrimming="CharacterEllipsis">
                             <TextBlock.Style>
                                 <Style TargetType="{x:Type TextBlock}">
                                     <Setter Property="Visibility" Value="Collapsed" />
@@ -403,6 +406,7 @@
                         <TextBox
                             x:Name="DestinationBox"
                             Width="402"
+                            MaxWidth="402"
                             Margin="5,0,2,0"
                             Padding="5,4,5,0"
                             FontFamily="Aller Light">
@@ -416,12 +420,14 @@
                         </TextBox>
                         <TextBlock
                             x:Name="DestinationBoxText"
+                            MaxWidth="375"
                             Margin="15,0,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             Foreground="{StaticResource MainColorFadedBrush}"
                             IsHitTestVisible="False"
-                            Text="Folder name">
+                            Text="Folder name"
+                            TextTrimming="CharacterEllipsis">
                             <TextBlock.Style>
                                 <Style TargetType="{x:Type TextBlock}">
                                     <Setter Property="Visibility" Value="Collapsed" />
@@ -491,6 +497,7 @@
                             x:Name="SourceBox"
                             Width="218"
                             Height="37"
+                            MaxWidth="218"
                             Margin="7,0,0,0"
                             Padding="7,8,18,8"
                             Text="">
@@ -504,12 +511,14 @@
                         </TextBox>
                         <TextBlock
                             x:Name="SourceBoxText"
-                            Margin="18,0,0,0"
+                            MaxWidth="205"
+                            Margin="18,0,0,0" Opacity=".9"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             Foreground="{StaticResource MainColorFadedBrush}"
                             IsHitTestVisible="False"
-                            Text="Folder name">
+                            Text="Folder name"
+                            TextTrimming="CharacterEllipsis">
                             <TextBlock.Style>
                                 <Style TargetType="{x:Type TextBlock}">
                                     <Setter Property="Visibility" Value="Collapsed" />

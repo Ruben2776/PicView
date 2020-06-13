@@ -29,6 +29,8 @@
                         <ControlTemplate TargetType="{x:Type TextBox}">
                             <Border
                                 x:Name="bg"
+                                Margin="0,0,0,2"
+                                Padding="5,7,5,3"
                                 BorderBrush="{DynamicResource ChosenColorBrush}"
                                 BorderThickness="1">
                                 <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />

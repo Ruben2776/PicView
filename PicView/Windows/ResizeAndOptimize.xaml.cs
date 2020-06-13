@@ -22,8 +22,6 @@ namespace PicView.Windows
             InitializeComponent();
 
             ContentRendered += Window_ContentRendered;
-
-
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)

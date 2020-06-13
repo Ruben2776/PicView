@@ -140,7 +140,7 @@ namespace PicView
 
             if (Rotateint == 0 || Rotateint == 180) // Standard aspect ratio calculation
             {
-                AspectRatio = Math.Min(maxWidth / width, (maxHeight / height));
+                AspectRatio = Math.Min(maxWidth / width, maxHeight / height);
             }
             else // Rotated aspect ratio calculation
             {
@@ -182,7 +182,7 @@ namespace PicView
                 // TODO Loses position gradually if not forced to center
                 if (!Properties.Settings.Default.Fullscreen)
                 {
-                    if (Properties.Settings.Default.PicGallery == 2 && xWidth >= monitorWidth - (picGalleryItem_Size + padding))
+                    if (Properties.Settings.Default.PicGallery == 2 && xWidth >= monitorWidth - (picGalleryItem_Size + 200))
                     {
                         // Offset window to not overlap gallery
                         mainWindow.Left = ((MonitorInfo.WorkArea.Width - picGalleryItem_Size - (mainWindow.Width * MonitorInfo.DpiScaling)) / 2)

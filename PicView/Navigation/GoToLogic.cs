@@ -24,7 +24,13 @@ namespace PicView
                 quickSettingsMenu.GoToPicBox.Text = FolderIndex.ToString(CultureInfo.CurrentCulture);
                 // TODO add error message or something..
             }
+
+        }
+
+        internal static void ClearGoTo()
+        {
             quickSettingsMenu.GoToPicBox.CaretBrush = new SolidColorBrush(Colors.Transparent);
+            FocusManager.SetFocusedElement(FocusManager.GetFocusScope(quickSettingsMenu.GoToPicBox), null);
             Close_UserControls();
             Keyboard.ClearFocus();
             mainWindow.Focus();

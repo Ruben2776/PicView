@@ -61,14 +61,6 @@ namespace PicView
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
             else if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]) && Path.GetDirectoryName(path) != Path.GetDirectoryName(Pics[FolderIndex]))
             {
-                //// Reset zipped values
-                //if (!string.IsNullOrWhiteSpace(TempZipPath))
-                //{
-                //    DeleteTempFiles();
-                //    TempZipPath = string.Empty;
-                //    RecentFiles.SetZipped(string.Empty, false);
-                //}
-
                 // Reset old values and get new
                 ChangeFolder(true);
                 await GetValues(path).ConfigureAwait(true);

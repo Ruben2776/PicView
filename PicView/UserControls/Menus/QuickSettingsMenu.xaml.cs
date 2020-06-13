@@ -21,10 +21,10 @@ namespace PicView.UserControls
 
             SettingsButton.Click += (s, x) => LoadWindows.AllSettingsWindow();
 
-            ResetZoomButton.Click += delegate {
-                Close_UserControls();
-                Pan_and_Zoom.ResetZoom();
-            };
+            //ResetZoomButton.Click += delegate {
+            //    Close_UserControls();
+            //    Pan_and_Zoom.ResetZoom();
+            //};
 
             SettingsButton.Click += delegate {
                 Close_UserControls();
@@ -66,9 +66,9 @@ namespace PicView.UserControls
 
 
             // ResetZoom button
-            ResetZoomButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ResetZoomBrush);
-            ResetZoomButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ResetZoomBrush, true);
-            ResetZoomButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ResetZoomBrush, false);
+            //ResetZoomButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ResetZoomBrush);
+            //ResetZoomButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ResetZoomBrush, true);
+            //ResetZoomButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ResetZoomBrush, false);
 
 
             // Toggle Scroll
@@ -82,10 +82,10 @@ namespace PicView.UserControls
             ToggleLooping.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ToggleLoopBrush, false);
 
             // BgButton
-            BgButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(BgButtonBrush);
-            BgButton.MouseEnter += (s, x) => ButtonMouseOverAnim(BgButtonBrush, true);
-            BgButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(BgButtonBrush, false);
-            BgButton.Click += Utilities.ChangeBackground;
+            //BgButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(BgButtonBrush);
+            //BgButton.MouseEnter += (s, x) => ButtonMouseOverAnim(BgButtonBrush, true);
+            //BgButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(BgButtonBrush, false);
+            //BgButton.Click += Utilities.ChangeBackground;
 
             // Set Fit
             SetFit.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(SetFitBrush);

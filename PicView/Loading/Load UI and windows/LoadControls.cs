@@ -162,10 +162,10 @@ namespace PicView
                 Visibility = Visibility.Hidden,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(36, 0, 0, 0)
+                Margin = new Thickness(52, 0, 0, 0)
             };
 
-            quickSettingsMenu.SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow ? true : false;
+            quickSettingsMenu.SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
 
             mainWindow.bg.Children.Add(quickSettingsMenu);
 
