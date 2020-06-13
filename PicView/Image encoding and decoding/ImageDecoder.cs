@@ -9,7 +9,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 using static PicView.Fields;
 
@@ -57,7 +56,6 @@ namespace PicView
                         var pic = sKBitmap.ToWriteableBitmap();
                         pic.Freeze();
                         return pic;
-
                     }
                     catch (Exception e)
                     {
@@ -81,7 +79,6 @@ namespace PicView
                         {
                             magick.Read(filestream, mrs);
                         }
-
                         catch (MagickException e)
                         {
 #if DEBUG
@@ -245,10 +242,7 @@ namespace PicView
                     var x = TransformImage(files[i], resize, width, height, aspectRatio, rotation, quality, optimize, flip, name, destination);
                     progress.Report(x);
                 }
-                catch (Exception)
-                {
-                    return;
-                }
+                catch (Exception) { return; }
             })).ConfigureAwait(false);
         }
 
@@ -269,7 +263,18 @@ namespace PicView
                 Quality = quality,
             };
 
-            magick.Read(path);
+            try
+            {
+                magick.Read(path);
+            }
+            catch (Exception e)
+            {
+                var errorMessage = "TransformImage caught exception " + Environment.NewLine + e.Message;
+#if DEBUG
+                Trace.WriteLine(errorMessage);
+#endif
+                return errorMessage;
+            }
 
             if (rotation != 0)
             {
@@ -279,7 +284,7 @@ namespace PicView
                 }
                 catch (Exception e)
                 {
-                    var errorMessage = "TransformImage caught exception \n" + e.Message;
+                    var errorMessage = "TransformImage caught exception " + Environment.NewLine + e.Message;
 #if DEBUG
                     Trace.WriteLine(errorMessage);
 #endif
@@ -304,7 +309,7 @@ namespace PicView
                 }
                 catch (Exception e)
                 {
-                    var errorMessage = "TransformImage caught exception \n" + e.Message;
+                    var errorMessage = "TransformImage caught exception " + Environment.NewLine + e.Message;
 #if DEBUG
                     Trace.WriteLine(errorMessage);
 #endif
@@ -320,7 +325,7 @@ namespace PicView
                 }
                 catch (Exception e)
                 {
-                    var errorMessage = "TransformImage caught exception \n" + e.Message;
+                    var errorMessage = "TransformImage caught exception " + Environment.NewLine + e.Message;
 #if DEBUG
                     Trace.WriteLine(errorMessage);
 #endif
@@ -336,7 +341,7 @@ namespace PicView
             }
             catch (Exception e)
             {
-                var errorMessage = "TransformImage caught exception \n" + e.Message;
+                var errorMessage = "TransformImage caught exception " + Environment.NewLine + e.Message;
 #if DEBUG
                 Trace.WriteLine(errorMessage);
 #endif

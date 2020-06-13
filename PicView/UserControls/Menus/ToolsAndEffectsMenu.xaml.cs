@@ -19,7 +19,7 @@ namespace PicView.UserControls
             { 
                 UC.Close_UserControls();
                 LoadWindows.ResizeAndOptimizeWindow();
-                LoadWindows.resizeAndOptimize.UpdateValues();
+                Batch_Resize.UpdateValues();
             };
 
             EffectsButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(EffectsButtonBrush);

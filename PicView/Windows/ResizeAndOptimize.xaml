@@ -145,7 +145,6 @@
                         Height="28"
                         Margin="15,3,5,3"
                         Padding="3,3,0,3"
-                        Background="{StaticResource BackgroundColorBrushAlt}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1">
                         <Border.Effect>
@@ -160,6 +159,9 @@
                             Padding="5,0,5,0"
                             Content="Optimize file size"
                             IsChecked="True" />
+                        <Border.Background>
+                            <SolidColorBrush x:Name="OptimizeBoxBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Border.Background>
                     </Border>
 
                     <Label Margin="9,5,0,0" Content="Quality" />
@@ -290,7 +292,6 @@
                         Height="28"
                         Margin="11,0,0,7"
                         Padding="2,3,2,3"
-                        Background="{StaticResource BackgroundColorBrushAlt}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1">
                         <Border.Effect>
@@ -305,13 +306,15 @@
                             Padding="7,0,1,0"
                             Content="Keep aspect ratio"
                             IsChecked="True" />
+                        <Border.Background>
+                            <SolidColorBrush x:Name="AspectRatioBoxBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Border.Background>
                     </Border>
 
                     <Border
                         Height="28"
                         Margin="16,0,0,7"
                         Padding="4,3,4,3"
-                        Background="{StaticResource BackgroundColorBrushAlt}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1">
                         <Border.Effect>
@@ -326,6 +329,9 @@
                             Padding="6,0,5,0"
                             Content="Flip image(s)"
                             IsChecked="False" />
+                        <Border.Background>
+                            <SolidColorBrush x:Name="FlipBoxBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Border.Background>
                     </Border>
 
 
@@ -346,7 +352,8 @@
                             Width="375"
                             MaxWidth="375"
                             Margin="5,0,2,0"
-                            Padding="5,4,5,0">
+                            Padding="5,4,5,0"
+                            IsEnabled="False">
                             <TextBox.Effect>
                                 <DropShadowEffect
                                     BlurRadius="4"
@@ -512,11 +519,12 @@
                         <TextBlock
                             x:Name="SourceBoxText"
                             MaxWidth="205"
-                            Margin="18,0,0,0" Opacity=".9"
+                            Margin="18,0,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             Foreground="{StaticResource MainColorFadedBrush}"
                             IsHitTestVisible="False"
+                            Opacity=".9"
                             Text="Folder name"
                             TextTrimming="CharacterEllipsis">
                             <TextBlock.Style>
@@ -541,7 +549,7 @@
                     AcceptsReturn="False"
                     Foreground="{StaticResource MainColorFadedBrush}"
                     IsReadOnly="True"
-                    Text="Under development, coming soon!"
+                    Text="Under development"
                     TextWrapping="Wrap">
                     <TextBox.Effect>
                         <DropShadowEffect
@@ -565,8 +573,7 @@
                     Margin="5"
                     HorizontalAlignment="Center"
                     Content="Start"
-                    Style="{StaticResource MetroAlphaFlatButton}"
-                    ToolTip=" [Not Implemented]">
+                    Style="{StaticResource MetroAlphaFlatButton}">
                     <Button.Background>
                         <SolidColorBrush x:Name="StartBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Button.Background>
