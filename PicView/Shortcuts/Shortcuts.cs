@@ -129,7 +129,7 @@ namespace PicView
 
                 case Key.Up:
                 case Key.W:
-                    if (Properties.Settings.Default.ScrollEnabled && mainWindow.Scroller.ScrollableHeight > 0)
+                    if (Properties.Settings.Default.ScrollEnabled)
                     {
                         if (ctrlDown)
                         {
@@ -176,7 +176,7 @@ namespace PicView
                     {
                         SaveFiles();
                     }
-                    else if (Properties.Settings.Default.ScrollEnabled && mainWindow.Scroller.ScrollableHeight > 0)
+                    else if (Properties.Settings.Default.ScrollEnabled)
                     {
                         mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset + 30);
                     }

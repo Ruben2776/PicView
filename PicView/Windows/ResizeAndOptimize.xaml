@@ -389,7 +389,10 @@
                         Background="{StaticResource BackgroundColorBrushAlt}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1">
-                        <CheckBox x:Name="RenameCheckBox" IsChecked="False" />
+                        <CheckBox
+                            x:Name="RenameCheckBox"
+                            IsChecked="False"
+                            IsEnabled="False" />
                         <Border.Effect>
                             <DropShadowEffect
                                 BlurRadius="4"

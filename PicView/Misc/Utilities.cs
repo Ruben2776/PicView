@@ -28,9 +28,9 @@ namespace PicView
         /// Gets the absolute mouse position, relative to screen
         /// </summary>
         /// <returns></returns>
-        internal static Point GetMousePos(Window window)
+        internal static Point GetMousePos(UIElement element)
         {
-            return window.PointToScreen(Mouse.GetPosition(window));
+            return element.PointToScreen(Mouse.GetPosition(element));
         }
 
 
