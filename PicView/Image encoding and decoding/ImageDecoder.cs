@@ -221,31 +221,6 @@ namespace PicView
             return new Size(magick.Width, magick.Height);
         }
 
-        internal static async Task TransformImagesAsync(List<string> files, IProgress<string> progress, CancellationToken cancellationToken,
-                                            bool resize,
-                                            int width,
-                                            int height,
-                                            bool aspectRatio,
-                                            int rotation,
-                                            int quality,
-                                            bool optimize,
-                                            bool flip,
-                                            string name,
-                                            string destination)
-        {
-            await Task.Run(() =>
-            Parallel.For(0, files.Count, (i, state) =>
-            {
-                try
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    var x = TransformImage(files[i], resize, width, height, aspectRatio, rotation, quality, optimize, flip, name, destination);
-                    progress.Report(x);
-                }
-                catch (Exception) { return; }
-            })).ConfigureAwait(false);
-        }
-
         internal static string TransformImage(string path,
                                             bool resize,
                                             int width,

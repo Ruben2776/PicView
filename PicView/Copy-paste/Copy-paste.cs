@@ -179,6 +179,10 @@ namespace PicView
                 {
                     Pic(Pics[0]);
                 }
+                else if (Pics.Count == 0)
+                {
+                    Unload();
+                }
                 else if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]))
                 {
                     Pic(Pics[FolderIndex]);

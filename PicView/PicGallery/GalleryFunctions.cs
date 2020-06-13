@@ -50,6 +50,10 @@ namespace PicView
 
             IsLoading = false;
             picGallery.Container.Children.Clear();
+
+#if DEBUG
+            Trace.WriteLine("Cleared Gallery children");
+#endif
         }
 
         internal static void SetSelected(int x)

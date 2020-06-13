@@ -18,25 +18,69 @@ namespace PicView
                 {
                     if (clickArrowRight != null && clickArrowLeft != null && x2 != null && galleryShortcut != null)
                     {
-                        int fadeTo;
-                        TimeSpan timespan;
+                        TimeSpan timespan = TimeSpan.FromSeconds(time);
 
-                        if (AutoScrolling)
+                        if (!show)
                         {
-                            fadeTo = 0;
-                            timespan = TimeSpan.FromSeconds(0);
+                            AnimationHelper.Fade(clickArrowLeft, 0, timespan);
+                            AnimationHelper.Fade(clickArrowRight, 0, timespan);
+                            AnimationHelper.Fade(galleryShortcut, 0, timespan);
+                            AnimationHelper.Fade(x2, 0, timespan);
+                            AnimationHelper.Fade(minus, 0, timespan);
+                            return;
+                        }
+                        else if (AutoScrolling)
+                        {
+                            clickArrowLeft.Opacity =
+                            clickArrowRight.Opacity =
+                            galleryShortcut.Opacity =
+                            x2.Opacity =
+                            minus.Opacity = 0;
+                            return;
+                        }
+
+                        var pos = Utilities.GetMousePos(mainWindow);
+
+                        //Tooltip.ShowTooltipMessage($"x = {pos.X} Y = {pos.Y}");
+
+                        if (pos.X < 1100 && pos.Y < 850)
+                        {
+                            AnimationHelper.Fade(clickArrowLeft, 1, timespan);
                         }
                         else
                         {
-                            fadeTo = show ? 1 : 0;
-                            timespan = TimeSpan.FromSeconds(time);
+                            AnimationHelper.Fade(clickArrowLeft, 0, timespan);
                         }
 
-                        AnimationHelper.Fade(clickArrowLeft, fadeTo, timespan);
-                        AnimationHelper.Fade(clickArrowRight, fadeTo, timespan);
-                        AnimationHelper.Fade(x2, fadeTo, timespan);
-                        AnimationHelper.Fade(minus, fadeTo, timespan);
-                        AnimationHelper.Fade(galleryShortcut, fadeTo, timespan);
+                        if (pos.X > 1400 && pos.Y < 1000)
+                        {
+                            AnimationHelper.Fade(clickArrowRight, 1, timespan);
+                        }
+                        else
+                        {
+                            AnimationHelper.Fade(clickArrowRight, 0, timespan);
+                        }
+
+                        if (pos.X > 1550 && pos.Y > 1100)
+                        {
+                            AnimationHelper.Fade(galleryShortcut, 1, timespan);
+                        }
+                        else
+                        {
+                            AnimationHelper.Fade(galleryShortcut, 0, timespan);
+                        }
+
+                        if (pos.X > 1400 && pos.Y < 500)
+                        {
+                            AnimationHelper.Fade(x2, 1, timespan);
+                            AnimationHelper.Fade(minus, 1, timespan);
+                        }
+                        else
+                        {
+                            AnimationHelper.Fade(x2, 0, timespan);
+                            AnimationHelper.Fade(minus, 0, timespan);
+                        }
+
                     }
                 }
 

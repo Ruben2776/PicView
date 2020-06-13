@@ -44,13 +44,18 @@ namespace PicView
                 if (Uri.IsWellFormedUriString(path, UriKind.Absolute))
                 {
                     LoadFromWeb.PicWeb(path);
+                    return;
+                }
+                else if (Directory.Exists(path))
+                {
+                    ChangeFolder(true);
+                    await GetValues(path).ConfigureAwait(true);
                 }
                 else
                 {
                     Unload();
+                    return;
                 }
-
-                return;
             }
 
             // If count not correct or just started, get values
@@ -142,12 +147,6 @@ namespace PicView
                 badImage = null;
                 IsUnsupported = false;
             }
-
-            // Additional error checking
-            if (x == -1)
-            {
-                await GetValues(Pics[0]).ConfigureAwait(true);
-            }
             
             if (Pics.Count <= x)
             {
@@ -201,7 +200,7 @@ namespace PicView
                     {
                         // Try again while loading                                             
                         pic = Preloader.Load(Pics[x]);
-                        await Task.Delay(15).ConfigureAwait(true);
+                        await Task.Delay(3).ConfigureAwait(true);
                     } while (Preloader.IsLoading);
 
                     AjaxLoadingEnd();
@@ -326,6 +325,29 @@ namespace PicView
             NoProgress();
 
             CanNavigate = false;
+        }
+
+        internal static async void PicFolder(string folder)
+        {
+            ChangeFolder(true);
+            Pics = FileList(folder);
+            
+            Pic(0);
+
+            quickSettingsMenu.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
+
+            AjaxLoadingEnd();
+
+            if (Pics.Count > 1)
+            {
+                if (!GalleryFunctions.IsLoading)
+                {
+                    await GalleryLoad.Load().ConfigureAwait(false);
+                }
+            }
+
+            prevPicResource = null; // Make sure to not waste memory
+
         }
 
         #endregion

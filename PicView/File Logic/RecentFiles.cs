@@ -26,12 +26,12 @@ namespace PicView
         /// </summary>
         const int MRUcount = 10;
 
-        static bool zipped;
+        internal static bool IsZipped { get; set; }
 
         internal static void Initialize()
         {
             MRUlist = new Queue<string>();
-            zipped = false;
+            IsZipped = false;
 
             LoadRecent();
         }
@@ -64,7 +64,7 @@ namespace PicView
         internal static void Add(string fileName)
         {
             // Don't add zipped files
-            if (zipped)
+            if (IsZipped)
             {
                 return;
             }
@@ -120,7 +120,7 @@ namespace PicView
                 Add(zipfile);
             }
 
-            zipped = isZipped;
+            IsZipped = isZipped;
         }
 
 

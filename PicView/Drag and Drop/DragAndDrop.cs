@@ -137,6 +137,14 @@ namespace PicView
                 {
                     Pic(files[0]);
                 }
+                else if (Directory.Exists(files[0]))
+                {
+                    if (Directory.GetFiles(files[0]).Length > 0)
+                    {
+                        PicFolder(files[0]);
+                    }
+                    return;
+                }
                 else return;
             }
 

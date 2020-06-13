@@ -17,14 +17,15 @@ namespace PicView
         private static string name;
         private static string destinationFolder;
         private static string sourceFolder;
-        private static CancellationTokenSource cts = new CancellationTokenSource();
+        private static readonly CancellationTokenSource cts = new CancellationTokenSource();
 
         internal static async Task StartProcessing()
         {
             if (resizeAndOptimize.StartButton.Content.ToString() == "Stop")
             {
-                resizeAndOptimize.StartButton.Content = "Cancelled";
                 cts.Cancel();
+                HandleCencalled();
+                return;
             }
 
             string file = Pics[FolderIndex];
@@ -33,33 +34,48 @@ namespace PicView
 
             GatherData();
 
-            if (resizeAndOptimize.AllRadio.IsChecked.Value)
+            if (!resizeAndOptimize.AllRadio.IsChecked.Value)
             {
-                resizeAndOptimize.OutputlogBox.Text = "Starting!" + Environment.NewLine;
-                var progress = new Progress<string>();
-                progress.ProgressChanged += Progress_ProgressChanged;
-
-                var currentFolder = Path.GetDirectoryName(Pics[FolderIndex]);
-                List<string> tempFileList;
-
-                if (currentFolder != sourceFolder)
-                {
-                    tempFileList = FileLists.FileList(sourceFolder);
-                }
-                else
-                {
-                    tempFileList = Pics;
-                }
-
-                resizeAndOptimize.UIprogressbar.Maximum = tempFileList.Count;
-
-                resizeAndOptimize.StartButton.Content = "Stop";
-
-                await ImageDecoder.TransformImagesAsync(tempFileList, progress, cts.Token, resize, width, height, aspectRatio, rotation, quality, optimize, flip, name, destinationFolder).ConfigureAwait(false);
+                await Task.Run(() =>
+                    ImageDecoder.TransformImage(file, resize, width, height, aspectRatio, rotation, quality,
+                        optimize, flip, name, destinationFolder)).ConfigureAwait(false);
                 return;
             }
 
-            await Task.Run(() => ImageDecoder.TransformImage(file, resize, width, height, aspectRatio, rotation, quality, optimize, flip, name, destinationFolder)).ConfigureAwait(false);
+            resizeAndOptimize.StartButton.Content = "Stop";
+
+            var progress = new Progress<string>();
+            progress.ProgressChanged += Progress_ProgressChanged;
+
+            var currentFolder = Path.GetDirectoryName(Pics[FolderIndex]);           
+
+            if (currentFolder != sourceFolder)
+            {
+                var tempFileList = FileLists.FileList(sourceFolder);
+                resizeAndOptimize.UIprogressbar.Maximum = tempFileList.Count;
+                try
+                {
+                    await TransformImagesAsync(tempFileList, progress, resize, width, height, aspectRatio, rotation, quality,
+                    optimize, flip, name, destinationFolder, cts.Token).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException) { return; }
+            }
+            else
+            {
+                resizeAndOptimize.UIprogressbar.Maximum = Pics.Count;
+
+                await TransformImagesAsync(Pics, progress, resize, width, height, aspectRatio, rotation, quality,
+                    optimize, flip, name, destinationFolder, cts.Token).ConfigureAwait(false);
+            }
+        }
+
+        private static async void HandleCencalled()
+        {
+            await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            {
+                resizeAndOptimize.StartButton.Content = "Cancelled";
+                resizeAndOptimize.UIprogressbar.Value = 0;
+            }));
         }
 
         private static void Progress_ProgressChanged(object sender, string e)
@@ -165,6 +181,30 @@ namespace PicView
                 resizeAndOptimize.HeightBoxText.Text = dimensions.Value.Height.ToString(CultureInfo.CurrentCulture);
             }
         }
+
+        internal static async Task TransformImagesAsync(
+            List<string> files, IProgress<string> progress, bool resize, int width, int height, bool aspectRatio,
+            int rotation, int quality, bool optimize, bool flip, string name, string destination, CancellationToken cancellationToken)
+        {
+            await Task.Run(() =>
+            {
+                for (int i = 0; i < files.Count; i++)
+                {
+                    var x = ImageDecoder.TransformImage(files[i], resize, width, height, aspectRatio, rotation, quality, optimize, flip, name, destination);
+                    progress.Report(x);
+                    //cancellationToken.ThrowIfCancellationRequested();
+                }
+            }).ConfigureAwait(false);
+
+        //await Task.Run(() =>
+        //Parallel.For(0, files.Count, (i, state) =>
+        //{
+        //    var x = ImageDecoder.TransformImage(files[i], resize, width, height, aspectRatio, rotation, quality, optimize, flip, name, destination);
+        //    progress.Report(x);
+        //    cancellationToken.ThrowIfCancellationRequested();
+
+        //})).ConfigureAwait(false);
+    }
 
 
     }

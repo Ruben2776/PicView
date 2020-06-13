@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using static PicView.Fields;
 
@@ -9,6 +10,8 @@ namespace PicView
 {
     internal static class Utilities
     {
+        #region static helpers
+
         /// <summary>
         /// Greatest Common Divisor
         /// </summary>
@@ -19,6 +22,21 @@ namespace PicView
         {
             return y == 0 ? x : GCD(y, x % y);
         }
+
+
+        /// <summary>
+        /// Gets the absolute mouse position, relative to screen
+        /// </summary>
+        /// <returns></returns>
+        internal static Point GetMousePos(Window window)
+        {
+            return window.PointToScreen(Mouse.GetPosition(window));
+        }
+
+
+        #endregion
+
+        #region Progress
 
         /// <summary>
         /// Show progress on taskbar
@@ -40,6 +58,8 @@ namespace PicView
             TaskbarManager prog = TaskbarManager.Instance;
             prog.SetProgressState(TaskbarProgressBarState.NoProgress);
         }
+
+        #endregion
 
         /// <summary>
         /// Sends the file to Windows print system
@@ -66,6 +86,8 @@ namespace PicView
             }
             return true;
         }
+
+        #region Color stuff
 
         /// <summary>
         /// Update color values for brushes and window border
@@ -171,5 +193,7 @@ namespace PicView
                     return new SolidColorBrush(Colors.Transparent);
             }
         }
+
+        #endregion
     }
 }
