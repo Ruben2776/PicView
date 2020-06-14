@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using PicView.UserControls;
+using System;
 using System.Windows;
 using System.Windows.Media.Animation;
-using PicView.UserControls;
 
 namespace PicView
 {
@@ -23,14 +21,14 @@ namespace PicView
         internal static PicGallery picGallery;
         internal static GalleryShortcut galleryShortcut;
         internal static BadImage badImage;
-
+        internal static CroppingTool cropppingTool;
 
         private static bool imageSettingsMenuOpen;
         private static bool fileMenuOpen;
         private static bool quickSettingsMenuOpen;
         private static bool toolsAndEffectsMenuOpen;
 
-        // Toggle open close menus
+        #region Toggle open close menus
 
         /// <summary>
         /// Toggles whether ImageSettingsMenu is open or not with a fade animation
@@ -328,5 +326,6 @@ namespace PicView
             }
         }
 
+        #endregion Toggle open close menus
     }
 }

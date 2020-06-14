@@ -237,5 +237,24 @@ namespace PicView
             Trace.WriteLine("LoadAutoScrollSign loaded ");
 #endif
         }
+
+
+        /// <summary>
+        /// Loads Croppingtool and adds it to the window
+        /// </summary>
+        internal static void LoadCroppingTool()
+        {
+            cropppingTool = new CroppingTool
+            {
+            };
+
+            mainWindow.bg.Children.Add(cropppingTool);
+
+#if DEBUG
+            Trace.WriteLine("cropppingTool loaded ");
+#endif
+        }
+
+
     }
 }

@@ -23,7 +23,7 @@ namespace PicView
         internal static void MainWindow_KeysDown(object sender, KeyEventArgs e)
         {
             // Don't allow keys when typing in text
-            if (mainWindow.Bar.IsKeyboardFocusWithin) { return; }
+            if (mainWindow.Bar.IsKeyboardFocusWithin || cropppingTool != null) { return; }
 
             var ctrlDown = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
             var altDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
@@ -323,6 +323,14 @@ namespace PicView
                     case Key.C:
                         if (ctrlDown)
                         {
+                            if (resizeAndOptimize != null)
+                            {
+                                if (resizeAndOptimize.IsVisible)
+                                {
+                                    return; // Prevent paste errors
+                                }
+                            }
+
                             if (shiftDown)
                             {
                                 Base64.SendToClipboard();
@@ -338,7 +346,9 @@ namespace PicView
                         }
                         else
                         {
-                            // TODO add crop function
+#if DEBUG
+                            ImageCropping.StartCrop();
+#endif
                         }
                         break;
 
@@ -484,9 +494,9 @@ namespace PicView
                 }
             }
 
-            #endregion Key is not held down
+#endregion Key is not held down
 
-            #region Alt + keys
+#region Alt + keys
 
             // Alt doesn't work in switch? Waiting for key up is confusing in this case
             // Alt + Z
@@ -509,7 +519,7 @@ namespace PicView
                 //e.Handled = true;
             }
 
-            #endregion Alt + keys
+#endregion Alt + keys
         }
 
         internal static void MainWindow_KeysUp(object sender, KeyEventArgs e)
@@ -519,13 +529,13 @@ namespace PicView
 
             switch (e.Key)
             {
-                #region FastPicUpdate()
+#region FastPicUpdate()
                 case Key.A:
                 case Key.Right:
                 case Key.D:
                     FastPicUpdate();
                     break;
-                    #endregion
+#endregion
             }
         }
 
