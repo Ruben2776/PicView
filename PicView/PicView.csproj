@@ -118,7 +118,7 @@
     </FileAssociation>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Magick.NET-Q16-x64" Version="7.19.0" />
+    <PackageReference Include="Magick.NET-Q16-x64" Version="7.19.0.1" />
     <PackageReference Include="Magick.NET.SystemDrawing" Version="2.0.0" />
     <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="1.0.1" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4" />
@@ -128,6 +128,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="PicViewCroppingImageLibrary" Version="1.0.4" />
     <PackageReference Include="SkiaSharp" Version="1.68.3" />
     <PackageReference Include="SkiaSharp.Views.WPF" Version="1.68.3" />
     <PackageReference Include="System.Buffers" Version="4.5.1" />
@@ -184,17 +185,23 @@
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="PicViewCroppingImageLibrary">
+      <HintPath>PicViewCroppingImageLibrary.dll</HintPath>
+    </Reference>
+  </ItemGroup>
   <PropertyGroup>
     <FileVersion>0.9.8.5</FileVersion>
     <SignAssembly>true</SignAssembly>
     <PackageLicenseFile></PackageLicenseFile>
-    <Copyright>Ruben Hyldgaard Negendahl</Copyright>
+    <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
     <PackageProjectUrl>https://github.com/Ruben2776/PicView</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Ruben2776/PicView</RepositoryUrl>
     <PackageLicenseExpression>GPL-3.0</PackageLicenseExpression>
     <AssemblyOriginatorKeyFile>PicViewKeyFile.pfx</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
     <LangVersion>8.0</LangVersion>
+    <Authors>Ruben2776</Authors>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

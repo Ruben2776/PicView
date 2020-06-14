@@ -118,43 +118,6 @@ namespace PicView
             return pic;
         }
 
-        /// <summary>
-        /// Tries to save image to the specified destination,
-        /// returns false if unsuccesful
-        /// </summary>
-        /// <param name="rotate">Degrees image is rotated by</param>
-        /// <param name="flipped">Whether to flip image or not</param>
-        /// <param name="path">The path of the source file</param>
-        /// <param name="destination">Where to save image to</param>
-        /// <returns></returns>
-        internal static bool TrySaveImage(int rotate, bool flipped, string path, string destination)
-        {
-            try
-            {
-                using var SaveImage = new MagickImage();
-                // Set maximum quality
-                var mrs = new MagickReadSettings()
-                {
-                    Density = new Density(300, 300),
-                };
-                SaveImage.Quality = 100;
-
-                SaveImage.Read(path, mrs);
-
-                // Apply transformation values
-                if (flipped)
-                {
-                    SaveImage.Flop();
-                }
-
-                SaveImage.Rotate(rotate);
-
-                SaveImage.Write(destination);
-            }
-            catch (Exception) { return false; }
-            return true;
-        }
-
         internal static Size? ImageSize(string file, bool usePreloader = false, bool advancedFormats = false)
         {
             if (usePreloader)

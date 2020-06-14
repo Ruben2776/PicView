@@ -107,7 +107,7 @@ namespace PicView
 
             IsDialogOpen = true;
 
-            if (!TrySaveImage(Rotateint, Flipped, Pics[FolderIndex], Savedlg.FileName))
+            if (!SaveImages.TrySaveImage(Rotateint, Flipped, Pics[FolderIndex], Savedlg.FileName))
             {
                 ShowTooltipMessage("Saving file failed");
             }

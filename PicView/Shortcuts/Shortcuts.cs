@@ -23,11 +23,38 @@ namespace PicView
         internal static void MainWindow_KeysDown(object sender, KeyEventArgs e)
         {
             // Don't allow keys when typing in text
-            if (mainWindow.Bar.IsKeyboardFocusWithin || cropppingTool != null) { return; }
+            if (mainWindow.Bar.IsKeyboardFocusWithin) { return; }
 
             var ctrlDown = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
             var altDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
             var shiftDown = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
+
+            #region CroppingKeys
+
+            if (cropppingTool != null)
+            {
+                if (cropppingTool.IsVisible)
+                {
+                    if (e.Key == Key.Escape)
+                    {
+                        mainWindow.bg.Children.Remove(cropppingTool);
+                        return;
+                    }
+
+                    if (e.Key == Key.Enter)
+                    {
+                        ImageCropping.SaveCrop();
+                        mainWindow.bg.Children.Remove(cropppingTool);
+                    }
+
+                    if (shiftDown)
+                    {
+                        // TODO keep it square when shift held down
+                    }
+                }
+            }
+
+            #endregion
 
             #region Keys where it can be held down
 
@@ -496,7 +523,7 @@ namespace PicView
 
 #endregion Key is not held down
 
-#region Alt + keys
+            #region Alt + keys
 
             // Alt doesn't work in switch? Waiting for key up is confusing in this case
             // Alt + Z
@@ -529,7 +556,7 @@ namespace PicView
 
             switch (e.Key)
             {
-#region FastPicUpdate()
+                #region FastPicUpdate()
                 case Key.A:
                 case Key.Right:
                 case Key.D:
@@ -549,7 +576,6 @@ namespace PicView
                     {
                         StopAutoScroll();
                     }
-
                     break;
 
                 case MouseButton.Middle:
