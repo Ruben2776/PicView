@@ -1,7 +1,9 @@
-﻿using ImageMagick;
+﻿using CroppingImageLibrary.Services;
+using ImageMagick;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Windows;
 using System.Windows.Media.Imaging;
 
 namespace PicView
@@ -52,14 +54,20 @@ namespace PicView
         /// <param name="croppedBitmap">The cropped bitmapy</param>
         /// /// <param name="destination">Where to save image to</param>
         /// <returns></returns>
-        internal static bool TrySaveImage(CroppedBitmap croppedBitmap, string destination)
+        internal static bool TrySaveImage(Int32Rect rect, string path, string destination)
         {
             try
             {
-                using var fileStream = new FileStream(destination, FileMode.Create);
-                BitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(croppedBitmap));
-                encoder.Save(fileStream);
+                using var SaveImage = new MagickImage
+                {
+                    Quality = 100
+                };
+
+                SaveImage.Read(path);
+
+                SaveImage.Crop(new MagickGeometry(rect.X, rect.Y, rect.Width, rect.Height));
+
+                SaveImage.Write(destination);
             }
             catch (Exception) { return false; }
             return true;
