@@ -128,7 +128,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="PicViewCroppingImageLibrary" Version="1.0.4" />
+    <PackageReference Include="PicViewCroppingImageLibrary" Version="1.0.5" />
     <PackageReference Include="SkiaSharp" Version="1.68.3" />
     <PackageReference Include="SkiaSharp.Views.WPF" Version="1.68.3" />
     <PackageReference Include="System.Buffers" Version="4.5.1" />
@@ -158,6 +158,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Update="Editing\PicViewCroppingImageLibrary.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
