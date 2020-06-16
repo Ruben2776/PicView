@@ -65,10 +65,9 @@ namespace PicView
         {
             await mainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
-                // TODO make fancy pants animations work
-                //AnimationHelper.Fade(mainWindow.img, TimeSpan.FromSeconds(0.6), TimeSpan.FromSeconds(1), 1, 0);
-                //AnimationHelper.Fade(mainWindow.img, TimeSpan.FromSeconds(0.6), TimeSpan.FromSeconds(1), 0, 1);
+                AnimationHelper.Fade(mainWindow.img, TimeSpan.FromSeconds(0.8), TimeSpan.FromSeconds(0), 0, .5);               
                 Pic();
+                AnimationHelper.Fade(mainWindow.img, TimeSpan.FromSeconds(0.7), TimeSpan.FromSeconds(0), .5, 1);
             }));
         }
     }

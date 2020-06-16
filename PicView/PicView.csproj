@@ -194,7 +194,7 @@
     </Reference>
   </ItemGroup>
   <PropertyGroup>
-    <FileVersion>0.9.8.5</FileVersion>
+    <FileVersion>0.9.8.7</FileVersion>
     <SignAssembly>true</SignAssembly>
     <PackageLicenseFile></PackageLicenseFile>
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>

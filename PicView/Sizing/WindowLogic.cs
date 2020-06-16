@@ -284,10 +284,10 @@ namespace PicView
 
                     mainWindow.bg.Width = double.NaN;
                     mainWindow.bg.Height = double.NaN;
-
-                    TryFitImage();
+                    
                 }
 
+                TryFitImage();
                 UpdateColor(); // Regain border              
 
                 Properties.Settings.Default.Fullscreen = false;
