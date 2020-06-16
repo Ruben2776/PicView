@@ -18,7 +18,7 @@ PicView is an Open Source Image Viewer for Windows, designed to efficiently and 
 <br>
 [HLSL Image Effects](https://github.com/Ruben2776/PicView/wiki/HLSL-Image-Effects)
 <br>
-[Batch Resizing Tool](https://github.com/Ruben2776/PicView/wiki/Batch-Resizing-Tool) _Coming soon!_
+[Batch Resizing Tool](https://github.com/Ruben2776/PicView/wiki/Batch-Resizing-Tool) _Beta_
 <br>
 [View shortcuts](https://github.com/Ruben2776/PicView/wiki/Keyboard-and-mouse-shortcuts)
 
