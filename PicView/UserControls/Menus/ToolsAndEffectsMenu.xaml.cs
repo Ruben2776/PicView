@@ -12,6 +12,7 @@ namespace PicView.UserControls
         {
             InitializeComponent();
 
+            // ResizeButton
             ResizeButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ResizeButtonBrush);
             ResizeButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ResizeButtonBrush, true);
             ResizeButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ResizeButtonBrush, false);
@@ -22,6 +23,7 @@ namespace PicView.UserControls
                 Batch_Resize.UpdateValues();
             };
 
+            // EffectsButton
             EffectsButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(EffectsButtonBrush);
             EffectsButton.MouseEnter += (s, x) => ButtonMouseOverAnim(EffectsButtonBrush, true);
             EffectsButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(EffectsButtonBrush, false);
@@ -29,6 +31,16 @@ namespace PicView.UserControls
             {
                 UC.Close_UserControls();
                 LoadWindows.EffectsWindow();
+            };
+
+            // CropButton
+            CropButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(CropButtonBrush);
+            CropButton.MouseEnter += (s, x) => ButtonMouseOverAnim(CropButtonBrush, true);
+            CropButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(CropButtonBrush, false);
+            CropButton.Click += delegate
+            {
+                UC.Close_UserControls();
+                ImageCropping.StartCrop();
             };
 
         }

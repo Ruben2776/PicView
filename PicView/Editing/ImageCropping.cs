@@ -16,6 +16,8 @@ namespace PicView
     {
         internal static void StartCrop()
         {
+            if (mainWindow.img.Source == null) { return; }
+
             if (cropppingTool == null)
             {
                 LoadControls.LoadCroppingTool();
@@ -30,7 +32,7 @@ namespace PicView
                     )));
             }
 
-            if (mainWindow.img.Source == null) { return; }
+            mainWindow.Bar.Text = "Press Esc to close, Enter to save";
 
             if (!mainWindow.bg.Children.Contains(cropppingTool))
             {
@@ -48,9 +50,19 @@ namespace PicView
                 1);
 
             cropppingTool.CropTool.SetImage(i);
-            cropppingTool.CropTool.SetSize(mainWindow.img.Source.Width, mainWindow.img.Source.Height);
-            cropppingTool.CropTool.Width = xWidth;
-            cropppingTool.CropTool.Height = xHeight;
+            if (Rotateint == 0 || Rotateint == 180)
+            {
+                cropppingTool.CropTool.SetSize(mainWindow.img.Source.Width, mainWindow.img.Source.Height);
+                cropppingTool.CropTool.Width = xWidth;
+                cropppingTool.CropTool.Height = xHeight;
+            }
+            else
+            {
+                cropppingTool.CropTool.SetSize(mainWindow.img.Source.Height, mainWindow.img.Source.Width);
+                cropppingTool.CropTool.Width = xHeight;
+                cropppingTool.CropTool.Height = xWidth;
+            }
+
         }
 
         internal static async void SaveCrop()
@@ -83,11 +95,43 @@ namespace PicView
         {
             var cropArea = cropppingTool.CropTool.CropService.GetCroppedArea();
 
-            // Incorrect coordinates calculated if image resized to fit app, help!
-            var x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X);
-            var y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y);
-            var width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width);
-            var height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height);
+            int x, y, width, height;
+
+            if (AspectRatio != 0)
+            {
+                if (Rotateint == 0 || Rotateint == 180)
+                {
+                    x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / AspectRatio);
+                    y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / AspectRatio);
+                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
+                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
+                }
+                else
+                {
+                    x = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / AspectRatio);
+                    y = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / AspectRatio);
+                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
+                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
+                }
+
+            }
+            else
+            {
+                if (Rotateint == 0 || Rotateint == 180)
+                {
+                    x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X);
+                    y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y);
+                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width);
+                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height);
+                }
+                else
+                {
+                    x = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y);
+                    y = Convert.ToInt32(cropArea.CroppedRectAbsolute.X);
+                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height);
+                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width);
+                }
+            }
 
             return new Int32Rect(x, y, width, height);
         }

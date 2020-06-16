@@ -37,12 +37,14 @@ namespace PicView
                 {
                     if (e.Key == Key.Escape)
                     {
+                        SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
                         mainWindow.bg.Children.Remove(cropppingTool);
                         return;
                     }
 
                     if (e.Key == Key.Enter)
                     {
+                        SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
                         ImageCropping.SaveCrop();
                         mainWindow.bg.Children.Remove(cropppingTool);
                     }
@@ -373,9 +375,7 @@ namespace PicView
                         }
                         else
                         {
-#if DEBUG
                             ImageCropping.StartCrop();
-#endif
                         }
                         break;
 

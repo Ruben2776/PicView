@@ -65,6 +65,11 @@ namespace PicView
 
                 SaveImage.Read(path);
 
+                if (Fields.Rotateint != 0)
+                {
+                    SaveImage.Rotate(Fields.Rotateint);
+                }
+
                 SaveImage.Crop(new MagickGeometry(rect.X, rect.Y, rect.Width, rect.Height));
 
                 SaveImage.Write(destination);

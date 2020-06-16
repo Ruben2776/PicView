@@ -137,12 +137,12 @@
                     Height="51"
                     Style="{StaticResource SexyBorder}">
                     <Border.Background>
-                        <SolidColorBrush x:Name="CopyButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        <SolidColorBrush x:Name="CropButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Border.Background>
                     <Button
                         x:Name="CropButton"
                         FontWeight="Bold"
-                        ToolTip="Crop image [C] (not implemented yet)">
+                        ToolTip="Crop image [C] (Rotation not yet working)">
                         <Canvas>
                             <TextBlock
                                 Canvas.Left="-59"
