@@ -23,7 +23,7 @@ PicView is an Open Source Image Viewer for Windows, designed to efficiently and 
 [View shortcuts](https://github.com/Ruben2776/PicView/wiki/Keyboard-and-mouse-shortcuts)
 
 
-### Contributing
+### Reach out
 I am just a single developer working on this in my spare time. So if you like what I have created please star it to show your support, as it would motive me to keep working on it! <br>
 Feedback and questions are always appreciated. Create an issue or take a look at an existing one if you want to report a bug or request a feature, or have something on your mind! 😊
 
@@ -39,6 +39,22 @@ Feedback and questions are always appreciated. Create an issue or take a look at
 
 <h2>Fullscreen Image Gallery:</h2>
 <img src="/.github/Screenshot%20(30)-min.png"/>
+View all files in current folder as a fullscreen thumbnail gallery, where you can quickly scroll to desired image.
 
 <h2>Contained Image Gallery:</h2>
 <img src="/.github/Annotation%202020-06-06%20070001-min.png"/>
+View all files in current folder as a thumbnail gallery, with custom animations.
+
+## Quick Image file Navigation Features
+<img src="https://i.imgur.com/2I1wtFu.png" align="left" width="428" height="459"/>
+
+You can Change how the application sorts through the files right from the context menu.
+
+**Switch between image scaling modes;** Pressing `1` Centers the image in the window, while retaining the image's original size. <br> Pressing `2` Also centers the image in the window, but the image will be stretched to window height, while retaining aspect ratio. 
+
+Pressing `3` enables the auto window sizing feature. It will resize the window to the image's size, while keeping the window centered.<br> Pressing `4` also enables the window sizing feature, but the image will be stretched to the monitor's height, while retaining aspect ratio. 
+
+
+Slideshow `F11` with adjustable timer in the Settings window `F4`
+
+[View all features](https://github.com/Ruben2776/PicView/wiki/Features)
