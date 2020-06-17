@@ -70,12 +70,13 @@ namespace PicView
             // Fix focus
             EditTitleBar.Refocus();
 
-            // Move window when Ctrl is being held down
-            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            // Move window when Shift is being held down
+            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
             {
                 Move(sender, e);
                 return;
             }
+
             // Logic for auto scrolling
             if (AutoScrolling)
             {
@@ -104,11 +105,6 @@ namespace PicView
         {
             // Fix focus
             EditTitleBar.Refocus();
-
-            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-            {
-                Move(sender, e);
-            }
         }
 
         /// <summary>

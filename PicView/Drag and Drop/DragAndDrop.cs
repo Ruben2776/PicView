@@ -1,10 +1,12 @@
 ﻿using PicView.PreLoading;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using static PicView.Fields;
 using static PicView.Navigation;
 using static PicView.Thumbnails;
@@ -177,5 +179,20 @@ namespace PicView
                 prevPicResource = null;
             }
         }
+
+        internal static void DragFile(object sender, MouseButtonEventArgs e)
+        {
+            if (Keyboard.Modifiers != ModifierKeys.Control || mainWindow.img.Source == null)
+            {
+                return;
+            }
+
+            FrameworkElement senderElement = sender as FrameworkElement;
+            DataObject dragObj = new DataObject();
+            dragObj.SetFileDropList(new StringCollection() { Pics[FolderIndex] });
+            DragDrop.DoDragDrop(senderElement, dragObj, DragDropEffects.Copy);
+        }
+
+
     }
 }

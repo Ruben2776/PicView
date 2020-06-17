@@ -146,6 +146,7 @@ namespace PicView
             mainWindow.Bar.PreviewMouseLeftButtonDown += EditTitleBar.Bar_PreviewMouseLeftButtonDown;
 
             // img
+            mainWindow.img.PreviewMouseLeftButtonDown += DragFile;
             mainWindow.img.MouseLeftButtonDown += Zoom_img_MouseLeftButtonDown;
             mainWindow.img.MouseLeftButtonUp += Zoom_img_MouseLeftButtonUp;
             mainWindow.img.MouseMove += Zoom_img_MouseMove;
