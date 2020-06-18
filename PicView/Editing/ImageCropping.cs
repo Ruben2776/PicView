@@ -67,13 +67,13 @@ namespace PicView
 
         internal static async void SaveCrop()
         {
-            if (string.IsNullOrEmpty(Pics[FolderIndex])) return;
+            var fileName = Pics.Count == 0 ? Path.GetRandomFileName() : Path.GetFileName(Pics[FolderIndex]);
 
             var Savedlg = new SaveFileDialog()
             {
                 Filter = FilterFiles,
                 Title = "Save image - PicView",
-                FileName = Path.GetFileName(Pics[FolderIndex])
+                FileName = fileName
             };
 
             if (!Savedlg.ShowDialog().Value) return;
@@ -82,12 +82,24 @@ namespace PicView
 
             var crop = GetCrop();
             var success = false;
-            await Task.Run(() =>
-                success = SaveImages.TrySaveImage(crop, Pics[FolderIndex], Savedlg.FileName)).ConfigureAwait(true);
+
+            if (Pics.Count > 0)
+            {
+                await Task.Run(() =>
+                    success = SaveImages.TrySaveImage(crop, fileName, Savedlg.FileName)).ConfigureAwait(true);
+            }
+            else
+            {
+                // Fixes saving if from web
+                // TODO add working method for copied images
+                var source = mainWindow.img.Source as BitmapSource;
+                await Task.Run(() =>
+                    success = SaveImages.TrySaveImage(crop, source, Savedlg.FileName)).ConfigureAwait(true);
+            }
 
             if (!success)
             {
-                Tooltip.ShowTooltipMessage($"An error occured while saving {Pics[FolderIndex]} to {Savedlg.FileName}");
+                Tooltip.ShowTooltipMessage($"An error occured while saving {fileName} to {Savedlg.FileName}");
             }
         }
 

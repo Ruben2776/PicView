@@ -1,5 +1,4 @@
-﻿using CroppingImageLibrary.Services;
-using ImageMagick;
+﻿using ImageMagick;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -47,6 +46,37 @@ namespace PicView
             return true;
         }
 
+        internal static bool TrySaveImage(int rotate, bool flipped, BitmapSource bitmapSource, string destination)
+        {
+            try
+            {
+                using var SaveImage = new MagickImage();
+                var encoder = new PngBitmapEncoder(); // or any other BitmapEncoder
+
+                encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+
+                using (var stream = new MemoryStream())
+                {
+                    encoder.Save(stream);
+                    SaveImage.Read(stream.ToArray());
+                }
+
+                SaveImage.Quality = 100;
+
+                // Apply transformation values
+                if (flipped)
+                {
+                    SaveImage.Flop();
+                }
+
+                SaveImage.Rotate(rotate);
+
+                SaveImage.Write(destination);
+            }
+            catch (Exception) { return false; }
+            return true;
+        }
+
         /// <summary>
         /// Tries to save image to the specified destination,
         /// returns false if unsuccesful
@@ -78,7 +108,37 @@ namespace PicView
             return true;
         }
 
+        internal static bool TrySaveImage(Int32Rect rect, BitmapSource bitmapSource, string destination)
+        {
+            try
+            {
+                using var SaveImage = new MagickImage
+                {
+                    Quality = 100
+                };
 
+                var encoder = new PngBitmapEncoder(); // or any other BitmapEncoder
+
+                encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+
+                using (var stream = new MemoryStream())
+                {
+                    encoder.Save(stream);
+                    SaveImage.Read(stream.ToArray());
+                }
+
+                if (Fields.Rotateint != 0)
+                {
+                    SaveImage.Rotate(Fields.Rotateint);
+                }
+
+                SaveImage.Crop(new MagickGeometry(rect.X, rect.Y, rect.Width, rect.Height));
+
+                SaveImage.Write(destination);
+            }
+            catch (Exception) { return false; }
+            return true;
+        }
 
         internal static void ResizeImageToFile(string file, int NewWidth, int NewHeight)
         {
@@ -103,7 +163,7 @@ namespace PicView
             }
 #else
                 catch (MagickException) { return; }
-#endif         
+#endif
         }
     }
 }

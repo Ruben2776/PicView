@@ -10,12 +10,15 @@ namespace PicView
 
         internal static void Bar_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-
+            if (Pics != null && Pics.Count == 0)
+            {
+                WindowLogic.Move(sender, e);
+            }
         }
 
         internal static void EditTitleBar_Text()
         {
-            if (!Properties.Settings.Default.ShowInterface)
+            if (Pics == null || !Properties.Settings.Default.ShowInterface || Pics.Count == 0)
             {
                 return;
             }
@@ -32,7 +35,7 @@ namespace PicView
 
         internal static void EditTitleBar_Text(object sender, KeyboardFocusChangedEventArgs e)
         {
-            if (Pics == null || !Properties.Settings.Default.ShowInterface)
+            if (Pics == null || !Properties.Settings.Default.ShowInterface || Pics.Count == 0)
             {
                 return;
             }

@@ -1,9 +1,11 @@
 ﻿using Microsoft.WindowsAPICodePack.Taskbar;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using static PicView.Fields;
 
 namespace PicView
@@ -85,6 +87,23 @@ namespace PicView
                 p.Start();
             }
             return true;
+        }
+
+        internal static byte[] BitmapSourceToBytes(BitmapSource bitmapSource)
+        {
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+            using var memoryStream = new MemoryStream();
+            encoder.Save(memoryStream);
+            var bitmap = new BitmapImage();
+
+            memoryStream.Position = 0;
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            bitmap.BeginInit();
+            bitmap.StreamSource = memoryStream;
+            bitmap.EndInit();
+            using BinaryReader br = new BinaryReader(bitmap.StreamSource);
+            return br.ReadBytes((int)bitmap.StreamSource.Length);
         }
 
         #region Color stuff

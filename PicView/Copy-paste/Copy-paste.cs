@@ -125,12 +125,10 @@ namespace PicView
                     {
                         for (int i = 1; i < files.Length; i++)
                         {
-                            using (var n = new Process())
-                            {
-                                n.StartInfo.FileName = Assembly.GetExecutingAssembly().Location;
-                                n.StartInfo.Arguments = files[i];
-                                n.Start();
-                            }
+                            using var n = new Process();
+                            n.StartInfo.FileName = Assembly.GetExecutingAssembly().Location;
+                            n.StartInfo.Arguments = files[i];
+                            n.Start();
                         }
                     }
                     return;

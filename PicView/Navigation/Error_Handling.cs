@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.AjaxLoader;
 using static PicView.DeleteFiles;
@@ -181,9 +182,18 @@ namespace PicView
                 return;
             }
 
-            var x = fromBackup ? xPicPath : Pics[FolderIndex];
+            string s;
+            if (Pics != null && Pics.Count > 0)
+            {
+                s = fromBackup ? xPicPath : Pics[FolderIndex];
+            }
+            else
+            {
+                // TODO extract url from path or get alternative method
+                s = Path.GetFileName(mainWindow.Bar.Text);
+            }
 
-            if (File.Exists(x))
+            if (File.Exists(s))
             {
                 // Force reloading values by setting freshStartup to true
                 FreshStartup = true;
@@ -195,13 +205,9 @@ namespace PicView
                 GalleryFunctions.Clear();
                 GalleryLoad.Load();
 
-                Pic(x);
+                Pic(s);
 
                 // Reset
-                if (isZoomed)
-                {
-                    ResetZoom();
-                }
 
                 if (Flipped)
                 {
@@ -212,6 +218,14 @@ namespace PicView
                 {
                     Rotate(0);
                 }
+            }
+            else if (Clipboard.ContainsImage() || Base64.IsBase64String(s))
+            {
+                return;
+            }
+            else if (Uri.IsWellFormedUriString(s, UriKind.Absolute)) // Check if from web
+            {
+                LoadFromWeb.PicWeb(s);
             }
             else
             {

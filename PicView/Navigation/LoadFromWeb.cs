@@ -32,7 +32,7 @@ namespace PicView
             mainWindow.Bar.Text = Loading;
 
             BitmapSource pic;
-            if (Pics != null)
+            if (Pics != null && Pics.Count > 0)
             {
                 xPicPath = Pics[FolderIndex];
             }

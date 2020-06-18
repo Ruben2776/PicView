@@ -15,6 +15,8 @@ using static PicView.GalleryToggle;
 using static PicView.UC;
 using static PicView.Utilities;
 using static PicView.WindowLogic;
+using System.IO;
+using System;
 
 namespace PicView
 {
@@ -37,14 +39,29 @@ namespace PicView
                 {
                     if (e.Key == Key.Escape)
                     {
-                        SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
+                        if (Pics.Count == 0)
+                        {
+                            SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, "Custom image");
+                        }
+                        else
+                        {
+                            SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
+                        }
                         mainWindow.bg.Children.Remove(cropppingTool);
                         return;
                     }
 
                     if (e.Key == Key.Enter)
                     {
-                        SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
+                        if (Pics.Count == 0)
+                        {
+                            SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, "Custom image");
+                        }
+                        else
+                        {
+                            SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
+                        }
+                        
                         ImageCropping.SaveCrop();
                         mainWindow.bg.Children.Remove(cropppingTool);
                     }

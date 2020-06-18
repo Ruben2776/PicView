@@ -8,6 +8,7 @@ using static PicView.ImageDecoder;
 using static PicView.Navigation;
 using static PicView.UC;
 using static PicView.Tooltip;
+using System.Windows.Media.Imaging;
 
 namespace PicView
 {
@@ -94,25 +95,45 @@ namespace PicView
         /// </summary>
         internal static void SaveFiles()
         {
-            if (string.IsNullOrEmpty(Pics[FolderIndex])) return;
+            string fileName;
+
+            if (Pics.Count > 0)
+            {
+                if (string.IsNullOrEmpty(Pics[FolderIndex])) return;
+                fileName = Path.GetFileName(Pics[FolderIndex]);
+            }
+            else
+            {
+                fileName = Path.GetRandomFileName();
+            }
 
             var Savedlg = new SaveFileDialog()
             {
                 Filter = FilterFiles,
                 Title = "Save image - PicView",
-                FileName = Path.GetFileName(Pics[FolderIndex])
+                FileName = fileName
             };
 
             if (!Savedlg.ShowDialog().Value) return;
 
             IsDialogOpen = true;
 
-            if (!SaveImages.TrySaveImage(Rotateint, Flipped, Pics[FolderIndex], Savedlg.FileName))
+            if (Pics.Count > 0)
             {
-                ShowTooltipMessage("Saving file failed");
+                if (!SaveImages.TrySaveImage(Rotateint, Flipped, Pics[FolderIndex], Savedlg.FileName))
+                {
+                    ShowTooltipMessage("Saving file failed");
+                }
+            }
+            else
+            {
+                if (!SaveImages.TrySaveImage(Rotateint, Flipped, mainWindow.img.Source as BitmapSource, Savedlg.FileName))
+                {
+                    ShowTooltipMessage("Saving file failed");
+                }
             }
 
-            else if (Savedlg.FileName == Pics[FolderIndex])
+            if (Savedlg.FileName == fileName)
             {
                 //Refresh the list of pictures.
                 Reload();
