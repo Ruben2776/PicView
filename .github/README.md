@@ -66,6 +66,10 @@ Quickly crop images by pressing `C`.
 ...
 
 
+...
+
+
+
 > The interface can be toggled by pressing `Alt + Z`. For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
 
 
