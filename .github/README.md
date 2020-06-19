@@ -12,8 +12,6 @@ PicView is an Open Source Image Viewer for Windows, designed to efficiently and 
 
 ### Features:
 
-[View a list of features](https://github.com/Ruben2776/PicView/wiki/Features)
-<br>
 [View file support](https://github.com/Ruben2776/PicView/wiki/File-support)
 <br>
 [HLSL Image Effects](https://github.com/Ruben2776/PicView/wiki/HLSL-Image-Effects)
@@ -22,11 +20,14 @@ PicView is an Open Source Image Viewer for Windows, designed to efficiently and 
 <br>
 [View shortcuts](https://github.com/Ruben2776/PicView/wiki/Keyboard-and-mouse-shortcuts)
 
+If you have 7-Zip or WinRAR installed, you can view images inside archive files such `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
 
-## Quick Image file Navigation Features
-<img src="https://i.imgur.com/2I1wtFu.png" align="left" width="428" height="459"/>
+
+
+
 
 You can Change how the application sorts through the files right from the context menu.
+
 
 **Switch between image scaling modes;** Pressing `1` Centers the image in the window, while retaining the image's original size. <br> Pressing `2` Also centers the image in the window, but the image will be stretched to window height, while retaining aspect ratio. 
 
@@ -36,11 +37,16 @@ Pressing `3` enables the auto window sizing feature. It will resize the window t
 Slideshow `F11` with adjustable timer in the Settings window `F4`
 
 
+[View a list of features](https://github.com/Ruben2776/PicView/wiki/Features)
+
+
 <h2>Configurable Interface Design</h2>
 <img src="/.github/Screenshot%20(29)-min.png" align="left" width="450"/>
 <img src="/.github/Annotation%202020-06-09%20102711.png" align="right" width="400"/>
 
-<br>
+
+...
+
 
 > The interface can be toggled by pressing `Alt + Z`. For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
 
@@ -54,7 +60,7 @@ View all files in current folder as a fullscreen thumbnail gallery, where you ca
 View all files in current folder as a thumbnail gallery, with custom animations.
 
 
-[View all features](https://github.com/Ruben2776/PicView/wiki/Features)
+
 
 ## Reach out
 I am just a single developer working on this in my spare time. So if you like what I have created please star it to show your support, as it would motive me to keep working on it! <br>
