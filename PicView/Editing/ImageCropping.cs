@@ -25,7 +25,7 @@ namespace PicView
                 var chosenColorBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
                 cropppingTool.CropTool.SetBackground(
                     new SolidColorBrush(Color.FromArgb(
-                        30,
+                        10,
                         chosenColorBrush.Color.R,
                         chosenColorBrush.Color.G,
                         chosenColorBrush.Color.B

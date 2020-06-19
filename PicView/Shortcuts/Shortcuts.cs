@@ -65,11 +65,6 @@ namespace PicView
                         ImageCropping.SaveCrop();
                         mainWindow.bg.Children.Remove(cropppingTool);
                     }
-
-                    if (shiftDown)
-                    {
-                        // TODO keep it square when shift held down
-                    }
                 }
             }
 
