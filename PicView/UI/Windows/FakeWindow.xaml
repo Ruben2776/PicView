@@ -1,0 +1,22 @@
+﻿<Window
+    x:Class="PicView.UI.Windows.FakeWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="FakeWindow"
+    AllowsTransparency="True"
+    Background="{x:Null}"
+    Focusable="False"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    Topmost="False"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
+    <Grid
+        x:Name="grid"
+        Background="#A4000000"
+        FocusVisualStyle="{x:Null}"
+        Focusable="False" />
+</Window>

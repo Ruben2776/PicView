@@ -2,25 +2,25 @@
     x:Class="PicView.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    StartupUri="MainWindow.xaml">
+    StartupUri="/UI/Windows/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Configs\Styles\Colors.xaml" />
-                <ResourceDictionary Source="Configs\Styles\Menu.xaml" />
-                <ResourceDictionary Source="Configs\Styles\Button.xaml" />
-                <ResourceDictionary Source="Configs\Styles\Border.xaml" />
-                <ResourceDictionary Source="Configs\Styles\ToggleButton.xaml" />
-                <ResourceDictionary Source="Configs\Styles\ToolTip.xaml" />
-                <ResourceDictionary Source="Configs\Styles\ScrollBar.xaml" />
-                <ResourceDictionary Source="Configs\Styles\RadioButton.xaml" />
-                <ResourceDictionary Source="Configs\Styles\Label.xaml" />
-                <ResourceDictionary Source="Configs\Styles\TextBox.xaml" />
+                <ResourceDictionary Source="UI\Styles\Colors.xaml" />
+                <ResourceDictionary Source="UI\Styles\Menu.xaml" />
+                <ResourceDictionary Source="UI\Styles\Button.xaml" />
+                <ResourceDictionary Source="UI\Styles\Border.xaml" />
+                <ResourceDictionary Source="UI\Styles\ToggleButton.xaml" />
+                <ResourceDictionary Source="UI\Styles\ToolTip.xaml" />
+                <ResourceDictionary Source="UI\Styles\ScrollBar.xaml" />
+                <ResourceDictionary Source="UI\Styles\RadioButton.xaml" />
+                <ResourceDictionary Source="UI\Styles\Label.xaml" />
+                <ResourceDictionary Source="UI\Styles\TextBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <ImageBrush
                 x:Key="NoisyBg"
-                ImageSource="\Resources/img/noisy-texture-200x200-o4-d31-c-161616-t0.png"
+                ImageSource="\Library\Resources/img/noisy-texture-200x200-o4-d31-c-161616-t0.png"
                 TileMode="FlipXY"
                 Viewport="0,0,100,100"
                 ViewportUnits="Absolute" />

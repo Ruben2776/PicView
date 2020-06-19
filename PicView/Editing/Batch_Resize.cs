@@ -1,14 +1,16 @@
-﻿using System;
+﻿using PicView.FileHandling;
+using PicView.ImageHandling;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static PicView.Fields;
-using static PicView.LoadWindows;
+using static PicView.Library.Fields;
+using static PicView.UI.Loading.LoadWindows;
 
-namespace PicView
+namespace PicView.Editing
 {
     internal static class Batch_Resize
     {

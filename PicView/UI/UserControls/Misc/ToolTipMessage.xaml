@@ -1,0 +1,29 @@
+﻿<UserControl
+    x:Class="PicView.UI.UserControls.ToolTipMessage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border
+        x:Name="SexyToolTipBorder"
+        Margin="0,0,0,95"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Bottom"
+        Background="{StaticResource AltInterfaceWBrush}"
+        BorderBrush="{StaticResource BorderBrush}"
+        BorderThickness="2"
+        CornerRadius="7">
+        <TextBlock
+            x:Name="ToolTipUIText"
+            MaxWidth="438"
+            Padding="12"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            FontFamily="/PicView;component/Resources/fonts/#TeX Gyre Heros"
+            FontSize="16"
+            FontStyle="Italic"
+            FontWeight="Bold"
+            Foreground="{StaticResource MainColorBrush}"
+            Text="My Awesome Tooltip style :)"
+            TextWrapping="WrapWithOverflow" />
+
+    </Border>
+</UserControl>

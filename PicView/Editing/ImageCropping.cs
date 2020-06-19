@@ -1,5 +1,8 @@
 ﻿using ImageMagick;
 using Microsoft.Win32;
+using PicView.ImageHandling;
+using PicView.UI;
+using PicView.UI.Loading;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,10 +10,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using static PicView.Fields;
-using static PicView.UC;
+using static PicView.Library.Fields;
+using static PicView.UI.UserControls.UC;
 
-namespace PicView
+namespace PicView.Editing
 {
     internal static class ImageCropping
     {

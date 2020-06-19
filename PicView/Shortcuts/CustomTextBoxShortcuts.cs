@@ -1,5 +1,6 @@
-﻿using System.Windows.Input;
-using static PicView.Fields;
+﻿using PicView.UI;
+using System.Windows.Input;
+using static PicView.Library.Fields;
 
 namespace PicView
 {

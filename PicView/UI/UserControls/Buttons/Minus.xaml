@@ -1,0 +1,31 @@
+﻿<UserControl
+    x:Class="PicView.UI.UserControls.Minus"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="300"
+    d:DesignWidth="300"
+    mc:Ignorable="d">
+    <Border
+        Width="40"
+        Height="25"
+        BorderThickness="1,0,0,1">
+        <Border.Background>
+            <SolidColorBrush x:Name="CanvasBGcolor" Color="{StaticResource AltInterface}" />
+        </Border.Background>
+        <Border.BorderBrush>
+            <SolidColorBrush x:Name="BorderBrushKey" Color="{StaticResource BorderColor}" />
+        </Border.BorderBrush>
+        <Viewbox
+            Width="20"
+            Height="20"
+            Margin="0,0,0,8">
+            <Path Data="M24,11c0-0.6-0.4-1-1-1H1c-0.6,0-1,0.4-1,1v2c0,0.6,0.4,1,1,1h22c0.6,0,1-0.4,1-1V11z">
+                <Path.Fill>
+                    <SolidColorBrush x:Name="PolyFill" Color="{StaticResource MainColor}" />
+                </Path.Fill>
+            </Path>
+        </Viewbox>
+    </Border>
+</UserControl>

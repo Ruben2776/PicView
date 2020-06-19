@@ -70,25 +70,25 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\img\Brainleaf-Dark-Blog-Reflex.ico</ApplicationIcon>
+    <ApplicationIcon>Library\Resources\img\Brainleaf-Dark-Blog-Reflex.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="PicGallery\PicGalleryLogic.cs~RF57f3b96.TMP" />
+    <None Remove="UI\PicGallery\PicGalleryLogic.cs~RF57f3b96.TMP" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\fonts\Aller_Rg.ttf" />
-    <Resource Include="Resources\fonts\Aller_Bd.ttf" />
-    <Resource Include="Resources\fonts\Aller_BdIt.ttf" />
-    <Resource Include="Resources\fonts\Aller_It.ttf" />
-    <Resource Include="Resources\fonts\Aller_Lt.ttf" />
-    <Resource Include="Resources\fonts\Aller_LtIt.ttf" />
-    <Resource Include="Resources\fonts\texgyreheros-bold.otf" />
-    <Resource Include="Resources\fonts\texgyreheros-bolditalic.otf" />
-    <Resource Include="Resources\fonts\texgyreheros-italic.otf" />
-    <Resource Include="Resources\fonts\texgyreheros-regular.otf" />
+    <Resource Include="Library\Resources\fonts\Aller_Rg.ttf" />
+    <Resource Include="Library\Resources\fonts\Aller_Bd.ttf" />
+    <Resource Include="Library\Resources\fonts\Aller_BdIt.ttf" />
+    <Resource Include="Library\Resources\fonts\Aller_It.ttf" />
+    <Resource Include="Library\Resources\fonts\Aller_Lt.ttf" />
+    <Resource Include="Library\Resources\fonts\Aller_LtIt.ttf" />
+    <Resource Include="Library\Resources\fonts\texgyreheros-bold.otf" />
+    <Resource Include="Library\Resources\fonts\texgyreheros-bolditalic.otf" />
+    <Resource Include="Library\Resources\fonts\texgyreheros-italic.otf" />
+    <Resource Include="Library\Resources\fonts\texgyreheros-regular.otf" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
@@ -104,10 +104,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
-    <Resource Include="Resources\img\noisy-texture-200x200-o4-d30-c-101010-t0.png" />
-    <Resource Include="Resources\img\Brainleaf-Dark-Blog-Reflex.ico" />
-    <Resource Include="Resources\img\reflex-icon.png" />
+    <Resource Include="Library\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
+    <Resource Include="Library\Resources\img\noisy-texture-200x200-o4-d30-c-101010-t0.png" />
+    <Resource Include="Library\Resources\img\Brainleaf-Dark-Blog-Reflex.ico" />
+    <Resource Include="Library\Resources\img\reflex-icon.png" />
   </ItemGroup>
   <ItemGroup>
     <FileAssociation Include=".jpg">
@@ -144,16 +144,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Update="UserControls\Buttons\MenuCloseButton.xaml.cs">
+    <Compile Update="UI\UserControls\Buttons\MenuCloseButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="UserControls\Buttons\FullscreenButton.xaml.cs">
+    <Compile Update="UI\UserControls\Buttons\FullscreenButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="UserControls\Buttons\MinButton.xaml.cs">
+    <Compile Update="UI\UserControls\Buttons\MinButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="UserControls\Buttons\CloseButton.xaml.cs">
+    <Compile Update="UI\UserControls\Buttons\CloseButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -167,21 +167,21 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="UserControls\Buttons\MenuCloseButton.xaml">
+    <Page Update="UI\UserControls\Buttons\MenuCloseButton.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="UserControls\Buttons\FullscreenButton.xaml">
+    <Page Update="UI\UserControls\Buttons\FullscreenButton.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="UserControls\Buttons\MinButton.xaml">
+    <Page Update="UI\UserControls\Buttons\MinButton.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="UserControls\Buttons\CloseButton.xaml">
+    <Page Update="UI\UserControls\Buttons\CloseButton.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Misc\PsEffects\**">
+    <Content Include="Editing\ShaderEffects\PsEffects\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -210,7 +210,6 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Magick.NET-Q16-x64.7.15.0\build\net40\Magick.NET-Q16-x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Magick.NET-Q16-x64.7.15.0\build\net40\Magick.NET-Q16-x64.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

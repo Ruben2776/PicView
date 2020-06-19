@@ -1,0 +1,403 @@
+﻿<Window
+    x:Class="PicView.UI.Windows.EffectsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:uc="clr-namespace:PicView.UI.UserControls"
+    Title="HLSL Picture FX"
+    Width="555"
+    Height="565"
+    FontFamily="/PicView;component/Resources/fonts/#Aller"
+    Foreground="{StaticResource MainColorBrush}"
+    Style="{DynamicResource MyWindowStyle}">
+
+    <DockPanel LastChildFill="True">
+        <DockPanel
+            x:Name="TitleBar"
+            Height="33"
+            Background="{StaticResource BackgroundColorBrushAltW}"
+            DockPanel.Dock="Top">
+
+            <uc:Logo />
+
+            <Rectangle
+                Width="1"
+                Height="35"
+                Margin="6,0,0,0"
+                Fill="{StaticResource BorderBrush}" />
+
+            <uc:CloseButton
+                x:Name="CloseButton"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Right" />
+
+            <Rectangle
+                Width="1"
+                Height="35"
+                DockPanel.Dock="Right"
+                Fill="{StaticResource BorderBrush}" />
+
+            <uc:MinButton
+                x:Name="MinButton"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Right" />
+
+            <Rectangle
+                Width="1"
+                Height="35"
+                Margin="0,0,-8,0"
+                DockPanel.Dock="Right"
+                Fill="{StaticResource BorderBrush}" />
+
+
+            <TextBlock
+                x:Name="Bar"
+                VerticalAlignment="Center"
+                Background="{x:Null}"
+                FontFamily="/PicView;component/Resources/fonts/#Aller"
+                FontSize="15"
+                FontWeight="Bold"
+                Foreground="{StaticResource MainColorBrush}"
+                Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                TextAlignment="Center"
+                TextTrimming="CharacterEllipsis" />
+        </DockPanel>
+
+        <Rectangle
+            x:Name="LeftBorderRectangle"
+            Width="7"
+            DockPanel.Dock="Left">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <Rectangle
+            x:Name="RightBorderRectangle"
+            Width="7"
+            Margin="-1,0,0,0"
+            DockPanel.Dock="Right">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <Rectangle
+            x:Name="BottomBorderRectangle"
+            Height="7"
+            Margin="-1,0,0,0"
+            DockPanel.Dock="Bottom">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+            <ScrollViewer
+                x:Name="Scroller"
+                Background="{StaticResource NoisyBg}"
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Auto">
+
+                <StackPanel>
+                    <WrapPanel Margin="10,5" Orientation="Horizontal">
+
+                        <RadioButton
+                            x:Name="NegativeButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Negative Colors">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="NegativeBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+
+                        <RadioButton
+                            x:Name="GrayscaleButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Black &amp; White">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="GrayscaleBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="ColorToneButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Color Tone">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="ColortoneBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="OldMovieButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Old Movie">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="OldMovieBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="BloomButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Bloom">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="BloomBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="GloomButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Gloom">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="GloomBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="MonochromeButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Monochrome">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="MonocromeBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="WavewarperButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Wave Warper">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="WavewarperBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="UnderwaterButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Underwater">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="UnderwaterBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="BandedSwirlButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Banded Swirl">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="BandedSwirlBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="RippleButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Ripple">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="RippleBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="RippleAltButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Ripple Alt">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="RippleAltBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="BlurButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Blur">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="BlurBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="DirectionalBlurButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Directional Blur">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="DirectionalBlurBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="TelescopicBlurButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Telescopic Blur">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="TelescopicBlurBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="PixelateButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Pixelate">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="PixelateBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="EmbossedButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Embossed">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="EmbossedBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="SmoothMagnifyButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Smooth Magnify">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="SmoothMagnifyBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="PivotButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Pivot">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="PivotBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="PaperfoldButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Paper fold">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="PaperfoldBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="PencilSketchButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Pencil Sketch">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="PencilSketchBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+
+                        <RadioButton
+                            x:Name="SketchButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Sketch">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="SketchBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="TonemappingButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Tone mapping">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="TonemappingBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+
+                        <RadioButton
+                            x:Name="FrostyOutlineButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Frosty Outline">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="FrostyOutlineBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="BandsButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Bands">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="BandsBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+
+                        <RadioButton
+                            x:Name="GlasTileButton"
+                            MinWidth="125"
+                            Margin="5"
+                            Padding="10"
+                            Content="Glass Tile">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="GlasTileBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                    </WrapPanel>
+
+                    <Label HorizontalAlignment="Center" Content="Click button to add specified shader effect to image" />
+                    <Label HorizontalAlignment="Center" Content="Uncheck to remove effect" />
+
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </DockPanel>
+</Window>

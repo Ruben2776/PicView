@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 using System.Windows.Input;
-using static PicView.Fields;
-using static PicView.GoToLogic;
-using static PicView.UC;
+using static PicView.Library.Fields;
+using static PicView.ChangeImage.GoToLogic;
+using static PicView.UI.UserControls.UC;
 
 namespace PicView
 {
