@@ -83,6 +83,150 @@
     <None Remove="UI\PicGallery\PicGalleryLogic.cs~RF57f3b96.TMP" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Editing\ShaderEffects\PsEffects\BandedSwirlEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\BandsEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\BloomEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\ColorToneEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\DirectionalBlurEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\EmbossedEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\FrostyOutlineEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\GlassTilesEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\GloomEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\GrayscaleEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\GrowablePoissonDiskEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\InvertColorEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\MagnifySmoothEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\MonochromeEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\MultiInput_ColorChannelsEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\OldMovieEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\PaperFoldEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\PivotEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\PixelateEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\PixelateOutTransitionEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\RadGradientEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\ReflectionEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\RippleEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\SharpenEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\SketchGraniteEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\SketchPencilStrokeEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\SplinterEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\StarGeneratorEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\SwirlEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\TelescopicBlurPS3Effect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\TilerEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\ToneMappingEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\ToonShaderEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\Transition_BandedSwirlEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\Transition_BlindsEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\Transition_BloodEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\Transition_CircleRevealEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\Transition_CircleStretchEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\Transition_CircularBlurEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\Transition_CloudRevealEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\Transition_CrumbleEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\Transition_RippleEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\Transition_WaterEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\TransparentAlternatingPixelsEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\TransparentAlternatingPixelsMultipliedEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\TransparentAlternatingScanlinesEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\UnderwaterEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\WaveWarperEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Library\Resources\fonts\Aller_Rg.ttf" />
     <Resource Include="Library\Resources\fonts\Aller_Bd.ttf" />
     <Resource Include="Library\Resources\fonts\Aller_BdIt.ttf" />

@@ -25,7 +25,7 @@ namespace PicView.Editing.HlslEffects
         public InvertColorEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/InvertColorEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/InvertColorEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -51,7 +51,7 @@ namespace PicView.Editing.HlslEffects
         public Transition_RippleEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/Transition_RippleEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/Transition_RippleEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -104,7 +104,7 @@ namespace PicView.Editing.HlslEffects
         public ColorToneEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/ColorToneEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/ColorToneEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -181,7 +181,7 @@ namespace PicView.Editing.HlslEffects
         public MonochromeEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/MonochromeEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/MonochromeEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -223,7 +223,7 @@ namespace PicView.Editing.HlslEffects
         public RippleEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/RippleEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/RippleEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -315,7 +315,7 @@ namespace PicView.Editing.HlslEffects
         public SwirlEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/SwirlEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/SwirlEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -382,7 +382,7 @@ namespace PicView.Editing.HlslEffects
         public BloomEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/BloomEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/BloomEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -466,7 +466,7 @@ namespace PicView.Editing.HlslEffects
         public ToneMappingEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/ToneMappingEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/ToneMappingEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -598,7 +598,7 @@ namespace PicView.Editing.HlslEffects
         public GloomEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/GloomEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/GloomEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -677,7 +677,7 @@ namespace PicView.Editing.HlslEffects
         public TelescopicBlurPS3Effect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/TelescopicBlurPS3Effect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/TelescopicBlurPS3Effect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -755,7 +755,7 @@ namespace PicView.Editing.HlslEffects
         public GrowablePoissonDiskEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/GrowablePoissonDiskEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/GrowablePoissonDiskEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -807,7 +807,7 @@ namespace PicView.Editing.HlslEffects
         public DirectionalBlurEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/DirectionalBlurEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/DirectionalBlurEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -861,7 +861,7 @@ namespace PicView.Editing.HlslEffects
         public BandedSwirlEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/BandedSwirlEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/BandedSwirlEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -940,7 +940,7 @@ namespace PicView.Editing.HlslEffects
         public BandsEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/BandsEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/BandsEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -1005,7 +1005,7 @@ namespace PicView.Editing.HlslEffects
         public EmbossedEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/EmbossedEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/EmbossedEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -1059,7 +1059,7 @@ namespace PicView.Editing.HlslEffects
         public GlassTilesEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/GlassTilesEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/GlassTilesEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -1137,7 +1137,7 @@ namespace PicView.Editing.HlslEffects
         public MagnifySmoothEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/MagnifySmoothEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/MagnifySmoothEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -1226,7 +1226,7 @@ namespace PicView.Editing.HlslEffects
         public PaperFoldEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/PaperFoldEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/PaperFoldEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -1265,7 +1265,7 @@ namespace PicView.Editing.HlslEffects
         public PivotEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/PivotEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/PivotEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -1318,7 +1318,7 @@ namespace PicView.Editing.HlslEffects
         public UnderwaterEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/UnderwaterEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/UnderwaterEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -1395,7 +1395,7 @@ namespace PicView.Editing.HlslEffects
         public WaveWarperEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/WaveWarperEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/WaveWarperEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -1446,7 +1446,7 @@ namespace PicView.Editing.HlslEffects
         public FrostyOutlineEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/FrostyOutlineEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/FrostyOutlineEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -1502,7 +1502,7 @@ namespace PicView.Editing.HlslEffects
         public OldMovieEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/OldMovieEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/OldMovieEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -1603,7 +1603,7 @@ namespace PicView.Editing.HlslEffects
         public PixelateEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/PixelateEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/PixelateEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -1654,7 +1654,7 @@ namespace PicView.Editing.HlslEffects
         public SketchGraniteEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/SketchGraniteEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/SketchGraniteEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -1692,7 +1692,7 @@ namespace PicView.Editing.HlslEffects
         public SketchPencilStrokeEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/SketchPencilStrokeEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/SketchPencilStrokeEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -1730,7 +1730,7 @@ namespace PicView.Editing.HlslEffects
         public TransparentAlternatingPixelsEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/TransparentAlternatingPixelsEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/TransparentAlternatingPixelsEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -1768,7 +1768,7 @@ namespace PicView.Editing.HlslEffects
         public TransparentAlternatingPixelsMultipliedEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/TransparentAlternatingPixelsMultipliedEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/TransparentAlternatingPixelsMultipliedEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -1806,7 +1806,7 @@ namespace PicView.Editing.HlslEffects
         public TransparentAlternatingScanlinesEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/TransparentAlternatingScanlinesEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/TransparentAlternatingScanlinesEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -1844,7 +1844,7 @@ namespace PicView.Editing.HlslEffects
         public ReflectionEffect()
         {
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            pixelShader.UriSource = new Uri(path + "Misc/PsEffects/ReflectionEffect.ps", UriKind.RelativeOrAbsolute);
+            pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/ReflectionEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);
@@ -1888,7 +1888,7 @@ namespace PicView.Editing.HlslEffects
 
     public class GrayscaleEffect : ShaderEffect
     {
-        private static PixelShader _pixelShader = new PixelShader() { UriSource = new Uri(System.AppDomain.CurrentDomain.BaseDirectory + "Misc/PsEffects/GrayscaleEffect.ps") };
+        private static PixelShader _pixelShader = new PixelShader() { UriSource = new Uri(System.AppDomain.CurrentDomain.BaseDirectory + "Editing/ShaderEffects/PsEffects/GrayscaleEffect.ps") };
 
         public GrayscaleEffect()
         {
