@@ -1,5 +1,7 @@
-﻿using System;
+﻿using PicView.Library;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -42,7 +44,7 @@ namespace PicView.FileHandling
             try
             {
                 // Read file stream
-                var listToRead = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "\\Recent.txt");
+                var listToRead = new StreamReader(Utilities.GetWritingPath() + "\\Recent.txt");
                 string line;
 
                 // Read each line until end of file
@@ -70,7 +72,7 @@ namespace PicView.FileHandling
             }
 
             // Prevent duplication on recent list
-            if (!(MRUlist.Contains(fileName)))
+            if (!MRUlist.Contains(fileName))
             {
                 MRUlist.Enqueue(fileName);
             }
@@ -101,7 +103,7 @@ namespace PicView.FileHandling
         internal static void WriteToFile()
         {
             // Create file called "Recent.txt" located on app folder
-            var streamWriter = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "\\Recent.txt");
+            var streamWriter = new StreamWriter(Utilities.GetWritingPath() + "\\Recent.txt");
             foreach (string item in MRUlist)
             {
                 // Write list to stream
@@ -134,7 +136,7 @@ namespace PicView.FileHandling
             var RecentFilesMenuItem = (MenuItem)sender;
 
             // Load values and check if succeeded
-            var fileNames = RecentFiles.LoadValues();
+            var fileNames = LoadValues();
             if (fileNames == null)
             {
                 return;
@@ -162,7 +164,6 @@ namespace PicView.FileHandling
                     menuItem.ToolTip = item;
                     var ext = Path.GetExtension(item);
                     var ext5 = !string.IsNullOrWhiteSpace(ext) && ext.Length >= 5 ? ext.Substring(0, 5) : ext;
-                    //ext5 = ext5.Length == 5 ? ext.Replace("?", string.Empty) : ext5;
                     menuItem.InputGestureText = ext5;
                 }
                 return;
@@ -200,7 +201,6 @@ namespace PicView.FileHandling
                 menuItem.Icon = cmIcon;
                 var ext = Path.GetExtension(item);
                 var ext5 = !string.IsNullOrWhiteSpace(ext) && ext.Length >= 5 ? ext.Substring(0, 5) : ext;
-                //ext5 = ext5.Length == 5 ? ext.Replace("?", string.Empty) : ext5;
                 menuItem.InputGestureText = ext5;
                 RecentFilesMenuItem.Items.Add(menuItem);
             }

@@ -19,8 +19,8 @@ namespace PicView
                 base.OnStartup(e);
             }
 
-            System.Runtime.ProfileOptimization.SetProfileRoot(AppDomain.CurrentDomain.BaseDirectory);
-            System.Runtime.ProfileOptimization.StartProfile("Profile optimization");
+            System.Runtime.ProfileOptimization.SetProfileRoot(Library.Utilities.GetWritingPath());
+            System.Runtime.ProfileOptimization.StartProfile("ProfileOptimization");
         }
     }
 }

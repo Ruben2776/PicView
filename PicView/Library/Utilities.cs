@@ -1,5 +1,6 @@
 ﻿using Microsoft.WindowsAPICodePack.Taskbar;
 using PicView.Library.Resources;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -89,21 +90,39 @@ namespace PicView.Library
             return true;
         }
 
-        internal static byte[] BitmapSourceToBytes(BitmapSource bitmapSource)
-        {
-            var encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
-            using var memoryStream = new MemoryStream();
-            encoder.Save(memoryStream);
-            var bitmap = new BitmapImage();
+        //internal static byte[] BitmapSourceToBytes(BitmapSource bitmapSource)
+        //{
+        //    var encoder = new PngBitmapEncoder();
+        //    encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+        //    using var memoryStream = new MemoryStream();
+        //    encoder.Save(memoryStream);
+        //    var bitmap = new BitmapImage();
 
-            memoryStream.Position = 0;
-            memoryStream.Seek(0, SeekOrigin.Begin);
-            bitmap.BeginInit();
-            bitmap.StreamSource = memoryStream;
-            bitmap.EndInit();
-            using BinaryReader br = new BinaryReader(bitmap.StreamSource);
-            return br.ReadBytes((int)bitmap.StreamSource.Length);
+        //    memoryStream.Position = 0;
+        //    memoryStream.Seek(0, SeekOrigin.Begin);
+        //    bitmap.BeginInit();
+        //    bitmap.StreamSource = memoryStream;
+        //    bitmap.EndInit();
+        //    using BinaryReader br = new BinaryReader(bitmap.StreamSource);
+        //    return br.ReadBytes((int)bitmap.StreamSource.Length);
+        //}
+
+        public static string GetDefaultExeConfigPath(ConfigurationUserLevel userLevel)
+        {
+            try
+            {
+                var UserConfig = ConfigurationManager.OpenExeConfiguration(userLevel);
+                return UserConfig.FilePath;
+            }
+            catch (ConfigurationException e)
+            {
+                return e.Filename;
+            }
+        }
+
+        public static string GetWritingPath()
+        {
+            return Path.GetDirectoryName(GetDefaultExeConfigPath(ConfigurationUserLevel.PerUserRoamingAndLocal));
         }
 
     }
