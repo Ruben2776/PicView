@@ -13,20 +13,18 @@ PicView is an Open Source Image Viewer for Windows, designed to efficiently and 
 ### Features:
 
 [View file support](https://github.com/Ruben2776/PicView/wiki/File-support)
-<br>
+
+
 [HLSL Image Effects](https://github.com/Ruben2776/PicView/wiki/HLSL-Image-Effects)
-<br>
+
+
 [Batch Resizing Tool](https://github.com/Ruben2776/PicView/wiki/Batch-Resizing-Tool) _Beta_
-<br>
+
+
 [View shortcuts](https://github.com/Ruben2776/PicView/wiki/Keyboard-and-mouse-shortcuts)
 
+
 If you have 7-Zip or WinRAR installed, you can view images inside archive files such `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
-
-
-
-
-
-You can Change how the application sorts through the files right from the context menu.
 
 
 **Switch between image scaling modes;** Pressing `1` Centers the image in the window, while retaining the image's original size. <br> Pressing `2` Also centers the image in the window, but the image will be stretched to window height, while retaining aspect ratio. 
@@ -34,7 +32,18 @@ You can Change how the application sorts through the files right from the contex
 Pressing `3` enables the auto window sizing feature. It will resize the window to the image's size, while keeping the window centered.<br> Pressing `4` also enables the window sizing feature, but the image will be stretched to the monitor's height, while retaining aspect ratio. 
 
 
+<img src="https://i.imgur.com/2I1wtFu.png" align="right" width="428" height="459"/>
+
+
 Slideshow `F11` with adjustable timer in the Settings window `F4`
+
+
+Drag and drop from files Windows explorer or your browser. You can also hold `Ctrl` to drag currently viewed image to your file system.
+
+
+
+
+> You can Change how the application sorts through the files right from the context menu.
 
 
 [View a list of features](https://github.com/Ruben2776/PicView/wiki/Features)
