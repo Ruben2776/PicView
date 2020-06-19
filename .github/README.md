@@ -41,17 +41,26 @@ Slideshow `F11` with adjustable timer in the Settings window `F4`
 Drag and drop from files Windows explorer or your browser. You can also hold `Ctrl` to drag currently viewed image to your file system.
 
 
-
-
 > You can Change how the application sorts through the files right from the context menu.
 
 
-[View a list of features](https://github.com/Ruben2776/PicView/wiki/Features)
+Rename files `F2`, for easy file management of photos/images.
+
+
+Image rotation by pressing `Up`, `Down` || `W`, `S`.
+
+
+Flip image back and forth (horizontally) by pressing `F`.
+
+
+View and access most recent files in the contextmenu, including ones from web addresses.
+
+Quickly crop images by pressing `C`.
 
 
 <h2>Configurable Interface Design</h2>
 <img src="/.github/Screenshot%20(29)-min.png" align="left" width="450"/>
-<img src="/.github/Annotation%202020-06-09%20102711.png" align="right" width="400"/>
+<img src="/.github/Annotation%202020-06-09%20102711.png" align="right" width="420"/>
 
 
 ...
