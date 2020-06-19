@@ -59,7 +59,7 @@ Quickly crop images by pressing `C`.
 
 
 <h2>Configurable Interface Design</h2>
-<img src="https://raw.githubusercontent.com/Ruben2776/PicView/master/.github/Screenshot%20(29)-min.png" align="left" width="466"/> 
+<img src="https://raw.githubusercontent.com/Ruben2776/PicView/master/.github/Screenshot%20(29)-min.png" align="left" width="464"/> 
 <img src="https://picview.app/wp-content/uploads/2020/06/Annotation-2020-06-18-104748-542x1024.png" align="right" width="400"/>
 
 
