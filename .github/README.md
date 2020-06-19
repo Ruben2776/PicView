@@ -60,17 +60,13 @@ Quickly crop images by pressing `C`.
 
 <h2>Configurable Interface Design</h2>
 <img src="https://picview.app/wp-content/uploads/2020/06/Annotation-2020-06-18-1047482-542x1024.png" align="left" width="420"/>
-<img src="https://raw.githubusercontent.com/Ruben2776/PicView/master/.github/Screenshot%20(29)-min.png" align="right" width="435"/>
-
-
-...
-
-
-...
+<img src="https://raw.githubusercontent.com/Ruben2776/PicView/master/.github/Screenshot%20(29)-min.png" align="right" width="440"/>
 
 
 
-The interface can be toggled by pressing `Alt + Z`. For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
+
+
+#### The interface can be toggled by pressing `Alt + Z`. For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
 
 
 <h2>Fullscreen Image Gallery:</h2>
