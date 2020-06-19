@@ -83,7 +83,7 @@
         <Setter Property="Padding" Value="20,8,0,8" />
         <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="FontFamily" Value="/PicView;component/Resources/fonts/#Aller" />
+        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Aller" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="BorderThickness" Value="2" />
         <Setter Property="Effect">
@@ -169,7 +169,7 @@
         <Setter Property="Margin" Value="0" />
         <Setter Property="Foreground" Value="WhiteSmoke" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="FontFamily" Value="/PicView;component/Resources/fonts/#Aller" />
+        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Aller" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Effect">
@@ -258,7 +258,7 @@
         <Setter Property="Margin" Value="0" />
         <Setter Property="Foreground" Value="WhiteSmoke" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="FontFamily" Value="/PicView;component/Resources/fonts/#Aller" />
+        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Aller" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Effect">

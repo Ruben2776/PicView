@@ -825,7 +825,7 @@
                         </TextBlock>
 
                         <TextBlock
-                            FontFamily="/PicView;component/Resources/fonts/#TeX Gyre Heros"
+                            FontFamily="/PicView;component/Library/Resources/fonts/#TeX Gyre Heros"
                             FontSize="16"
                             TextAlignment="Center"
                             ToolTip="http://www.fontsquirrel.com/fonts/tex-gyre-heros">
