@@ -63,10 +63,10 @@ Quickly crop images by pressing `C`.
 <img src="https://picview.app/wp-content/uploads/2020/06/Annotation-2020-06-18-104748-542x1024.png" align="right" width="400"/>
 
 
+...
 
 
-
- > The interface can be toggled by pressing `Alt + Z`. For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
+#### The interface can be toggled by pressing `Alt + Z`. For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
 
 
 <h2>Fullscreen Image Gallery:</h2>
