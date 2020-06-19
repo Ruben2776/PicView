@@ -1,7 +1,8 @@
 {
   "profiles": {
     "PicView": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "\"B:\\Pictures\\Somewhat SFW Characters\\323_paul_kwon_2b_nier_automata_02_zeronis_lr.jpg\""
     }
   }
 }

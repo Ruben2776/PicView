@@ -2,11 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-  <ResourceDictionary.MergedDictionaries>
+  <!--<ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="Shared.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  <!--<SnippetToolBar>-->
+  --><!--<SnippetToolBar>--><!--
   <Style x:Key="ToolBarButtonBaseStyle"
          TargetType="{x:Type ButtonBase}">
     <Setter Property="SnapsToDevicePixels"
@@ -388,6 +388,6 @@
         </LinearGradientBrush>
       </Setter.Value>
     </Setter>
-  </Style>
+  </Style>-->
   <!--</SnippetToolBar>-->
 </ResourceDictionary>

@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Style TargetType="{x:Type TabControl}">
+    <!--<Style TargetType="{x:Type TabControl}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template">
@@ -72,17 +72,21 @@
                         </Trigger>
                         <Trigger Property="IsSelected" Value="False">
                             <Setter TargetName="Border" Property="Background" Value="#E5232323" />
-                            <!--<Setter TargetName="Border" Property="Effect">
+    -->
+    <!--<Setter TargetName="Border" Property="Effect">
             <Setter.Value>
                 <BlurEffect Radius="7" RenderingBias="Quality"/>
             </Setter.Value>
             </Setter>-->
+    <!--
                             <Setter Property="Foreground" Value="#FFF7F4F4" />
                             <Setter Property="FontWeight" Value="Normal" />
                         </Trigger>
-                        <!--<Trigger SourceName="Border" Property="IsMouseOver" Value="True">
+    -->
+    <!--<Trigger SourceName="Border" Property="IsMouseOver" Value="True">
             <Setter TargetName="Border" Property="Background" Value="#007ACC" />
           </Trigger>-->
+    <!--
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Border" Property="Background" Value="#FF343434" />
                             <Setter TargetName="Border" Property="BorderBrush" Value="#007acc" />
@@ -92,5 +96,5 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 </ResourceDictionary>

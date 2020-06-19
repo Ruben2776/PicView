@@ -94,7 +94,7 @@ namespace PicView.UI.Loading
                 }
                 else
                 {
-                    UpdateColor();
+                    ConfigColors.UpdateColor();
                 }
             }
             else
@@ -111,12 +111,12 @@ namespace PicView.UI.Loading
                 }
                 else
                 {
-                    UpdateColor();
+                    ConfigColors.UpdateColor();
                 }
             }
 
             // Update values
-            SetColors();
+            ConfigColors.SetColors();
             mainWindow.AllowDrop = true;
             IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
 

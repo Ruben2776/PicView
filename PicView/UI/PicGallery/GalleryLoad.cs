@@ -56,7 +56,7 @@ namespace PicView.UI.PicGallery
 
                 ShowNavigation(false);
                 ShowTopandBottom(false);
-                Utilities.UpdateColor(true);
+                ConfigColors.UpdateColor(true);
 
                 mainWindow.Margin = new Thickness(0, 0, -picGallery.Width, 0);
             }

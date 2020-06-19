@@ -446,7 +446,7 @@
     <!--  MenuItem Style  -->
     <Style x:Key="{x:Type MenuItem}" TargetType="{x:Type MenuItem}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="FontFamily" Value="/PicView;component/Resources/fonts/#TeX Gyre Heros" />
+        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#TeX Gyre Heros" />
         <Style.Triggers>
             <Trigger Property="Role" Value="TopLevelHeader">
                 <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelHeaderTemplateKey}}" />

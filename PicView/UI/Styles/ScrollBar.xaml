@@ -63,7 +63,7 @@
                         Margin="0,0,0,1">
                         <Grid.Background>
                             <ImageBrush
-                                ImageSource="/PicView;component/Resources/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
+                                ImageSource="/PicView;component/Library/Resources/img/noisy-texture-200x200-o4-d30-c-101010-t0.png"
                                 TileMode="FlipXY"
                                 Viewport="0,0,100,100"
                                 ViewportUnits="Absolute" />
@@ -238,15 +238,15 @@
                     <ColumnDefinition MaxWidth="18" />
                 </Grid.ColumnDefinitions>
                 <RepeatButton
-                Grid.Column="0"
-                Width="18"
-                Command="ScrollBar.LineLeftCommand"
-                Style="{StaticResource LineButtonLeftStyle}" />
+                    Grid.Column="0"
+                    Width="18"
+                    Command="ScrollBar.LineLeftCommand"
+                    Style="{StaticResource LineButtonLeftStyle}" />
 
                 <Track
-                Name="PART_Track"
-                Grid.Column="1"
-                IsDirectionReversed="False">
+                    Name="PART_Track"
+                    Grid.Column="1"
+                    IsDirectionReversed="False">
                     <Track.DecreaseRepeatButton>
                         <RepeatButton Command="ScrollBar.PageLeftCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
                     </Track.DecreaseRepeatButton>
@@ -264,10 +264,10 @@
                     </Track.Resources>
                 </Track>
                 <RepeatButton
-                Grid.Column="2"
-                Width="18"
-                Command="ScrollBar.LineRightCommand"
-                Style="{StaticResource LineButtonRightStyle}" />
+                    Grid.Column="2"
+                    Width="18"
+                    Command="ScrollBar.LineRightCommand"
+                    Style="{StaticResource LineButtonRightStyle}" />
             </Grid>
         </Border>
     </ControlTemplate>

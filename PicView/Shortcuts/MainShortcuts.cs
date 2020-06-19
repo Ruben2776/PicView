@@ -440,7 +440,7 @@ namespace PicView.Shortcuts
 
                     // T
                     case Key.T:
-                        ChangeBackground(sender, e);
+                        ConfigColors.ChangeBackground(sender, e);
                         break;
 
                     // Space

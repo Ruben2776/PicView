@@ -212,7 +212,7 @@ namespace PicView.UI
         {
             bool value = Properties.Settings.Default.WindowBorderColorEnabled ? false : true;
             Properties.Settings.Default.WindowBorderColorEnabled = value;
-            Utilities.UpdateColor(!value);
+            ConfigColors.UpdateColor(!value);
         }
 
         internal static void SetSlidetimer()

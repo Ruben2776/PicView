@@ -6,7 +6,7 @@
     Title="Information, help &amp; shortcuts"
     Width="560"
     Height="650"
-    FontFamily="/PicView;component/Resources/fonts/#Aller"
+    FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
     Foreground="{StaticResource MainColorBrush}"
     Style="{DynamicResource MyWindowStyle}">
 
@@ -53,7 +53,7 @@
                 x:Name="Bar"
                 VerticalAlignment="Center"
                 Background="{x:Null}"
-                FontFamily="/PicView;component/Resources/fonts/#Aller"
+                FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
                 FontSize="15"
                 FontWeight="Bold"
                 Foreground="{StaticResource MainColorBrush}"
@@ -809,7 +809,7 @@
                             Content="Fonts Used:"
                             FontSize="16" />
                         <TextBlock
-                            FontFamily="/PicView;component/Resources/fonts/#Aller"
+                            FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
                             FontSize="16"
                             TextAlignment="Center"
                             ToolTip="http://www.fontsquirrel.com/fonts/aller">
@@ -845,7 +845,7 @@
                     <StackPanel Margin="0,7">
                         <Label HorizontalAlignment="Center" FontSize="16">Icons Used:</Label>
                         <TextBlock
-                            FontFamily="/PicView;component/Resources/fonts/#Aller"
+                            FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
                             FontSize="14"
                             TextAlignment="Center"
                             ToolTip="https://useiconic.com/open/">
@@ -861,7 +861,7 @@
                         </TextBlock>
                         <TextBlock
                             x:Name="FlatIcon"
-                            FontFamily="/PicView;component/Resources/fonts/#Aller"
+                            FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
                             FontSize="14"
                             TextAlignment="Center"
                             ToolTip="http://www.flaticon.com/free-icon/file-folder_379">
@@ -876,7 +876,7 @@
 
                         <TextBlock
                             x:Name="Ionic"
-                            FontFamily="/PicView;component/Resources/fonts/#Aller"
+                            FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
                             FontSize="14"
                             TextAlignment="Center"
                             ToolTip="http://Ionicons.com/">
@@ -891,7 +891,7 @@
 
                         <TextBlock
                             x:Name="FontAwesome"
-                            FontFamily="/PicView;component/Resources/fonts/#Aller"
+                            FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
                             FontSize="14"
                             TextAlignment="Center"
                             ToolTip="http://fontawesome.io/">
@@ -905,7 +905,7 @@
 
                         <TextBlock
                             x:Name="zondicons"
-                            FontFamily="/PicView;component/Resources/fonts/#Aller"
+                            FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
                             FontSize="14"
                             TextAlignment="Center"
                             ToolTip="http://www.zondicons.com/icons.html">
@@ -925,7 +925,7 @@
                         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                             <TextBlock
                                 x:Name="GitHub"
-                                FontFamily="/PicView;component/Resources/fonts/#Aller"
+                                FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
                                 FontSize="14"
                                 TextAlignment="Center"
                                 ToolTip="https://github.com/Ruben2776/PicView">
@@ -949,7 +949,7 @@
                             Margin="0,2"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
-                            FontFamily="/PicView;component/Resources/fonts/#Aller"
+                            FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
                             FontSize="12"
                             Text="Made by Ruben Hyldgaard Negendahl" />
 

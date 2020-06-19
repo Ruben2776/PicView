@@ -405,9 +405,9 @@ namespace PicView.UI.Loading
                 Height = double.NaN,
                 HorizontalAlignment = HorizontalAlignment.Left
             };
-            transcmHeader.Click += ChangeBackground;
+            transcmHeader.Click += ConfigColors.ChangeBackground;
             transcm.Header = transcmHeader;
-            transcm.Click += ChangeBackground;
+            transcm.Click += ConfigColors.ChangeBackground;
             settingscm.Items.Add(transcm);
 
             cm.Items.Add(new Separator());

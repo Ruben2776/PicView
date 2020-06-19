@@ -6,7 +6,7 @@
     Title="Loading..."
     MinWidth="465"
     MinHeight="515"
-    FontFamily="/PicView;component/Resources/fonts/#Aller"
+    FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="CanMinimize"
     SizeToContent="WidthAndHeight"
@@ -70,7 +70,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Background="{x:Null}"
-                    FontFamily="/PicView;component/Resources/fonts/#Aller"
+                    FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
                     FontSize="15"
                     FontWeight="Bold"
                     Foreground="{StaticResource MainColorBrush}" />

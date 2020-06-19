@@ -4,7 +4,7 @@
     <Style x:Key="{x:Type ToolTip}" TargetType="ToolTip">
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Setter Property="HasDropShadow" Value="True" />
-        <Setter Property="FontFamily" Value="/PicView;component/Resources/fonts/#TeX Gyre Heros" />
+        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#TeX Gyre Heros" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
         <!--<Setter Property="BorderThickness" Value="1"/>

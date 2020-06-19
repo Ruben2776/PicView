@@ -11,7 +11,7 @@
         Background="{x:Null}"
         CaretBrush="{StaticResource MainColorBrush}"
         ContextMenu="{x:Null}"
-        FontFamily="/PicView;component/Resources/fonts/#Aller"
+        FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
         FontSize="15"
         FontWeight="Bold"
         Foreground="{StaticResource MainColorBrush}"

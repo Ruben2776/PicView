@@ -6,7 +6,7 @@
     Title="Batch resize &amp; optimize"
     Width="530"
     Height="520"
-    FontFamily="/PicView;component/Resources/fonts/#Aller"
+    FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="CanMinimize"
     Style="{DynamicResource MyWindowStyle}"
@@ -54,7 +54,7 @@
                 x:Name="Bar"
                 VerticalAlignment="Center"
                 Background="{x:Null}"
-                FontFamily="/PicView;component/Resources/fonts/#Aller"
+                FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
                 FontSize="15"
                 FontWeight="Bold"
                 Foreground="{StaticResource MainColorBrush}"
@@ -419,7 +419,7 @@
                             MaxWidth="402"
                             Margin="5,0,2,0"
                             Padding="5,4,5,0"
-                            FontFamily="Aller Light">
+                            FontFamily="/PicView;component/Resources/fonts/#Aller Light">
                             <TextBox.Effect>
                                 <DropShadowEffect
                                     BlurRadius="4"

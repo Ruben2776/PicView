@@ -196,8 +196,8 @@ namespace PicView.UI.Sizing
             {
                 CenterWindowOnScreen();
             }
-            
-            UpdateColor();
+
+            ConfigColors.UpdateColor();
         }
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace PicView.UI.Sizing
 
                 mainWindow.Topmost = true;
 
-                UpdateColor(true);
+                ConfigColors.UpdateColor(true);
             }
             else
             {
@@ -287,7 +287,7 @@ namespace PicView.UI.Sizing
                 }
 
                 TryFitImage();
-                UpdateColor(); // Regain border              
+                ConfigColors.UpdateColor(); // Regain border              
 
                 Properties.Settings.Default.Fullscreen = false;
             }
