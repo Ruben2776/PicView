@@ -120,14 +120,6 @@ namespace PicView
 
             AjaxLoadingEnd();
 
-            if (Pics.Count > 1)
-            {
-                if (!GalleryFunctions.IsLoading)
-                {
-                    await GalleryLoad.Load().ConfigureAwait(false);
-                }
-            }
-
             prevPicResource = null; // Make sure to not waste memory
 
         }
@@ -327,7 +319,7 @@ namespace PicView
             CanNavigate = false;
         }
 
-        internal static async void PicFolder(string folder)
+        internal static void PicFolder(string folder)
         {
             ChangeFolder(true);
             Pics = FileList(folder);
@@ -337,14 +329,6 @@ namespace PicView
             quickSettingsMenu.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
 
             AjaxLoadingEnd();
-
-            if (Pics.Count > 1)
-            {
-                if (!GalleryFunctions.IsLoading)
-                {
-                    await GalleryLoad.Load().ConfigureAwait(false);
-                }
-            }
 
             prevPicResource = null; // Make sure to not waste memory
 

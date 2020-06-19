@@ -69,7 +69,7 @@ namespace PicView
 
         #region Open
 
-        internal static void OpenContainedGallery()
+        internal static async void OpenContainedGallery()
         {
             if (Pics.Count < 1)
             {
@@ -104,10 +104,20 @@ namespace PicView
             }
 
             ScrollTo();
+
+            if (!IsLoading)
+            {
+                await Load().ConfigureAwait(false);
+            }
         }
 
-        internal static void OpenFullscreenGallery()
+        internal static async void OpenFullscreenGallery()
         {
+            if (Pics.Count < 1)
+            {
+                return;
+            }
+
             Properties.Settings.Default.PicGallery = 2;
             LoadLayout();
 
@@ -139,6 +149,11 @@ namespace PicView
 
             // Fix not showing up opacity bug.. 
             VisualStateManager.GoToElementState(picGallery, "Opacity", false);
+
+            if (!IsLoading)
+            {
+                await Load().ConfigureAwait(false);
+            }
         }
 
         #endregion
