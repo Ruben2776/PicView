@@ -12,12 +12,12 @@ namespace PicView.UI.UserControls
     /// </summary>
     public partial class Minus : UserControl
     {
-        private static ColorAnimation ccAnim;
-        private static ColorAnimation ccAnim2;
-        private static Color bb;
-        private static Color bg;
-        private static Color bg2;
-        private static Color fg;
+        private ColorAnimation ccAnim;
+        private ColorAnimation ccAnim2;
+        private Color bb;
+        private Color bg;
+        private Color bg2;
+        private Color fg;
 
         public Minus()
         {

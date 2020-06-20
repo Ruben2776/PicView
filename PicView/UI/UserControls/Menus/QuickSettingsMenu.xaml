@@ -110,7 +110,7 @@
                                 Panel.ZIndex="1"
                                 AcceptsTab="False"
                                 IsTabStop="False"
-                                Text="42"
+                                Text="1"
                                 TextAlignment="Center" />
                         </Canvas>
                     </Button.Content>

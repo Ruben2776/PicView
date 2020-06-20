@@ -5,6 +5,7 @@ using PicView.UI.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -54,7 +55,7 @@ namespace PicView.UI.Loading
             AjaxLoadingStart();
         }
 
-        internal static void Start()
+        internal static async void Start()
         {
 #if DEBUG
             Trace.WriteLine("ContentRendered started");
@@ -98,8 +99,6 @@ namespace PicView.UI.Loading
             }
             else
             {
-                Pic(Application.Current.Properties["ArbitraryArgName"].ToString());
-
                 if (Properties.Settings.Default.Fullscreen)
                 {
                     Fullscreen_Restore(true);
@@ -112,8 +111,22 @@ namespace PicView.UI.Loading
                 {
                     ConfigColors.UpdateColor();
                 }
+
+                await Pic(Application.Current.Properties["ArbitraryArgName"].ToString()).ConfigureAwait(false);
             }
 
+            await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            {
+                AddUIElementsAndUpdateValues();
+            }));
+
+#if DEBUG
+            Trace.WriteLine("Start Completed ");
+#endif
+        }
+
+        private static void AddUIElementsAndUpdateValues()
+        {
             // Update values
             ConfigColors.SetColors();
             mainWindow.AllowDrop = true;
@@ -175,6 +188,7 @@ namespace PicView.UI.Loading
 
             // Add things!
             Eventshandling.Go();
+            AjaxLoadingEnd();
             AddTimers();
             AddContextMenus();
 
@@ -184,11 +198,6 @@ namespace PicView.UI.Loading
                 Properties.Settings.Default.Upgrade();
                 Properties.Settings.Default.CallUpgrade = false;
             }
-            AjaxLoadingEnd();
-
-#if DEBUG
-            Trace.WriteLine("Start Completed ");
-#endif
         }
     }
 }

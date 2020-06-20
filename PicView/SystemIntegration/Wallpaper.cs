@@ -63,8 +63,9 @@ namespace PicView.SystemIntegration
                         File.Delete(tempPath + randomName);
                         using var timer = new Timer(2000);
                         timer.Elapsed += (s, x) => Directory.Delete(tempPath);
-                        return;
                     });
+
+                    return;
                 }
                 // TODO add Base64 support
                 //if (Base64.IsBase64String(s))

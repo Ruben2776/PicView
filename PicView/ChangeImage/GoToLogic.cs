@@ -10,14 +10,14 @@ namespace PicView.ChangeImage
 {
     internal static class GoToLogic
     {
-        internal static void GoToPicEvent(object sender, RoutedEventArgs e)
+        internal static async System.Threading.Tasks.Task GoToPicEventAsync(object sender, RoutedEventArgs e)
         {
             if (int.TryParse(quickSettingsMenu.GoToPicBox.Text.ToString(), out int x))
             {
                 x--;
                 x = x <= 0 ? 0 : x;
                 x = x >= Pics.Count ? Pics.Count - 1 : x;
-                Navigation.Pic(x);
+                await Navigation.Pic(x).ConfigureAwait(false);
                 quickSettingsMenu.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture);
             }
             else

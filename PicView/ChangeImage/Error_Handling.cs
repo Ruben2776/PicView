@@ -33,7 +33,7 @@ namespace PicView.ChangeImage
 #endif
             if (Pics == null)
             {
-                Reload(true);
+                await Reload(true).ConfigureAwait(true);
                 return null;
             }
 
@@ -172,7 +172,7 @@ namespace PicView.ChangeImage
         /// <summary>
         /// Refresh the current list of pics and reload them if there is some missing or changes.
         /// </summary>
-        internal static void Reload(bool fromBackup = false)
+        internal static async Task Reload(bool fromBackup = false)
         {
             if (fromBackup && string.IsNullOrWhiteSpace(xPicPath))
             {
@@ -201,9 +201,8 @@ namespace PicView.ChangeImage
 
                 // Need a sort method instead
                 GalleryFunctions.Clear();
-                GalleryLoad.Load();
 
-                Pic(s);
+                await Pic(s).ConfigureAwait(false);
 
                 // Reset
 
@@ -223,7 +222,7 @@ namespace PicView.ChangeImage
             }
             else if (Uri.IsWellFormedUriString(s, UriKind.Absolute)) // Check if from web
             {
-                LoadFromWeb.PicWeb(s);
+                await LoadFromWeb.PicWeb(s).ConfigureAwait(false);
             }
             else
             {
@@ -264,35 +263,6 @@ namespace PicView.ChangeImage
 
             SystemIntegration.Taskbar.NoProgress();
             AnimationHelper.Fade(ajaxLoading, 0, TimeSpan.FromSeconds(.2));
-        }
-
-        /// <summary>
-        /// Display broken image status, without affecting file list
-        /// </summary>
-        internal static void DisplayBrokenImage()
-        {
-            mainWindow.img.Source = null;
-
-            if (badImage == null)
-            {
-                badImage = new UI.UserControls.BadImage
-                {
-                    Width = xWidth,
-                    Height = xHeight
-                };
-            }
-            else
-            {
-                badImage.Width = xWidth;
-                badImage.Height = xHeight;
-            }
-
-            mainWindow.topLayer.Children.Add(badImage);
-
-            mainWindow.Bar.ToolTip = mainWindow.Bar.Text = CannotRender;
-            mainWindow.Title = CannotRender + " - " + AppName;
-
-            IsUnsupported = true;
         }
     }
 }

@@ -54,7 +54,7 @@ namespace PicView
                     break;
 
                 case Key.Enter: // Execute it!
-                    GoToPicEvent(sender, e);
+                    GoToPicEventAsync(sender, e);
                     ClearGoTo();
                     break;
 

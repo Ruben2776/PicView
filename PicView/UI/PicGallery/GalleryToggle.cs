@@ -131,7 +131,7 @@ namespace PicView.UI.PicGallery
                 mainWindow.bg.Children.Remove(picGallery);
                 fakeWindow.grid.Children.Add(picGallery);
             }
-            else if (!fakeWindow.grid.Children.Contains(picGallery))
+            else
             {
                 mainWindow.bg.Children.Remove(picGallery);
                 fakeWindow.grid.Children.Add(picGallery);

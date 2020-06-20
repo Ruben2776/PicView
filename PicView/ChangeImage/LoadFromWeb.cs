@@ -23,7 +23,7 @@ namespace PicView.ChangeImage
         /// Attemps to download image and display it
         /// </summary>
         /// <param name="path"></param>
-        internal static async void PicWeb(string path)
+        internal static async Task PicWeb(string path)
         {
             if (ajaxLoading.Opacity != 1)
             {

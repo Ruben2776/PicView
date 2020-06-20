@@ -55,7 +55,10 @@ namespace PicView.UI
         /// </summary>
         internal static void CloseToolTipMessage()
         {
-            toolTipMessage.Visibility = Visibility.Hidden;
+            if (toolTipMessage.CheckAccess())
+            {
+                toolTipMessage.Visibility = Visibility.Hidden;
+            }
         }
     }
 }

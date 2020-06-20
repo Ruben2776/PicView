@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Error_Handling;
@@ -90,7 +91,7 @@ namespace PicView.FileHandling
         /// Retrieves the data from the clipboard and attemps to load image, if possible
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
-        internal static void Paste()
+        internal static async Task Paste()
         {
             // file
 
@@ -107,16 +108,16 @@ namespace PicView.FileHandling
                         // If from same folder
                         if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]) && Path.GetDirectoryName(x) == Path.GetDirectoryName(Pics[FolderIndex]))
                         {
-                            Pic(Pics.IndexOf(x));
+                            await Pic(Pics.IndexOf(x)).ConfigureAwait(false);
                         }
                         else
                         {
-                            Pic(x);
+                            await Pic(x).ConfigureAwait(false);
                         }
                     }
                     else
                     {
-                        Pic(x);
+                        await Pic(x).ConfigureAwait(false);
                     }
 
                     if (files.Length > 1)
@@ -151,7 +152,7 @@ namespace PicView.FileHandling
 
             if (Base64.IsBase64String(s))
             {
-                Pic64(s);
+                await Pic64(s).ConfigureAwait(false);
                 return;
             }
 
@@ -165,7 +166,7 @@ namespace PicView.FileHandling
 
             if (File.Exists(s))
             {
-                Pic(s);
+                await Pic(s).ConfigureAwait(false);
             }
             else if (Directory.Exists(s))
             {
@@ -173,7 +174,7 @@ namespace PicView.FileHandling
                 Pics = FileList(s);
                 if (Pics.Count > 0)
                 {
-                    Pic(Pics[0]);
+                    await Pic(Pics[0]).ConfigureAwait(false);
                 }
                 else if (Pics.Count == 0)
                 {
@@ -181,7 +182,7 @@ namespace PicView.FileHandling
                 }
                 else if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]))
                 {
-                    Pic(Pics[FolderIndex]);
+                    await Pic(Pics[FolderIndex]).ConfigureAwait(false);
                 }
                 else
                 {
@@ -190,7 +191,7 @@ namespace PicView.FileHandling
             }
             else if (Uri.IsWellFormedUriString(s, UriKind.Absolute)) // Check if from web
             {
-                LoadFromWeb.PicWeb(s);
+                await LoadFromWeb.PicWeb(s).ConfigureAwait(false);
             }
             else
             {

@@ -3,6 +3,7 @@ using PicView.ImageHandling;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
@@ -52,7 +53,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// Open a file dialog where user can select a supported file
         /// </summary>
-        internal static void Open()
+        internal static async Task Open()
         {
             IsDialogOpen = true;
 
@@ -63,7 +64,7 @@ namespace PicView.FileHandling
             };
             if (dlg.ShowDialog().Value)
             {
-                Pic(dlg.FileName);
+                await Pic(dlg.FileName).ConfigureAwait(false);
             }
             else
             {
@@ -102,7 +103,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// Open a File Dialog, where the user can save a supported file type.
         /// </summary>
-        internal static void SaveFiles()
+        internal static async Task SaveFiles()
         {
             string fileName;
 
@@ -145,7 +146,7 @@ namespace PicView.FileHandling
             if (Savedlg.FileName == fileName)
             {
                 //Refresh the list of pictures.
-                Reload();
+                await Reload().ConfigureAwait(false);
             }
 
             Close_UserControls();

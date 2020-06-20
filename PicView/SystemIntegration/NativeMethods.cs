@@ -102,7 +102,7 @@ namespace PicView.SystemIntegration
         private const int WM_SIZING = 0x214;
 
         private const int WM_EXITSIZEMOVE = 0x232;
-        private static bool WindowWasResized = false;
+        private static bool WindowWasResized;
 
         public static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {

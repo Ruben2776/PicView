@@ -12,7 +12,6 @@ using static PicView.FileHandling.Copy_Paste;
 using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.Open_Save;
 using static PicView.Library.Fields;
-using static PicView.Library.Utilities;
 using static PicView.Shortcuts.MainShortcuts;
 using static PicView.UI.Animations.MouseOverAnimations;
 using static PicView.UI.DragAndDrop;
@@ -54,17 +53,17 @@ namespace PicView.UI.Loading
             mainWindow.FileMenuButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgColor(mainWindow.FileMenuBg);
             mainWindow.FileMenuButton.Click += Toggle_open_menu;
 
-            fileMenu.Open.Click += (s, x) => Open();
+            fileMenu.Open.Click += (s, x) => Open().ConfigureAwait(false);
             fileMenu.FileLocation.Click += (s, x) => Open_In_Explorer();
             fileMenu.Print.Click += (s, x) => Print(Pics[FolderIndex]);
-            fileMenu.SaveBorder.Click += (s, x) => SaveFiles();
+            fileMenu.SaveBorder.Click += async (s, x) => await SaveFiles().ConfigureAwait(false); ;
 
-            fileMenu.OpenBorder.MouseLeftButtonUp += (s, x) => Open();
+            fileMenu.OpenBorder.MouseLeftButtonUp += async (s, x) => await Open().ConfigureAwait(false); ;
             fileMenu.FileLocationBorder.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
             fileMenu.PrintBorder.MouseLeftButtonUp += (s, x) => Print(Pics[FolderIndex]);
-            fileMenu.Save_File_Location_Border.MouseLeftButtonUp += (s, x) => SaveFiles();
+            fileMenu.Save_File_Location_Border.MouseLeftButtonUp += async (s, x) => await SaveFiles().ConfigureAwait(false); ;
 
-            fileMenu.PasteButton.Click += (s, x) => Paste();
+            fileMenu.PasteButton.Click += async (s, x) => await Paste();
             fileMenu.CopyButton.Click += (s, x) => Copyfile();
 
             // image_button
@@ -97,7 +96,7 @@ namespace PicView.UI.Loading
             mainWindow.LeftButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(mainWindow.LeftButtonBrush);
             mainWindow.LeftButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.LeftArrowFill);
             mainWindow.LeftButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(mainWindow.LeftButtonBrush);
-            mainWindow.LeftButton.Click += (s, x) => PicButton(false, false);
+            mainWindow.LeftButton.Click += async (s, x) => await PicButton(false, false).ConfigureAwait(false);
 
             // RightButton
             mainWindow.RightButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.RightArrowFill);
@@ -105,7 +104,7 @@ namespace PicView.UI.Loading
             mainWindow.RightButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(mainWindow.RightButtonBrush);
             mainWindow.RightButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.RightArrowFill);
             mainWindow.RightButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(mainWindow.RightButtonBrush);
-            mainWindow.RightButton.Click += (s, x) => PicButton(false, true);
+            mainWindow.RightButton.Click += async (s, x) => await PicButton(false, true).ConfigureAwait(false);
 
             // SettingsButton
             mainWindow.SettingsButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.SettingsButtonFill);
@@ -128,10 +127,10 @@ namespace PicView.UI.Loading
             imageSettingsMenu.FlipButton.Click += (s, x) => Flip();
 
             // ClickArrows
-            clickArrowLeft.MouseLeftButtonDown += (s, x) => PicButton(true, false);
+            clickArrowLeft.MouseLeftButtonDown += async (s, x) => await PicButton(true, false).ConfigureAwait(false);
             clickArrowLeft.MouseEnter += Interface_MouseEnter_Negative;
 
-            clickArrowRight.MouseLeftButtonDown += (s, x) => PicButton(true, true);
+            clickArrowRight.MouseLeftButtonDown += async (s, x) => await PicButton(true, true).ConfigureAwait(false);
             clickArrowRight.MouseEnter += Interface_MouseEnter_Negative;
 
             // x2
@@ -160,7 +159,7 @@ namespace PicView.UI.Loading
 
             // bg
             mainWindow.bg.MouseLeftButtonDown += Bg_MouseLeftButtonDown;
-            mainWindow.bg.Drop += Image_Drop;
+            mainWindow.bg.Drop += async (s, x) => await Image_Drop(s, x).ConfigureAwait(false);
             mainWindow.bg.DragEnter += Image_DragEnter;
             mainWindow.bg.DragLeave += Image_DragLeave;
             mainWindow.bg.MouseEnter += Interface_MouseEnter;
@@ -180,7 +179,7 @@ namespace PicView.UI.Loading
             //Logobg.PreviewMouseLeftButtonDown += LogoMouseButtonDown;
 
             // Lower Bar
-            mainWindow.LowerBar.Drop += Image_Drop;
+            mainWindow.LowerBar.Drop += async (s, x) => await Image_Drop(s, x).ConfigureAwait(false);
             mainWindow.LowerBar.MouseLeftButtonDown += Move;
 
             // This

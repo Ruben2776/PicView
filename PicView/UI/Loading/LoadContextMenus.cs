@@ -158,8 +158,8 @@ namespace PicView.UI.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 0
             };
-            sortcmChild0Header.Click += delegate { UpdateUIValues.ChangeSorting(0); cm.IsOpen = false; };
-            sortcmChild0.Click += delegate { UpdateUIValues.ChangeSorting(0); cm.IsOpen = false; };
+            sortcmChild0Header.Click += delegate { UpdateUIValues.ChangeSortingAsync(0); cm.IsOpen = false; };
+            sortcmChild0.Click += delegate { UpdateUIValues.ChangeSortingAsync(0); cm.IsOpen = false; };
             sortcmChild0.Header = sortcmChild0Header;
             sortcm.Items.Add(sortcmChild0);
 
@@ -174,8 +174,8 @@ namespace PicView.UI.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 1
             };
-            sortcmChild1Header.Click += delegate { UpdateUIValues.ChangeSorting(1); cm.IsOpen = false; };
-            sortcmChild1.Click += delegate { UpdateUIValues.ChangeSorting(1); cm.IsOpen = false; };
+            sortcmChild1Header.Click += delegate { UpdateUIValues.ChangeSortingAsync(1); cm.IsOpen = false; };
+            sortcmChild1.Click += delegate { UpdateUIValues.ChangeSortingAsync(1); cm.IsOpen = false; };
             sortcmChild1.Header = sortcmChild1Header;
             sortcm.Items.Add(sortcmChild1);
 
@@ -190,8 +190,8 @@ namespace PicView.UI.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 2
             };
-            sortcmChild2Header.Click += delegate { UpdateUIValues.ChangeSorting(2); cm.IsOpen = false; };
-            sortcmChild2.Click += delegate { UpdateUIValues.ChangeSorting(2); cm.IsOpen = false; };
+            sortcmChild2Header.Click += delegate { UpdateUIValues.ChangeSortingAsync(2); cm.IsOpen = false; };
+            sortcmChild2.Click += delegate { UpdateUIValues.ChangeSortingAsync(2); cm.IsOpen = false; };
             sortcmChild2.Header = sortcmChild2Header;
             sortcm.Items.Add(sortcmChild2);
 
@@ -206,8 +206,8 @@ namespace PicView.UI.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 3
             };
-            sortcmChild3Header.Click += delegate { UpdateUIValues.ChangeSorting(3); cm.IsOpen = false; };
-            sortcmChild3.Click += delegate { UpdateUIValues.ChangeSorting(3); cm.IsOpen = false; };
+            sortcmChild3Header.Click += delegate { UpdateUIValues.ChangeSortingAsync(3); cm.IsOpen = false; };
+            sortcmChild3.Click += delegate { UpdateUIValues.ChangeSortingAsync(3); cm.IsOpen = false; };
             sortcmChild3.Header = sortcmChild3Header;
             sortcm.Items.Add(sortcmChild3);
 
@@ -222,8 +222,8 @@ namespace PicView.UI.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 4
             };
-            sortcmChild4Header.Click += delegate { UpdateUIValues.ChangeSorting(4); cm.IsOpen = false; };
-            sortcmChild4.Click += delegate { UpdateUIValues.ChangeSorting(4); cm.IsOpen = false; };
+            sortcmChild4Header.Click += delegate { UpdateUIValues.ChangeSortingAsync(4); cm.IsOpen = false; };
+            sortcmChild4.Click += delegate { UpdateUIValues.ChangeSortingAsync(4); cm.IsOpen = false; };
             sortcmChild4.Header = sortcmChild4Header;
             sortcm.Items.Add(sortcmChild4);
 
@@ -238,8 +238,8 @@ namespace PicView.UI.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 5
             };
-            sortcmChild5Header.Click += delegate { UpdateUIValues.ChangeSorting(5); cm.IsOpen = false; };
-            sortcmChild5.Click += delegate { UpdateUIValues.ChangeSorting(5); cm.IsOpen = false; };
+            sortcmChild5Header.Click += delegate { UpdateUIValues.ChangeSortingAsync(5); cm.IsOpen = false; };
+            sortcmChild5.Click += delegate { UpdateUIValues.ChangeSortingAsync(5); cm.IsOpen = false; };
             sortcmChild5.Header = sortcmChild5Header;
             sortcm.Items.Add(sortcmChild5);
 
@@ -254,8 +254,8 @@ namespace PicView.UI.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 6
             };
-            sortcmChild6Header.Click += delegate { UpdateUIValues.ChangeSorting(6); cm.IsOpen = false; };
-            sortcmChild6.Click += delegate { UpdateUIValues.ChangeSorting(6); cm.IsOpen = false; };
+            sortcmChild6Header.Click += delegate { UpdateUIValues.ChangeSortingAsync(6); cm.IsOpen = false; };
+            sortcmChild6.Click += delegate { UpdateUIValues.ChangeSortingAsync(6); cm.IsOpen = false; };
             sortcmChild6.Header = sortcmChild6Header;
             sortcm.Items.Add(sortcmChild6);
             cm.Items.Add(sortcm);
@@ -724,7 +724,7 @@ namespace PicView.UI.Loading
                     break;
             }
 
-            cm.Opened += (tt, yy) => Recentcm_MouseEnter(recentcm);
+            cm.Opened += (tt, yy) => Recentcm_Opened(recentcm);
 
 #if DEBUG
             Trace.WriteLine("Contextmenu loaded");

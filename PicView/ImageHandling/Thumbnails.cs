@@ -48,12 +48,19 @@ namespace PicView.ImageHandling
         {
             BitmapSource pic;
 
-            if (picGallery.Container.Children.Count > 0)
+            if (picGallery != null)
             {
-                if (x < picGallery.Container.Children.Count && picGallery.Container.Children.Count == Pics.Count)
+                if (picGallery.Container.Children.Count > 0)
                 {
-                    var y = picGallery.Container.Children[x] as PicGalleryItem;
-                    pic = (BitmapSource)y.img.Source;
+                    if (x < picGallery.Container.Children.Count && picGallery.Container.Children.Count == Pics.Count)
+                    {
+                        var y = picGallery.Container.Children[x] as PicGalleryItem;
+                        pic = (BitmapSource)y.img.Source;
+                    }
+                    else
+                    {
+                        pic = GetBitmapSourceThumb(Pics[x]);
+                    }
                 }
                 else
                 {

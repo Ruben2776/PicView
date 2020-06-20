@@ -19,7 +19,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// File list for Most Recently Used files
         /// </summary>
-        internal static Queue<string> MRUlist;
+        private static Queue<string> MRUlist;
 
         /// <summary>
         /// How many max recent files
@@ -126,7 +126,7 @@ namespace PicView.FileHandling
         /// Adds events and submenu items to recent items in the context menu
         /// </summary>
         /// <param name="sender"></param>
-        internal static void Recentcm_MouseEnter(object sender)
+        internal static void Recentcm_Opened(object sender)
         {
             // Need to register the object as a MenuItem to use it
             var RecentFilesMenuItem = (MenuItem)sender;
@@ -193,7 +193,7 @@ namespace PicView.FileHandling
                     ToolTip = item
                 };
                 // Set tooltip as argument to avoid subscribing and unsubscribing to events
-                menuItem.Click += (x, xx) => Pic(menuItem.ToolTip.ToString());
+                menuItem.Click += async (x, xx) => await Pic(menuItem.ToolTip.ToString()).ConfigureAwait(false);
                 menuItem.Icon = cmIcon;
                 var ext = Path.GetExtension(item);
                 var ext5 = !string.IsNullOrWhiteSpace(ext) && ext.Length >= 5 ? ext.Substring(0, 5) : ext;

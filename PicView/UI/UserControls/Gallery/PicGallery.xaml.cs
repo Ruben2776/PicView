@@ -11,7 +11,7 @@ namespace PicView.UI.UserControls
         public PicGallery()
         {
             InitializeComponent();
-            //PicGalleryLogic.IsLoading = PicGalleryLogic.IsOpen = false;
+
             Loaded += GalleryLoad.PicGallery_Loaded;
         }
     }

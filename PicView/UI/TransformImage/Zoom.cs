@@ -24,6 +24,12 @@ namespace PicView.UI.TransformImage
             get
             {
                 var zoom = Math.Round(AspectRatio * 100);
+
+                if (st == null)
+                {
+                    return string.Empty;
+                }
+
                 if (st.ScaleX == 1)
                 {
                     return string.Empty;

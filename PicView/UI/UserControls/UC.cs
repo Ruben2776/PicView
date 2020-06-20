@@ -1,5 +1,6 @@
 ﻿using PicView.UI.Animations;
 using PicView.UI.PicGallery;
+using PicView.UI.Windows;
 using System;
 using System.Windows;
 using System.Windows.Media.Animation;
@@ -21,7 +22,6 @@ namespace PicView.UI.UserControls
         internal static Minus minus;
         internal static PicGallery picGallery;
         internal static GalleryShortcut galleryShortcut;
-        internal static BadImage badImage;
         internal static CroppingTool cropppingTool;
 
         private static bool imageSettingsMenuOpen;
@@ -112,6 +112,13 @@ namespace PicView.UI.UserControls
                 if (quickSettingsMenu != null)
                 {
                     quickSettingsMenu.BeginAnimation(UIElement.OpacityProperty, da);
+                    if (Library.Fields.mainWindow.img.Source != null)
+                    {
+                        quickSettingsMenu.GoToPicBox.Text =
+                            (Library.Fields.FolderIndex + 1)
+                            .ToString(System.Globalization.CultureInfo.CurrentCulture);
+                    }
+
                 }
             }
         }

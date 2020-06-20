@@ -16,24 +16,40 @@ namespace PicView.UI.Animations
 
         internal static void Fade(UIElement element, double to, Duration duration)
         {
-            var da = new DoubleAnimation()
+            var da = new DoubleAnimation
             {
                 To = to,
                 Duration = duration
             };
-            element.BeginAnimation(UIElement.OpacityProperty, da);
+
+            try
+            {
+                element.BeginAnimation(UIElement.OpacityProperty, da);
+            }
+            catch (Exception)
+            {
+                return;
+            }
         }
 
         internal static void Fade(UIElement element, Duration duration, TimeSpan begintime, double from, double to)
         {
-            var da = new DoubleAnimation()
+            var da = new DoubleAnimation
             {
                 From = from,
                 To = to,
                 BeginTime = begintime,
                 Duration = duration
             };
-            element.BeginAnimation(UIElement.OpacityProperty, da);
+
+            try
+            {
+                element.BeginAnimation(UIElement.OpacityProperty, da);
+            }
+            catch (Exception)
+            {
+                return;
+            }
         }
 
         #endregion Fade

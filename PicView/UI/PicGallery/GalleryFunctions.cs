@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -27,15 +28,15 @@ namespace PicView.UI.PicGallery
             }
         }
 
-        internal static async void Add(BitmapSource pic, int id)
+        internal static async Task Add(BitmapSource pic, int id)
         {
             await mainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
             {
                 var selected = id == FolderIndex;
                 var item = new UserControls.PicGalleryItem(pic, id, selected);
-                item.MouseLeftButtonUp += (s, x) =>
+                item.MouseLeftButtonDown += async delegate
                 {
-                    GalleryClick.Click(id);
+                    await GalleryClick.ClickAsync(id).ConfigureAwait(false);
                 };
                 picGallery.Container.Children.Add(item);
             }));

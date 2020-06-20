@@ -47,7 +47,7 @@ namespace PicView.UI.UserControls
             SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
             SetFit.Click += UpdateUIValues.SetAutoFit;
 
-            GoToPic.Click += GoToPicEvent;
+            GoToPic.Click += async (s, x) => await GoToPicEventAsync(s, x).ConfigureAwait(false);
             GoToPicBox.PreviewMouseLeftButtonDown += delegate
             {
                 GoToPicBox.CaretBrush = new SolidColorBrush(UI.ConfigColors.mainColor);

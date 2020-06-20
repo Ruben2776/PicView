@@ -2,6 +2,7 @@
 using PicView.UI.Sizing;
 using PicView.UI.UserControls;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.ChangeImage.Navigation;
@@ -14,7 +15,7 @@ namespace PicView.UI
 {
     internal static class UpdateUIValues
     {
-        internal static void ChangeSorting(short sorting)
+        internal static async Task ChangeSortingAsync(short sorting)
         {
             if (Properties.Settings.Default.SortPreference == sorting)
             {
@@ -27,7 +28,7 @@ namespace PicView.UI
             {
                 Pics = FileList(Path.GetDirectoryName(tmp));
                 PreloadCount = 4;
-                Pic(Pics.IndexOf(tmp));
+                await Pic(Pics.IndexOf(tmp)).ConfigureAwait(false);
             }
             var sortcm = cm.Items[6] as MenuItem;
 
