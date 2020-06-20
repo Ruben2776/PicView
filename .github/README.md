@@ -61,7 +61,19 @@ Flip image back and forth (horizontally) by pressing `F`.
 
 View and access most recent files in the contextmenu, including ones from web addresses.
 
+
 Quickly crop images by pressing `C`.
+
+
+Toggleable scroll function by pressing `X`
+Scroll function supports auto scroll, by `middle mouse` clicking
+
+
+Change file name `F2`.
+
+<img src="https://i.imgur.com/1I6GwDP.png" width="500"/>
+
+ > The file name can be renamed or moved right in the title bar!
 
 
 
@@ -73,7 +85,7 @@ Quickly crop images by pressing `C`.
 
 
 
- > The interface can be toggled by pressing `Alt + Z`. <br> For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
+ > The interface can be toggled, to just show the interface, by pressing `Alt + Z`. <br> For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
  
 
 
