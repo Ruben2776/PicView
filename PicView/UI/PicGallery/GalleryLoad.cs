@@ -17,7 +17,7 @@ namespace PicView.UI.PicGallery
             picGallery.Scroller.PreviewMouseWheel += ScrollTo;
             picGallery.Scroller.ScrollChanged += (s, x) => mainWindow.Focus(); // Maintain window focus when scrolling manually
             picGallery.grid.MouseLeftButtonDown += (s, x) => mainWindow.Focus();
-            picGallery.x2.MouseLeftButtonUp += delegate { GalleryToggle.CloseContainedGallery(); };
+            picGallery.x2.MouseLeftButtonDown += delegate { GalleryToggle.CloseContainedGallery(); };
         }
 
         internal static void LoadLayout()
