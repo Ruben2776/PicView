@@ -1,5 +1,6 @@
 ﻿using PicView.FileHandling;
 using PicView.ImageHandling;
+using PicView.SystemIntegration;
 using PicView.UI.PicGallery;
 using System;
 using System.Diagnostics;
@@ -13,7 +14,6 @@ using static PicView.FileHandling.FileLists;
 using static PicView.ImageHandling.ImageDecoder;
 using static PicView.ImageHandling.Thumbnails;
 using static PicView.Library.Fields;
-using static PicView.Library.Utilities;
 using static PicView.UI.Loading.AjaxLoader;
 using static PicView.UI.SetTitle;
 using static PicView.UI.Sizing.ScaleImage;
@@ -26,6 +26,7 @@ namespace PicView.ChangeImage
     internal static class Navigation
     {
         #region Update Image values
+
         /// <summary>
         /// Loads a picture from a given file path and does extra error checking
         /// </summary>
@@ -123,7 +124,6 @@ namespace PicView.ChangeImage
             AjaxLoadingEnd();
 
             prevPicResource = null; // Make sure to not waste memory
-
         }
 
         /// <summary>
@@ -132,6 +132,11 @@ namespace PicView.ChangeImage
         /// <param name="x">The index of file to load from Pics</param>
         internal static async void Pic(int x)
         {
+#if DEBUG
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+#endif
+
             BitmapSource pic;
 
             // Clear unsupported image window, if shown
@@ -141,7 +146,7 @@ namespace PicView.ChangeImage
                 badImage = null;
                 IsUnsupported = false;
             }
-            
+
             if (Pics.Count <= x)
             {
                 pic = await PicErrorFix(x).ConfigureAwait(true);
@@ -163,7 +168,7 @@ namespace PicView.ChangeImage
             {
                 mainWindow.Title = Loading;
                 mainWindow.Bar.Text = Loading;
-                mainWindow.Bar.ToolTip = Loading;               
+                mainWindow.Bar.ToolTip = Loading;
 
                 var thumb = GetThumb(x, true);
 
@@ -192,7 +197,7 @@ namespace PicView.ChangeImage
 
                     do
                     {
-                        // Try again while loading                                             
+                        // Try again while loading
                         pic = Preloader.Load(Pics[x]);
                         await Task.Delay(3).ConfigureAwait(true);
                     } while (Preloader.IsLoading);
@@ -238,7 +243,7 @@ namespace PicView.ChangeImage
 
             if (Pics.Count > 1)
             {
-                Progress(x, Pics.Count);
+                SystemIntegration.Taskbar.Progress(x, Pics.Count);
 
                 // Preload images \\
                 if (Preloader.StartPreload())
@@ -261,8 +266,15 @@ namespace PicView.ChangeImage
                     prevPicResource = null;
                 }
             }
-            
+
             FreshStartup = false;
+
+#if DEBUG
+            stopWatch.Stop();
+            var s = $"Pic(); executed in {stopWatch.Elapsed.TotalMilliseconds} milliseconds";
+            Trace.WriteLine(s);
+            //ToolTipStyle(s);
+#endif
         }
 
         /// <summary>
@@ -288,7 +300,7 @@ namespace PicView.ChangeImage
 
             SetTitleString(pic.PixelWidth, pic.PixelHeight, imageName);
 
-            NoProgress();
+            Taskbar.NoProgress();
 
             CanNavigate = false;
         }
@@ -316,7 +328,7 @@ namespace PicView.ChangeImage
 
             SetTitleString(pic.PixelWidth, pic.PixelHeight, "Base64 image");
 
-            NoProgress();
+            Taskbar.NoProgress();
 
             CanNavigate = false;
         }
@@ -325,7 +337,7 @@ namespace PicView.ChangeImage
         {
             ChangeFolder(true);
             Pics = FileList(folder);
-            
+
             Pic(0);
 
             quickSettingsMenu.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
@@ -333,12 +345,11 @@ namespace PicView.ChangeImage
             AjaxLoadingEnd();
 
             prevPicResource = null; // Make sure to not waste memory
-
         }
 
-        #endregion
+        #endregion Update Image values
 
-        #region Change navigation values 
+        #region Change navigation values
 
         /// <summary>
         /// Goes to next, previous, first or last file in folder
@@ -348,12 +359,6 @@ namespace PicView.ChangeImage
         /// depending on the next value</param>
         internal static void Pic(bool next = true, bool end = false)
         {
-
-#if DEBUG
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
-#endif
-
             // Exit if not intended to change picture
             if (!CanNavigate)
             {
@@ -457,16 +462,9 @@ namespace PicView.ChangeImage
                     // TODO Find way to get PicGalleryItem an alternative way...
                 }
             }
-
-#if DEBUG
-            stopWatch.Stop();
-            var s = "Pic(); executed in " + stopWatch.Elapsed.TotalMilliseconds + " milliseconds";
-            Trace.WriteLine(s);
-            //ToolTipStyle(s);
-#endif
         }
 
-        internal static void PicButton(bool arrow , bool right)
+        internal static void PicButton(bool arrow, bool right)
         {
             if (arrow)
             {
@@ -522,7 +520,7 @@ namespace PicView.ChangeImage
             /// Need solution for slowing down this thing to something useful
             /// await task delay only works once, it seems
             /// Timers doesn't deliver a proper result in my experience
-            /// 
+            ///
 
             FastPicRunning = true;
 
@@ -563,7 +561,7 @@ namespace PicView.ChangeImage
                 mainWindow.img.Source = thumb;
             }
 
-            Progress(FolderIndex, Pics.Count);
+            Taskbar.Progress(FolderIndex, Pics.Count);
         }
 
         /// <summary>
@@ -587,6 +585,6 @@ namespace PicView.ChangeImage
             Pic(FolderIndex);
         }
 
-        #endregion
+        #endregion Change navigation values
     }
 }

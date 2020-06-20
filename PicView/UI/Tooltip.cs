@@ -57,6 +57,5 @@ namespace PicView.UI
         {
             toolTipMessage.Visibility = Visibility.Hidden;
         }
-
     }
 }

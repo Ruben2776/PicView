@@ -1,11 +1,10 @@
-﻿using static PicView.UI.UserControls.UC;
+﻿using PicView.UI.Animations;
 using System;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.Library.Fields;
-using static PicView.Wallpaper;
-using PicView.UI.Animations;
-using PicView.Library;
+using static PicView.SystemIntegration.Wallpaper;
+using static PicView.UI.ConfigColors;
 
 namespace PicView.UI.Windows
 {
@@ -20,36 +19,47 @@ namespace PicView.UI.Windows
                 case 1:
                     BlueRadio.IsChecked = true;
                     break;
+
                 case 2:
                     PinkRadio.IsChecked = true;
                     break;
+
                 case 3:
                     OrangeRadio.IsChecked = true;
                     break;
+
                 case 4:
                     GreenRadio.IsChecked = true;
                     break;
+
                 case 5:
                     RedRadio.IsChecked = true;
                     break;
+
                 case 6:
                     TealRadio.IsChecked = true;
                     break;
+
                 case 7:
                     AquaRadio.IsChecked = true;
                     break;
+
                 case 8:
                     BeigeRadio.IsChecked = true;
                     break;
+
                 case 9:
                     PurpleRadio.IsChecked = true;
                     break;
+
                 case 10:
                     CyanRadio.IsChecked = true;
                     break;
+
                 case 11:
                     MagentaRadio.IsChecked = true;
                     break;
+
                 case 12:
                     GreyRadio.IsChecked = true;
                     break;
@@ -60,7 +70,6 @@ namespace PicView.UI.Windows
 
             ContentRendered += (s, x) =>
             {
-
                 // CloseButton
                 CloseButton.TheButton.Click += delegate { Hide(); };
 
@@ -158,7 +167,6 @@ namespace PicView.UI.Windows
                     BorderRadio.IsChecked = true;
                 }
 
-
                 // Toggle Scroll
                 ToggleScroll.PreviewMouseLeftButtonDown += ToggleScroll_PreviewMouseLeftButtonDown;
                 ToggleScroll.MouseEnter += ToggleScroll_MouseEnter;
@@ -239,10 +247,12 @@ namespace PicView.UI.Windows
                 case Key.Down:
                     Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 10);
                     break;
+
                 case Key.W:
                 case Key.U:
                     Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 10);
                     break;
+
                 case Key.Q:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                     {
@@ -260,6 +270,7 @@ namespace PicView.UI.Windows
                     Hide();
                     mainWindow.Focus();
                     break;
+
                 case Key.Q:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                     {
@@ -269,11 +280,10 @@ namespace PicView.UI.Windows
             }
         }
 
-
         #region EventHandlers
 
         // Blue
-        void BlueRadio_MouseLeave(object sender, MouseEventArgs e)
+        private void BlueRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -285,7 +295,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void BlueRadio_MouseEnter(object sender, MouseEventArgs e)
+        private void BlueRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
                 backgroundBorderColor.A,
@@ -297,13 +307,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void BlueRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void BlueRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(BlueBrush, 1);
         }
 
         // Pink
-        void PinkRadio_MouseLeave(object sender, MouseEventArgs e)
+        private void PinkRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -315,7 +325,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void PinkRadio_MouseEnter(object sender, MouseEventArgs e)
+        private void PinkRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
                 backgroundBorderColor.A,
@@ -327,13 +337,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void PinkRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void PinkRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(PinkBrush, 2);
         }
 
         // Orange
-        void OrangeRadio_MouseLeave(object sender, MouseEventArgs e)
+        private void OrangeRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -345,7 +355,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void OrangeRadio_MouseEnter(object sender, MouseEventArgs e)
+        private void OrangeRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
                 backgroundBorderColor.A,
@@ -357,13 +367,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void OrangeRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OrangeRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(OrangeBrush, 3);
         }
 
         // Green
-        void GreenRadio_MouseLeave(object sender, MouseEventArgs e)
+        private void GreenRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -375,7 +385,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void GreenRadio_MouseEnter(object sender, MouseEventArgs e)
+        private void GreenRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
                 backgroundBorderColor.A,
@@ -387,13 +397,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void GreenRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void GreenRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(GreenBrush, 4);
         }
 
         // Red
-        void RedRadio_MouseLeave(object sender, MouseEventArgs e)
+        private void RedRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -405,7 +415,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void RedRadio_MouseEnter(object sender, MouseEventArgs e)
+        private void RedRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
                 backgroundBorderColor.A,
@@ -417,13 +427,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void RedRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void RedRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(RedBrush, 5);
         }
 
         // Teal
-        void TealRadio_MouseLeave(object sender, MouseEventArgs e)
+        private void TealRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -435,7 +445,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void TealRadio_MouseEnter(object sender, MouseEventArgs e)
+        private void TealRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
                 backgroundBorderColor.A,
@@ -447,13 +457,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void TealRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void TealRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(TealBrush, 6);
         }
 
         // Aqua
-        void AquaRadio_MouseLeave(object sender, MouseEventArgs e)
+        private void AquaRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -465,7 +475,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void AquaRadio_MouseEnter(object sender, MouseEventArgs e)
+        private void AquaRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
                 backgroundBorderColor.A,
@@ -477,13 +487,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void AquaRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void AquaRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(AquaBrush, 7);
         }
 
         // Beige
-        void BeigeRadio_MouseLeave(object sender, MouseEventArgs e)
+        private void BeigeRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -495,7 +505,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void BeigeRadio_MouseEnter(object sender, MouseEventArgs e)
+        private void BeigeRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
                 backgroundBorderColor.A,
@@ -507,13 +517,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void BeigeRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void BeigeRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(BeigeBrush, 8);
         }
 
         // Purple
-        void PurpleRadio_MouseLeave(object sender, MouseEventArgs e)
+        private void PurpleRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -525,7 +535,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void PurpleRadio_MouseEnter(object sender, MouseEventArgs e)
+        private void PurpleRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
                 backgroundBorderColor.A,
@@ -537,13 +547,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void PurpleRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void PurpleRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(PurpleBrush, 9);
         }
 
         // Cyan
-        void CyanRadio_MouseLeave(object sender, MouseEventArgs e)
+        private void CyanRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -555,7 +565,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void CyanRadio_MouseEnter(object sender, MouseEventArgs e)
+        private void CyanRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
                 backgroundBorderColor.A,
@@ -567,13 +577,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void CyanRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void CyanRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(CyanBrush, 10);
         }
 
         // Magenta
-        void MagentaRadio_MouseLeave(object sender, MouseEventArgs e)
+        private void MagentaRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -585,7 +595,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void MagentaRadio_MouseEnter(object sender, MouseEventArgs e)
+        private void MagentaRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
                 backgroundBorderColor.A,
@@ -597,13 +607,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void MagentaRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MagentaRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(MagentaBrush, 11);
         }
 
         // Grey
-        void GreyRadio_MouseLeave(object sender, MouseEventArgs e)
+        private void GreyRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -615,7 +625,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void GreyRadio_MouseEnter(object sender, MouseEventArgs e)
+        private void GreyRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
                 backgroundBorderColor.A,
@@ -627,13 +637,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void GreyRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void GreyRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(GreyBrush, 12);
         }
 
         // Loop
-        void LoopRadio_MouseLeave(object sender, MouseEventArgs e)
+        private void LoopRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -645,7 +655,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void LoopRadio_MouseEnter(object sender, MouseEventArgs e)
+        private void LoopRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
@@ -657,13 +667,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void LoopRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void LoopRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, LoopBrush, false);
         }
 
         // BorderColor
-        void BorderRadio_MouseLeave(object sender, MouseEventArgs e)
+        private void BorderRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -675,7 +685,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void BorderRadio_MouseEnter(object sender, MouseEventArgs e)
+        private void BorderRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
@@ -687,12 +697,12 @@ namespace PicView.UI.Windows
             );
         }
 
-        void BorderRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void BorderRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, BorderBrushColor, false);
         }
 
-        #endregion
+        #endregion EventHandlers
 
         #region Set ColorTheme
 
@@ -711,7 +721,7 @@ namespace PicView.UI.Windows
         private static void Orange(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 3;
-            ConfigColors.UpdateColor();
+            UpdateColor();
         }
 
         private static void Green(object sender, RoutedEventArgs e)
@@ -768,12 +778,12 @@ namespace PicView.UI.Windows
             ConfigColors.UpdateColor();
         }
 
-        #endregion
+        #endregion Set ColorTheme
 
         #region Mouseover Events
 
         // Fill Button
-        void Fill_MouseLeave(object sender, MouseEventArgs e)
+        private void Fill_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -785,7 +795,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void Fill_MouseEnter(object sender, MouseEventArgs e)
+        private void Fill_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
@@ -797,13 +807,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void Fill_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void Fill_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(FillBrush, false);
         }
 
         // Tile Button
-        void Tile_MouseLeave(object sender, MouseEventArgs e)
+        private void Tile_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -815,7 +825,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void Tile_MouseEnter(object sender, MouseEventArgs e)
+        private void Tile_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
@@ -827,13 +837,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void Tile_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void Tile_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(TileBrush, false);
         }
 
         // Center Button
-        void Center_MouseLeave(object sender, MouseEventArgs e)
+        private void Center_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -845,7 +855,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void Center_MouseEnter(object sender, MouseEventArgs e)
+        private void Center_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
@@ -857,13 +867,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void Center_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void Center_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(CenterBrush, false);
         }
 
         // Fitbutton Mouse Event
-        void Fit_MouseLeave(object sender, MouseEventArgs e)
+        private void Fit_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -875,7 +885,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void Fit_MouseEnter(object sender, MouseEventArgs e)
+        private void Fit_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
@@ -887,13 +897,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void Fit_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void Fit_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(FitBrush, false);
         }
 
         // Stretch Button
-        void Stretch_MouseLeave(object sender, MouseEventArgs e)
+        private void Stretch_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -905,7 +915,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void Stretch_MouseEnter(object sender, MouseEventArgs e)
+        private void Stretch_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
@@ -917,13 +927,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void Stretch_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void Stretch_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(StretchBrush, false);
         }
 
         // SetFitbutton Mouse Event
-        void SetFit_MouseLeave(object sender, MouseEventArgs e)
+        private void SetFit_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -935,7 +945,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void SetFit_MouseEnter(object sender, MouseEventArgs e)
+        private void SetFit_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
@@ -947,13 +957,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void SetFit_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void SetFit_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(SetFitBrush, false);
         }
 
         // SetCenter Button
-        void SetCenter_MouseLeave(object sender, MouseEventArgs e)
+        private void SetCenter_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -965,7 +975,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void SetCenter_MouseEnter(object sender, MouseEventArgs e)
+        private void SetCenter_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
@@ -977,13 +987,13 @@ namespace PicView.UI.Windows
             );
         }
 
-        void SetCenter_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void SetCenter_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(SetCenterBrush, false);
         }
 
         // ToggleScroll
-        void ToggleScroll_MouseLeave(object sender, MouseEventArgs e)
+        private void ToggleScroll_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -995,7 +1005,7 @@ namespace PicView.UI.Windows
             );
         }
 
-        void ToggleScroll_MouseEnter(object sender, MouseEventArgs e)
+        private void ToggleScroll_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
@@ -1007,12 +1017,11 @@ namespace PicView.UI.Windows
             );
         }
 
-        void ToggleScroll_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void ToggleScroll_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ToggleScrollBrush, false);
         }
 
-        #endregion
-
+        #endregion Mouseover Events
     }
 }

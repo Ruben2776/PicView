@@ -40,7 +40,6 @@
                                     <Setter TargetName="bg" Property="BorderBrush" Value="{StaticResource ResourceKey=ChosenColorBrush}" />
                                     <Setter TargetName="bg" Property="BorderThickness" Value="1" />
                                 </Trigger>
-
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>

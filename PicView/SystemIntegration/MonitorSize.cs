@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Windows;
 
-namespace PicView
+namespace PicView.SystemIntegration
 {
     /// <summary>
-    /// Logic for the current monitor's screen resolution 
+    /// Logic for the current monitor's screen resolution
     /// </summary>
     internal readonly struct MonitorSize
     {
@@ -37,7 +37,7 @@ namespace PicView
         internal static MonitorSize GetMonitorSize()
         {
             /// TODO Get Solution to get actual screen pixel size
-            /// and not just without taskbar and such... 
+            /// and not just without taskbar and such...
             /// Needs to get updated when dragging to different screen
             /// Window.LocationChanged Event https://docs.microsoft.com/en-us/dotnet/api/system.windows.window.locationchanged?redirectedfrom=MSDN&view=netcore-3.1
             /// is not proper, since it also fires on Left and Top property changes
@@ -47,7 +47,7 @@ namespace PicView
 
             //find out if our app is being scaled by the monitor
             var source = PresentationSource.FromVisual(Application.Current.MainWindow);
-            var dpiScaling = (source != null && source.CompositionTarget != null ? source.CompositionTarget.TransformFromDevice.M11 : 1);
+            var dpiScaling = source != null && source.CompositionTarget != null ? source.CompositionTarget.TransformFromDevice.M11 : 1;
 
             //get the available area of the monitor
             var workArea = currentMonitor.WorkingArea;
@@ -56,8 +56,6 @@ namespace PicView
 
             //return new MonitorSize(workAreaWidth, workAreaHeight, dpiScaling, workArea);
             return new MonitorSize(workAreaWidth, workAreaHeight, dpiScaling, workArea);
-
         }
     }
-
 }

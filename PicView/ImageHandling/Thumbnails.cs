@@ -1,12 +1,11 @@
 ﻿using ImageMagick;
-using PicView.ChangeImage;
-using static PicView.UI.UserControls.UC;
+using PicView.FileHandling;
+using PicView.UI.UserControls;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
 using static PicView.Library.Fields;
-using PicView.UI.UserControls;
-using PicView.FileHandling;
+using static PicView.UI.UserControls.UC;
 
 namespace PicView.ImageHandling
 {
@@ -47,9 +46,9 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         internal static BitmapSource GetThumb(int x)
         {
-            var pic = Preloader.Load(Pics[x]);
+            BitmapSource pic;
 
-            if (pic == null)
+            if (picGallery.Container.Children.Count > 0)
             {
                 if (x < picGallery.Container.Children.Count && picGallery.Container.Children.Count == Pics.Count)
                 {
@@ -60,6 +59,10 @@ namespace PicView.ImageHandling
                 {
                     pic = GetBitmapSourceThumb(Pics[x]);
                 }
+            }
+            else
+            {
+                pic = GetBitmapSourceThumb(Pics[x]);
             }
 
             if (pic == null)
@@ -119,7 +122,6 @@ namespace PicView.ImageHandling
 #if DEBUG
                 catch (MagickException e)
                 {
-
                     Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
                     return null;
                 }

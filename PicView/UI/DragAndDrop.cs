@@ -1,4 +1,5 @@
 ﻿using PicView.ChangeImage;
+using PicView.FileHandling;
 using PicView.UI.Loading;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -8,11 +9,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using static PicView.Library.Fields;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.Thumbnails;
+using static PicView.Library.Fields;
 using static PicView.UI.Tooltip;
-using PicView.FileHandling;
 
 namespace PicView.UI
 {
@@ -194,7 +194,5 @@ namespace PicView.UI
             dragObj.SetFileDropList(new StringCollection() { Pics[FolderIndex] });
             DragDrop.DoDragDrop(senderElement, dragObj, DragDropEffects.Copy);
         }
-
-
     }
 }

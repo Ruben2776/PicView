@@ -3,7 +3,6 @@ using System.Windows.Input;
 using static PicView.Library.Fields;
 using static PicView.UI.UserControls.UC;
 
-
 namespace PicView.UI.PicGallery
 {
     // TODO Get scrolling calculation working for PicGallery 2
@@ -12,7 +11,7 @@ namespace PicView.UI.PicGallery
     {
         #region int calculations
 
-        static int Horizontal_items
+        private static int Horizontal_items
         {
             get
             {
@@ -25,7 +24,7 @@ namespace PicView.UI.PicGallery
             }
         }
 
-        static int Vertical_items
+        private static int Vertical_items
         {
             get
             {
@@ -40,7 +39,7 @@ namespace PicView.UI.PicGallery
             }
         }
 
-        static int Items_per_page
+        private static int Items_per_page
         {
             get
             {
@@ -55,7 +54,7 @@ namespace PicView.UI.PicGallery
             }
         }
 
-        static int Current_page
+        private static int Current_page
         {
             get
             {
@@ -71,7 +70,7 @@ namespace PicView.UI.PicGallery
         //     }
         // }
 
-        #endregion
+        #endregion int calculations
 
         #region ScrollTo
 
@@ -144,7 +143,6 @@ namespace PicView.UI.PicGallery
             }
         }
 
-        #endregion
-
+        #endregion ScrollTo
     }
 }

@@ -1,9 +1,9 @@
-﻿using PicView.UI.Windows;
+﻿using PicView.SystemIntegration;
+using PicView.UI.Windows;
 using System;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.Library.Fields;
-using static PicView.Library.Utilities;
 using static PicView.UI.HideInterfaceLogic;
 using static PicView.UI.Sizing.ScaleImage;
 using static PicView.UI.UserControls.UC;
@@ -38,7 +38,6 @@ namespace PicView.UI.Sizing
                     }
 
                     mainWindow.WindowState = WindowState.Normal;
-
                 }
                 else
                 {
@@ -85,7 +84,6 @@ namespace PicView.UI.Sizing
                 return;
             }
 
-
             if (e.ClickCount == 2)
             {
                 Maximize_Restore();
@@ -119,7 +117,6 @@ namespace PicView.UI.Sizing
                 mainWindow.DragMove();
             }
         }
-
 
         /// <summary>
         /// Function made to restore and drag window from maximized windowstate
@@ -283,15 +280,13 @@ namespace PicView.UI.Sizing
 
                     mainWindow.bg.Width = double.NaN;
                     mainWindow.bg.Height = double.NaN;
-                    
                 }
 
                 TryFitImage();
-                ConfigColors.UpdateColor(); // Regain border              
+                ConfigColors.UpdateColor(); // Regain border
 
                 Properties.Settings.Default.Fullscreen = false;
             }
-
         }
 
         /// <summary>
@@ -302,9 +297,8 @@ namespace PicView.UI.Sizing
             //move to the centre
             mainWindow.Left = (((MonitorInfo.WorkArea.Width - (mainWindow.Width * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling));
             mainWindow.Top = ((MonitorInfo.WorkArea.Height - (mainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
-
         }
 
-        #endregion
+        #endregion Window Functions
     }
 }

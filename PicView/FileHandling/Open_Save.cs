@@ -1,14 +1,14 @@
 ﻿using Microsoft.Win32;
+using PicView.ImageHandling;
 using System;
 using System.Diagnostics;
 using System.IO;
-using static PicView.ChangeImage.Error_Handling;
-using static PicView.Library.Fields;
-using static PicView.ChangeImage.Navigation;
-using static PicView.UI.UserControls.UC;
-using static PicView.UI.Tooltip;
 using System.Windows.Media.Imaging;
-using PicView.ImageHandling;
+using static PicView.ChangeImage.Error_Handling;
+using static PicView.ChangeImage.Navigation;
+using static PicView.Library.Fields;
+using static PicView.UI.Tooltip;
+using static PicView.UI.UserControls.UC;
 
 namespace PicView.FileHandling
 {
@@ -69,7 +69,7 @@ namespace PicView.FileHandling
         /// <param name="file">The absolute path to the file</param>
         internal static void OpenWith(string file)
         {
-            using (var process = new Process())                      
+            using (var process = new Process())
             {
                 process.StartInfo.FileName = "openwith";
                 process.StartInfo.Arguments = $"\"{file}\"";
@@ -86,7 +86,6 @@ namespace PicView.FileHandling
 #endif
                     ShowTooltipMessage(e.Message, true);
                 }
-                
             }
         }
 

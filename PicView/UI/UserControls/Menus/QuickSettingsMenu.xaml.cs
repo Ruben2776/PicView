@@ -1,10 +1,9 @@
-﻿using System.Windows.Controls;
+﻿using PicView.UI.Loading;
+using System.Windows.Controls;
 using System.Windows.Media;
-using static PicView.Library.Fields;
 using static PicView.ChangeImage.GoToLogic;
 using static PicView.UI.Animations.MouseOverAnimations;
 using static PicView.UI.UserControls.UC;
-using PicView.UI.Loading;
 
 namespace PicView.UI.UserControls
 {
@@ -27,12 +26,14 @@ namespace PicView.UI.UserControls
             //    Pan_and_Zoom.ResetZoom();
             //};
 
-            SettingsButton.Click += delegate {
+            SettingsButton.Click += delegate
+            {
                 Close_UserControls();
                 LoadWindows.AllSettingsWindow();
             };
 
-            InfoButton.Click += delegate {
+            InfoButton.Click += delegate
+            {
                 Close_UserControls();
                 LoadWindows.HelpWindow();
             };
@@ -47,8 +48,9 @@ namespace PicView.UI.UserControls
             SetFit.Click += UpdateUIValues.SetAutoFit;
 
             GoToPic.Click += GoToPicEvent;
-            GoToPicBox.PreviewMouseLeftButtonDown += delegate {
-                GoToPicBox.CaretBrush = new SolidColorBrush(mainColor);
+            GoToPicBox.PreviewMouseLeftButtonDown += delegate
+            {
+                GoToPicBox.CaretBrush = new SolidColorBrush(UI.ConfigColors.mainColor);
             };
             GoToPicBox.PreviewKeyDown += GotoPicsShortcuts.GoToPicPreviewKeys;
 
@@ -59,18 +61,15 @@ namespace PicView.UI.UserControls
             SettingsButton.MouseEnter += (s, x) => ButtonMouseOverAnim(SettingsButtonBrush, true);
             SettingsButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(SettingsButtonBrush, false);
 
-
             // InfoButton
             InfoButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(InfoButtonBrush);
             InfoButton.MouseEnter += (s, x) => ButtonMouseOverAnim(InfoButtonBrush, true);
             InfoButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(InfoButtonBrush, false);
 
-
             // ResetZoom button
             //ResetZoomButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ResetZoomBrush);
             //ResetZoomButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ResetZoomBrush, true);
             //ResetZoomButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ResetZoomBrush, false);
-
 
             // Toggle Scroll
             ToggleScroll.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ToggleScrollBrush);
@@ -103,10 +102,7 @@ namespace PicView.UI.UserControls
             GoToPic.MouseEnter += (s, x) => ButtonMouseOverAnim(GoToPicBrush, true);
             GoToPic.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(GoToPicBrush, false);
 
-
-
-            #endregion
+            #endregion Animation events
         }
-
     }
 }

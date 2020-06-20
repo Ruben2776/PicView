@@ -18,8 +18,8 @@ namespace PicView.UI.UserControls
             ResizeButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ResizeButtonBrush);
             ResizeButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ResizeButtonBrush, true);
             ResizeButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ResizeButtonBrush, false);
-            ResizeButton.Click += delegate 
-            { 
+            ResizeButton.Click += delegate
+            {
                 UC.Close_UserControls();
                 LoadWindows.ResizeAndOptimizeWindow();
                 Batch_Resize.UpdateValues();
@@ -44,7 +44,6 @@ namespace PicView.UI.UserControls
                 UC.Close_UserControls();
                 ImageCropping.StartCrop();
             };
-
         }
     }
 }

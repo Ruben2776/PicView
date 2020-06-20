@@ -189,7 +189,6 @@
                             </GradientStopCollection>
                         </LinearGradientBrush.GradientStops>
                     </LinearGradientBrush>
-
                 </Border.BorderBrush>
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0.25,0" EndPoint="1,0">

@@ -1,9 +1,8 @@
-﻿using static PicView.UI.UserControls.UC;
+﻿using PicView.UI.Animations;
+using PicView.UI.PicGallery;
 using System;
 using System.Windows;
 using System.Windows.Media.Animation;
-using PicView.UI.PicGallery;
-using PicView.UI.Animations;
 
 namespace PicView.UI.UserControls
 {

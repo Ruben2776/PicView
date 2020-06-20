@@ -3,7 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace PicView
+namespace PicView.SystemIntegration
 {
     //https://msdn.microsoft.com/en-us/library/ms182161.aspx
     [SuppressUnmanagedCodeSecurity]
@@ -50,19 +50,26 @@ namespace PicView
             public int cbSize;
             public uint fMask;
             public IntPtr hwnd;
+
             [MarshalAs(UnmanagedType.LPTStr)]
             public string lpVerb;
+
             [MarshalAs(UnmanagedType.LPTStr)]
             public string lpFile;
+
             [MarshalAs(UnmanagedType.LPTStr)]
             public string lpParameters;
+
             [MarshalAs(UnmanagedType.LPTStr)]
             public readonly string lpDirectory;
+
             public int nShow;
             public IntPtr hInstApp;
             public IntPtr lpIDList;
+
             [MarshalAs(UnmanagedType.LPTStr)]
             public readonly string lpClass;
+
             public IntPtr hkeyClass;
             public readonly uint dwHotKey;
             public IntPtr hIcon;
@@ -75,14 +82,16 @@ namespace PicView
         // Remove from Alt + tab
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
         [DllImport("user32.dll")]
         internal static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
         internal const int GWL_EX_STYLE = -20;
         internal const int WS_EX_APPWINDOW = 0x00040000, WS_EX_TOOLWINDOW = 0x00000080;
 
-
         // Disable Screensaver and Power options.
         internal const uint ES_CONTINUOUS = 0x80000000;
+
         internal const uint ES_SYSTEM_REQUIRED = 0x00000001;
         internal const uint ES_DISPLAY_REQUIRED = 0x00000002;
 
@@ -90,19 +99,17 @@ namespace PicView
         public static extern uint SetThreadExecutionState([In] uint esFlags);
 
         // https://stackoverflow.com/a/60938929/13646636
-        const int WM_SIZING = 0x214;
-        const int WM_EXITSIZEMOVE = 0x232;
-        private static bool WindowWasResized = false;
+        private const int WM_SIZING = 0x214;
 
+        private const int WM_EXITSIZEMOVE = 0x232;
+        private static bool WindowWasResized = false;
 
         public static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             if (msg == WM_SIZING)
             {
-
                 if (WindowWasResized == false)
                 {
-
                     //    'indicate the the user is resizing and not moving the window
                     WindowWasResized = true;
                 }
@@ -110,11 +117,9 @@ namespace PicView
 
             if (msg == WM_EXITSIZEMOVE)
             {
-
-                // 'check that this is the end of resize and not move operation          
+                // 'check that this is the end of resize and not move operation
                 if (WindowWasResized == true)
                 {
-
                     // your stuff to do
                     ScaleImage.TryFitImage();
 
@@ -125,7 +130,5 @@ namespace PicView
 
             return IntPtr.Zero;
         }
-
-
     }
 }

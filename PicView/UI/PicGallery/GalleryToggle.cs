@@ -1,5 +1,4 @@
-﻿using PicView.Library;
-using PicView.UI.Sizing;
+﻿using PicView.UI.Sizing;
 using PicView.UI.Windows;
 using System;
 using System.Windows;
@@ -15,7 +14,7 @@ namespace PicView.UI.PicGallery
 {
     internal static class GalleryToggle
     {
-        #region Toggle 
+        #region Toggle
 
         internal static void Toggle(bool change = false)
         {
@@ -66,7 +65,7 @@ namespace PicView.UI.PicGallery
             }
         }
 
-        #endregion
+        #endregion Toggle
 
         #region Open
 
@@ -87,7 +86,7 @@ namespace PicView.UI.PicGallery
                 From = 0
             };
 
-            picGallery.BeginAnimation(UIElement.OpacityProperty, da);           
+            picGallery.BeginAnimation(UIElement.OpacityProperty, da);
 
             clickArrowLeft.Visibility =
             clickArrowRight.Visibility =
@@ -123,7 +122,7 @@ namespace PicView.UI.PicGallery
             LoadLayout();
 
             if (fakeWindow == null)
-            {                
+            {
                 fakeWindow = new FakeWindow();
             }
 
@@ -132,7 +131,6 @@ namespace PicView.UI.PicGallery
                 mainWindow.bg.Children.Remove(picGallery);
                 fakeWindow.grid.Children.Add(picGallery);
             }
-
             else if (!fakeWindow.grid.Children.Contains(picGallery))
             {
                 mainWindow.bg.Children.Remove(picGallery);
@@ -146,9 +144,9 @@ namespace PicView.UI.PicGallery
             if (!FreshStartup)
             {
                 ScaleImage.TryFitImage();
-            }            
+            }
 
-            // Fix not showing up opacity bug.. 
+            // Fix not showing up opacity bug..
             VisualStateManager.GoToElementState(picGallery, "Opacity", false);
 
             if (!IsLoading)
@@ -157,7 +155,7 @@ namespace PicView.UI.PicGallery
             }
         }
 
-        #endregion
+        #endregion Open
 
         #region Close
 
@@ -174,7 +172,8 @@ namespace PicView.UI.PicGallery
                 galleryShortcut.Visibility = Visibility.Visible;
             }
 
-            var da = new DoubleAnimation {
+            var da = new DoubleAnimation
+            {
                 Duration = TimeSpan.FromSeconds(.5),
                 From = 1,
                 To = 0,
@@ -200,7 +199,7 @@ namespace PicView.UI.PicGallery
             HideInterfaceLogic.ShowStandardInterface();
         }
 
-        #endregion
+        #endregion Close
 
         #region Change
 
@@ -243,7 +242,6 @@ namespace PicView.UI.PicGallery
             mainWindow.Focus();
         }
 
-        #endregion
-
+        #endregion Change
     }
 }

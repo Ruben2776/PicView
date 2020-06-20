@@ -1,4 +1,5 @@
 ﻿using PicView.FileHandling;
+using PicView.SystemIntegration;
 using PicView.UI.PicGallery;
 using PicView.UI.UserControls;
 using System;
@@ -11,7 +12,6 @@ using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 using static PicView.Library.Resources.Timers;
-using static PicView.Library.Utilities;
 using static PicView.UI.Loading.AjaxLoader;
 using static PicView.UI.Loading.LoadContextMenus;
 using static PicView.UI.Loading.LoadControls;
@@ -56,7 +56,6 @@ namespace PicView.UI.Loading
 
         internal static void Start()
         {
-
 #if DEBUG
             Trace.WriteLine("ContentRendered started");
 #endif

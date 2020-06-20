@@ -69,24 +69,23 @@ namespace PicView.FileHandling
                 case ".srf":
                 case ".x3f":
 
-
                 // Obscure
-                
+
                 case ".bpg": // untested
-                case ".cur": 
+                case ".cur":
                 case ".cut": // untested
                 case ".dib": // untested
                 case ".emf": // untested
                 case ".exif": // untested
-                case ".exr": 
-                case ".hdr": 
-                case ".heic": 
+                case ".exr":
+                case ".hdr":
+                case ".heic":
                 case ".pcx":
                 case ".tga":
                 case ".wmf": // untested
-                case ".wpg": 
-                case ".xbm": 
-                case ".xpm": 
+                case ".wpg":
+                case ".xbm":
+                case ".xpm":
 
                     return false;
 
@@ -162,7 +161,6 @@ namespace PicView.FileHandling
                 case ".rw2":
                 case ".srf":
                 case ".x3f":
-
 
                 // Obscure
 

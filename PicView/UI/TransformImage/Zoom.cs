@@ -1,15 +1,16 @@
-﻿using System;
+﻿using PicView.UI.PicGallery;
+using PicView.UI.Sizing;
+using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using static PicView.Library.Fields;
 using static PicView.ChangeImage.Navigation;
+using static PicView.Library.Fields;
 using static PicView.Library.Utilities;
 using static PicView.UI.Sizing.WindowLogic;
-using PicView.UI.Sizing;
-using PicView.Library;
-using PicView.UI.PicGallery;
 
 namespace PicView.UI.TransformImage
 {
@@ -254,12 +255,24 @@ namespace PicView.UI.TransformImage
             // Display non-zoomed values
             if (CanNavigate)
             {
-               SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
+                SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
             }
             else
             {
                 // Display values from web
-                SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, Pics[FolderIndex]);
+                try
+                {
+                    var linkParser = new Regex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                    var txt = linkParser.Match(mainWindow.Bar.Text).ToString();
+                    SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, txt);
+                }
+                catch (Exception e)
+                {
+                    SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, "Custom image");
+#if DEBUG
+                    Trace.WriteLine(e.Message);
+#endif
+                }
             }
 
             isZoomed = false;
@@ -336,7 +349,6 @@ namespace PicView.UI.TransformImage
                 }
                 //zoomValue = i > 0 ? zoomValue : -zoomValue;
                 //st.ScaleY = st.ScaleX += zoomValue;
-
             }
 
             isZoomed = true;
@@ -344,7 +356,7 @@ namespace PicView.UI.TransformImage
             /// Displays zoompercentage in the center window
             if (!string.IsNullOrEmpty(ZoomPercentage))
             {
-               Tooltip.ShowTooltipMessage(ZoomPercentage, true);
+                Tooltip.ShowTooltipMessage(ZoomPercentage, true);
             }
             else
             {
@@ -359,7 +371,19 @@ namespace PicView.UI.TransformImage
             else
             {
                 /// Display values from web
-                SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, Pics[FolderIndex]);
+                try
+                {
+                    var linkParser = new Regex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                    var txt = linkParser.Match(mainWindow.Bar.Text).ToString();
+                    SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, txt);
+                }
+                catch (Exception e)
+                {
+                    SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, "Custom image");
+#if DEBUG
+                    Trace.WriteLine(e.Message);
+#endif
+                }
             }
         }
     }

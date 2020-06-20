@@ -20,6 +20,5 @@ namespace PicView
                     break;
             }
         }
-    } 
+    }
 }
-

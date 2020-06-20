@@ -76,18 +76,16 @@ namespace PicView.UI.Windows
                     Hide();
                     mainWindow.Focus();
                     break;
+
                 case Key.Q:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                     {
                         Environment.Exit(0);
                     }
                     break;
-
             }
         }
 
-        #endregion
-
-
+        #endregion Keyboard Shortcuts
     }
 }

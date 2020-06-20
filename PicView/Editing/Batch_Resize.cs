@@ -14,8 +14,8 @@ namespace PicView.Editing
 {
     internal static class Batch_Resize
     {
-        static int rotation, quality, width, height;
-        static bool rename, aspectRatio, optimize, flip, resize = false;
+        private static int rotation, quality, width, height;
+        private static bool rename, aspectRatio, optimize, flip, resize = false;
         private static string name;
         private static string destinationFolder;
         private static string sourceFolder;
@@ -49,7 +49,7 @@ namespace PicView.Editing
             var progress = new Progress<string>();
             progress.ProgressChanged += Progress_ProgressChanged;
 
-            var currentFolder = Path.GetDirectoryName(Pics[FolderIndex]);           
+            var currentFolder = Path.GetDirectoryName(Pics[FolderIndex]);
 
             if (currentFolder != sourceFolder)
             {
@@ -198,16 +198,14 @@ namespace PicView.Editing
                 }
             }).ConfigureAwait(false);
 
-        //await Task.Run(() =>
-        //Parallel.For(0, files.Count, (i, state) =>
-        //{
-        //    var x = ImageDecoder.TransformImage(files[i], resize, width, height, aspectRatio, rotation, quality, optimize, flip, name, destination);
-        //    progress.Report(x);
-        //    cancellationToken.ThrowIfCancellationRequested();
+            //await Task.Run(() =>
+            //Parallel.For(0, files.Count, (i, state) =>
+            //{
+            //    var x = ImageDecoder.TransformImage(files[i], resize, width, height, aspectRatio, rotation, quality, optimize, flip, name, destination);
+            //    progress.Report(x);
+            //    cancellationToken.ThrowIfCancellationRequested();
 
-        //})).ConfigureAwait(false);
-    }
-
-
+            //})).ConfigureAwait(false);
+        }
     }
 }

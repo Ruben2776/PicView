@@ -38,7 +38,6 @@ namespace PicView.UI.Windows
 
             TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
 
-
             Aller.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(AllerBrush); };
             Aller.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(AllerBrush); };
             Aller.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(AllerBrush); };
@@ -83,11 +82,13 @@ namespace PicView.UI.Windows
                 case Key.S:
                     Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + zoomSpeed);
                     break;
+
                 case Key.Up:
                 case Key.PageUp:
                 case Key.W:
                     Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - zoomSpeed);
                     break;
+
                 case Key.Q:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                     {
@@ -105,13 +106,13 @@ namespace PicView.UI.Windows
                     Hide();
                     mainWindow.Focus();
                     break;
+
                 case Key.Q:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                     {
                         Environment.Exit(0);
                     }
                     break;
-
             }
         }
 
@@ -127,8 +128,7 @@ namespace PicView.UI.Windows
             }
         }
 
-        #endregion
-
+        #endregion Keyboard Shortcuts
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {

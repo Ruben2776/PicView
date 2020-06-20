@@ -1,11 +1,12 @@
-﻿using System;
-using System.Timers;
-using System.Windows.Threading;
-using static PicView.Library.Fields;
-using static PicView.ChangeImage.Navigation;
-using static PicView.UI.Sizing.WindowLogic;
+﻿using PicView.SystemIntegration;
 using PicView.UI.Animations;
 using PicView.UI.UserControls;
+using System;
+using System.Timers;
+using System.Windows.Threading;
+using static PicView.ChangeImage.Navigation;
+using static PicView.Library.Fields;
+using static PicView.UI.Sizing.WindowLogic;
 
 namespace PicView.UI
 {
@@ -67,7 +68,7 @@ namespace PicView.UI
         {
             await mainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
-                AnimationHelper.Fade(mainWindow.img, TimeSpan.FromSeconds(0.8), TimeSpan.FromSeconds(0), 0, .5);               
+                AnimationHelper.Fade(mainWindow.img, TimeSpan.FromSeconds(0.8), TimeSpan.FromSeconds(0), 0, .5);
                 Pic();
                 AnimationHelper.Fade(mainWindow.img, TimeSpan.FromSeconds(0.7), TimeSpan.FromSeconds(0), .5, 1);
             }));

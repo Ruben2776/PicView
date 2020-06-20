@@ -138,9 +138,6 @@
                         Stretch="Fill" />
                 </Button>
 
-
-
-
                 <CheckBox
                     x:Name="FlipButton"
                     Canvas.Left="153"
@@ -249,12 +246,7 @@
                         <SolidColorBrush x:Name="ContainedBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Border.Background>
                 </Border>
-
-
-
-
             </Canvas>
-
         </Border>
         <Rectangle
             Width="22"

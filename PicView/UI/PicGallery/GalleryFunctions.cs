@@ -1,12 +1,11 @@
-﻿using static PicView.UI.UserControls.UC;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.Library.Fields;
-
+using static PicView.UI.UserControls.UC;
 
 namespace PicView.UI.PicGallery
 {
@@ -14,11 +13,13 @@ namespace PicView.UI.PicGallery
     {
         internal static bool IsLoading { get; set; }
 
-        static bool Open;
-        internal static bool IsOpen 
-        { 
+        private static bool Open;
+
+        internal static bool IsOpen
+        {
             get { return Open; }
-            set {
+            set
+            {
                 Open = value;
 #if DEBUG
                 Trace.WriteLine("IsOpen changed value to: " + IsOpen);
@@ -74,6 +75,5 @@ namespace PicView.UI.PicGallery
             prevItem.innerborder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
             prevItem.innerborder.Width = prevItem.innerborder.Height = picGalleryItem_Size_s;
         }
-
     }
 }

@@ -1,14 +1,13 @@
 ﻿using System.Globalization;
 using System.Windows.Input;
-using static PicView.Library.Fields;
 using static PicView.ChangeImage.GoToLogic;
+using static PicView.Library.Fields;
 using static PicView.UI.UserControls.UC;
 
 namespace PicView
 {
     internal static class GotoPicsShortcuts
     {
-
         internal static void GoToPicPreviewKeys(object sender, KeyEventArgs e)
         {
             switch (e.Key)
@@ -53,15 +52,16 @@ namespace PicView
                     quickSettingsMenu.GoToPicBox.Text = FolderIndex.ToString(CultureInfo.CurrentCulture);
                     ClearGoTo();
                     break;
+
                 case Key.Enter: // Execute it!
                     GoToPicEvent(sender, e);
                     ClearGoTo();
                     break;
-                default: 
+
+                default:
                     e.Handled = true; // Don't allow other keys
                     break;
             }
         }
-    } 
+    }
 }
-

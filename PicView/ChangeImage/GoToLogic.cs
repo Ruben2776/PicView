@@ -25,7 +25,6 @@ namespace PicView.ChangeImage
                 quickSettingsMenu.GoToPicBox.Text = FolderIndex.ToString(CultureInfo.CurrentCulture);
                 // TODO add error message or something..
             }
-
         }
 
         internal static void ClearGoTo()

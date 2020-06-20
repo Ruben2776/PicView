@@ -48,7 +48,6 @@
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
-
             <TextBlock
                 x:Name="Bar"
                 VerticalAlignment="Center"
@@ -405,7 +404,6 @@
                                         </TableCell>
                                     </TableRow>
 
-
                                     <TableRow>
                                         <TableCell>
                                             <Paragraph>
@@ -428,7 +426,6 @@
                                             <Paragraph>Zoom out</Paragraph>
                                         </TableCell>
                                     </TableRow>
-
 
                                     <TableRow>
                                         <TableCell>
@@ -505,7 +502,6 @@
                                             <Paragraph>Center application on current monitor</Paragraph>
                                         </TableCell>
                                     </TableRow>
-
 
                                     <TableRow Background="{StaticResource BorderBrush}">
                                         <TableCell>
@@ -750,7 +746,6 @@
                                         </TableCell>
                                     </TableRow>
 
-
                                     <TableRow Background="{StaticResource BorderBrush}">
                                         <TableCell>
                                             <Paragraph>
@@ -762,7 +757,6 @@
                                         </TableCell>
                                     </TableRow>
 
-
                                     <TableRow>
                                         <TableCell>
                                             <Paragraph>
@@ -773,7 +767,6 @@
                                             <Paragraph>Navigate to next picture</Paragraph>
                                         </TableCell>
                                     </TableRow>
-
 
                                     <TableRow Background="{StaticResource BorderBrush}">
                                         <TableCell>
@@ -796,7 +789,6 @@
                                             <Paragraph>Start auto scroll</Paragraph>
                                         </TableCell>
                                     </TableRow>
-
                                 </TableRowGroup>
                             </Table>
                         </FlowDocument>
@@ -841,7 +833,6 @@
                         </TextBlock>
                     </StackPanel>
 
-
                     <StackPanel Margin="0,7">
                         <Label HorizontalAlignment="Center" FontSize="16">Icons Used:</Label>
                         <TextBlock
@@ -873,7 +864,6 @@
                             </Hyperlink>
                         </TextBlock>
 
-
                         <TextBlock
                             x:Name="Ionic"
                             FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
@@ -887,7 +877,6 @@
                                 </Hyperlink.Foreground>
                             </Hyperlink>
                         </TextBlock>
-
 
                         <TextBlock
                             x:Name="FontAwesome"
@@ -916,8 +905,6 @@
                                 </Hyperlink.Foreground>
                             </Hyperlink>
                         </TextBlock>
-
-
                     </StackPanel>
 
                     <StackPanel Margin="0,70,0,0">
@@ -960,11 +947,8 @@
                             VerticalAlignment="Bottom"
                             Content="Version : " />
                     </StackPanel>
-
                 </StackPanel>
-
             </ScrollViewer>
         </Border>
-
     </DockPanel>
 </Window>

@@ -12,7 +12,6 @@ using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.FileLists;
 using static PicView.ImageHandling.ImageDecoder;
 using static PicView.Library.Fields;
-using static PicView.Library.Utilities;
 using static PicView.UI.Loading.AjaxLoader;
 using static PicView.UI.Tooltip;
 using static PicView.UI.TransformImage.Rotation;
@@ -148,8 +147,6 @@ namespace PicView.ChangeImage
             return null;
         }
 
-
-
         /// <summary>
         /// Clears data, to free objects no longer necessary to store in memory and allow changing folder without error.
         /// </summary>
@@ -265,7 +262,7 @@ namespace PicView.ChangeImage
                 TempZipPath = string.Empty;
             }
 
-            NoProgress();
+            SystemIntegration.Taskbar.NoProgress();
             AnimationHelper.Fade(ajaxLoading, 0, TimeSpan.FromSeconds(.2));
         }
 

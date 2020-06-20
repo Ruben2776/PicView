@@ -2,11 +2,13 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-  <!--<ResourceDictionary.MergedDictionaries>
+    <!--<ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="Shared.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  --><!--<SnippetToolBar>--><!--
+  -->
+    <!--<SnippetToolBar>-->
+    <!--
   <Style x:Key="ToolBarButtonBaseStyle"
          TargetType="{x:Type ButtonBase}">
     <Setter Property="SnapsToDevicePixels"
@@ -62,7 +64,7 @@
                 <VisualState x:Name="Disabled">
                   <Storyboard>
                     <ColorAnimationUsingKeyFrames Storyboard.TargetName="Border"
-                                                  Storyboard.TargetProperty="(Panel.Background). 
+                                                  Storyboard.TargetProperty="(Panel.Background).
                       (GradientBrush.GradientStops)[1].(GradientStop.Color)">
                       <EasingColorKeyFrame KeyTime="0"
                                            Value="{StaticResource DisabledControlDarkColor}" />
@@ -128,8 +130,8 @@
                   BorderThickness="1">
                         <Border.Background>
                             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                <GradientStop Color="#B28F8F8F" Offset="0"/>
-                                <GradientStop Color="#CC000000" Offset="1"/>
+                                <GradientStop Color="#B28F8F8F" Offset="0" />
+                                <GradientStop Color="#CC000000" Offset="1" />
                             </LinearGradientBrush>
                         </Border.Background>
                         <Border.BorderBrush>
@@ -141,13 +143,13 @@
                 <VisualState x:Name="Disabled">
                   <Storyboard>
                     <ColorAnimationUsingKeyFrames Storyboard.TargetName="Border"
-                                                  Storyboard.TargetProperty="(Panel.Background).  
+                                                  Storyboard.TargetProperty="(Panel.Background).
                       (SolidColorBrush.Color)">
                       <EasingColorKeyFrame KeyTime="0"
                                            Value="{StaticResource DisabledControlDarkColor}" />
                     </ColorAnimationUsingKeyFrames>
                     <ColorAnimationUsingKeyFrames Storyboard.TargetName="Border"
-                                                  Storyboard.TargetProperty="(Border.BorderBrush).  
+                                                  Storyboard.TargetProperty="(Border.BorderBrush).
                       (SolidColorBrush.Color)">
                       <EasingColorKeyFrame KeyTime="0"
                                            Value="{StaticResource DisabledBorderLightColor}" />
@@ -223,7 +225,7 @@
                 <VisualState x:Name="Pressed">
                   <Storyboard>
                     <ColorAnimationUsingKeyFrames Storyboard.TargetName="Border"
-                                                  Storyboard.TargetProperty="(Panel.Background).    
+                                                  Storyboard.TargetProperty="(Panel.Background).
                       (GradientBrush.GradientStops)[1].(GradientStop.Color)">
                       <EasingColorKeyFrame KeyTime="0"
                                            Value="{StaticResource ControlPressedColor}" />
@@ -233,7 +235,7 @@
                 <VisualState x:Name="MouseOver">
                   <Storyboard>
                     <ColorAnimationUsingKeyFrames Storyboard.TargetName="Border"
-                                                  Storyboard.TargetProperty="(Panel.Background).     
+                                                  Storyboard.TargetProperty="(Panel.Background).
                       (GradientBrush.GradientStops)[1].(GradientStop.Color)">
                       <EasingColorKeyFrame KeyTime="0"
                                            Value="{StaticResource ControlMouseOverColor}" />
@@ -243,7 +245,7 @@
                 <VisualState x:Name="Disabled">
                   <Storyboard>
                     <ColorAnimationUsingKeyFrames Storyboard.TargetName="Border"
-                                                  Storyboard.TargetProperty="(Panel.Background).   
+                                                  Storyboard.TargetProperty="(Panel.Background).
                       (GradientBrush.GradientStops)[1].(GradientStop.Color)">
                       <EasingColorKeyFrame KeyTime="0"
                                            Value="{StaticResource DisabledBorderLightColor}" />
@@ -310,7 +312,7 @@
                             IsEnabled="{TemplateBinding HasOverflowItems}"
                             Style="{StaticResource ToolBarOverflowButtonStyle}"
                             ClickMode="Press"
-                            IsChecked="{Binding IsOverflowOpen, Mode=TwoWay, 
+                            IsChecked="{Binding IsOverflowOpen, Mode=TwoWay,
                 RelativeSource={RelativeSource TemplatedParent}}">
                 <Popup x:Name="OverflowPopup"
                        AllowsTransparency="true"
@@ -318,7 +320,7 @@
                        StaysOpen="false"
                        Focusable="false"
                        PopupAnimation="Slide"
-                       IsOpen="{Binding IsOverflowOpen, 
+                       IsOpen="{Binding IsOverflowOpen,
                   RelativeSource={RelativeSource TemplatedParent}}">
                   <Border x:Name="DropDownBorder"
                           BorderThickness="1">
@@ -389,5 +391,5 @@
       </Setter.Value>
     </Setter>
   </Style>-->
-  <!--</SnippetToolBar>-->
+    <!--</SnippetToolBar>-->
 </ResourceDictionary>

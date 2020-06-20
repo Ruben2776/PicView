@@ -15,8 +15,6 @@ namespace PicView.UI.UserControls
                 MouseEnter += (s, x) => ButtonMouseOverAnim(MinButtonBrush, true);
                 MouseLeave += (s, x) => ButtonMouseLeaveAnim(MinButtonBrush, true);
             };
-
-
         }
     }
 }

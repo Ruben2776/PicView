@@ -28,7 +28,6 @@ namespace PicView.ChangeImage
             return false;
         }
 
-
         /// <summary>
         /// Preloader list of BitmapSources
         /// </summary>
@@ -56,7 +55,6 @@ namespace PicView.ChangeImage
                 return IsLoading = false;
             }
 
-
             IsLoading = true;
 
             var pic = await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(true);
@@ -77,7 +75,6 @@ namespace PicView.ChangeImage
 #endif
 
             return Sources.TryAdd(file, pic);
-
         }
 
         /// <summary>
@@ -93,9 +90,9 @@ namespace PicView.ChangeImage
 
             IsLoading = true;
 
-//#if DEBUG
-//            System.Threading.Thread.Sleep(1000);
-//#endif
+            //#if DEBUG
+            //            System.Threading.Thread.Sleep(1000);
+            //#endif
 
             if (File.Exists(Pics[i]))
             {
@@ -103,7 +100,6 @@ namespace PicView.ChangeImage
                 {
                     return await Add(Pics[i]).ConfigureAwait(true);
                 }
-
                 else
                 {
 #if DEBUG
@@ -111,12 +107,11 @@ namespace PicView.ChangeImage
 #endif
                     return false;
                 }
-
             }
             else
             {
                 Pics.Remove(Pics[i]);
-                
+
 #if DEBUG
                 Trace.WriteLine("Preloader removed = " + Pics[i] + " from Pics, index " + i);
 #endif
@@ -166,7 +161,6 @@ namespace PicView.ChangeImage
 #else
             Sources.TryAdd(key, bmp);
 #endif
-
         }
 
         /// <summary>
@@ -227,7 +221,7 @@ namespace PicView.ChangeImage
         }
 
         /// <summary>
-        /// Removes all keys 
+        /// Removes all keys
         /// </summary>
         internal static void Clear()
         {
@@ -289,7 +283,6 @@ namespace PicView.ChangeImage
             return Sources.ContainsKey(key);
         }
 
-
         internal static async void PreloaderFix(string file)
         {
             if (!Contains(file))
@@ -299,7 +292,6 @@ namespace PicView.ChangeImage
                 await Add(file).ConfigureAwait(false);
             }
         }
-
 
         /// <summary>
         /// Starts decoding images into memory,
@@ -315,7 +307,7 @@ namespace PicView.ChangeImage
                 + string.Concat(Reverse ? "backwards" : "forwards"));
 #endif
 
-            return Task.Run(async() =>
+            return Task.Run(async () =>
             {
                 var toLoad = 8;
                 var extraToLoad = toLoad / 2;
@@ -475,9 +467,7 @@ namespace PicView.ChangeImage
                 }
 
                 IsLoading = false; // Fixes loading erros
-
             });
         }
     }
-
 }

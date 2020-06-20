@@ -64,18 +64,15 @@
                         </BulletDecorator>
                     </Border>
 
-
                     <!--  If item is checked, trigger the visibility of the mark  -->
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="true">
                             <Setter TargetName="TickMark" Property="Visibility" Value="Visible" />
                             <Setter TargetName="CrossMark" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-
 </ResourceDictionary>

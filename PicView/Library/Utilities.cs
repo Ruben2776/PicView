@@ -1,13 +1,8 @@
-﻿using Microsoft.WindowsAPICodePack.Taskbar;
-using PicView.Library.Resources;
-using System.Configuration;
+﻿using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using static PicView.Library.Fields;
 
 namespace PicView.Library
 {
@@ -26,7 +21,6 @@ namespace PicView.Library
             return y == 0 ? x : GCD(y, x % y);
         }
 
-
         /// <summary>
         /// Gets the absolute mouse position, relative to screen
         /// </summary>
@@ -36,33 +30,7 @@ namespace PicView.Library
             return element.PointToScreen(Mouse.GetPosition(element));
         }
 
-
-        #endregion
-
-        #region Progress
-
-        /// <summary>
-        /// Show progress on taskbar
-        /// </summary>
-        /// <param name="i">index</param>
-        /// <param name="ii">size</param>
-        internal static void Progress(int i, int ii)
-        {
-            TaskbarManager prog = TaskbarManager.Instance;
-            prog.SetProgressState(TaskbarProgressBarState.Normal);
-            prog.SetProgressValue(i, ii);
-        }
-
-        /// <summary>
-        /// Stop showing taskbar progress, return to default
-        /// </summary>
-        internal static void NoProgress()
-        {
-            TaskbarManager prog = TaskbarManager.Instance;
-            prog.SetProgressState(TaskbarProgressBarState.NoProgress);
-        }
-
-        #endregion
+        #endregion static helpers
 
         /// <summary>
         /// Sends the file to Windows print system
@@ -124,6 +92,5 @@ namespace PicView.Library
         {
             return Path.GetDirectoryName(GetDefaultExeConfigPath(ConfigurationUserLevel.PerUserRoamingAndLocal));
         }
-
     }
 }

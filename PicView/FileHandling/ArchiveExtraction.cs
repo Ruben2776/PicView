@@ -26,7 +26,6 @@ namespace PicView.FileHandling
                 DeleteTempFiles();
             }
 
-
             // TODO find a way to make user set path and app
             // if installed in irregular way
 
@@ -108,7 +107,6 @@ namespace PicView.FileHandling
                 return false;
             }
 
-
             //return SetDirectory(path);
             return true;
         }
@@ -167,7 +165,6 @@ namespace PicView.FileHandling
         /// </summary>
         internal static async Task<bool> RecoverFailedArchiveAsync()
         {
-
 #if DEBUG
             Trace.WriteLine("Entered RecoverFailedArchiveAsync");
 #endif

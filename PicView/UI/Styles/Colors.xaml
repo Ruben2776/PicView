@@ -51,10 +51,4 @@
     <Color x:Key="AltInterfaceW">#A7171717</Color>
     <SolidColorBrush x:Key="AltInterfaceBrush" Color="{StaticResource AltInterface}" />
     <SolidColorBrush x:Key="AltInterfaceWBrush" Color="{StaticResource AltInterfaceW}" />
-
-
-
-
-
-
 </ResourceDictionary>

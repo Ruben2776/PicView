@@ -9,7 +9,7 @@ namespace PicView.Library.Resources
 
         public static DrawingBrush CheckerboardDrawingBrush(Color color)
         {
-            return CheckerboardDrawingBrush(color, Fields.backgroundBorderColor, 30);
+            return CheckerboardDrawingBrush(color, UI.ConfigColors.backgroundBorderColor, 30);
         }
 
         public static DrawingBrush CheckerboardDrawingBrush(Color color, Color color2, int size)
@@ -57,6 +57,6 @@ namespace PicView.Library.Resources
             return draw;
         }
 
-        #endregion
+        #endregion DrawingBrush
     }
 }

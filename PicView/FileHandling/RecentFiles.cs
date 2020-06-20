@@ -1,7 +1,6 @@
 ﻿using PicView.Library;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,7 +16,6 @@ namespace PicView.FileHandling
     /// </summary>
     internal static class RecentFiles
     {
-
         /// <summary>
         /// File list for Most Recently Used files
         /// </summary>
@@ -26,7 +24,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// How many max recent files
         /// </summary>
-        const int MRUcount = 10;
+        private const int MRUcount = 10;
 
         internal static bool IsZipped { get; set; }
 
@@ -57,7 +55,6 @@ namespace PicView.FileHandling
             }
             catch (Exception) { }
         }
-
 
         /// <summary>
         /// Function to add file to MRU
@@ -124,7 +121,6 @@ namespace PicView.FileHandling
 
             IsZipped = isZipped;
         }
-
 
         /// <summary>
         /// Adds events and submenu items to recent items in the context menu
@@ -205,6 +201,5 @@ namespace PicView.FileHandling
                 RecentFilesMenuItem.Items.Add(menuItem);
             }
         }
-
     }
 }

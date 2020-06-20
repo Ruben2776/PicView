@@ -33,7 +33,6 @@
                                         </GradientStopCollection>
                                     </GradientBrush.GradientStops>
                                 </LinearGradientBrush>
-
                             </Border.BorderBrush>
                             <Grid x:Name="Animation" ClipToBounds="True">
                                 <Rectangle
@@ -59,7 +58,6 @@
                                                 </DiscreteObjectKeyFrame.Value>
                                             </DiscreteObjectKeyFrame>
                                         </ObjectAnimationUsingKeyFrames>
-
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>

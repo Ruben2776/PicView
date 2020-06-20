@@ -1,14 +1,14 @@
-﻿using System.Windows;
-using static PicView.Library.Fields;
-using static PicView.UI.UserControls.UC;
-using static PicView.UI.Sizing.WindowLogic;
+﻿using PicView.SystemIntegration;
 using PicView.UI.Loading;
+using System.Windows;
+using static PicView.Library.Fields;
+using static PicView.UI.Sizing.WindowLogic;
+using static PicView.UI.UserControls.UC;
 
 namespace PicView.UI.Windows
 {
     public partial class MainWindow : Window
     {
-
         public MainWindow()
         {
             InitializeComponent();
@@ -63,7 +63,6 @@ namespace PicView.UI.Windows
             base.OnRenderSizeChanged(size);
         }
 
-        #endregion Add events
-        
+        #endregion OnRenderSizeChanged override
     }
 }

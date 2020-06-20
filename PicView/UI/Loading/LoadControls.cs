@@ -238,7 +238,6 @@ namespace PicView.UI.Loading
 #endif
         }
 
-
         /// <summary>
         /// Loads Croppingtool and adds it to the window
         /// </summary>
@@ -254,7 +253,5 @@ namespace PicView.UI.Loading
             Trace.WriteLine("cropppingTool loaded ");
 #endif
         }
-
-
     }
 }

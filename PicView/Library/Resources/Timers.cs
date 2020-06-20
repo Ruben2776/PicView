@@ -1,6 +1,6 @@
 ﻿using System.Timers;
-using static PicView.UI.Animations.FadeControls;
 using static PicView.Library.Fields;
+using static PicView.UI.Animations.FadeControls;
 using static PicView.UI.TransformImage.Scroll;
 
 namespace PicView.Library.Resources
@@ -50,6 +50,6 @@ namespace PicView.Library.Resources
             //MouseIdleTimer.Elapsed += delegate { HideCursorTimer.Start(); };
         }
 
-        #endregion
+        #endregion Add Timers
     }
 }

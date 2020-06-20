@@ -33,18 +33,25 @@ namespace PicView.FileHandling
             {
                 case 0:
                     return FileList(path, SortFilesBy.Name);
+
                 case 1:
                     return FileList(path, SortFilesBy.FileSize);
+
                 case 2:
                     return FileList(path, SortFilesBy.Creationtime);
+
                 case 3:
                     return FileList(path, SortFilesBy.Extension);
+
                 case 4:
                     return FileList(path, SortFilesBy.Lastaccesstime);
+
                 case 5:
                     return FileList(path, SortFilesBy.Lastwritetime);
+
                 case 6:
                     return FileList(path, SortFilesBy.Random);
+
                 default:
                     return FileList(path, SortFilesBy.Name);
             }
@@ -68,7 +75,7 @@ namespace PicView.FileHandling
                 .AsParallel()
                 .Where(file =>
 
-                        // Standards
+                           // Standards
                            file.ToLower(CultureInfo.CurrentCulture).EndsWith("jpg", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower(CultureInfo.CurrentCulture).EndsWith("jpeg", StringComparison.OrdinalIgnoreCase)
                         || file.ToLower(CultureInfo.CurrentCulture).EndsWith("jpe", StringComparison.OrdinalIgnoreCase)
@@ -137,23 +144,29 @@ namespace PicView.FileHandling
                 // Alphanumeric sort
                 case SortFilesBy.Name:
                     var list = items.ToList();
-                    list.Sort((x, y) => { return NativeMethods.StrCmpLogicalW(x, y); });
+                    list.Sort((x, y) => { return SystemIntegration.NativeMethods.StrCmpLogicalW(x, y); });
                     return list;
+
                 case SortFilesBy.FileSize:
                     items = items.OrderBy(f => new FileInfo(f).Length);
                     break;
+
                 case SortFilesBy.Extension:
                     items = items.OrderBy(f => new FileInfo(f).Extension);
                     break;
+
                 case SortFilesBy.Creationtime:
                     items = items.OrderBy(f => new FileInfo(f).CreationTime);
                     break;
+
                 case SortFilesBy.Lastaccesstime:
                     items = items.OrderBy(f => new FileInfo(f).LastAccessTime);
                     break;
+
                 case SortFilesBy.Lastwritetime:
                     items = items.OrderBy(f => new FileInfo(f).LastWriteTime);
                     break;
+
                 case SortFilesBy.Random:
                     items = items.OrderBy(f => Guid.NewGuid());
                     break;
@@ -209,7 +222,6 @@ namespace PicView.FileHandling
 #if DEBUG
                 Trace.WriteLine("Getvalues completed ");
 #endif
-
             }).ConfigureAwait(false);
         }
     }

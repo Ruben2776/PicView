@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using static PicView.Library.Fields;
 
-namespace PicView
+namespace PicView.SystemIntegration
 {
     public static class Wallpaper // Taken from a Microsoft sample...
     {
@@ -73,10 +73,9 @@ namespace PicView
             }
         }
 
-
         /// <summary>
-        /// Determine if .jpg files are supported as wallpaper in the current 
-        /// operating system. The .jpg wallpapers are not supported before 
+        /// Determine if .jpg files are supported as wallpaper in the current
+        /// operating system. The .jpg wallpapers are not supported before
         /// Windows Vista.
         /// </summary>
         public static bool SupportJpgAsWallpaper
@@ -87,10 +86,9 @@ namespace PicView
             }
         }
 
-
         /// <summary>
-        /// Determine if the fit and fill wallpaper styles are supported in 
-        /// the current operating system. The styles are not supported before 
+        /// Determine if the fit and fill wallpaper styles are supported in
+        /// the current operating system. The styles are not supported before
         /// Windows 7.
         /// </summary>
         public static bool SupportFitFillWallpaperStyles
@@ -101,7 +99,6 @@ namespace PicView
             }
         }
 
-
         /// <summary>
         /// Set the desktop wallpaper.
         /// </summary>
@@ -109,17 +106,17 @@ namespace PicView
         /// <param name="style">Wallpaper style</param>
         public static void SetDesktopWallpaper(string path, WallpaperStyle style)
         {
-            // Set the wallpaper style and tile. 
+            // Set the wallpaper style and tile.
             // Two registry values are set in the Control Panel\Desktop key.
             // TileWallpaper
-            //  0: The wallpaper picture should not be tiled 
-            //  1: The wallpaper picture should be tiled 
+            //  0: The wallpaper picture should not be tiled
+            //  1: The wallpaper picture should be tiled
             // WallpaperStyle
             //  0:  The image is centered if TileWallpaper=0 or tiled if TileWallpaper=1
             //  2:  The image is stretched to fill the screen
-            //  6:  The image is resized to fit the screen while maintaining the aspect 
+            //  6:  The image is resized to fit the screen while maintaining the aspect
             //      ratio. (Windows 7 and later)
-            //  10: The image is resized and cropped to fill the screen while 
+            //  10: The image is resized and cropped to fill the screen while
             //      maintaining the aspect ratio. (Windows 7 and later)
             RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
 
@@ -129,18 +126,22 @@ namespace PicView
                     key.SetValue(@"WallpaperStyle", "0");
                     key.SetValue(@"TileWallpaper", "1");
                     break;
+
                 case WallpaperStyle.Center:
                     key.SetValue(@"WallpaperStyle", "0");
                     key.SetValue(@"TileWallpaper", "0");
                     break;
+
                 case WallpaperStyle.Stretch:
                     key.SetValue(@"WallpaperStyle", "2");
                     key.SetValue(@"TileWallpaper", "0");
                     break;
+
                 case WallpaperStyle.Fit: // (Windows 7 and later)
                     key.SetValue(@"WallpaperStyle", "6");
                     key.SetValue(@"TileWallpaper", "0");
                     break;
+
                 case WallpaperStyle.Fill: // (Windows 7 and later)
                     key.SetValue(@"WallpaperStyle", "10");
                     key.SetValue(@"TileWallpaper", "0");
@@ -153,9 +154,9 @@ namespace PicView
             /// works for Windows supported standard images, such as PSD to jpg?
 
             // If the specified image file is neither .bmp nor .jpg, - or -
-            // if the image is a .jpg file but the operating system is Windows Server 
-            // 2003 or Windows XP/2000 that does not support .jpg as the desktop 
-            // wallpaper, convert the image file to .bmp and save it to the 
+            // if the image is a .jpg file but the operating system is Windows Server
+            // 2003 or Windows XP/2000 that does not support .jpg as the desktop
+            // wallpaper, convert the image file to .bmp and save it to the
             // %appdata%\Microsoft\Windows\Themes folder.
             string ext = Path.GetExtension(path);
             if ((!ext.Equals(".bmp", StringComparison.OrdinalIgnoreCase) &&
@@ -169,11 +170,10 @@ namespace PicView
                         Path.GetFileNameWithoutExtension(path));
                 SaveImages.TrySaveImage(Rotateint, Flipped, path, dest);
                 path = dest;
-
             }
 
-            // Set the desktop wallpapaer by calling the Win32 API SystemParametersInfo 
-            // with the SPI_SETDESKWALLPAPER desktop parameter. The changes should 
+            // Set the desktop wallpapaer by calling the Win32 API SystemParametersInfo
+            // with the SPI_SETDESKWALLPAPER desktop parameter. The changes should
             // persist, and also be immediately visible.
             if (!NativeMethods.SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, path,
                 SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE))
@@ -182,12 +182,8 @@ namespace PicView
             }
         }
 
-
         private const uint SPI_SETDESKWALLPAPER = 20;
         private const uint SPIF_UPDATEINIFILE = 0x01;
         private const uint SPIF_SENDWININICHANGE = 0x02;
     }
-
-
-
 }

@@ -7,7 +7,6 @@ namespace PicView.UI.UserControls
     /// </summary>
     public partial class ToolTipMessage : UserControl
     {
-
         public ToolTipMessage()
         {
             InitializeComponent();

@@ -1,15 +1,14 @@
-﻿using System;
+﻿using PicView.Editing.HlslEffects;
+using System;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.Library.Fields;
 using static PicView.UI.Animations.MouseOverAnimations;
-using PicView.Editing.HlslEffects;
 
 namespace PicView.UI.Windows
 {
     public partial class EffectsWindow : Window
     {
-
         public EffectsWindow()
         {
             InitializeComponent();
@@ -225,11 +224,13 @@ namespace PicView.UI.Windows
                 case Key.S:
                     Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + zoomSpeed);
                     break;
+
                 case Key.Up:
                 case Key.PageUp:
                 case Key.W:
                     Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - zoomSpeed);
                     break;
+
                 case Key.Q:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                     {
@@ -247,13 +248,13 @@ namespace PicView.UI.Windows
                     Hide();
                     mainWindow.Focus();
                     break;
+
                 case Key.Q:
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                     {
                         Environment.Exit(0);
                     }
                     break;
-
             }
         }
 
@@ -269,7 +270,7 @@ namespace PicView.UI.Windows
             }
         }
 
-        #endregion
+        #endregion Keyboard Shortcuts
 
         #region HLSL Shader Effects
 
@@ -285,7 +286,6 @@ namespace PicView.UI.Windows
                 mainWindow.img.Effect = new InvertColorEffect();
             }
             else NegativeButton.IsChecked = false;
-            
         }
 
         private void GraySceale(object sender, RoutedEventArgs e)
@@ -304,7 +304,6 @@ namespace PicView.UI.Windows
                 mainWindow.img.Effect = new ColorToneEffect();
             }
             else ColorToneButton.IsChecked = false;
-
         }
 
         private void RippleEffect1(object sender, RoutedEventArgs e)
@@ -341,7 +340,6 @@ namespace PicView.UI.Windows
                 mainWindow.img.Effect = new MonochromeEffect();
             }
             else MonochromeButton.IsChecked = false;
-
         }
 
         private void Swirl(object sender, RoutedEventArgs e)
@@ -441,7 +439,6 @@ namespace PicView.UI.Windows
                 mainWindow.img.Effect = new MagnifySmoothEffect();
             }
             else SmoothMagnifyButton.IsChecked = false;
-
         }
 
         private void PaperFoldEffect(object sender, RoutedEventArgs e)
@@ -525,8 +522,6 @@ namespace PicView.UI.Windows
             else PencilSketchButton.IsChecked = false;
         }
 
-        #endregion
-
-
+        #endregion HLSL Shader Effects
     }
 }

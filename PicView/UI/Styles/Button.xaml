@@ -18,7 +18,6 @@
         </Setter>
     </Style>
 
-
     <Style TargetType="CheckBox">
         <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Aller" />
         <Setter Property="Background" Value="Transparent" />
@@ -107,5 +106,4 @@
             </Setter.Value>
         </Setter>
     </Style>
-
 </ResourceDictionary>

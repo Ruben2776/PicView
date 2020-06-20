@@ -193,7 +193,6 @@
                     </Button>
                 </Border>
 
-
                 <Border
                     x:Name="ExifButtonBorder"
                     Canvas.Left="6"
@@ -225,8 +224,6 @@
                         </Canvas>
                     </Button>
                 </Border>
-
-
             </Canvas>
         </Border>
         <Rectangle
@@ -244,4 +241,3 @@
             StrokeThickness="2" />
     </StackPanel>
 </UserControl>
-

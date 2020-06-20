@@ -75,7 +75,7 @@
     -->
     <!--<Setter TargetName="Border" Property="Effect">
             <Setter.Value>
-                <BlurEffect Radius="7" RenderingBias="Quality"/>
+                <BlurEffect Radius="7" RenderingBias="Quality" />
             </Setter.Value>
             </Setter>-->
     <!--

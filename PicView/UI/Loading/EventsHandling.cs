@@ -1,4 +1,5 @@
 ﻿using PicView.FileHandling;
+using PicView.SystemIntegration;
 using PicView.UI.Animations;
 using PicView.UI.PicGallery;
 using System;
@@ -190,7 +191,6 @@ namespace PicView.UI.Loading
             //LocationChanged += MainWindow_LocationChanged;
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
 
-
 #if DEBUG
             Trace.WriteLine("Events loaded");
 #endif
@@ -205,8 +205,10 @@ namespace PicView.UI.Loading
                 case WindowState.Maximized:
                     SetWindowBehaviour = false;
                     break;
+
                 case WindowState.Normal:
                     break;
+
                 case WindowState.Minimized:
                     break;
             }
@@ -257,6 +259,5 @@ namespace PicView.UI.Loading
 #endif
             Environment.Exit(0);
         }
-
     }
 }

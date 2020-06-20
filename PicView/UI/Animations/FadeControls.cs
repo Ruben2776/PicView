@@ -88,7 +88,6 @@ namespace PicView.UI.Animations
                 {
                     AnimationHelper.Fade(x2, 0, timespan);
                     AnimationHelper.Fade(minus, 0, timespan);
-
                 }
             }));
         }

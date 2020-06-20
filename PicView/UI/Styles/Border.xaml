@@ -15,7 +15,5 @@
                     Color="Black" />
             </Setter.Value>
         </Setter>
-
     </Style>
-
 </ResourceDictionary>

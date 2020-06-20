@@ -45,7 +45,6 @@ namespace PicView.UI.UserControls
                 ImagePath2Fill.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
                 ImagePath3Fill.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
                 AnimationHelper.MouseOverColorEvent(alpha.A, alpha.R, alpha.G, alpha.B, BorderBrushKey, true);
-
             };
 
             MouseEnter += (sender, e) =>
@@ -60,7 +59,6 @@ namespace PicView.UI.UserControls
                     {
                         Duration = TimeSpan.FromSeconds(.2)
                     };
-
                 }
 
                 ccAnim.From = fg;
@@ -73,7 +71,6 @@ namespace PicView.UI.UserControls
                 ccAnim2.To = bg2;
                 CanvasBGcolor.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim2);
                 AnimationHelper.MouseOverColorEvent(bb.A, bb.R, bb.G, bb.B, BorderBrushKey, true);
-
             };
             MouseLeave += (sender, e) =>
             {

@@ -42,7 +42,6 @@ namespace PicView.ChangeImage
             {
                 pic = await LoadImageWebAsync(path).ConfigureAwait(true);
             }
-
             catch (Exception e)
             {
 #if DEBUG

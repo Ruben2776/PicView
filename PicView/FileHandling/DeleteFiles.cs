@@ -3,9 +3,9 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using static PicView.ChangeImage.Error_Handling;
-using static PicView.Library.Fields;
-using static PicView.FileHandling.FileFunctions;
 using static PicView.ChangeImage.Navigation;
+using static PicView.FileHandling.FileFunctions;
+using static PicView.Library.Fields;
 using static PicView.UI.Tooltip;
 
 namespace PicView.FileHandling
@@ -106,7 +106,6 @@ namespace PicView.FileHandling
             PreloadCount = Reverse ? PreloadCount - 1 : PreloadCount + 1;
 
             Pic(Reverse);
-
         }
     }
 }

@@ -10,6 +10,16 @@ namespace PicView.UI
     public static class ConfigColors
     {
         /// <summary>
+        /// Helper for user color settings
+        /// </summary>
+        internal static Color backgroundBorderColor;
+
+        /// <summary>
+        /// Helper for user color settings
+        /// </summary>
+        internal static Color mainColor;
+
+        /// <summary>
         /// Update color values for brushes and window border
         /// </summary>
         /// <param name="remove">Remove border?</param>
@@ -40,7 +50,6 @@ namespace PicView.UI
 #endif
                     //throw;
                 }
-
             }
         }
 
@@ -53,9 +62,11 @@ namespace PicView.UI
                 case 0:
                     mainWindow.imgBorder.Background = new SolidColorBrush(Colors.Transparent);
                     break;
+
                 case 1:
                     mainWindow.imgBorder.Background = new SolidColorBrush(Colors.White);
                     break;
+
                 case 2:
                     mainWindow.imgBorder.Background = DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
                     break;
@@ -64,29 +75,11 @@ namespace PicView.UI
             backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
         }
 
-        public static void ChangeBackground()
-        {
-            ChangeBackground(null, null);
-        }
-
         public static void ChangeBackground(object sender, RoutedEventArgs e)
-        {
-            var brush = GetBackgroundColorBrush();
-            if (brush != null)
-            {
-                mainWindow.imgBorder.Background = brush;
-            }
-            else
-            {
-                mainWindow.imgBorder.Background = new SolidColorBrush(Colors.Transparent);
-            }
-        }
-
-        public static Brush GetBackgroundColorBrush()
         {
             if (mainWindow.imgBorder == null)
             {
-                return null;
+                return;
             }
 
             Properties.Settings.Default.BgColorChoice++;
@@ -104,14 +97,36 @@ namespace PicView.UI
                     {
                         goto case 1;
                     }
-                    return x;
+                    mainWindow.imgBorder.Background = x;
+                    break;
+
                 case 1:
-                    return new SolidColorBrush(Colors.White);
+                    mainWindow.imgBorder.Background = new SolidColorBrush(Colors.White);
+                    break;
+
                 case 2:
-                    return DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
+                    var _ = DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
+                    if (_ != null)
+                    {
+                        mainWindow.imgBorder.Background = _;
+                    }
+                    break;
+
                 default:
-                    return new SolidColorBrush(Colors.Transparent);
+                    mainWindow.imgBorder.Background = new SolidColorBrush(Colors.Transparent);
+                    break;
             }
+        }
+
+        public static Brush GetBackgroundColorBrush()
+        {
+            return Properties.Settings.Default.BgColorChoice switch
+            {
+                0 => new SolidColorBrush(Colors.Transparent),
+                1 => new SolidColorBrush(Colors.White),
+                2 => DrawingBrushes.CheckerboardDrawingBrush(Colors.White),
+                _ => new SolidColorBrush(Colors.Transparent),
+            };
         }
     }
 }

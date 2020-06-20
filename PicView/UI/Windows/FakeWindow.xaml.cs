@@ -3,8 +3,8 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using static PicView.Library.Fields;
+using static PicView.SystemIntegration.NativeMethods;
 using static PicView.UI.PicGallery.GalleryScroll;
-using static PicView.NativeMethods;
 
 namespace PicView.UI.Windows
 {
@@ -51,10 +51,13 @@ namespace PicView.UI.Windows
                 case WindowState.Normal:
                     mainWindow.Focus();
                     break;
+
                 case WindowState.Minimized:
                     break;
+
                 case WindowState.Maximized:
                     break;
+
                 default:
                     break;
             }

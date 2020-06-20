@@ -1,5 +1,4 @@
-﻿using ImageMagick;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using PicView.ImageHandling;
 using PicView.UI;
 using PicView.UI.Loading;
@@ -65,7 +64,6 @@ namespace PicView.Editing
                 cropppingTool.CropTool.Width = xHeight;
                 cropppingTool.CropTool.Height = xWidth;
             }
-
         }
 
         internal static async void SaveCrop()
@@ -128,7 +126,6 @@ namespace PicView.Editing
                     width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
                     height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
                 }
-
             }
             else
             {

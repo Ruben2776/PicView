@@ -48,7 +48,6 @@
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
-
             <TextBlock
                 x:Name="Bar"
                 VerticalAlignment="Center"
@@ -203,8 +202,6 @@
                                 <SolidColorBrush x:Name="BeigeBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
-
-
                     </WrapPanel>
                     <Label
                         Margin="0,3,0,0"
@@ -397,9 +394,7 @@
                             ToolTip="Enter the slideshow amount in seconds." />
 
                         <Label Content="Sec." Style="{StaticResource LabelShadow}" />
-
                     </StackPanel>
-
                 </StackPanel>
             </ScrollViewer>
         </Border>

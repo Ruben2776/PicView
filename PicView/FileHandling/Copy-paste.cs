@@ -1,4 +1,5 @@
 ﻿using PicView.ChangeImage;
+using PicView.ImageHandling;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -7,12 +8,11 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Error_Handling;
-using static PicView.Library.Fields;
+using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileFunctions;
 using static PicView.FileHandling.FileLists;
-using static PicView.ChangeImage.Navigation;
+using static PicView.Library.Fields;
 using static PicView.UI.Tooltip;
-using PicView.ImageHandling;
 
 namespace PicView.FileHandling
 {
@@ -86,7 +86,6 @@ namespace PicView.FileHandling
             ShowTooltipMessage("Copied Image to clipboard");
         }
 
-
         /// <summary>
         /// Retrieves the data from the clipboard and attemps to load image, if possible
         /// </summary>
@@ -108,8 +107,6 @@ namespace PicView.FileHandling
                         // If from same folder
                         if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]) && Path.GetDirectoryName(x) == Path.GetDirectoryName(Pics[FolderIndex]))
                         {
-
-
                             Pic(Pics.IndexOf(x));
                         }
                         else

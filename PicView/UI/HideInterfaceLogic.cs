@@ -1,16 +1,15 @@
-﻿using System.Windows;
+﻿using PicView.UI.PicGallery;
+using System.Windows;
 using System.Windows.Input;
-using static PicView.UI.Animations.FadeControls;
 using static PicView.Library.Fields;
+using static PicView.UI.Animations.FadeControls;
 using static PicView.UI.Sizing.ScaleImage;
 using static PicView.UI.UserControls.UC;
-using PicView.UI.PicGallery;
 
 namespace PicView.UI
 {
     internal static class HideInterfaceLogic
     {
-
         /// <summary>
         /// Toggle between hidden interface and default
         /// </summary>
@@ -84,7 +83,7 @@ namespace PicView.UI
         }
 
         /// <summary>
-        /// Toggle alternative layout navigation 
+        /// Toggle alternative layout navigation
         /// </summary>
         /// <param name="show"></param>
         internal static void ShowNavigation(bool show)
@@ -127,8 +126,6 @@ namespace PicView.UI
             }
         }
 
-
-
         /// <summary>
         /// Logic for mouse enter mainwindow event
         /// </summary>
@@ -154,7 +151,6 @@ namespace PicView.UI
             //FadeControlsAsync(true);
         }
 
-
         /// <summary>
         /// Logic for mouse movements on MainWindow
         /// </summary>
@@ -174,11 +170,9 @@ namespace PicView.UI
             //    HideCursorTimer.Stop();
             //}
 
-
             // If mouse moves on mainwindow, show elements
 
             FadeControlsAsync(true);
-
 
             //// If Slideshow is running the interface will hide after 2,5 sec.
             //if (Slidetimer.Enabled == true)
@@ -202,7 +196,5 @@ namespace PicView.UI
             //activityTimer.Start();
             FadeControlsAsync(false);
         }
-
-
     }
 }

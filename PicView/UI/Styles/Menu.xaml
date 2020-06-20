@@ -5,7 +5,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-
     <!--  SimpleStyles: Menu  -->
     <!--<SnippetMenu>-->
     <Style x:Key="{x:Type Menu}" TargetType="{x:Type Menu}">
@@ -202,7 +201,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Separator}">
-                    <Border BorderBrush="#FF2B2727" BorderThickness="2"/>
+                    <Border BorderBrush="#FF2B2727" BorderThickness="2" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using PicView.ImageHandling;
+using System;
 using static PicView.Library.Fields;
-using static PicView.UI.TransformImage.Scroll;
 using static PicView.UI.Sizing.WindowLogic;
-using PicView.ImageHandling;
+using static PicView.UI.TransformImage.Scroll;
 
 namespace PicView.UI.Sizing
 {
@@ -200,7 +200,7 @@ namespace PicView.UI.Sizing
             else
             {
                 /// Fix title width to window size
-                mainWindow.Bar.MaxWidth = mainWindow.ActualWidth - interfaceSize; 
+                mainWindow.Bar.MaxWidth = mainWindow.ActualWidth - interfaceSize;
             }
 
             if (isZoomed)
@@ -234,4 +234,3 @@ namespace PicView.UI.Sizing
         }
     }
 }
-

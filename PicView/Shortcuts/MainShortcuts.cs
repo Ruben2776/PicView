@@ -63,14 +63,14 @@ namespace PicView.Shortcuts
                         {
                             SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
                         }
-                        
+
                         ImageCropping.SaveCrop();
                         mainWindow.bg.Children.Remove(cropppingTool);
                     }
                 }
             }
 
-            #endregion
+            #endregion CroppingKeys
 
             #region Keys where it can be held down
 
@@ -192,7 +192,7 @@ namespace PicView.Shortcuts
                                 ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
                                 return;
                             }
-                            if (ctrlDown) 
+                            if (ctrlDown)
                             {
                                 Rotate(false);
                             }
@@ -256,12 +256,12 @@ namespace PicView.Shortcuts
                 // Zoom
                 case Key.Add:
                 case Key.OemPlus:
-                        Zoom(1, ctrlDown);
+                    Zoom(1, ctrlDown);
                     return;
 
                 case Key.Subtract:
                 case Key.OemMinus:
-                        Zoom(-1, ctrlDown);
+                    Zoom(-1, ctrlDown);
                     return;
             }
 
@@ -406,7 +406,7 @@ namespace PicView.Shortcuts
                     case Key.I:
                         if (ctrlDown)
                         {
-                            NativeMethods.ShowFileProperties(Pics[FolderIndex]);
+                            SystemIntegration.NativeMethods.ShowFileProperties(Pics[FolderIndex]);
                         }
 
                         break;
@@ -535,7 +535,7 @@ namespace PicView.Shortcuts
                 }
             }
 
-#endregion Key is not held down
+            #endregion Key is not held down
 
             #region Alt + keys
 
@@ -560,7 +560,7 @@ namespace PicView.Shortcuts
                 //e.Handled = true;
             }
 
-#endregion Alt + keys
+            #endregion Alt + keys
         }
 
         internal static void MainWindow_KeysUp(object sender, KeyEventArgs e)
@@ -571,12 +571,14 @@ namespace PicView.Shortcuts
             switch (e.Key)
             {
                 #region FastPicUpdate()
+
                 case Key.A:
                 case Key.Right:
                 case Key.D:
                     FastPicUpdate();
                     break;
-#endregion
+
+                    #endregion FastPicUpdate()
             }
         }
 
@@ -613,7 +615,5 @@ namespace PicView.Shortcuts
                     break;
             }
         }
-
-
     }
 }

@@ -7,7 +7,7 @@
         <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#TeX Gyre Heros" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
-        <!--<Setter Property="BorderThickness" Value="1"/>
+        <!--<Setter Property="BorderThickness" Value="1" />
         <Setter Property="BorderBrush" Value="#F90F0F0F" />-->
         <Setter Property="Template">
             <Setter.Value>
@@ -37,5 +37,4 @@
         </Setter>
     </Style>
     <!--</SnippetToolTip>-->
-
 </ResourceDictionary>

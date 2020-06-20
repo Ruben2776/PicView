@@ -1,21 +1,19 @@
-﻿using System.IO;
+﻿using PicView.UI.PicGallery;
+using PicView.UI.Sizing;
+using PicView.UI.UserControls;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using static PicView.Library.Fields;
-using static PicView.FileHandling.FileLists;
 using static PicView.ChangeImage.Navigation;
-using static PicView.UI.TransformImage.Scroll;
+using static PicView.FileHandling.FileLists;
+using static PicView.Library.Fields;
 using static PicView.UI.Tooltip;
-using PicView.UI.PicGallery;
-using PicView.UI.UserControls;
-using PicView.UI.Sizing;
-using PicView.Library;
+using static PicView.UI.TransformImage.Scroll;
 
 namespace PicView.UI
 {
     internal static class UpdateUIValues
     {
-
         internal static void ChangeSorting(short sorting)
         {
             if (Properties.Settings.Default.SortPreference == sorting)
@@ -65,6 +63,7 @@ namespace PicView.UI
                     sort5Header.IsChecked = false;
                     sort6Header.IsChecked = false;
                     break;
+
                 case 1:
                     sort0Header.IsChecked = false;
                     sort1Header.IsChecked = true;
@@ -74,6 +73,7 @@ namespace PicView.UI
                     sort5Header.IsChecked = false;
                     sort6Header.IsChecked = false;
                     break;
+
                 case 2:
                     sort0Header.IsChecked = false;
                     sort1Header.IsChecked = false;
@@ -83,6 +83,7 @@ namespace PicView.UI
                     sort5Header.IsChecked = false;
                     sort6Header.IsChecked = false;
                     break;
+
                 case 3:
                     sort0Header.IsChecked = false;
                     sort1Header.IsChecked = false;
@@ -92,6 +93,7 @@ namespace PicView.UI
                     sort5Header.IsChecked = false;
                     sort6Header.IsChecked = false;
                     break;
+
                 case 4:
                     sort0Header.IsChecked = false;
                     sort1Header.IsChecked = false;
@@ -101,6 +103,7 @@ namespace PicView.UI
                     sort5Header.IsChecked = false;
                     sort6Header.IsChecked = false;
                     break;
+
                 case 5:
                     sort0Header.IsChecked = false;
                     sort1Header.IsChecked = false;
@@ -110,6 +113,7 @@ namespace PicView.UI
                     sort5Header.IsChecked = true;
                     sort6Header.IsChecked = false;
                     break;
+
                 case 6:
                     sort0Header.IsChecked = false;
                     sort1Header.IsChecked = false;
@@ -121,7 +125,6 @@ namespace PicView.UI
                     break;
             }
         }
-
 
         internal static void SetScrolling(object sender, RoutedEventArgs e)
         {
@@ -278,6 +281,7 @@ namespace PicView.UI
                 case "15":
                     Properties.Settings.Default.SlideTimer = 15000;
                     break;
+
                 default:
                     break;
             }

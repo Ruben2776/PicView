@@ -212,9 +212,7 @@
                         <SolidColorBrush x:Name="SaveBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Border.Background>
                 </Border>
-
             </Canvas>
-
         </Border>
         <Rectangle
             Width="22"

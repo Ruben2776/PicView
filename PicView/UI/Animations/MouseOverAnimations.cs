@@ -1,13 +1,10 @@
 ﻿using System.Windows.Media;
-using System.Windows.Input;
-using static PicView.Library.Fields;
-
+using static PicView.UI.ConfigColors;
 
 namespace PicView.UI.Animations
 {
     internal static class MouseOverAnimations
     {
-
         /*
 
             Adds MouseOver events for the given elements with the AnimationHelper.
@@ -51,7 +48,7 @@ namespace PicView.UI.Animations
         //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(wBrush, false);
         //}
 
-        #endregion
+        #endregion logo
 
         #region 1x
 
@@ -110,7 +107,7 @@ namespace PicView.UI.Animations
             );
         }
 
-        #endregion
+        #endregion 1x
 
         #region 2x
 
@@ -132,7 +129,7 @@ namespace PicView.UI.Animations
             ButtonMouseLeaveAnim(brush2, transparent, alpha);
         }
 
-        #endregion
+        #endregion 2x
 
         #region 3x
 
@@ -157,7 +154,6 @@ namespace PicView.UI.Animations
             ButtonMouseLeaveAnim(brush3, transparent, alpha);
         }
 
-        #endregion
-
+        #endregion 3x
     }
 }

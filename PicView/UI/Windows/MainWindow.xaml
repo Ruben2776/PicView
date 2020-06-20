@@ -74,7 +74,6 @@
                     FontSize="15"
                     FontWeight="Bold"
                     Foreground="{StaticResource MainColorBrush}" />
-
             </DockPanel>
 
             <StackPanel
@@ -248,9 +247,7 @@
                                 </Path.Fill>
                             </Path>
                         </Button>
-
                     </Canvas>
-
 
                     <Rectangle
                         Canvas.Left="372"
@@ -404,7 +401,6 @@
                         Width="1"
                         Height="35"
                         Fill="{StaticResource BorderBrush}" />
-
                 </Canvas>
             </StackPanel>
 

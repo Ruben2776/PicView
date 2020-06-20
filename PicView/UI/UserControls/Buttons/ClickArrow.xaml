@@ -12,7 +12,7 @@
         BorderThickness="1,1,0,1"
         CornerRadius="2,0,0,2">
         <Border.BorderBrush>
-            <SolidColorBrush x:Name="BorderBrushKey" Color="{StaticResource BorderColor}"/>
+            <SolidColorBrush x:Name="BorderBrushKey" Color="{StaticResource BorderColor}" />
         </Border.BorderBrush>
         <Canvas x:Name="canvas">
             <Polygon

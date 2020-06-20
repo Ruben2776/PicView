@@ -1,6 +1,5 @@
 ﻿using PicView.UI.PicGallery;
 using PicView.UI.Sizing;
-using System;
 using System.Windows.Media;
 using static PicView.Library.Fields;
 
@@ -48,7 +47,6 @@ namespace PicView.UI.TransformImage
             if (mainWindow.img.Source == null ||
                 Properties.Settings.Default.PicGallery == 1 && GalleryFunctions.IsOpen)
             { return; }
-            
 
             if (right)
             {

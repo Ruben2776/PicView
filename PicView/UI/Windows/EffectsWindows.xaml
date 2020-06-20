@@ -48,7 +48,6 @@
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
-
             <TextBlock
                 x:Name="Bar"
                 VerticalAlignment="Center"
@@ -111,7 +110,6 @@
                                 <SolidColorBrush x:Name="NegativeBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
-
 
                         <RadioButton
                             x:Name="GrayscaleButton"
@@ -333,7 +331,6 @@
                             </RadioButton.Background>
                         </RadioButton>
 
-
                         <RadioButton
                             x:Name="SketchButton"
                             MinWidth="125"
@@ -355,7 +352,6 @@
                                 <SolidColorBrush x:Name="TonemappingBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
-
 
                         <RadioButton
                             x:Name="FrostyOutlineButton"
@@ -379,7 +375,6 @@
                             </RadioButton.Background>
                         </RadioButton>
 
-
                         <RadioButton
                             x:Name="GlasTileButton"
                             MinWidth="125"
@@ -390,12 +385,10 @@
                                 <SolidColorBrush x:Name="GlasTileBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
-
                     </WrapPanel>
 
                     <Label HorizontalAlignment="Center" Content="Click button to add specified shader effect to image" />
                     <Label HorizontalAlignment="Center" Content="Uncheck to remove effect" />
-
                 </StackPanel>
             </ScrollViewer>
         </Border>

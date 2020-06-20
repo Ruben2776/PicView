@@ -1,18 +1,19 @@
-﻿using System.Windows;
+﻿using PicView.ImageHandling;
+using PicView.SystemIntegration;
+using PicView.UI.PicGallery;
+using PicView.UI.Sizing;
+using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.FileHandling.Copy_Paste;
 using static PicView.FileHandling.DeleteFiles;
-using static PicView.Library.Fields;
-using static PicView.Library.Utilities;
 using static PicView.FileHandling.Open_Save;
 using static PicView.FileHandling.RecentFiles;
+using static PicView.Library.Fields;
 using static PicView.Library.Resources.SvgIcons;
-using static PicView.Wallpaper;
-using System.Diagnostics;
-using PicView.UI.Sizing;
-using PicView.UI.PicGallery;
-using PicView.ImageHandling;
+using static PicView.Library.Utilities;
+using static PicView.SystemIntegration.Wallpaper;
 
 namespace PicView.UI.Loading
 {
@@ -23,7 +24,6 @@ namespace PicView.UI.Loading
             // Add main contextmenu
             cm = new ContextMenu();
             var scbf = (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"];
-
 
             ///////////////////////////
             ///////////////////////////
@@ -46,7 +46,6 @@ namespace PicView.UI.Loading
             opencm.Click += (s, x) => Open();
             cm.Items.Add(opencm);
 
-
             ///////////////////////////
             ///////////////////////////
             ///     Save           \\\\
@@ -67,8 +66,6 @@ namespace PicView.UI.Loading
             savecm.Icon = savecmIcon;
             savecm.Click += (s, x) => SaveFiles();
             cm.Items.Add(savecm);
-
-
 
             ///////////////////////////
             ///////////////////////////
@@ -111,7 +108,6 @@ namespace PicView.UI.Loading
             openwcm.Icon = openwIcon;
             openwcm.Click += (s, x) => OpenWith(Pics[FolderIndex]);
             cm.Items.Add(openwcm);
-
 
             ///////////////////////////
             ///////////////////////////
@@ -193,7 +189,6 @@ namespace PicView.UI.Loading
                 BorderThickness = new Thickness(0, 0, 0, 0),
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 2
-
             };
             sortcmChild2Header.Click += delegate { UpdateUIValues.ChangeSorting(2); cm.IsOpen = false; };
             sortcmChild2.Click += delegate { UpdateUIValues.ChangeSorting(2); cm.IsOpen = false; };
@@ -264,7 +259,6 @@ namespace PicView.UI.Loading
             sortcmChild6.Header = sortcmChild6Header;
             sortcm.Items.Add(sortcmChild6);
             cm.Items.Add(sortcm);
-
 
             ///////////////////////////
             ///////////////////////////
@@ -377,8 +371,9 @@ namespace PicView.UI.Loading
                 Width = double.NaN,
                 Height = double.NaN
             };
-            altcmHeader.Click += delegate {
-                if (GalleryFunctions.IsOpen) 
+            altcmHeader.Click += delegate
+            {
+                if (GalleryFunctions.IsOpen)
                 {
                     altcmHeader.IsChecked = Properties.Settings.Default.ShowInterface;
                     return;
@@ -432,7 +427,6 @@ namespace PicView.UI.Loading
             wallcm.Icon = wallcmIcon;
             cm.Items.Add(wallcm);
 
-
             ///////////////////////////
             ///////////////////////////
             ///   Locate on disk   \\\\
@@ -454,7 +448,6 @@ namespace PicView.UI.Loading
             lcdcm.Icon = lcdcmIcon;
             lcdcm.Click += (s, x) => Open_In_Explorer();
             cm.Items.Add(lcdcm);
-
 
             ///////////////////////////
             ///////////////////////////
@@ -496,7 +489,6 @@ namespace PicView.UI.Loading
             cpmIcon.Width = cpmIcon.Height = 12;
             cpmIcon.Fill = scbf;
             cpm.Icon = cpmIcon;
-
 
             ///////////////////////////
             ///   Copy file        \\\\
@@ -541,8 +533,6 @@ namespace PicView.UI.Loading
             };
             cppfm.Click += (s, x) => CopyText();
             cpm.Items.Add(cppfm);
-
-
 
             cm.Items.Add(cpm);
 
@@ -610,7 +600,6 @@ namespace PicView.UI.Loading
             MovetoRecycleBin.Icon = MovetoRecycleBinIcon;
             MovetoRecycleBin.Click += (s, x) => DeleteFile(Pics[FolderIndex], true);
             cm.Items.Add(MovetoRecycleBin);
-
 
             ///////////////////////////
             ///////////////////////////

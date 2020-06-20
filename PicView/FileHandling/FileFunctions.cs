@@ -6,9 +6,8 @@ using System.Text.RegularExpressions;
 
 namespace PicView.FileHandling
 {
-    class FileFunctions
+    internal class FileFunctions
     {
-
         internal static bool RenameFile(string path, string newPath)
         {
             try
@@ -25,50 +24,47 @@ namespace PicView.FileHandling
             return true;
         }
 
-
-
         /// <summary>
-        /// Returns the human-readable file size for an arbitrary, 64-bit file size 
+        /// Returns the human-readable file size for an arbitrary, 64-bit file size
         /// The default format is "0.### XB", e.g. "4.2 KB" or "1.434 GB"
         /// </summary>
         /// <param name="i">FileInfo.Length</param>
         /// <returns></returns>
         /// Credits to http://www.somacon.com/p576.php
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]
         internal static string GetSizeReadable(long i)
         {
-            string sign = (i < 0 ? "-" : string.Empty);
-            double readable = i < 0 ? -i : i;
-            char suffix;
+            string sign = i < 0 ? "-" : string.Empty;
+            _ = i < 0 ? -i : i;
+            char prefix;
+            double value;
 
             if (i >= 0x40000000) // Gigabyte
             {
-                suffix = 'G';
-                readable = (i >> 20);
+                prefix = 'G';
+                value = i >> 20;
             }
             else if (i >= 0x100000) // Megabyte
             {
-                suffix = 'M';
-                readable = (i >> 10);
+                prefix = 'M';
+                value = i >> 10;
             }
             else if (i >= 0x400) // Kilobyte
             {
-                suffix = 'K';
-                readable = i;
+                prefix = 'K';
+                value = i;
             }
             else
             {
                 return i.ToString(sign + "0 B", CultureInfo.CurrentCulture); // Byte
             }
-            readable /= 1024;
+            value /= 1024;
 
-            return sign + readable.ToString("0.## ", CultureInfo.CurrentCulture) + suffix + 'B';
+            return sign + value.ToString("0.## ", CultureInfo.CurrentCulture) + prefix + 'B';
         }
-
 
         internal static bool FilePathHasInvalidChars(string path)
         {
-            return (!string.IsNullOrEmpty(path) && path.IndexOfAny(Path.GetInvalidPathChars()) >= 0);
+            return !string.IsNullOrEmpty(path) && path.IndexOfAny(Path.GetInvalidPathChars()) >= 0;
         }
 
         internal static string MakeValidFileName(string name)
@@ -89,6 +85,4 @@ namespace PicView.FileHandling
             return name;
         }
     }
-
-
 }

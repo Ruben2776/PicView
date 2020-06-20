@@ -1,17 +1,16 @@
 ﻿using PicView.ChangeImage;
-using static PicView.UI.UserControls.UC;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using static PicView.ChangeImage.Navigation;
+using static PicView.ImageHandling.ImageDecoder;
+using static PicView.ImageHandling.Thumbnails;
 using static PicView.Library.Fields;
 using static PicView.UI.PicGallery.GalleryFunctions;
-using static PicView.ImageHandling.ImageDecoder;
-using static PicView.ChangeImage.Navigation;
 using static PicView.UI.Sizing.ScaleImage;
-using static PicView.ImageHandling.Thumbnails;
-using PicView.Library;
+using static PicView.UI.UserControls.UC;
 
 namespace PicView.UI.PicGallery
 {
@@ -135,6 +134,5 @@ namespace PicView.UI.PicGallery
             // Select next item
             SetSelected(id);
         }
-
     }
 }

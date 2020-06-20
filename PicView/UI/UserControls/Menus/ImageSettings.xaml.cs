@@ -37,7 +37,6 @@ namespace PicView.UI.UserControls
             Contained_Gallery.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ContainedBorderBrush);
             Contained_Gallery.MouseEnter += (s, x) => ButtonMouseOverAnim(ContainedBorderBrush, true);
             Contained_Gallery.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ContainedBorderBrush, false);
-
         }
 
         #region Methods
@@ -55,7 +54,6 @@ namespace PicView.UI.UserControls
             FlipPath.Data = Geometry.Parse("M448,192l-128,96v-64H128v128h248c4.4,0,8,3.6,8,8v48c0,4.4-3.6,8-8,8H72c-4.4,0-8-3.6-8-8V168c0-4.4,3.6-8,8-8h248V96 L448, 192z");
         }
 
-        #endregion
-
+        #endregion Methods
     }
 }

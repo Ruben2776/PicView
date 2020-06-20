@@ -203,7 +203,6 @@
                             </TextBlock.Style>
                         </TextBlock>
                     </Grid>
-
                 </StackPanel>
 
                 <StackPanel
@@ -333,9 +332,6 @@
                             <SolidColorBrush x:Name="FlipBoxBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Border.Background>
                     </Border>
-
-
-
                 </StackPanel>
 
                 <StackPanel
@@ -401,7 +397,6 @@
                                 Color="Black" />
                         </Border.Effect>
                     </Border>
-
                 </StackPanel>
 
                 <StackPanel
@@ -477,8 +472,6 @@
                             <SolidColorBrush x:Name="SelectedBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Border.Background>
                     </Border>
-
-
 
                     <Border
                         x:Name="AllRadioBorder"
@@ -581,7 +574,6 @@
                         <SolidColorBrush x:Name="StartBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Button.Background>
                 </Button>
-
             </StackPanel>
         </Border>
     </DockPanel>

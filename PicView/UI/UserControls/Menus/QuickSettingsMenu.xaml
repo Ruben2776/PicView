@@ -116,7 +116,6 @@
                     </Button.Content>
                 </Button>
 
-
                 <Button
                     x:Name="InfoButton"
                     Canvas.Left="0"
@@ -217,11 +216,7 @@
                         <SolidColorBrush x:Name="ToggleLoopBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </CheckBox.Background>
                 </CheckBox>
-
-
-
             </Canvas>
-
         </Border>
         <Rectangle
             Width="23"

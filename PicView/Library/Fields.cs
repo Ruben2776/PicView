@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using PicView.SystemIntegration;
+using System.Collections.Generic;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,7 +26,6 @@ namespace PicView.Library
         + " *.jpm *.jps *.jpt *.kdc *.label *.map *.nrw *.otb *.otf *.pbm *.pcd *.pcds *.pcl *.pct *.pcx *.pfa *.pfb *.pfm *.picon *.pict *.pix *.pjpeg *.png00"
         + " *.png24 *.png32 *.png48 *.png64 *.png8 *.pnm *.ppm *.ps *.radialgradient *.ras *.rgb *.rgba *.rgbo *.rla *.rle *.scr *.screenshot *.sgi *.srf *.sun"
         + " *.svgz *.tiff64 *.ttf *.vda *.vicar *.vid *.viff *.vst *.vmf *.wpg *.xbm *.xcf *.yuv";
-
 
         /// <summary>
         ///  Files filterering string used for file/save dialog
@@ -141,6 +141,7 @@ namespace PicView.Library
         /// Starting point of AutoScroll
         /// </summary>
         internal static Point? autoScrollOrigin;
+
         /// <summary>
         /// Current point of AutoScroll
         /// </summary>
@@ -153,7 +154,6 @@ namespace PicView.Library
         /// List of file paths to supported files
         /// </summary>
         internal static List<string> Pics { get; set; }
-
 
         //internal static List<ImageSource> Images { get; set; }
         /// <summary>
@@ -195,15 +195,5 @@ namespace PicView.Library
         /// Primary ContextMenu
         /// </summary>
         internal static ContextMenu cm;
-
-        /// <summary>
-        /// Helper for user color settings
-        /// </summary>
-        internal static Color backgroundBorderColor;
-        /// <summary>
-        /// Helper for user color settings
-        /// </summary>
-        internal static Color mainColor;
-
     }
 }
