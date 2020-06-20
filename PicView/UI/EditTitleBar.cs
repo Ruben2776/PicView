@@ -13,15 +13,14 @@ namespace PicView.UI
 
         internal static void Bar_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (!mainWindow.Bar.IsFocused)
+            if (mainWindow.Bar.IsFocused)
             {
-                if (e.ClickCount == 2)
-                {
-                    WindowLogic.Maximize_Restore();
-                }
-
-                e.Handled = true;
+                return;
             }
+
+            WindowLogic.Move(sender, e);
+            Refocus();
+            e.Handled = true; // Disable text clicking
         }
 
         internal static void EditTitleBar_Text()
