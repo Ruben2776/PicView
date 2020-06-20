@@ -14,10 +14,10 @@ namespace PicView.UI.UserControls
     {
         private ColorAnimation ccAnim;
         private ColorAnimation ccAnim2;
-        private Color bb;
-        private Color bg;
-        private Color bg2;
-        private Color fg;
+        private readonly Color bb;
+        private readonly Color bg;
+        private readonly Color bg2;
+        private readonly Color fg;
 
         public Minus()
         {

@@ -115,11 +115,14 @@ namespace PicView.ChangeImage
             if (FreshStartup)
                 Trace.WriteLine("Pic(string path) entering Pic(int x)");
 #endif
+            if (ajaxLoading.Opacity != 0)
+            {
+                AjaxLoadingEnd();
+            }
 
             // Navigate to picture using obtained index
             await Pic(FolderIndex).ConfigureAwait(false);
-
-            AjaxLoadingEnd();
+            
 
             prevPicResource = null; // Make sure to not waste memory
         }
@@ -257,12 +260,10 @@ namespace PicView.ChangeImage
             }
 
             FreshStartup = false;
-
 #if DEBUG
             stopWatch.Stop();
             var s = $"Pic(); executed in {stopWatch.Elapsed.TotalMilliseconds} milliseconds";
             Trace.WriteLine(s);
-            //ToolTipStyle(s);
 #endif
         }
 

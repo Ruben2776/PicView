@@ -6,7 +6,7 @@ namespace PicView.SystemIntegration
     /// <summary>
     /// Logic for the current monitor's screen resolution
     /// </summary>
-    internal readonly struct MonitorSize
+    internal readonly struct MonitorSize : IEquatable<MonitorSize>
     {
         internal readonly int Width { get; }
         internal readonly int Height { get; }
@@ -14,6 +14,34 @@ namespace PicView.SystemIntegration
         internal readonly double DpiScaling { get; }
 
         internal readonly Rect WorkArea { get; }
+
+        public bool Equals(MonitorSize other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || !(obj is MonitorSize))
+                return false;
+
+            return Equals((MonitorSize)obj);
+        }
+
+        public static bool operator ==(MonitorSize e1, MonitorSize e2)
+        {
+            return e1.Equals(e2);
+        }
+
+        public static bool operator !=(MonitorSize e1, MonitorSize e2)
+        {
+            return !(e1 == e2);
+        }
+
+        public override int GetHashCode()
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Store current monitor info
@@ -54,7 +82,6 @@ namespace PicView.SystemIntegration
             var workAreaWidth = (int)Math.Floor(workArea.Width * dpiScaling);
             var workAreaHeight = (int)Math.Floor(workArea.Height * dpiScaling);
 
-            //return new MonitorSize(workAreaWidth, workAreaHeight, dpiScaling, workArea);
             return new MonitorSize(workAreaWidth, workAreaHeight, dpiScaling, workArea);
         }
     }

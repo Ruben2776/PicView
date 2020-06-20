@@ -12,8 +12,15 @@ namespace PicView.UI.UserControls
             InitializeComponent();
         }
 
-        public string Text { get { return Bar.Text; } set { Bar.Text = value; } }
+        public string Text {
+            get => Bar.Text;
+            set => Bar.Text = value;
+        }
 
-        public new bool IsFocused { get { return Bar.IsFocused; } }
+        public new bool IsFocused {
+            get {
+                return Bar.IsFocused; 
+            }
+        }
     }
 }

@@ -5,7 +5,7 @@ using PicView.UI.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -55,7 +55,7 @@ namespace PicView.UI.Loading
             AjaxLoadingStart();
         }
 
-        internal static async void Start()
+        internal static async Task Start()
         {
 #if DEBUG
             Trace.WriteLine("ContentRendered started");

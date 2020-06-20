@@ -24,7 +24,7 @@ namespace PicView.Shortcuts
 {
     internal static class MainShortcuts
     {
-        internal static void MainWindow_KeysDown(object sender, KeyEventArgs e)
+        internal static async System.Threading.Tasks.Task MainWindow_KeysDownAsync(object sender, KeyEventArgs e)
         {
             // Don't allow keys when typing in text
             if (mainWindow.Bar.IsKeyboardFocusWithin) { return; }
@@ -94,11 +94,11 @@ namespace PicView.Shortcuts
                         // Go to first if Ctrl held down
                         if (ctrlDown)
                         {
-                            Pic(true, true);
+                            await Pic(true, true).ConfigureAwait(false);
                         }
                         else
                         {
-                            Pic();
+                            await Pic().ConfigureAwait(false);
                         }
                     }
                     else if (CanNavigate)
@@ -125,11 +125,11 @@ namespace PicView.Shortcuts
                         // Go to last if Ctrl held down
                         if (ctrlDown)
                         {
-                            Pic(false, true);
+                            await Pic(false, true).ConfigureAwait(false);
                         }
                         else
                         {
-                            Pic(false);
+                            await Pic(false).ConfigureAwait(false);
                         }
                     }
                     else if (CanNavigate)
@@ -198,7 +198,7 @@ namespace PicView.Shortcuts
                             }
                             else
                             {
-                                Pic(false);
+                                await Pic(false).ConfigureAwait(false);
                             }
                         }
                         else
@@ -217,7 +217,7 @@ namespace PicView.Shortcuts
                 case Key.S:
                     if (ctrlDown && picGallery != null && !GalleryFunctions.IsOpen)
                     {
-                        SaveFiles();
+                        await SaveFiles().ConfigureAwait(false);
                     }
                     else if (Properties.Settings.Default.ScrollEnabled)
                     {
@@ -238,7 +238,7 @@ namespace PicView.Shortcuts
                             }
                             else
                             {
-                                Pic();
+                                await Pic().ConfigureAwait(false);
                             }
                         }
                         else
@@ -263,6 +263,7 @@ namespace PicView.Shortcuts
                 case Key.OemMinus:
                     Zoom(-1, ctrlDown);
                     return;
+                default: break; // Please automatic code analyzers...
             }
 
             #endregion Keys where it can be held down
@@ -297,7 +298,7 @@ namespace PicView.Shortcuts
                         }
                         if (GalleryFunctions.IsOpen)
                         {
-                            Toggle();
+                            await ToggleAsync().ConfigureAwait(false);
                             return;
                         }
                         if (IsDialogOpen)
@@ -338,7 +339,7 @@ namespace PicView.Shortcuts
 
                     // O, Ctrl + O
                     case Key.O:
-                        Open();
+                        await Open().ConfigureAwait(false);
                         break;
 
                     // X, Ctrl + X
@@ -397,7 +398,7 @@ namespace PicView.Shortcuts
                     case Key.V:
                         if (ctrlDown)
                         {
-                            Paste();
+                            await Paste().ConfigureAwait(false);
                         }
 
                         break;
@@ -424,7 +425,7 @@ namespace PicView.Shortcuts
                     case Key.R:
                         if (ctrlDown)
                         {
-                            Reload();
+                            await Reload().ConfigureAwait(false);
                         }
                         break;
 
@@ -538,6 +539,8 @@ namespace PicView.Shortcuts
                     case Key.End:
                         mainWindow.Scroller.ScrollToEnd();
                         break;
+
+                    default: break;
                 }
             }
 
@@ -553,7 +556,6 @@ namespace PicView.Shortcuts
                 {
                     HideInterfaceLogic.ToggleInterface();
                 }
-                //e.Handled = true;
             }
 
             // Alt + Enter
@@ -563,13 +565,12 @@ namespace PicView.Shortcuts
                 {
                     Fullscreen_Restore();
                 }
-                //e.Handled = true;
             }
 
             #endregion Alt + keys
         }
 
-        internal static void MainWindow_KeysUp(object sender, KeyEventArgs e)
+        internal static async System.Threading.Tasks.Task MainWindow_KeysUpAsync(object sender, KeyEventArgs e)
         {
             // Don't allow keys when typing in text
             if (mainWindow.Bar.IsKeyboardFocusWithin) { return; }
@@ -581,14 +582,16 @@ namespace PicView.Shortcuts
                 case Key.A:
                 case Key.Right:
                 case Key.D:
-                    FastPicUpdate();
+                    await FastPicUpdate().ConfigureAwait(false);
                     break;
 
-                    #endregion FastPicUpdate()
+                #endregion FastPicUpdate()
+
+                default: break;
             }
         }
 
-        internal static void MainWindow_MouseDown(object sender, MouseButtonEventArgs e)
+        internal static async System.Threading.Tasks.Task MainWindow_MouseDownAsync(object sender, MouseButtonEventArgs e)
         {
             switch (e.ChangedButton)
             {
@@ -613,12 +616,14 @@ namespace PicView.Shortcuts
                     break;
 
                 case MouseButton.XButton1:
-                    Pic(false);
+                    await Pic(false).ConfigureAwait(false);
                     break;
 
                 case MouseButton.XButton2:
-                    Pic();
+                    await Pic().ConfigureAwait(false);
                     break;
+
+                default: break;
             }
         }
     }

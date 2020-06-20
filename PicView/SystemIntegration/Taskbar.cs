@@ -2,7 +2,7 @@
 
 namespace PicView.SystemIntegration
 {
-    internal class Taskbar
+    internal static class Taskbar
     {
         #region Progress
 

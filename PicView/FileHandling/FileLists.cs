@@ -141,7 +141,7 @@ namespace PicView.FileHandling
 
             switch (sortFilesBy)
             {
-                // Alphanumeric sort
+                default:  // Alphanumeric sort
                 case SortFilesBy.Name:
                     var list = items.ToList();
                     list.Sort((x, y) => { return SystemIntegration.NativeMethods.StrCmpLogicalW(x, y); });
@@ -181,48 +181,47 @@ namespace PicView.FileHandling
         /// <returns></returns>
         internal static async Task GetValues(string path)
         {
-            await Task.Run(() =>
+            var extension = Path.GetExtension(path);
+            extension = extension.ToLower(CultureInfo.CurrentCulture);
+            switch (extension)
             {
-                var extension = Path.GetExtension(path);
-                extension = extension.ToLower(CultureInfo.CurrentCulture);
-                switch (extension)
-                {
-                    // Archives
-                    case ".zip":
-                    case ".7zip":
-                    case ".7z":
-                    case ".rar":
-                    case ".cbr":
-                    case ".cb7":
-                    case ".cbt":
-                    case ".cbz":
-                    case ".xz":
-                    case ".bzip2":
-                    case ".gzip":
-                    case ".tar":
-                    case ".wim":
-                    case ".iso":
-                    case ".cab":
-                        if (!Extract(path))
-                        {
-                            Error_Handling.Reload(true);
-                        }
-                        return;
-                }
-
-                // Set files to Pics and get index
-                Pics = FileList(Path.GetDirectoryName(path));
-                if (Pics == null)
-                {
+                // Archives
+                case ".zip":
+                case ".7zip":
+                case ".7z":
+                case ".rar":
+                case ".cbr":
+                case ".cb7":
+                case ".cbt":
+                case ".cbz":
+                case ".xz":
+                case ".bzip2":
+                case ".gzip":
+                case ".tar":
+                case ".wim":
+                case ".iso":
+                case ".cab":
+                    if (!Extract(path))
+                    {
+                        await Error_Handling.Reload(true).ConfigureAwait(false);
+                    }
                     return;
-                }
+            }
 
-                FolderIndex = Pics.IndexOf(path);
+            // Set files to Pics and get index
+            Pics = FileList(Path.GetDirectoryName(path));
+            if (Pics == null)
+            {
+                return;
+            }
+
+            FolderIndex = Pics.IndexOf(path);
 
 #if DEBUG
-                Trace.WriteLine("Getvalues completed ");
+            Trace.WriteLine("Getvalues completed ");
 #endif
-            }).ConfigureAwait(false);
         }
+
+
     }
 }

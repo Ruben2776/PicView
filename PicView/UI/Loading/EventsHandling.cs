@@ -32,9 +32,9 @@ namespace PicView.UI.Loading
         internal static void Go()
         {
             // keyboard and Mouse_Keys Keys
-            mainWindow.KeyDown += MainWindow_KeysDown;
-            mainWindow.KeyUp += MainWindow_KeysUp;
-            mainWindow.MouseDown += MainWindow_MouseDown;
+            mainWindow.KeyDown += async (s,x) => await MainWindow_KeysDownAsync(s, x).ConfigureAwait(false);
+            mainWindow.KeyUp += async (s, x) => await MainWindow_KeysUpAsync(s, x).ConfigureAwait(false);
+            mainWindow.MouseDown += async (s, x) => await MainWindow_MouseDownAsync(s, x).ConfigureAwait(false);
 
             // MinButton
             mainWindow.MinButton.TheButton.Click += (s, x) => SystemCommands.MinimizeWindow(mainWindow);
@@ -61,9 +61,14 @@ namespace PicView.UI.Loading
             fileMenu.OpenBorder.MouseLeftButtonUp += async (s, x) => await Open().ConfigureAwait(false); ;
             fileMenu.FileLocationBorder.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
             fileMenu.PrintBorder.MouseLeftButtonUp += (s, x) => Print(Pics[FolderIndex]);
-            fileMenu.Save_File_Location_Border.MouseLeftButtonUp += async (s, x) => await SaveFiles().ConfigureAwait(false); ;
-
-            fileMenu.PasteButton.Click += async (s, x) => await Paste();
+            fileMenu.Save_File_Location_Border.MouseLeftButtonUp += async delegate
+            {
+                await SaveFiles().ConfigureAwait(false);
+            };
+            fileMenu.PasteButton.Click += async delegate
+            {
+                await Paste().ConfigureAwait(false);
+            };
             fileMenu.CopyButton.Click += (s, x) => Copyfile();
 
             // image_button
@@ -142,7 +147,7 @@ namespace PicView.UI.Loading
             minus.MouseEnter += Interface_MouseEnter_Negative;
 
             // GalleryShortcut
-            galleryShortcut.MouseLeftButtonDown += (s, x) => GalleryToggle.Toggle();
+            galleryShortcut.MouseLeftButtonDown += (s, x) => GalleryToggle.ToggleAsync();
             galleryShortcut.MouseEnter += Interface_MouseEnter_Negative;
 
             // Bar

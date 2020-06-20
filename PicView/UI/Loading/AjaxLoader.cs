@@ -6,20 +6,6 @@ namespace PicView.UI.Loading
 {
     internal static class AjaxLoader
     {
-        //// AjaxLoading
-        ///// <summary>
-        ///// Loads AjaxLoading and adds it to the window
-        ///// </summary>
-        //internal static void LoadAjaxLoading()
-        //{
-        //    ajaxLoading = new AjaxLoading
-        //    {
-        //        Focusable = false,
-        //        Opacity = 0
-        //    };
-
-        //    mainWindow.bg.Children.Add(ajaxLoading);
-        //}
 
         /// <summary>
         /// Start loading animation
@@ -37,7 +23,10 @@ namespace PicView.UI.Loading
         /// </summary>
         internal static void AjaxLoadingEnd()
         {
-            AnimationHelper.Fade(ajaxLoading, 0, TimeSpan.FromSeconds(.2));
+            if (ajaxLoading.Opacity != 0)
+            {
+                AnimationHelper.Fade(ajaxLoading, 0, TimeSpan.FromSeconds(.2));
+            }
         }
     }
 }
