@@ -19,6 +19,16 @@ namespace PicView.FileHandling
         /// </summary>
         internal static void Open_In_Explorer()
         {
+
+            if (Pics.Count > 0)
+            {
+                if (Pics.Count < FolderIndex)
+                {
+                    return;
+                }
+            }
+            else return;
+
             if (!File.Exists(Pics[FolderIndex]) || mainWindow.img.Source == null)
             {
                 return;
