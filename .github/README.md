@@ -1,7 +1,5 @@
 <img src="/.github/PicView-logo.svg" width="170"/>
 
----
-
 
 [![Total Downloads](https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=downloads&style=for-the-badge)](https://github.com/Ruben2776/PicView/releases)
 
@@ -11,7 +9,11 @@ PicView is an Open Source Image Viewer for Windows, designed to efficiently and 
 ![Visual Studio 2019](https://img.shields.io/badge/IDE-Visual%20Studio%202019-964ad4.svg?maxAge=3600)
 ![.NET Core 3.1](https://img.shields.io/badge/.NET-Core%203.1-lightgrey.svg?maxAge=3600)
 ![Windows OS](https://img.shields.io/badge/OS-Windows%207+-00adef.svg?maxAge=3600)
- 
+
+
+---
+
+
 <img src="/.github/Annotation%202020-06-06%20070000.png" align="left" width="350"/>
 
 ### Features:
