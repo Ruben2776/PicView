@@ -13,9 +13,14 @@ namespace PicView.UI
 
         internal static void Bar_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (Pics != null && Pics.Count == 0)
+            if (!mainWindow.Bar.IsFocused)
             {
-                WindowLogic.Move(sender, e);
+                if (e.ClickCount == 2)
+                {
+                    WindowLogic.Maximize_Restore();
+                }
+
+                e.Handled = true;
             }
         }
 

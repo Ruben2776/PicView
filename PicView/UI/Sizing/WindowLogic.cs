@@ -112,7 +112,7 @@ namespace PicView.UI.Sizing
                 return;
             }
 
-            if (!Properties.Settings.Default.ShowInterface && !SetWindowBehaviour && e.LeftButton == MouseButtonState.Pressed)
+            if (e.LeftButton == MouseButtonState.Pressed)
             {
                 mainWindow.DragMove();
             }

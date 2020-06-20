@@ -513,6 +513,12 @@ namespace PicView.Shortcuts
                         ResetZoom();
                         break;
 
+#if DEBUG
+                    // F8
+                    case Key.F8:
+                        Unload();
+                        break;
+#endif
                     // F11
                     case Key.F11:
                         SlideShow.StartSlideshow();

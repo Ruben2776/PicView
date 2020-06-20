@@ -67,28 +67,40 @@ namespace PicView.UI
                 return;
             }
 
+            if (!check.Value)
+            {
+                return;
+            }
+
+            // Check if same file
+            if (files.Length == 1 && Pics.Count > 0)
+            {
+                if (files[0] == Pics[FolderIndex])
+                {
+                    return;
+                }
+            }
+            
+
             // Tell that it's succeeded
             e.Effects = DragDropEffects.Copy;
             e.Handled = true;
             ShowTooltipMessage(DragOverString, true);
 
-            if (check.Value)
+            // If no image, fix it to container
+            if (mainWindow.img.Source == null)
             {
-                // If no image, fix it to container
-                if (mainWindow.img.Source == null)
-                {
-                    mainWindow.img.Width = mainWindow.Scroller.ActualWidth;
-                    mainWindow.img.Height = mainWindow.Scroller.ActualHeight;
-                }
-                else
-                {
-                    // Save our image so we can swap back to it later if neccesary
-                    prevPicResource = mainWindow.img.Source;
-                }
-
-                // Load from preloader or thumbnails
-                mainWindow.img.Source = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : GetBitmapSourceThumb(files[0]);
+                mainWindow.img.Width = mainWindow.Scroller.ActualWidth;
+                mainWindow.img.Height = mainWindow.Scroller.ActualHeight;
             }
+            else
+            {
+                // Save our image so we can swap back to it later if neccesary
+                prevPicResource = mainWindow.img.Source;
+            }
+
+            // Load from preloader or thumbnails
+            mainWindow.img.Source = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : GetBitmapSourceThumb(files[0]);
         }
 
         /// <summary>
@@ -152,6 +164,15 @@ namespace PicView.UI
                 else return;
             }
 
+            // Check if same file
+            if (files.Length == 1 && Pics.Count > 0)
+            {
+                if (files[0] == Pics[FolderIndex])
+                {
+                    return;
+                }
+            }
+
             // Load it
             Pic(files[0]);
 
@@ -160,6 +181,7 @@ namespace PicView.UI
             AjaxLoader.AjaxLoadingEnd();
 
             // Start multiple clients if user drags multiple files
+            // TODO no longer working after converting to .NET Core...
             if (files.Length > 0)
             {
                 Parallel.For(1, files.Length, x =>

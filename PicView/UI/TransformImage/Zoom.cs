@@ -61,21 +61,15 @@ namespace PicView.UI.TransformImage
         /// <param name="e"></param>
         internal static void Zoom_img_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (!isZoomed)
-            {
-                MoveAlt(sender, e);
-                return;
-            }
-
-            // Fix focus
-            EditTitleBar.Refocus();
-
             // Move window when Shift is being held down
             if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
             {
                 Move(sender, e);
                 return;
             }
+
+            // Fix focus
+            EditTitleBar.Refocus();
 
             // Logic for auto scrolling
             if (AutoScrolling)
