@@ -30,7 +30,7 @@ PicView is an Open Source Image Viewer for Windows, designed to efficiently and 
 [View shortcuts](https://github.com/Ruben2776/PicView/wiki/Keyboard-and-mouse-shortcuts)
 
 
-If you have 7-Zip or WinRAR installed, you can view images inside archive files such `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
+If you have 7-Zip or WinRAR installed, you can view images inside archive files, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
 
 
 **Switch between image scaling modes;** Pressing `1` Centers the image in the window, while retaining the image's original size. <br> Pressing `2` Also centers the image in the window, but the image will be stretched to window height, while retaining aspect ratio. 
@@ -41,7 +41,7 @@ Pressing `3` enables the auto window sizing feature. It will resize the window t
 <img src="https://i.imgur.com/2I1wtFu.png" align="right" width="428" height="459"/>
 
 
-Slideshow `F11` with adjustable timer in the Settings window `F4`
+Slideshow `F11` with adjustable timer in the Settings window `F4`.
 
 
 Drag and drop from files Windows explorer or your browser. You can also hold `Ctrl` to drag currently viewed image to your file system.
@@ -66,7 +66,7 @@ Quickly crop images by pressing `C`.
 
 
 Toggleable scroll function by pressing `X` <br>
-Scroll function supports auto scroll, by `middle mouse` clicking
+Scroll function supports auto scroll, by `middle mouse` clicking.
 
 
 Rename/move files `F2`, for easy file management of photos/images.
