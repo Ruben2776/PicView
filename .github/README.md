@@ -64,18 +64,17 @@ View and access most recent files in the contextmenu, including ones from web ad
 Quickly crop images by pressing `C`.
 
 
- > The interface can be toggled by pressing `Alt + Z`. For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
+
 
 
 <h2>Configurable Interface Design</h2>
-<img src="https://picview.app/wp-content/uploads/2020/06/Annotation-2020-06-20-115747.png" align="left" width="405"/> 
-<img src="https://picview.app/wp-content/uploads/2020/06/Annotation-2020-06-18-104748.png" align="right" width="405"/>
+<img src="https://picview.app/wp-content/uploads/2020/06/Annotation-2020-06-20-115747.png" align="left" height="730"/> 
+<img src="https://picview.app/wp-content/uploads/2020/06/Annotation-2020-06-18-104748.png" align="right" height="730"/>
 
 
-...
 
-
-...
+ > The interface can be toggled by pressing `Alt + Z`. <br> For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
+ 
 
 
 <h2>Fullscreen Image Gallery:</h2>
