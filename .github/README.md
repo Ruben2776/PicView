@@ -1,4 +1,8 @@
-# PicView
+<img src="/.github/PicView-logo.svg" width="170"/>
+
+---
+
+
 [![Total Downloads](https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=downloads&style=for-the-badge)](https://github.com/Ruben2776/PicView/releases)
 
 PicView is an Open Source Image Viewer for Windows, designed to efficiently and quickly browse through images supporting all common file formats, including `.heic`, `.hdr`, `.png`, `.jpg` & RAW camera image files. 
