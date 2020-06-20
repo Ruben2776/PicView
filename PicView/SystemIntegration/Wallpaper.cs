@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using static PicView.Library.Fields;
@@ -22,55 +23,65 @@ namespace PicView.SystemIntegration
             Fill
         }
 
-        internal static void SetWallpaper(string path, WallpaperStyle style)
+        /// <summary>
+        /// NOT thread safe!
+        /// </summary>
+        /// <param name="style"></param>
+        internal static void SetWallpaper(WallpaperStyle style)
         {
-            if (CanNavigate)
+            string wallpaper;
+
+            try
             {
-                if (File.Exists(path))
-                {
-                    try
-                    {
-                        Task.Run(() => SetDesktopWallpaper(path, style));
-                    }
-#if DEBUG
-                    catch (Exception e)
-                    {
-                        Trace.WriteLine("Wallpaper exception \n" + e.Message);
-                        return;
-                    }
-#else
-                    catch (Exception) { return; }
-#endif
-                }
+                var linkParser = new Regex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                wallpaper = linkParser.Match(mainWindow.Bar.Text).ToString();
             }
-            else
+            catch (Exception e)
             {
-                Task.Run(() =>
+#if DEBUG
+                Trace.WriteLine(e.Message);
+#endif
+                return;
+            }
+
+            if (Uri.IsWellFormedUriString(wallpaper, UriKind.Absolute)) // Check if from web
                 {
-                    try
-                    {
-                        //Handle if file from web, need clipboard image solution
+                    Task.Run(() => {
+                        // Create temp directory
                         var tempPath = Path.GetTempPath();
                         var randomName = Path.GetRandomFileName();
-                        var webClient = new System.Net.WebClient();
+
+                        // Download to it
+                        using var webClient = new System.Net.WebClient();
                         Directory.CreateDirectory(tempPath);
-                        webClient.DownloadFile(path, tempPath + randomName);
+                        webClient.DownloadFile(wallpaper, tempPath + randomName);
+
+                        // Use it
                         SetDesktopWallpaper(tempPath + randomName, style);
+
+                        // Clean up
                         File.Delete(tempPath + randomName);
-                        var timer = new Timer(2000);
+                        using var timer = new Timer(2000);
                         timer.Elapsed += (s, x) => Directory.Delete(tempPath);
-                    }
-#if DEBUG
-                    catch (Exception e)
-                    {
-                        Trace.WriteLine("Wallpaper download exception \n" + e.Message);
                         return;
-                    }
-#else
-                    catch (Exception) { return; }
-#endif
-                });
+                    });
+                }
+                // TODO add Base64 support
+                //if (Base64.IsBase64String(s))
+                //{
+                //}
+
+
+            if (Pics.Count > 0)
+            {
+                if (FolderIndex < Pics.Count)
+                {
+                    Task.Run(() => {
+                        SetDesktopWallpaper(Pics[FolderIndex], style);
+                    });
+                }
             }
+            // TODO add clipboard image support
         }
 
         /// <summary>
@@ -82,7 +93,7 @@ namespace PicView.SystemIntegration
         {
             get
             {
-                return (Environment.OSVersion.Version >= new Version(6, 0));
+                return Environment.OSVersion.Version >= new Version(6, 0);
             }
         }
 
@@ -95,7 +106,7 @@ namespace PicView.SystemIntegration
         {
             get
             {
-                return (Environment.OSVersion.Version >= new Version(6, 1));
+                return Environment.OSVersion.Version >= new Version(6, 1);
             }
         }
 

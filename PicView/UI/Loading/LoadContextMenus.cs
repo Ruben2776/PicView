@@ -416,7 +416,7 @@ namespace PicView.UI.Loading
             {
                 Header = "Set as wallpaper"
             };
-            wallcm.Click += (s, x) => SetWallpaper(Pics[FolderIndex], WallpaperStyle.Fill);
+            wallcm.Click += (s, x) => SetWallpaper(WallpaperStyle.Fill);
             var wallcmIcon = new System.Windows.Shapes.Path
             {
                 Data = Geometry.Parse(SVGiconCamera),

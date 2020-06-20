@@ -141,5 +141,31 @@ namespace PicView.FileHandling
             Close_UserControls();
             IsDialogOpen = false;
         }
+
+        /// <summary>
+        /// Sends the file to Windows print system
+        /// </summary>
+        /// <param name="path">The file path</param>
+        internal static bool Print(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return false;
+            }
+
+            if (!File.Exists(path))
+            {
+                return false;
+            }
+
+            using (var p = new Process())
+            {
+                p.StartInfo.FileName = path;
+                p.StartInfo.Verb = "print";
+                p.StartInfo.UseShellExecute = true;
+                p.Start();
+            }
+            return true;
+        }
     }
 }

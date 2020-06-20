@@ -185,7 +185,7 @@ namespace PicView.UI.Windows
                 Fill.MouseLeave += Fill_MouseLeave;
                 Fill.Click += delegate
                 {
-                    SetWallpaper(Pics[FolderIndex], WallpaperStyle.Fill);
+                    SetWallpaper(WallpaperStyle.Fill);
                 };
 
                 // Fit
@@ -194,7 +194,7 @@ namespace PicView.UI.Windows
                 Fit.MouseLeave += Fit_MouseLeave;
                 Fit.Click += delegate
                 {
-                    SetWallpaper(Pics[FolderIndex], WallpaperStyle.Fit);
+                    SetWallpaper(WallpaperStyle.Fit);
                 };
 
                 // Center
@@ -203,7 +203,7 @@ namespace PicView.UI.Windows
                 Center.MouseLeave += Center_MouseLeave;
                 Center.Click += delegate
                 {
-                    SetWallpaper(Pics[FolderIndex], WallpaperStyle.Center);
+                    SetWallpaper(WallpaperStyle.Center);
                 };
 
                 // Tile
@@ -212,7 +212,7 @@ namespace PicView.UI.Windows
                 Tile.MouseLeave += Tile_MouseLeave;
                 Tile.Click += delegate
                 {
-                    SetWallpaper(Pics[FolderIndex], WallpaperStyle.Tile);
+                    SetWallpaper(WallpaperStyle.Tile);
                 };
 
                 // Stretch
@@ -221,7 +221,7 @@ namespace PicView.UI.Windows
                 Stretch.MouseLeave += Stretch_MouseLeave;
                 Stretch.Click += delegate
                 {
-                    SetWallpaper(Pics[FolderIndex], WallpaperStyle.Stretch);
+                    SetWallpaper(WallpaperStyle.Stretch);
                 };
 
                 // Set Center
