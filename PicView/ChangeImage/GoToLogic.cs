@@ -10,14 +10,14 @@ namespace PicView.ChangeImage
 {
     internal static class GoToLogic
     {
-        internal static async System.Threading.Tasks.Task GoToPicEventAsync(object sender, RoutedEventArgs e)
+        internal static async void GoToPicEvent(object sender, RoutedEventArgs e)
         {
             if (int.TryParse(quickSettingsMenu.GoToPicBox.Text.ToString(), out int x))
             {
                 x--;
                 x = x <= 0 ? 0 : x;
                 x = x >= Pics.Count ? Pics.Count - 1 : x;
-                await Navigation.Pic(x).ConfigureAwait(false);
+                Navigation.Pic(x);
                 await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
                 {
                     quickSettingsMenu.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture);
@@ -30,16 +30,13 @@ namespace PicView.ChangeImage
             }
         }
 
-        internal static async System.Threading.Tasks.Task ClearGoToAsync()
+        internal static void ClearGoTo()
         {
-            await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
-            {
-                quickSettingsMenu.GoToPicBox.CaretBrush = new SolidColorBrush(Colors.Transparent);
-                FocusManager.SetFocusedElement(FocusManager.GetFocusScope(quickSettingsMenu.GoToPicBox), null);
-                Close_UserControls();
-                Keyboard.ClearFocus();
-                mainWindow.Focus();
-            }));
+            quickSettingsMenu.GoToPicBox.CaretBrush = new SolidColorBrush(Colors.Transparent);
+            FocusManager.SetFocusedElement(FocusManager.GetFocusScope(quickSettingsMenu.GoToPicBox), null);
+            Close_UserControls();
+            Keyboard.ClearFocus();
+            mainWindow.Focus();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace PicView.UI.PicGallery
 {
     internal static class GalleryClick
     {
-        internal static async Task ClickAsync(int id)
+        internal static void Click(int id)
         {
             mainWindow.Focus();
 
@@ -78,12 +78,9 @@ namespace PicView.UI.PicGallery
 
                 da.Completed += async delegate
                 {
-                    await ItemClickAsync(id).ConfigureAwait(false);
-                    await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
-                    {
-                        picGallery.grid.Children.Remove(border);
-                        img = null;
-                    }));
+                    ItemClick(id);
+                    picGallery.grid.Children.Remove(border);
+                    img = null;
                     IsOpen = false;
                     
                 };
@@ -94,7 +91,7 @@ namespace PicView.UI.PicGallery
             else
             {
                 Preloader.PreloaderFix(Pics[id]);
-                await ItemClickAsync(id).ConfigureAwait(false);
+                ItemClick(id);
             }
         }
 
@@ -113,13 +110,13 @@ namespace PicView.UI.PicGallery
             }
         }
 
-        internal static async Task ItemClickAsync(int id)
+        internal static void ItemClick(int id)
         {
             // Deselect current item
             SetUnselected(FolderIndex);
 
             // Change image
-            await Pic(id).ConfigureAwait(true);
+            Pic(id);
 
             if (Properties.Settings.Default.PicGallery == 1)
             {

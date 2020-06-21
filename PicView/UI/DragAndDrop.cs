@@ -127,7 +127,7 @@ namespace PicView.UI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static async Task Image_Drop(object sender, DragEventArgs e)
+        internal static void Image_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetData(DataFormats.Html) != null)
             {
@@ -137,7 +137,7 @@ namespace PicView.UI
                     string dataStr = Encoding.Unicode.GetString(data.ToArray());
                     string[] parts = dataStr.Split((char)10);
 
-                    await Pic(parts[0]).ConfigureAwait(false);
+                    Pic(parts[0]);
                     return;
                 }
             }
@@ -150,13 +150,13 @@ namespace PicView.UI
             {
                 if (Path.GetExtension(files[0]) == ".url")
                 {
-                    await Pic(files[0]).ConfigureAwait(false);
+                    Pic(files[0]);
                 }
                 else if (Directory.Exists(files[0]))
                 {
                     if (Directory.GetFiles(files[0]).Length > 0)
                     {
-                        await PicFolderAsync(files[0]).ConfigureAwait(false);
+                        PicFolder(files[0]);
                     }
                     return;
                 }
@@ -173,7 +173,7 @@ namespace PicView.UI
             }
 
             // Load it
-            await Pic(files[0]).ConfigureAwait(false);
+            Pic(files[0]);
 
             // Don't show drop message any longer
             CloseToolTipMessage();

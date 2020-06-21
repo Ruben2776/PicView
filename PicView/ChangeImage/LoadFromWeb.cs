@@ -21,7 +21,7 @@ namespace PicView.ChangeImage
         /// Attemps to download image and display it
         /// </summary>
         /// <param name="path"></param>
-        internal static async Task PicWeb(string path)
+        internal static async void PicWeb(string path)
         {
             mainWindow.Bar.Text = Loading;
 
@@ -46,7 +46,7 @@ namespace PicView.ChangeImage
 
             if (pic == null)
             {
-                await Reload(true).ConfigureAwait(false);
+                Reload(true);
                 return;
             }
 

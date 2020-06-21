@@ -3,7 +3,6 @@ using PicView.ImageHandling;
 using PicView.UI;
 using PicView.UI.Loading;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -23,15 +22,27 @@ namespace PicView.Editing
             if (cropppingTool == null)
             {
                 LoadControls.LoadCroppingTool();
-                //cropppingTool.CropTool.SetStretch(Stretch.None);
                 var chosenColorBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
                 cropppingTool.CropTool.SetBackground(
                     new SolidColorBrush(Color.FromArgb(
-                        10,
+                        25,
                         chosenColorBrush.Color.R,
                         chosenColorBrush.Color.G,
                         chosenColorBrush.Color.B
                     )));
+            }
+
+            if (Rotateint == 0 || Rotateint == 180)
+            {
+                cropppingTool.CropTool.SetSize(xWidth, xHeight);
+                cropppingTool.CropTool.Width = xWidth;
+                cropppingTool.CropTool.Height = xHeight;
+            }
+            else
+            {
+                cropppingTool.CropTool.SetSize(xHeight, xWidth);
+                cropppingTool.CropTool.Width = xHeight;
+                cropppingTool.CropTool.Height = xWidth;
             }
 
             mainWindow.Bar.Text = "Press Esc to close, Enter to save";
@@ -41,29 +52,7 @@ namespace PicView.Editing
                 mainWindow.bg.Children.Add(cropppingTool);
             }
 
-            var i = BitmapSource.Create( // Create dummy image
-                2,
-                2,
-                96,
-                96,
-                PixelFormats.Indexed1,
-                new BitmapPalette(new List<Color> { Colors.Transparent }),
-                new byte[] { 0, 0, 0, 0 },
-                1);
-
-            cropppingTool.CropTool.SetImage(i);
-            if (Rotateint == 0 || Rotateint == 180)
-            {
-                cropppingTool.CropTool.SetSize(mainWindow.img.Source.Width, mainWindow.img.Source.Height);
-                cropppingTool.CropTool.Width = xWidth;
-                cropppingTool.CropTool.Height = xHeight;
-            }
-            else
-            {
-                cropppingTool.CropTool.SetSize(mainWindow.img.Source.Height, mainWindow.img.Source.Width);
-                cropppingTool.CropTool.Width = xHeight;
-                cropppingTool.CropTool.Height = xWidth;
-            }
+            CanNavigate = false;
         }
 
         internal static async void SaveCrop()
@@ -87,7 +76,7 @@ namespace PicView.Editing
             if (Pics.Count > 0)
             {
                 await Task.Run(() =>
-                    success = SaveImages.TrySaveImage(crop, fileName, Savedlg.FileName)).ConfigureAwait(true);
+                    success = SaveImages.TrySaveImage(crop, fileName, Savedlg.FileName)).ConfigureAwait(false);
             }
             else
             {
@@ -95,13 +84,15 @@ namespace PicView.Editing
                 // TODO add working method for copied images
                 var source = mainWindow.img.Source as BitmapSource;
                 await Task.Run(() =>
-                    success = SaveImages.TrySaveImage(crop, source, Savedlg.FileName)).ConfigureAwait(true);
+                    success = SaveImages.TrySaveImage(crop, source, Savedlg.FileName)).ConfigureAwait(false);
             }
 
             if (!success)
             {
                 Tooltip.ShowTooltipMessage($"An error occured while saving {fileName} to {Savedlg.FileName}");
             }
+
+            mainWindow.bg.Children.Remove(cropppingTool);
         }
 
         internal static Int32Rect GetCrop()

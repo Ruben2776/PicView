@@ -136,6 +136,7 @@ namespace PicView.ImageHandling
                 case ".JPG":
                 case ".JPEG":
                 case ".JPE":
+                case ".JFIF":
                     magick.Format = MagickFormat.Jpg;
                     break;
 

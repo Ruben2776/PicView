@@ -306,9 +306,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Update="Editing\PicViewCroppingImageLibrary.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -337,9 +334,6 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="PicViewCroppingImageLibrary">
-      <HintPath>PicViewCroppingImageLibrary.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <PropertyGroup>
     <FileVersion>0.9.9.0</FileVersion>

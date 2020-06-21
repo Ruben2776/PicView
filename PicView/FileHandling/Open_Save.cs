@@ -53,7 +53,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// Open a file dialog where user can select a supported file
         /// </summary>
-        internal static async Task Open()
+        internal static void Open()
         {
             IsDialogOpen = true;
 
@@ -64,7 +64,7 @@ namespace PicView.FileHandling
             };
             if (dlg.ShowDialog().Value)
             {
-                await Pic(dlg.FileName).ConfigureAwait(false);
+                Pic(dlg.FileName);
             }
             else
             {
@@ -103,7 +103,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// Open a File Dialog, where the user can save a supported file type.
         /// </summary>
-        internal static async Task SaveFiles()
+        internal static async void SaveFiles()
         {
             string fileName;
 
@@ -146,7 +146,7 @@ namespace PicView.FileHandling
             if (Savedlg.FileName == fileName)
             {
                 //Refresh the list of pictures.
-                await Reload().ConfigureAwait(false);
+                Reload();
             }
 
             Close_UserControls();

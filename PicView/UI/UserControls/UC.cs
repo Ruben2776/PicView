@@ -150,6 +150,8 @@ namespace PicView.UI.UserControls
             }
         }
 
+        
+
         /// <summary>
         /// Check if any UserControls are open
         /// </summary>

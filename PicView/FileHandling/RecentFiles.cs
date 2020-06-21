@@ -193,7 +193,7 @@ namespace PicView.FileHandling
                     ToolTip = item
                 };
                 // Set tooltip as argument to avoid subscribing and unsubscribing to events
-                menuItem.Click += async (x, xx) => await Pic(menuItem.ToolTip.ToString()).ConfigureAwait(false);
+                menuItem.Click += delegate { Pic(menuItem.ToolTip.ToString()); };
                 menuItem.Icon = cmIcon;
                 var ext = Path.GetExtension(item);
                 var ext5 = !string.IsNullOrWhiteSpace(ext) && ext.Length >= 5 ? ext.Substring(0, 5) : ext;

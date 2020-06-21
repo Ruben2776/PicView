@@ -1,5 +1,4 @@
 ﻿using PicView.ImageHandling;
-using PicView.UI.Animations;
 using PicView.UI.PicGallery;
 using System;
 using System.Diagnostics;
@@ -14,7 +13,6 @@ using static PicView.ImageHandling.ImageDecoder;
 using static PicView.Library.Fields;
 using static PicView.UI.Tooltip;
 using static PicView.UI.TransformImage.Rotation;
-using static PicView.UI.UserControls.UC;
 
 namespace PicView.ChangeImage
 {
@@ -32,13 +30,13 @@ namespace PicView.ChangeImage
 #endif
             if (Pics == null)
             {
-                await Reload(true).ConfigureAwait(true);
+                Reload(true);
                 return null;
             }
 
             if (x == -1)
             {
-                await GetValues(Pics[0]).ConfigureAwait(false);
+                GetValues(Pics[0]);
             }
 
             if (Pics.Count < 0)
@@ -169,7 +167,7 @@ namespace PicView.ChangeImage
         /// <summary>
         /// Refresh the current list of pics and reload them if there is some missing or changes.
         /// </summary>
-        internal static async Task Reload(bool fromBackup = false)
+        internal static void Reload(bool fromBackup = false)
         {
             if (fromBackup && string.IsNullOrWhiteSpace(xPicPath))
             {
@@ -199,7 +197,9 @@ namespace PicView.ChangeImage
                 // Need a sort method instead
                 GalleryFunctions.Clear();
 
-                await Pic(s).ConfigureAwait(false);
+                //await Pic(s).ConfigureAwait(false);
+
+                Pic(s);
 
                 // Reset
 
@@ -219,7 +219,7 @@ namespace PicView.ChangeImage
             }
             else if (Uri.IsWellFormedUriString(s, UriKind.Absolute)) // Check if from web
             {
-                await LoadFromWeb.PicWeb(s).ConfigureAwait(false);
+                LoadFromWeb.PicWeb(s);
             }
             else
             {

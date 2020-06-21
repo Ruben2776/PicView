@@ -179,7 +179,7 @@ namespace PicView.FileHandling
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        internal static async Task GetValues(string path)
+        internal static void GetValues(string path)
         {
             var extension = Path.GetExtension(path);
             extension = extension.ToLower(CultureInfo.CurrentCulture);
@@ -203,7 +203,7 @@ namespace PicView.FileHandling
                 case ".cab":
                     if (!Extract(path))
                     {
-                        await Error_Handling.Reload(true).ConfigureAwait(false);
+                        Error_Handling.Reload(true);
                     }
                     return;
             }

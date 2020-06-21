@@ -32,9 +32,9 @@ namespace PicView.UI.Loading
         internal static void Go()
         {
             // keyboard and Mouse_Keys Keys
-            mainWindow.KeyDown += async (s,x) => await MainWindow_KeysDownAsync(s, x).ConfigureAwait(false);
-            mainWindow.KeyUp += async (s, x) => await MainWindow_KeysUpAsync(s, x).ConfigureAwait(false);
-            mainWindow.MouseDown += async (s, x) => await MainWindow_MouseDownAsync(s, x).ConfigureAwait(false);
+            mainWindow.KeyDown += MainWindow_KeysDown;
+            mainWindow.KeyUp += MainWindow_KeysUp;
+            mainWindow.MouseDown += MainWindow_MouseDown;
 
             // MinButton
             mainWindow.MinButton.TheButton.Click += (s, x) => SystemCommands.MinimizeWindow(mainWindow);
@@ -53,22 +53,17 @@ namespace PicView.UI.Loading
             mainWindow.FileMenuButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgColor(mainWindow.FileMenuBg);
             mainWindow.FileMenuButton.Click += Toggle_open_menu;
 
-            fileMenu.Open.Click += (s, x) => Open().ConfigureAwait(false);
+            fileMenu.Open.Click += (s, x) => Open();
             fileMenu.FileLocation.Click += (s, x) => Open_In_Explorer();
             fileMenu.Print.Click += (s, x) => Print(Pics[FolderIndex]);
-            fileMenu.SaveBorder.Click += async (s, x) => await SaveFiles().ConfigureAwait(false); ;
+            fileMenu.SaveBorder.Click += (s, x) => SaveFiles();
 
-            fileMenu.OpenBorder.MouseLeftButtonUp += async (s, x) => await Open().ConfigureAwait(false); ;
+            fileMenu.OpenBorder.MouseLeftButtonUp += (s, x) => Open();
             fileMenu.FileLocationBorder.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
             fileMenu.PrintBorder.MouseLeftButtonUp += (s, x) => Print(Pics[FolderIndex]);
-            fileMenu.Save_File_Location_Border.MouseLeftButtonUp += async delegate
-            {
-                await SaveFiles().ConfigureAwait(false);
-            };
-            fileMenu.PasteButton.Click += async delegate
-            {
-                await Paste().ConfigureAwait(false);
-            };
+            fileMenu.Save_File_Location_Border.MouseLeftButtonUp += (s, x) => SaveFiles();
+
+            fileMenu.PasteButton.Click += (s, x) => Paste();
             fileMenu.CopyButton.Click += (s, x) => Copyfile();
 
             // image_button
@@ -83,15 +78,13 @@ namespace PicView.UI.Loading
             imageSettingsMenu.RotateRightButton.Click += (s, x) => Rotate(true);
             imageSettingsMenu.RotateLeftButton.Click += (s, x) => Rotate(false);
 
-            imageSettingsMenu.Contained_Gallery.Click += async delegate
-            {
+            imageSettingsMenu.Contained_Gallery.Click += delegate {
                 Close_UserControls();
-                await GalleryToggle.OpenContainedGallery().ConfigureAwait(false);
+                GalleryToggle.OpenContainedGallery();
             };
-            imageSettingsMenu.Fullscreen_Gallery.Click += async delegate
-            {
+            imageSettingsMenu.Fullscreen_Gallery.Click += delegate {
                 Close_UserControls();
-                await GalleryToggle.OpenFullscreenGallery().ConfigureAwait(false);
+                GalleryToggle.OpenFullscreenGallery();
             };
             imageSettingsMenu.SlideshowButton.Click += delegate { SlideShow.StartSlideshow(); };
 
@@ -101,7 +94,7 @@ namespace PicView.UI.Loading
             mainWindow.LeftButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(mainWindow.LeftButtonBrush);
             mainWindow.LeftButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.LeftArrowFill);
             mainWindow.LeftButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(mainWindow.LeftButtonBrush);
-            mainWindow.LeftButton.Click += async (s, x) => await PicButton(false, false).ConfigureAwait(false);
+            mainWindow.LeftButton.Click += (s, x) => PicButton(false, false);
 
             // RightButton
             mainWindow.RightButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.RightArrowFill);
@@ -109,7 +102,7 @@ namespace PicView.UI.Loading
             mainWindow.RightButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(mainWindow.RightButtonBrush);
             mainWindow.RightButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.RightArrowFill);
             mainWindow.RightButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(mainWindow.RightButtonBrush);
-            mainWindow.RightButton.Click += async (s, x) => await PicButton(false, true).ConfigureAwait(false);
+            mainWindow.RightButton.Click += (s, x) => PicButton(false, true);
 
             // SettingsButton
             mainWindow.SettingsButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.SettingsButtonFill);
@@ -132,10 +125,10 @@ namespace PicView.UI.Loading
             imageSettingsMenu.FlipButton.Click += (s, x) => Flip();
 
             // ClickArrows
-            clickArrowLeft.MouseLeftButtonDown += async (s, x) => await PicButton(true, false).ConfigureAwait(false);
+            clickArrowLeft.MouseLeftButtonDown += (s, x) => PicButton(true, false);
             clickArrowLeft.MouseEnter += Interface_MouseEnter_Negative;
 
-            clickArrowRight.MouseLeftButtonDown += async (s, x) => await PicButton(true, true).ConfigureAwait(false);
+            clickArrowRight.MouseLeftButtonDown += (s, x) => PicButton(true, true);
             clickArrowRight.MouseEnter += Interface_MouseEnter_Negative;
 
             // x2
@@ -147,12 +140,12 @@ namespace PicView.UI.Loading
             minus.MouseEnter += Interface_MouseEnter_Negative;
 
             // GalleryShortcut
-            galleryShortcut.MouseLeftButtonDown += async (s, x) => await GalleryToggle.ToggleAsync().ConfigureAwait(false);
+            galleryShortcut.MouseLeftButtonDown += (s, x) => GalleryToggle.Toggle();
             galleryShortcut.MouseEnter += Interface_MouseEnter_Negative;
 
             // Bar
             mainWindow.Bar.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
-            mainWindow.Bar.Bar.PreviewKeyDown += async (s, x) => await CustomTextBoxShortcuts.CustomTextBox_KeyDownAsync(s, x).ConfigureAwait(false);
+            mainWindow.Bar.Bar.PreviewKeyDown += CustomTextBoxShortcuts.CustomTextBox_KeyDown;
             mainWindow.Bar.PreviewMouseLeftButtonDown += EditTitleBar.Bar_PreviewMouseLeftButtonDown;
 
             // img
@@ -164,7 +157,7 @@ namespace PicView.UI.Loading
 
             // bg
             mainWindow.bg.MouseLeftButtonDown += Bg_MouseLeftButtonDown;
-            mainWindow.bg.Drop += async (s, x) => await Image_Drop(s, x).ConfigureAwait(false);
+            mainWindow.bg.Drop += Image_Drop;
             mainWindow.bg.DragEnter += Image_DragEnter;
             mainWindow.bg.DragLeave += Image_DragLeave;
             mainWindow.bg.MouseEnter += Interface_MouseEnter;
@@ -184,7 +177,7 @@ namespace PicView.UI.Loading
             //Logobg.PreviewMouseLeftButtonDown += LogoMouseButtonDown;
 
             // Lower Bar
-            mainWindow.LowerBar.Drop += async (s, x) => await Image_Drop(s, x).ConfigureAwait(false);
+            mainWindow.LowerBar.Drop += Image_Drop;
             mainWindow.LowerBar.MouseLeftButtonDown += Move;
 
             // This

@@ -1,7 +1,6 @@
 ﻿using PicView.UI.Sizing;
 using PicView.UI.Windows;
 using System;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Animation;
 using static PicView.Library.Fields;
@@ -17,7 +16,7 @@ namespace PicView.UI.PicGallery
     {
         #region Toggle
 
-        internal static async Task ToggleAsync(bool change = false)
+        internal static void Toggle(bool change = false)
         {
             if (Pics.Count < 1)
             {
@@ -33,7 +32,7 @@ namespace PicView.UI.PicGallery
                 {
                     if (!IsOpen)
                     {
-                        await OpenContainedGallery().ConfigureAwait(false);
+                        OpenContainedGallery();
                     }
                     else
                     {
@@ -44,7 +43,7 @@ namespace PicView.UI.PicGallery
                 {
                     if (!IsOpen)
                     {
-                        await OpenFullscreenGallery().ConfigureAwait(false);
+                        OpenFullscreenGallery();
                     }
                     else
                     {
@@ -70,7 +69,7 @@ namespace PicView.UI.PicGallery
 
         #region Open
 
-        internal static async Task OpenContainedGallery()
+        internal static async void OpenContainedGallery()
         {
             if (Pics.Count < 1)
             {
@@ -112,7 +111,7 @@ namespace PicView.UI.PicGallery
             }
         }
 
-        internal static async Task OpenFullscreenGallery()
+        internal static async void OpenFullscreenGallery()
         {
             if (Pics.Count < 1)
             {

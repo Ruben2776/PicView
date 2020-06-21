@@ -50,12 +50,12 @@ namespace PicView
                     }
                 case Key.Escape: // Escape logic
                     quickSettingsMenu.GoToPicBox.Text = FolderIndex.ToString(CultureInfo.CurrentCulture);
-                    await ClearGoToAsync().ConfigureAwait(false);
+                    ClearGoTo();
                     break;
 
                 case Key.Enter: // Execute it!
-                    await GoToPicEventAsync(sender, e).ConfigureAwait(false);
-                    await ClearGoToAsync().ConfigureAwait(false);
+                     GoToPicEvent(sender, e);
+                     ClearGoTo();
                     break;
 
                 default:

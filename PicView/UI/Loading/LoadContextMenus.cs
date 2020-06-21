@@ -43,7 +43,7 @@ namespace PicView.UI.Loading
             opencmIcon.Width = opencmIcon.Height = 12;
             opencmIcon.Fill = scbf;
             opencm.Icon = opencmIcon;
-            opencm.Click += async (s, x) => await Open().ConfigureAwait(false);
+            opencm.Click += (s, x) => Open();
             cm.Items.Add(opencm);
 
             ///////////////////////////
@@ -64,7 +64,7 @@ namespace PicView.UI.Loading
             savecmIcon.Width = savecmIcon.Height = 12;
             savecmIcon.Fill = scbf;
             savecm.Icon = savecmIcon;
-            savecm.Click += async (s, x) => await SaveFiles().ConfigureAwait(false);
+            savecm.Click += (s, x) => SaveFiles();
             cm.Items.Add(savecm);
 
             ///////////////////////////
@@ -158,8 +158,8 @@ namespace PicView.UI.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 0
             };
-            sortcmChild0Header.Click += async delegate { cm.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(0).ConfigureAwait(false);  };
-            sortcmChild0.Click += async delegate { cm.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(0).ConfigureAwait(false);  };
+            sortcmChild0Header.Click += delegate { UpdateUIValues.ChangeSorting(0); cm.IsOpen = false; };
+            sortcmChild0.Click += delegate { UpdateUIValues.ChangeSorting(0); cm.IsOpen = false; };
             sortcmChild0.Header = sortcmChild0Header;
             sortcm.Items.Add(sortcmChild0);
 
@@ -174,8 +174,8 @@ namespace PicView.UI.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 1
             };
-            sortcmChild1Header.Click += async delegate { cm.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(1).ConfigureAwait(false);  };
-            sortcmChild1.Click += async delegate { cm.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(1).ConfigureAwait(false);  };
+            sortcmChild1Header.Click += delegate { UpdateUIValues.ChangeSorting(1); cm.IsOpen = false; };
+            sortcmChild1.Click += delegate { UpdateUIValues.ChangeSorting(1); cm.IsOpen = false; };
             sortcmChild1.Header = sortcmChild1Header;
             sortcm.Items.Add(sortcmChild1);
 
@@ -190,8 +190,8 @@ namespace PicView.UI.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 2
             };
-            sortcmChild2Header.Click += async delegate { cm.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(2).ConfigureAwait(false);  };
-            sortcmChild2.Click += async delegate { cm.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(2).ConfigureAwait(false); };
+            sortcmChild2Header.Click += delegate { UpdateUIValues.ChangeSorting(2); cm.IsOpen = false; };
+            sortcmChild2.Click += delegate { UpdateUIValues.ChangeSorting(2); cm.IsOpen = false; };
             sortcmChild2.Header = sortcmChild2Header;
             sortcm.Items.Add(sortcmChild2);
 
@@ -206,8 +206,8 @@ namespace PicView.UI.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 3
             };
-            sortcmChild3Header.Click += async delegate { cm.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(3).ConfigureAwait(false);  };
-            sortcmChild3.Click += async delegate { cm.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(3).ConfigureAwait(false);  };
+            sortcmChild3Header.Click += delegate { UpdateUIValues.ChangeSorting(3); cm.IsOpen = false; };
+            sortcmChild3.Click += delegate { UpdateUIValues.ChangeSorting(3); cm.IsOpen = false; };
             sortcmChild3.Header = sortcmChild3Header;
             sortcm.Items.Add(sortcmChild3);
 
@@ -222,8 +222,8 @@ namespace PicView.UI.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 4
             };
-            sortcmChild4Header.Click += async delegate { cm.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(4).ConfigureAwait(false);  };
-            sortcmChild4.Click += async delegate { cm.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(4).ConfigureAwait(false);  };
+            sortcmChild4Header.Click += delegate { UpdateUIValues.ChangeSorting(4); cm.IsOpen = false; };
+            sortcmChild4.Click += delegate { UpdateUIValues.ChangeSorting(4); cm.IsOpen = false; };
             sortcmChild4.Header = sortcmChild4Header;
             sortcm.Items.Add(sortcmChild4);
 
@@ -238,8 +238,8 @@ namespace PicView.UI.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 5
             };
-            sortcmChild5Header.Click += async delegate { cm.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(5).ConfigureAwait(false); };
-            sortcmChild5.Click += async delegate { cm.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(5).ConfigureAwait(false);  };
+            sortcmChild5Header.Click += delegate { UpdateUIValues.ChangeSorting(5); cm.IsOpen = false; };
+            sortcmChild5.Click += delegate { UpdateUIValues.ChangeSorting(5); cm.IsOpen = false; };
             sortcmChild5.Header = sortcmChild5Header;
             sortcm.Items.Add(sortcmChild5);
 
@@ -254,8 +254,8 @@ namespace PicView.UI.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 6
             };
-            sortcmChild6Header.Click += async delegate { cm.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(6).ConfigureAwait(false); };
-            sortcmChild6.Click += async delegate { cm.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(6).ConfigureAwait(false);  };
+            sortcmChild6Header.Click += delegate { UpdateUIValues.ChangeSorting(6); cm.IsOpen = false; };
+            sortcmChild6.Click += delegate { UpdateUIValues.ChangeSorting(6); cm.IsOpen = false; };
             sortcmChild6.Header = sortcmChild6Header;
             sortcm.Items.Add(sortcmChild6);
             cm.Items.Add(sortcm);
@@ -576,7 +576,7 @@ namespace PicView.UI.Loading
                 Fill = scbf
             };
             pastecm.Icon = pastecmIcon;
-            pastecm.Click += async (s, x) => await Paste().ConfigureAwait(false);
+            pastecm.Click += (s, x) => Paste();
             cm.Items.Add(pastecm);
 
             ///////////////////////////
@@ -627,67 +627,6 @@ namespace PicView.UI.Loading
 
             // Add to elements
             mainWindow.img.ContextMenu = mainWindow.bg.ContextMenu = mainWindow.LowerBar.ContextMenu = cm;
-
-            // Add left and right ContextMenus
-            //var cmLeft = new ContextMenu();
-            //var cmRight = new ContextMenu();
-
-            //var nextcm = new MenuItem
-            //{
-            //    Header = "Next picture",
-            //    InputGestureText = "ᗌ or D",
-            //    ToolTip = "Go to Next image",
-            //    StaysOpenOnClick = true
-            //};
-            //nextcm.Click += (s, x) => Pic();
-            //cmRight.Items.Add(nextcm);
-
-            //var prevcm = new MenuItem
-            //{
-            //    Header = "Previous picture",
-            //    InputGestureText = "ᗏ or A",
-            //    ToolTip = "Go to previous image in folder",
-            //    StaysOpenOnClick = true
-            //};
-            //prevcm.Click += (s, x) => Pic(false);
-            //cmLeft.Items.Add(prevcm);
-
-            //var firstcm = new MenuItem
-            //{
-            //    Header = "First picture",
-            //    InputGestureText = "Ctrl + D or Ctrl + ᗌ",
-            //    ToolTip = "Go to first image in folder"
-            //};
-            //firstcm.Click += (s, x) => Pic(false, true);
-            //cmLeft.Items.Add(firstcm);
-
-            //var lastcm = new MenuItem
-            //{
-            //    Header = "Last picture",
-            //    InputGestureText = "Ctrl + A or Ctrl + ᗏ",
-            //    ToolTip = "Go to last image in folder"
-            //};
-            //lastcm.Click += (s, x) => Pic(true, true);
-            //cmRight.Items.Add(lastcm);
-
-            //// Add to elements
-            //mainWindow.RightButton.ContextMenu = cmRight;
-            //mainWindow.LeftButton.ContextMenu = cmLeft;
-
-            //clickArrowRight.ContextMenu = cmRight;
-            //clickArrowLeft.ContextMenu = cmLeft;
-
-            // Add Title contextMenu
-            //var cmTitle = new ContextMenu();
-
-            //var clTc = new MenuItem
-            //{
-            //    Header = "Copy path to clipboard"
-            //};
-            //clTc.Click += (s, x) => CopyText();
-            //cmTitle.Items.Add(clTc);
-
-            //mainWindow.Bar.ContextMenu = cmTitle;
 
             switch (Properties.Settings.Default.SortPreference)
             {

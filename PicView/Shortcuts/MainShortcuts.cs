@@ -23,7 +23,7 @@ namespace PicView.Shortcuts
 {
     internal static class MainShortcuts
     {
-        internal static async System.Threading.Tasks.Task MainWindow_KeysDownAsync(object sender, KeyEventArgs e)
+        internal static async void MainWindow_KeysDown(object sender, KeyEventArgs e)
         {
             // Don't allow keys when typing in text
             if (mainWindow.Bar.IsKeyboardFocusWithin) { return; }
@@ -49,6 +49,7 @@ namespace PicView.Shortcuts
                             SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
                         }
                         mainWindow.bg.Children.Remove(cropppingTool);
+                        CanNavigate = true;
                         return;
                     }
 
@@ -63,8 +64,9 @@ namespace PicView.Shortcuts
                             SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
                         }
 
-                        ImageCropping.SaveCrop();
-                        mainWindow.bg.Children.Remove(cropppingTool);
+                        await ImageCropping.SaveCrop().ConfigureAwait(false);
+                        CanNavigate = true;
+                        return;
                     }
                 }
             }
@@ -216,7 +218,7 @@ namespace PicView.Shortcuts
                 case Key.S:
                     if (ctrlDown && picGallery != null && !GalleryFunctions.IsOpen)
                     {
-                        await SaveFiles().ConfigureAwait(false);
+                        SaveFiles();
                     }
                     else if (Properties.Settings.Default.ScrollEnabled)
                     {
@@ -297,7 +299,7 @@ namespace PicView.Shortcuts
                         }
                         if (GalleryFunctions.IsOpen)
                         {
-                            await ToggleAsync().ConfigureAwait(false);
+                            Toggle();
                             return;
                         }
                         if (IsDialogOpen)
@@ -338,7 +340,7 @@ namespace PicView.Shortcuts
 
                     // O, Ctrl + O
                     case Key.O:
-                        await Open().ConfigureAwait(false);
+                        Open();
                         break;
 
                     // X, Ctrl + X
@@ -397,7 +399,7 @@ namespace PicView.Shortcuts
                     case Key.V:
                         if (ctrlDown)
                         {
-                            await Paste().ConfigureAwait(false);
+                            Paste();
                         }
 
                         break;
@@ -424,7 +426,7 @@ namespace PicView.Shortcuts
                     case Key.R:
                         if (ctrlDown)
                         {
-                            await Reload().ConfigureAwait(false);
+                            Reload();
                         }
                         break;
 
@@ -569,7 +571,7 @@ namespace PicView.Shortcuts
             #endregion Alt + keys
         }
 
-        internal static async System.Threading.Tasks.Task MainWindow_KeysUpAsync(object sender, KeyEventArgs e)
+        internal static async void MainWindow_KeysUp(object sender, KeyEventArgs e)
         {
             // Don't allow keys when typing in text
             if (mainWindow.Bar.IsKeyboardFocusWithin) { return; }
@@ -581,7 +583,7 @@ namespace PicView.Shortcuts
                 case Key.A:
                 case Key.Right:
                 case Key.D:
-                    await FastPicUpdate().ConfigureAwait(false);
+                    FastPicUpdate();
                     break;
 
                 #endregion FastPicUpdate()
@@ -590,7 +592,7 @@ namespace PicView.Shortcuts
             }
         }
 
-        internal static async System.Threading.Tasks.Task MainWindow_MouseDownAsync(object sender, MouseButtonEventArgs e)
+        internal static async void MainWindow_MouseDown(object sender, MouseButtonEventArgs e)
         {
             switch (e.ChangedButton)
             {

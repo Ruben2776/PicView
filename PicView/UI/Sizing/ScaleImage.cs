@@ -11,9 +11,9 @@ namespace PicView.UI.Sizing
         /// <summary>
         /// Tries to call Zoomfit with additional error checking
         /// </summary>
-        internal static void TryFitImage()
+        internal static bool TryFitImage()
         {
-            if (FreshStartup) { return; }
+            if (FreshStartup) { return false; }
 
             if (Pics != null)
             {
@@ -23,6 +23,7 @@ namespace PicView.UI.Sizing
                     if (pic != null)
                     {
                         FitImage(pic.PixelWidth, pic.PixelHeight);
+                        return true;
                     }
                     else
                     {
@@ -30,14 +31,17 @@ namespace PicView.UI.Sizing
                         if (size.HasValue)
                         {
                             FitImage(size.Value.Width, size.Value.Height);
+                            return true;
                         }
                         else if (mainWindow.img.Source != null)
                         {
                             FitImage(mainWindow.img.Source.Width, mainWindow.img.Source.Height);
+                            return true;
                         }
                         else if (xWidth != 0 && xHeight != 0)
                         {
                             FitImage(xWidth, xHeight);
+                            return true;
                         }
                     }
                 }
@@ -45,25 +49,32 @@ namespace PicView.UI.Sizing
             else if (mainWindow.img.Source != null)
             {
                 FitImage(mainWindow.img.Source.Width, mainWindow.img.Source.Height);
+                return true;
             }
             else if (xWidth != 0 && xHeight != 0)
             {
                 FitImage(xWidth, xHeight);
+                return true;
             }
+
+            return false;
         }
 
         /// <summary>
         /// Tries to call Zoomfit with specified path
         /// </summary>
-        internal static void TryFitImage(string source)
+        internal static bool TryFitImage(string source)
         {
-            if (string.IsNullOrWhiteSpace(source)) { return; }
+            if (string.IsNullOrWhiteSpace(source)) { return false; }
 
             var size = ImageDecoder.ImageSize(source);
             if (size.HasValue)
             {
                 FitImage(size.Value.Width, size.Value.Height);
+                return true;
             }
+
+            return false;
         }
 
         /// <summary>

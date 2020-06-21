@@ -34,9 +34,9 @@ namespace PicView.UI.PicGallery
             {
                 var selected = id == FolderIndex;
                 var item = new UserControls.PicGalleryItem(pic, id, selected);
-                item.MouseLeftButtonDown += async delegate
+                item.MouseLeftButtonDown += delegate
                 {
-                    await GalleryClick.ClickAsync(id).ConfigureAwait(false);
+                    GalleryClick.Click(id);
                 };
                 picGallery.Container.Children.Add(item);
             }));

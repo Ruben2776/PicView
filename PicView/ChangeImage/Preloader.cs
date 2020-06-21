@@ -32,16 +32,34 @@ namespace PicView.ChangeImage
         /// Preloader list of BitmapSources
         /// </summary>
         private static readonly ConcurrentDictionary<string, BitmapSource> Sources = new ConcurrentDictionary<string, BitmapSource>();
+        private static bool isLoading;
+        private static bool isReset;
+
+        internal static bool GetIsReset()
+        {
+            return isReset;
+        }
+
+        internal static void SetIsReset(bool value)
+        {
+            isReset = value;
+        }
 
         /// <summary>
         /// When Preloader is adding an image
         /// </summary>
-        internal static bool IsLoading;
+        internal static bool GetIsLoading()
+        {
+            return isLoading;
+        }
 
         /// <summary>
-        /// Used for manual loading fix
+        /// When Preloader is adding an image
         /// </summary>
-        internal static bool IsReset;
+        internal static void SetIsLoading(bool value)
+        {
+            isLoading = value;
+        }
 
         //internal static int Count { get { return Sources.Count; } }
         /// <summary>
@@ -52,15 +70,17 @@ namespace PicView.ChangeImage
         {
             if (Contains(file) || Pics.Count == 0 || Pics.IndexOf(file) == -1)
             {
-                return IsLoading = false;
+                SetIsLoading(false);
+                return false;
             }
 
-            IsLoading = true;
+            SetIsLoading(true);
 
             var pic = await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(true);
             if (pic == null)
             {
-                return IsLoading = false;
+                SetIsLoading(false);
+                return false;
             }
 
             if (!pic.IsFrozen)
@@ -68,7 +88,7 @@ namespace PicView.ChangeImage
                 pic.Freeze();
             }
 
-            IsLoading = false;
+            SetIsLoading(false);
 
 #if DEBUG
             Trace.WriteLine("Add string file = " + file + " to Preloader, index " + Pics.IndexOf(file));
@@ -88,7 +108,7 @@ namespace PicView.ChangeImage
                 return false;
             }
 
-            IsLoading = true;
+            SetIsLoading(true);
 
             if (File.Exists(Pics[i]))
             {
@@ -111,7 +131,8 @@ namespace PicView.ChangeImage
 #if DEBUG
                 Trace.WriteLine("Preloader removed = " + Pics[i] + " from Pics, index " + i);
 #endif
-                return IsLoading = false;
+                SetIsLoading(false);
+                return false;
             }
         }
 
@@ -141,6 +162,8 @@ namespace PicView.ChangeImage
                 return;
             }
 
+            SetIsLoading(true);
+
             if (!bmp.IsFrozen)
             {
                 bmp.Freeze();
@@ -157,6 +180,7 @@ namespace PicView.ChangeImage
 #else
             Sources.TryAdd(key, bmp);
 #endif
+            SetIsLoading(false);
         }
 
         /// <summary>
@@ -284,7 +308,7 @@ namespace PicView.ChangeImage
             if (!Contains(file))
             {
                 PreloadCount = 4;
-                IsReset = true;
+                SetIsReset(true);
                 await Add(file).ConfigureAwait(false);
             }
         }
@@ -462,7 +486,7 @@ namespace PicView.ChangeImage
                     }
                 }
 
-                IsLoading = false; // Fixes loading erros
+                SetIsLoading(false); // Fixes loading erros
             });
         }
     }

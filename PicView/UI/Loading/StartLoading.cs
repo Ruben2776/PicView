@@ -1,6 +1,7 @@
 ﻿using PicView.FileHandling;
 using PicView.SystemIntegration;
 using PicView.UI.PicGallery;
+using PicView.UI.Sizing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,7 +31,7 @@ namespace PicView.UI.Loading
             Trace.Unindent();
             Trace.WriteLine(AppName + " started at " + DateTime.Now);
 #endif
-            // this two line have to be exactly onload
+            // theese two line have to be exactly onload
             HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(mainWindow).Handle);
             source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
 
@@ -46,7 +47,7 @@ namespace PicView.UI.Loading
             }
         }
 
-        internal static async Task Start()
+        internal static void Start()
         {
 #if DEBUG
             Trace.WriteLine("ContentRendered started");
@@ -54,6 +55,55 @@ namespace PicView.UI.Loading
             MonitorInfo = MonitorSize.GetMonitorSize();
             SetWindowBehaviour = Properties.Settings.Default.AutoFitWindow;
 
+            Pics = new List<string>();
+
+            // Load image if possible
+            var arg = Application.Current.Properties["ArbitraryArgName"];
+            if (arg == null)
+            {
+                Unload();
+                if (Properties.Settings.Default.Maximized)
+                {
+                    Maximize();
+                }
+                else
+                {
+                    ConfigColors.UpdateColor();
+                    SetDefaultSize();
+                }
+            }
+            else
+            {
+                if (Properties.Settings.Default.Fullscreen)
+                {
+                    Fullscreen_Restore(true);
+                }
+                else if (Properties.Settings.Default.Maximized)
+                {
+                    Maximize();
+                }
+                else
+                {
+                    ConfigColors.UpdateColor();
+
+                    if (!ScaleImage.TryFitImage(arg.ToString()))
+                    {
+                        SetDefaultSize();
+                    } 
+                }
+
+                Pic(arg.ToString());
+            }
+
+            AddUIElementsAndUpdateValues();
+
+#if DEBUG
+            Trace.WriteLine("Start Completed ");
+#endif
+        }
+
+        private static void SetDefaultSize()
+        {
             // If normal window style
             if (!SetWindowBehaviour)
             {
@@ -72,51 +122,14 @@ namespace PicView.UI.Loading
                     CenterWindowOnScreen();
                 }
             }
-
-            Pics = new List<string>();
-
-            // Load image if possible
-            if (Application.Current.Properties["ArbitraryArgName"] == null)
-            {
-                Unload();
-                if (Properties.Settings.Default.Maximized)
-                {
-                    Maximize();
-                }
-                else
-                {
-                    ConfigColors.UpdateColor();
-                }
-            }
             else
             {
-                if (Properties.Settings.Default.Fullscreen)
-                {
-                    Fullscreen_Restore(true);
-                }
-                else if (Properties.Settings.Default.Maximized)
-                {
-                    Maximize();
-                }
-                else
-                {
-                    ConfigColors.UpdateColor();
-                }
-
-                await Pic(Application.Current.Properties["ArbitraryArgName"].ToString()).ConfigureAwait(false);
+                mainWindow.img.Width = 815;
+                mainWindow.img.Height = 970;
             }
-
-            await mainWindow.Dispatcher.BeginInvoke((Action)(async () =>
-            {
-                await AddUIElementsAndUpdateValuesAsync().ConfigureAwait(false);
-            }));
-
-#if DEBUG
-            Trace.WriteLine("Start Completed ");
-#endif
         }
 
-        private static async Task AddUIElementsAndUpdateValuesAsync()
+        private static void AddUIElementsAndUpdateValues()
         {
             // Update values
             ConfigColors.SetColors();
@@ -161,7 +174,7 @@ namespace PicView.UI.Loading
 
                 if (Properties.Settings.Default.PicGallery == 2)
                 {
-                    await GalleryToggle.OpenFullscreenGallery().ConfigureAwait(true);
+                    GalleryToggle.OpenFullscreenGallery();
                 }
             }
 
@@ -173,12 +186,13 @@ namespace PicView.UI.Loading
             LoadToolsAndEffectsMenu();
             LoadAutoScrollSign();
 
+            Eventshandling.Go();
+
             // Initilize Things!
             RecentFiles.Initialize();
             InitializeZoom();
 
             // Add things!
-            Eventshandling.Go();
             AddTimers();
             AddContextMenus();
 
