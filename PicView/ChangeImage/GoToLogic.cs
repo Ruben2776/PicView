@@ -1,4 +1,4 @@
-﻿using PicView.UI.Loading;
+﻿using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
@@ -18,7 +18,10 @@ namespace PicView.ChangeImage
                 x = x <= 0 ? 0 : x;
                 x = x >= Pics.Count ? Pics.Count - 1 : x;
                 await Navigation.Pic(x).ConfigureAwait(false);
-                quickSettingsMenu.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture);
+                await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    quickSettingsMenu.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture);
+                }));
             }
             else
             {
@@ -27,14 +30,16 @@ namespace PicView.ChangeImage
             }
         }
 
-        internal static void ClearGoTo()
+        internal static async System.Threading.Tasks.Task ClearGoToAsync()
         {
-            quickSettingsMenu.GoToPicBox.CaretBrush = new SolidColorBrush(Colors.Transparent);
-            FocusManager.SetFocusedElement(FocusManager.GetFocusScope(quickSettingsMenu.GoToPicBox), null);
-            Close_UserControls();
-            Keyboard.ClearFocus();
-            mainWindow.Focus();
-            AjaxLoader.AjaxLoadingEnd();
+            await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            {
+                quickSettingsMenu.GoToPicBox.CaretBrush = new SolidColorBrush(Colors.Transparent);
+                FocusManager.SetFocusedElement(FocusManager.GetFocusScope(quickSettingsMenu.GoToPicBox), null);
+                Close_UserControls();
+                Keyboard.ClearFocus();
+                mainWindow.Focus();
+            }));
         }
     }
 }

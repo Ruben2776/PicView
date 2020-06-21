@@ -6,12 +6,12 @@ namespace PicView
 {
     internal static class CustomTextBoxShortcuts
     {
-        internal static void CustomTextBox_KeyDown(object sender, KeyEventArgs e)
+        internal static async System.Threading.Tasks.Task CustomTextBox_KeyDownAsync(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
                 case Key.Enter:
-                    EditTitleBar.HandleRename();
+                    await EditTitleBar.HandleRenameAsync().ConfigureAwait(false);
                     break;
 
                 case Key.Escape:

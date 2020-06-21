@@ -1,6 +1,5 @@
 ﻿using PicView.ChangeImage;
 using PicView.FileHandling;
-using PicView.UI.Loading;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
@@ -157,7 +156,7 @@ namespace PicView.UI
                 {
                     if (Directory.GetFiles(files[0]).Length > 0)
                     {
-                        PicFolderAsync(files[0]);
+                        await PicFolderAsync(files[0]).ConfigureAwait(false);
                     }
                     return;
                 }
@@ -178,7 +177,6 @@ namespace PicView.UI
 
             // Don't show drop message any longer
             CloseToolTipMessage();
-            AjaxLoader.AjaxLoadingEnd();
 
             // Start multiple clients if user drags multiple files
             // TODO no longer working after converting to .NET Core...

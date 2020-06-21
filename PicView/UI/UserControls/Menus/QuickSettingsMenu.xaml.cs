@@ -52,7 +52,7 @@ namespace PicView.UI.UserControls
             {
                 GoToPicBox.CaretBrush = new SolidColorBrush(UI.ConfigColors.mainColor);
             };
-            GoToPicBox.PreviewKeyDown += GotoPicsShortcuts.GoToPicPreviewKeys;
+            GoToPicBox.PreviewKeyDown += async (s, x) => await GotoPicsShortcuts.GoToPicPreviewKeysAsync(s, x).ConfigureAwait(false);
 
             #region Animation events
 

@@ -8,7 +8,7 @@ namespace PicView
 {
     internal static class GotoPicsShortcuts
     {
-        internal static void GoToPicPreviewKeys(object sender, KeyEventArgs e)
+        internal static async System.Threading.Tasks.Task GoToPicPreviewKeysAsync(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
@@ -50,12 +50,12 @@ namespace PicView
                     }
                 case Key.Escape: // Escape logic
                     quickSettingsMenu.GoToPicBox.Text = FolderIndex.ToString(CultureInfo.CurrentCulture);
-                    ClearGoTo();
+                    await ClearGoToAsync().ConfigureAwait(false);
                     break;
 
                 case Key.Enter: // Execute it!
-                    GoToPicEventAsync(sender, e);
-                    ClearGoTo();
+                    await GoToPicEventAsync(sender, e).ConfigureAwait(false);
+                    await ClearGoToAsync().ConfigureAwait(false);
                     break;
 
                 default:

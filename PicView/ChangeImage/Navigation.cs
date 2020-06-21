@@ -14,7 +14,6 @@ using static PicView.FileHandling.FileLists;
 using static PicView.ImageHandling.ImageDecoder;
 using static PicView.ImageHandling.Thumbnails;
 using static PicView.Library.Fields;
-using static PicView.UI.Loading.AjaxLoader;
 using static PicView.UI.SetTitle;
 using static PicView.UI.Sizing.ScaleImage;
 using static PicView.UI.Tooltip;
@@ -36,10 +35,6 @@ namespace PicView.ChangeImage
             // Set Loading
             mainWindow.Title = mainWindow.Bar.Text = Loading;
             mainWindow.Bar.ToolTip = Loading;
-            if (mainWindow.img.Source == null)
-            {
-                AjaxLoadingStart();
-            }
 
             // Handle if from web
             if (!File.Exists(path))
@@ -115,10 +110,6 @@ namespace PicView.ChangeImage
             if (FreshStartup)
                 Trace.WriteLine("Pic(string path) entering Pic(int x)");
 #endif
-            if (ajaxLoading.Opacity != 0)
-            {
-                AjaxLoadingEnd();
-            }
 
             // Navigate to picture using obtained index
             await Pic(FolderIndex).ConfigureAwait(false);
@@ -186,16 +177,12 @@ namespace PicView.ChangeImage
                 }
                 else
                 {
-                    AjaxLoadingStart();
-
                     do
                     {
                         // Try again while loading
                         pic = Preloader.Load(Pics[x]);
                         await Task.Delay(3).ConfigureAwait(true);
                     } while (Preloader.IsLoading);
-
-                    AjaxLoadingEnd();
                 }
 
                 // If pic is still null, image can't be rendered
@@ -331,8 +318,6 @@ namespace PicView.ChangeImage
             await Pic(0).ConfigureAwait(false);
 
             quickSettingsMenu.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
-
-            AjaxLoadingEnd();
 
             prevPicResource = null; // Make sure to not waste memory
         }

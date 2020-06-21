@@ -13,7 +13,6 @@ namespace PicView.UI.UserControls
         internal static FileMenu fileMenu;
         internal static QuickSettingsMenu quickSettingsMenu;
         internal static ToolsAndEffectsMenu toolsAndEffectsMenu;
-        internal static AjaxLoading ajaxLoading;
         internal static ToolTipMessage toolTipMessage;
         internal static AutoScrollSign autoScrollSign;
         internal static ClickArrow clickArrowLeft;

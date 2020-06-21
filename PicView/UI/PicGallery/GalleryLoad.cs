@@ -70,7 +70,7 @@ namespace PicView.UI.PicGallery
         internal static Task Load()
         {
             IsLoading = true;
-            return Task.Run(() =>
+            return Task.Run(async () =>
             {
                 /// TODO Maybe make this start at at folder index
                 /// and get it work with a real sorting method?
@@ -85,7 +85,7 @@ namespace PicView.UI.PicGallery
                             pic.Freeze();
                         }
 
-                        Add(pic, i);
+                        await Add(pic, i).ConfigureAwait(false);
                     }
                     // TODO find a placeholder for null images?
                 }

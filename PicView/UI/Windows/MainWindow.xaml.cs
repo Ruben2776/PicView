@@ -13,7 +13,7 @@ namespace PicView.UI.Windows
         {
             InitializeComponent();
             Loaded += delegate { StartLoading.PreStart(); };
-            ContentRendered += delegate { StartLoading.Start(); };
+            ContentRendered += async delegate { await StartLoading.Start().ConfigureAwait(false); };
         }
 
         #region OnRenderSizeChanged override

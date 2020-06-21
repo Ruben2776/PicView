@@ -1,7 +1,6 @@
 ﻿using PicView.FileHandling;
 using PicView.SystemIntegration;
 using PicView.UI.PicGallery;
-using PicView.UI.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,7 +12,6 @@ using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 using static PicView.Library.Resources.Timers;
-using static PicView.UI.Loading.AjaxLoader;
 using static PicView.UI.Loading.LoadContextMenus;
 using static PicView.UI.Loading.LoadControls;
 using static PicView.UI.Sizing.WindowLogic;
@@ -46,13 +44,6 @@ namespace PicView.UI.Loading
                 mainWindow.RightBorderRectangle.Visibility
                 = Visibility.Collapsed;
             }
-
-            ajaxLoading = new AjaxLoading
-            {
-                Opacity = 0
-            };
-            mainWindow.bg.Children.Add(ajaxLoading);
-            AjaxLoadingStart();
         }
 
         internal static async Task Start()
@@ -115,9 +106,9 @@ namespace PicView.UI.Loading
                 await Pic(Application.Current.Properties["ArbitraryArgName"].ToString()).ConfigureAwait(false);
             }
 
-            await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            await mainWindow.Dispatcher.BeginInvoke((Action)(async () =>
             {
-                AddUIElementsAndUpdateValues();
+                await AddUIElementsAndUpdateValuesAsync().ConfigureAwait(false);
             }));
 
 #if DEBUG
@@ -125,7 +116,7 @@ namespace PicView.UI.Loading
 #endif
         }
 
-        private static void AddUIElementsAndUpdateValues()
+        private static async Task AddUIElementsAndUpdateValuesAsync()
         {
             // Update values
             ConfigColors.SetColors();
@@ -170,7 +161,7 @@ namespace PicView.UI.Loading
 
                 if (Properties.Settings.Default.PicGallery == 2)
                 {
-                    GalleryToggle.OpenFullscreenGallery();
+                    await GalleryToggle.OpenFullscreenGallery().ConfigureAwait(true);
                 }
             }
 
@@ -188,7 +179,6 @@ namespace PicView.UI.Loading
 
             // Add things!
             Eventshandling.Go();
-            AjaxLoadingEnd();
             AddTimers();
             AddContextMenus();
 

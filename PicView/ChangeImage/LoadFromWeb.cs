@@ -10,10 +10,8 @@ using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.ImageDecoder;
 using static PicView.Library.Fields;
-using static PicView.UI.Loading.AjaxLoader;
 using static PicView.UI.SetTitle;
 using static PicView.UI.Tooltip;
-using static PicView.UI.UserControls.UC;
 
 namespace PicView.ChangeImage
 {
@@ -25,11 +23,6 @@ namespace PicView.ChangeImage
         /// <param name="path"></param>
         internal static async Task PicWeb(string path)
         {
-            if (ajaxLoading.Opacity != 1)
-            {
-                AjaxLoadingStart();
-            }
-
             mainWindow.Bar.Text = Loading;
 
             BitmapSource pic;
@@ -53,8 +46,7 @@ namespace PicView.ChangeImage
 
             if (pic == null)
             {
-                Reload(true);
-                AjaxLoadingEnd();
+                await Reload(true).ConfigureAwait(false);
                 return;
             }
 

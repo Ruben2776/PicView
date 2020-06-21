@@ -156,7 +156,7 @@ namespace PicView.UI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static void Interface_MouseMove(object sender, MouseEventArgs e)
+        internal static async System.Threading.Tasks.Task Interface_MouseMoveAsync(object sender, MouseEventArgs e)
         {
             if (AutoScrolling)
             {
@@ -172,7 +172,7 @@ namespace PicView.UI
 
             // If mouse moves on mainwindow, show elements
 
-            FadeControlsAsync(true);
+            await FadeControlsAsync(true).ConfigureAwait(false);
 
             //// If Slideshow is running the interface will hide after 2,5 sec.
             //if (Slidetimer.Enabled == true)
@@ -190,11 +190,11 @@ namespace PicView.UI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static void Interface_MouseLeave(object sender, MouseEventArgs e)
+        internal static async System.Threading.Tasks.Task Interface_MouseLeaveAsync(object sender, MouseEventArgs e)
         {
             // Start timer when mouse leaves mainwindow
             //activityTimer.Start();
-            FadeControlsAsync(false);
+            await FadeControlsAsync(false).ConfigureAwait(false);
         }
     }
 }

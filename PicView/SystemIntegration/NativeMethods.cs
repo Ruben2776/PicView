@@ -76,9 +76,6 @@ namespace PicView.SystemIntegration
             public IntPtr hProcess;
         }
 
-        //[DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        //public static extern void SHChangeNotify(uint wEventId, uint uFlags, IntPtr dwItem1, IntPtr dwItem2);
-
         // Remove from Alt + tab
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern int GetWindowLong(IntPtr hWnd, int nIndex);
@@ -104,7 +101,13 @@ namespace PicView.SystemIntegration
         private const int WM_EXITSIZEMOVE = 0x232;
         private static bool WindowWasResized;
 
+
+        /// Supress warnings about unused parameters, because they are required by OS.
+        /// Executes when user manually resized window
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA1801:Review unused parameters", Justification = "<Pending>")]
+#pragma warning disable IDE0060 // Remove unused parameter
         public static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             if (msg == WM_SIZING)
             {

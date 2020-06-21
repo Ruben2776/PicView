@@ -63,7 +63,7 @@ namespace PicView.FileHandling
         internal static void Add(string fileName)
         {
             // Don't add zipped files
-            if (IsZipped)
+            if (IsZipped || MRUlist == null)
             {
                 return;
             }

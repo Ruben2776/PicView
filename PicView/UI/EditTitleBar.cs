@@ -61,13 +61,13 @@ namespace PicView.UI
             mainWindow.Bar.Bar.Select(start, end);
         }
 
-        internal static void HandleRename()
+        internal static async System.Threading.Tasks.Task HandleRenameAsync()
         {
             if (FileFunctions.RenameFile(Pics[FolderIndex], mainWindow.Bar.Text))
             {
                 Pics[FolderIndex] = mainWindow.Bar.Text;
                 Refocus();
-                Error_Handling.Reload(); // TODO proper renaming of window title, tooltip, etc.
+                await Error_Handling.Reload().ConfigureAwait(false); // TODO proper renaming of window title, tooltip, etc.
             }
             else
             {

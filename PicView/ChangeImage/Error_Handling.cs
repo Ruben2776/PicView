@@ -12,7 +12,6 @@ using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.FileLists;
 using static PicView.ImageHandling.ImageDecoder;
 using static PicView.Library.Fields;
-using static PicView.UI.Loading.AjaxLoader;
 using static PicView.UI.Tooltip;
 using static PicView.UI.TransformImage.Rotation;
 using static PicView.UI.UserControls.UC;
@@ -135,8 +134,6 @@ namespace PicView.ChangeImage
             {
                 ShowTooltipMessage("File not found or unable to render, " + file, false, TimeSpan.FromSeconds(2.5));
             }
-
-            AjaxLoadingEnd();
 
             // Repeat process if the next image was not found
             if (FolderIndex > 0 && FolderIndex < Pics.Count)
@@ -262,7 +259,6 @@ namespace PicView.ChangeImage
             }
 
             SystemIntegration.Taskbar.NoProgress();
-            AnimationHelper.Fade(ajaxLoading, 0, TimeSpan.FromSeconds(.2));
         }
     }
 }

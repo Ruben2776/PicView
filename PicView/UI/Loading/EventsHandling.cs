@@ -83,15 +83,15 @@ namespace PicView.UI.Loading
             imageSettingsMenu.RotateRightButton.Click += (s, x) => Rotate(true);
             imageSettingsMenu.RotateLeftButton.Click += (s, x) => Rotate(false);
 
-            imageSettingsMenu.Contained_Gallery.Click += delegate
+            imageSettingsMenu.Contained_Gallery.Click += async delegate
             {
                 Close_UserControls();
-                GalleryToggle.OpenContainedGallery();
+                await GalleryToggle.OpenContainedGallery().ConfigureAwait(false);
             };
-            imageSettingsMenu.Fullscreen_Gallery.Click += delegate
+            imageSettingsMenu.Fullscreen_Gallery.Click += async delegate
             {
                 Close_UserControls();
-                GalleryToggle.OpenFullscreenGallery();
+                await GalleryToggle.OpenFullscreenGallery().ConfigureAwait(false);
             };
             imageSettingsMenu.SlideshowButton.Click += delegate { SlideShow.StartSlideshow(); };
 
@@ -147,12 +147,12 @@ namespace PicView.UI.Loading
             minus.MouseEnter += Interface_MouseEnter_Negative;
 
             // GalleryShortcut
-            galleryShortcut.MouseLeftButtonDown += (s, x) => GalleryToggle.ToggleAsync();
+            galleryShortcut.MouseLeftButtonDown += async (s, x) => await GalleryToggle.ToggleAsync().ConfigureAwait(false);
             galleryShortcut.MouseEnter += Interface_MouseEnter_Negative;
 
             // Bar
             mainWindow.Bar.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
-            mainWindow.Bar.Bar.PreviewKeyDown += CustomTextBoxShortcuts.CustomTextBox_KeyDown;
+            mainWindow.Bar.Bar.PreviewKeyDown += async (s, x) => await CustomTextBoxShortcuts.CustomTextBox_KeyDownAsync(s, x).ConfigureAwait(false);
             mainWindow.Bar.PreviewMouseLeftButtonDown += EditTitleBar.Bar_PreviewMouseLeftButtonDown;
 
             // img
@@ -160,7 +160,7 @@ namespace PicView.UI.Loading
             mainWindow.img.MouseLeftButtonDown += Zoom_img_MouseLeftButtonDown;
             mainWindow.img.MouseLeftButtonUp += Zoom_img_MouseLeftButtonUp;
             mainWindow.img.MouseMove += Zoom_img_MouseMove;
-            mainWindow.img.MouseWheel += Zoom_img_MouseWheel;
+            mainWindow.img.MouseWheel += async (s, x) => await Zoom_img_MouseWheelAsync(s, x).ConfigureAwait(false);
 
             // bg
             mainWindow.bg.MouseLeftButtonDown += Bg_MouseLeftButtonDown;
@@ -168,11 +168,11 @@ namespace PicView.UI.Loading
             mainWindow.bg.DragEnter += Image_DragEnter;
             mainWindow.bg.DragLeave += Image_DragLeave;
             mainWindow.bg.MouseEnter += Interface_MouseEnter;
-            mainWindow.bg.MouseMove += Interface_MouseMove;
-            mainWindow.bg.MouseLeave += Interface_MouseLeave;
+            mainWindow.bg.MouseMove += async (s, x) => await Interface_MouseMoveAsync(s, x).ConfigureAwait(false);
+            mainWindow.bg.MouseLeave += async (s, x) => await Interface_MouseLeaveAsync(s, x).ConfigureAwait(false);
 
             // TooltipStyle
-            toolTipMessage.MouseWheel += Zoom_img_MouseWheel;
+            toolTipMessage.MouseWheel += async (s, x) => await Zoom_img_MouseWheelAsync(s, x).ConfigureAwait(false);
 
             // TitleBar
             mainWindow.TitleBar.MouseLeftButtonDown += Move;

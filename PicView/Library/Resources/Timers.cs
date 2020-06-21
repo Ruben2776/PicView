@@ -26,7 +26,7 @@ namespace PicView.Library.Resources
                 AutoReset = true,
                 Enabled = false
             };
-            activityTimer.Elapsed += delegate { FadeControlsAsync(false); };
+            activityTimer.Elapsed += async delegate { await FadeControlsAsync(false).ConfigureAwait(false); };
 
             //fastPicTimer = new Timer()
             //{

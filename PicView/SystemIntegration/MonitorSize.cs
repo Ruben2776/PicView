@@ -20,13 +20,7 @@ namespace PicView.SystemIntegration
             throw new NotImplementedException();
         }
 
-        public override bool Equals(object obj)
-        {
-            if (obj == null || !(obj is MonitorSize))
-                return false;
-
-            return Equals((MonitorSize)obj);
-        }
+        public override bool Equals(object obj) => obj != null && obj is MonitorSize size && Equals(size);
 
         public static bool operator ==(MonitorSize e1, MonitorSize e2)
         {
@@ -73,7 +67,7 @@ namespace PicView.SystemIntegration
             // https://stackoverflow.com/a/32599760
             var currentMonitor = WpfScreenHelper.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow).Handle);
 
-            //find out if our app is being scaled by the monitor
+            //find out if the app is being scaled by the monitor
             var source = PresentationSource.FromVisual(Application.Current.MainWindow);
             var dpiScaling = source != null && source.CompositionTarget != null ? source.CompositionTarget.TransformFromDevice.M11 : 1;
 

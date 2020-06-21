@@ -84,7 +84,7 @@ namespace PicView.FileHandling
         /// and display information
         /// </summary>
         /// <param name="Recyclebin"></param>
-        internal static void DeleteFile(string file, bool Recyclebin)
+        internal static async System.Threading.Tasks.Task DeleteFileAsync(string file, bool Recyclebin)
         {
             if (!TryDeleteFile(file, Recyclebin))
             {
@@ -105,7 +105,7 @@ namespace PicView.FileHandling
 
             PreloadCount = Reverse ? PreloadCount - 1 : PreloadCount + 1;
 
-            Pic(Reverse);
+            await Pic(Reverse).ConfigureAwait(false);
         }
     }
 }

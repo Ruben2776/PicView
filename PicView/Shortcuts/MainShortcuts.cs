@@ -10,7 +10,6 @@ using static PicView.FileHandling.Copy_Paste;
 using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.Open_Save;
 using static PicView.Library.Fields;
-using static PicView.Library.Utilities;
 using static PicView.UI.Loading.LoadWindows;
 using static PicView.UI.PicGallery.GalleryScroll;
 using static PicView.UI.PicGallery.GalleryToggle;
@@ -360,7 +359,7 @@ namespace PicView.Shortcuts
 
                     // Delete, Shift + Delete
                     case Key.Delete:
-                        DeleteFile(Pics[FolderIndex], !shiftDown);
+                        await DeleteFileAsync(Pics[FolderIndex], !shiftDown).ConfigureAwait(false);
                         break;
 
                     // Ctrl + C, Ctrl + Shift + C, Ctrl + Alt + C

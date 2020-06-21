@@ -90,10 +90,6 @@ namespace PicView.ChangeImage
 
             IsLoading = true;
 
-            //#if DEBUG
-            //            System.Threading.Thread.Sleep(1000);
-            //#endif
-
             if (File.Exists(Pics[i]))
             {
                 if (!Contains(Pics[i]))
