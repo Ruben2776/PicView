@@ -64,7 +64,7 @@ namespace PicView.Shortcuts
                             SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
                         }
 
-                        await ImageCropping.SaveCrop().ConfigureAwait(false);
+                        ImageCropping.SaveCrop();
                         CanNavigate = true;
                         return;
                     }
