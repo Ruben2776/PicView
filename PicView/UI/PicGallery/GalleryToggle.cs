@@ -126,12 +126,8 @@ namespace PicView.UI.PicGallery
                 fakeWindow = new FakeWindow();
             }
 
+            // Switch gallery container to the correct window
             if (mainWindow.bg.Children.Contains(picGallery))
-            {
-                mainWindow.bg.Children.Remove(picGallery);
-                fakeWindow.grid.Children.Add(picGallery);
-            }
-            else
             {
                 mainWindow.bg.Children.Remove(picGallery);
                 fakeWindow.grid.Children.Add(picGallery);

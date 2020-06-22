@@ -160,7 +160,10 @@ namespace PicView.UI
                     }
                     return;
                 }
-                else return;
+                else
+                {
+                    return;
+                }
             }
 
             // Check if same file

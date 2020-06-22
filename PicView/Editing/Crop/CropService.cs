@@ -12,8 +12,8 @@ namespace PicView.Editing.Crop
 {
     public class CropArea
     {
-        public readonly Size OriginalSize;
-        public readonly Rect CroppedRectAbsolute;
+        internal readonly Size OriginalSize;
+        internal readonly Rect CroppedRectAbsolute;
 
         public CropArea(Size originalSize, Rect croppedRectAbsolute)
         {

@@ -4,11 +4,11 @@ using static PicView.ChangeImage.GoToLogic;
 using static PicView.Library.Fields;
 using static PicView.UI.UserControls.UC;
 
-namespace PicView
+namespace PicView.Shortcuts
 {
     internal static class GotoPicsShortcuts
     {
-        internal static async System.Threading.Tasks.Task GoToPicPreviewKeysAsync(object sender, KeyEventArgs e)
+        internal static void GoToPicPreviewKeys(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {

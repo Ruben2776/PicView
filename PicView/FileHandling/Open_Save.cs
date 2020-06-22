@@ -103,7 +103,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// Open a File Dialog, where the user can save a supported file type.
         /// </summary>
-        internal static async void SaveFiles()
+        internal static void SaveFiles()
         {
             string fileName;
 
@@ -124,7 +124,10 @@ namespace PicView.FileHandling
                 FileName = fileName
             };
 
-            if (!Savedlg.ShowDialog().Value) return;
+            if (!Savedlg.ShowDialog().Value)
+            {
+                return;
+            }
 
             IsDialogOpen = true;
 

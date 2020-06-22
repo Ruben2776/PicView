@@ -35,13 +35,11 @@ namespace PicView.Editing.Crop.State
             return new Position(left, top, width, height);
         }
 
-        /// <summary>
-        /// Blank override
-        /// </summary>
-        /// <param name="point"></param>
+
         public void OnMouseUp(Point point)
         {
-
+            // Blank override
+            throw new NotImplementedException();
         }
 
         private void SetCreateBorderLimit(ref double newX, ref double newY, ref double newWidth, ref double newHeight)

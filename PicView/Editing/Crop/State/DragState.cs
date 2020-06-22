@@ -1,4 +1,5 @@
 ﻿using PicView.Editing.Crop.Tools;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -42,7 +43,8 @@ namespace PicView.Editing.Crop.State
 
         public void OnMouseUp(Point point)
         {
-
+            // Blank override
+            throw new NotImplementedException();
         }
 
         private void SetBorderLimit(ref double newX, ref double newY, ref double offsetX, ref double offsetY)

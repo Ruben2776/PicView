@@ -70,7 +70,10 @@ namespace PicView.Editing.Crop
                 FileName = fileName
             };
 
-            if (!Savedlg.ShowDialog().Value) return;
+            if (!Savedlg.ShowDialog().Value)
+            {
+                return;
+            }
 
             IsDialogOpen = true;
 

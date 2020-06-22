@@ -76,7 +76,7 @@ namespace PicView.UI.PicGallery
                     DecelerationRatio = deceleration
                 };
 
-                da.Completed += async delegate
+                da.Completed += delegate
                 {
                     ItemClick(id);
                     picGallery.grid.Children.Remove(border);
