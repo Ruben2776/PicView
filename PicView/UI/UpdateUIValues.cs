@@ -189,12 +189,12 @@ namespace PicView.UI
         {
             if (windowBehaviour)
             {
-                WindowLogic.SetWindowBehaviour = true;
+                WindowLogic.AutoFitWindow = true;
                 UC.quickSettingsMenu.SetFit.IsChecked = true;
             }
             else
             {
-                WindowLogic.SetWindowBehaviour = false;
+                WindowLogic.AutoFitWindow = false;
                 UC.quickSettingsMenu.SetFit.IsChecked = false;
             }
 

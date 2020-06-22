@@ -199,7 +199,7 @@ namespace PicView.UI.Loading
             switch (mainWindow.WindowState)
             {
                 case WindowState.Maximized:
-                    SetWindowBehaviour = false;
+                    AutoFitWindow = false;
                     break;
 
                 case WindowState.Normal:

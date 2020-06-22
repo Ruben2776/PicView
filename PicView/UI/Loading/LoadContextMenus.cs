@@ -348,9 +348,9 @@ namespace PicView.UI.Loading
                 Width = double.NaN,
                 Height = double.NaN
             };
-            fitcmHeader.Click += delegate { WindowLogic.SetWindowBehaviour = WindowLogic.SetWindowBehaviour ? false : true; };
+            fitcmHeader.Click += delegate { WindowLogic.AutoFitWindow = WindowLogic.AutoFitWindow ? false : true; };
             fitcm.Header = fitcmHeader;
-            fitcm.Click += delegate { WindowLogic.SetWindowBehaviour = WindowLogic.SetWindowBehaviour ? false : true; };
+            fitcm.Click += delegate { WindowLogic.AutoFitWindow = WindowLogic.AutoFitWindow ? false : true; };
             settingscm.Items.Add(fitcm);
 
             ///////////////////////////

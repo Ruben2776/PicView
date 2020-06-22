@@ -17,7 +17,7 @@ namespace PicView.UI.Sizing
         /// <summary>
         /// Set whether to fit window to image or image to window
         /// </summary>
-        internal static bool SetWindowBehaviour
+        internal static bool AutoFitWindow
         {
             get
             {
@@ -159,7 +159,7 @@ namespace PicView.UI.Sizing
         internal static void Maximize()
         {
             // Update new setting and sizing
-            SetWindowBehaviour = false;
+            AutoFitWindow = false;
             Properties.Settings.Default.Maximized = true;
 
             // Tell Windows that it's maximized
@@ -171,7 +171,7 @@ namespace PicView.UI.Sizing
         internal static void Restore()
         {
             // Update new setting and sizing
-            SetWindowBehaviour = true;
+            AutoFitWindow = true;
             Properties.Settings.Default.Maximized = false;
 
             // Tell Windows that it's normal
@@ -204,7 +204,7 @@ namespace PicView.UI.Sizing
         {
             if (startup || !Properties.Settings.Default.Fullscreen)
             {
-                if (!SetWindowBehaviour)
+                if (!AutoFitWindow)
                 {
                     Properties.Settings.Default.Save();
                 }
@@ -246,7 +246,7 @@ namespace PicView.UI.Sizing
                     ShowShortcuts(true);
                 }
 
-                if (SetWindowBehaviour)
+                if (AutoFitWindow)
                 {
                     mainWindow.SizeToContent = SizeToContent.WidthAndHeight;
                     mainWindow.ResizeMode = ResizeMode.NoResize;

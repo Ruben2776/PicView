@@ -53,7 +53,7 @@ namespace PicView.UI.Loading
             Trace.WriteLine("ContentRendered started");
 #endif
             MonitorInfo = MonitorSize.GetMonitorSize();
-            SetWindowBehaviour = Properties.Settings.Default.AutoFitWindow;
+            AutoFitWindow = Properties.Settings.Default.AutoFitWindow;
 
             Pics = new List<string>();
 
@@ -86,10 +86,17 @@ namespace PicView.UI.Loading
                 {
                     ConfigColors.UpdateColor();
 
-                    if (!ScaleImage.TryFitImage(arg.ToString()))
+                    if (AutoFitWindow)
+                    {
+                        if (!ScaleImage.TryFitImage(arg.ToString()))
+                        {
+                            SetDefaultSize();
+                        }
+                    }
+                    else
                     {
                         SetDefaultSize();
-                    } 
+                    }
                 }
 
                 Pic(arg.ToString());
@@ -105,7 +112,7 @@ namespace PicView.UI.Loading
         private static void SetDefaultSize()
         {
             // If normal window style
-            if (!SetWindowBehaviour)
+            if (!AutoFitWindow)
             {
                 if (Properties.Settings.Default.Width != 0)
                 {
