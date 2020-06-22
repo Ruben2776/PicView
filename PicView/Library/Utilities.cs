@@ -1,5 +1,8 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
+using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 
@@ -7,7 +10,6 @@ namespace PicView.Library
 {
     internal static class Utilities
     {
-        #region static helpers
 
         /// <summary>
         /// Greatest Common Divisor
@@ -29,8 +31,6 @@ namespace PicView.Library
             return element.PointToScreen(Mouse.GetPosition(element));
         }
 
-        #endregion static helpers
-
         public static string GetDefaultExeConfigPath(ConfigurationUserLevel userLevel)
         {
             try
@@ -47,6 +47,22 @@ namespace PicView.Library
         public static string GetWritingPath()
         {
             return Path.GetDirectoryName(GetDefaultExeConfigPath(ConfigurationUserLevel.PerUserRoamingAndLocal));
+        }
+
+        internal static string GetURL(string value)
+        {
+            try
+            {
+                var linkParser = new Regex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                return linkParser.Match(value).ToString();
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine(e.Message);
+#endif
+                return string.Empty;
+            }
         }
     }
 }

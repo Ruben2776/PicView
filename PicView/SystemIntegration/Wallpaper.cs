@@ -29,20 +29,7 @@ namespace PicView.SystemIntegration
         /// <param name="style"></param>
         internal static void SetWallpaper(WallpaperStyle style)
         {
-            string wallpaper;
-
-            try
-            {
-                var linkParser = new Regex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                wallpaper = linkParser.Match(mainWindow.Bar.Text).ToString();
-            }
-            catch (Exception e)
-            {
-#if DEBUG
-                Trace.WriteLine(e.Message);
-#endif
-                return;
-            }
+            string wallpaper = Library.Utilities.GetURL(mainWindow.Bar.Text);
 
             if (Uri.IsWellFormedUriString(wallpaper, UriKind.Absolute)) // Check if from web
                 {

@@ -43,7 +43,7 @@ namespace PicView.Shortcuts
                     {
                         if (Pics.Count == 0)
                         {
-                            SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, "Custom image");
+                            SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height);
                         }
                         else
                         {
@@ -59,7 +59,7 @@ namespace PicView.Shortcuts
                     {
                         if (Pics.Count == 0)
                         {
-                            SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, "Custom image");
+                            SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height);
                         }
                         else
                         {

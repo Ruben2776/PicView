@@ -16,7 +16,7 @@ namespace PicView.UI
         /// <param name="height"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        internal static string[] TitleString(int width, int height, int index)
+        private static string[] TitleString(int width, int height, int index)
         {
             var s1 = new StringBuilder(90);
             s1.Append(Path.GetFileName(Pics[index])).Append(" ").Append(index + 1).Append("/").Append(Pics.Count).Append(" files")
@@ -62,7 +62,7 @@ namespace PicView.UI
         /// <param name="height"></param>
         /// <param name="path"></param>
         /// <returns></returns>
-        internal static string[] TitleString(int width, int height, string path)
+        private static string[] TitleString(int width, int height, string path)
         {
             var s1 = new StringBuilder();
             s1.Append(path).Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height));
@@ -96,5 +96,27 @@ namespace PicView.UI
             mainWindow.Bar.Text = titleString[1];
             mainWindow.Bar.ToolTip = titleString[1];
         }
+
+        /// <summary>
+        /// Use name from title bar to set title string with,
+        /// zoom, aspect ratio and resolution
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        internal static void SetTitleString(int width, int height)
+        {
+            string path = Library.Utilities.GetURL(mainWindow.Bar.Text);
+
+            path = string.IsNullOrWhiteSpace(path) ? "Custom image" : path;
+
+            var titleString = TitleString(width, height, path);
+            mainWindow.Title = titleString[0];
+            mainWindow.Bar.Text = titleString[1];
+            mainWindow.Bar.ToolTip = titleString[1];
+        }
+
+
+
+
     }
 }

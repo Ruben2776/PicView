@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace PicView.FileHandling
 {
-    internal class FileFunctions
+    internal static class FileFunctions
     {
         internal static bool RenameFile(string path, string newPath)
         {

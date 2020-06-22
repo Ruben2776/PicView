@@ -256,26 +256,14 @@ namespace PicView.UI.TransformImage
             ScaleImage.TryFitImage();
 
             // Display non-zoomed values
-            if (CanNavigate)
+            if (Pics.Count == 0)
             {
-                SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
+                /// Display values from web
+                SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height);
             }
             else
             {
-                // Display values from web
-                try
-                {
-                    var linkParser = new Regex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                    var txt = linkParser.Match(mainWindow.Bar.Text).ToString();
-                    SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, txt);
-                }
-                catch (Exception e)
-                {
-                    SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, "Custom image");
-#if DEBUG
-                    Trace.WriteLine(e.Message);
-#endif
-                }
+                SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
             }
 
             IsZoomed = false;
@@ -367,26 +355,14 @@ namespace PicView.UI.TransformImage
             }
 
             /// Display updated values
-            if (CanNavigate)
+            if (Pics.Count == 0)
             {
-                SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
+                /// Display values from web
+                SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height);
             }
             else
             {
-                /// Display values from web
-                try
-                {
-                    var linkParser = new Regex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                    var txt = linkParser.Match(mainWindow.Bar.Text).ToString();
-                    SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, txt);
-                }
-                catch (Exception e)
-                {
-                    SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, "Custom image");
-#if DEBUG
-                    Trace.WriteLine(e.Message);
-#endif
-                }
+                SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
             }
         }
     }
