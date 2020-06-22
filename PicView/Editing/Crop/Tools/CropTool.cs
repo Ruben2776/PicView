@@ -32,7 +32,7 @@ namespace PicView.Editing.Crop.Tools
                     Width = 4,
                     Stroke = (SolidColorBrush)Application.Current.Resources["MainColorBrush"],
                     StrokeThickness = 2
-                });
+                }, canvas);
 
             shadeService = new ShadeTool(canvas, this);
             thumbService = new ThumbTool(canvas, this);

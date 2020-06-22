@@ -64,6 +64,10 @@ namespace PicView.Editing.Crop
             var cropShape = new CropShape(
                 new Rectangle
                 {
+                    Height = 4,
+                    Width = 4,
+                    Stroke = (SolidColorBrush)Application.Current.Resources["MainColorBrush"],
+                    StrokeThickness = 2
                 }
             );
 

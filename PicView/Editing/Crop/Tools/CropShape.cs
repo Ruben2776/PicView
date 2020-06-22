@@ -8,12 +8,12 @@ namespace PicView.Editing.Crop.Tools
     {
         public Shape Shape { get; }
 
-        private readonly Canvas _originalCanvas;
+        private readonly Canvas originalCanvas;
 
         public CropShape(Shape shape, Canvas overlayCanvas = null)
         {
             Shape = shape;
-            _originalCanvas = overlayCanvas;
+            originalCanvas = overlayCanvas;
         }
 
         public void Redraw(double newX, double newY, double newWidth, double newHeight)
@@ -52,16 +52,16 @@ namespace PicView.Editing.Crop.Tools
             Shape.Height = newHeight;
             Shape.Width = newHeight;
 
-            if (Shape.Height > _originalCanvas.ActualWidth)
+            if (Shape.Height > originalCanvas.ActualWidth)
             {
                 Canvas.SetLeft(Shape, 0);
-                Shape.Height = _originalCanvas.ActualWidth;
-                Shape.Width = _originalCanvas.ActualWidth;
+                Shape.Height = originalCanvas.ActualWidth;
+                Shape.Width = originalCanvas.ActualWidth;
             }
 
-            if (Shape.Height + newX > _originalCanvas.ActualWidth)
+            if (Shape.Height + newX > originalCanvas.ActualWidth)
             {
-                Canvas.SetLeft(Shape, _originalCanvas.ActualWidth - Shape.ActualWidth);
+                Canvas.SetLeft(Shape, originalCanvas.ActualWidth - Shape.ActualWidth);
             }
         }
 
