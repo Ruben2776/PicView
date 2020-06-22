@@ -250,7 +250,7 @@ namespace PicView.UI.TransformImage
             mainWindow.img.RenderTransformOrigin = new Point(0.5, 0.5);
 
             Tooltip.CloseToolTipMessage();
-            isZoomed = false;
+            IsZoomed = false;
 
             // Reset size
             ScaleImage.TryFitImage();
@@ -278,7 +278,7 @@ namespace PicView.UI.TransformImage
                 }
             }
 
-            isZoomed = false;
+            IsZoomed = false;
         }
 
         /// <summary>
@@ -301,7 +301,7 @@ namespace PicView.UI.TransformImage
             if (zoomMode)
             {
                 /// Start from 1 or zoom value
-                if (isZoomed)
+                if (IsZoomed)
                 {
                     AspectRatio += i > 0 ? .01 : -.01;
                 }
@@ -354,7 +354,7 @@ namespace PicView.UI.TransformImage
                 //st.ScaleY = st.ScaleX += zoomValue;
             }
 
-            isZoomed = true;
+            IsZoomed = true;
 
             /// Displays zoompercentage in the center window
             if (!string.IsNullOrEmpty(ZoomPercentage))

@@ -60,11 +60,6 @@ namespace PicView.Library
         /// </summary>
         internal static UI.Windows.MainWindow mainWindow = (UI.Windows.MainWindow)Application.Current.MainWindow;
 
-        ///// <summary>
-        ///// File path of current image
-        ///// </summary>
-        //internal static string Pics[FolderIndex] { get; set; }
-
         /// <summary>
         /// Backup of Previous file, if changed folder etc.
         /// </summary>
@@ -83,7 +78,7 @@ namespace PicView.Library
         internal static bool LeftbuttonClicked { get; set; }
         internal static bool RightbuttonClicked { get; set; }
         internal static bool FastPicRunning { get; set; }
-        internal static bool isZoomed { get; set; }
+        internal static bool IsZoomed { get; set; }
         internal static bool Flipped { get; set; }
         internal static bool CanNavigate { get; set; }
         internal static bool FreshStartup { get; set; }
@@ -108,11 +103,6 @@ namespace PicView.Library
         /// Counter used to get/set current index
         /// </summary>
         internal static int FolderIndex { get; set; }
-
-        ///// <summary>
-        ///// Backup of FolderIndex
-        ///// </summary>
-        //internal static int xFolderIndex;
 
         /// <summary>
         /// Counter used to check if preloading is neccesary.
@@ -155,7 +145,6 @@ namespace PicView.Library
         /// </summary>
         internal static List<string> Pics { get; set; }
 
-        //internal static List<ImageSource> Images { get; set; }
         /// <summary>
         /// Timer used to continously scroll with AutoScroll
         /// </summary>
@@ -165,21 +154,6 @@ namespace PicView.Library
         /// Timer used to hide interface and/or scrollbar
         /// </summary>
         internal static Timer activityTimer;
-
-        /// <summary>
-        /// Timer used for FastPic()
-        /// </summary>
-        //internal static Timer fastPicTimer;
-
-        /// <summary>
-        /// Timer used for hide/show cursor.
-        /// </summary>
-        //internal static Timer HideCursorTimer;
-
-        /// <summary>
-        /// Timer used to check if mouse is idle.
-        /// </summary>
-        //internal static Timer MouseIdleTimer;
 
         /// <summary>
         /// Timer used for slideshow

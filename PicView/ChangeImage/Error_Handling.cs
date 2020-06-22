@@ -197,8 +197,6 @@ namespace PicView.ChangeImage
                 // Need a sort method instead
                 GalleryFunctions.Clear();
 
-                //await Pic(s).ConfigureAwait(false);
-
                 Pic(s);
 
                 // Reset

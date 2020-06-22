@@ -61,7 +61,6 @@ namespace PicView.ChangeImage
             isLoading = value;
         }
 
-        //internal static int Count { get { return Sources.Count; } }
         /// <summary>
         /// Add file to prelader
         /// </summary>

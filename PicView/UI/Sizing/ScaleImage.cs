@@ -214,7 +214,7 @@ namespace PicView.UI.Sizing
                 mainWindow.Bar.MaxWidth = mainWindow.ActualWidth - interfaceSize;
             }
 
-            if (isZoomed)
+            if (IsZoomed)
             {
                 TransformImage.ZoomLogic.ResetZoom();
             }

@@ -48,7 +48,6 @@ namespace PicView.UI
 #if DEBUG
                     Trace.WriteLine(nameof(UpdateColor) + " threw exception:  " + e.Message);
 #endif
-                    //throw;
                 }
             }
         }

@@ -171,11 +171,6 @@ namespace PicView.UI.Loading
             mainWindow.TitleBar.MouseLeftButtonDown += Move;
             mainWindow.TitleBar.MouseLeave += Restore_From_Move;
 
-            // Logobg
-            //Logobg.MouseEnter += LogoMouseOver;
-            //Logobg.MouseLeave += LogoMouseLeave;
-            //Logobg.PreviewMouseLeftButtonDown += LogoMouseButtonDown;
-
             // Lower Bar
             mainWindow.LowerBar.Drop += Image_Drop;
             mainWindow.LowerBar.MouseLeftButtonDown += MoveAlt;

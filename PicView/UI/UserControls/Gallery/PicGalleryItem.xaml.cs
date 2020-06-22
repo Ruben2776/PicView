@@ -11,8 +11,6 @@ namespace PicView.UI.UserControls
     /// </summary>
     public partial class PicGalleryItem : UserControl
     {
-        //internal bool Selected { get; set; }
-
         internal readonly int Id;
 
         public PicGalleryItem(BitmapSource pic, int id, bool selected = false)
@@ -24,7 +22,6 @@ namespace PicView.UI.UserControls
                 img.Source = pic;
             }
 
-            //Selected = selected;
             Id = id;
 
             outterborder.Width = outterborder.Height = picGalleryItem_Size;

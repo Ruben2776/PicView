@@ -107,7 +107,6 @@ namespace PicView.FileHandling
                 return false;
             }
 
-            //return SetDirectory(path);
             return true;
         }
 
@@ -223,8 +222,6 @@ namespace PicView.FileHandling
                         }
                     }
                     break;
-                    //Reload(true);
-                    //return false;
                 }
 
                 switch (count)

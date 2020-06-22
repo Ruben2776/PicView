@@ -51,8 +51,6 @@ namespace PicView.UI.Animations
 
                 var pos = Utilities.GetMousePos(mainWindow.bg);
 
-                //Tooltip.ShowTooltipMessage($"x = {pos.X} Y = {pos.Y}");
-
                 if (pos.X < 1100 && pos.Y < 850)
                 {
                     AnimationHelper.Fade(clickArrowLeft, 1, timespan);
