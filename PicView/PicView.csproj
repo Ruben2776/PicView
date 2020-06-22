@@ -276,7 +276,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="PicViewCroppingImageLibrary" Version="1.0.7" />
     <PackageReference Include="SkiaSharp" Version="1.68.3" />
     <PackageReference Include="SkiaSharp.Views.WPF" Version="1.68.3" />
     <PackageReference Include="System.Buffers" Version="4.5.1" />
@@ -332,8 +331,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
-  <ItemGroup>
   </ItemGroup>
   <PropertyGroup>
     <FileVersion>0.9.9.0</FileVersion>

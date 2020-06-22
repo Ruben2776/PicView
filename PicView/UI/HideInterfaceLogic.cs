@@ -146,9 +146,10 @@ namespace PicView.UI
         /// <param name="e"></param>
         internal static void Interface_MouseEnter_Negative(object sender, MouseEventArgs e)
         {
-            // Start timer when mouse enters
-            activityTimer.Stop();
-            //FadeControlsAsync(true);
+            if (activityTimer.Enabled)
+            {
+                activityTimer.Stop();
+            }
         }
 
         /// <summary>
@@ -156,33 +157,22 @@ namespace PicView.UI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static async System.Threading.Tasks.Task Interface_MouseMoveAsync(object sender, MouseEventArgs e)
+        internal static void Interface_MouseMove(object sender, MouseEventArgs e)
         {
             if (AutoScrolling)
             {
                 return;
             }
 
-            ////If Mouse is hidden, show it and interface elements.
-            //if (e.MouseDevice.OverrideCursor == Cursors.None)
-            //{
-            //    Mouse.OverrideCursor = null;
-            //    HideCursorTimer.Stop();
-            //}
+            if (cropppingTool != null)
+            {
+                if (cropppingTool.IsVisible)
+                {
+                    return;
+                }
+            }
 
-            // If mouse moves on mainwindow, show elements
-
-            await FadeControlsAsync(true).ConfigureAwait(false);
-
-            //// If Slideshow is running the interface will hide after 2,5 sec.
-            //if (Slidetimer.Enabled == true)
-            //{
-            //    MouseIdleTimer.Start();
-            //}
-            //else
-            //{
-            //    MouseIdleTimer.Stop();
-            //}
+            FadeControlsAsync(true);
         }
 
         /// <summary>
@@ -190,11 +180,11 @@ namespace PicView.UI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static async System.Threading.Tasks.Task Interface_MouseLeaveAsync(object sender, MouseEventArgs e)
+        internal static void Interface_MouseLeave(object sender, MouseEventArgs e)
         {
             // Start timer when mouse leaves mainwindow
             //activityTimer.Start();
-            await FadeControlsAsync(false).ConfigureAwait(false);
+            FadeControlsAsync(false);
         }
     }
 }

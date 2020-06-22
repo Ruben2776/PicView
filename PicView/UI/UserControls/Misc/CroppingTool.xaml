@@ -2,6 +2,7 @@
     x:Class="PicView.UI.UserControls.CroppingTool"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:crop="clr-namespace:CroppingImageLibrary;assembly=PicViewCroppingImageLibrary">
-    <crop:CropToolControl x:Name="CropTool" />
+    HorizontalAlignment="Center"
+    VerticalAlignment="Center">
+    <Grid x:Name="RootGrid" Background="Transparent" />
 </UserControl>

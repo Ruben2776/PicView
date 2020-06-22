@@ -12,7 +12,6 @@ using static PicView.FileHandling.Open_Save;
 using static PicView.FileHandling.RecentFiles;
 using static PicView.Library.Fields;
 using static PicView.Library.Resources.SvgIcons;
-using static PicView.Library.Utilities;
 using static PicView.SystemIntegration.Wallpaper;
 
 namespace PicView.UI.Loading
@@ -598,7 +597,7 @@ namespace PicView.UI.Loading
                 Fill = scbf
             };
             MovetoRecycleBin.Icon = MovetoRecycleBinIcon;
-            MovetoRecycleBin.Click += async (s, x) => await DeleteFileAsync(Pics[FolderIndex], true).ConfigureAwait(false);
+            MovetoRecycleBin.Click += delegate { DeleteFile(Pics[FolderIndex], true); };
             cm.Items.Add(MovetoRecycleBin);
 
             ///////////////////////////

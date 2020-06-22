@@ -11,10 +11,12 @@ using System.Windows.Media.Imaging;
 using static PicView.Library.Fields;
 using static PicView.UI.UserControls.UC;
 
-namespace PicView.Editing
+namespace PicView.Editing.Crop
 {
-    internal static class ImageCropping
+    internal class CropFunctions
     {
+        public static CropService CropService { get; private set; }
+
         internal static void StartCrop()
         {
             if (mainWindow.img.Source == null) { return; }
@@ -22,28 +24,10 @@ namespace PicView.Editing
             if (cropppingTool == null)
             {
                 LoadControls.LoadCroppingTool();
-                var chosenColorBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
-                cropppingTool.CropTool.SetBackground(
-                    new SolidColorBrush(Color.FromArgb(
-                        25,
-                        chosenColorBrush.Color.R,
-                        chosenColorBrush.Color.G,
-                        chosenColorBrush.Color.B
-                    )));
             }
 
-            if (Rotateint == 0 || Rotateint == 180)
-            {
-                cropppingTool.CropTool.SetSize(xWidth, xHeight);
-                cropppingTool.CropTool.Width = xWidth;
-                cropppingTool.CropTool.Height = xHeight;
-            }
-            else
-            {
-                cropppingTool.CropTool.SetSize(xHeight, xWidth);
-                cropppingTool.CropTool.Width = xHeight;
-                cropppingTool.CropTool.Height = xWidth;
-            }
+            cropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? xWidth : xHeight;
+            cropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? xHeight : xWidth;
 
             mainWindow.Bar.Text = "Press Esc to close, Enter to save";
 
@@ -53,6 +37,26 @@ namespace PicView.Editing
             }
 
             CanNavigate = false;
+        }
+
+        internal static void InitilizeCrop()
+        {
+            cropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? xWidth : xHeight;
+            cropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? xHeight : xWidth;
+
+            CropService = new CropService(cropppingTool);
+
+            var chosenColorBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
+            cropppingTool.RootGrid.Background =
+                new SolidColorBrush(Color.FromArgb(
+                    25,
+                    chosenColorBrush.Color.R,
+                    chosenColorBrush.Color.G,
+                    chosenColorBrush.Color.B
+                ));
+
+            cropppingTool.RootGrid.PreviewMouseDown += (s, e) => CropService.Adorner.RaiseEvent(e);
+            cropppingTool.RootGrid.PreviewMouseLeftButtonUp += (s, e) => CropService.Adorner.RaiseEvent(e);
         }
 
         internal static async void SaveCrop()
@@ -76,7 +80,7 @@ namespace PicView.Editing
             if (Pics.Count > 0)
             {
                 await Task.Run(() =>
-                    success = SaveImages.TrySaveImage(crop, fileName, Savedlg.FileName)).ConfigureAwait(false);
+                    success = SaveImages.TrySaveImage(crop, Pics[FolderIndex], Savedlg.FileName)).ConfigureAwait(false);
             }
             else
             {
@@ -86,18 +90,20 @@ namespace PicView.Editing
                 await Task.Run(() =>
                     success = SaveImages.TrySaveImage(crop, source, Savedlg.FileName)).ConfigureAwait(false);
             }
-
-            if (!success)
+            await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
             {
-                Tooltip.ShowTooltipMessage($"An error occured while saving {fileName} to {Savedlg.FileName}");
-            }
+                if (!success)
+                {
+                    Tooltip.ShowTooltipMessage($"An error occured while saving {fileName} to {Savedlg.FileName}");
+                }
 
-            mainWindow.bg.Children.Remove(cropppingTool);
+                mainWindow.bg.Children.Remove(cropppingTool);
+            }));
         }
 
         internal static Int32Rect GetCrop()
         {
-            var cropArea = cropppingTool.CropTool.CropService.GetCroppedArea();
+            var cropArea = CropService.GetCroppedArea();
 
             int x, y, width, height;
 

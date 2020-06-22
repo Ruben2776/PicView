@@ -12,7 +12,7 @@ namespace PicView.UI.Animations
         /// Hides/shows interface elements with a fade animation
         /// </summary>
         /// <param name="show"></param>
-        internal static async Task FadeControlsAsync(bool show, double time = .5)
+        internal static async void FadeControlsAsync(bool show, double time = .5)
         {
             await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
             {

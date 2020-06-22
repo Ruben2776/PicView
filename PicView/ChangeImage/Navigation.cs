@@ -323,7 +323,7 @@ namespace PicView.ChangeImage
         /// <param name="next">Whether it's forward or not</param>
         /// <param name="end">Whether to go to last or first,
         /// depending on the next value</param>
-        internal static async Task Pic(bool next = true, bool end = false)
+        internal static void Pic(bool next = true, bool end = false)
         {
             // Exit if not intended to change picture
             if (!CanNavigate)
@@ -430,7 +430,7 @@ namespace PicView.ChangeImage
             }
         }
 
-        internal static async void PicButton(bool arrow, bool right)
+        internal static void PicButton(bool arrow, bool right)
         {
             if (arrow)
             {
@@ -442,12 +442,12 @@ namespace PicView.ChangeImage
                 if (right)
                 {
                     ClickArrowRightClicked = true;
-                    await Pic().ConfigureAwait(false);
+                    Pic();
                 }
                 else
                 {
                     ClickArrowLeftClicked = true;
-                    await Pic(false, false).ConfigureAwait(false);
+                    Pic(false, false);
                 }
             }
             else
@@ -466,12 +466,12 @@ namespace PicView.ChangeImage
                 if (right)
                 {
                     RightbuttonClicked = true;
-                    await Pic().ConfigureAwait(false);
+                    Pic();
                 }
                 else
                 {
                     LeftbuttonClicked = true;
-                    await Pic(false, false).ConfigureAwait(false);
+                    Pic(false, false);
                 }
             }
         }

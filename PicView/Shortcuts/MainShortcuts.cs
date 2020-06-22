@@ -1,4 +1,5 @@
 ﻿using PicView.Editing;
+using PicView.Editing.Crop;
 using PicView.ImageHandling;
 using PicView.UI;
 using PicView.UI.PicGallery;
@@ -50,6 +51,7 @@ namespace PicView.Shortcuts
                         }
                         mainWindow.bg.Children.Remove(cropppingTool);
                         CanNavigate = true;
+                        e.Handled = true;
                         return;
                     }
 
@@ -64,10 +66,13 @@ namespace PicView.Shortcuts
                             SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
                         }
 
-                        ImageCropping.SaveCrop();
+                        CropFunctions.SaveCrop();
                         CanNavigate = true;
+                        e.Handled = true;
                         return;
                     }
+                    e.Handled = true;
+                    return;
                 }
             }
 
@@ -95,11 +100,11 @@ namespace PicView.Shortcuts
                         // Go to first if Ctrl held down
                         if (ctrlDown)
                         {
-                            await Pic(true, true).ConfigureAwait(false);
+                            Pic(true, true);
                         }
                         else
                         {
-                            await Pic().ConfigureAwait(false);
+                            Pic();
                         }
                     }
                     else if (CanNavigate)
@@ -126,11 +131,11 @@ namespace PicView.Shortcuts
                         // Go to last if Ctrl held down
                         if (ctrlDown)
                         {
-                            await Pic(false, true).ConfigureAwait(false);
+                            Pic(false, true);
                         }
                         else
                         {
-                            await Pic(false).ConfigureAwait(false);
+                            Pic(false);
                         }
                     }
                     else if (CanNavigate)
@@ -199,7 +204,7 @@ namespace PicView.Shortcuts
                             }
                             else
                             {
-                                await Pic(false).ConfigureAwait(false);
+                                Pic(false);
                             }
                         }
                         else
@@ -239,7 +244,7 @@ namespace PicView.Shortcuts
                             }
                             else
                             {
-                                await Pic().ConfigureAwait(false);
+                                Pic();
                             }
                         }
                         else
@@ -361,7 +366,7 @@ namespace PicView.Shortcuts
 
                     // Delete, Shift + Delete
                     case Key.Delete:
-                        await DeleteFileAsync(Pics[FolderIndex], !shiftDown).ConfigureAwait(false);
+                        DeleteFile(Pics[FolderIndex], !shiftDown);
                         break;
 
                     // Ctrl + C, Ctrl + Shift + C, Ctrl + Alt + C
@@ -391,7 +396,7 @@ namespace PicView.Shortcuts
                         }
                         else
                         {
-                            ImageCropping.StartCrop();
+                            CropFunctions.StartCrop();
                         }
                         break;
 
@@ -571,7 +576,7 @@ namespace PicView.Shortcuts
             #endregion Alt + keys
         }
 
-        internal static async void MainWindow_KeysUp(object sender, KeyEventArgs e)
+        internal static void MainWindow_KeysUp(object sender, KeyEventArgs e)
         {
             // Don't allow keys when typing in text
             if (mainWindow.Bar.IsKeyboardFocusWithin) { return; }
@@ -617,11 +622,11 @@ namespace PicView.Shortcuts
                     break;
 
                 case MouseButton.XButton1:
-                    await Pic(false).ConfigureAwait(false);
+                    Pic(false);
                     break;
 
                 case MouseButton.XButton2:
-                    await Pic().ConfigureAwait(false);
+                    Pic();
                     break;
 
                 default: break;

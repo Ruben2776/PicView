@@ -153,7 +153,7 @@ namespace PicView.UI.Loading
             mainWindow.img.MouseLeftButtonDown += Zoom_img_MouseLeftButtonDown;
             mainWindow.img.MouseLeftButtonUp += Zoom_img_MouseLeftButtonUp;
             mainWindow.img.MouseMove += Zoom_img_MouseMove;
-            mainWindow.img.MouseWheel += async (s, x) => await Zoom_img_MouseWheelAsync(s, x).ConfigureAwait(false);
+            mainWindow.img.MouseWheel += Zoom_img_MouseWheel;
 
             // bg
             mainWindow.bg.MouseLeftButtonDown += Bg_MouseLeftButtonDown;
@@ -161,11 +161,11 @@ namespace PicView.UI.Loading
             mainWindow.bg.DragEnter += Image_DragEnter;
             mainWindow.bg.DragLeave += Image_DragLeave;
             mainWindow.bg.MouseEnter += Interface_MouseEnter;
-            mainWindow.bg.MouseMove += async (s, x) => await Interface_MouseMoveAsync(s, x).ConfigureAwait(false);
-            mainWindow.bg.MouseLeave += async (s, x) => await Interface_MouseLeaveAsync(s, x).ConfigureAwait(false);
+            mainWindow.bg.MouseMove += Interface_MouseMove;
+            mainWindow.bg.MouseLeave += Interface_MouseLeave;
 
             // TooltipStyle
-            toolTipMessage.MouseWheel += async (s, x) => await Zoom_img_MouseWheelAsync(s, x).ConfigureAwait(false);
+            toolTipMessage.MouseWheel += Zoom_img_MouseWheel;
 
             // TitleBar
             mainWindow.TitleBar.MouseLeftButtonDown += Move;
@@ -178,12 +178,11 @@ namespace PicView.UI.Loading
 
             // Lower Bar
             mainWindow.LowerBar.Drop += Image_Drop;
-            mainWindow.LowerBar.MouseLeftButtonDown += Move;
+            mainWindow.LowerBar.MouseLeftButtonDown += MoveAlt;
 
             // This
             mainWindow.Closing += Window_Closing;
             mainWindow.StateChanged += MainWindow_StateChanged;
-            mainWindow.MouseLeftButtonDown += MoveAlt;
 
             //LocationChanged += MainWindow_LocationChanged;
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;

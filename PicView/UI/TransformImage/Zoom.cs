@@ -103,8 +103,11 @@ namespace PicView.UI.TransformImage
 
         internal static void Bg_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // Fix focus
-            EditTitleBar.Refocus();
+            if (mainWindow.Bar.Bar.IsKeyboardFocusWithin)
+            {
+                // Fix focus
+                EditTitleBar.Refocus();
+            }
         }
 
         /// <summary>
@@ -158,7 +161,7 @@ namespace PicView.UI.TransformImage
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static async System.Threading.Tasks.Task Zoom_img_MouseWheelAsync(object sender, MouseWheelEventArgs e)
+        internal static void Zoom_img_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             // Disable normal scroll, so we can use our own values
             e.Handled = true;
@@ -171,7 +174,7 @@ namespace PicView.UI.TransformImage
                 }
                 else if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
                 {
-                    await Pic(e.Delta > 0).ConfigureAwait(false);
+                    Pic(e.Delta > 0);
                 }
                 else
                 {
@@ -190,7 +193,7 @@ namespace PicView.UI.TransformImage
             // Change image with shift being held down
             else if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
             {
-                await Pic(e.Delta > 0).ConfigureAwait(false);
+                Pic(e.Delta > 0);
             }
             // Scale when Ctrl being held down
             else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !AutoScrolling)

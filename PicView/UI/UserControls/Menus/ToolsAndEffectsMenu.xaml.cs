@@ -1,4 +1,5 @@
 ﻿using PicView.Editing;
+using PicView.Editing.Crop;
 using PicView.UI.Loading;
 using System.Windows.Controls;
 using static PicView.UI.Animations.MouseOverAnimations;
@@ -42,7 +43,7 @@ namespace PicView.UI.UserControls
             CropButton.Click += delegate
             {
                 UC.Close_UserControls();
-                ImageCropping.StartCrop();
+                CropFunctions.StartCrop();
             };
         }
     }
