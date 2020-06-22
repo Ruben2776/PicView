@@ -167,18 +167,6 @@ namespace PicView.UI.Windows
                     BorderRadio.IsChecked = true;
                 }
 
-                // Toggle Scroll
-                ToggleScroll.PreviewMouseLeftButtonDown += ToggleScroll_PreviewMouseLeftButtonDown;
-                ToggleScroll.MouseEnter += ToggleScroll_MouseEnter;
-                ToggleScroll.MouseLeave += ToggleScroll_MouseLeave;
-                ToggleScroll.IsChecked = Properties.Settings.Default.ScrollEnabled;
-
-                // Set Fit
-                SetFit.PreviewMouseLeftButtonDown += SetFit_PreviewMouseLeftButtonDown;
-                SetFit.MouseEnter += SetFit_MouseEnter;
-                SetFit.MouseLeave += SetFit_MouseLeave;
-                SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
-
                 // Fill
                 Fill.PreviewMouseLeftButtonDown += Fill_PreviewMouseLeftButtonDown;
                 Fill.MouseEnter += Fill_MouseEnter;
@@ -223,11 +211,6 @@ namespace PicView.UI.Windows
                 {
                     SetWallpaper(WallpaperStyle.Stretch);
                 };
-
-                // Set Center
-                SetCenter.PreviewMouseLeftButtonDown += SetCenter_PreviewMouseLeftButtonDown;
-                SetCenter.MouseEnter += SetCenter_MouseEnter;
-                SetCenter.MouseLeave += SetCenter_MouseLeave;
 
                 SlideshowSlider.Value = Properties.Settings.Default.SlideTimer / 1000;
                 SlideshowSlider.ValueChanged += SlideshowSlider_ValueChanged;
@@ -930,96 +913,6 @@ namespace PicView.UI.Windows
         private void Stretch_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(StretchBrush, false);
-        }
-
-        // SetFitbutton Mouse Event
-        private void SetFit_MouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                SetFitBrush,
-                false
-            );
-        }
-
-        private void SetFit_MouseEnter(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseOverColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                SetFitBrush,
-                false
-            );
-        }
-
-        private void SetFit_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(SetFitBrush, false);
-        }
-
-        // SetCenter Button
-        private void SetCenter_MouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                SetCenterBrush,
-                false
-            );
-        }
-
-        private void SetCenter_MouseEnter(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseOverColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                SetCenterBrush,
-                false
-            );
-        }
-
-        private void SetCenter_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(SetCenterBrush, false);
-        }
-
-        // ToggleScroll
-        private void ToggleScroll_MouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                ToggleScrollBrush,
-                false
-            );
-        }
-
-        private void ToggleScroll_MouseEnter(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseOverColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                ToggleScrollBrush,
-                false
-            );
-        }
-
-        private void ToggleScroll_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(ToggleScrollBrush, false);
         }
 
         #endregion Mouseover Events

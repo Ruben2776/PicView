@@ -68,9 +68,6 @@ namespace PicView.SystemIntegration
                     return;
                 }
                 // TODO add Base64 support
-                //if (Base64.IsBase64String(s))
-                //{
-                //}
 
 
             if (Pics.Count > 0)
@@ -154,6 +151,7 @@ namespace PicView.SystemIntegration
                     key.SetValue(@"TileWallpaper", "0");
                     break;
 
+                default:
                 case WallpaperStyle.Fill: // (Windows 7 and later)
                     key.SetValue(@"WallpaperStyle", "10");
                     key.SetValue(@"TileWallpaper", "0");

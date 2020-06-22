@@ -10,6 +10,13 @@
     Foreground="{StaticResource MainColorBrush}"
     SizeToContent="Height"
     Style="{DynamicResource MyWindowStyle}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="\UI\Styles\Slider.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <DockPanel LastChildFill="True">
         <DockPanel
             x:Name="TitleBar"
@@ -305,59 +312,6 @@
                         </Button>
                     </WrapPanel>
 
-                    <Label
-                        HorizontalAlignment="Center"
-                        Content="Image Stretching"
-                        Style="{StaticResource LabelShadow}" />
-
-                    <WrapPanel
-                        Margin="0,3,0,8"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
-                        Orientation="Horizontal">
-                        <CheckBox
-                            x:Name="ToggleScroll"
-                            Width="100"
-                            Height="40"
-                            Margin="3"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1"
-                            Content="Scroll"
-                            Style="{StaticResource Checkstyle}"
-                            ToolTip="Great for manga/comic reading">
-                            <CheckBox.Background>
-                                <SolidColorBrush x:Name="ToggleScrollBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </CheckBox.Background>
-                        </CheckBox>
-                        <RadioButton
-                            x:Name="SetFit"
-                            Width="100"
-                            Height="40"
-                            Margin="3"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1"
-                            Content="Fit"
-                            Style="{StaticResource MetroAlphaFlatRadioButton}"
-                            ToolTip="Resize window to image size">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="SetFitBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                        </RadioButton>
-                        <RadioButton
-                            x:Name="SetCenter"
-                            Width="100"
-                            Height="40"
-                            Margin="3"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1"
-                            Content="Center"
-                            Style="{StaticResource MetroAlphaFlatRadioButton}"
-                            ToolTip="Image will stay centered and window can be resized">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="SetCenterBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                        </RadioButton>
-                    </WrapPanel>
 
                     <Label
                         Margin="0,3,0,0"
