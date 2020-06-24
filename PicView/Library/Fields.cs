@@ -124,9 +124,6 @@ namespace PicView.Library
         /// </summary>
         internal static MonitorSize MonitorInfo { get; set; }
 
-        internal static Point origin;
-        internal static Point start;
-
         /// <summary>
         /// Starting point of AutoScroll
         /// </summary>
@@ -137,8 +134,7 @@ namespace PicView.Library
         /// </summary>
         internal static Point autoScrollPos;
 
-        internal static ScaleTransform st;
-        internal static TranslateTransform tt;
+
 
         /// <summary>
         /// List of file paths to supported files

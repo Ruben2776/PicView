@@ -1,12 +1,10 @@
 ﻿using PicView.UI.PicGallery;
-using PicView.UI.Sizing;
 using System;
-using System.Diagnostics;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 using static PicView.Library.Utilities;
@@ -16,6 +14,16 @@ namespace PicView.UI.TransformImage
 {
     internal static class ZoomLogic
     {
+        private static ScaleTransform scaleTransform;
+        private static TranslateTransform translateTransform;
+        private static Point origin;
+        private static Point start;
+
+        /// Used to determine final point when zooming,
+        /// since DoubleAnimation changes value of
+        /// TranslateTransform continuesly.
+        private static double zoomValue; 
+
         /// <summary>
         /// Returns zoom percentage. if 100%, return empty string
         /// </summary>
@@ -23,17 +31,12 @@ namespace PicView.UI.TransformImage
         {
             get
             {
-                var zoom = Math.Round(AspectRatio * 100);
-
-                if (st == null)
+                if (zoomValue == 1)
                 {
                     return string.Empty;
                 }
 
-                if (st.ScaleX == 1)
-                {
-                    return string.Empty;
-                }
+                var zoom = Math.Round(zoomValue * 100);
 
                 return zoom + "%";
             }
@@ -97,7 +100,7 @@ namespace PicView.UI.TransformImage
                 // Report position for image drag
                 mainWindow.img.CaptureMouse();
                 start = e.GetPosition(mainWindow);
-                origin = new Point(tt.X, tt.Y);
+                origin = new Point(translateTransform.X, translateTransform.Y);
             }
         }
 
@@ -144,15 +147,43 @@ namespace PicView.UI.TransformImage
 
             // Don't drag when full scale
             // and don't drag it if mouse not held down on image
-            if (!mainWindow.img.IsMouseCaptured || st.ScaleX == 1)
+            if (!mainWindow.img.IsMouseCaptured || scaleTransform.ScaleX == 1)
             {
                 return;
             }
 
             // Drag image by modifying X,Y coordinates
-            var v = start - e.GetPosition(mainWindow);
-            tt.X = origin.X - v.X;
-            tt.Y = origin.Y - v.Y;
+            var dragMousePosition = start - e.GetPosition(mainWindow);
+
+            var newXproperty = origin.X - dragMousePosition.X;
+            var newYproperty = origin.Y - dragMousePosition.Y;
+
+            if (newXproperty < 0)
+            {
+                newXproperty = 0;
+            }
+
+            if (newYproperty < 0)
+            {
+                newYproperty = 0;
+            }
+
+            var rightEdge = mainWindow.bg.ActualWidth / zoomValue;
+            var bottomEdge = (xHeight + translateTransform.Y + origin.Y) * zoomValue;
+
+            if (rightEdge > mainWindow.bg.ActualWidth)
+            {
+                newXproperty = newXproperty - 1 < -1 ? 0 : newXproperty - 1;
+            }
+
+            if (bottomEdge > mainWindow.bg.ActualHeight)
+            {
+                newYproperty = newYproperty - 1 < -1 ? 0 : newYproperty - 1;
+            }
+
+            translateTransform.X = newXproperty;
+            translateTransform.Y = newYproperty;
+
             e.Handled = true;
         }
 
@@ -168,11 +199,7 @@ namespace PicView.UI.TransformImage
 
             if (Properties.Settings.Default.ScrollEnabled && !AutoScrolling)
             {
-                if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                {
-                    Zoom(e.Delta, true); // Scale zoom by holding Ctrl when scroll is enabled
-                }
-                else if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+                if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
                 {
                     Pic(e.Delta > 0);
                 }
@@ -195,15 +222,10 @@ namespace PicView.UI.TransformImage
             {
                 Pic(e.Delta > 0);
             }
-            // Scale when Ctrl being held down
-            else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !AutoScrolling)
-            {
-                Zoom(e.Delta, true);
-            }
             // Zoom
             else if (!AutoScrolling)
             {
-                Zoom(e.Delta, false);
+                Zoom(e.Delta > 0);
             }
         }
 
@@ -213,9 +235,6 @@ namespace PicView.UI.TransformImage
         /// </summary>
         internal static void InitializeZoom()
         {
-            // Set center
-            //mainWindow.img.RenderTransformOrigin = new Point(0.5, 0.5); // Already set in xaml
-
             // Add children, which can be manipulated ;)
             mainWindow.img.RenderTransform = new TransformGroup
             {
@@ -229,8 +248,8 @@ namespace PicView.UI.TransformImage
             mainWindow.Scroller.ClipToBounds = mainWindow.img.ClipToBounds = true;
 
             // Add children to fields
-            st = (ScaleTransform)((TransformGroup)mainWindow.img.RenderTransform).Children.First(tr => tr is ScaleTransform);
-            tt = (TranslateTransform)((TransformGroup)mainWindow.img.RenderTransform).Children.First(tr => tr is TranslateTransform);
+            scaleTransform = (ScaleTransform)((TransformGroup)mainWindow.img.RenderTransform).Children.First(tr => tr is ScaleTransform);
+            translateTransform = (TranslateTransform)((TransformGroup)mainWindow.img.RenderTransform).Children.First(tr => tr is TranslateTransform);
         }
 
         /// <summary>
@@ -245,15 +264,16 @@ namespace PicView.UI.TransformImage
             scaletransform.ScaleX = scaletransform.ScaleY = 1.0;
             mainWindow.img.LayoutTransform = scaletransform;
 
-            st.ScaleX = st.ScaleY = 1;
-            tt.X = tt.Y = 0;
+            scaleTransform.ScaleX = scaleTransform.ScaleY = 1;
             mainWindow.img.RenderTransformOrigin = new Point(0.5, 0.5);
+
+            BeginZoomAnimation(1);
 
             Tooltip.CloseToolTipMessage();
             IsZoomed = false;
 
             // Reset size
-            ScaleImage.TryFitImage();
+            //ScaleImage.TryFitImage();
 
             // Display non-zoomed values
             if (Pics.Count == 0)
@@ -272,9 +292,8 @@ namespace PicView.UI.TransformImage
         /// <summary>
         /// Scales or zooms, depending on given values
         /// </summary>
-        /// <param name="i"></param>
-        /// <param name="zoomMode"></param>
-        internal static void Zoom(int i, bool zoomMode)
+        /// <param name="i">increment</param>
+        internal static void Zoom(bool increment)
         {
             /// Don't zoom when gallery is open
             if (UserControls.UC.picGallery != null)
@@ -285,62 +304,54 @@ namespace PicView.UI.TransformImage
                 }
             }
 
-            /// Scales the window with img.LayoutTransform
-            if (zoomMode)
+            /// Get position where user points cursor
+            var position = Mouse.GetPosition(mainWindow.img);
+
+            /// Use our position as starting point for zoom
+            mainWindow.img.RenderTransformOrigin = new Point(position.X / xWidth, position.Y / xHeight);
+
+            zoomValue = scaleTransform.ScaleX;
+
+            /// Determine zoom speed
+            var zoomSpeed = .095;
+
+            if (increment)
             {
-                /// Start from 1 or zoom value
-                if (IsZoomed)
+                // Increase speed determined by how much is zoomed in
+                if (zoomValue > 1.3)
                 {
-                    AspectRatio += i > 0 ? .01 : -.01;
+                    zoomSpeed += .11;
                 }
-                else
+                if (zoomValue > 1.5)
                 {
-                    AspectRatio = 1;
+                    zoomSpeed += .13;
                 }
-
-                var scaletransform = new ScaleTransform();
-
-                scaletransform.ScaleX = scaletransform.ScaleY = AspectRatio;
-                mainWindow.img.LayoutTransform = scaletransform;
             }
-
-            /// Pan and zoom
             else
             {
-                /// Get position where user points cursor
-                var position = Mouse.GetPosition(mainWindow.img);
-
-                /// Use our position as starting point for zoom
-                mainWindow.img.RenderTransformOrigin = new Point(position.X / xWidth, position.Y / xHeight);
-
-                /// Determine zoom speed
-                var zoomValue = st.ScaleX > 1.3 ? .03 : .01;
-                if (st.ScaleX > 1.5)
+                // Zoom out faster
+                if (zoomValue > 1.3)
                 {
-                    zoomValue += .005;
+                    zoomSpeed += .3;
                 }
-
-                if (st.ScaleX > 1.7)
+                if (zoomValue > 1.5)
                 {
-                    zoomValue += .007;
+                    zoomSpeed += .35;
                 }
-
-                if (st.ScaleX >= 1.0 && st.ScaleX + zoomValue >= 1.0 || st.ScaleX - zoomValue >= 1.0)
-                {
-                    zoomValue = i > 0 ? zoomValue : -zoomValue;
-                    // Start zoom
-                    st.ScaleY = st.ScaleX += zoomValue;
-                    AspectRatio += zoomValue;
-                }
-
-                if (st.ScaleX < 1.0)
-                {
-                    /// Don't zoom less than 1.0, does not work so good...
-                    st.ScaleX = st.ScaleY = 1.0;
-                }
-                //zoomValue = i > 0 ? zoomValue : -zoomValue;
-                //st.ScaleY = st.ScaleX += zoomValue;
+                // Make it go negative
+                zoomSpeed = -zoomSpeed;
             }
+
+            // Set speed
+            zoomValue += zoomSpeed;
+
+            if (zoomValue < 1.0)
+            {
+                /// Don't zoom less than 1.0,
+                zoomValue = 1.0;
+            }
+
+            BeginZoomAnimation(zoomValue);
 
             IsZoomed = true;
 
@@ -364,6 +375,14 @@ namespace PicView.UI.TransformImage
             {
                 SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
             }
+        }
+
+        private static void BeginZoomAnimation(double zoomValue)
+        {
+            Duration duration = new Duration(TimeSpan.FromSeconds(.35));
+            DoubleAnimation anim = new DoubleAnimation(zoomValue, duration);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
         }
     }
 }

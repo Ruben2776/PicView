@@ -262,12 +262,12 @@ namespace PicView.Shortcuts
                 // Zoom
                 case Key.Add:
                 case Key.OemPlus:
-                    Zoom(1, ctrlDown);
+                    Zoom(true);
                     return;
 
                 case Key.Subtract:
                 case Key.OemMinus:
-                    Zoom(-1, ctrlDown);
+                    Zoom(false);
                     return;
                 default: break; // Please automatic code analyzers...
             }
