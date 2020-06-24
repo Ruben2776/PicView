@@ -32,26 +32,26 @@ namespace PicView.UI.Loading
         internal static void Go()
         {
             // keyboard and Mouse_Keys Keys
-            mainWindow.KeyDown += MainWindow_KeysDown;
-            mainWindow.KeyUp += MainWindow_KeysUp;
-            mainWindow.MouseDown += MainWindow_MouseDown;
+            TheMainWindow.KeyDown += MainWindow_KeysDown;
+            TheMainWindow.KeyUp += MainWindow_KeysUp;
+            TheMainWindow.MouseDown += MainWindow_MouseDown;
 
             // MinButton
-            mainWindow.MinButton.TheButton.Click += (s, x) => SystemCommands.MinimizeWindow(mainWindow);
+            TheMainWindow.MinButton.TheButton.Click += (s, x) => SystemCommands.MinimizeWindow(TheMainWindow);
 
             // MaxButton
-            mainWindow.FullscreenButton.TheButton.Click += (s, x) => Fullscreen_Restore();
+            TheMainWindow.FullscreenButton.TheButton.Click += (s, x) => Fullscreen_Restore();
 
             // CloseButton
-            mainWindow.CloseButton.TheButton.Click += (s, x) => SystemCommands.CloseWindow(mainWindow);
+            TheMainWindow.CloseButton.TheButton.Click += (s, x) => SystemCommands.CloseWindow(TheMainWindow);
 
             // FileMenuButton
-            mainWindow.FileMenuButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.FolderFill);
-            mainWindow.FileMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(mainWindow.FolderFill);
-            mainWindow.FileMenuButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgColor(mainWindow.FileMenuBg);
-            mainWindow.FileMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.FolderFill);
-            mainWindow.FileMenuButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgColor(mainWindow.FileMenuBg);
-            mainWindow.FileMenuButton.Click += Toggle_open_menu;
+            TheMainWindow.FileMenuButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.FolderFill);
+            TheMainWindow.FileMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(TheMainWindow.FolderFill);
+            TheMainWindow.FileMenuButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgColor(TheMainWindow.FileMenuBg);
+            TheMainWindow.FileMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(TheMainWindow.FolderFill);
+            TheMainWindow.FileMenuButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgColor(TheMainWindow.FileMenuBg);
+            TheMainWindow.FileMenuButton.Click += Toggle_open_menu;
 
             fileMenu.Open.Click += (s, x) => Open();
             fileMenu.FileLocation.Click += (s, x) => Open_In_Explorer();
@@ -67,12 +67,12 @@ namespace PicView.UI.Loading
             fileMenu.CopyButton.Click += (s, x) => Copyfile();
 
             // image_button
-            mainWindow.image_button.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.ImagePath1Fill, mainWindow.ImagePath2Fill, mainWindow.ImagePath3Fill);
-            mainWindow.image_button.MouseEnter += (s, x) => ButtonMouseOverAnim(mainWindow.ImagePath1Fill, mainWindow.ImagePath2Fill, mainWindow.ImagePath3Fill);
-            mainWindow.image_button.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgColor(mainWindow.ImageMenuBg);
-            mainWindow.image_button.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.ImagePath1Fill, mainWindow.ImagePath2Fill, mainWindow.ImagePath3Fill);
-            mainWindow.image_button.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgColor(mainWindow.ImageMenuBg);
-            mainWindow.image_button.Click += Toggle_image_menu;
+            TheMainWindow.image_button.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.ImagePath1Fill, TheMainWindow.ImagePath2Fill, TheMainWindow.ImagePath3Fill);
+            TheMainWindow.image_button.MouseEnter += (s, x) => ButtonMouseOverAnim(TheMainWindow.ImagePath1Fill, TheMainWindow.ImagePath2Fill, TheMainWindow.ImagePath3Fill);
+            TheMainWindow.image_button.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgColor(TheMainWindow.ImageMenuBg);
+            TheMainWindow.image_button.MouseLeave += (s, x) => ButtonMouseLeaveAnim(TheMainWindow.ImagePath1Fill, TheMainWindow.ImagePath2Fill, TheMainWindow.ImagePath3Fill);
+            TheMainWindow.image_button.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgColor(TheMainWindow.ImageMenuBg);
+            TheMainWindow.image_button.Click += Toggle_image_menu;
 
             // imageSettingsMenu Buttons
             imageSettingsMenu.RotateRightButton.Click += (s, x) => Rotate(true);
@@ -86,40 +86,40 @@ namespace PicView.UI.Loading
                 Close_UserControls();
                 GalleryToggle.OpenFullscreenGallery();
             };
-            imageSettingsMenu.SlideshowButton.Click += delegate { SlideShow.StartSlideshow(); };
+            imageSettingsMenu.SlideshowButton.Click += delegate { Slideshow.StartSlideshow(); };
 
             // LeftButton
-            mainWindow.LeftButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.LeftArrowFill);
-            mainWindow.LeftButton.MouseEnter += (s, x) => ButtonMouseOverAnim(mainWindow.LeftArrowFill);
-            mainWindow.LeftButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(mainWindow.LeftButtonBrush);
-            mainWindow.LeftButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.LeftArrowFill);
-            mainWindow.LeftButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(mainWindow.LeftButtonBrush);
-            mainWindow.LeftButton.Click += (s, x) => PicButton(false, false);
+            TheMainWindow.LeftButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.LeftArrowFill);
+            TheMainWindow.LeftButton.MouseEnter += (s, x) => ButtonMouseOverAnim(TheMainWindow.LeftArrowFill);
+            TheMainWindow.LeftButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(TheMainWindow.LeftButtonBrush);
+            TheMainWindow.LeftButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(TheMainWindow.LeftArrowFill);
+            TheMainWindow.LeftButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(TheMainWindow.LeftButtonBrush);
+            TheMainWindow.LeftButton.Click += (s, x) => PicButton(false, false);
 
             // RightButton
-            mainWindow.RightButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.RightArrowFill);
-            mainWindow.RightButton.MouseEnter += (s, x) => ButtonMouseOverAnim(mainWindow.RightArrowFill);
-            mainWindow.RightButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(mainWindow.RightButtonBrush);
-            mainWindow.RightButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.RightArrowFill);
-            mainWindow.RightButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(mainWindow.RightButtonBrush);
-            mainWindow.RightButton.Click += (s, x) => PicButton(false, true);
+            TheMainWindow.RightButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.RightArrowFill);
+            TheMainWindow.RightButton.MouseEnter += (s, x) => ButtonMouseOverAnim(TheMainWindow.RightArrowFill);
+            TheMainWindow.RightButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(TheMainWindow.RightButtonBrush);
+            TheMainWindow.RightButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(TheMainWindow.RightArrowFill);
+            TheMainWindow.RightButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(TheMainWindow.RightButtonBrush);
+            TheMainWindow.RightButton.Click += (s, x) => PicButton(false, true);
 
             // SettingsButton
-            mainWindow.SettingsButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(mainWindow.SettingsButtonFill);
-            mainWindow.SettingsButton.MouseEnter += (s, x) => ButtonMouseOverAnim(mainWindow.SettingsButtonFill);
-            mainWindow.SettingsButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgColor(mainWindow.SettingsMenuBg);
-            mainWindow.SettingsButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(mainWindow.SettingsButtonFill);
-            mainWindow.SettingsButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgColor(mainWindow.SettingsMenuBg);
-            mainWindow.SettingsButton.Click += Toggle_quick_settings_menu;
+            TheMainWindow.SettingsButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.SettingsButtonFill);
+            TheMainWindow.SettingsButton.MouseEnter += (s, x) => ButtonMouseOverAnim(TheMainWindow.SettingsButtonFill);
+            TheMainWindow.SettingsButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgColor(TheMainWindow.SettingsMenuBg);
+            TheMainWindow.SettingsButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(TheMainWindow.SettingsButtonFill);
+            TheMainWindow.SettingsButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgColor(TheMainWindow.SettingsMenuBg);
+            TheMainWindow.SettingsButton.Click += Toggle_quick_settings_menu;
 
             //FunctionButton
-            var MagicBrush = mainWindow.TryFindResource("MagicBrush") as SolidColorBrush;
-            mainWindow.FunctionMenuButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(MagicBrush);
-            mainWindow.FunctionMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(MagicBrush);
-            mainWindow.FunctionMenuButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgColor(mainWindow.EffectsMenuBg);
-            mainWindow.FunctionMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(MagicBrush);
-            mainWindow.FunctionMenuButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgColor(mainWindow.EffectsMenuBg);
-            mainWindow.FunctionMenuButton.Click += Toggle_Functions_menu;
+            var MagicBrush = TheMainWindow.TryFindResource("MagicBrush") as SolidColorBrush;
+            TheMainWindow.FunctionMenuButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(MagicBrush);
+            TheMainWindow.FunctionMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(MagicBrush);
+            TheMainWindow.FunctionMenuButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgColor(TheMainWindow.EffectsMenuBg);
+            TheMainWindow.FunctionMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(MagicBrush);
+            TheMainWindow.FunctionMenuButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgColor(TheMainWindow.EffectsMenuBg);
+            TheMainWindow.FunctionMenuButton.Click += Toggle_Functions_menu;
 
             // FlipButton
             imageSettingsMenu.FlipButton.Click += (s, x) => Flip();
@@ -132,11 +132,11 @@ namespace PicView.UI.Loading
             clickArrowRight.MouseEnter += Interface_MouseEnter_Negative;
 
             // x2
-            x2.MouseLeftButtonDown += (x, xx) => SystemCommands.CloseWindow(mainWindow);
+            x2.MouseLeftButtonDown += (x, xx) => SystemCommands.CloseWindow(TheMainWindow);
             x2.MouseEnter += Interface_MouseEnter_Negative;
 
             // Minus
-            minus.MouseLeftButtonDown += (s, x) => SystemCommands.MinimizeWindow(mainWindow);
+            minus.MouseLeftButtonDown += (s, x) => SystemCommands.MinimizeWindow(TheMainWindow);
             minus.MouseEnter += Interface_MouseEnter_Negative;
 
             // GalleryShortcut
@@ -144,40 +144,40 @@ namespace PicView.UI.Loading
             galleryShortcut.MouseEnter += Interface_MouseEnter_Negative;
 
             // Bar
-            mainWindow.Bar.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
-            mainWindow.Bar.Bar.PreviewKeyDown += CustomTextBoxShortcuts.CustomTextBox_KeyDown;
-            mainWindow.Bar.PreviewMouseLeftButtonDown += EditTitleBar.Bar_PreviewMouseLeftButtonDown;
+            TheMainWindow.Bar.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
+            TheMainWindow.Bar.Bar.PreviewKeyDown += CustomTextBoxShortcuts.CustomTextBox_KeyDown;
+            TheMainWindow.Bar.PreviewMouseLeftButtonDown += EditTitleBar.Bar_PreviewMouseLeftButtonDown;
 
             // img
-            mainWindow.img.PreviewMouseLeftButtonDown += DragFile;
-            mainWindow.img.MouseLeftButtonDown += Zoom_img_MouseLeftButtonDown;
-            mainWindow.img.MouseLeftButtonUp += Zoom_img_MouseLeftButtonUp;
-            mainWindow.img.MouseMove += Zoom_img_MouseMove;
-            mainWindow.img.MouseWheel += Zoom_img_MouseWheel;
+            TheMainWindow.MainImage.PreviewMouseLeftButtonDown += DragFile;
+            TheMainWindow.MainImage.MouseLeftButtonDown += MainImage_MouseLeftButtonDown;
+            TheMainWindow.MainImage.MouseLeftButtonUp += Zoom_img_MouseLeftButtonUp;
+            TheMainWindow.MainImage.MouseMove += Zoom_img_MouseMove;
+            TheMainWindow.MainImage.MouseWheel += Zoom_img_MouseWheel;
 
             // bg
-            mainWindow.bg.MouseLeftButtonDown += Bg_MouseLeftButtonDown;
-            mainWindow.bg.Drop += Image_Drop;
-            mainWindow.bg.DragEnter += Image_DragEnter;
-            mainWindow.bg.DragLeave += Image_DragLeave;
-            mainWindow.bg.MouseEnter += Interface_MouseEnter;
-            mainWindow.bg.MouseMove += Interface_MouseMove;
-            mainWindow.bg.MouseLeave += Interface_MouseLeave;
+            TheMainWindow.bg.MouseLeftButtonDown += Bg_MouseLeftButtonDown;
+            TheMainWindow.bg.Drop += Image_Drop;
+            TheMainWindow.bg.DragEnter += Image_DragEnter;
+            TheMainWindow.bg.DragLeave += Image_DragLeave;
+            TheMainWindow.bg.MouseEnter += Interface_MouseEnter;
+            TheMainWindow.bg.MouseMove += Interface_MouseMove;
+            TheMainWindow.bg.MouseLeave += Interface_MouseLeave;
 
             // TooltipStyle
             toolTipMessage.MouseWheel += Zoom_img_MouseWheel;
 
             // TitleBar
-            mainWindow.TitleBar.MouseLeftButtonDown += Move;
-            mainWindow.TitleBar.MouseLeave += Restore_From_Move;
+            TheMainWindow.TitleBar.MouseLeftButtonDown += Move;
+            TheMainWindow.TitleBar.MouseLeave += Restore_From_Move;
 
             // Lower Bar
-            mainWindow.LowerBar.Drop += Image_Drop;
-            mainWindow.LowerBar.MouseLeftButtonDown += MoveAlt;
+            TheMainWindow.LowerBar.Drop += Image_Drop;
+            TheMainWindow.LowerBar.MouseLeftButtonDown += MoveAlt;
 
             // This
-            mainWindow.Closing += Window_Closing;
-            mainWindow.StateChanged += MainWindow_StateChanged;
+            TheMainWindow.Closing += Window_Closing;
+            TheMainWindow.StateChanged += MainWindow_StateChanged;
 
             //LocationChanged += MainWindow_LocationChanged;
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
@@ -191,7 +191,7 @@ namespace PicView.UI.Loading
 
         private static void MainWindow_StateChanged(object sender, EventArgs e)
         {
-            switch (mainWindow.WindowState)
+            switch (TheMainWindow.WindowState)
             {
                 case WindowState.Maximized:
                     AutoFitWindow = false;
@@ -228,15 +228,15 @@ namespace PicView.UI.Loading
                 fakeWindow.Close();
             }
 
-            mainWindow.Hide(); // Make it feel faster
+            TheMainWindow.Hide(); // Make it feel faster
 
             if (!Properties.Settings.Default.AutoFitWindow && !Properties.Settings.Default.Fullscreen)
             {
-                Properties.Settings.Default.Top = mainWindow.Top;
-                Properties.Settings.Default.Left = mainWindow.Left;
-                Properties.Settings.Default.Height = mainWindow.Height;
-                Properties.Settings.Default.Width = mainWindow.Width;
-                Properties.Settings.Default.Maximized = mainWindow.WindowState == WindowState.Maximized;
+                Properties.Settings.Default.Top = TheMainWindow.Top;
+                Properties.Settings.Default.Left = TheMainWindow.Left;
+                Properties.Settings.Default.Height = TheMainWindow.Height;
+                Properties.Settings.Default.Width = TheMainWindow.Width;
+                Properties.Settings.Default.Maximized = TheMainWindow.WindowState == WindowState.Maximized;
             }
 
             Properties.Settings.Default.Save();

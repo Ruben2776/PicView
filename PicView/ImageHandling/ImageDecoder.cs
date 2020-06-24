@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 
 namespace PicView.ImageHandling

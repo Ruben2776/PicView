@@ -4,7 +4,7 @@ using PicView.UI.UserControls;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
-using static PicView.Library.Fields;
+using static PicView.ChangeImage.Navigation;
 using static PicView.UI.UserControls.UC;
 
 namespace PicView.ImageHandling

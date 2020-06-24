@@ -9,6 +9,7 @@ using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 using static PicView.Library.Utilities;
 using static PicView.UI.Sizing.WindowLogic;
+using static PicView.UI.TransformImage.Scroll;
 
 namespace PicView.UI.TransformImage
 {
@@ -31,7 +32,7 @@ namespace PicView.UI.TransformImage
         {
             get
             {
-                if (zoomValue == 1)
+                if (scaleTransform == null || zoomValue <= 1)
                 {
                     return string.Empty;
                 }
@@ -62,13 +63,35 @@ namespace PicView.UI.TransformImage
             return ", " + x + ":" + y + ") ";
         }
 
+        /// <summary>
+        /// Manipulates the required elements to allow zooming
+        /// by modifying ScaleTransform and TranslateTransform
+        /// </summary>
+        internal static void InitializeZoom()
+        {
+            // Initialize transforms
+            TheMainWindow.MainImage.RenderTransform = new TransformGroup
+            {
+                Children = new TransformCollection {
+                            new ScaleTransform(),
+                            new TranslateTransform()
+                        }
+            };
+
+            TheMainWindow.Scroller.ClipToBounds = TheMainWindow.MainImage.ClipToBounds = true;
+
+            // Set transforms to UI elements
+            scaleTransform = (ScaleTransform)((TransformGroup)TheMainWindow.MainImage.RenderTransform).Children.First(tr => tr is ScaleTransform);
+            translateTransform = (TranslateTransform)((TransformGroup)TheMainWindow.MainImage.RenderTransform).Children.First(tr => tr is TranslateTransform);
+        }
+
         // Zoom
         /// <summary>
         /// Pan and Zoom, reset zoom and double click to reset
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static void Zoom_img_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        internal static void MainImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             // Move window when Shift is being held down
             if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
@@ -84,8 +107,8 @@ namespace PicView.UI.TransformImage
             if (AutoScrolling)
             {
                 // Report position and enable autoscrolltimer
-                autoScrollOrigin = e.GetPosition(mainWindow);
-                autoScrollTimer.Enabled = true;
+                AutoScrollOrigin = e.GetPosition(TheMainWindow);
+                AutoScrollTimer.Enabled = true;
                 return;
             }
             // Reset zoom on double click
@@ -98,15 +121,15 @@ namespace PicView.UI.TransformImage
             if (!Scroll.IsScrollEnabled)
             {
                 // Report position for image drag
-                mainWindow.img.CaptureMouse();
-                start = e.GetPosition(mainWindow);
+                TheMainWindow.MainImage.CaptureMouse();
+                start = e.GetPosition(TheMainWindow);
                 origin = new Point(translateTransform.X, translateTransform.Y);
             }
         }
 
         internal static void Bg_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (mainWindow.Bar.Bar.IsKeyboardFocusWithin)
+            if (TheMainWindow.Bar.Bar.IsKeyboardFocusWithin)
             {
                 // Fix focus
                 EditTitleBar.Refocus();
@@ -126,7 +149,7 @@ namespace PicView.UI.TransformImage
             }
             else
             {
-                mainWindow.img.ReleaseMouseCapture();
+                TheMainWindow.MainImage.ReleaseMouseCapture();
             }
         }
 
@@ -141,19 +164,19 @@ namespace PicView.UI.TransformImage
             if (AutoScrolling)
             {
                 // Start automainWindow.Scroller and report position
-                autoScrollPos = e.GetPosition(mainWindow.Scroller);
-                autoScrollTimer.Start();
+                AutoScrollPos = e.GetPosition(TheMainWindow.Scroller);
+                AutoScrollTimer.Start();
             }
 
             // Don't drag when full scale
             // and don't drag it if mouse not held down on image
-            if (!mainWindow.img.IsMouseCaptured || scaleTransform.ScaleX == 1)
+            if (!TheMainWindow.MainImage.IsMouseCaptured || scaleTransform.ScaleX == 1)
             {
                 return;
             }
 
             // Drag image by modifying X,Y coordinates
-            var dragMousePosition = start - e.GetPosition(mainWindow);
+            var dragMousePosition = start - e.GetPosition(TheMainWindow);
 
             var newXproperty = origin.X - dragMousePosition.X;
             var newYproperty = origin.Y - dragMousePosition.Y;
@@ -168,15 +191,15 @@ namespace PicView.UI.TransformImage
                 newYproperty = 0;
             }
 
-            var rightEdge = mainWindow.bg.ActualWidth / zoomValue;
+            var rightEdge = TheMainWindow.bg.ActualWidth / zoomValue;
             var bottomEdge = (xHeight + translateTransform.Y + origin.Y) * zoomValue;
 
-            if (rightEdge > mainWindow.bg.ActualWidth)
+            if (rightEdge > TheMainWindow.bg.ActualWidth)
             {
                 newXproperty = newXproperty - 1 < -1 ? 0 : newXproperty - 1;
             }
 
-            if (bottomEdge > mainWindow.bg.ActualHeight)
+            if (bottomEdge > TheMainWindow.bg.ActualHeight)
             {
                 newYproperty = newYproperty - 1 < -1 ? 0 : newYproperty - 1;
             }
@@ -209,11 +232,11 @@ namespace PicView.UI.TransformImage
                     var zoomSpeed = 45;
                     if (e.Delta > 0)
                     {
-                        mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset - zoomSpeed);
+                        TheMainWindow.Scroller.ScrollToVerticalOffset(TheMainWindow.Scroller.VerticalOffset - zoomSpeed);
                     }
                     else if (e.Delta < 0)
                     {
-                        mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset + zoomSpeed);
+                        TheMainWindow.Scroller.ScrollToVerticalOffset(TheMainWindow.Scroller.VerticalOffset + zoomSpeed);
                     }
                 }
             }
@@ -230,34 +253,11 @@ namespace PicView.UI.TransformImage
         }
 
         /// <summary>
-        /// Manipulates the required elements to allow zooming
-        /// by modifying ScaleTransform and TranslateTransform
-        /// </summary>
-        internal static void InitializeZoom()
-        {
-            // Add children, which can be manipulated ;)
-            mainWindow.img.RenderTransform = new TransformGroup
-            {
-                Children = new TransformCollection {
-                            new ScaleTransform(),
-                            new TranslateTransform()
-                        }
-            };
-
-            mainWindow.imgBorder.IsManipulationEnabled = true;
-            mainWindow.Scroller.ClipToBounds = mainWindow.img.ClipToBounds = true;
-
-            // Add children to fields
-            scaleTransform = (ScaleTransform)((TransformGroup)mainWindow.img.RenderTransform).Children.First(tr => tr is ScaleTransform);
-            translateTransform = (TranslateTransform)((TransformGroup)mainWindow.img.RenderTransform).Children.First(tr => tr is TranslateTransform);
-        }
-
-        /// <summary>
         /// Resets element values to their loaded values
         /// </summary>
         internal static void ResetZoom(bool animate = true)
         {
-            if (mainWindow.img.Source == null) { return; }
+            if (TheMainWindow.MainImage.Source == null) { return; }
 
             // Scale to default
             translateTransform.X = translateTransform.Y = 1;
@@ -268,26 +268,23 @@ namespace PicView.UI.TransformImage
             }
             else
             {
-                
                 scaleTransform.ScaleX = scaleTransform.ScaleY = 1.0;
             }
-            
 
             Tooltip.CloseToolTipMessage();
             IsZoomed = false;
+            zoomValue = 1;
 
             // Display non-zoomed values
             if (Pics.Count == 0)
             {
                 /// Display values from web
-                SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height);
+                SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height);
             }
             else
             {
-                SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
+                SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height, FolderIndex);
             }
-
-            IsZoomed = false;
         }
 
         /// <summary>
@@ -306,10 +303,10 @@ namespace PicView.UI.TransformImage
             }
 
             /// Get position where user points cursor
-            var position = Mouse.GetPosition(mainWindow.img);
+            var position = Mouse.GetPosition(TheMainWindow.MainImage);
 
             /// Use our position as starting point for zoom
-            mainWindow.img.RenderTransformOrigin = new Point(position.X / xWidth, position.Y / xHeight);
+            TheMainWindow.MainImage.RenderTransformOrigin = new Point(position.X / xWidth, position.Y / xHeight);
 
             zoomValue = scaleTransform.ScaleX;
 
@@ -352,9 +349,9 @@ namespace PicView.UI.TransformImage
                 zoomValue = 1.0;
             }
 
-            BeginZoomAnimation(zoomValue);
-
             IsZoomed = true;
+
+            BeginZoomAnimation(zoomValue);
 
             /// Displays zoompercentage in the center window
             if (!string.IsNullOrEmpty(ZoomPercentage))
@@ -370,11 +367,11 @@ namespace PicView.UI.TransformImage
             if (Pics.Count == 0)
             {
                 /// Display values from web
-                SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height);
+                SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height);
             }
             else
             {
-                SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
+                SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height, FolderIndex);
             }
         }
 
@@ -388,8 +385,13 @@ namespace PicView.UI.TransformImage
                 FillBehavior = FillBehavior.Stop
             };
 
-            // Hack it to keep the intended value
-            anim.Completed += delegate { scaleTransform.ScaleX = scaleTransform.ScaleY = zoomValue; };
+            anim.Completed += delegate {
+                // Hack it to keep the intended value
+                scaleTransform.ScaleX = scaleTransform.ScaleY = zoomValue;
+
+                // Make sure value stays correct
+                IsZoomed = true;
+            };
 
             scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
             scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, anim);

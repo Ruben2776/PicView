@@ -1,6 +1,6 @@
 ﻿using PicView.Library;
 using System;
-using System.Threading.Tasks;
+using System.Timers;
 using static PicView.Library.Fields;
 using static PicView.UI.UserControls.UC;
 
@@ -9,14 +9,19 @@ namespace PicView.UI.Animations
     internal static class FadeControls
     {
         /// <summary>
+        /// Timer used to hide interface and/or scrollbar
+        /// </summary>
+        internal static Timer ActivityTimer { get; set; }
+
+        /// <summary>
         /// Hides/shows interface elements with a fade animation
         /// </summary>
         /// <param name="show"></param>
         internal static async void FadeControlsAsync(bool show, double time = .5)
         {
-            await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            await TheMainWindow.Dispatcher.BeginInvoke((Action)(() =>
             {
-                if (Properties.Settings.Default.ScrollEnabled && mainWindow.Scroller.ScrollableHeight > 0)
+                if (Properties.Settings.Default.ScrollEnabled && TheMainWindow.Scroller.ScrollableHeight > 0)
                 {
                     ScrollbarFade(show);
                 }
@@ -49,7 +54,7 @@ namespace PicView.UI.Animations
                     return;
                 }
 
-                var pos = Utilities.GetMousePos(mainWindow.bg);
+                var pos = Utilities.GetMousePos(TheMainWindow.bg);
 
                 if (pos.X < 1100 && pos.Y < 850)
                 {
@@ -97,7 +102,7 @@ namespace PicView.UI.Animations
         /// <param name="show"></param>
         internal static void ScrollbarFade(bool show)
         {
-            var s = mainWindow.Scroller.Template.FindName("PART_VerticalScrollBar", mainWindow.Scroller) as System.Windows.Controls.Primitives.ScrollBar;
+            var s = TheMainWindow.Scroller.Template.FindName("PART_VerticalScrollBar", TheMainWindow.Scroller) as System.Windows.Controls.Primitives.ScrollBar;
 
             if (show)
             {

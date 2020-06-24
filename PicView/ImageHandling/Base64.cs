@@ -1,4 +1,5 @@
 ﻿using ImageMagick;
+using PicView.ChangeImage;
 using PicView.Library;
 using PicView.UI;
 using System;
@@ -64,7 +65,7 @@ namespace PicView.ImageHandling
 
         internal static void SendToClipboard()
         {
-            var base64 = ConvertToBase64(Fields.Pics[Fields.FolderIndex]);
+            var base64 = ConvertToBase64(Navigation.Pics[Fields.FolderIndex]);
             if (!string.IsNullOrWhiteSpace(base64))
             {
                 Clipboard.SetText(base64);

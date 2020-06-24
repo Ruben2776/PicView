@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 using static PicView.UI.Loading.LoadWindows;
 
@@ -73,7 +74,7 @@ namespace PicView.Editing
 
         private static async void HandleCencalled()
         {
-            await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            await TheMainWindow.Dispatcher.BeginInvoke((Action)(() =>
             {
                 resizeAndOptimize.StartButton.Content = "Cancelled";
                 resizeAndOptimize.UIprogressbar.Value = 0;

@@ -25,7 +25,7 @@ namespace PicView.UI.Loading
                     HorizontalAlignment = HorizontalAlignment.Right
                 };
 
-                mainWindow.bg.Children.Add(clickArrowRight);
+                TheMainWindow.bg.Children.Add(clickArrowRight);
             }
             else
             {
@@ -37,7 +37,7 @@ namespace PicView.UI.Loading
                     HorizontalAlignment = HorizontalAlignment.Left
                 };
 
-                mainWindow.bg.Children.Add(clickArrowLeft);
+                TheMainWindow.bg.Children.Add(clickArrowLeft);
 
 #if DEBUG
                 Trace.WriteLine("LoadClickArrow loaded " + right);
@@ -58,7 +58,7 @@ namespace PicView.UI.Loading
                 HorizontalAlignment = HorizontalAlignment.Right
             };
 
-            mainWindow.bg.Children.Add(x2);
+            TheMainWindow.bg.Children.Add(x2);
 
 #if DEBUG
             Trace.WriteLine("Loadx2 loaded ");
@@ -79,7 +79,7 @@ namespace PicView.UI.Loading
                 Margin = new Thickness(0, 0, 50, 0)
             };
 
-            mainWindow.bg.Children.Add(minus);
+            TheMainWindow.bg.Children.Add(minus);
 
 #if DEBUG
             Trace.WriteLine("LoadMinus loaded ");
@@ -99,7 +99,7 @@ namespace PicView.UI.Loading
                 HorizontalAlignment = HorizontalAlignment.Right
             };
 
-            mainWindow.bg.Children.Add(galleryShortcut);
+            TheMainWindow.bg.Children.Add(galleryShortcut);
 
 #if DEBUG
             Trace.WriteLine("LoadGalleryShortcut loaded ");
@@ -121,7 +121,7 @@ namespace PicView.UI.Loading
                 Margin = new Thickness(0, 0, 188, 0)
             };
 
-            mainWindow.bg.Children.Add(fileMenu);
+            TheMainWindow.bg.Children.Add(fileMenu);
 
 #if DEBUG
             Trace.WriteLine("LoadFileMenu loaded ");
@@ -143,7 +143,7 @@ namespace PicView.UI.Loading
                 Margin = new Thickness(0, 0, 95, 0)
             };
 
-            mainWindow.bg.Children.Add(imageSettingsMenu);
+            TheMainWindow.bg.Children.Add(imageSettingsMenu);
 
 #if DEBUG
             Trace.WriteLine("LoadImageSettingsMenu loaded ");
@@ -167,7 +167,7 @@ namespace PicView.UI.Loading
 
             quickSettingsMenu.SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
 
-            mainWindow.bg.Children.Add(quickSettingsMenu);
+            TheMainWindow.bg.Children.Add(quickSettingsMenu);
 
 #if DEBUG
             Trace.WriteLine("LoadQuickSettingsMenu loaded ");
@@ -189,7 +189,7 @@ namespace PicView.UI.Loading
                 Margin = new Thickness(87, 0, 0, 0)
             };
 
-            mainWindow.bg.Children.Add(toolsAndEffectsMenu);
+            TheMainWindow.bg.Children.Add(toolsAndEffectsMenu);
 
 #if DEBUG
             Trace.WriteLine("LoadFunctionsMenu loaded ");
@@ -210,7 +210,7 @@ namespace PicView.UI.Loading
                 Visibility = Visibility.Hidden
             };
 
-            mainWindow.bg.Children.Add(toolTipMessage);
+            TheMainWindow.bg.Children.Add(toolTipMessage);
 
 #if DEBUG
             Trace.WriteLine("LoadTooltipStyle loaded ");
@@ -231,7 +231,7 @@ namespace PicView.UI.Loading
                 Height = 35
             };
 
-            mainWindow.topLayer.Children.Add(autoScrollSign);
+            TheMainWindow.topLayer.Children.Add(autoScrollSign);
 
 #if DEBUG
             Trace.WriteLine("LoadAutoScrollSign loaded ");
@@ -247,7 +247,7 @@ namespace PicView.UI.Loading
             {
             };
 
-            mainWindow.bg.Children.Add(cropppingTool);
+            TheMainWindow.bg.Children.Add(cropppingTool);
 
 #if DEBUG
             Trace.WriteLine("cropppingTool loaded ");

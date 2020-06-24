@@ -31,7 +31,7 @@ namespace PicView.UI.Windows
             Scroller.MouseWheel += Info_MouseWheel;
 
             // CloseButton
-            CloseButton.TheButton.Click += delegate { Hide(); mainWindow.Focus(); };
+            CloseButton.TheButton.Click += delegate { Hide(); TheMainWindow.Focus(); };
 
             // MinButton
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
@@ -104,7 +104,7 @@ namespace PicView.UI.Windows
             {
                 case Key.Escape:
                     Hide();
-                    mainWindow.Focus();
+                    TheMainWindow.Focus();
                     break;
 
                 case Key.Q:

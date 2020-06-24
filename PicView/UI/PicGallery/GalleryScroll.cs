@@ -35,7 +35,7 @@ namespace PicView.UI.PicGallery
 
                 return Properties.Settings.Default.PicGallery == 1 ?
                     (int)Math.Floor(picGallery.Height / picGalleryItem_Size) :
-                    Pics.Count;
+                    ChangeImage.Navigation.Pics.Count;
             }
         }
 

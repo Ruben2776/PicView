@@ -44,9 +44,9 @@ namespace PicView.UI
             ShowNavigation(false);
             ShowShortcuts(false);
 
-            if (activityTimer != null)
+            if (ActivityTimer != null)
             {
-                activityTimer.Stop();
+                ActivityTimer.Stop();
             }
         }
 
@@ -58,9 +58,9 @@ namespace PicView.UI
 
             Properties.Settings.Default.ShowInterface = false;
 
-            if (activityTimer != null)
+            if (ActivityTimer != null)
             {
-                activityTimer.Start();
+                ActivityTimer.Start();
             }
         }
 
@@ -68,17 +68,17 @@ namespace PicView.UI
         {
             if (show)
             {
-                mainWindow.TitleBar.Visibility =
-                mainWindow.LowerBar.Visibility =
-                mainWindow.LeftBorderRectangle.Visibility =
-                mainWindow.RightBorderRectangle.Visibility = Visibility.Visible;
+                TheMainWindow.TitleBar.Visibility =
+                TheMainWindow.LowerBar.Visibility =
+                TheMainWindow.LeftBorderRectangle.Visibility =
+                TheMainWindow.RightBorderRectangle.Visibility = Visibility.Visible;
             }
             else
             {
-                mainWindow.TitleBar.Visibility =
-                mainWindow.LowerBar.Visibility =
-                mainWindow.LeftBorderRectangle.Visibility =
-                mainWindow.RightBorderRectangle.Visibility = Visibility.Collapsed;
+                TheMainWindow.TitleBar.Visibility =
+                TheMainWindow.LowerBar.Visibility =
+                TheMainWindow.LeftBorderRectangle.Visibility =
+                TheMainWindow.RightBorderRectangle.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -133,9 +133,9 @@ namespace PicView.UI
         /// <param name="e"></param>
         internal static void Interface_MouseEnter(object sender, MouseEventArgs e)
         {
-            if (!activityTimer.Enabled || AutoScrolling)
+            if (!ActivityTimer.Enabled || AutoScrolling)
             {
-                activityTimer.Start();
+                ActivityTimer.Start();
             }
         }
 
@@ -146,9 +146,9 @@ namespace PicView.UI
         /// <param name="e"></param>
         internal static void Interface_MouseEnter_Negative(object sender, MouseEventArgs e)
         {
-            if (activityTimer.Enabled)
+            if (ActivityTimer.Enabled)
             {
-                activityTimer.Stop();
+                ActivityTimer.Stop();
             }
         }
 

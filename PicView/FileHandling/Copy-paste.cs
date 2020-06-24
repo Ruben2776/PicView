@@ -67,17 +67,17 @@ namespace PicView.FileHandling
 
         internal static void CopyBitmap()
         {
-            if (Pics.Count == 0 && mainWindow.img.Source != null)
+            if (Pics.Count == 0 && TheMainWindow.MainImage.Source != null)
             {
-                Clipboard.SetImage((BitmapSource)mainWindow.img.Source);
+                Clipboard.SetImage((BitmapSource)TheMainWindow.MainImage.Source);
             }
             else if (Preloader.Contains(Pics[FolderIndex]))
             {
                 Clipboard.SetImage(Preloader.Load(Pics[FolderIndex]));
             }
-            else if (mainWindow.img.Source != null)
+            else if (TheMainWindow.MainImage.Source != null)
             {
-                Clipboard.SetImage((BitmapSource)mainWindow.img.Source);
+                Clipboard.SetImage((BitmapSource)TheMainWindow.MainImage.Source);
             }
             else
             {

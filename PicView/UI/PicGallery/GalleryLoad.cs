@@ -15,8 +15,8 @@ namespace PicView.UI.PicGallery
         {
             // Add events and set fields, when it's loaded.
             picGallery.Scroller.PreviewMouseWheel += ScrollTo;
-            picGallery.Scroller.ScrollChanged += (s, x) => mainWindow.Focus(); // Maintain window focus when scrolling manually
-            picGallery.grid.MouseLeftButtonDown += (s, x) => mainWindow.Focus();
+            picGallery.Scroller.ScrollChanged += (s, x) => TheMainWindow.Focus(); // Maintain window focus when scrolling manually
+            picGallery.grid.MouseLeftButtonDown += (s, x) => TheMainWindow.Focus();
             picGallery.x2.MouseLeftButtonDown += delegate { GalleryToggle.CloseContainedGallery(); };
         }
 
@@ -27,13 +27,13 @@ namespace PicView.UI.PicGallery
             {
                 if (Properties.Settings.Default.ShowInterface)
                 {
-                    picGallery.Width = mainWindow.Width - 15;
-                    picGallery.Height = mainWindow.ActualHeight - 70;
+                    picGallery.Width = TheMainWindow.Width - 15;
+                    picGallery.Height = TheMainWindow.ActualHeight - 70;
                 }
                 else
                 {
-                    picGallery.Width = mainWindow.Width - 2;
-                    picGallery.Height = mainWindow.Height - 2; // 2px for borders
+                    picGallery.Width = TheMainWindow.Width - 2;
+                    picGallery.Height = TheMainWindow.Height - 2; // 2px for borders
                 }
 
                 picGallery.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -57,7 +57,7 @@ namespace PicView.UI.PicGallery
                 ShowTopandBottom(false);
                 ConfigColors.UpdateColor(true);
 
-                mainWindow.Margin = new Thickness(0, 0, -picGallery.Width, 0);
+                TheMainWindow.Margin = new Thickness(0, 0, -picGallery.Width, 0);
             }
 
             picGallery.Visibility = Visibility.Visible;
@@ -75,9 +75,9 @@ namespace PicView.UI.PicGallery
                 /// TODO Maybe make this start at at folder index
                 /// and get it work with a real sorting method?
 
-                for (int i = 0; i < Pics.Count; i++)
+                for (int i = 0; i < ChangeImage.Navigation.Pics.Count; i++)
                 {
-                    var pic = ImageHandling.Thumbnails.GetBitmapSourceThumb(Pics[i]);
+                    var pic = ImageHandling.Thumbnails.GetBitmapSourceThumb(ChangeImage.Navigation.Pics[i]);
                     if (pic != null)
                     {
                         if (!pic.IsFrozen)

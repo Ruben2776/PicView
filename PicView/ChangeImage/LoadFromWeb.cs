@@ -23,7 +23,7 @@ namespace PicView.ChangeImage
         /// <param name="path"></param>
         internal static async void PicWeb(string path)
         {
-            mainWindow.Bar.Text = Loading;
+            TheMainWindow.Bar.Text = Loading;
 
             BitmapSource pic;
             if (Pics != null && Pics.Count > 0)
@@ -68,13 +68,13 @@ namespace PicView.ChangeImage
             {
                 var client = new WebClient();
                 client.DownloadProgressChanged += (sender, e) =>
-                mainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                TheMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                 {
-                    mainWindow.Title = mainWindow.Bar.Text = e.BytesReceived + "/" + e.TotalBytesToReceive + ". " + e.ProgressPercentage + "% complete...";
-                    mainWindow.Bar.ToolTip = mainWindow.Title;
+                    TheMainWindow.Title = TheMainWindow.Bar.Text = e.BytesReceived + "/" + e.TotalBytesToReceive + ". " + e.ProgressPercentage + "% complete...";
+                    TheMainWindow.Bar.ToolTip = TheMainWindow.Title;
                 }));
                 client.DownloadDataCompleted += (sender, e) =>
-                mainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                TheMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                 {
                     if (pic != null)
                     {

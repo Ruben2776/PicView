@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text;
+using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileFunctions;
 using static PicView.Library.Fields;
 using static PicView.UI.TransformImage.ZoomLogic;
@@ -49,9 +50,9 @@ namespace PicView.UI
         internal static void SetTitleString(int width, int height, int index)
         {
             var titleString = TitleString(width, height, index);
-            mainWindow.Title = titleString[0];
-            mainWindow.Bar.Text = titleString[1];
-            mainWindow.Bar.ToolTip = titleString[2];
+            TheMainWindow.Title = titleString[0];
+            TheMainWindow.Bar.Text = titleString[1];
+            TheMainWindow.Bar.ToolTip = titleString[2];
         }
 
         /// <summary>
@@ -92,9 +93,9 @@ namespace PicView.UI
         internal static void SetTitleString(int width, int height, string path)
         {
             var titleString = TitleString(width, height, path);
-            mainWindow.Title = titleString[0];
-            mainWindow.Bar.Text = titleString[1];
-            mainWindow.Bar.ToolTip = titleString[1];
+            TheMainWindow.Title = titleString[0];
+            TheMainWindow.Bar.Text = titleString[1];
+            TheMainWindow.Bar.ToolTip = titleString[1];
         }
 
         /// <summary>
@@ -105,14 +106,14 @@ namespace PicView.UI
         /// <param name="height"></param>
         internal static void SetTitleString(int width, int height)
         {
-            string path = Library.Utilities.GetURL(mainWindow.Bar.Text);
+            string path = Library.Utilities.GetURL(TheMainWindow.Bar.Text);
 
             path = string.IsNullOrWhiteSpace(path) ? "Custom image" : path;
 
             var titleString = TitleString(width, height, path);
-            mainWindow.Title = titleString[0];
-            mainWindow.Bar.Text = titleString[1];
-            mainWindow.Bar.ToolTip = titleString[1];
+            TheMainWindow.Title = titleString[0];
+            TheMainWindow.Bar.Text = titleString[1];
+            TheMainWindow.Bar.ToolTip = titleString[1];
         }
 
 

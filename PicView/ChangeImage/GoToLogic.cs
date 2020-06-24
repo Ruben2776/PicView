@@ -16,9 +16,9 @@ namespace PicView.ChangeImage
             {
                 x--;
                 x = x <= 0 ? 0 : x;
-                x = x >= Pics.Count ? Pics.Count - 1 : x;
+                x = x >= Navigation.Pics.Count ? Navigation.Pics.Count - 1 : x;
                 Navigation.Pic(x);
-                await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
+                await TheMainWindow.Dispatcher.BeginInvoke((Action)(() =>
                 {
                     quickSettingsMenu.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture);
                 }));
@@ -36,7 +36,7 @@ namespace PicView.ChangeImage
             FocusManager.SetFocusedElement(FocusManager.GetFocusScope(quickSettingsMenu.GoToPicBox), null);
             Close_UserControls();
             Keyboard.ClearFocus();
-            mainWindow.Focus();
+            TheMainWindow.Focus();
         }
     }
 }

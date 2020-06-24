@@ -111,7 +111,7 @@ namespace PicView.UI.UserControls
                 if (quickSettingsMenu != null)
                 {
                     quickSettingsMenu.BeginAnimation(UIElement.OpacityProperty, da);
-                    if (Library.Fields.mainWindow.img.Source != null)
+                    if (Library.Fields.TheMainWindow.MainImage.Source != null)
                     {
                         quickSettingsMenu.GoToPicBox.Text =
                             (Library.Fields.FolderIndex + 1)

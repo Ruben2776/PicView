@@ -1,6 +1,7 @@
 ﻿using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.SystemIntegration;
+using PicView.UI;
 using PicView.UI.PicGallery;
 using System;
 using System.Diagnostics;
@@ -23,6 +24,12 @@ namespace PicView.ChangeImage
 {
     internal static class Navigation
     {
+        /// <summary>
+        /// List of file paths to supported files
+        /// </summary>
+        internal static System.Collections.Generic.List<string> Pics { get; set; }
+
+
         #region Update Image values
 
         /// <summary>
@@ -32,8 +39,8 @@ namespace PicView.ChangeImage
         internal static async void Pic(string path)
         {
             // Set Loading
-            mainWindow.Title = mainWindow.Bar.Text = Loading;
-            mainWindow.Bar.ToolTip = Loading;
+            TheMainWindow.Title = TheMainWindow.Bar.Text = Loading;
+            TheMainWindow.Bar.ToolTip = Loading;
 
             // Handle if from web
             if (!File.Exists(path))
@@ -88,10 +95,10 @@ namespace PicView.ChangeImage
                     }
                     else
                     {
-                        mainWindow.Bar.Text = "Unzipping...";
-                        mainWindow.Bar.ToolTip = mainWindow.Bar.Text;
+                        TheMainWindow.Bar.Text = "Unzipping...";
+                        TheMainWindow.Bar.ToolTip = TheMainWindow.Bar.Text;
                     }
-                    mainWindow.Focus();
+                    TheMainWindow.Focus();
                 }
             }
             else
@@ -148,15 +155,15 @@ namespace PicView.ChangeImage
 
             if (pic == null)
             {
-                mainWindow.Title = Loading;
-                mainWindow.Bar.Text = Loading;
-                mainWindow.Bar.ToolTip = Loading;
+                TheMainWindow.Title = Loading;
+                TheMainWindow.Bar.Text = Loading;
+                TheMainWindow.Bar.ToolTip = Loading;
 
                 var thumb = GetThumb(x, true);
 
                 if (thumb != null)
                 {
-                    mainWindow.img.Source = thumb;
+                    TheMainWindow.MainImage.Source = thumb;
                 }
 
                 // Dissallow changing image while loading
@@ -197,17 +204,17 @@ namespace PicView.ChangeImage
                 }
             }
 
-            await mainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
+            await TheMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
             {
                 // Show the image! :)
-                mainWindow.img.Source = pic;
+                TheMainWindow.MainImage.Source = pic;
                 FitImage(pic.PixelWidth, pic.PixelHeight);
                 SetTitleString(pic.PixelWidth, pic.PixelHeight, x);
 
                 // Scroll to top if scroll enabled
                 if (IsScrollEnabled)
                 {
-                    mainWindow.Scroller.ScrollToTop();
+                    TheMainWindow.Scroller.ScrollToTop();
                 }
 
             }));            
@@ -258,10 +265,10 @@ namespace PicView.ChangeImage
 
             if (IsScrollEnabled)
             {
-                mainWindow.Scroller.ScrollToTop();
+                TheMainWindow.Scroller.ScrollToTop();
             }
 
-            mainWindow.img.Source = bitmap;
+            TheMainWindow.MainImage.Source = bitmap;
 
             FitImage(bitmap.PixelWidth, bitmap.PixelHeight);
             CloseToolTipMessage();
@@ -286,10 +293,10 @@ namespace PicView.ChangeImage
 
             if (IsScrollEnabled)
             {
-                mainWindow.Scroller.ScrollToTop();
+                TheMainWindow.Scroller.ScrollToTop();
             }
 
-            mainWindow.img.Source = pic;
+            TheMainWindow.MainImage.Source = pic;
 
             FitImage(pic.PixelWidth, pic.PixelHeight);
             CloseToolTipMessage();
@@ -366,7 +373,7 @@ namespace PicView.ChangeImage
                 if (next)
                 {
                     // loop next
-                    if (Properties.Settings.Default.Looping || SlideTimer != null && SlideTimer.Enabled)
+                    if (Properties.Settings.Default.Looping || Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
                     {
                         FolderIndex = FolderIndex == Pics.Count - 1 ? 0 : FolderIndex + 1;
                     }
@@ -387,7 +394,7 @@ namespace PicView.ChangeImage
                 else
                 {
                     // Loop prev
-                    if (Properties.Settings.Default.Looping || SlideTimer != null && SlideTimer.Enabled)
+                    if (Properties.Settings.Default.Looping || Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
                     {
                         FolderIndex = FolderIndex == 0 ? Pics.Count - 1 : FolderIndex - 1;
                     }
@@ -513,18 +520,18 @@ namespace PicView.ChangeImage
                 }
             }
 
-            mainWindow.img.Width = xWidth;
-            mainWindow.img.Height = xHeight;
+            TheMainWindow.MainImage.Width = xWidth;
+            TheMainWindow.MainImage.Height = xHeight;
 
-            mainWindow.Bar.ToolTip =
-            mainWindow.Title =
-            mainWindow.Bar.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count;
+            TheMainWindow.Bar.ToolTip =
+            TheMainWindow.Title =
+            TheMainWindow.Bar.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count;
 
             var thumb = GetThumb(FolderIndex);
 
             if (thumb != null)
             {
-                mainWindow.img.Source = thumb;
+                TheMainWindow.MainImage.Source = thumb;
             }
 
             Taskbar.Progress(FolderIndex, Pics.Count);

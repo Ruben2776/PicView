@@ -183,7 +183,7 @@ namespace PicView.ChangeImage
             else
             {
                 // TODO extract url from path or get alternative method
-                s = Path.GetFileName(mainWindow.Bar.Text);
+                s = Path.GetFileName(TheMainWindow.Bar.Text);
             }
 
             if (File.Exists(s))
@@ -231,10 +231,10 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static void Unload()
         {
-            mainWindow.Bar.ToolTip = mainWindow.Bar.Text = NoImage;
-            mainWindow.Title = NoImage + " - " + AppName;
+            TheMainWindow.Bar.ToolTip = TheMainWindow.Bar.Text = NoImage;
+            TheMainWindow.Title = NoImage + " - " + AppName;
             CanNavigate = false;
-            mainWindow.img.Source = null;
+            TheMainWindow.MainImage.Source = null;
             FreshStartup = true;
             if (Pics != null)
             {
@@ -245,8 +245,8 @@ namespace PicView.ChangeImage
             Preloader.Clear();
             GalleryFunctions.Clear();
             FolderIndex = 0;
-            mainWindow.img.Width = mainWindow.Scroller.Width = mainWindow.Scroller.Height =
-            mainWindow.img.Height = double.NaN;
+            TheMainWindow.MainImage.Width = TheMainWindow.Scroller.Width = TheMainWindow.Scroller.Height =
+            TheMainWindow.MainImage.Height = double.NaN;
             xWidth = xHeight = 0;
             prevPicResource = null;
 

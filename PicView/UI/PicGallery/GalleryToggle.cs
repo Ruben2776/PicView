@@ -3,6 +3,7 @@ using PicView.UI.Windows;
 using System;
 using System.Windows;
 using System.Windows.Media.Animation;
+using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 using static PicView.UI.PicGallery.GalleryFunctions;
 using static PicView.UI.PicGallery.GalleryLoad;
@@ -99,7 +100,7 @@ namespace PicView.UI.PicGallery
                 if (fakeWindow.grid.Children.Contains(picGallery))
                 {
                     fakeWindow.grid.Children.Remove(picGallery);
-                    mainWindow.bg.Children.Add(picGallery);
+                    TheMainWindow.bg.Children.Add(picGallery);
                 }
             }
 
@@ -127,15 +128,15 @@ namespace PicView.UI.PicGallery
             }
 
             // Switch gallery container to the correct window
-            if (mainWindow.bg.Children.Contains(picGallery))
+            if (TheMainWindow.bg.Children.Contains(picGallery))
             {
-                mainWindow.bg.Children.Remove(picGallery);
+                TheMainWindow.bg.Children.Remove(picGallery);
                 fakeWindow.grid.Children.Add(picGallery);
             }
 
             fakeWindow.Show();
             ScrollTo();
-            mainWindow.Focus();
+            TheMainWindow.Focus();
 
             if (!FreshStartup)
             {
@@ -207,7 +208,7 @@ namespace PicView.UI.PicGallery
             if (fakeWindow.grid.Children.Contains(picGallery))
             {
                 fakeWindow.grid.Children.Remove(picGallery);
-                mainWindow.bg.Children.Add(picGallery);
+                TheMainWindow.bg.Children.Add(picGallery);
             }
 
             fakeWindow.Hide();
@@ -222,20 +223,20 @@ namespace PicView.UI.PicGallery
             {
                 if (!fakeWindow.grid.Children.Contains(picGallery))
                 {
-                    mainWindow.bg.Children.Remove(picGallery);
+                    TheMainWindow.bg.Children.Remove(picGallery);
                     fakeWindow.grid.Children.Add(picGallery);
                 }
             }
             else
             {
-                mainWindow.bg.Children.Remove(picGallery);
+                TheMainWindow.bg.Children.Remove(picGallery);
                 fakeWindow = new FakeWindow();
                 fakeWindow.grid.Children.Add(picGallery);
             }
 
             fakeWindow.Show();
             ScrollTo();
-            mainWindow.Focus();
+            TheMainWindow.Focus();
         }
 
         #endregion Change

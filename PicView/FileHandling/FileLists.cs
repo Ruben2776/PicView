@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using static PicView.FileHandling.ArchiveExtraction;
 using static PicView.Library.Fields;
 
@@ -209,13 +208,13 @@ namespace PicView.FileHandling
             }
 
             // Set files to Pics and get index
-            Pics = FileList(Path.GetDirectoryName(path));
-            if (Pics == null)
+            Navigation.Pics = FileList(Path.GetDirectoryName(path));
+            if (Navigation.Pics == null)
             {
                 return;
             }
 
-            FolderIndex = Pics.IndexOf(path);
+            FolderIndex = Navigation.Pics.IndexOf(path);
 
 #if DEBUG
             Trace.WriteLine("Getvalues completed ");

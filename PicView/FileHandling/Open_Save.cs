@@ -30,7 +30,7 @@ namespace PicView.FileHandling
             }
             else return;
 
-            if (!File.Exists(Pics[FolderIndex]) || mainWindow.img.Source == null)
+            if (!File.Exists(Pics[FolderIndex]) || TheMainWindow.MainImage.Source == null)
             {
                 return;
             }
@@ -140,7 +140,7 @@ namespace PicView.FileHandling
             }
             else
             {
-                if (!SaveImages.TrySaveImage(Rotateint, Flipped, mainWindow.img.Source as BitmapSource, Savedlg.FileName))
+                if (!SaveImages.TrySaveImage(Rotateint, Flipped, TheMainWindow.MainImage.Source as BitmapSource, Savedlg.FileName))
                 {
                     ShowTooltipMessage("Saving file failed");
                 }

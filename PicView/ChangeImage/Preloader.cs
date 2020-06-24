@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 
 namespace PicView.ChangeImage
@@ -31,7 +32,10 @@ namespace PicView.ChangeImage
         /// <summary>
         /// Preloader list of BitmapSources
         /// </summary>
-        private static readonly ConcurrentDictionary<string, BitmapSource> Sources = new ConcurrentDictionary<string, BitmapSource>();
+        private static readonly ConcurrentDictionary<
+            string,
+            BitmapSource> Sources = new ConcurrentDictionary<string, BitmapSource>();
+
         private static bool isLoading;
         private static bool isReset;
 
@@ -208,11 +212,11 @@ namespace PicView.ChangeImage
 #if DEBUG
             if (Sources.TryRemove(key, out _))
             {
-                Trace.WriteLine("Removed = " + key + " from Preloader, index " + Pics.IndexOf(key));
+                Trace.WriteLine($"Removed = {key} from Preloader, index {Pics.IndexOf(key)}");
             }
             else
             {
-                Trace.WriteLine("Failed to Remove = " + key + " from Preloader, index " + Pics.IndexOf(key));
+                Trace.WriteLine($"Failed to Remove = {key} from Preloader, index {Pics.IndexOf(key)}");
             }
 #else
             Sources.TryRemove(key, out _);
@@ -339,7 +343,7 @@ namespace PicView.ChangeImage
                     if (!Reverse)
                     {
                         // Add first elements
-                        for (int i = index + 1; i < (index + 1) + toLoad; i++)
+                        for (int i = index + 1; i < index + 1 + toLoad; i++)
                         {
                             if (i > Pics.Count)
                             {
@@ -349,7 +353,7 @@ namespace PicView.ChangeImage
                             await Add(i).ConfigureAwait(false);
                         }
                         // Add second elements behind
-                        for (int i = index - 1; i > (index - 1) - extraToLoad; i--)
+                        for (int i = index - 1; i > index - 1 - extraToLoad; i--)
                         {
                             if (i < 0)
                             {
@@ -362,7 +366,7 @@ namespace PicView.ChangeImage
                         //Clean up behind
                         if (Pics.Count > cleanUp * 2 && !FreshStartup)
                         {
-                            for (int i = (index - 1) - cleanUp; i < ((index - 1) - extraToLoad); i++)
+                            for (int i = index - 1 - cleanUp; i < (index - 1 - extraToLoad); i++)
                             {
                                 if (i < 0)
                                 {
@@ -382,7 +386,7 @@ namespace PicView.ChangeImage
                     else
                     {
                         // Add first elements behind
-                        for (int i = index - 1; i > (index - 1) - toLoad; i--)
+                        for (int i = index - 1; i > index - 1 - toLoad; i--)
                         {
                             if (i < 0)
                             {
@@ -392,7 +396,7 @@ namespace PicView.ChangeImage
                             await Add(i).ConfigureAwait(false);
                         }
                         // Add second elements
-                        for (int i = index + 1; i <= (index + 1) + toLoad; i++)
+                        for (int i = index + 1; i <= index + 1 + toLoad; i++)
                         {
                             if (i > Pics.Count)
                             {
@@ -405,7 +409,7 @@ namespace PicView.ChangeImage
                         //Clean up infront
                         if (Pics.Count > cleanUp * 2 && !FreshStartup)
                         {
-                            for (int i = (index + 1) + cleanUp; i > ((index + 1) + cleanUp) - extraToLoad; i--)
+                            for (int i = index + 1 + cleanUp; i > index + 1 + cleanUp - extraToLoad; i--)
                             {
                                 if (i < 0)
                                 {
@@ -430,12 +434,12 @@ namespace PicView.ChangeImage
                     if (!Reverse)
                     {
                         // Add first elements
-                        for (int i = index + 1; i < (index + 1) + toLoad; i++)
+                        for (int i = index + 1; i < index + 1 + toLoad; i++)
                         {
                             await Add(i % Pics.Count).ConfigureAwait(false);
                         }
                         // Add second elements behind
-                        for (int i = index - 1; i > (index - 1) - extraToLoad; i--)
+                        for (int i = index - 1; i > index - 1 - extraToLoad; i--)
                         {
                             await Add(i % Pics.Count).ConfigureAwait(false);
                         }
@@ -443,7 +447,7 @@ namespace PicView.ChangeImage
                         //Clean up behind
                         if (Pics.Count > cleanUp * 2 && !FreshStartup)
                         {
-                            for (int i = (index - 1) - cleanUp; i < ((index - 1) - extraToLoad); i++)
+                            for (int i = index - 1 - cleanUp; i < (index - 1 - extraToLoad); i++)
                             {
                                 Remove(i % Pics.Count);
                             }
@@ -454,7 +458,7 @@ namespace PicView.ChangeImage
                     {
                         // Add first elements behind
                         int y = 0;
-                        for (int i = index - 1; i > (index - 1) - toLoad; i--)
+                        for (int i = index - 1; i > index - 1 - toLoad; i--)
                         {
                             y++;
                             if (i < 0)
@@ -469,7 +473,7 @@ namespace PicView.ChangeImage
                         }
 
                         // Add second elements
-                        for (int i = index + 1; i <= (index + 1) + toLoad; i++)
+                        for (int i = index + 1; i <= index + 1 + toLoad; i++)
                         {
                             await Add(i % Pics.Count).ConfigureAwait(false);
                         }
@@ -477,7 +481,7 @@ namespace PicView.ChangeImage
                         //Clean up infront
                         if (Pics.Count > cleanUp + toLoad && !FreshStartup)
                         {
-                            for (int i = (index + 1) + cleanUp; i > ((index + 1) + cleanUp) - extraToLoad; i--)
+                            for (int i = index + 1 + cleanUp; i > index + 1 + cleanUp - extraToLoad; i--)
                             {
                                 Remove(i % Pics.Count);
                             }

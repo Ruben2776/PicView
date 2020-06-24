@@ -3,15 +3,19 @@ using PicView.UI.Animations;
 using PicView.UI.UserControls;
 using System;
 using System.Timers;
-using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 using static PicView.UI.Sizing.WindowLogic;
 
 namespace PicView.UI
 {
-    internal static class SlideShow
+    internal static class Slideshow
     {
+        /// <summary>
+        /// Timer used for slideshow
+        /// </summary>
+        internal static Timer SlideTimer;
+
         /// <summary>
         /// Maximize and removes Interface and start timer for slideshow.
         /// </summary>
@@ -64,11 +68,11 @@ namespace PicView.UI
         /// </summary>
         /// <param name="server"></param>
         /// <param name="e"></param>
-        internal static void SlideTimer_Elapsed(object server, ElapsedEventArgs e)
+        private static void SlideTimer_Elapsed(object server, ElapsedEventArgs e)
         {
-            AnimationHelper.Fade(mainWindow.img, TimeSpan.FromSeconds(0.8), TimeSpan.FromSeconds(0), 0, .5);
+            AnimationHelper.Fade(TheMainWindow.MainImage, TimeSpan.FromSeconds(0.8), TimeSpan.FromSeconds(0), 0, .5);
             Pic();
-            AnimationHelper.Fade(mainWindow.img, TimeSpan.FromSeconds(0.7), TimeSpan.FromSeconds(0), .5, 1);
+            AnimationHelper.Fade(TheMainWindow.MainImage, TimeSpan.FromSeconds(0.7), TimeSpan.FromSeconds(0), .5, 1);
         }
     }
 }

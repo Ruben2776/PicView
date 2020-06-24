@@ -469,12 +469,12 @@
                                 </Style>
                             </ScrollViewer.Style>
                             <Border
-                                x:Name="imgBorder"
+                                x:Name="MainImageBorder"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Focusable="False">
                                 <Image
-                                    x:Name="img"
+                                    x:Name="MainImage"
                                     AllowDrop="True"
                                     Focusable="False"
                                     RenderOptions.BitmapScalingMode="Fant"

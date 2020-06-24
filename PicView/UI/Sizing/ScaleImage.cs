@@ -1,5 +1,6 @@
 ﻿using PicView.ImageHandling;
 using System;
+using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 using static PicView.UI.Sizing.WindowLogic;
 using static PicView.UI.TransformImage.Scroll;
@@ -33,9 +34,9 @@ namespace PicView.UI.Sizing
                             FitImage(size.Value.Width, size.Value.Height);
                             return true;
                         }
-                        else if (mainWindow.img.Source != null)
+                        else if (TheMainWindow.MainImage.Source != null)
                         {
-                            FitImage(mainWindow.img.Source.Width, mainWindow.img.Source.Height);
+                            FitImage(TheMainWindow.MainImage.Source.Width, TheMainWindow.MainImage.Source.Height);
                             return true;
                         }
                         else if (xWidth != 0 && xHeight != 0)
@@ -46,9 +47,9 @@ namespace PicView.UI.Sizing
                     }
                 }
             }
-            else if (mainWindow.img.Source != null)
+            else if (TheMainWindow.MainImage.Source != null)
             {
-                FitImage(mainWindow.img.Source.Width, mainWindow.img.Source.Height);
+                FitImage(TheMainWindow.MainImage.Source.Width, TheMainWindow.MainImage.Source.Height);
                 return true;
             }
             else if (xWidth != 0 && xHeight != 0)
@@ -91,7 +92,7 @@ namespace PicView.UI.Sizing
 
             double maxWidth, maxHeight;
             var padding = 75; // Padding to make it feel more comfortable
-            var borderSpaceHeight = showInterface ? mainWindow.LowerBar.Height + mainWindow.TitleBar.Height + 6 : 6;
+            var borderSpaceHeight = showInterface ? TheMainWindow.LowerBar.Height + TheMainWindow.TitleBar.Height + 6 : 6;
             var borderSpaceWidth = 20; // Based on UI borders
 
             var monitorWidth = MonitorInfo.Width - borderSpaceWidth;
@@ -131,21 +132,21 @@ namespace PicView.UI.Sizing
             {
                 if (Properties.Settings.Default.FillImage)
                 {
-                    maxWidth = mainWindow.bg.ActualWidth;
-                    maxHeight = mainWindow.bg.ActualHeight;
+                    maxWidth = TheMainWindow.bg.ActualWidth;
+                    maxHeight = TheMainWindow.bg.ActualHeight;
                 }
                 else
                 {
-                    maxWidth = Math.Min(mainWindow.Width, width);
+                    maxWidth = Math.Min(TheMainWindow.Width, width);
 
                     if (showInterface)
                     {
                         /// Use padding for shown interface
-                        maxHeight = Math.Min(mainWindow.Height - padding, height);
+                        maxHeight = Math.Min(TheMainWindow.Height - padding, height);
                     }
                     else
                     {
-                        maxHeight = Math.Min(mainWindow.Height, height);
+                        maxHeight = Math.Min(TheMainWindow.Height, height);
                     }
                 }
             }
@@ -162,25 +163,25 @@ namespace PicView.UI.Sizing
             if (IsScrollEnabled)
             {
                 /// Calculate height based on width
-                mainWindow.img.Width = maxWidth;
-                mainWindow.img.Height = maxWidth * height / width;
+                TheMainWindow.MainImage.Width = maxWidth;
+                TheMainWindow.MainImage.Height = maxWidth * height / width;
 
                 /// Set mainWindow.Scroller height to aspect ratio calculation
-                mainWindow.Scroller.Height = height * AspectRatio;
+                TheMainWindow.Scroller.Height = height * AspectRatio;
 
                 /// Update values
-                xWidth = mainWindow.img.Width;
-                xHeight = mainWindow.Scroller.Height;
+                xWidth = TheMainWindow.MainImage.Width;
+                xHeight = TheMainWindow.Scroller.Height;
             }
             else
             {
                 /// Reset mainWindow.Scroller's height to auto
-                mainWindow.Scroller.Height = double.NaN;
+                TheMainWindow.Scroller.Height = double.NaN;
 
                 /// Fit image by aspect ratio calculation
                 /// and update values
-                mainWindow.img.Width = xWidth = width * AspectRatio;
-                mainWindow.img.Height = xHeight = height * AspectRatio;
+                TheMainWindow.MainImage.Width = xWidth = width * AspectRatio;
+                TheMainWindow.MainImage.Height = xHeight = height * AspectRatio;
             }
 
             /// Update TitleBar
@@ -189,7 +190,7 @@ namespace PicView.UI.Sizing
             {
                 /// Update mainWindow.TitleBar width to dynamically fit new size
                 var x = Rotateint == 0 || Rotateint == 180 ? xWidth : xHeight;
-                mainWindow.Bar.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
+                TheMainWindow.Bar.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
 
                 // TODO Loses position gradually if not forced to center
                 if (!Properties.Settings.Default.Fullscreen)
@@ -197,10 +198,10 @@ namespace PicView.UI.Sizing
                     if (Properties.Settings.Default.PicGallery == 2 && xWidth >= monitorWidth - (picGalleryItem_Size + 200))
                     {
                         // Offset window to not overlap gallery
-                        mainWindow.Left = ((MonitorInfo.WorkArea.Width - picGalleryItem_Size - (mainWindow.Width * MonitorInfo.DpiScaling)) / 2)
+                        TheMainWindow.Left = ((MonitorInfo.WorkArea.Width - picGalleryItem_Size - (TheMainWindow.Width * MonitorInfo.DpiScaling)) / 2)
                                           + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
-                        mainWindow.Top = ((MonitorInfo.WorkArea.Height
-                                           - (mainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
+                        TheMainWindow.Top = ((MonitorInfo.WorkArea.Height
+                                           - (TheMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
                     }
                     else
                     {
@@ -211,7 +212,7 @@ namespace PicView.UI.Sizing
             else
             {
                 /// Fix title width to window size
-                mainWindow.Bar.MaxWidth = mainWindow.ActualWidth - interfaceSize;
+                TheMainWindow.Bar.MaxWidth = TheMainWindow.ActualWidth - interfaceSize;
             }
 
             if (IsZoomed)

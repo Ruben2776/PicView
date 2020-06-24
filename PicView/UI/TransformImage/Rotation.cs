@@ -13,7 +13,7 @@ namespace PicView.UI.TransformImage
         /// <param name="r"></param>
         internal static void Rotate(int r)
         {
-            if (mainWindow.img.Source == null)
+            if (TheMainWindow.MainImage.Source == null)
             {
                 return;
             }
@@ -29,11 +29,11 @@ namespace PicView.UI.TransformImage
                 var flip = new ScaleTransform { ScaleX = -1 };
                 tg.Children.Add(flip);
                 tg.Children.Add(rt);
-                mainWindow.img.LayoutTransform = tg;
+                TheMainWindow.MainImage.LayoutTransform = tg;
             }
             else
             {
-                mainWindow.img.LayoutTransform = rt;
+                TheMainWindow.MainImage.LayoutTransform = rt;
             }
         }
 
@@ -44,7 +44,7 @@ namespace PicView.UI.TransformImage
         // https://stackoverflow.com/a/62136307/13646636
         internal static void Rotate(bool right)
         {
-            if (mainWindow.img.Source == null ||
+            if (TheMainWindow.MainImage.Source == null ||
                 Properties.Settings.Default.PicGallery == 1 && GalleryFunctions.IsOpen)
             { return; }
 
@@ -67,7 +67,7 @@ namespace PicView.UI.TransformImage
         /// </summary>
         internal static void Flip()
         {
-            if (mainWindow.img.Source == null)
+            if (TheMainWindow.MainImage.Source == null)
             {
                 return;
             }
@@ -90,7 +90,7 @@ namespace PicView.UI.TransformImage
             rt.Angle = Rotateint;
             tg.Children.Add(flip);
             tg.Children.Add(rt);
-            mainWindow.img.LayoutTransform = tg;
+            TheMainWindow.MainImage.LayoutTransform = tg;
         }
     }
 }

@@ -2,12 +2,11 @@
 using PicView.ImageHandling;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
+using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 
 namespace PicView.SystemIntegration
@@ -29,7 +28,7 @@ namespace PicView.SystemIntegration
         /// <param name="style"></param>
         internal static void SetWallpaper(WallpaperStyle style)
         {
-            string wallpaper = Library.Utilities.GetURL(mainWindow.Bar.Text);
+            string wallpaper = Library.Utilities.GetURL(TheMainWindow.Bar.Text);
 
             if (Uri.IsWellFormedUriString(wallpaper, UriKind.Absolute)) // Check if from web
                 {

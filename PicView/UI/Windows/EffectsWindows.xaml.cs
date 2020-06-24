@@ -23,7 +23,7 @@ namespace PicView.UI.Windows
             Scroller.MouseWheel += Info_MouseWheel;
 
             // CloseButton
-            CloseButton.TheButton.Click += delegate { Hide(); mainWindow.Focus(); };
+            CloseButton.TheButton.Click += delegate { Hide(); TheMainWindow.Focus(); };
 
             // MinButton
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
@@ -246,7 +246,7 @@ namespace PicView.UI.Windows
             {
                 case Key.Escape:
                     Hide();
-                    mainWindow.Focus();
+                    TheMainWindow.Focus();
                     break;
 
                 case Key.Q:
@@ -276,14 +276,14 @@ namespace PicView.UI.Windows
 
         private void Remove_Effects(object sender, RoutedEventArgs e)
         {
-            mainWindow.img.Effect = null;
+            TheMainWindow.MainImage.Effect = null;
         }
 
         private void Negative(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new InvertColorEffect();
+                TheMainWindow.MainImage.Effect = new InvertColorEffect();
             }
             else
             {
@@ -293,9 +293,9 @@ namespace PicView.UI.Windows
 
         private void GraySceale(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new GrayscaleEffect();
+                TheMainWindow.MainImage.Effect = new GrayscaleEffect();
             }
             else
             {
@@ -305,9 +305,9 @@ namespace PicView.UI.Windows
 
         private void ColorToneEffect(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new ColorToneEffect();
+                TheMainWindow.MainImage.Effect = new ColorToneEffect();
             }
             else
             {
@@ -317,9 +317,9 @@ namespace PicView.UI.Windows
 
         private void RippleEffect1(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new Transition_RippleEffect();
+                TheMainWindow.MainImage.Effect = new Transition_RippleEffect();
             }
             else
             {
@@ -329,9 +329,9 @@ namespace PicView.UI.Windows
 
         private void RippleEffect2(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new RippleEffect();
+                TheMainWindow.MainImage.Effect = new RippleEffect();
             }
             else
             {
@@ -341,9 +341,9 @@ namespace PicView.UI.Windows
 
         private void BandedSwirlEffect(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new BandedSwirlEffect();
+                TheMainWindow.MainImage.Effect = new BandedSwirlEffect();
             }
             else
             {
@@ -353,9 +353,9 @@ namespace PicView.UI.Windows
 
         private void Monochrome(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new MonochromeEffect();
+                TheMainWindow.MainImage.Effect = new MonochromeEffect();
             }
             else
             {
@@ -365,9 +365,9 @@ namespace PicView.UI.Windows
 
         private void Swirl(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new SwirlEffect();
+                TheMainWindow.MainImage.Effect = new SwirlEffect();
             }
             else
             {
@@ -377,9 +377,9 @@ namespace PicView.UI.Windows
 
         private void Bloom(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new BloomEffect();
+                TheMainWindow.MainImage.Effect = new BloomEffect();
             }
             else
             {
@@ -389,9 +389,9 @@ namespace PicView.UI.Windows
 
         private void Gloom(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new GloomEffect();
+                TheMainWindow.MainImage.Effect = new GloomEffect();
             }
             else
             {
@@ -401,9 +401,9 @@ namespace PicView.UI.Windows
 
         private void ToneMapping(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new ToneMappingEffect();
+                TheMainWindow.MainImage.Effect = new ToneMappingEffect();
             }
             else
             {
@@ -413,9 +413,9 @@ namespace PicView.UI.Windows
 
         private void Teleskopisk_blur(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new TelescopicBlurPS3Effect();
+                TheMainWindow.MainImage.Effect = new TelescopicBlurPS3Effect();
             }
             else
             {
@@ -425,9 +425,9 @@ namespace PicView.UI.Windows
 
         private void Poison_blur(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new GrowablePoissonDiskEffect();
+                TheMainWindow.MainImage.Effect = new GrowablePoissonDiskEffect();
             }
             else
             {
@@ -437,9 +437,9 @@ namespace PicView.UI.Windows
 
         private void Dir_blur(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new DirectionalBlurEffect();
+                TheMainWindow.MainImage.Effect = new DirectionalBlurEffect();
             }
             else
             {
@@ -449,9 +449,9 @@ namespace PicView.UI.Windows
 
         private void bands(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new BandsEffect();
+                TheMainWindow.MainImage.Effect = new BandsEffect();
             }
             else
             {
@@ -461,9 +461,9 @@ namespace PicView.UI.Windows
 
         private void Embossed(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new EmbossedEffect();
+                TheMainWindow.MainImage.Effect = new EmbossedEffect();
             }
             else
             {
@@ -473,9 +473,9 @@ namespace PicView.UI.Windows
 
         private void GlasTileEffect(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new GlassTilesEffect();
+                TheMainWindow.MainImage.Effect = new GlassTilesEffect();
             }
             else
             {
@@ -485,9 +485,9 @@ namespace PicView.UI.Windows
 
         private void MagnifySmoothEffect(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new MagnifySmoothEffect();
+                TheMainWindow.MainImage.Effect = new MagnifySmoothEffect();
             }
             else
             {
@@ -497,9 +497,9 @@ namespace PicView.UI.Windows
 
         private void PaperFoldEffect(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new PaperFoldEffect();
+                TheMainWindow.MainImage.Effect = new PaperFoldEffect();
             }
             else
             {
@@ -509,9 +509,9 @@ namespace PicView.UI.Windows
 
         private void PivotEffect(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new PivotEffect();
+                TheMainWindow.MainImage.Effect = new PivotEffect();
             }
             else
             {
@@ -521,9 +521,9 @@ namespace PicView.UI.Windows
 
         private void UnderWaterEffect(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new UnderwaterEffect();
+                TheMainWindow.MainImage.Effect = new UnderwaterEffect();
             }
             else
             {
@@ -533,9 +533,9 @@ namespace PicView.UI.Windows
 
         private void WaveWarperEffect(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new WaveWarperEffect();
+                TheMainWindow.MainImage.Effect = new WaveWarperEffect();
             }
             else
             {
@@ -545,9 +545,9 @@ namespace PicView.UI.Windows
 
         private void FrostyOutlineEffect(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new FrostyOutlineEffect();
+                TheMainWindow.MainImage.Effect = new FrostyOutlineEffect();
             }
             else
             {
@@ -557,9 +557,9 @@ namespace PicView.UI.Windows
 
         private void OldMovieEffect(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new OldMovieEffect();
+                TheMainWindow.MainImage.Effect = new OldMovieEffect();
             }
             else
             {
@@ -569,9 +569,9 @@ namespace PicView.UI.Windows
 
         private void PixelateEffect(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new PixelateEffect();
+                TheMainWindow.MainImage.Effect = new PixelateEffect();
             }
             else
             {
@@ -581,9 +581,9 @@ namespace PicView.UI.Windows
 
         private void Sketch(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new SketchGraniteEffect();
+                TheMainWindow.MainImage.Effect = new SketchGraniteEffect();
             }
             else
             {
@@ -593,9 +593,9 @@ namespace PicView.UI.Windows
 
         private void SketchPencilStrokeEffect(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.img.Effect == null)
+            if (TheMainWindow.MainImage.Effect == null)
             {
-                mainWindow.img.Effect = new SketchPencilStrokeEffect();
+                TheMainWindow.MainImage.Effect = new SketchPencilStrokeEffect();
             }
             else
             {

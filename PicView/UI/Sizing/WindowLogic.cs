@@ -29,20 +29,20 @@ namespace PicView.UI.Sizing
 
                 if (value)
                 {
-                    mainWindow.SizeToContent = SizeToContent.WidthAndHeight;
-                    mainWindow.ResizeMode = ResizeMode.CanMinimize;
+                    TheMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
+                    TheMainWindow.ResizeMode = ResizeMode.CanMinimize;
 
                     if (quickSettingsMenu != null)
                     {
                         quickSettingsMenu.SetFit.IsChecked = value;
                     }
 
-                    mainWindow.WindowState = WindowState.Normal;
+                    TheMainWindow.WindowState = WindowState.Normal;
                 }
                 else
                 {
-                    mainWindow.SizeToContent = SizeToContent.Manual;
-                    mainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
+                    TheMainWindow.SizeToContent = SizeToContent.Manual;
+                    TheMainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
 
                     if (quickSettingsMenu != null)
                     {
@@ -69,7 +69,7 @@ namespace PicView.UI.Sizing
                 return;
             }
 
-            if (mainWindow.Bar.Bar.IsFocused)
+            if (TheMainWindow.Bar.Bar.IsFocused)
             {
                 if (e.ClickCount == 2)
                 {
@@ -93,7 +93,7 @@ namespace PicView.UI.Sizing
             {
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
-                    mainWindow.DragMove();
+                    TheMainWindow.DragMove();
                 }
 
                 // Update info for possible new screen, needs more engineering
@@ -114,7 +114,7 @@ namespace PicView.UI.Sizing
 
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                mainWindow.DragMove();
+                TheMainWindow.DragMove();
             }
         }
 
@@ -125,11 +125,11 @@ namespace PicView.UI.Sizing
         /// <param name="e"></param>
         internal static void Restore_From_Move(object sender, MouseEventArgs e)
         {
-            if (mainWindow.WindowState == WindowState.Maximized && e.LeftButton == MouseButtonState.Pressed)
+            if (TheMainWindow.WindowState == WindowState.Maximized && e.LeftButton == MouseButtonState.Pressed)
             {
                 try
                 {
-                    mainWindow.DragMove();
+                    TheMainWindow.DragMove();
                 }
                 catch (InvalidOperationException)
                 {
@@ -144,13 +144,13 @@ namespace PicView.UI.Sizing
         internal static void Maximize_Restore()
         {
             // Maximize
-            if (mainWindow.WindowState == WindowState.Normal)
+            if (TheMainWindow.WindowState == WindowState.Normal)
             {
                 Maximize();
             }
 
             // Restore
-            else if (mainWindow.WindowState == WindowState.Maximized)
+            else if (TheMainWindow.WindowState == WindowState.Maximized)
             {
                 Restore();
             }
@@ -163,9 +163,9 @@ namespace PicView.UI.Sizing
             Properties.Settings.Default.Maximized = true;
 
             // Tell Windows that it's maximized
-            mainWindow.WindowState = WindowState.Maximized;
-            SystemCommands.MaximizeWindow(mainWindow);
-            mainWindow.LowerBar.Height = 44; // Seems to fix UI going below Windows taskbar
+            TheMainWindow.WindowState = WindowState.Maximized;
+            SystemCommands.MaximizeWindow(TheMainWindow);
+            TheMainWindow.LowerBar.Height = 44; // Seems to fix UI going below Windows taskbar
         }
 
         internal static void Restore()
@@ -175,18 +175,18 @@ namespace PicView.UI.Sizing
             Properties.Settings.Default.Maximized = false;
 
             // Tell Windows that it's normal
-            mainWindow.WindowState = WindowState.Normal;
-            SystemCommands.RestoreWindow(mainWindow);
-            mainWindow.LowerBar.Height = 35; // Set it back
+            TheMainWindow.WindowState = WindowState.Normal;
+            SystemCommands.RestoreWindow(TheMainWindow);
+            TheMainWindow.LowerBar.Height = 35; // Set it back
 
             if (!Properties.Settings.Default.AutoFitWindow)
             {
                 if (Properties.Settings.Default.Width != 0)
                 {
-                    mainWindow.Top = Properties.Settings.Default.Top;
-                    mainWindow.Left = Properties.Settings.Default.Left;
-                    mainWindow.Height = Properties.Settings.Default.Height;
-                    mainWindow.Width = Properties.Settings.Default.Width;
+                    TheMainWindow.Top = Properties.Settings.Default.Top;
+                    TheMainWindow.Left = Properties.Settings.Default.Left;
+                    TheMainWindow.Height = Properties.Settings.Default.Height;
+                    TheMainWindow.Width = Properties.Settings.Default.Width;
                 }
             }
             else
@@ -217,21 +217,21 @@ namespace PicView.UI.Sizing
                 ShowNavigation(false);
                 ShowShortcuts(false);
 
-                mainWindow.ResizeMode = ResizeMode.CanMinimize;
-                mainWindow.SizeToContent = SizeToContent.Manual;
-                mainWindow.Width = mainWindow.bg.Width = SystemParameters.PrimaryScreenWidth;
-                mainWindow.Height = SystemParameters.PrimaryScreenHeight;
+                TheMainWindow.ResizeMode = ResizeMode.CanMinimize;
+                TheMainWindow.SizeToContent = SizeToContent.Manual;
+                TheMainWindow.Width = TheMainWindow.bg.Width = SystemParameters.PrimaryScreenWidth;
+                TheMainWindow.Height = SystemParameters.PrimaryScreenHeight;
 
-                mainWindow.Top = 0;
-                mainWindow.Left = 0;
+                TheMainWindow.Top = 0;
+                TheMainWindow.Left = 0;
 
-                mainWindow.Topmost = true;
+                TheMainWindow.Topmost = true;
 
                 ConfigColors.UpdateColor(true);
             }
             else
             {
-                mainWindow.Topmost = false;
+                TheMainWindow.Topmost = false;
 
                 if (Properties.Settings.Default.ShowInterface)
                 {
@@ -248,38 +248,38 @@ namespace PicView.UI.Sizing
 
                 if (AutoFitWindow)
                 {
-                    mainWindow.SizeToContent = SizeToContent.WidthAndHeight;
-                    mainWindow.ResizeMode = ResizeMode.NoResize;
+                    TheMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
+                    TheMainWindow.ResizeMode = ResizeMode.NoResize;
 
                     if (quickSettingsMenu != null)
                     {
                         quickSettingsMenu.SetFit.IsChecked = true;
                     }
 
-                    mainWindow.WindowState = WindowState.Normal;
+                    TheMainWindow.WindowState = WindowState.Normal;
 
-                    mainWindow.Width = mainWindow.bg.Width = double.NaN;
-                    mainWindow.Height = mainWindow.bg.Height = double.NaN;
+                    TheMainWindow.Width = TheMainWindow.bg.Width = double.NaN;
+                    TheMainWindow.Height = TheMainWindow.bg.Height = double.NaN;
 
-                    mainWindow.Top -= mainWindow.LowerBar.ActualHeight / 2; // It works...
+                    TheMainWindow.Top -= TheMainWindow.LowerBar.ActualHeight / 2; // It works...
                 }
                 else
                 {
-                    mainWindow.SizeToContent = SizeToContent.Manual;
-                    mainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
+                    TheMainWindow.SizeToContent = SizeToContent.Manual;
+                    TheMainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
 
                     if (quickSettingsMenu != null)
                     {
                         quickSettingsMenu.SetFit.IsChecked = false;
                     }
 
-                    mainWindow.Top = Properties.Settings.Default.Top;
-                    mainWindow.Left = Properties.Settings.Default.Left;
-                    mainWindow.Height = Properties.Settings.Default.Height;
-                    mainWindow.Width = Properties.Settings.Default.Width;
+                    TheMainWindow.Top = Properties.Settings.Default.Top;
+                    TheMainWindow.Left = Properties.Settings.Default.Left;
+                    TheMainWindow.Height = Properties.Settings.Default.Height;
+                    TheMainWindow.Width = Properties.Settings.Default.Width;
 
-                    mainWindow.bg.Width = double.NaN;
-                    mainWindow.bg.Height = double.NaN;
+                    TheMainWindow.bg.Width = double.NaN;
+                    TheMainWindow.bg.Height = double.NaN;
                 }
 
                 TryFitImage();
@@ -295,8 +295,8 @@ namespace PicView.UI.Sizing
         internal static void CenterWindowOnScreen()
         {
             //move to the centre
-            mainWindow.Left = (((MonitorInfo.WorkArea.Width - (mainWindow.Width * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling));
-            mainWindow.Top = ((MonitorInfo.WorkArea.Height - (mainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
+            TheMainWindow.Left = (((MonitorInfo.WorkArea.Width - (TheMainWindow.Width * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling));
+            TheMainWindow.Top = ((MonitorInfo.WorkArea.Height - (TheMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
         }
 
         #endregion Window Functions

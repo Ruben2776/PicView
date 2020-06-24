@@ -87,19 +87,19 @@ namespace PicView.UI
             ShowTooltipMessage(DragOverString, true);
 
             // If no image, fix it to container
-            if (mainWindow.img.Source == null)
+            if (TheMainWindow.MainImage.Source == null)
             {
-                mainWindow.img.Width = mainWindow.Scroller.ActualWidth;
-                mainWindow.img.Height = mainWindow.Scroller.ActualHeight;
+                TheMainWindow.MainImage.Width = TheMainWindow.Scroller.ActualWidth;
+                TheMainWindow.MainImage.Height = TheMainWindow.Scroller.ActualHeight;
             }
             else
             {
                 // Save our image so we can swap back to it later if neccesary
-                prevPicResource = mainWindow.img.Source;
+                prevPicResource = TheMainWindow.MainImage.Source;
             }
 
             // Load from preloader or thumbnails
-            mainWindow.img.Source = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : GetBitmapSourceThumb(files[0]);
+            TheMainWindow.MainImage.Source = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : GetBitmapSourceThumb(files[0]);
         }
 
         /// <summary>
@@ -114,11 +114,11 @@ namespace PicView.UI
             // Switch to previous image if available
             if (!CanNavigate)
             {
-                mainWindow.img.Source = null;
+                TheMainWindow.MainImage.Source = null;
             }
             else if (prevPicResource != null)
             {
-                mainWindow.img.Source = prevPicResource;
+                TheMainWindow.MainImage.Source = prevPicResource;
             }
         }
 
@@ -207,7 +207,7 @@ namespace PicView.UI
 
         internal static void DragFile(object sender, MouseButtonEventArgs e)
         {
-            if (Keyboard.Modifiers != ModifierKeys.Control || mainWindow.img.Source == null)
+            if (Keyboard.Modifiers != ModifierKeys.Control || TheMainWindow.MainImage.Source == null)
             {
                 return;
             }

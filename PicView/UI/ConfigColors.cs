@@ -59,15 +59,15 @@ namespace PicView.UI
             switch (Properties.Settings.Default.BgColorChoice)
             {
                 case 0:
-                    mainWindow.imgBorder.Background = new SolidColorBrush(Colors.Transparent);
+                    TheMainWindow.MainImageBorder.Background = new SolidColorBrush(Colors.Transparent);
                     break;
 
                 case 1:
-                    mainWindow.imgBorder.Background = new SolidColorBrush(Colors.White);
+                    TheMainWindow.MainImageBorder.Background = new SolidColorBrush(Colors.White);
                     break;
 
                 case 2:
-                    mainWindow.imgBorder.Background = DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
+                    TheMainWindow.MainImageBorder.Background = DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
                     break;
             }
 
@@ -76,7 +76,7 @@ namespace PicView.UI
 
         public static void ChangeBackground(object sender, RoutedEventArgs e)
         {
-            if (mainWindow.imgBorder == null)
+            if (TheMainWindow.MainImageBorder == null)
             {
                 return;
             }
@@ -92,27 +92,27 @@ namespace PicView.UI
             {
                 case 0:
                     var x = new SolidColorBrush(Colors.Transparent);
-                    if (mainWindow.imgBorder.Background == x)
+                    if (TheMainWindow.MainImageBorder.Background == x)
                     {
                         goto case 1;
                     }
-                    mainWindow.imgBorder.Background = x;
+                    TheMainWindow.MainImageBorder.Background = x;
                     break;
 
                 case 1:
-                    mainWindow.imgBorder.Background = new SolidColorBrush(Colors.White);
+                    TheMainWindow.MainImageBorder.Background = new SolidColorBrush(Colors.White);
                     break;
 
                 case 2:
                     var _ = DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
                     if (_ != null)
                     {
-                        mainWindow.imgBorder.Background = _;
+                        TheMainWindow.MainImageBorder.Background = _;
                     }
                     break;
 
                 default:
-                    mainWindow.imgBorder.Background = new SolidColorBrush(Colors.Transparent);
+                    TheMainWindow.MainImageBorder.Background = new SolidColorBrush(Colors.Transparent);
                     break;
             }
         }

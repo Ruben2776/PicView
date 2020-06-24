@@ -12,21 +12,21 @@ namespace PicView.Library.Resources
         // Add timers
         internal static void AddTimers()
         {
-            autoScrollTimer = new Timer()
+            AutoScrollTimer = new Timer()
             {
                 Interval = 7,
                 AutoReset = true,
                 Enabled = false
             };
-            autoScrollTimer.Elapsed += AutoScrollTimerEvent;
+            AutoScrollTimer.Elapsed += AutoScrollTimerEvent;
 
-            activityTimer = new Timer()
+            ActivityTimer = new Timer()
             {
                 Interval = 6000,
                 AutoReset = true,
                 Enabled = false
             };
-            activityTimer.Elapsed += delegate { FadeControlsAsync(false); };
+            ActivityTimer.Elapsed += delegate { FadeControlsAsync(false); };
 
             //fastPicTimer = new Timer()
             //{

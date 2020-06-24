@@ -56,7 +56,7 @@ namespace PicView.UI.Windows
             StartButton.Click += delegate { _ = Batch_Resize.StartProcessing(); };
 
             // CloseButton
-            CloseButton.TheButton.Click += delegate { Hide(); mainWindow.Focus(); };
+            CloseButton.TheButton.Click += delegate { Hide(); TheMainWindow.Focus(); };
 
             // MinButton
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
@@ -74,7 +74,7 @@ namespace PicView.UI.Windows
             {
                 case Key.Escape:
                     Hide();
-                    mainWindow.Focus();
+                    TheMainWindow.Focus();
                     break;
 
                 case Key.Q:

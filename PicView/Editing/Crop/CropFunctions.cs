@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using PicView.ChangeImage;
 using PicView.ImageHandling;
 using PicView.UI;
 using PicView.UI.Loading;
@@ -19,7 +20,7 @@ namespace PicView.Editing.Crop
 
         internal static void StartCrop()
         {
-            if (mainWindow.img.Source == null) { return; }
+            if (TheMainWindow.MainImage.Source == null) { return; }
 
             if (cropppingTool == null)
             {
@@ -29,11 +30,11 @@ namespace PicView.Editing.Crop
             cropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? xWidth : xHeight;
             cropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? xHeight : xWidth;
 
-            mainWindow.Bar.Text = "Press Esc to close, Enter to save";
+            TheMainWindow.Bar.Text = "Press Esc to close, Enter to save";
 
-            if (!mainWindow.bg.Children.Contains(cropppingTool))
+            if (!TheMainWindow.bg.Children.Contains(cropppingTool))
             {
-                mainWindow.bg.Children.Add(cropppingTool);
+                TheMainWindow.bg.Children.Add(cropppingTool);
             }
 
             CanNavigate = false;
@@ -61,7 +62,8 @@ namespace PicView.Editing.Crop
 
         internal static async void SaveCrop()
         {
-            var fileName = Pics.Count == 0 ? Path.GetRandomFileName() : Path.GetFileName(Pics[FolderIndex]);
+            var fileName = Navigation.Pics.Count == 0 ? Path.GetRandomFileName()
+                : Path.GetFileName(Navigation.Pics[FolderIndex]);
 
             var Savedlg = new SaveFileDialog()
             {
@@ -80,27 +82,34 @@ namespace PicView.Editing.Crop
             var crop = GetCrop();
             var success = false;
 
-            if (Pics.Count > 0)
+            if (Navigation.Pics.Count > 0)
             {
                 await Task.Run(() =>
-                    success = SaveImages.TrySaveImage(crop, Pics[FolderIndex], Savedlg.FileName)).ConfigureAwait(false);
+                    success = SaveImages.TrySaveImage(
+                        crop,
+                        Navigation.Pics[FolderIndex],
+                        Savedlg.FileName)).ConfigureAwait(false);
             }
             else
             {
                 // Fixes saving if from web
                 // TODO add working method for copied images
-                var source = mainWindow.img.Source as BitmapSource;
+                var source = TheMainWindow.MainImage.Source as BitmapSource;
                 await Task.Run(() =>
-                    success = SaveImages.TrySaveImage(crop, source, Savedlg.FileName)).ConfigureAwait(false);
+                    success = SaveImages.TrySaveImage(
+                        crop,
+                        source,
+                        Savedlg.FileName)).ConfigureAwait(false);
             }
-            await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            await TheMainWindow.Dispatcher.BeginInvoke((Action)(() =>
             {
                 if (!success)
                 {
-                    Tooltip.ShowTooltipMessage($"An error occured while saving {fileName} to {Savedlg.FileName}");
+                    Tooltip.ShowTooltipMessage(
+                        $"An error occured while saving {fileName} to {Savedlg.FileName}");
                 }
 
-                mainWindow.bg.Children.Remove(cropppingTool);
+                TheMainWindow.bg.Children.Remove(cropppingTool);
             }));
         }
 

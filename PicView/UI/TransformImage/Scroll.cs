@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -12,6 +13,21 @@ namespace PicView.UI.TransformImage
     internal static class Scroll
     {
         /// <summary>
+        /// Starting point of AutoScroll
+        /// </summary>
+        internal static Point? AutoScrollOrigin;
+
+        /// <summary>
+        /// Current point of AutoScroll
+        /// </summary>
+        internal static Point AutoScrollPos;
+
+        /// <summary>
+        /// Timer used to continously scroll with AutoScroll
+        /// </summary>
+        internal static Timer AutoScrollTimer;
+
+        /// <summary>
         /// Toggles scroll and displays it with TooltipStle
         /// </summary>
         internal static bool IsScrollEnabled
@@ -20,8 +36,10 @@ namespace PicView.UI.TransformImage
             set
             {
                 Properties.Settings.Default.ScrollEnabled = value;
-                mainWindow.Scroller.VerticalScrollBarVisibility = value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
-                if (Pics != null)
+                TheMainWindow.Scroller.VerticalScrollBarVisibility =
+                    value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+
+                if (ChangeImage.Navigation.Pics != null)
                 {
                     TryFitImage();
                     ShowTooltipMessage(value ? "Scrolling enabled" : "Scrolling disabled");
@@ -39,8 +57,8 @@ namespace PicView.UI.TransformImage
 
         internal static void ShowAutoScrollSign()
         {
-            Canvas.SetTop(autoScrollSign, autoScrollOrigin.Value.Y);
-            Canvas.SetLeft(autoScrollSign, autoScrollOrigin.Value.X);
+            Canvas.SetTop(autoScrollSign, AutoScrollOrigin.Value.Y);
+            Canvas.SetLeft(autoScrollSign, AutoScrollOrigin.Value.X);
             autoScrollSign.Visibility = Visibility.Visible;
             autoScrollSign.Opacity = 1;
         }
@@ -54,13 +72,13 @@ namespace PicView.UI.TransformImage
         internal static void StartAutoScroll(MouseButtonEventArgs e)
         {
             // Don't scroll if not scrollable
-            if (mainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed)
+            if (TheMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed)
             {
                 return;
             }
 
             AutoScrolling = true;
-            autoScrollOrigin = e.GetPosition(mainWindow.Scroller);
+            AutoScrollOrigin = e.GetPosition(TheMainWindow.Scroller);
 
             ShowAutoScrollSign();
         }
@@ -70,11 +88,11 @@ namespace PicView.UI.TransformImage
         /// </summary>
         internal static void StopAutoScroll()
         {
-            autoScrollTimer.Stop();
+            AutoScrollTimer.Stop();
             //window.ReleaseMouseCapture();
-            autoScrollTimer.Enabled = false;
+            AutoScrollTimer.Enabled = false;
             AutoScrolling = false;
-            autoScrollOrigin = null;
+            AutoScrollOrigin = null;
             HideAutoScrollSign();
         }
 
@@ -83,29 +101,27 @@ namespace PicView.UI.TransformImage
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="E"></param>
-        internal static async void AutoScrollTimerEvent(object sender, System.Timers.ElapsedEventArgs E)
+        internal static async void AutoScrollTimerEvent(object sender, ElapsedEventArgs E)
         {
             // Error checking
-            if (autoScrollPos == null || autoScrollOrigin == null)
+            if (AutoScrollPos == null || AutoScrollOrigin == null)
             {
                 return;
             }
 
             // Start in dispatcher because timer is threaded
-            await mainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            await TheMainWindow.Dispatcher.BeginInvoke((Action)(() =>
             {
-                if (autoScrollOrigin.HasValue)
+                if (AutoScrollOrigin.HasValue)
                 {
                     // Calculate offset by Y coordinate
-                    var offset = (autoScrollPos.Y - autoScrollOrigin.Value.Y) / 15;
-
-                    //ToolTipStyle("pos = " + autoScrollPos.Y.ToString() + " origin = " + autoScrollOrigin.Value.Y.ToString()
-                    //    + Environment.NewLine + "offset = " + offset, false);
+                    var offset = (AutoScrollPos.Y - AutoScrollOrigin.Value.Y) / 15;
 
                     if (AutoScrolling)
                     {
                         // Tell the scrollviewer to scroll to calculated offset
-                        mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset + offset);
+                        TheMainWindow.Scroller.ScrollToVerticalOffset(
+                            TheMainWindow.Scroller.VerticalOffset + offset);
                     }
                 }
             }));

@@ -19,7 +19,7 @@ namespace PicView.UI.PicGallery
     {
         internal static void Click(int id)
         {
-            mainWindow.Focus();
+            TheMainWindow.Focus();
 
             if (Properties.Settings.Default.PicGallery == 1)
             {
@@ -102,7 +102,7 @@ namespace PicView.UI.PicGallery
                 Preloader.PreloaderFix(Pics[id]);
             }
 
-            mainWindow.img.Source = source;
+            TheMainWindow.MainImage.Source = source;
             var size = ImageSize(Pics[id]);
             if (size.HasValue)
             {

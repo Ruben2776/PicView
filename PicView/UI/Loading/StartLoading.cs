@@ -32,17 +32,17 @@ namespace PicView.UI.Loading
             Trace.WriteLine(AppName + " started at " + DateTime.Now);
 #endif
             // theese two line have to be exactly onload
-            HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(mainWindow).Handle);
+            HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(TheMainWindow).Handle);
             source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
 
             FreshStartup = true;
 
             if (!Properties.Settings.Default.ShowInterface)
             {
-                mainWindow.TitleBar.Visibility =
-                mainWindow.LowerBar.Visibility =
-                mainWindow.LeftBorderRectangle.Visibility =
-                mainWindow.RightBorderRectangle.Visibility
+                TheMainWindow.TitleBar.Visibility =
+                TheMainWindow.LowerBar.Visibility =
+                TheMainWindow.LeftBorderRectangle.Visibility =
+                TheMainWindow.RightBorderRectangle.Visibility
                 = Visibility.Collapsed;
             }
         }
@@ -116,23 +116,23 @@ namespace PicView.UI.Loading
             {
                 if (Properties.Settings.Default.Width != 0)
                 {
-                    mainWindow.Top = Properties.Settings.Default.Top;
-                    mainWindow.Left = Properties.Settings.Default.Left;
-                    mainWindow.Width = Properties.Settings.Default.Width;
-                    mainWindow.Height = Properties.Settings.Default.Height;
+                    TheMainWindow.Top = Properties.Settings.Default.Top;
+                    TheMainWindow.Left = Properties.Settings.Default.Left;
+                    TheMainWindow.Width = Properties.Settings.Default.Width;
+                    TheMainWindow.Height = Properties.Settings.Default.Height;
                 }
                 else
                 {
                     // Execute logic for first time startup
-                    mainWindow.Width = 815;
-                    mainWindow.Height = 970;
+                    TheMainWindow.Width = 815;
+                    TheMainWindow.Height = 970;
                     CenterWindowOnScreen();
                 }
             }
             else
             {
-                mainWindow.img.Width = 815;
-                mainWindow.img.Height = 970;
+                TheMainWindow.MainImage.Width = 815;
+                TheMainWindow.MainImage.Height = 970;
             }
         }
 
@@ -140,7 +140,7 @@ namespace PicView.UI.Loading
         {
             // Update values
             ConfigColors.SetColors();
-            mainWindow.AllowDrop = true;
+            TheMainWindow.AllowDrop = true;
             IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
 
             LoadClickArrow(true);
@@ -176,7 +176,7 @@ namespace PicView.UI.Loading
                     Visibility = Visibility.Collapsed
                 };
 
-                mainWindow.bg.Children.Add(picGallery);
+                TheMainWindow.bg.Children.Add(picGallery);
                 Panel.SetZIndex(picGallery, 999);
 
                 if (Properties.Settings.Default.PicGallery == 2)

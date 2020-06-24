@@ -58,7 +58,7 @@ namespace PicView.Library
         /// <summary>
         /// The Main Window?
         /// </summary>
-        internal static UI.Windows.MainWindow mainWindow = (UI.Windows.MainWindow)Application.Current.MainWindow;
+        internal static UI.Windows.MainWindow TheMainWindow = (UI.Windows.MainWindow)Application.Current.MainWindow;
 
         /// <summary>
         /// Backup of Previous file, if changed folder etc.
@@ -124,37 +124,7 @@ namespace PicView.Library
         /// </summary>
         internal static MonitorSize MonitorInfo { get; set; }
 
-        /// <summary>
-        /// Starting point of AutoScroll
-        /// </summary>
-        internal static Point? autoScrollOrigin;
 
-        /// <summary>
-        /// Current point of AutoScroll
-        /// </summary>
-        internal static Point autoScrollPos;
-
-
-
-        /// <summary>
-        /// List of file paths to supported files
-        /// </summary>
-        internal static List<string> Pics { get; set; }
-
-        /// <summary>
-        /// Timer used to continously scroll with AutoScroll
-        /// </summary>
-        internal static Timer autoScrollTimer;
-
-        /// <summary>
-        /// Timer used to hide interface and/or scrollbar
-        /// </summary>
-        internal static Timer activityTimer;
-
-        /// <summary>
-        /// Timer used for slideshow
-        /// </summary>
-        internal static Timer SlideTimer;
 
         /// <summary>
         /// Backup of image

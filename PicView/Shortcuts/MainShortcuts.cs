@@ -27,7 +27,7 @@ namespace PicView.Shortcuts
         internal static void MainWindow_KeysDown(object sender, KeyEventArgs e)
         {
             // Don't allow keys when typing in text
-            if (mainWindow.Bar.IsKeyboardFocusWithin) { return; }
+            if (TheMainWindow.Bar.IsKeyboardFocusWithin) { return; }
 
             var ctrlDown = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
             var altDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
@@ -43,13 +43,13 @@ namespace PicView.Shortcuts
                     {
                         if (Pics.Count == 0)
                         {
-                            SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height);
+                            SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height);
                         }
                         else
                         {
-                            SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
+                            SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height, FolderIndex);
                         }
-                        mainWindow.bg.Children.Remove(cropppingTool);
+                        TheMainWindow.bg.Children.Remove(cropppingTool);
                         CanNavigate = true;
                         e.Handled = true;
                         return;
@@ -59,11 +59,11 @@ namespace PicView.Shortcuts
                     {
                         if (Pics.Count == 0)
                         {
-                            SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height);
+                            SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height);
                         }
                         else
                         {
-                            SetTitle.SetTitleString((int)mainWindow.img.Source.Width, (int)mainWindow.img.Source.Height, FolderIndex);
+                            SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height, FolderIndex);
                         }
 
                         CropFunctions.SaveCrop();
@@ -155,7 +155,7 @@ namespace PicView.Shortcuts
                     }
                     if (Properties.Settings.Default.ScrollEnabled)
                     {
-                        mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset - 30);
+                        TheMainWindow.Scroller.ScrollToVerticalOffset(TheMainWindow.Scroller.VerticalOffset - 30);
                     }
 
                     return;
@@ -171,7 +171,7 @@ namespace PicView.Shortcuts
                     }
                     if (Properties.Settings.Default.ScrollEnabled)
                     {
-                        mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset + 30);
+                        TheMainWindow.Scroller.ScrollToVerticalOffset(TheMainWindow.Scroller.VerticalOffset + 30);
                     }
 
                     return;
@@ -186,7 +186,7 @@ namespace PicView.Shortcuts
                         }
                         else
                         {
-                            mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset - 30);
+                            TheMainWindow.Scroller.ScrollToVerticalOffset(TheMainWindow.Scroller.VerticalOffset - 30);
                         }
                     }
                     else if (picGallery != null)
@@ -227,7 +227,7 @@ namespace PicView.Shortcuts
                     }
                     else if (Properties.Settings.Default.ScrollEnabled)
                     {
-                        mainWindow.Scroller.ScrollToVerticalOffset(mainWindow.Scroller.VerticalOffset + 30);
+                        TheMainWindow.Scroller.ScrollToVerticalOffset(TheMainWindow.Scroller.VerticalOffset + 30);
                     }
                     else if (picGallery != null)
                     {
@@ -289,11 +289,11 @@ namespace PicView.Shortcuts
                         }
                         if (Properties.Settings.Default.Fullscreen)
                         {
-                            if (SlideTimer != null)
+                            if (Slideshow.SlideTimer != null)
                             {
-                                if (SlideTimer.Enabled)
+                                if (Slideshow.SlideTimer.Enabled)
                                 {
-                                    SlideShow.StopSlideshow();
+                                    Slideshow.StopSlideshow();
                                 }
                             }
                             else
@@ -330,7 +330,7 @@ namespace PicView.Shortcuts
                         }
                         if (!cm.IsVisible)
                         {
-                            SystemCommands.CloseWindow(mainWindow);
+                            SystemCommands.CloseWindow(TheMainWindow);
                         }
                         break;
 
@@ -338,7 +338,7 @@ namespace PicView.Shortcuts
                     case Key.Q:
                         if (ctrlDown)
                         {
-                            SystemCommands.CloseWindow(mainWindow);
+                            SystemCommands.CloseWindow(TheMainWindow);
                         }
 
                         break;
@@ -528,7 +528,7 @@ namespace PicView.Shortcuts
 #endif
                     // F11
                     case Key.F11:
-                        SlideShow.StartSlideshow();
+                        Slideshow.StartSlideshow();
                         break;
 
                     // F12
@@ -538,12 +538,12 @@ namespace PicView.Shortcuts
 
                     // Home
                     case Key.Home:
-                        mainWindow.Scroller.ScrollToHome();
+                        TheMainWindow.Scroller.ScrollToHome();
                         break;
 
                     // End
                     case Key.End:
-                        mainWindow.Scroller.ScrollToEnd();
+                        TheMainWindow.Scroller.ScrollToEnd();
                         break;
 
                     default: break;
@@ -579,7 +579,7 @@ namespace PicView.Shortcuts
         internal static void MainWindow_KeysUp(object sender, KeyEventArgs e)
         {
             // Don't allow keys when typing in text
-            if (mainWindow.Bar.IsKeyboardFocusWithin) { return; }
+            if (TheMainWindow.Bar.IsKeyboardFocusWithin) { return; }
 
             switch (e.Key)
             {

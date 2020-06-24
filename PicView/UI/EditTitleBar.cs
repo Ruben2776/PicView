@@ -3,6 +3,7 @@ using PicView.FileHandling;
 using PicView.UI.Sizing;
 using System.IO;
 using System.Windows.Input;
+using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 
 namespace PicView.UI
@@ -13,7 +14,7 @@ namespace PicView.UI
 
         internal static void Bar_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (mainWindow.Bar.IsFocused)
+            if (TheMainWindow.Bar.IsFocused)
             {
                 return;
             }
@@ -29,9 +30,9 @@ namespace PicView.UI
             {
                 return;
             }
-            if (!mainWindow.Bar.IsFocused)
+            if (!TheMainWindow.Bar.IsFocused)
             {
-                mainWindow.Bar.Bar.Focus();
+                TheMainWindow.Bar.Bar.Focus();
                 SelectFileName();
             }
             else
@@ -49,8 +50,8 @@ namespace PicView.UI
 
             e.Handled = true;
 
-            backupTitle = mainWindow.Bar.Text;
-            mainWindow.Bar.Text = Pics[FolderIndex];
+            backupTitle = TheMainWindow.Bar.Text;
+            TheMainWindow.Bar.Text = Pics[FolderIndex];
         }
 
         internal static void SelectFileName()
@@ -58,14 +59,14 @@ namespace PicView.UI
             var filename = Path.GetFileName(Pics[FolderIndex]);
             var start = Pics[FolderIndex].Length - filename.Length;
             var end = Path.GetFileNameWithoutExtension(filename).Length;
-            mainWindow.Bar.Bar.Select(start, end);
+            TheMainWindow.Bar.Bar.Select(start, end);
         }
 
         internal static void HandleRename()
         {
-            if (FileFunctions.RenameFile(Pics[FolderIndex], mainWindow.Bar.Text))
+            if (FileFunctions.RenameFile(Pics[FolderIndex], TheMainWindow.Bar.Text))
             {
-                Pics[FolderIndex] = mainWindow.Bar.Text;
+                Pics[FolderIndex] = TheMainWindow.Bar.Text;
                 Refocus();
                 Error_Handling.Reload(); // TODO proper renaming of window title, tooltip, etc.
             }
@@ -78,16 +79,16 @@ namespace PicView.UI
 
         internal static void Refocus()
         {
-            if (!mainWindow.Bar.IsFocused)
+            if (!TheMainWindow.Bar.IsFocused)
             {
                 return;
             }
 
-            FocusManager.SetFocusedElement(FocusManager.GetFocusScope(mainWindow.Bar), null);
+            FocusManager.SetFocusedElement(FocusManager.GetFocusScope(TheMainWindow.Bar), null);
             Keyboard.ClearFocus();
-            mainWindow.Focus();
+            TheMainWindow.Focus();
 
-            mainWindow.Bar.Text = backupTitle;
+            TheMainWindow.Bar.Text = backupTitle;
             backupTitle = string.Empty;
         }
     }

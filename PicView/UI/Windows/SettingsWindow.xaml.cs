@@ -251,7 +251,7 @@ namespace PicView.UI.Windows
             {
                 case Key.Escape:
                     Hide();
-                    mainWindow.Focus();
+                    TheMainWindow.Focus();
                     break;
 
                 case Key.Q:

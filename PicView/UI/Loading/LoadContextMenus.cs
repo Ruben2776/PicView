@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.Copy_Paste;
 using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.Open_Save;
@@ -621,11 +622,11 @@ namespace PicView.UI.Loading
                 Fill = scbf
             };
             clcm.Icon = mclcmIcon;
-            clcm.Click += (s, x) => { cm.Visibility = Visibility.Collapsed; SystemCommands.CloseWindow(mainWindow); };
+            clcm.Click += (s, x) => { cm.Visibility = Visibility.Collapsed; SystemCommands.CloseWindow(TheMainWindow); };
             cm.Items.Add(clcm);
 
             // Add to elements
-            mainWindow.img.ContextMenu = mainWindow.bg.ContextMenu = mainWindow.LowerBar.ContextMenu = cm;
+            TheMainWindow.MainImage.ContextMenu = TheMainWindow.bg.ContextMenu = TheMainWindow.LowerBar.ContextMenu = cm;
 
             switch (Properties.Settings.Default.SortPreference)
             {

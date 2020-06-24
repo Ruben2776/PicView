@@ -23,7 +23,7 @@ namespace PicView.UI.Loading
             {
                 infoWindow = new InfoWindow
                 {
-                    Owner = mainWindow
+                    Owner = TheMainWindow
                 };
 
                 infoWindow.Show();
@@ -54,7 +54,7 @@ namespace PicView.UI.Loading
             {
                 settingsWindow = new SettingsWindow
                 {
-                    Owner = mainWindow
+                    Owner = TheMainWindow
                 };
 
                 settingsWindow.Show();
@@ -85,7 +85,7 @@ namespace PicView.UI.Loading
             {
                 effects = new EffectsWindow
                 {
-                    Owner = mainWindow
+                    Owner = TheMainWindow
                 };
 
                 effects.Show();
@@ -116,7 +116,7 @@ namespace PicView.UI.Loading
             {
                 resizeAndOptimize = new BatchWindow
                 {
-                    Owner = mainWindow
+                    Owner = TheMainWindow
                 };
 
                 resizeAndOptimize.Show();

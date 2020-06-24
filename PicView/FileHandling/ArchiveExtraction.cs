@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.FileLists;
 using static PicView.Library.Fields;
@@ -173,8 +174,8 @@ namespace PicView.FileHandling
                 return true;
             }
 
-            mainWindow.Bar.Text = "Unzipping...";
-            mainWindow.Bar.ToolTip = mainWindow.Bar.Text;
+            TheMainWindow.Bar.Text = "Unzipping...";
+            TheMainWindow.Bar.ToolTip = TheMainWindow.Bar.Text;
             await Task.Delay(100).ConfigureAwait(true);
 
             // TempZipPath is not null = images being extracted
