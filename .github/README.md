@@ -80,8 +80,8 @@ Rename/move files `F2`, for easy file management of photos/images.
 
 
 <h2>Configurable Interface Design</h2>
-<img src="https://picview.app/wp-content/uploads/2020/06/Annotation-2020-06-20-115747.png" align="left" height="730"/> 
-<img src="https://picview.app/wp-content/uploads/2020/06/Annotation-2020-06-18-104748.png" align="right" height="730"/>
+<img src="https://picview.app/wp-content/uploads/2020/06/Annotation-2020-06-20-115747.png" align="left" height="660"/> 
+<img src="https://picview.app/wp-content/uploads/2020/06/Annotation-2020-06-18-104748.png" align="right" height="670"/>
 
 
 
