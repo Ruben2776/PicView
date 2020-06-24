@@ -216,7 +216,7 @@ namespace PicView.UI.Sizing
 
             if (IsZoomed)
             {
-                TransformImage.ZoomLogic.ResetZoom();
+                TransformImage.ZoomLogic.ResetZoom(false);
             }
 
             /*

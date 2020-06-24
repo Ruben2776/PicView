@@ -255,25 +255,26 @@ namespace PicView.UI.TransformImage
         /// <summary>
         /// Resets element values to their loaded values
         /// </summary>
-        internal static void ResetZoom()
+        internal static void ResetZoom(bool animate = true)
         {
             if (mainWindow.img.Source == null) { return; }
 
             // Scale to default
-            var scaletransform = new ScaleTransform();
-            scaletransform.ScaleX = scaletransform.ScaleY = 1.0;
-            mainWindow.img.LayoutTransform = scaletransform;
+            translateTransform.X = translateTransform.Y = 1;
 
-            scaleTransform.ScaleX = scaleTransform.ScaleY = 1;
-            mainWindow.img.RenderTransformOrigin = new Point(0.5, 0.5);
-
-            BeginZoomAnimation(1);
+            if (animate)
+            {
+                BeginZoomAnimation(1);
+            }
+            else
+            {
+                
+                scaleTransform.ScaleX = scaleTransform.ScaleY = 1.0;
+            }
+            
 
             Tooltip.CloseToolTipMessage();
             IsZoomed = false;
-
-            // Reset size
-            //ScaleImage.TryFitImage();
 
             // Display non-zoomed values
             if (Pics.Count == 0)
@@ -379,8 +380,17 @@ namespace PicView.UI.TransformImage
 
         private static void BeginZoomAnimation(double zoomValue)
         {
-            Duration duration = new Duration(TimeSpan.FromSeconds(.35));
-            DoubleAnimation anim = new DoubleAnimation(zoomValue, duration);
+            var duration = new Duration(TimeSpan.FromSeconds(.35));
+
+            var anim = new DoubleAnimation(zoomValue, duration)
+            {
+                // Set stop to make sure animation doesn't hold ownership of scaletransform
+                FillBehavior = FillBehavior.Stop
+            };
+
+            // Hack it to keep the intended value
+            anim.Completed += delegate { scaleTransform.ScaleX = scaleTransform.ScaleY = zoomValue; };
+
             scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
             scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
         }
