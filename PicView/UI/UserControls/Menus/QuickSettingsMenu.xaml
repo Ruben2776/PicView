@@ -90,6 +90,42 @@
                     </Path>
                 </Button>
 
+                <Canvas x:Name="ZoomSliderParent" Opacity="0" Visibility="Collapsed">
+                    <Border
+                        Canvas.Left="80"
+                        Canvas.Top="-44"
+                        Panel.ZIndex="3"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="2">
+                        <Canvas
+                            Width="115"
+                            Height="27"
+                            Background="{StaticResource BackgroundColorBrushAlt}">
+                            <Slider
+                                x:Name="ZoomSlider"
+                                Canvas.Left="3"
+                                Canvas.Top="3"
+                                Width="95"
+                                Maximum="14"
+                                Minimum="1" />
+                        </Canvas>
+                    </Border>
+                    <Rectangle
+                        Canvas.Left="113"
+                        Canvas.Top="-15"
+                        Width="28"
+                        Height="2"
+                        Panel.ZIndex="4"
+                        Fill="{StaticResource BackgroundColorBrush}" />
+                    <Polygon
+                        Canvas.Left="112"
+                        Canvas.Top="-14"
+                        Fill="{StaticResource BackgroundColorBrush}"
+                        Points="0,0 15,30, 30,0"
+                        Stroke="{StaticResource BorderBrush}"
+                        StrokeThickness="2" />
+                </Canvas>
+
                 <Button
                     x:Name="GoToPic"
                     Canvas.Left="155"

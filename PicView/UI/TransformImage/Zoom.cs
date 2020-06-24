@@ -1,4 +1,5 @@
 ﻿using PicView.UI.PicGallery;
+using PicView.UI.UserControls;
 using System;
 using System.Linq;
 using System.Windows;
@@ -118,7 +119,7 @@ namespace PicView.UI.TransformImage
                 return;
             }
             // Drag logic
-            if (!Scroll.IsScrollEnabled)
+            if (!IsScrollEnabled)
             {
                 // Report position for image drag
                 TheMainWindow.MainImage.CaptureMouse();
@@ -140,12 +141,12 @@ namespace PicView.UI.TransformImage
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static void Zoom_img_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        internal static void MainImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             // Stop autoscrolling or dragging image
             if (AutoScrolling)
             {
-                Scroll.StopAutoScroll();
+                StopAutoScroll();
             }
             else
             {
@@ -159,7 +160,7 @@ namespace PicView.UI.TransformImage
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static void Zoom_img_MouseMove(object sender, MouseEventArgs e)
+        internal static void MainImage_MouseMove(object sender, MouseEventArgs e)
         {
             if (AutoScrolling)
             {
@@ -215,7 +216,7 @@ namespace PicView.UI.TransformImage
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static void Zoom_img_MouseWheel(object sender, MouseWheelEventArgs e)
+        internal static void MainImage_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             // Disable normal scroll, so we can use our own values
             e.Handled = true;
@@ -294,7 +295,7 @@ namespace PicView.UI.TransformImage
         internal static void Zoom(bool increment)
         {
             /// Don't zoom when gallery is open
-            if (UserControls.UC.picGallery != null)
+            if (UC.picGallery != null)
             {
                 if (GalleryFunctions.IsOpen)
                 {
@@ -349,6 +350,17 @@ namespace PicView.UI.TransformImage
                 zoomValue = 1.0;
             }
 
+            Zoom(zoomValue);
+        }
+
+        internal static void Zoom(double value)
+        {
+            if (value > UC.quickSettingsMenu.ZoomSlider.Maximum)
+            {
+                return;
+            }
+
+            zoomValue = value;
             IsZoomed = true;
 
             BeginZoomAnimation(zoomValue);
@@ -373,6 +385,12 @@ namespace PicView.UI.TransformImage
             {
                 SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height, FolderIndex);
             }
+
+            if (UC.quickSettingsMenu.ZoomSlider.Value != value)
+            {
+                UC.quickSettingsMenu.ZoomSlider.Value = value;
+            }
+
         }
 
         private static void BeginZoomAnimation(double zoomValue)

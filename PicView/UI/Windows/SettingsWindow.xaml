@@ -10,13 +10,6 @@
     Foreground="{StaticResource MainColorBrush}"
     SizeToContent="Height"
     Style="{DynamicResource MyWindowStyle}">
-    <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="\UI\Styles\Slider.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Window.Resources>
     <DockPanel LastChildFill="True">
         <DockPanel
             x:Name="TitleBar"

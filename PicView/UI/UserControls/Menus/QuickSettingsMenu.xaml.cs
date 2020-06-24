@@ -1,4 +1,7 @@
-﻿using PicView.UI.Loading;
+﻿using PicView.UI.Animations;
+using PicView.UI.Loading;
+using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.ChangeImage.GoToLogic;
@@ -20,11 +23,6 @@ namespace PicView.UI.UserControls
             ToggleScroll.Click += (s, x) => UpdateUIValues.SetScrolling(Properties.Settings.Default.ScrollEnabled);
 
             SettingsButton.Click += (s, x) => LoadWindows.AllSettingsWindow();
-
-            //ResetZoomButton.Click += delegate {
-            //    Close_UserControls();
-            //    Pan_and_Zoom.ResetZoom();
-            //};
 
             SettingsButton.Click += delegate
             {
@@ -50,9 +48,24 @@ namespace PicView.UI.UserControls
             GoToPic.Click += GoToPicEvent;
             GoToPicBox.PreviewMouseLeftButtonDown += delegate
             {
-                GoToPicBox.CaretBrush = new SolidColorBrush(UI.ConfigColors.mainColor);
+                GoToPicBox.CaretBrush = new SolidColorBrush(ConfigColors.mainColor);
             };
             GoToPicBox.PreviewKeyDown += Shortcuts.GotoPicsShortcuts.GoToPicPreviewKeys;
+
+            ZoomButton.Click += delegate
+            {
+                if (ZoomSliderParent.Visibility == Visibility.Collapsed || ZoomSliderParent.Opacity == 0)
+                {
+                    ZoomSliderParent.Visibility = Visibility.Visible;
+                    AnimationHelper.Fade(ZoomSliderParent, 1, TimeSpan.FromSeconds(.4));
+                }
+                else
+                {
+                    AnimationHelper.Fade(ZoomSliderParent, 0, TimeSpan.FromSeconds(.3));
+                }
+            };
+
+            ZoomSlider.ValueChanged += delegate { TransformImage.ZoomLogic.Zoom(ZoomSlider.Value); };
 
             #region Animation events
 
@@ -101,6 +114,11 @@ namespace PicView.UI.UserControls
             GoToPic.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(GoToPicBrush);
             GoToPic.MouseEnter += (s, x) => ButtonMouseOverAnim(GoToPicBrush, true);
             GoToPic.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(GoToPicBrush, false);
+
+            // ZoomButton
+            ZoomButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ZoomButtonBrush);
+            ZoomButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ZoomButtonBrush, true);
+            ZoomButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ZoomButtonBrush, false);
 
             #endregion Animation events
         }

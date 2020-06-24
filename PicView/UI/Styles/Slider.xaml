@@ -102,39 +102,19 @@
             <TickBar
                 x:Name="TopTick"
                 Width="4"
+                Fill="{DynamicResource ChosenColorBrush}"
                 Placement="Left"
                 SnapsToDevicePixels="True"
-                Visibility="Collapsed">
-                <TickBar.Fill>
-                    <SolidColorBrush Color="{DynamicResource ChosenColor}" />
-                </TickBar.Fill>
-            </TickBar>
+                Visibility="Collapsed" />
 
             <Border
                 x:Name="TrackBackground"
                 Grid.Column="1"
                 Width="4"
                 Margin="0"
+                Background="{DynamicResource ChosenColorBrush}"
                 BorderThickness="1"
-                CornerRadius="2">
-                <Border.BorderBrush>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                        <LinearGradientBrush.GradientStops>
-                            <GradientStopCollection>
-                                <GradientStop Offset="0.0" Color="{DynamicResource ChosenColor}" />
-                                <GradientStop Offset="1.0" Color="{DynamicResource ChosenColor}" />
-                            </GradientStopCollection>
-                        </LinearGradientBrush.GradientStops>
-                    </LinearGradientBrush>
-
-                </Border.BorderBrush>
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0.25,0" EndPoint="1,0">
-                        <GradientStop Offset="0" Color="{DynamicResource ChosenColor}" />
-                        <GradientStop Offset="1" Color="{DynamicResource ChosenColor}" />
-                    </LinearGradientBrush>
-                </Border.Background>
-            </Border>
+                CornerRadius="2" />
             <Track x:Name="PART_Track" Grid.Column="1">
                 <Track.DecreaseRepeatButton>
                     <RepeatButton Command="Slider.DecreaseLarge" Style="{StaticResource SliderButtonStyle}" />

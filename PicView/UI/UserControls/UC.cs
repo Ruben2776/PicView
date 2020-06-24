@@ -99,9 +99,10 @@ namespace PicView.UI.UserControls
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
                 if (!value)
                 {
-                    Application.Current.Resources["ChosenColor"] = AnimationHelper.GetPrefferedColorOver();
                     da.To = 0;
-                    da.Completed += delegate { quickSettingsMenu.Visibility = Visibility.Hidden; };
+                    da.Completed += delegate { 
+                        quickSettingsMenu.Visibility = Visibility.Hidden;
+                        quickSettingsMenu.ZoomSliderParent.Visibility = Visibility.Collapsed; };
                 }
                 else
                 {
@@ -110,7 +111,6 @@ namespace PicView.UI.UserControls
 
                 if (quickSettingsMenu != null)
                 {
-                    quickSettingsMenu.BeginAnimation(UIElement.OpacityProperty, da);
                     if (Library.Fields.TheMainWindow.MainImage.Source != null)
                     {
                         quickSettingsMenu.GoToPicBox.Text =
@@ -118,6 +118,7 @@ namespace PicView.UI.UserControls
                             .ToString(System.Globalization.CultureInfo.CurrentCulture);
                     }
 
+                    quickSettingsMenu.BeginAnimation(UIElement.OpacityProperty, da);
                 }
             }
         }

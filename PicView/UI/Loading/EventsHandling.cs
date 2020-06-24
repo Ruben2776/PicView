@@ -151,9 +151,9 @@ namespace PicView.UI.Loading
             // img
             TheMainWindow.MainImage.PreviewMouseLeftButtonDown += DragFile;
             TheMainWindow.MainImage.MouseLeftButtonDown += MainImage_MouseLeftButtonDown;
-            TheMainWindow.MainImage.MouseLeftButtonUp += Zoom_img_MouseLeftButtonUp;
-            TheMainWindow.MainImage.MouseMove += Zoom_img_MouseMove;
-            TheMainWindow.MainImage.MouseWheel += Zoom_img_MouseWheel;
+            TheMainWindow.MainImage.MouseLeftButtonUp += MainImage_MouseLeftButtonUp;
+            TheMainWindow.MainImage.MouseMove += MainImage_MouseMove;
+            TheMainWindow.MainImage.MouseWheel += MainImage_MouseWheel;
 
             // bg
             TheMainWindow.bg.MouseLeftButtonDown += Bg_MouseLeftButtonDown;
@@ -165,7 +165,7 @@ namespace PicView.UI.Loading
             TheMainWindow.bg.MouseLeave += Interface_MouseLeave;
 
             // TooltipStyle
-            toolTipMessage.MouseWheel += Zoom_img_MouseWheel;
+            toolTipMessage.MouseWheel += MainImage_MouseWheel;
 
             // TitleBar
             TheMainWindow.TitleBar.MouseLeftButtonDown += Move;

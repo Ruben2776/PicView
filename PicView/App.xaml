@@ -7,11 +7,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="UI\Styles\Colors.xaml" />
-                <ResourceDictionary Source="UI\Styles\Menu.xaml" />
                 <ResourceDictionary Source="UI\Styles\Button.xaml" />
                 <ResourceDictionary Source="UI\Styles\Border.xaml" />
                 <ResourceDictionary Source="UI\Styles\ToggleButton.xaml" />
-                <ResourceDictionary Source="UI\Styles\ToolTip.xaml" />
                 <ResourceDictionary Source="UI\Styles\ScrollBar.xaml" />
                 <ResourceDictionary Source="UI\Styles\RadioButton.xaml" />
                 <ResourceDictionary Source="UI\Styles\Label.xaml" />

@@ -52,6 +52,34 @@ namespace PicView.UI.Loading
 #if DEBUG
             Trace.WriteLine("ContentRendered started");
 #endif
+
+            ConfigColors.UpdateColor();
+
+            #region Add dictionaries // Hack to make colors update.. Possibly feels faster?
+
+            Application.Current.Resources.MergedDictionaries.Add(
+                new ResourceDictionary
+                {
+                    Source = new Uri(@"/PicView;component/UI/Styles/Menu.xaml", UriKind.Relative)
+                }
+            );
+
+            Application.Current.Resources.MergedDictionaries.Add(
+                new ResourceDictionary
+                {
+                    Source = new Uri(@"/PicView;component/UI/Styles/ToolTip.xaml", UriKind.Relative)
+                }
+            );
+
+            Application.Current.Resources.MergedDictionaries.Add(
+                new ResourceDictionary
+                {
+                    Source = new Uri(@"/PicView;component/UI/Styles/Slider.xaml", UriKind.Relative)
+                }
+            );
+
+            #endregion
+
             MonitorInfo = MonitorSize.GetMonitorSize();
             AutoFitWindow = Properties.Settings.Default.AutoFitWindow;
 
@@ -68,7 +96,6 @@ namespace PicView.UI.Loading
                 }
                 else
                 {
-                    ConfigColors.UpdateColor();
                     SetDefaultSize();
                 }
             }
@@ -84,8 +111,6 @@ namespace PicView.UI.Loading
                 }
                 else
                 {
-                    ConfigColors.UpdateColor();
-
                     if (AutoFitWindow)
                     {
                         if (!ScaleImage.TryFitImage(arg.ToString()))
