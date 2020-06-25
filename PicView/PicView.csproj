@@ -333,7 +333,7 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <PropertyGroup>
-    <FileVersion>0.9.9.0</FileVersion>
+    <FileVersion>0.9.9.2</FileVersion>
     <SignAssembly>true</SignAssembly>
     <PackageLicenseFile></PackageLicenseFile>
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
