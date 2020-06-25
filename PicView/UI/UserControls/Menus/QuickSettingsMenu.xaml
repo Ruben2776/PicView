@@ -75,7 +75,7 @@
                     BorderBrush="{x:Null}"
                     FontWeight="Bold"
                     Foreground="{x:Null}"
-                    ToolTip="[Not implemented]">
+                    ToolTip="Adjust zoom level">
                     <Button.Background>
                         <SolidColorBrush x:Name="ZoomButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Button.Background>
@@ -90,7 +90,10 @@
                     </Path>
                 </Button>
 
-                <Canvas x:Name="ZoomSliderParent" Opacity="0" Visibility="Collapsed">
+                <Canvas
+                    x:Name="ZoomSliderParent"
+                    Opacity="0"
+                    Visibility="Collapsed">
                     <Border
                         Canvas.Left="80"
                         Canvas.Top="-44"

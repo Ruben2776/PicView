@@ -136,7 +136,7 @@ namespace PicView.ChangeImage
 
             BitmapSource pic;
 
-            if (Pics.Count <= x)
+            if (Pics.Count < x)
             {
                 pic = await PicErrorFix(x).ConfigureAwait(true);
                 if (pic == null)
@@ -182,7 +182,7 @@ namespace PicView.ChangeImage
                 {
                     // Try again while loading
                     pic = Preloader.Load(Pics[x]);
-                    await Task.Delay(3).ConfigureAwait(false);
+                    await Task.Delay(25).ConfigureAwait(false);
                 } while (Preloader.GetIsLoading());
 
                 // If pic is still null, image can't be rendered
@@ -198,8 +198,10 @@ namespace PicView.ChangeImage
                             return;
                         }
 
-                        pic = DisplayUnsupportedImage.DrawUnsupportedImageText();
+                        Pics.RemoveAt(x);
                         CanNavigate = true;
+                        Pic();
+                        return;
                     }
                 }
             }

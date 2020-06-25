@@ -123,7 +123,7 @@ namespace PicView.UI.TransformImage
             {
                 // Report position for image drag
                 TheMainWindow.MainImage.CaptureMouse();
-                start = e.GetPosition(TheMainWindow);
+                start = e.GetPosition(TheMainWindow.MainImage);
                 origin = new Point(translateTransform.X, translateTransform.Y);
             }
         }
@@ -286,6 +286,8 @@ namespace PicView.UI.TransformImage
             {
                 SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height, FolderIndex);
             }
+
+            UC.quickSettingsMenu.ZoomSlider.Value = 1.0;
         }
 
         /// <summary>
