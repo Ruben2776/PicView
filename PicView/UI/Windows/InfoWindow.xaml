@@ -5,10 +5,10 @@
     xmlns:uc="clr-namespace:PicView.UI.UserControls"
     Title="Information, help &amp; shortcuts"
     Width="560"
-    Height="650"
+    MinHeight="650"
     FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
     Foreground="{StaticResource MainColorBrush}"
-    Style="{DynamicResource MyWindowStyle}">
+    Style="{StaticResource MyWindowStyle}">
 
     <DockPanel LastChildFill="True">
         <DockPanel
@@ -98,703 +98,1640 @@
                 VerticalScrollBarVisibility="Auto">
                 <StackPanel>
 
-                    <FlowDocumentScrollViewer
-                        x:Name="FlowDoc"
-                        IsToolBarVisible="False"
-                        VerticalScrollBarVisibility="Disabled">
-                        <FlowDocument>
-
-                            <Table
-                                BorderBrush="{StaticResource BorderBrush}"
-                                BorderThickness="2"
-                                CellSpacing="6"
-                                FontFamily="TeX Gyre Heros"
-                                FontSize="16">
-
-                                <Table.Columns>
-                                    <TableColumn />
-                                    <TableColumn />
-                                </Table.Columns>
-
-                                <TableRowGroup>
-
-                                    <!--  Title row for the table.  -->
-                                    <TableRow>
-                                        <TableCell ColumnSpan="2" TextAlignment="Center">
-                                            <Paragraph FontSize="26" FontWeight="Bold">Keyboard Shortcuts</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <!--  Header row for the table.  -->
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph FontSize="18" FontWeight="Bold">Key</Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph FontSize="18" FontWeight="Bold">Function</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <!--  Next Next Next Next Next Next Next Next Next  -->
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>A</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Navigate to previous picture</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Left</Bold>
-                                                arrow key</Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Navigate to previous picture</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Ctrl + A</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Navigate to first picture</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Ctrl +Left</Bold>
-                                                arrow key</Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Navigate to first picture</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>D</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Navigate to next picture</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <!--  Prev Prev Prev Prev Prev Prev Prev Prev Prev  -->
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Right</Bold>
-                                                arrow key</Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Navigate to next picture</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Ctrl</Bold>
-                                                +<Bold>D</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Navigate to last picture</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Ctrl</Bold>
-                                                +<Bold>Right</Bold>
-                                                arrow key</Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Navigate to last picture</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Up</Bold>
-                                                arrow key</Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Rotate left</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>W</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Rotate left</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Down</Bold>
-                                                arrow key</Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Rotate right</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>S</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Rotate right</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>F</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Flip image</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>1</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Toggle window resizement</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>T</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Change between white/dark background</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>X</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Toggle scroll</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <!--  Zoom Zoom Zoom Zoom Zoom Zoom Zoom Zoom Zoom  -->
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Page Up</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Zoom in</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Page Down</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Scroll down</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Page Up</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Scroll up</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                Numpad<Bold>+</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Zoom in</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Ctrl</Bold>
-                                                numpad<Bold>+</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Increase scale</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                Numpad<Bold>-</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Zoom out</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Ctrl</Bold>
-                                                Numpad<Bold>-</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Decrease scale</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>F6</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Reset zoom</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Home</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Scroll to top</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>End</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Scroll to end</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>T</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Change between white/dark background</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Space</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Center application on current monitor</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Alt</Bold>
-                                                +<Bold>Z</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Toggle between graphical interfaces</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>
-                                                    Alt
-                                                    + Enter
-                                                </Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Toggle between fullscreen</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Esc</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Close current window or menu</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Ctrl +Q</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Exit the application</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Ctrl + O</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Open file dialog</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Ctrl + S</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Save file dialog</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>F3</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Open file in Windows Explorer</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>E</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Open with</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Ctrl + C</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Copy file</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Ctrl + X</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Cut file</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Ctrl + V</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Paste file</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Ctrl + P</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Print image</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Ctrl + R</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Reload image</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Delete</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Send file to the recycle bin</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Shift + Delete</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Permanently delete file</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <!--  Title row  -->
-                                    <TableRow>
-                                        <TableCell ColumnSpan="2" TextAlignment="Center">
-                                            <Paragraph FontSize="26" FontWeight="Bold">Mouse Shortcuts</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph />
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <!--  Header row for the table.  -->
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph FontSize="18" FontWeight="Bold">Key</Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph FontSize="18" FontWeight="Bold">Function</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <!--  Four data rows for the inner planets.  -->
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Mouse wheel</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Zoom</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Shift + Mouse wheel</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Change picture</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Mouse button forward</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Navigate to next picture</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow Background="{StaticResource BorderBrush}">
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Mouse button back</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Navigate to previous picture</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow>
-                                        <TableCell>
-                                            <Paragraph>
-                                                <Bold>Middle mouse button</Bold>
-                                            </Paragraph>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Paragraph>Start auto scroll</Paragraph>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableRowGroup>
-                            </Table>
-                        </FlowDocument>
-                    </FlowDocumentScrollViewer>
-
-                    <StackPanel Margin="0,7">
+                    <Label
+                        Margin="0,5,0,8"
+                        HorizontalAlignment="Center"
+                        Content="Application Shortcuts"
+                        FontSize="20"
+                        Style="{StaticResource LabelShadow}" />
+
+                    <Label
+                        Width="490"
+                        Margin="0,0,0,7"
+                        HorizontalAlignment="Center"
+                        Content="Navigation"
+                        FontSize="16" />
+
+                    <Grid Width="480">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Next Image" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="A" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Left" />
+                        </Border>
+
+
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Previous Image" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="D" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Right" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Last Image" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Ctrl + A" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Ctrl + Left" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="4"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="First Image" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="4"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Ctrl + D" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="4"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Ctrl + Right" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="5"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,1">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Toggle Looping" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="5"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="L" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="5"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,1" />
+
+                    </Grid>
+
+
+                    <Label
+                        Width="490"
+                        Margin="0,9,0,7"
+                        HorizontalAlignment="Center"
+                        Content="Image Control"
+                        FontSize="16" />
+
+                    <Grid Width="480">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Rotate Right" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="W" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Up" />
+                        </Border>
+
+
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Rotate Left" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="S" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Down" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Flip horizontally" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="F" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1" />
+
+                    </Grid>
+
+                    <Label
+                        Width="490"
+                        Margin="0,9,0,7"
+                        HorizontalAlignment="Center"
+                        Content="Zoom"
+                        FontSize="16" />
+
+                    <Grid Width="480">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Zoom In" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Mouse Wheel" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Numpad +" />
+                        </Border>
+
+
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Zoom Out" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Mouse Wheel" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Numpad -" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Reset Zoom" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Double Click Image" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1" />
+
+                        <Border
+                            Grid.Row="4"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Toggle Scroll" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="4"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="X" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="4"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                FontStyle="Italic"
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text="(Saved on next startup)" />
+                        </Border>
+
+
+                    </Grid>
+
+
+                    <Label
+                        Width="490"
+                        Margin="0,9,0,7"
+                        HorizontalAlignment="Center"
+                        Content="Window Scaling"
+                        FontSize="16" />
+
+                    <Grid Width="480">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Normal Window" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="1" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                FontStyle="Italic"
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text="(Saved on next startup)" />
+                        </Border>
+
+
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="⇔ Fill Height" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="2" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                FontStyle="Italic"
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text="(Saved on next startup)" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Auto Fit Window" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="3" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                FontStyle="Italic"
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text="(Saved on next startup)" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="4"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="⇔ Fill Height" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="4"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="4" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="4"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                FontStyle="Italic"
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text="(Saved on next startup)" />
+                        </Border>
+
+                    </Grid>
+
+
+
+
+                    <Label
+                        Width="490"
+                        Margin="0,9,0,7"
+                        HorizontalAlignment="Center"
+                        Content="Interface Configuration"
+                        FontSize="16" />
+
+                    <Grid Width="480">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Toggle Interface" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Alt + Z" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                FontStyle="Italic"
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text="(Saved on next startup)" />
+                        </Border>
+
+
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Toggle Background" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="T" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                FontStyle="Italic"
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text="(Saved on next startup)" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Toggle Fullscreen" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="F11" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Alt + Enter" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="4"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Slideshow" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="4"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="F5" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="4"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1" />
+
+                    </Grid>
+
+
+                    <Label
+                        Width="490"
+                        Margin="0,9,0,7"
+                        HorizontalAlignment="Center"
+                        Content="File Management"
+                        FontSize="16" />
+
+
+                    <Grid Width="480">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Open" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Ctrl + O" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="O" />
+                        </Border>
+
+
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Save" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Ctrl + S" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0" />
+
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Print" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Ctrl + P" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0" />
+
+                        <Border
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Copy File" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Ctrl + C" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="3"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Ctrl + Drag Image"
+                                ToolTip="Drag file to Windows Explorer or another application" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="4"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Cut File" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="4"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Ctrl + X" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="4"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1" />
+
+
+                        <Border
+                            Grid.Row="5"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Delete File" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="5"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Delete" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="5"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Shift + Delete" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="6"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Rename File" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="6"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="F2" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="6"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1" />
+
+                        <Border
+                            Grid.Row="7"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Locate File"
+                                ToolTip="Opens file in Windows Explorer" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="7"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="F3" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="7"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1" />
+
+                        <Border
+                            Grid.Row="8"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="File Details" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="8"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Ctrl + I" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="8"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1" />
+
+                    </Grid>
+
+
+                    <Label
+                        Width="490"
+                        Margin="0,9,0,7"
+                        HorizontalAlignment="Center"
+                        Content="Window Management"
+                        FontSize="16" />
+
+                    <Grid Width="480">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Info Window" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="F1" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0" />
+
+
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Settings Window" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="F4" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0" />
+
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Close" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Esc"
+                                ToolTip="Closes currently opened window/menu" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Ctrl + Q"
+                                ToolTip="Closes the whole application" />
+                        </Border>
+
+                    </Grid>
+
+
+                    <Label
+                        Width="490"
+                        Margin="0,9,0,7"
+                        HorizontalAlignment="Center"
+                        Content="Additional Functions"
+                        FontSize="16" />
+
+                    <Grid Width="480">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Open With..." />
+                        </Border>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="E" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0" />
+
+
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Center Window" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Space" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0" />
+
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Reload" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Ctrl + R" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1" />
+
+                    </Grid>
+
+
+                    <StackPanel Margin="0,25,0,7">
+                        <Label
+                        Margin="0,5,0,12"
+                        HorizontalAlignment="Center"
+                        Content="Credits"
+                        FontSize="20"
+                        Style="{StaticResource LabelShadow}" />
+
                         <Label
                             HorizontalAlignment="Center"
                             VerticalAlignment="Top"
@@ -907,7 +1844,7 @@
                         </TextBlock>
                     </StackPanel>
 
-                    <StackPanel Margin="0,70,0,0">
+                    <StackPanel Margin="0,36,0,0">
 
                         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                             <TextBlock

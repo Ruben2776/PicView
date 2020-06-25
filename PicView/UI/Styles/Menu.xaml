@@ -44,10 +44,10 @@
                 <ControlTemplate TargetType="{x:Type ContextMenu}">
                     <Border
                         x:Name="Border"
-                        Background="{StaticResource BackgroundColorBrush}"
+                        Background="{StaticResource NoisyBg}"
                         BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="2">
+                        BorderThickness="2"
+                        CornerRadius="4">
                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
                     </Border>
                     <ControlTemplate.Triggers>
@@ -117,81 +117,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-    <!--  ScrollViewer for a MenuItem  -->
-    <!--<Style
-        x:Key="MenuScrollViewer"
-        BasedOn="{x:Null}"
-        TargetType="{x:Type ScrollViewer}">
-        <Setter Property="HorizontalScrollBarVisibility" Value="Hidden" />
-        <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
-        <Setter Property="Template">
-            <Setter.Value>
-    -->
-    <!--<SnippetMenuScrollViewer>-->
-    <!--  ScrollViewer for a MenuItem  -->
-    <!--
-                <ControlTemplate TargetType="{x:Type ScrollViewer}">
-                    <Grid SnapsToDevicePixels="True">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Border Grid.Row="1" Grid.Column="0">
-                            <ScrollContentPresenter Margin="0" />
-                        </Border>
-                        <RepeatButton
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            Command="{x:Static ScrollBar.LineUpCommand}"
-                            CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
-                            Focusable="False"
-                            Style="{StaticResource MenuScrollButton}">
-                            <RepeatButton.Visibility>
-                                <MultiBinding
-                                    Converter="{StaticResource MenuScrollingVisibilityConverter}"
-                                    ConverterParameter="0"
-                                    FallbackValue="Visibility.Collapsed">
-                                    <Binding Path="ComputedVerticalScrollBarVisibility" RelativeSource="{RelativeSource TemplatedParent}" />
-                                    <Binding Path="VerticalOffset" RelativeSource="{RelativeSource TemplatedParent}" />
-                                    <Binding Path="ExtentHeight" RelativeSource="{RelativeSource TemplatedParent}" />
-                                    <Binding Path="ViewportHeight" RelativeSource="{RelativeSource TemplatedParent}" />
-                                </MultiBinding>
-                            </RepeatButton.Visibility>
-                            <Path Data="{StaticResource UpArrow}" Fill="{DynamicResource {x:Static SystemColors.MenuTextBrushKey}}" />
-                        </RepeatButton>
-                        <RepeatButton
-                            Grid.Row="2"
-                            Grid.Column="0"
-                            Command="{x:Static ScrollBar.LineDownCommand}"
-                            CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
-                            Focusable="False"
-                            Style="{StaticResource MenuScrollButton}">
-                            <RepeatButton.Visibility>
-                                <MultiBinding
-                                    Converter="{StaticResource MenuScrollingVisibilityConverter}"
-                                    ConverterParameter="100"
-                                    FallbackValue="Visibility.Collapsed">
-                                    <Binding Path="ComputedVerticalScrollBarVisibility" RelativeSource="{RelativeSource TemplatedParent}" />
-                                    <Binding Path="VerticalOffset" RelativeSource="{RelativeSource TemplatedParent}" />
-                                    <Binding Path="ExtentHeight" RelativeSource="{RelativeSource TemplatedParent}" />
-                                    <Binding Path="ViewportHeight" RelativeSource="{RelativeSource TemplatedParent}" />
-                                </MultiBinding>
-                            </RepeatButton.Visibility>
-                            <Path Data="{StaticResource DownArrow}" Fill="{DynamicResource {x:Static SystemColors.MenuTextBrushKey}}" />
-                        </RepeatButton>
-                    </Grid>
-                </ControlTemplate>
-    -->
-    <!--</SnippetMenuScrollViewer>-->
-    <!--
-            </Setter.Value>
-        </Setter>
-    </Style>-->
 
     <!--<SnippetMenuItem>-->
     <!--<Seperator>-->
@@ -372,7 +297,7 @@
         <Border
             x:Name="Border"
             Padding="3"
-            Background="{StaticResource BackgroundColorBrush}">
+            Background="{StaticResource NoisyBg}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="Icon" />
@@ -393,7 +318,7 @@
                 <TextBlock
                     x:Name="InputGestureText"
                     Grid.Column="2"
-                    Margin="5,2,0,2"
+                    Margin="0,2,0,2"
                     DockPanel.Dock="Right"
                     Foreground="{StaticResource MainColorFadedBrush}"
                     Text="{TemplateBinding InputGestureText}" />
@@ -417,9 +342,10 @@
                     <!--  Sub level border  -->
                     <Border
                         x:Name="SubmenuBorder"
-                        Background="{StaticResource BackgroundColorBrush}"
+                        Background="{StaticResource NoisyBg}"
                         BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="1"
+                        BorderThickness="2"
+                        CornerRadius="1"
                         SnapsToDevicePixels="True">
                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
                     </Border>

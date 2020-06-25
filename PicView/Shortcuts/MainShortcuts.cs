@@ -406,7 +406,6 @@ namespace PicView.Shortcuts
                         {
                             Paste();
                         }
-
                         break;
 
                     // Ctrl + I
@@ -415,7 +414,6 @@ namespace PicView.Shortcuts
                         {
                             SystemIntegration.NativeMethods.ShowFileProperties(Pics[FolderIndex]);
                         }
-
                         break;
 
                     // Ctrl + P
@@ -424,7 +422,6 @@ namespace PicView.Shortcuts
                         {
                             Print(Pics[FolderIndex]);
                         }
-
                         break;
 
                     // Ctrl + R
@@ -513,6 +510,7 @@ namespace PicView.Shortcuts
 
                     // F5
                     case Key.F5:
+                        Slideshow.StartSlideshow();
                         break;
 
                     // F6
@@ -528,11 +526,6 @@ namespace PicView.Shortcuts
 #endif
                     // F11
                     case Key.F11:
-                        Slideshow.StartSlideshow();
-                        break;
-
-                    // F12
-                    case Key.F12:
                         Fullscreen_Restore();
                         break;
 

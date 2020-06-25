@@ -7,8 +7,6 @@
         <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#TeX Gyre Heros" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
-        <!--<Setter Property="BorderThickness" Value="1" />
-        <Setter Property="BorderBrush" Value="#F90F0F0F" />-->
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToolTip">
@@ -16,13 +14,13 @@
                         Name="Border"
                         Width="{TemplateBinding Width}"
                         Height="{TemplateBinding Height}"
-                        Background="{StaticResource BackgroundColorBrush}"
+                        Background="{StaticResource BorderBrushAlt}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1"
-                        CornerRadius="2">
+                        CornerRadius="3">
 
                         <ContentPresenter
-                            Margin="6"
+                            Margin="7"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top" />
                     </Border>

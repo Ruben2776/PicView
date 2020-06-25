@@ -27,7 +27,6 @@ namespace PicView.UI.Windows
         {
             KeyDown += KeysDown;
             KeyUp += KeysUp;
-            FlowDoc.PreviewMouseWheel += Info_MouseWheel;
             Scroller.MouseWheel += Info_MouseWheel;
 
             // CloseButton

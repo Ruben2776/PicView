@@ -219,11 +219,11 @@
             Height="2"
             Margin="29,-2,0,0"
             HorizontalAlignment="Left"
-            Fill="{StaticResource BackgroundColorBrush}" />
+            Fill="{StaticResource BorderBrushAlt}" />
         <Polygon
             Margin="25,-7,0,0"
             Panel.ZIndex="-1"
-            Fill="{StaticResource BackgroundColorBrush}"
+            Fill="{StaticResource BorderBrushAlt}"
             Points="0,0 15,30, 30,0"
             Stroke="{StaticResource BorderBrush}"
             StrokeThickness="2" />
