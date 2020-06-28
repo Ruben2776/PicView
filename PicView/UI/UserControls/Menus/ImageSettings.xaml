@@ -174,8 +174,7 @@
                         x:Name="Fullscreen_Gallery"
                         FocusVisualStyle="{x:Null}"
                         FontSize="14"
-                        FontWeight="Bold"
-                        ToolTip="Show fullscreen image gallery">
+                        FontWeight="Bold">
                         <Canvas>
                             <Image
                                 Canvas.Left="79"
@@ -216,8 +215,7 @@
                         x:Name="Contained_Gallery"
                         FocusVisualStyle="{x:Null}"
                         FontSize="14"
-                        FontWeight="Bold"
-                        ToolTip="Show fullscreen image gallery">
+                        FontWeight="Bold">
                         <Canvas>
                             <Image
                                 Canvas.Left="79"

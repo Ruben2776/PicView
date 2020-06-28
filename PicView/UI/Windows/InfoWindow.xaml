@@ -1608,6 +1608,7 @@
                             <RowDefinition />
                             <RowDefinition />
                             <RowDefinition />
+                            <RowDefinition />
                         </Grid.RowDefinitions>
 
                         <Border
@@ -1721,16 +1722,53 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1" />
 
+
+                        <Border
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Crop Image" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="C" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="3"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0" />
+
                     </Grid>
 
 
                     <StackPanel Margin="0,25,0,7">
                         <Label
-                        Margin="0,5,0,12"
-                        HorizontalAlignment="Center"
-                        Content="Credits"
-                        FontSize="20"
-                        Style="{StaticResource LabelShadow}" />
+                            Margin="0,5,0,12"
+                            HorizontalAlignment="Center"
+                            Content="Credits"
+                            FontSize="20"
+                            Style="{StaticResource LabelShadow}" />
 
                         <Label
                             HorizontalAlignment="Center"
