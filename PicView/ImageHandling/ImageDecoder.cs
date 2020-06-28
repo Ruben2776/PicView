@@ -23,7 +23,6 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         internal static async Task<BitmapSource> RenderToBitmapSource(string file)
         {
-            using var filestream = new FileStream(file, FileMode.Open, FileAccess.Read);
             var ext = Path.GetExtension(file).ToLower(CultureInfo.CurrentCulture);
             switch (ext)
             {
@@ -45,6 +44,7 @@ namespace PicView.ImageHandling
 
                     try
                     {
+                        using var filestream = new FileStream(file, FileMode.Open, FileAccess.Read);
                         using var memStream = new MemoryStream();
                         // Have to wait for it, or it will produce an unfinished image
                         await filestream.CopyToAsync(memStream).ConfigureAwait(true);
@@ -77,6 +77,7 @@ namespace PicView.ImageHandling
 
                         try
                         {
+                            using var filestream = new FileStream(file, FileMode.Open, FileAccess.Read);
                             magick.Read(filestream, mrs);
                         }
                         catch (MagickException e)

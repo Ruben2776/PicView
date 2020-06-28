@@ -145,12 +145,17 @@ namespace PicView.ChangeImage
                     return;
                 }
             }
-            else
+            else if(File.Exists(Pics[x]))
             {
                 /// Add "pic" as local variable used for the image.
                 /// Use the Load() function load image from memory if available
                 /// if not, it will be null
                 pic = Preloader.Load(Pics[x]);
+            }
+            else
+            {
+                Unload();
+                return;
             }
 
             if (pic == null)

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using PicView.ChangeImage;
+using System.IO;
 using System.Text;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileFunctions;
@@ -19,9 +20,19 @@ namespace PicView.UI
         /// <returns></returns>
         private static string[] TitleString(int width, int height, int index)
         {
+            FileInfo fileInfo;
+            try
+            {
+                fileInfo = new FileInfo(Pics[index]);
+            }
+            catch (System.Exception)
+            {
+                return null;
+            }
+
             var s1 = new StringBuilder(90);
-            s1.Append(Path.GetFileName(Pics[index])).Append(" ").Append(index + 1).Append("/").Append(Pics.Count).Append(" files")
-                    .Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height)).Append(GetSizeReadable(new FileInfo(Pics[index]).Length));
+            s1.Append(fileInfo.Name).Append(" ").Append(index + 1).Append("/").Append(Pics.Count).Append(" files")
+                    .Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height)).Append(GetSizeReadable(fileInfo.Length));
 
             if (!string.IsNullOrEmpty(ZoomPercentage))
             {
@@ -50,6 +61,11 @@ namespace PicView.UI
         internal static void SetTitleString(int width, int height, int index)
         {
             var titleString = TitleString(width, height, index);
+            if (titleString == null)
+            {
+                return;
+            }
+
             TheMainWindow.Title = titleString[0];
             TheMainWindow.Bar.Text = titleString[1];
             TheMainWindow.Bar.ToolTip = titleString[2];

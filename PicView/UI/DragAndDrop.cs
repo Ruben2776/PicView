@@ -1,5 +1,6 @@
 ﻿using PicView.ChangeImage;
 using PicView.FileHandling;
+using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
@@ -99,7 +100,12 @@ namespace PicView.UI
             }
 
             // Load from preloader or thumbnails
-            TheMainWindow.MainImage.Source = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : GetBitmapSourceThumb(files[0]);
+            var thumb = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : GetBitmapSourceThumb(files[0]);
+
+            if (thumb != null)
+            {
+                TheMainWindow.MainImage.Source = thumb;
+            }
         }
 
         /// <summary>
@@ -112,11 +118,8 @@ namespace PicView.UI
             // TODO fix base64 image not returning to normal
 
             // Switch to previous image if available
-            if (!CanNavigate)
-            {
-                TheMainWindow.MainImage.Source = null;
-            }
-            else if (prevPicResource != null)
+
+            if (prevPicResource != null)
             {
                 TheMainWindow.MainImage.Source = prevPicResource;
             }
@@ -212,9 +215,42 @@ namespace PicView.UI
                 return;
             }
 
+            string file;
+
+            if (Pics.Count == 0)
+            {
+                string url = Library.Utilities.GetURL(TheMainWindow.Bar.Text);
+                if (Uri.IsWellFormedUriString(url, UriKind.Absolute)) // Check if from web
+                {
+                    // Create temp directory
+                    var tempPath = Path.GetTempPath();
+                    var fileName = Path.GetFileName(url);
+
+                    // Download to it
+                    using var webClient = new System.Net.WebClient();
+                    Directory.CreateDirectory(tempPath);
+                    webClient.DownloadFileAsync(new Uri(url), tempPath + fileName);
+
+                    file = tempPath + fileName;
+                }
+                else
+                {
+                    return;
+                }
+                    
+            }
+            else if (Pics.Count < FolderIndex)
+            {
+                file = Pics[FolderIndex];
+            }
+            else
+            {
+                return;
+            }
+
             FrameworkElement senderElement = sender as FrameworkElement;
             DataObject dragObj = new DataObject();
-            dragObj.SetFileDropList(new StringCollection() { Pics[FolderIndex] });
+            dragObj.SetFileDropList(new StringCollection() { file });
             DragDrop.DoDragDrop(senderElement, dragObj, DragDropEffects.Copy);
         }
     }
