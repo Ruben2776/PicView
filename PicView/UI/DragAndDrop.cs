@@ -123,6 +123,12 @@ namespace PicView.UI
             {
                 TheMainWindow.MainImage.Source = prevPicResource;
             }
+            else if (TheMainWindow.Bar.Text == "No image loaded")
+            {
+                TheMainWindow.MainImage.Source = null;
+            }
+
+            CloseToolTipMessage();
         }
 
         /// <summary>
