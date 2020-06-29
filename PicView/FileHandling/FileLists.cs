@@ -61,16 +61,13 @@ namespace PicView.FileHandling
         /// </summary>
         internal static List<string> FileList(string path, SortFilesBy sortFilesBy)
         {
-            /// TODO need to get a recursive folder user configurable option for this added
-            /// Need to look through file list to check if they all work,
-            /// or some alternative way, mayhaps..?
-
             if (!Directory.Exists(path))
             {
                 return null;
             }
 
-            var items = Directory.EnumerateFiles(path)
+            // TODO make search option a user setting
+            var items = Directory.EnumerateFiles(path, "*.*", SearchOption.AllDirectories)
                 .AsParallel()
                 .Where(file =>
 
@@ -147,30 +144,23 @@ namespace PicView.FileHandling
                     return list;
 
                 case SortFilesBy.FileSize:
-                    items = items.OrderBy(f => new FileInfo(f).Length);
-                    break;
+                    return items.OrderBy(f => new FileInfo(f).Length).ToList();
 
                 case SortFilesBy.Extension:
-                    items = items.OrderBy(f => new FileInfo(f).Extension);
-                    break;
+                    return items.OrderBy(f => new FileInfo(f).Extension).ToList();
 
                 case SortFilesBy.Creationtime:
-                    items = items.OrderBy(f => new FileInfo(f).CreationTime);
-                    break;
+                    return items.OrderBy(f => new FileInfo(f).CreationTime).ToList();
 
                 case SortFilesBy.Lastaccesstime:
-                    items = items.OrderBy(f => new FileInfo(f).LastAccessTime);
-                    break;
+                    return items.OrderBy(f => new FileInfo(f).LastAccessTime).ToList();
 
                 case SortFilesBy.Lastwritetime:
-                    items = items.OrderBy(f => new FileInfo(f).LastWriteTime);
-                    break;
+                    return items.OrderBy(f => new FileInfo(f).LastWriteTime).ToList();
 
                 case SortFilesBy.Random:
-                    items = items.OrderBy(f => Guid.NewGuid());
-                    break;
+                    return items.OrderBy(f => Guid.NewGuid()).ToList();
             }
-            return items.ToList();
         }
 
         /// <summary>
