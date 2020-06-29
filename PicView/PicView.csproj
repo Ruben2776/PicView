@@ -266,9 +266,9 @@
     </FileAssociation>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Magick.NET-Q16-x64" Version="7.19.0.1" />
-    <PackageReference Include="Magick.NET.SystemDrawing" Version="2.0.0" />
-    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="1.0.1" />
+    <PackageReference Include="Magick.NET-Q16-x64" Version="7.20.0.1" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="2.0.1" />
+    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="1.0.2" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-ShellExtensions" Version="1.1.4" />
@@ -283,7 +283,7 @@
     <PackageReference Include="System.Memory" Version="4.5.4" />
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.1" />
-    <PackageReference Include="WpfScreenHelper" Version="0.4.0" />
+    <PackageReference Include="WpfScreenHelper" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
