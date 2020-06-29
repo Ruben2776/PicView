@@ -92,11 +92,6 @@ namespace PicView.FileHandling
                 return;
             }
 
-            var filename = Path.GetFileName(file);
-
-            filename = filename.Length >= 25 ? Shorten(filename, 21) : filename;
-            ShowTooltipMessage(Recyclebin ? "Sent " + filename + " to the recyle bin" : "Deleted " + filename);
-
             if (Pics.Count <= 0)
             {
                 Unload();
@@ -105,7 +100,13 @@ namespace PicView.FileHandling
 
             PreloadCount = Reverse ? PreloadCount - 1 : PreloadCount + 1;
 
-            Pic(Reverse);
+            Pic(false);
+
+            var filename = Path.GetFileName(file);
+
+            filename = filename.Length >= 25 ? Shorten(filename, 21) : filename;
+
+            ShowTooltipMessage(Recyclebin ? $"Sent {filename} to the recyle bin" : $"Deleted {filename}");
         }
     }
 }

@@ -442,6 +442,8 @@ namespace PicView.ChangeImage
                     // TODO Find way to get PicGalleryItem an alternative way...
                 }
             }
+
+            CloseToolTipMessage();
         }
 
         internal static void PicButton(bool arrow, bool right)
