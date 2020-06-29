@@ -6,10 +6,6 @@
         x:Name="TheButton"
         Width="33"
         Height="33"
-        Margin="5,0,0,0"
-        VerticalAlignment="Center"
-        BorderThickness="0"
-        DockPanel.Dock="Right"
         FocusVisualStyle="{x:Null}"
         Focusable="False"
         ToolTip="Minimize">

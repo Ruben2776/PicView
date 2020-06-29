@@ -44,14 +44,15 @@
             <Rectangle
                 Width="1"
                 Height="35"
-                Margin="0,0,-8,0"
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
             <TextBlock
                 x:Name="Bar"
+                Height="35"
+                Padding="0,8.4,0,0"
                 VerticalAlignment="Center"
-                Background="{x:Null}"
+                Background="{StaticResource AltInterfaceWBrush}"
                 FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
                 FontSize="15"
                 FontWeight="Bold"

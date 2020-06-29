@@ -44,14 +44,15 @@
             <Rectangle
                 Width="1"
                 Height="35"
-                Margin="0,0,-8,0"
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
             <TextBlock
                 x:Name="Bar"
+                Height="35"
+                Padding="0,8.4,0,0"
                 VerticalAlignment="Center"
-                Background="{x:Null}"
+                Background="{StaticResource AltInterfaceWBrush}"
                 FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
                 FontSize="15"
                 FontWeight="Bold"
@@ -1758,6 +1759,112 @@
                             Background="{StaticResource BackgroundColorBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0" />
+
+                    </Grid>
+
+                    <Label
+                        Width="490"
+                        Margin="0,9,0,7"
+                        HorizontalAlignment="Center"
+                        Content="Extra Mouse Key Functions"
+                        FontSize="16" />
+
+                    <Grid Width="480">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Next Image" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Shift + Mousewheel" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Browser Forward" />
+                        </Border>
+
+
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,1,1,0">
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                Text="Previous Image" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Shift + Mousewheel" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,1,0">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Browser Backward" />
+                        </Border>
 
                     </Grid>
 
