@@ -189,7 +189,7 @@ namespace PicView.UI.Sizing
             if (Properties.Settings.Default.AutoFitWindow)
             {
                 /// Update mainWindow.TitleBar width to dynamically fit new size
-                var x = Rotateint == 0 || Rotateint == 180 ? xWidth : xHeight;
+                var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(xWidth, TheMainWindow.MinWidth) : Math.Max(xHeight, TheMainWindow.MinHeight);
                 TheMainWindow.Bar.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
 
                 // TODO Loses position gradually if not forced to center
