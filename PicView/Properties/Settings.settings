@@ -128,5 +128,8 @@
     <Setting Name="MagentaAlpha" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#F2FF6CD4</Value>
     </Setting>
+    <Setting Name="IncludeSubDirectories" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -1,4 +1,5 @@
-﻿using PicView.UI.Animations;
+﻿using PicView.ChangeImage;
+using PicView.UI.Animations;
 using System;
 using System.Windows;
 using System.Windows.Input;
@@ -150,12 +151,15 @@ namespace PicView.UI.Windows
                 GreyRadio.MouseLeave += GreyRadio_MouseLeave;
                 GreyRadio.Click += Grey;
 
-                // LoopRadio
-                LoopRadio.PreviewMouseLeftButtonDown += LoopRadio_PreviewMouseLeftButtonDown;
-                LoopRadio.MouseEnter += LoopRadio_MouseEnter;
-                LoopRadio.MouseLeave += LoopRadio_MouseLeave;
-                LoopRadio.IsChecked = Properties.Settings.Default.Looping;
-                LoopRadio.Click += UpdateUIValues.SetLooping;
+                // SubDirRadio
+                SubDirRadio.PreviewMouseLeftButtonDown += SubDirRadio_PreviewMouseLeftButtonDown;
+                SubDirRadio.MouseEnter += SubDirRadio_MouseEnter;
+                SubDirRadio.MouseLeave += SubDirRadio_MouseLeave;
+                SubDirRadio.IsChecked = Properties.Settings.Default.IncludeSubDirectories;
+                SubDirRadio.Click += delegate { 
+                    Properties.Settings.Default.IncludeSubDirectories = !Properties.Settings.Default.IncludeSubDirectories;
+                    Error_Handling.Reload();
+                };
 
                 // BorderColorRadio
                 BorderRadio.PreviewMouseLeftButtonDown += BorderRadio_PreviewMouseLeftButtonDown;
@@ -625,34 +629,34 @@ namespace PicView.UI.Windows
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(GreyBrush, 12);
         }
 
-        // Loop
-        private void LoopRadio_MouseLeave(object sender, MouseEventArgs e)
+        // SubDirRadio
+        private void SubDirRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
-                LoopBrush,
+                SubDirBrush,
                 false
             );
         }
 
-        private void LoopRadio_MouseEnter(object sender, MouseEventArgs e)
+        private void SubDirRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseOverColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
-                LoopBrush,
+                SubDirBrush,
                 false
             );
         }
 
-        private void LoopRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void SubDirRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, LoopBrush, false);
+            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, SubDirBrush, false);
         }
 
         // BorderColor
@@ -722,7 +726,7 @@ namespace PicView.UI.Windows
         private static void Teal(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 6;
-            ConfigColors.UpdateColor();
+            UpdateColor();
         }
 
         private static void Aqua(object sender, RoutedEventArgs e)

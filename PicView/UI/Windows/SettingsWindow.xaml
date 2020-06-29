@@ -217,15 +217,15 @@
                         VerticalAlignment="Top"
                         Orientation="Horizontal">
                         <CheckBox
-                            x:Name="LoopRadio"
-                            Width="131"
+                            x:Name="SubDirRadio"
+                            Width="225"
                             Height="40"
                             Margin="5,3"
                             BorderThickness="2"
-                            Content="Enable Looping"
+                            Content="Enable Subdirectory Searching"
                             Style="{StaticResource Checkstyle}">
                             <CheckBox.Background>
-                                <SolidColorBrush x:Name="LoopBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                <SolidColorBrush x:Name="SubDirBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </CheckBox.Background>
                         </CheckBox>
                         <CheckBox

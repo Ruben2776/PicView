@@ -526,5 +526,17 @@ namespace PicView.Properties {
                 this["MagentaAlpha"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IncludeSubDirectories {
+            get {
+                return ((bool)(this["IncludeSubDirectories"]));
+            }
+            set {
+                this["IncludeSubDirectories"] = value;
+            }
+        }
     }
 }

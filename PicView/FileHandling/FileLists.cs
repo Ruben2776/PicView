@@ -66,8 +66,8 @@ namespace PicView.FileHandling
                 return null;
             }
 
-            // TODO make search option a user setting
-            var items = Directory.EnumerateFiles(path, "*.*", SearchOption.AllDirectories)
+            var searchOption = Properties.Settings.Default.IncludeSubDirectories;
+            var items = Directory.EnumerateFiles(path, "*.*", searchOption ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
                 .AsParallel()
                 .Where(file =>
 
