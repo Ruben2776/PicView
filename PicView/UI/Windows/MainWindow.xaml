@@ -479,7 +479,6 @@
                                     Focusable="False"
                                     RenderOptions.BitmapScalingMode="Fant"
                                     RenderOptions.EdgeMode="Aliased"
-                                    RenderTransformOrigin="0.5,0.5"
                                     Stretch="Fill" />
                             </Border>
                         </ScrollViewer>

@@ -123,7 +123,7 @@ namespace PicView.UI.TransformImage
             {
                 // Report position for image drag
                 TheMainWindow.MainImage.CaptureMouse();
-                start = e.GetPosition(TheMainWindow.MainImage);
+                start = e.GetPosition(TheMainWindow.MainImageBorder);
                 origin = new Point(translateTransform.X, translateTransform.Y);
             }
         }
@@ -134,6 +134,14 @@ namespace PicView.UI.TransformImage
             {
                 // Fix focus
                 EditTitleBar.Refocus();
+                return;
+            }
+
+            // Reset zoom on double click
+            if (e.ClickCount == 2)
+            {
+                ResetZoom();
+                return;
             }
         }
 
@@ -182,27 +190,25 @@ namespace PicView.UI.TransformImage
             var newXproperty = origin.X - dragMousePosition.X;
             var newYproperty = origin.Y - dragMousePosition.Y;
 
-            if (newXproperty < 0)
+            var isXOutOfBorder = TheMainWindow.MainImageBorder.ActualWidth < (TheMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
+            var isYOutOfBorder = TheMainWindow.MainImageBorder.ActualHeight < (TheMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
+            if ((isXOutOfBorder && newXproperty > 0) || (!isXOutOfBorder && newXproperty < 0))
             {
                 newXproperty = 0;
             }
-
-            if (newYproperty < 0)
+            if ((isYOutOfBorder && newYproperty > 0) || (!isYOutOfBorder && newYproperty < 0))
             {
                 newYproperty = 0;
             }
-
-            var rightEdge = TheMainWindow.bg.ActualWidth / zoomValue;
-            var bottomEdge = (xHeight + translateTransform.Y + origin.Y) * zoomValue;
-
-            if (rightEdge > TheMainWindow.bg.ActualWidth)
+            var maxX = TheMainWindow.MainImageBorder.ActualWidth - (TheMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
+            if ((isXOutOfBorder && newXproperty < maxX) || (!isXOutOfBorder && newXproperty > maxX))
             {
-                newXproperty = newXproperty - 1 < -1 ? 0 : newXproperty - 1;
+                newXproperty = maxX;
             }
-
-            if (bottomEdge > TheMainWindow.bg.ActualHeight)
+            var maxY = TheMainWindow.MainImageBorder.ActualHeight - (TheMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
+            if ((isXOutOfBorder && newYproperty < maxY) || (!isXOutOfBorder && newYproperty > maxY))
             {
-                newYproperty = newYproperty - 1 < -1 ? 0 : newYproperty - 1;
+                newYproperty = maxY;
             }
 
             translateTransform.X = newXproperty;
@@ -260,9 +266,6 @@ namespace PicView.UI.TransformImage
         {
             if (TheMainWindow.MainImage.Source == null) { return; }
 
-            // Scale to default
-            translateTransform.X = translateTransform.Y = 1;
-
             if (animate)
             {
                 BeginZoomAnimation(1);
@@ -270,6 +273,7 @@ namespace PicView.UI.TransformImage
             else
             {
                 scaleTransform.ScaleX = scaleTransform.ScaleY = 1.0;
+                translateTransform.X = translateTransform.Y = 0.0;
             }
 
             Tooltip.CloseToolTipMessage();
@@ -304,12 +308,6 @@ namespace PicView.UI.TransformImage
                     return;
                 }
             }
-
-            /// Get position where user points cursor
-            var position = Mouse.GetPosition(TheMainWindow.MainImage);
-
-            /// Use our position as starting point for zoom
-            TheMainWindow.MainImage.RenderTransformOrigin = new Point(position.X / xWidth, position.Y / xHeight);
 
             zoomValue = scaleTransform.ScaleX;
 
@@ -397,15 +395,27 @@ namespace PicView.UI.TransformImage
 
         private static void BeginZoomAnimation(double zoomValue)
         {
+            Point relative = Mouse.GetPosition(TheMainWindow.MainImage);
+
+            // Calculate new position
+            double absoluteX = relative.X * scaleTransform.ScaleX + translateTransform.X;
+            double absoluteY = relative.Y * scaleTransform.ScaleY + translateTransform.Y;
+
+            // Reset to zero if value is one, which is reset
+            double newTranslateValueX = zoomValue > 1 ? absoluteX - relative.X * zoomValue : 0;
+            double newTranslateValueY = zoomValue > 1 ? absoluteY - relative.Y * zoomValue : 0;
+
+
             var duration = new Duration(TimeSpan.FromSeconds(.35));
 
-            var anim = new DoubleAnimation(zoomValue, duration)
+            var scaleAnim = new DoubleAnimation(zoomValue, duration)
             {
                 // Set stop to make sure animation doesn't hold ownership of scaletransform
                 FillBehavior = FillBehavior.Stop
             };
 
-            anim.Completed += delegate {
+            scaleAnim.Completed += delegate
+            {
                 // Hack it to keep the intended value
                 scaleTransform.ScaleX = scaleTransform.ScaleY = zoomValue;
 
@@ -413,8 +423,38 @@ namespace PicView.UI.TransformImage
                 IsZoomed = true;
             };
 
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
+            var translateAnimX = new DoubleAnimation(translateTransform.X, newTranslateValueX, duration)
+            {
+                // Set stop to make sure animation doesn't hold ownership of translateTransform
+                FillBehavior = FillBehavior.Stop
+            };
+
+            translateAnimX.Completed += delegate
+            {
+                // Hack it to keep the intended value
+                translateTransform.X = newTranslateValueX;
+            };
+
+            var translateAnimY = new DoubleAnimation(translateTransform.Y, newTranslateValueY, duration)
+            {
+                // Set stop to make sure animation doesn't hold ownership of translateTransform
+                FillBehavior = FillBehavior.Stop
+            };
+
+            translateAnimY.Completed += delegate
+            {
+                // Hack it to keep the intended value
+                translateTransform.Y = newTranslateValueY;
+            };
+
+            // Start animations
+
+            translateTransform.BeginAnimation(TranslateTransform.XProperty, translateAnimX);
+            translateTransform.BeginAnimation(TranslateTransform.YProperty, translateAnimY);
+
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnim);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnim);
+
         }
     }
 }
