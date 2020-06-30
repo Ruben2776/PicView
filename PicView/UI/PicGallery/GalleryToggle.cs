@@ -100,7 +100,7 @@ namespace PicView.UI.PicGallery
                 if (fakeWindow.grid.Children.Contains(picGallery))
                 {
                     fakeWindow.grid.Children.Remove(picGallery);
-                    TheMainWindow.bg.Children.Add(picGallery);
+                    TheMainWindow.ParentContainer.Children.Add(picGallery);
                 }
             }
 
@@ -128,9 +128,9 @@ namespace PicView.UI.PicGallery
             }
 
             // Switch gallery container to the correct window
-            if (TheMainWindow.bg.Children.Contains(picGallery))
+            if (TheMainWindow.ParentContainer.Children.Contains(picGallery))
             {
-                TheMainWindow.bg.Children.Remove(picGallery);
+                TheMainWindow.ParentContainer.Children.Remove(picGallery);
                 fakeWindow.grid.Children.Add(picGallery);
             }
 
@@ -208,7 +208,7 @@ namespace PicView.UI.PicGallery
             if (fakeWindow.grid.Children.Contains(picGallery))
             {
                 fakeWindow.grid.Children.Remove(picGallery);
-                TheMainWindow.bg.Children.Add(picGallery);
+                TheMainWindow.ParentContainer.Children.Add(picGallery);
             }
 
             fakeWindow.Hide();
@@ -223,13 +223,13 @@ namespace PicView.UI.PicGallery
             {
                 if (!fakeWindow.grid.Children.Contains(picGallery))
                 {
-                    TheMainWindow.bg.Children.Remove(picGallery);
+                    TheMainWindow.ParentContainer.Children.Remove(picGallery);
                     fakeWindow.grid.Children.Add(picGallery);
                 }
             }
             else
             {
-                TheMainWindow.bg.Children.Remove(picGallery);
+                TheMainWindow.ParentContainer.Children.Remove(picGallery);
                 fakeWindow = new FakeWindow();
                 fakeWindow.grid.Children.Add(picGallery);
             }

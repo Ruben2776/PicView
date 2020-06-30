@@ -32,9 +32,9 @@ namespace PicView.Editing.Crop
 
             TheMainWindow.Bar.Text = "Press Esc to close, Enter to save";
 
-            if (!TheMainWindow.bg.Children.Contains(cropppingTool))
+            if (!TheMainWindow.ParentContainer.Children.Contains(cropppingTool))
             {
-                TheMainWindow.bg.Children.Add(cropppingTool);
+                TheMainWindow.ParentContainer.Children.Add(cropppingTool);
             }
 
             CanNavigate = false;
@@ -109,7 +109,7 @@ namespace PicView.Editing.Crop
                         $"An error occured while saving {fileName} to {Savedlg.FileName}");
                 }
 
-                TheMainWindow.bg.Children.Remove(cropppingTool);
+                TheMainWindow.ParentContainer.Children.Remove(cropppingTool);
             }));
         }
 

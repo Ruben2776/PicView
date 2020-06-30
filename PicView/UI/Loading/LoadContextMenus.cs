@@ -626,7 +626,7 @@ namespace PicView.UI.Loading
             cm.Items.Add(clcm);
 
             // Add to elements
-            TheMainWindow.MainImage.ContextMenu = TheMainWindow.bg.ContextMenu = TheMainWindow.LowerBar.ContextMenu = cm;
+            TheMainWindow.MainImage.ContextMenu = TheMainWindow.ParentContainer.ContextMenu = TheMainWindow.LowerBar.ContextMenu = cm;
 
             switch (Properties.Settings.Default.SortPreference)
             {

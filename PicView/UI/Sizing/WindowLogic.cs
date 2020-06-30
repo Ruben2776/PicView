@@ -219,7 +219,7 @@ namespace PicView.UI.Sizing
 
                 TheMainWindow.ResizeMode = ResizeMode.CanMinimize;
                 TheMainWindow.SizeToContent = SizeToContent.Manual;
-                TheMainWindow.Width = TheMainWindow.bg.Width = SystemParameters.PrimaryScreenWidth;
+                TheMainWindow.Width = TheMainWindow.ParentContainer.Width = SystemParameters.PrimaryScreenWidth;
                 TheMainWindow.Height = SystemParameters.PrimaryScreenHeight;
 
                 TheMainWindow.Top = 0;
@@ -258,8 +258,8 @@ namespace PicView.UI.Sizing
 
                     TheMainWindow.WindowState = WindowState.Normal;
 
-                    TheMainWindow.Width = TheMainWindow.bg.Width = double.NaN;
-                    TheMainWindow.Height = TheMainWindow.bg.Height = double.NaN;
+                    TheMainWindow.Width = TheMainWindow.ParentContainer.Width = double.NaN;
+                    TheMainWindow.Height = TheMainWindow.ParentContainer.Height = double.NaN;
 
                     TheMainWindow.Top -= TheMainWindow.LowerBar.ActualHeight / 2; // It works...
                 }
@@ -278,8 +278,8 @@ namespace PicView.UI.Sizing
                     TheMainWindow.Height = Properties.Settings.Default.Height;
                     TheMainWindow.Width = Properties.Settings.Default.Width;
 
-                    TheMainWindow.bg.Width = double.NaN;
-                    TheMainWindow.bg.Height = double.NaN;
+                    TheMainWindow.ParentContainer.Width = double.NaN;
+                    TheMainWindow.ParentContainer.Height = double.NaN;
                 }
 
                 TryFitImage();

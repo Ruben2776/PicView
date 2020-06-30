@@ -49,7 +49,7 @@ namespace PicView.Shortcuts
                         {
                             SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height, FolderIndex);
                         }
-                        TheMainWindow.bg.Children.Remove(cropppingTool);
+                        TheMainWindow.ParentContainer.Children.Remove(cropppingTool);
                         CanNavigate = true;
                         e.Handled = true;
                         return;

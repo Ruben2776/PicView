@@ -157,13 +157,13 @@ namespace PicView.UI.Loading
             TheMainWindow.MainImage.MouseWheel += MainImage_MouseWheel;
 
             // bg
-            TheMainWindow.bg.MouseLeftButtonDown += Bg_MouseLeftButtonDown;
-            TheMainWindow.bg.Drop += Image_Drop;
-            TheMainWindow.bg.DragEnter += Image_DragEnter;
-            TheMainWindow.bg.DragLeave += Image_DragLeave;
-            TheMainWindow.bg.MouseEnter += Interface_MouseEnter;
-            TheMainWindow.bg.MouseMove += Interface_MouseMove;
-            TheMainWindow.bg.MouseLeave += Interface_MouseLeave;
+            TheMainWindow.ParentContainer.MouseLeftButtonDown += Bg_MouseLeftButtonDown;
+            TheMainWindow.ParentContainer.Drop += Image_Drop;
+            TheMainWindow.ParentContainer.DragEnter += Image_DragEnter;
+            TheMainWindow.ParentContainer.DragLeave += Image_DragLeave;
+            TheMainWindow.ParentContainer.MouseEnter += Interface_MouseEnter;
+            TheMainWindow.ParentContainer.MouseMove += Interface_MouseMove;
+            TheMainWindow.ParentContainer.MouseLeave += Interface_MouseLeave;
 
             // TooltipStyle
             toolTipMessage.MouseWheel += MainImage_MouseWheel;

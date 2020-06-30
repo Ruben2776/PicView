@@ -54,7 +54,7 @@ namespace PicView.UI.Animations
                     return;
                 }
 
-                var pos = Utilities.GetMousePos(TheMainWindow.bg);
+                var pos = Utilities.GetMousePos(TheMainWindow.ParentContainer);
 
                 if (pos.X < 1100 && pos.Y < 850)
                 {

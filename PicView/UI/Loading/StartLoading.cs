@@ -201,7 +201,7 @@ namespace PicView.UI.Loading
                     Visibility = Visibility.Collapsed
                 };
 
-                TheMainWindow.bg.Children.Add(picGallery);
+                TheMainWindow.ParentContainer.Children.Add(picGallery);
                 Panel.SetZIndex(picGallery, 999);
 
                 if (Properties.Settings.Default.PicGallery == 2)

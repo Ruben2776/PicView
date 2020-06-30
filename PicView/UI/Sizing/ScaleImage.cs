@@ -133,8 +133,8 @@ namespace PicView.UI.Sizing
             {
                 if (Properties.Settings.Default.FillImage)
                 {
-                    maxWidth = TheMainWindow.bg.ActualWidth;
-                    maxHeight = TheMainWindow.bg.ActualHeight;
+                    maxWidth = TheMainWindow.ParentContainer.ActualWidth;
+                    maxHeight = TheMainWindow.ParentContainer.ActualHeight;
                 }
                 else
                 {
