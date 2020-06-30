@@ -1,22 +1,19 @@
 ﻿using PicView.ChangeImage;
 using PicView.FileHandling;
-using System;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.Thumbnails;
 using static PicView.Library.Fields;
 using static PicView.UI.Tooltip;
 
-namespace PicView.UI
+namespace PicView.UI.DragAndDrop
 {
-    internal static class DragAndDrop
+    internal static class Image_DragAndDrop
     {
         internal const string DragOverString = "Drop to load image";
 
@@ -214,50 +211,6 @@ namespace PicView.UI
             }
         }
 
-        internal static void DragFile(object sender, MouseButtonEventArgs e)
-        {
-            if (Keyboard.Modifiers != ModifierKeys.Control || TheMainWindow.MainImage.Source == null)
-            {
-                return;
-            }
 
-            string file;
-
-            if (Pics.Count == 0)
-            {
-                string url = Library.Utilities.GetURL(TheMainWindow.Bar.Text);
-                if (Uri.IsWellFormedUriString(url, UriKind.Absolute)) // Check if from web
-                {
-                    // Create temp directory
-                    var tempPath = Path.GetTempPath();
-                    var fileName = Path.GetFileName(url);
-
-                    // Download to it
-                    using var webClient = new System.Net.WebClient();
-                    Directory.CreateDirectory(tempPath);
-                    webClient.DownloadFileAsync(new Uri(url), tempPath + fileName);
-
-                    file = tempPath + fileName;
-                }
-                else
-                {
-                    return;
-                }
-                    
-            }
-            else if (Pics.Count < FolderIndex)
-            {
-                file = Pics[FolderIndex];
-            }
-            else
-            {
-                return;
-            }
-
-            FrameworkElement senderElement = sender as FrameworkElement;
-            DataObject dragObj = new DataObject();
-            dragObj.SetFileDropList(new StringCollection() { file });
-            DragDrop.DoDragDrop(senderElement, dragObj, DragDropEffects.Copy);
-        }
     }
 }

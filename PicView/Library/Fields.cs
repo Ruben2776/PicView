@@ -78,7 +78,6 @@ namespace PicView.Library
         internal static bool LeftbuttonClicked { get; set; }
         internal static bool RightbuttonClicked { get; set; }
         internal static bool FastPicRunning { get; set; }
-        internal static bool IsZoomed { get; set; }
         internal static bool Flipped { get; set; }
         internal static bool CanNavigate { get; set; }
         internal static bool FreshStartup { get; set; }

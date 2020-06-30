@@ -1,4 +1,5 @@
 ﻿using PicView.ImageHandling;
+using PicView.UI.TransformImage;
 using System;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
@@ -215,9 +216,9 @@ namespace PicView.UI.Sizing
                 TheMainWindow.Bar.MaxWidth = TheMainWindow.ActualWidth - interfaceSize;
             }
 
-            if (IsZoomed)
+            if (ZoomLogic.ZoomValue == 1.0)
             {
-                TransformImage.ZoomLogic.ResetZoom(false);
+                ZoomLogic.ResetZoom(false);
             }
 
             /*

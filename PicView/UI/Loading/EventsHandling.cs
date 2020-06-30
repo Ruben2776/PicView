@@ -14,7 +14,7 @@ using static PicView.FileHandling.Open_Save;
 using static PicView.Library.Fields;
 using static PicView.Shortcuts.MainShortcuts;
 using static PicView.UI.Animations.MouseOverAnimations;
-using static PicView.UI.DragAndDrop;
+using static PicView.UI.DragAndDrop.Image_DragAndDrop;
 using static PicView.UI.HideInterfaceLogic;
 using static PicView.UI.Sizing.ScaleImage;
 using static PicView.UI.Sizing.WindowLogic;
@@ -149,7 +149,8 @@ namespace PicView.UI.Loading
             TheMainWindow.Bar.PreviewMouseLeftButtonDown += EditTitleBar.Bar_PreviewMouseLeftButtonDown;
 
             // img
-            TheMainWindow.MainImage.PreviewMouseLeftButtonDown += DragFile;
+            TheMainWindow.MainImage.PreviewMouseLeftButtonDown += DragAndDrop.DragToExplorer.DragFile;
+            TheMainWindow.MainImage.PreviewGiveFeedback += DragAndDrop.DragToExplorer.UIElement_OnPreviewGiveFeedback;
             TheMainWindow.MainImage.MouseLeftButtonDown += MainImage_MouseLeftButtonDown;
             TheMainWindow.MainImage.MouseLeftButtonUp += MainImage_MouseLeftButtonUp;
             TheMainWindow.MainImage.MouseMove += MainImage_MouseMove;

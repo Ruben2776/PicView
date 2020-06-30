@@ -24,7 +24,7 @@ namespace PicView.UI.TransformImage
         /// Used to determine final point when zooming,
         /// since DoubleAnimation changes value of
         /// TranslateTransform continuesly.
-        private static double zoomValue; 
+        internal static double ZoomValue { get; set; }
 
         /// <summary>
         /// Returns zoom percentage. if 100%, return empty string
@@ -33,12 +33,12 @@ namespace PicView.UI.TransformImage
         {
             get
             {
-                if (scaleTransform == null || zoomValue <= 1)
+                if (scaleTransform == null || ZoomValue <= 1)
                 {
                     return string.Empty;
                 }
 
-                var zoom = Math.Round(zoomValue * 100);
+                var zoom = Math.Round(ZoomValue * 100);
 
                 return zoom + "%";
             }
@@ -253,7 +253,7 @@ namespace PicView.UI.TransformImage
                 Pic(e.Delta > 0);
             }
             // Zoom
-            else if (!AutoScrolling)
+            else if (!AutoScrolling && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
                 Zoom(e.Delta > 0);
             }
@@ -277,8 +277,7 @@ namespace PicView.UI.TransformImage
             }
 
             Tooltip.CloseToolTipMessage();
-            IsZoomed = false;
-            zoomValue = 1;
+            ZoomValue = 1;
 
             // Display non-zoomed values
             if (Pics.Count == 0)
@@ -309,7 +308,7 @@ namespace PicView.UI.TransformImage
                 }
             }
 
-            zoomValue = scaleTransform.ScaleX;
+            ZoomValue = scaleTransform.ScaleX;
 
             /// Determine zoom speed
             var zoomSpeed = .095;
@@ -317,40 +316,44 @@ namespace PicView.UI.TransformImage
             if (increment)
             {
                 // Increase speed determined by how much is zoomed in
-                if (zoomValue > 1.3)
+                if (ZoomValue > 1.2)
                 {
-                    zoomSpeed += .11;
+                    zoomSpeed += .135;
                 }
-                if (zoomValue > 1.5)
+                if (ZoomValue > 1.5)
                 {
-                    zoomSpeed += .13;
+                    zoomSpeed += .16;
+                }
+                if (ZoomValue > 1.8)
+                {
+                    zoomSpeed += .19;
                 }
             }
             else
             {
                 // Zoom out faster
-                if (zoomValue > 1.3)
+                if (ZoomValue > 1.2)
                 {
-                    zoomSpeed += .3;
+                    zoomSpeed += .4;
                 }
-                if (zoomValue > 1.5)
+                if (ZoomValue > 1.5)
                 {
-                    zoomSpeed += .35;
+                    zoomSpeed += .55;
                 }
                 // Make it go negative
                 zoomSpeed = -zoomSpeed;
             }
 
             // Set speed
-            zoomValue += zoomSpeed;
+            ZoomValue += zoomSpeed;
 
-            if (zoomValue < 1.0)
+            if (ZoomValue < 1.0)
             {
                 /// Don't zoom less than 1.0,
-                zoomValue = 1.0;
+                ZoomValue = 1.0;
             }
 
-            Zoom(zoomValue);
+            Zoom(ZoomValue);
         }
 
         internal static void Zoom(double value)
@@ -360,10 +363,9 @@ namespace PicView.UI.TransformImage
                 return;
             }
 
-            zoomValue = value;
-            IsZoomed = true;
+            ZoomValue = value;
 
-            BeginZoomAnimation(zoomValue);
+            BeginZoomAnimation(ZoomValue);
 
             /// Displays zoompercentage in the center window
             if (!string.IsNullOrEmpty(ZoomPercentage))
@@ -406,7 +408,7 @@ namespace PicView.UI.TransformImage
             double newTranslateValueY = zoomValue > 1 ? absoluteY - relative.Y * zoomValue : 0;
 
 
-            var duration = new Duration(TimeSpan.FromSeconds(.35));
+            var duration = new Duration(TimeSpan.FromSeconds(.3));
 
             var scaleAnim = new DoubleAnimation(zoomValue, duration)
             {
@@ -420,7 +422,7 @@ namespace PicView.UI.TransformImage
                 scaleTransform.ScaleX = scaleTransform.ScaleY = zoomValue;
 
                 // Make sure value stays correct
-                IsZoomed = true;
+                ZoomValue = 1.0;
             };
 
             var translateAnimX = new DoubleAnimation(translateTransform.X, newTranslateValueX, duration)
