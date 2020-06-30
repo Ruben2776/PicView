@@ -70,18 +70,11 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Library\Resources\img\Brainleaf-Dark-Blog-Reflex.ico</ApplicationIcon>
+    <ApplicationIcon>camera.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="Library\Resources\fonts\texgyreheros-bold.otf" />
-    <None Remove="Library\Resources\fonts\texgyreheros-bolditalic.otf" />
-    <None Remove="Library\Resources\fonts\texgyreheros-italic.otf" />
-    <None Remove="Library\Resources\fonts\texgyreheros-regular.otf" />
-    <None Remove="UI\PicGallery\PicGalleryLogic.cs~RF57f3b96.TMP" />
-  </ItemGroup>
   <ItemGroup>
     <Resource Include="Editing\ShaderEffects\PsEffects\BandedSwirlEffect.ps">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -254,16 +247,8 @@
     <Resource Include="Library\Resources\fonts\texgyreheros-regular.otf" />
     <Resource Include="Library\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
     <Resource Include="Library\Resources\img\noisy-texture-200x200-o4-d30-c-101010-t0.png" />
-    <Resource Include="Library\Resources\img\Brainleaf-Dark-Blog-Reflex.ico" />
-    <Resource Include="Library\Resources\img\reflex-icon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <FileAssociation Include=".jpg">
-      <Visible>False</Visible>
-      <Description>jpg</Description>
-      <Progid>PicView.0.7.1</Progid>
-      <DefaultIcon>lib\img\Brainleaf-Dark-Blog-Reflex.ico</DefaultIcon>
-    </FileAssociation>
+    <Resource Include="Library\Resources\img\camera.ico" />
+    <Resource Include="Library\Resources\img\camera.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Magick.NET-Q16-x64" Version="7.20.0.1" />

@@ -1937,9 +1937,9 @@
                             FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
                             FontSize="14"
                             TextAlignment="Center"
-                            ToolTip="http://www.flaticon.com/free-icon/file-folder_379">
-                            <Hyperlink NavigateUri="http://www.flaticon.com/free-icon/file-folder_379" RequestNavigate="Hyperlink_RequestNavigate">
-                                Flaticon
+                            ToolTip="https://www.flaticon.com/free-icon/camera_2905172">
+                            <Hyperlink NavigateUri="https://www.flaticon.com/free-icon/camera_2905172" RequestNavigate="Hyperlink_RequestNavigate">
+                                Flaticon Camera
                                 <Hyperlink.Foreground>
                                     <SolidColorBrush x:Name="FlatIconBrush" Color="{StaticResource MainColor}" />
                                 </Hyperlink.Foreground>
