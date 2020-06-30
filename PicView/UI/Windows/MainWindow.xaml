@@ -425,12 +425,12 @@
                     </Rectangle.Fill>
                 </Rectangle>
 
-                <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                <Border
+                    Background="{StaticResource NoisyBg}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
 
-                    <Grid
-                        x:Name="bg"
-                        AllowDrop="True"
-                        Background="{StaticResource NoisyBg}">
+                    <Grid x:Name="ParentContainer" AllowDrop="True">
 
                         <ScrollViewer
                             x:Name="Scroller"

@@ -59,15 +59,15 @@ namespace PicView.UI
             switch (Properties.Settings.Default.BgColorChoice)
             {
                 case 0:
-                    TheMainWindow.MainImageBorder.Background = new SolidColorBrush(Colors.Transparent);
+                    TheMainWindow.ParentContainer.Background = new SolidColorBrush(Colors.Transparent);
                     break;
 
                 case 1:
-                    TheMainWindow.MainImageBorder.Background = new SolidColorBrush(Colors.White);
+                    TheMainWindow.ParentContainer.Background = new SolidColorBrush(Colors.White);
                     break;
 
                 case 2:
-                    TheMainWindow.MainImageBorder.Background = DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
+                    TheMainWindow.ParentContainer.Background = DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
                     break;
             }
 
@@ -76,7 +76,7 @@ namespace PicView.UI
 
         public static void ChangeBackground(object sender, RoutedEventArgs e)
         {
-            if (TheMainWindow.MainImageBorder == null)
+            if (TheMainWindow.ParentContainer == null)
             {
                 return;
             }
@@ -92,27 +92,27 @@ namespace PicView.UI
             {
                 case 0:
                     var x = new SolidColorBrush(Colors.Transparent);
-                    if (TheMainWindow.MainImageBorder.Background == x)
+                    if (TheMainWindow.ParentContainer.Background == x)
                     {
                         goto case 1;
                     }
-                    TheMainWindow.MainImageBorder.Background = x;
+                    TheMainWindow.ParentContainer.Background = x;
                     break;
 
                 case 1:
-                    TheMainWindow.MainImageBorder.Background = new SolidColorBrush(Colors.White);
+                    TheMainWindow.ParentContainer.Background = new SolidColorBrush(Colors.White);
                     break;
 
                 case 2:
                     var _ = DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
                     if (_ != null)
                     {
-                        TheMainWindow.MainImageBorder.Background = _;
+                        TheMainWindow.ParentContainer.Background = _;
                     }
                     break;
 
                 default:
-                    TheMainWindow.MainImageBorder.Background = new SolidColorBrush(Colors.Transparent);
+                    TheMainWindow.ParentContainer.Background = new SolidColorBrush(Colors.Transparent);
                     break;
             }
         }
