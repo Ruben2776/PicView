@@ -2,7 +2,7 @@
     x:Class="PicView.UI.UserControls.Logo"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Margin="7,0,0,0">
+    Margin="6,0,0,0">
     <Canvas
         x:Name="Logobg"
         Width="81.7220001220703"

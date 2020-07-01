@@ -31,7 +31,7 @@
     <SolidColorBrush x:Key="BackgroundColorBrushAlt" Color="{StaticResource BackgroundColorAlt}" />
 
     <!--  Background Color Alt  -->
-    <Color x:Key="BackgroundColorAltW">#FF0C0C0C</Color>
+    <Color x:Key="BackgroundColorAltW">#FF161413</Color>
     <SolidColorBrush x:Key="BackgroundColorBrushAltW" Color="{StaticResource BackgroundColorAltW}" />
 
     <!--  Background Color Fade  -->
@@ -46,7 +46,7 @@
 
     <!--  Alt Interface  -->
     <Color x:Key="AltInterface">#A7222222</Color>
-    <Color x:Key="AltInterfaceW">#A7171717</Color>
+    <Color x:Key="AltInterfaceW">#A7202020</Color>
     <SolidColorBrush x:Key="AltInterfaceBrush" Color="{StaticResource AltInterface}" />
     <SolidColorBrush x:Key="AltInterfaceWBrush" Color="{StaticResource AltInterfaceW}" />
 </ResourceDictionary>
