@@ -41,6 +41,11 @@ namespace PicView.UI
             }
         }
 
+        /// <summary>
+        /// Set the text to the filename
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         internal static void EditTitleBar_Text(object sender, KeyboardFocusChangedEventArgs e)
         {
             if (Pics == null || !Properties.Settings.Default.ShowInterface || Pics.Count == 0)
@@ -77,6 +82,9 @@ namespace PicView.UI
             }
         }
 
+        /// <summary>
+        /// Removes focus from titlebar and sets it to the mainwindow
+        /// </summary>
         internal static void Refocus()
         {
             if (!TheMainWindow.Bar.IsFocused)

@@ -25,6 +25,12 @@ namespace PicView.UI.DragAndDrop
                 return;
             }
 
+            if (TheMainWindow.Bar.IsFocused)
+            {
+                EditTitleBar.Refocus();
+                return;
+            }
+
             string file;
 
             if (Pics.Count == 0)
