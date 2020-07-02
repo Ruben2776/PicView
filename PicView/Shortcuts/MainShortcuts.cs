@@ -490,7 +490,7 @@ namespace PicView.Shortcuts
 
                     // F1
                     case Key.F1:
-                        HelpWindow();
+                        InfoDialogWindow();
                         break;
 
                     // F2

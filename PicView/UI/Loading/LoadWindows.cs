@@ -17,7 +17,7 @@ namespace PicView.UI.Loading
         /// <summary>
         /// Show Help window in a dialog
         /// </summary>
-        internal static void HelpWindow()
+        internal static void InfoDialogWindow()
         {
             if (infoWindow == null)
             {
@@ -25,8 +25,6 @@ namespace PicView.UI.Loading
                 {
                     Owner = TheMainWindow
                 };
-
-                infoWindow.Show();
             }
             else
             {
@@ -34,12 +32,15 @@ namespace PicView.UI.Loading
                 {
                     infoWindow.Focus();
                 }
-                else
-                {
-                    infoWindow.Show();
-                }
             }
 
+            infoWindow.Width = TheMainWindow.ActualWidth;
+            infoWindow.Height = TheMainWindow.ActualHeight;
+
+            infoWindow.Left = TheMainWindow.Left + (TheMainWindow.Width - infoWindow.Width) / 2;
+            infoWindow.Top = TheMainWindow.Top + (TheMainWindow.Height - infoWindow.Height) / 2;
+
+            infoWindow.ShowDialog();
 #if DEBUG
             Trace.WriteLine("HelpWindow loaded ");
 #endif

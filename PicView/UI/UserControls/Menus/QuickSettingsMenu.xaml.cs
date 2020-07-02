@@ -33,7 +33,7 @@ namespace PicView.UI.UserControls
             InfoButton.Click += delegate
             {
                 Close_UserControls();
-                LoadWindows.HelpWindow();
+                LoadWindows.InfoDialogWindow();
             };
 
             ToggleFill.IsChecked = Properties.Settings.Default.FillImage;

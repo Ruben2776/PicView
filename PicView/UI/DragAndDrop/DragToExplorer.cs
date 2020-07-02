@@ -1,4 +1,5 @@
-﻿using PicView.UI.TransformImage;
+﻿using PicView.Library;
+using PicView.UI.TransformImage;
 using System;
 using System.Collections.Specialized;
 using System.IO;
@@ -25,6 +26,15 @@ namespace PicView.UI.DragAndDrop
                 return;
             }
 
+            var pos = Utilities.GetMousePos(TheMainWindow.ParentContainer);
+
+            //Tooltip.ShowTooltipMessage($"x = {pos.X} y = {pos.Y}");
+            // Only target center of image
+            if (pos.Y < 380 || pos.Y > 1040)
+            {
+                return;
+            }
+
             if (TheMainWindow.Bar.IsFocused)
             {
                 EditTitleBar.Refocus();
@@ -35,7 +45,7 @@ namespace PicView.UI.DragAndDrop
 
             if (Pics.Count == 0)
             {
-                string url = Library.Utilities.GetURL(TheMainWindow.Bar.Text);
+                string url = Utilities.GetURL(TheMainWindow.Bar.Text);
                 if (Uri.IsWellFormedUriString(url, UriKind.Absolute)) // Check if from web
                 {
                     // Create temp directory

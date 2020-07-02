@@ -4,62 +4,46 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uc="clr-namespace:PicView.UI.UserControls"
     Title="Information, help &amp; shortcuts"
-    Width="560"
-    MinHeight="650"
+    AllowsTransparency="True"
+    Background="#99212020"
     FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
     Foreground="{StaticResource MainColorBrush}"
-    Style="{StaticResource MyWindowStyle}">
+    ResizeMode="CanMinimize"
+    ShowInTaskbar="False"
+    WindowStyle="None">
 
-    <DockPanel LastChildFill="True">
+    <DockPanel
+        Width="560"
+        MinHeight="650"
+        Margin="20,45,20,45"
+        LastChildFill="True">
         <DockPanel
             x:Name="TitleBar"
             Height="33"
             Background="{StaticResource BackgroundColorBrushAltW}"
             DockPanel.Dock="Top">
 
-            <uc:Logo />
-
-            <Rectangle
-                Width="1"
-                Height="35"
-                Margin="6,0,0,0"
-                Fill="{StaticResource BorderBrush}" />
+            <uc:Logo Margin="6,0,7,0" />
 
             <uc:CloseButton
                 x:Name="CloseButton"
                 VerticalAlignment="Center"
                 DockPanel.Dock="Right" />
 
-            <Rectangle
-                Width="1"
-                Height="35"
-                DockPanel.Dock="Right"
-                Fill="{StaticResource BorderBrush}" />
-
-            <uc:MinButton
-                x:Name="MinButton"
-                VerticalAlignment="Center"
-                DockPanel.Dock="Right" />
-
-            <Rectangle
-                Width="1"
-                Height="35"
-                DockPanel.Dock="Right"
-                Fill="{StaticResource BorderBrush}" />
-
-            <TextBlock
-                x:Name="Bar"
-                Height="35"
-                Padding="0,8.4,0,0"
-                VerticalAlignment="Center"
+            <Border
                 Background="{StaticResource AltInterfaceWBrush}"
-                FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
-                FontSize="15"
-                FontWeight="Bold"
-                Foreground="{StaticResource MainColorBrush}"
-                Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                TextAlignment="Center"
-                TextTrimming="CharacterEllipsis" />
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1,1,1,0">
+                <TextBlock
+                    x:Name="Bar"
+                    Margin="85,0,0,0"
+                    VerticalAlignment="Center"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    Foreground="{StaticResource MainColorBrush}"
+                    Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                    TextTrimming="CharacterEllipsis" />
+            </Border>
         </DockPanel>
 
         <Rectangle
@@ -100,20 +84,20 @@
                 <StackPanel>
 
                     <Label
-                        Margin="0,5,0,8"
+                        Margin="1,22,0,11"
                         HorizontalAlignment="Center"
                         Content="Application Shortcuts"
-                        FontSize="20"
+                        FontSize="17"
                         Style="{StaticResource LabelShadow}" />
 
                     <Label
                         Width="490"
-                        Margin="0,0,0,7"
+                        Margin="5,0,0,9"
                         HorizontalAlignment="Center"
                         Content="Navigation"
                         FontSize="16" />
 
-                    <Grid Width="480">
+                    <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
@@ -136,8 +120,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Next Image" />
                         </Border>
 
@@ -151,7 +135,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="A" />
                         </Border>
 
@@ -166,7 +150,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Left" />
                         </Border>
 
@@ -180,8 +164,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Previous Image" />
                         </Border>
 
@@ -195,7 +179,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="D" />
                         </Border>
 
@@ -210,7 +194,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Right" />
                         </Border>
 
@@ -223,8 +207,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Last Image" />
                         </Border>
 
@@ -238,7 +222,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Ctrl + A" />
                         </Border>
 
@@ -253,7 +237,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Ctrl + Left" />
                         </Border>
 
@@ -266,8 +250,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="First Image" />
                         </Border>
 
@@ -281,7 +265,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Ctrl + D" />
                         </Border>
 
@@ -296,7 +280,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Ctrl + Right" />
                         </Border>
 
@@ -308,8 +292,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,1">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Toggle Looping" />
                         </Border>
 
@@ -323,7 +307,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="L" />
                         </Border>
 
@@ -334,19 +318,26 @@
                             Padding="0,3,0,3"
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="0,1,1,1" />
+                            BorderThickness="0,1,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontStyle="Italic"
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text="(Saved on next startup)" />
+                        </Border>
 
                     </Grid>
 
 
                     <Label
                         Width="490"
-                        Margin="0,9,0,7"
+                        Margin="5,0,0,9"
                         HorizontalAlignment="Center"
                         Content="Image Control"
-                        FontSize="16" />
+                        FontSize="15" />
 
-                    <Grid Width="480">
+                    <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
@@ -366,8 +357,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Rotate Right" />
                         </Border>
 
@@ -381,7 +372,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="W" />
                         </Border>
 
@@ -396,7 +387,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Up" />
                         </Border>
 
@@ -410,8 +401,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Rotate Left" />
                         </Border>
 
@@ -425,7 +416,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="S" />
                         </Border>
 
@@ -440,7 +431,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Down" />
                         </Border>
 
@@ -453,8 +444,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Flip horizontally" />
                         </Border>
 
@@ -468,7 +459,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="F" />
                         </Border>
 
@@ -485,18 +476,19 @@
 
                     <Label
                         Width="490"
-                        Margin="0,9,0,7"
+                        Margin="5,0,0,9"
                         HorizontalAlignment="Center"
                         Content="Zoom"
-                        FontSize="16" />
+                        FontSize="15" />
 
-                    <Grid Width="480">
+                    <Grid Width="480" Margin="0,0,0,16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
+                            <RowDefinition />
                             <RowDefinition />
                             <RowDefinition />
                             <RowDefinition />
@@ -511,8 +503,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Zoom In" />
                         </Border>
 
@@ -526,8 +518,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
-                                Text="Mouse Wheel" />
+                                FontSize="15"
+                                Text="Ctrl + Mouse Wheel" />
                         </Border>
 
 
@@ -541,7 +533,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Numpad +" />
                         </Border>
 
@@ -555,8 +547,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Zoom Out" />
                         </Border>
 
@@ -570,8 +562,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
-                                Text="Mouse Wheel" />
+                                FontSize="15"
+                                Text="Ctrl + Mouse Wheel" />
                         </Border>
 
 
@@ -585,10 +577,9 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Numpad -" />
                         </Border>
-
 
                         <Border
                             Grid.Row="2"
@@ -596,11 +587,11 @@
                             Padding="0,3,0,3"
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1,0,1,1">
+                            BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
-                                Text="Reset Zoom" />
+                                Margin="10,3,0,3"
+                                FontSize="15"
+                                Text="Pan" />
                         </Border>
 
                         <Border
@@ -609,12 +600,12 @@
                             Padding="0,3,0,3"
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1,0,1,1">
+                            BorderThickness="0,1,1,0">
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
-                                Text="Double Click Image" />
+                                FontSize="15"
+                                Text="Ctrl + Mouse Drag" />
                         </Border>
 
 
@@ -624,23 +615,24 @@
                             Padding="0,3,0,3"
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1,0,1,1" />
+                            BorderThickness="0,1,1,0" />
+
 
                         <Border
-                            Grid.Row="4"
+                            Grid.Row="3"
                             Grid.Column="0"
                             Padding="0,3,0,3"
                             Background="{StaticResource BackgroundColorBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
-                                Text="Toggle Scroll" />
+                                Margin="10,3,0,3"
+                                FontSize="15"
+                                Text="Reset Zoom" />
                         </Border>
 
                         <Border
-                            Grid.Row="4"
+                            Grid.Row="3"
                             Grid.Column="1"
                             Padding="0,3,0,3"
                             Background="{StaticResource BackgroundColorBrush}"
@@ -649,7 +641,43 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
+                                Text="Ctrl + Double Click" />
+                        </Border>
+
+
+                        <Border
+                            Grid.Row="3"
+                            Grid.Column="2"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource BackgroundColorBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1" />
+
+                        <Border
+                            Grid.Row="4"
+                            Grid.Column="0"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                Margin="10,3,0,3"
+                                FontSize="15"
+                                Text="Toggle Scroll" />
+                        </Border>
+
+                        <Border
+                            Grid.Row="4"
+                            Grid.Column="1"
+                            Padding="0,3,0,3"
+                            Background="{StaticResource AltInterfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1,0,1,1">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="15"
                                 Text="X" />
                         </Border>
 
@@ -658,13 +686,12 @@
                             Grid.Row="4"
                             Grid.Column="2"
                             Padding="0,3,0,3"
-                            Background="{StaticResource BackgroundColorBrush}"
+                            Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 FontStyle="Italic"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text="(Saved on next startup)" />
@@ -676,12 +703,12 @@
 
                     <Label
                         Width="490"
-                        Margin="0,9,0,7"
+                        Margin="5,0,0,9"
                         HorizontalAlignment="Center"
                         Content="Window Scaling"
-                        FontSize="16" />
+                        FontSize="15" />
 
-                    <Grid Width="480">
+                    <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
@@ -702,8 +729,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Normal Window" />
                         </Border>
 
@@ -717,7 +744,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="1" />
                         </Border>
 
@@ -732,7 +759,6 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 FontStyle="Italic"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text="(Saved on next startup)" />
@@ -748,8 +774,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="⇔ Fill Height" />
                         </Border>
 
@@ -763,7 +789,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="2" />
                         </Border>
 
@@ -778,7 +804,6 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 FontStyle="Italic"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text="(Saved on next startup)" />
@@ -793,8 +818,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Auto Fit Window" />
                         </Border>
 
@@ -808,7 +833,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="3" />
                         </Border>
 
@@ -823,7 +848,6 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 FontStyle="Italic"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text="(Saved on next startup)" />
@@ -838,8 +862,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="⇔ Fill Height" />
                         </Border>
 
@@ -853,7 +877,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="4" />
                         </Border>
 
@@ -868,7 +892,6 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 FontStyle="Italic"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text="(Saved on next startup)" />
@@ -881,12 +904,12 @@
 
                     <Label
                         Width="490"
-                        Margin="0,9,0,7"
+                        Margin="5,0,0,9"
                         HorizontalAlignment="Center"
                         Content="Interface Configuration"
-                        FontSize="16" />
+                        FontSize="15" />
 
-                    <Grid Width="480">
+                    <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
@@ -907,8 +930,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Toggle Interface" />
                         </Border>
 
@@ -922,7 +945,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Alt + Z" />
                         </Border>
 
@@ -937,7 +960,6 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 FontStyle="Italic"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text="(Saved on next startup)" />
@@ -953,8 +975,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Toggle Background" />
                         </Border>
 
@@ -968,7 +990,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="T" />
                         </Border>
 
@@ -983,7 +1005,6 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 FontStyle="Italic"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text="(Saved on next startup)" />
@@ -998,8 +1019,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Toggle Fullscreen" />
                         </Border>
 
@@ -1013,7 +1034,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="F11" />
                         </Border>
 
@@ -1028,7 +1049,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Alt + Enter" />
                         </Border>
 
@@ -1041,8 +1062,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Slideshow" />
                         </Border>
 
@@ -1056,7 +1077,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="F5" />
                         </Border>
 
@@ -1074,13 +1095,13 @@
 
                     <Label
                         Width="490"
-                        Margin="0,9,0,7"
+                        Margin="5,0,0,9"
                         HorizontalAlignment="Center"
                         Content="File Management"
-                        FontSize="16" />
+                        FontSize="15" />
 
 
-                    <Grid Width="480">
+                    <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
@@ -1107,8 +1128,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Open" />
                         </Border>
 
@@ -1122,7 +1143,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Ctrl + O" />
                         </Border>
 
@@ -1137,7 +1158,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="O" />
                         </Border>
 
@@ -1151,8 +1172,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Save" />
                         </Border>
 
@@ -1166,7 +1187,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Ctrl + S" />
                         </Border>
 
@@ -1188,8 +1209,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Print" />
                         </Border>
 
@@ -1203,7 +1224,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Ctrl + P" />
                         </Border>
 
@@ -1224,8 +1245,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Copy File" />
                         </Border>
 
@@ -1239,7 +1260,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Ctrl + C" />
                         </Border>
 
@@ -1254,8 +1275,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
-                                Text="Ctrl + Drag Image"
+                                FontSize="15"
+                                Text="Drag Image"
                                 ToolTip="Drag file to Windows Explorer or another application" />
                         </Border>
 
@@ -1268,8 +1289,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Cut File" />
                         </Border>
 
@@ -1283,7 +1304,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Ctrl + X" />
                         </Border>
 
@@ -1305,8 +1326,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Delete File" />
                         </Border>
 
@@ -1320,7 +1341,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Delete" />
                         </Border>
 
@@ -1335,7 +1356,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Shift + Delete" />
                         </Border>
 
@@ -1347,8 +1368,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Rename File" />
                         </Border>
 
@@ -1362,7 +1383,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="F2" />
                         </Border>
 
@@ -1383,8 +1404,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Locate File"
                                 ToolTip="Opens file in Windows Explorer" />
                         </Border>
@@ -1399,7 +1420,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="F3" />
                         </Border>
 
@@ -1420,8 +1441,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="File Details" />
                         </Border>
 
@@ -1435,7 +1456,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Ctrl + I" />
                         </Border>
 
@@ -1453,12 +1474,12 @@
 
                     <Label
                         Width="490"
-                        Margin="0,9,0,7"
+                        Margin="5,0,0,9"
                         HorizontalAlignment="Center"
                         Content="Window Management"
-                        FontSize="16" />
+                        FontSize="15" />
 
-                    <Grid Width="480">
+                    <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
@@ -1478,8 +1499,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Info Window" />
                         </Border>
 
@@ -1493,7 +1514,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="F1" />
                         </Border>
 
@@ -1516,8 +1537,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Settings Window" />
                         </Border>
 
@@ -1531,7 +1552,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="F4" />
                         </Border>
 
@@ -1553,8 +1574,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Close" />
                         </Border>
 
@@ -1568,7 +1589,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Esc"
                                 ToolTip="Closes currently opened window/menu" />
                         </Border>
@@ -1584,7 +1605,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Ctrl + Q"
                                 ToolTip="Closes the whole application" />
                         </Border>
@@ -1594,12 +1615,12 @@
 
                     <Label
                         Width="490"
-                        Margin="0,9,0,7"
+                        Margin="5,0,0,9"
                         HorizontalAlignment="Center"
                         Content="Additional Functions"
-                        FontSize="16" />
+                        FontSize="15" />
 
-                    <Grid Width="480">
+                    <Grid Width="480" Margin="0,0,0,16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
@@ -1620,8 +1641,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Open With..." />
                         </Border>
 
@@ -1635,7 +1656,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="E" />
                         </Border>
 
@@ -1658,8 +1679,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Center Window" />
                         </Border>
 
@@ -1673,7 +1694,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Space" />
                         </Border>
 
@@ -1695,8 +1716,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Reload" />
                         </Border>
 
@@ -1710,7 +1731,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Ctrl + R" />
                         </Border>
 
@@ -1732,8 +1753,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Crop Image" />
                         </Border>
 
@@ -1747,7 +1768,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="C" />
                         </Border>
 
@@ -1764,12 +1785,12 @@
 
                     <Label
                         Width="490"
-                        Margin="0,9,0,7"
+                        Margin="5,0,0,9"
                         HorizontalAlignment="Center"
                         Content="Extra Mouse Key Functions"
-                        FontSize="16" />
+                        FontSize="15" />
 
-                    <Grid Width="480">
+                    <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
@@ -1788,8 +1809,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Next Image" />
                         </Border>
 
@@ -1803,7 +1824,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Shift + Mousewheel" />
                         </Border>
 
@@ -1818,7 +1839,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Browser Forward" />
                         </Border>
 
@@ -1832,8 +1853,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
-                                Margin="10,0,0,0"
-                                FontSize="16"
+                                Margin="10,3,0,3"
+                                FontSize="15"
                                 Text="Previous Image" />
                         </Border>
 
@@ -1847,7 +1868,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Shift + Mousewheel" />
                         </Border>
 
@@ -1862,27 +1883,32 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
+                                FontSize="15"
                                 Text="Browser Backward" />
                         </Border>
 
                     </Grid>
 
 
-                    <StackPanel Margin="0,25,0,7">
+                    <StackPanel Margin="0,28,0,7">
+
                         <Label
-                            Margin="0,5,0,12"
+                            Margin="1,0,0,11"
                             HorizontalAlignment="Center"
-                            Content="Credits"
-                            FontSize="20"
+                            Content="Attributions and Credits"
+                            FontSize="17"
                             Style="{StaticResource LabelShadow}" />
 
                         <Label
+                            Margin="0,3,0,10"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Top"
-                            Content="Fonts Used:"
+                            Content="Fonts used:"
                             FontSize="16" />
+
+
                         <TextBlock
+                            Margin="0,0,0,2"
                             FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
                             FontSize="16"
                             TextAlignment="Center"
@@ -1913,12 +1939,15 @@
                                 </Hyperlink.Foreground>
                             </Hyperlink>
                         </TextBlock>
-                    </StackPanel>
 
-                    <StackPanel Margin="0,7">
-                        <Label HorizontalAlignment="Center" FontSize="16">Icons Used:</Label>
+                        <Label
+                            Margin="0,20,0,10"
+                            HorizontalAlignment="Center"
+                            Content="Icons used:"
+                            FontSize="16" />
+
                         <TextBlock
-                            FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
+                            Margin="0,0,0,2"
                             FontSize="14"
                             TextAlignment="Center"
                             ToolTip="https://useiconic.com/open/">
@@ -1934,7 +1963,7 @@
                         </TextBlock>
                         <TextBlock
                             x:Name="FlatIcon"
-                            FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
+                            Margin="0,0,0,2"
                             FontSize="14"
                             TextAlignment="Center"
                             ToolTip="https://www.flaticon.com/free-icon/camera_2905172">
@@ -1948,7 +1977,7 @@
 
                         <TextBlock
                             x:Name="Ionic"
-                            FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
+                            Margin="0,0,0,2"
                             FontSize="14"
                             TextAlignment="Center"
                             ToolTip="http://Ionicons.com/">
@@ -1960,28 +1989,27 @@
                             </Hyperlink>
                         </TextBlock>
 
-                        <TextBlock
-                            x:Name="FontAwesome"
-                            FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
-                            FontSize="14"
-                            TextAlignment="Center"
-                            ToolTip="http://fontawesome.io/">
+                        <TextBlock TextAlignment="Center" ToolTip="http://fontawesome.io/">
                             <Hyperlink NavigateUri="http://fontawesome.io/" RequestNavigate="Hyperlink_RequestNavigate">
-                                FontAwesome
+                                <TextBlock
+                                    x:Name="FontAwesome"
+                                    Margin="0,0,0,2"
+                                    FontSize="14"
+                                    Text="FontAwesome" />
                                 <Hyperlink.Foreground>
                                     <SolidColorBrush x:Name="FontAwesomeBrush" Color="{StaticResource MainColor}" />
                                 </Hyperlink.Foreground>
                             </Hyperlink>
                         </TextBlock>
 
-                        <TextBlock
-                            x:Name="zondicons"
-                            FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
-                            FontSize="14"
-                            TextAlignment="Center"
-                            ToolTip="http://www.zondicons.com/icons.html">
+                        <TextBlock TextAlignment="Center">
                             <Hyperlink NavigateUri="http://www.zondicons.com/icons.html" RequestNavigate="Hyperlink_RequestNavigate">
-                                Zondicons
+                                <TextBlock
+                                    x:Name="zondicons"
+                                    Margin="0,0,0,2"
+                                    FontSize="14"
+                                    Text="Zondicons"
+                                    ToolTip="http://www.zondicons.com/icons.html" />
                                 <Hyperlink.Foreground>
                                     <SolidColorBrush x:Name="zondiconsBrush" Color="{StaticResource MainColor}" />
                                 </Hyperlink.Foreground>
@@ -1992,39 +2020,38 @@
                     <StackPanel Margin="0,36,0,0">
 
                         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                            <TextBlock
-                                x:Name="GitHub"
-                                FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
-                                FontSize="14"
-                                TextAlignment="Center"
-                                ToolTip="https://github.com/Ruben2776/PicView">
+                            <TextBlock>
                                 <Hyperlink NavigateUri="https://github.com/Ruben2776/PicView" RequestNavigate="Hyperlink_RequestNavigate">
-                                    Github directory
                                     <Hyperlink.Foreground>
                                         <SolidColorBrush x:Name="GitHubBrush" Color="{StaticResource MainColor}" />
                                     </Hyperlink.Foreground>
+                                    <TextBlock
+                                        x:Name="GitHub"
+                                        FontSize="14"
+                                        Text="Github repository"
+                                        TextAlignment="Center"
+                                        ToolTip="https://github.com/Ruben2776/PicView" />
                                 </Hyperlink>
                             </TextBlock>
                             <Path
                                 Width="16"
                                 Height="16"
-                                Margin="3,0,0,0"
+                                Margin="5,0,0,0"
                                 Data="M256,32C132.3,32,32,134.9,32,261.7c0,101.5,64.2,187.5,153.2,217.9a17.56,17.56,0,0,0,3.8.4c8.3,0,11.5-6.1,11.5-11.4,0-5.5-.2-19.9-.3-39.1a102.4,102.4,0,0,1-22.6,2.7c-43.1,0-52.9-33.5-52.9-33.5-10.2-26.5-24.9-33.6-24.9-33.6-19.5-13.7-.1-14.1,1.4-14.1h.1c22.5,2,34.3,23.8,34.3,23.8,11.2,19.6,26.2,25.1,39.6,25.1a63,63,0,0,0,25.6-6c2-14.8,7.8-24.9,14.2-30.7-49.7-5.8-102-25.5-102-113.5,0-25.1,8.7-45.6,23-61.6-2.3-5.8-10-29.2,2.2-60.8a18.64,18.64,0,0,1,5-.5c8.1,0,26.4,3.1,56.6,24.1a208.21,208.21,0,0,1,112.2,0c30.2-21,48.5-24.1,56.6-24.1a18.64,18.64,0,0,1,5,.5c12.2,31.6,4.5,55,2.2,60.8,14.3,16.1,23,36.6,23,61.6,0,88.2-52.4,107.6-102.3,113.3,8,7.1,15.2,21.1,15.2,42.5,0,30.7-.3,55.5-.3,63,0,5.4,3.1,11.5,11.4,11.5a19.35,19.35,0,0,0,4-.4C415.9,449.2,480,363.1,480,261.7,480,134.9,379.7,32,256,32Z"
                                 Fill="{StaticResource MainColorBrush}"
                                 Stretch="Fill" />
                         </StackPanel>
 
                         <TextBlock
-                            Margin="0,2"
+                            Margin="0,7,0,2"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
-                            FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
                             FontSize="12"
                             Text="Made by Ruben Hyldgaard Negendahl" />
 
                         <Label
                             x:Name="appVersion"
-                            Margin="0,2"
+                            Margin="0,12,0,15"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
                             Content="Version : " />

@@ -32,9 +32,6 @@ namespace PicView.UI.Windows
             // CloseButton
             CloseButton.TheButton.Click += delegate { Hide(); TheMainWindow.Focus(); };
 
-            // MinButton
-            MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
-
             TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
 
             Aller.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(AllerBrush); };
