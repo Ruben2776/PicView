@@ -6,14 +6,12 @@
     AllowsTransparency="True"
     Background="{x:Null}"
     Focusable="False"
+    Foreground="{x:Null}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     Topmost="False"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None">
-    <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="0" UseAeroCaptionButtons="False" />
-    </WindowChrome.WindowChrome>
     <Grid
         x:Name="grid"
         Background="#A4000000"

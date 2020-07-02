@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PicView.SystemIntegration;
+using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -33,6 +34,8 @@ namespace PicView.UI.Windows
             Application.Current.MainWindow.Focus();
             LostFocus += FakeWindow_LostFocus;
             GotFocus += FakeWindow_LostFocus;
+
+            EnableBlur(this);
 
             // Hide from alt tab
             var helper = new WindowInteropHelper(this).Handle;

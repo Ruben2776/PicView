@@ -2,6 +2,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Windows;
+using System.Windows.Interop;
 
 namespace PicView.SystemIntegration
 {
@@ -141,8 +143,105 @@ namespace PicView.SystemIntegration
         [StructLayout(LayoutKind.Sequential)]
         internal struct Win32Point
         {
-            public Int32 X;
-            public Int32 Y;
+            public int X;
+            public int Y;
         };
+
+        enum AccentState
+        {
+            ACCENT_DISABLED = 0,
+            ACCENT_ENABLE_GRADIENT = 1,
+            ACCENT_ENABLE_TRANSPARENTGRADIENT = 2,
+            ACCENT_ENABLE_BLURBEHIND = 3,
+            ACCENT_INVALID_STATE = 4
+        }
+
+        struct AccentPolicy : IEquatable<AccentPolicy>
+        {
+            public AccentState AccentState;
+            public int AccentFlags;
+            public int GradientColor;
+            public int AnimationId;
+
+            public override bool Equals(object obj)
+            {
+                return obj is AccentPolicy policy && Equals(policy);
+            }
+
+            public bool Equals(AccentPolicy other)
+            {
+                return AnimationId == other.AnimationId;
+            }
+
+            public static bool operator ==(AccentPolicy left, AccentPolicy right)
+            {
+                return left.Equals(right);
+            }
+
+            public static bool operator !=(AccentPolicy left, AccentPolicy right)
+            {
+                return !(left == right);
+            }
+
+            public override int GetHashCode()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        struct WindowCompositionAttributeData : IEquatable<WindowCompositionAttributeData>
+        {
+            public WindowCompositionAttribute Attribute;
+            public IntPtr Data;
+            public int SizeOfData;
+
+            public override bool Equals(object obj)
+            {
+                return obj is WindowCompositionAttributeData data && Equals(data);
+            }
+
+            public bool Equals(WindowCompositionAttributeData other)
+            {
+                return Attribute == other.Attribute &&
+                       Data.Equals(other.Data) &&
+                       SizeOfData == other.SizeOfData;
+            }
+
+            public override int GetHashCode()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        enum WindowCompositionAttribute
+        {
+            WCA_ACCENT_POLICY = 19
+        }
+
+        [DllImport("user32.dll")]
+        static extern int SetWindowCompositionAttribute(IntPtr hwnd, ref WindowCompositionAttributeData data);
+
+        internal static void EnableBlur(Window window)
+        {
+            var windowHelper = new WindowInteropHelper(window);
+            var accent = new AccentPolicy
+            {
+                AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND
+            };
+
+            var accentStructSize = Marshal.SizeOf(accent);
+            var accentPtr = Marshal.AllocHGlobal(accentStructSize);
+            Marshal.StructureToPtr(accent, accentPtr, false);
+
+            var Data = new WindowCompositionAttributeData
+            {
+                Attribute = WindowCompositionAttribute.WCA_ACCENT_POLICY,
+                SizeOfData = accentStructSize,
+                Data = accentPtr
+            };
+
+            _ = SetWindowCompositionAttribute(windowHelper.Handle, ref Data);
+            Marshal.FreeHGlobal(accentPtr);
+        }
     }
 }
