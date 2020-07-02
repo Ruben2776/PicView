@@ -147,7 +147,7 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static void ChangeFolder(bool backup = false)
         {
-            if (backup)
+            if (Pics.Count > 0 && backup)
             {
                 // Make a backup of xPicPath and FolderIndex
                 if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]))
@@ -155,6 +155,7 @@ namespace PicView.ChangeImage
                     xPicPath = Pics[FolderIndex];
                 }
             }
+
 
             Pics.Clear();
             Preloader.Clear();
