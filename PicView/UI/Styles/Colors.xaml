@@ -11,7 +11,7 @@
     <SolidColorBrush x:Key="ChosenColorBrush" Color="{DynamicResource ChosenColor}" />
 
     <!--  Main Color  -->
-    <Color x:Key="MainColor">#FFF7F4F4</Color>
+    <Color x:Key="MainColor">#FFf6f4f4</Color>
     <SolidColorBrush x:Key="MainColorBrush" Color="{StaticResource MainColor}" />
 
     <!--  Main Color faded  -->

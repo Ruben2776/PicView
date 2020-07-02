@@ -1,6 +1,9 @@
 ﻿using PicView.UI.Windows;
+using System;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
 using static PicView.Library.Fields;
 
 namespace PicView.UI.Loading
@@ -23,7 +26,8 @@ namespace PicView.UI.Loading
             {
                 infoWindow = new InfoWindow
                 {
-                    Owner = TheMainWindow
+                    Owner = TheMainWindow,
+                    Opacity = 0
                 };
             }
             else
@@ -40,7 +44,22 @@ namespace PicView.UI.Loading
             infoWindow.Left = TheMainWindow.Left + (TheMainWindow.Width - infoWindow.Width) / 2;
             infoWindow.Top = TheMainWindow.Top + (TheMainWindow.Height - infoWindow.Height) / 2;
 
+            TheMainWindow.Effect = new BlurEffect
+            {
+                RenderingBias = RenderingBias.Quality,
+                KernelType = KernelType.Gaussian,
+                Radius = 9
+            };
+
+            infoWindow.BeginAnimation(Window.OpacityProperty, new DoubleAnimation
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromSeconds(.3)
+            });
+
             infoWindow.ShowDialog();
+            
 #if DEBUG
             Trace.WriteLine("HelpWindow loaded ");
 #endif

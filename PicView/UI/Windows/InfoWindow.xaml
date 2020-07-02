@@ -5,10 +5,9 @@
     xmlns:uc="clr-namespace:PicView.UI.UserControls"
     Title="Information, help &amp; shortcuts"
     AllowsTransparency="True"
-    Background="#99212020"
+    Background="#990F0F0F"
     FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
     Foreground="{StaticResource MainColorBrush}"
-    ResizeMode="CanMinimize"
     ShowInTaskbar="False"
     WindowStyle="None">
 
@@ -87,12 +86,12 @@
                         Margin="1,22,0,11"
                         HorizontalAlignment="Center"
                         Content="Application Shortcuts"
-                        FontSize="17"
+                        FontSize="16"
                         Style="{StaticResource LabelShadow}" />
 
                     <Label
                         Width="490"
-                        Margin="5,0,0,9"
+                        Margin="5,0,0,11"
                         HorizontalAlignment="Center"
                         Content="Navigation"
                         FontSize="16" />
@@ -135,7 +134,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="A" />
                         </Border>
 
@@ -150,7 +150,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="Left" />
                         </Border>
 
@@ -179,7 +180,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="D" />
                         </Border>
 
@@ -194,7 +196,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="Right" />
                         </Border>
 
@@ -219,11 +222,23 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Ctrl + A" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Ctrl" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="A" />
+                            </StackPanel>
                         </Border>
 
 
@@ -237,7 +252,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="Ctrl + Left" />
                         </Border>
 
@@ -262,11 +278,23 @@
                             Background="{StaticResource BackgroundColorBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,0">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Ctrl + D" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Ctrl" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="D" />
+                            </StackPanel>
                         </Border>
 
 
@@ -280,7 +308,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="Ctrl + Right" />
                         </Border>
 
@@ -307,7 +336,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="L" />
                         </Border>
 
@@ -332,10 +362,10 @@
 
                     <Label
                         Width="490"
-                        Margin="5,0,0,9"
+                        Margin="5,0,0,11"
                         HorizontalAlignment="Center"
                         Content="Image Control"
-                        FontSize="15" />
+                        FontSize="16" />
 
                     <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
@@ -373,6 +403,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontSize="15"
+                                Opacity=".96"
                                 Text="W" />
                         </Border>
 
@@ -388,6 +419,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontSize="15"
+                                Opacity=".96"
                                 Text="Up" />
                         </Border>
 
@@ -417,6 +449,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontSize="15"
+                                Opacity=".96"
                                 Text="S" />
                         </Border>
 
@@ -432,6 +465,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontSize="15"
+                                Opacity=".96"
                                 Text="Down" />
                         </Border>
 
@@ -460,6 +494,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontSize="15"
+                                Opacity=".96"
                                 Text="F" />
                         </Border>
 
@@ -476,10 +511,10 @@
 
                     <Label
                         Width="490"
-                        Margin="5,0,0,9"
+                        Margin="5,0,0,11"
                         HorizontalAlignment="Center"
                         Content="Zoom"
-                        FontSize="15" />
+                        FontSize="16" />
 
                     <Grid Width="480" Margin="0,0,0,16">
                         <Grid.ColumnDefinitions>
@@ -515,11 +550,23 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Ctrl + Mouse Wheel" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Ctrl" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Mouse Wheel" />
+                            </StackPanel>
                         </Border>
 
 
@@ -533,7 +580,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="Numpad +" />
                         </Border>
 
@@ -559,11 +607,23 @@
                             Background="{StaticResource BackgroundColorBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Ctrl + Mouse Wheel" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Ctrl" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Mouse Wheel" />
+                            </StackPanel>
                         </Border>
 
 
@@ -577,7 +637,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="Numpad -" />
                         </Border>
 
@@ -601,11 +662,23 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Ctrl + Mouse Drag" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Ctrl" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Mouse Drag" />
+                            </StackPanel>
                         </Border>
 
 
@@ -638,11 +711,23 @@
                             Background="{StaticResource BackgroundColorBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Ctrl + Double Click" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Ctrl" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Double Click" />
+                            </StackPanel>
                         </Border>
 
 
@@ -677,7 +762,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="X" />
                         </Border>
 
@@ -703,10 +789,10 @@
 
                     <Label
                         Width="490"
-                        Margin="5,0,0,9"
+                        Margin="5,0,0,11"
                         HorizontalAlignment="Center"
                         Content="Window Scaling"
-                        FontSize="15" />
+                        FontSize="16" />
 
                     <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
@@ -744,7 +830,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="1" />
                         </Border>
 
@@ -789,7 +876,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="2" />
                         </Border>
 
@@ -833,7 +921,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="3" />
                         </Border>
 
@@ -877,7 +966,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="4" />
                         </Border>
 
@@ -904,10 +994,10 @@
 
                     <Label
                         Width="490"
-                        Margin="5,0,0,9"
+                        Margin="5,0,0,11"
                         HorizontalAlignment="Center"
                         Content="Interface Configuration"
-                        FontSize="15" />
+                        FontSize="16" />
 
                     <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
@@ -942,11 +1032,23 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Alt + Z" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Alt" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Z" />
+                            </StackPanel>
                         </Border>
 
 
@@ -990,7 +1092,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="T" />
                         </Border>
 
@@ -1034,7 +1137,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="F11" />
                         </Border>
 
@@ -1046,11 +1150,23 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Alt + Enter" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Alt" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Enter" />
+                            </StackPanel>
                         </Border>
 
 
@@ -1077,7 +1193,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="F5" />
                         </Border>
 
@@ -1095,10 +1212,10 @@
 
                     <Label
                         Width="490"
-                        Margin="5,0,0,9"
+                        Margin="5,0,0,11"
                         HorizontalAlignment="Center"
                         Content="File Management"
-                        FontSize="15" />
+                        FontSize="16" />
 
 
                     <Grid Width="480" Margin="0,0,0,20">
@@ -1140,11 +1257,23 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Ctrl + O" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Ctrl" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="O" />
+                            </StackPanel>
                         </Border>
 
 
@@ -1158,7 +1287,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="O" />
                         </Border>
 
@@ -1184,11 +1314,23 @@
                             Background="{StaticResource BackgroundColorBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Ctrl + S" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Ctrl" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="S" />
+                            </StackPanel>
                         </Border>
 
 
@@ -1221,11 +1363,23 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Ctrl + P" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Ctrl" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="P" />
+                            </StackPanel>
                         </Border>
 
 
@@ -1257,11 +1411,23 @@
                             Background="{StaticResource BackgroundColorBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Ctrl + C" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Ctrl" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="C" />
+                            </StackPanel>
                         </Border>
 
 
@@ -1272,12 +1438,24 @@
                             Background="{StaticResource BackgroundColorBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Drag Image"
-                                ToolTip="Drag file to Windows Explorer or another application" />
+                                Orientation="Horizontal"
+                                ToolTip="Drag file to Windows Explorer or another application">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Ctrl" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Drag Image" />
+                            </StackPanel>
                         </Border>
 
 
@@ -1301,11 +1479,23 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Ctrl + X" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Ctrl" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="P" />
+                            </StackPanel>
                         </Border>
 
 
@@ -1341,7 +1531,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="Delete" />
                         </Border>
 
@@ -1353,11 +1544,23 @@
                             Background="{StaticResource BackgroundColorBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Shift + Delete" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Shift" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="P" />
+                            </StackPanel>
                         </Border>
 
                         <Border
@@ -1383,7 +1586,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="F2" />
                         </Border>
 
@@ -1420,7 +1624,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="F3" />
                         </Border>
 
@@ -1453,11 +1658,23 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Ctrl + I" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Ctrl" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="I" />
+                            </StackPanel>
                         </Border>
 
 
@@ -1474,10 +1691,10 @@
 
                     <Label
                         Width="490"
-                        Margin="5,0,0,9"
+                        Margin="5,0,0,11"
                         HorizontalAlignment="Center"
                         Content="Window Management"
-                        FontSize="15" />
+                        FontSize="16" />
 
                     <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
@@ -1514,7 +1731,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="F1" />
                         </Border>
 
@@ -1552,7 +1770,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="F4" />
                         </Border>
 
@@ -1589,7 +1808,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="Esc"
                                 ToolTip="Closes currently opened window/menu" />
                         </Border>
@@ -1602,12 +1822,24 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Ctrl + Q"
-                                ToolTip="Closes the whole application" />
+                                Orientation="Horizontal"
+                                ToolTip="Closes the whole application">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Ctrl" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Q" />
+                            </StackPanel>
                         </Border>
 
                     </Grid>
@@ -1615,10 +1847,10 @@
 
                     <Label
                         Width="490"
-                        Margin="5,0,0,9"
+                        Margin="5,0,0,11"
                         HorizontalAlignment="Center"
                         Content="Additional Functions"
-                        FontSize="15" />
+                        FontSize="16" />
 
                     <Grid Width="480" Margin="0,0,0,16">
                         <Grid.ColumnDefinitions>
@@ -1656,7 +1888,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="E" />
                         </Border>
 
@@ -1694,7 +1927,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="Space" />
                         </Border>
 
@@ -1728,11 +1962,23 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Ctrl + R" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Ctrl" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="I" />
+                            </StackPanel>
                         </Border>
 
 
@@ -1768,7 +2014,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="C" />
                         </Border>
 
@@ -1785,10 +2032,10 @@
 
                     <Label
                         Width="490"
-                        Margin="5,0,0,9"
+                        Margin="5,0,0,11"
                         HorizontalAlignment="Center"
                         Content="Extra Mouse Key Functions"
-                        FontSize="15" />
+                        FontSize="16" />
 
                     <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
@@ -1821,11 +2068,23 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Shift + Mousewheel" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Shift" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Mouse Wheel" />
+                            </StackPanel>
                         </Border>
 
 
@@ -1839,7 +2098,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="Browser Forward" />
                         </Border>
 
@@ -1865,11 +2125,23 @@
                             Background="{StaticResource BackgroundColorBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Shift + Mousewheel" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Shift" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock
+                                    FontSize="14"
+                                    Opacity=".96"
+                                    Text="Mouse Wheel" />
+                            </StackPanel>
                         </Border>
 
 
@@ -1883,7 +2155,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
+                                FontSize="14"
+                                Opacity=".96"
                                 Text="Browser Backward" />
                         </Border>
 

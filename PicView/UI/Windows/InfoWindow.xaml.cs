@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using static PicView.Library.Fields;
 
@@ -30,7 +31,7 @@ namespace PicView.UI.Windows
             Scroller.MouseWheel += Info_MouseWheel;
 
             // CloseButton
-            CloseButton.TheButton.Click += delegate { Hide(); TheMainWindow.Focus(); };
+            CloseButton.TheButton.Click += delegate { HideLogic(); };
 
             TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
 
@@ -99,8 +100,7 @@ namespace PicView.UI.Windows
             switch (e.Key)
             {
                 case Key.Escape:
-                    Hide();
-                    TheMainWindow.Focus();
+                    HideLogic();
                     break;
 
                 case Key.Q:
@@ -125,6 +125,25 @@ namespace PicView.UI.Windows
         }
 
         #endregion Keyboard Shortcuts
+
+        private void HideLogic()
+        {
+            var da = new DoubleAnimation
+            {
+                From = 1,
+                To = 0,
+                Duration = TimeSpan.FromSeconds(.3)
+            };
+
+            da.Completed += delegate
+            {
+                Hide();
+            };
+
+            BeginAnimation(OpacityProperty, da);
+            TheMainWindow.Effect = null;
+            TheMainWindow.Focus();
+        }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
