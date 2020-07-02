@@ -44,7 +44,7 @@ namespace PicView.UI.PicGallery
             }
             else
             {
-                picGallery.Width = picGalleryItem_Size + 19; // 17 for scrollbar width + 2 for borders
+                picGallery.Width = picGalleryItem_Size + 14; // 17 for scrollbar width + 2 for borders
                 picGallery.Height = MonitorInfo.Height;
 
                 picGallery.HorizontalAlignment = HorizontalAlignment.Right;
