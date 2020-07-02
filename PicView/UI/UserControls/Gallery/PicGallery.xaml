@@ -12,7 +12,7 @@
         x:Name="border"
         Background="{StaticResource BackgroundColorBrushFade}"
         BorderBrush="{StaticResource BorderBrush}"
-        BorderThickness="1">
+        BorderThickness="1,0,1,0">
         <Grid x:Name="grid">
             <UserControls:X2
                 x:Name="x2"
