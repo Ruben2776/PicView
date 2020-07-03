@@ -27,7 +27,7 @@ namespace PicView.Shortcuts
         internal static void MainWindow_KeysDown(object sender, KeyEventArgs e)
         {
             // Don't allow keys when typing in text
-            if (TheMainWindow.Bar.IsKeyboardFocusWithin) { return; }
+            if (TheMainWindow.TitleText.IsKeyboardFocusWithin) { return; }
 
             var ctrlDown = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
             var altDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
@@ -463,28 +463,28 @@ namespace PicView.Shortcuts
                     // 1
                     case Key.D1:
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen) { break; }
-                        Tooltip.ShowTooltipMessage("Set to center image in window");
+                        Tooltip.ShowTooltipMessage("Set to center image in window"); // TODO add to translation
                         UpdateUIValues.SetScalingBehaviour(false, false);
                         break;
 
                     // 2
                     case Key.D2:
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen) { break; }
-                        Tooltip.ShowTooltipMessage("Center image in window, fill height");
+                        Tooltip.ShowTooltipMessage("Center image in window, fill height"); // TODO add to translation
                         UpdateUIValues.SetScalingBehaviour(false, true);
                         break;
 
                     // 3
                     case Key.D3:
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen) { break; }
-                        Tooltip.ShowTooltipMessage("Center application to window");
+                        Tooltip.ShowTooltipMessage("Center application to window"); // TODO add to translation
                         UpdateUIValues.SetScalingBehaviour(true, false);
                         break;
 
                     // 4
                     case Key.D4:
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen) { break; }
-                        Tooltip.ShowTooltipMessage("Center application to window, fill height");
+                        Tooltip.ShowTooltipMessage("Center application to window, fill height"); // TODO add to translation
                         UpdateUIValues.SetScalingBehaviour(true, true);
                         break;
 
@@ -572,7 +572,7 @@ namespace PicView.Shortcuts
         internal static void MainWindow_KeysUp(object sender, KeyEventArgs e)
         {
             // Don't allow keys when typing in text
-            if (TheMainWindow.Bar.IsKeyboardFocusWithin) { return; }
+            if (TheMainWindow.TitleText.IsKeyboardFocusWithin) { return; }
 
             switch (e.Key)
             {
@@ -596,14 +596,14 @@ namespace PicView.Shortcuts
             {
                 case MouseButton.Right:
                 case MouseButton.Left:
-                    if (AutoScrolling)
+                    if (IsAutoScrolling)
                     {
                         StopAutoScroll();
                     }
                     break;
 
                 case MouseButton.Middle:
-                    if (!AutoScrolling)
+                    if (!IsAutoScrolling)
                     {
                         StartAutoScroll(e);
                     }

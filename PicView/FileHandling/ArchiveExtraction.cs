@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PicView.ChangeImage;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -174,8 +175,8 @@ namespace PicView.FileHandling
                 return true;
             }
 
-            TheMainWindow.Bar.Text = "Unzipping...";
-            TheMainWindow.Bar.ToolTip = TheMainWindow.Bar.Text;
+            TheMainWindow.TitleText.Text = "Unzipping..."; // TODO add to translation
+            TheMainWindow.TitleText.ToolTip = TheMainWindow.TitleText.Text;
             await Task.Delay(100).ConfigureAwait(true);
 
             // TempZipPath is not null = images being extracted
@@ -215,8 +216,8 @@ namespace PicView.FileHandling
 #if DEBUG
                                 Trace.WriteLine("Process killed");
 #endif
-                                ShowTooltipMessage("Password protected archive not supported");
-                                //Reload(true);
+                                ShowTooltipMessage("Password protected archive not supported"); // TODO add to translation
+                                Error_Handling.Reload(true);
                                 getProcesses[0].Kill();
                                 return false;
                             }

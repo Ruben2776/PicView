@@ -1,4 +1,5 @@
 ﻿using PicView.Library;
+using PicView.UI.TransformImage;
 using System;
 using System.Timers;
 using static PicView.Library.Fields;
@@ -44,7 +45,7 @@ namespace PicView.UI.Animations
                     AnimationHelper.Fade(minus, 0, timespan);
                     return;
                 }
-                else if (AutoScrolling)
+                else if (Scroll.IsAutoScrolling)
                 {
                     clickArrowLeft.Opacity =
                     clickArrowRight.Opacity =

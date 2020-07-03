@@ -1,6 +1,4 @@
 ﻿using PicView.SystemIntegration;
-using System.Collections.Generic;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -10,14 +8,6 @@ namespace PicView.Library
     internal static class Fields
     {
         internal const string AppName = "PicView";
-        internal const string Loading = "Loading...";
-        internal const string TxtCopy = "Filename added to clipboard";
-        internal const string FileCopy = "File added to clipboard";
-        internal const string ImageCopy = "Image added to clipboard";
-        internal const string ImageCut = "Image added to move clipboard";
-        internal const string ExpFind = "Locating in file explorer";
-        internal const string NoImage = "No image loaded";
-        internal const string CannotRender = "Unable to render image";
 
         internal const string SupportedFilesFilter =
         " *.jpg *.jpeg *.jpe *.png *.bmp *.tif *.tiff *.gif *.ico *.wdp *.svg *.psd *.psb *.orf *.cr2 *.crw *.dng *.raf *.raw *.mrw *.nef *.x3f *.arw *.webp *"
@@ -81,7 +71,7 @@ namespace PicView.Library
         internal static bool Flipped { get; set; }
         internal static bool CanNavigate { get; set; }
         internal static bool FreshStartup { get; set; }
-        internal static bool AutoScrolling { get; set; }
+        
         internal static bool ClickArrowRightClicked { get; set; }
         internal static bool ClickArrowLeftClicked { get; set; }
         internal static bool Reverse { get; set; }

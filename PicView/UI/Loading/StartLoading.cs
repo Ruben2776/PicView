@@ -5,7 +5,6 @@ using PicView.UI.Sizing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -55,7 +54,14 @@ namespace PicView.UI.Loading
 
             ConfigColors.UpdateColor();
 
-            #region Add dictionaries // Hack to make colors update.. Possibly feels faster?
+            #region Add dictionaries 
+
+            Application.Current.Resources.MergedDictionaries.Add(
+                new ResourceDictionary
+                {
+                    Source = new Uri(@"/PicView;component/Translations/en-US.xaml", UriKind.Relative)
+                }
+            );
 
             Application.Current.Resources.MergedDictionaries.Add(
                 new ResourceDictionary

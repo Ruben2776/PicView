@@ -15,8 +15,6 @@ namespace PicView.UI.DragAndDrop
 {
     internal static class Image_DragAndDrop
     {
-        internal const string DragOverString = "Drop to load image";
-
         /// <summary>
         /// Check if dragged file is valid,
         /// returns false for valid file with no thumbnail,
@@ -82,7 +80,7 @@ namespace PicView.UI.DragAndDrop
             // Tell that it's succeeded
             e.Effects = DragDropEffects.Copy;
             e.Handled = true;
-            ShowTooltipMessage(DragOverString, true);
+            ShowTooltipMessage(Application.Current.Resources["DragOverString"] as string, true);
 
             // If no image, fix it to container
             if (TheMainWindow.MainImage.Source == null)
@@ -120,7 +118,7 @@ namespace PicView.UI.DragAndDrop
             {
                 TheMainWindow.MainImage.Source = prevPicResource;
             }
-            else if (TheMainWindow.Bar.Text == "No image loaded")
+            else if (TheMainWindow.TitleText.Text == "No image loaded")
             {
                 TheMainWindow.MainImage.Source = null;
             }

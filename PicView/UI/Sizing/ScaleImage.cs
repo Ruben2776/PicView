@@ -102,7 +102,7 @@ namespace PicView.UI.Sizing
             if (Properties.Settings.Default.PicGallery == 2)
             {
                 /// Extra padding for picgallery required
-                padding += picGalleryItem_Size * 2; // Fixes Math.Min returning incorrectly
+                padding += picGalleryItem_Size - 50; // Fixes Math.Min returning incorrectly
                 maxWidth = Math.Min(monitorWidth - padding, width);
                 maxHeight = Math.Min(monitorHeight, height);
             }
@@ -191,14 +191,14 @@ namespace PicView.UI.Sizing
             {
                 /// Update mainWindow.TitleBar width to dynamically fit new size
                 var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(xWidth, TheMainWindow.MinWidth) : Math.Max(xHeight, TheMainWindow.MinHeight);
-                TheMainWindow.Bar.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
+                TheMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
 
                 if (!Properties.Settings.Default.Fullscreen)
                 {
                     if (Properties.Settings.Default.PicGallery == 2 && xWidth >= monitorWidth - (picGalleryItem_Size + 200))
                     {
                         // Offset window to not overlap gallery
-                        TheMainWindow.Left = ((MonitorInfo.WorkArea.Width - picGalleryItem_Size - (TheMainWindow.Width * MonitorInfo.DpiScaling)) / 2)
+                        TheMainWindow.Left = ((MonitorInfo.WorkArea.Width - picGalleryItem_Size - (TheMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
                                           + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
                         TheMainWindow.Top = ((MonitorInfo.WorkArea.Height
                                            - (TheMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
@@ -213,7 +213,7 @@ namespace PicView.UI.Sizing
             else
             {
                 /// Fix title width to window size
-                TheMainWindow.Bar.MaxWidth = TheMainWindow.ActualWidth - interfaceSize;
+                TheMainWindow.TitleText.MaxWidth = TheMainWindow.ActualWidth - interfaceSize;
             }
 
             if (ZoomLogic.ZoomValue == 1.0)

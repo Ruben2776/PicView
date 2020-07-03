@@ -27,7 +27,6 @@ namespace PicView.UI.Windows
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             KeyDown += KeysDown;
-            KeyUp += KeysUp;
             Scroller.MouseWheel += Info_MouseWheel;
 
             // CloseButton
@@ -74,6 +73,17 @@ namespace PicView.UI.Windows
         {
             switch (e.Key)
             {
+                case Key.Escape:
+                case Key.F1:
+                    HideLogic();
+                    break;
+
+                case Key.Q:
+                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    {
+                        Environment.Exit(0);
+                    }
+                    break;
                 case Key.Down:
                 case Key.PageDown:
                 case Key.S:
@@ -84,30 +94,6 @@ namespace PicView.UI.Windows
                 case Key.PageUp:
                 case Key.W:
                     Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - zoomSpeed);
-                    break;
-
-                case Key.Q:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        Environment.Exit(0);
-                    }
-                    break;
-            }
-        }
-
-        private void KeysUp(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Escape:
-                    HideLogic();
-                    break;
-
-                case Key.Q:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        Environment.Exit(0);
-                    }
                     break;
             }
         }

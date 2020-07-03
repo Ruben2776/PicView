@@ -163,13 +163,13 @@ namespace PicView.UI
             {
                 Properties.Settings.Default.Looping = false;
                 loopcmHeader.IsChecked = false;
-                ShowTooltipMessage("Looping disabled");
+                ShowTooltipMessage("Looping disabled"); // TODO add to translation
             }
             else
             {
                 Properties.Settings.Default.Looping = true;
                 loopcmHeader.IsChecked = true;
-                ShowTooltipMessage("Looping enabled");
+                ShowTooltipMessage("Looping enabled"); // TODO add to translation
             }
         }
 

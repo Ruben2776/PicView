@@ -1,0 +1,33 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!--  TitleText  -->
+    <system:String x:Key="Loading">Loading...</system:String>
+    <system:String x:Key="NoImage">No image loaded</system:String>
+    <system:String x:Key="Files">files</system:String>
+
+    <!--  Info window  -->
+    <system:String x:Key="InfoWindowTitle">Information, help &amp; shortcuts</system:String>
+    <system:String x:Key="ApplicationShortcuts">Application Shortcuts</system:String>
+
+    <!--  Navigation related  -->
+    <system:String x:Key="Navigation">Navigation</system:String>
+    <system:String x:Key="NextImage">Next Image</system:String>
+    <system:String x:Key="PrevImage">Previous Image</system:String>
+
+    <!--  File related  -->
+    <system:String x:Key="Open">Open</system:String>
+    <system:String x:Key="Close">Close</system:String>
+    <system:String x:Key="Save">Save</system:String>
+
+    <!--  Tooltip Messages  -->
+    <system:String x:Key="FileCopy">File added to clipboard</system:String>
+    <system:String x:Key="FileCopyPath">File path added to clipboard</system:String>
+    <system:String x:Key="ImageCopy">Image added to move clipboard</system:String>
+    <system:String x:Key="OpeningInExplorer">Opening file in Windows Explorer</system:String>
+    <system:String x:Key="FileCut">Image added to move clipboard</system:String>
+    <system:String x:Key="DragOverString">Drop to load image</system:String>
+
+</ResourceDictionary>

@@ -27,6 +27,8 @@ namespace PicView.UI.TransformImage
         /// </summary>
         internal static Timer AutoScrollTimer;
 
+        internal static bool IsAutoScrolling { get; set; }
+
         /// <summary>
         /// Toggles scroll and displays it with TooltipStle
         /// </summary>
@@ -42,7 +44,7 @@ namespace PicView.UI.TransformImage
                 if (ChangeImage.Navigation.Pics != null)
                 {
                     TryFitImage();
-                    ShowTooltipMessage(value ? "Scrolling enabled" : "Scrolling disabled");
+                    ShowTooltipMessage(value ? "Scrolling enabled" : "Scrolling disabled"); // TODO add to translation
                 }
             }
         }
@@ -77,7 +79,7 @@ namespace PicView.UI.TransformImage
                 return;
             }
 
-            AutoScrolling = true;
+            IsAutoScrolling = true;
             AutoScrollOrigin = e.GetPosition(TheMainWindow.Scroller);
 
             ShowAutoScrollSign();
@@ -91,7 +93,7 @@ namespace PicView.UI.TransformImage
             AutoScrollTimer.Stop();
             //window.ReleaseMouseCapture();
             AutoScrollTimer.Enabled = false;
-            AutoScrolling = false;
+            IsAutoScrolling = false;
             AutoScrollOrigin = null;
             HideAutoScrollSign();
         }
@@ -117,7 +119,7 @@ namespace PicView.UI.TransformImage
                     // Calculate offset by Y coordinate
                     var offset = (AutoScrollPos.Y - AutoScrollOrigin.Value.Y) / 15;
 
-                    if (AutoScrolling)
+                    if (IsAutoScrolling)
                     {
                         // Tell the scrollviewer to scroll to calculated offset
                         TheMainWindow.Scroller.ScrollToVerticalOffset(

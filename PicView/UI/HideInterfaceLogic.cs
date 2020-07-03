@@ -1,4 +1,5 @@
 ﻿using PicView.UI.PicGallery;
+using PicView.UI.TransformImage;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.Library.Fields;
@@ -133,7 +134,7 @@ namespace PicView.UI
         /// <param name="e"></param>
         internal static void Interface_MouseEnter(object sender, MouseEventArgs e)
         {
-            if (!ActivityTimer.Enabled || AutoScrolling)
+            if (!ActivityTimer.Enabled || Scroll.IsAutoScrolling)
             {
                 ActivityTimer.Start();
             }
@@ -159,7 +160,7 @@ namespace PicView.UI
         /// <param name="e"></param>
         internal static void Interface_MouseMove(object sender, MouseEventArgs e)
         {
-            if (AutoScrolling)
+            if (Scroll.IsAutoScrolling)
             {
                 return;
             }

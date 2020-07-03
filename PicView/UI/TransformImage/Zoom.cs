@@ -105,7 +105,7 @@ namespace PicView.UI.TransformImage
             EditTitleBar.Refocus();
 
             // Logic for auto scrolling
-            if (AutoScrolling)
+            if (IsAutoScrolling)
             {
                 // Report position and enable autoscrolltimer
                 AutoScrollOrigin = e.GetPosition(TheMainWindow);
@@ -130,7 +130,7 @@ namespace PicView.UI.TransformImage
 
         internal static void Bg_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (TheMainWindow.Bar.Bar.IsKeyboardFocusWithin)
+            if (TheMainWindow.TitleText.InnerTextBox.IsKeyboardFocusWithin)
             {
                 // Fix focus
                 EditTitleBar.Refocus();
@@ -152,7 +152,7 @@ namespace PicView.UI.TransformImage
         internal static void MainImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             // Stop autoscrolling or dragging image
-            if (AutoScrolling)
+            if (IsAutoScrolling)
             {
                 StopAutoScroll();
             }
@@ -170,7 +170,7 @@ namespace PicView.UI.TransformImage
         /// <param name="e"></param>
         internal static void MainImage_MouseMove(object sender, MouseEventArgs e)
         {
-            if (AutoScrolling)
+            if (IsAutoScrolling)
             {
                 // Start automainWindow.Scroller and report position
                 AutoScrollPos = e.GetPosition(TheMainWindow.Scroller);
@@ -227,7 +227,7 @@ namespace PicView.UI.TransformImage
             // Disable normal scroll, so we can use our own values
             e.Handled = true;
 
-            if (Properties.Settings.Default.ScrollEnabled && !AutoScrolling)
+            if (Properties.Settings.Default.ScrollEnabled && !IsAutoScrolling)
             {
                 if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
                 {
@@ -253,7 +253,7 @@ namespace PicView.UI.TransformImage
                 Pic(e.Delta > 0);
             }
             // Zoom
-            else if (!AutoScrolling && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            else if (!IsAutoScrolling && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
                 Zoom(e.Delta > 0);
             }

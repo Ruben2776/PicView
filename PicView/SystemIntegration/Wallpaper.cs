@@ -28,7 +28,7 @@ namespace PicView.SystemIntegration
         /// <param name="style"></param>
         internal static void SetWallpaper(WallpaperStyle style)
         {
-            string wallpaper = Library.Utilities.GetURL(TheMainWindow.Bar.Text);
+            string wallpaper = Library.Utilities.GetURL(TheMainWindow.TitleText.Text);
 
             if (Uri.IsWellFormedUriString(wallpaper, UriKind.Absolute)) // Check if from web
                 {

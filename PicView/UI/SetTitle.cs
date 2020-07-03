@@ -1,6 +1,6 @@
-﻿using PicView.ChangeImage;
-using System.IO;
+﻿using System.IO;
 using System.Text;
+using System.Windows;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileFunctions;
 using static PicView.Library.Fields;
@@ -31,8 +31,10 @@ namespace PicView.UI
             }
 
             var s1 = new StringBuilder(90);
-            s1.Append(fileInfo.Name).Append(" ").Append(index + 1).Append("/").Append(Pics.Count).Append(" files")
-                    .Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height)).Append(GetSizeReadable(fileInfo.Length));
+            s1.Append(fileInfo.Name).Append(" ").Append(index + 1).Append("/").Append(Pics.Count).Append(" ")
+                .Append(Application.Current.Resources["Files"] as string)
+                .Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height))
+                .Append(GetSizeReadable(fileInfo.Length));
 
             if (!string.IsNullOrEmpty(ZoomPercentage))
             {
@@ -67,8 +69,8 @@ namespace PicView.UI
             }
 
             TheMainWindow.Title = titleString[0];
-            TheMainWindow.Bar.Text = titleString[1];
-            TheMainWindow.Bar.ToolTip = titleString[2];
+            TheMainWindow.TitleText.Text = titleString[1];
+            TheMainWindow.TitleText.ToolTip = titleString[2];
         }
 
         /// <summary>
@@ -110,8 +112,8 @@ namespace PicView.UI
         {
             var titleString = TitleString(width, height, path);
             TheMainWindow.Title = titleString[0];
-            TheMainWindow.Bar.Text = titleString[1];
-            TheMainWindow.Bar.ToolTip = titleString[1];
+            TheMainWindow.TitleText.Text = titleString[1];
+            TheMainWindow.TitleText.ToolTip = titleString[1];
         }
 
         /// <summary>
@@ -122,14 +124,14 @@ namespace PicView.UI
         /// <param name="height"></param>
         internal static void SetTitleString(int width, int height)
         {
-            string path = Library.Utilities.GetURL(TheMainWindow.Bar.Text);
+            string path = Library.Utilities.GetURL(TheMainWindow.TitleText.Text);
 
             path = string.IsNullOrWhiteSpace(path) ? "Custom image" : path;
 
             var titleString = TitleString(width, height, path);
             TheMainWindow.Title = titleString[0];
-            TheMainWindow.Bar.Text = titleString[1];
-            TheMainWindow.Bar.ToolTip = titleString[1];
+            TheMainWindow.TitleText.Text = titleString[1];
+            TheMainWindow.TitleText.ToolTip = titleString[1];
         }
 
 

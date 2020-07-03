@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Error_Handling;
 using static PicView.FileHandling.ArchiveExtraction;
@@ -39,8 +40,8 @@ namespace PicView.ChangeImage
         internal static async void Pic(string path)
         {
             // Set Loading
-            TheMainWindow.Title = TheMainWindow.Bar.Text = Loading;
-            TheMainWindow.Bar.ToolTip = Loading;
+            TheMainWindow.Title = TheMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
+            TheMainWindow.TitleText.ToolTip = Application.Current.Resources["Loading"] as string;
 
             // Handle if from web
             if (!File.Exists(path))
@@ -89,14 +90,14 @@ namespace PicView.ChangeImage
                     var recovery = await RecoverFailedArchiveAsync().ConfigureAwait(true);
                     if (!recovery)
                     {
-                        ShowTooltipMessage("Archive could not be processed");
+                        ShowTooltipMessage("Archive could not be processed"); // TODO add to translation
                         Reload(true);
                         return;
                     }
                     else
                     {
-                        TheMainWindow.Bar.Text = "Unzipping...";
-                        TheMainWindow.Bar.ToolTip = TheMainWindow.Bar.Text;
+                        TheMainWindow.TitleText.Text = "Unzipping...";
+                        TheMainWindow.TitleText.ToolTip = TheMainWindow.TitleText.Text;
                     }
                     TheMainWindow.Focus();
                 }
@@ -166,9 +167,9 @@ namespace PicView.ChangeImage
 
             if (pic == null)
             {
-                TheMainWindow.Title = Loading;
-                TheMainWindow.Bar.Text = Loading;
-                TheMainWindow.Bar.ToolTip = Loading;
+                TheMainWindow.Title = Application.Current.Resources["Loading"] as string;
+                TheMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
+                TheMainWindow.TitleText.ToolTip = Application.Current.Resources["Loading"] as string;
 
                 var thumb = GetThumb(x, true);
 
@@ -321,7 +322,7 @@ namespace PicView.ChangeImage
             FitImage(pic.PixelWidth, pic.PixelHeight);
             CloseToolTipMessage();
 
-            SetTitleString(pic.PixelWidth, pic.PixelHeight, "Base64 image");
+            SetTitleString(pic.PixelWidth, pic.PixelHeight, "Base64 image"); // TODO add to translation
 
             Taskbar.NoProgress();
 
@@ -545,9 +546,9 @@ namespace PicView.ChangeImage
             TheMainWindow.MainImage.Width = xWidth;
             TheMainWindow.MainImage.Height = xHeight;
 
-            TheMainWindow.Bar.ToolTip =
+            TheMainWindow.TitleText.ToolTip =
             TheMainWindow.Title =
-            TheMainWindow.Bar.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count;
+            TheMainWindow.TitleText.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count; // TODO add to translation
 
             var thumb = GetThumb(FolderIndex);
 

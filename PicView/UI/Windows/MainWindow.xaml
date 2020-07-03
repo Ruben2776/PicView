@@ -65,7 +65,7 @@
                     Fill="{StaticResource BorderBrush}" />
 
                 <uc:CustomTextBox
-                    x:Name="Bar"
+                    x:Name="TitleText"
                     Padding="2,0,2,0"
                     Background="{StaticResource AltInterfaceWBrush}"
                     FontFamily="/PicView;component/Library/Resources/fonts/#Aller"

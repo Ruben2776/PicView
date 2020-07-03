@@ -14,7 +14,7 @@ namespace PicView.UI
 
         internal static void Bar_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (TheMainWindow.Bar.IsFocused)
+            if (TheMainWindow.TitleText.IsFocused)
             {
                 return;
             }
@@ -30,9 +30,9 @@ namespace PicView.UI
             {
                 return;
             }
-            if (!TheMainWindow.Bar.IsFocused)
+            if (!TheMainWindow.TitleText.IsFocused)
             {
-                TheMainWindow.Bar.Bar.Focus();
+                TheMainWindow.TitleText.InnerTextBox.Focus();
                 SelectFileName();
             }
             else
@@ -55,8 +55,8 @@ namespace PicView.UI
 
             e.Handled = true;
 
-            backupTitle = TheMainWindow.Bar.Text;
-            TheMainWindow.Bar.Text = Pics[FolderIndex];
+            backupTitle = TheMainWindow.TitleText.Text;
+            TheMainWindow.TitleText.Text = Pics[FolderIndex];
         }
 
         internal static void SelectFileName()
@@ -64,20 +64,20 @@ namespace PicView.UI
             var filename = Path.GetFileName(Pics[FolderIndex]);
             var start = Pics[FolderIndex].Length - filename.Length;
             var end = Path.GetFileNameWithoutExtension(filename).Length;
-            TheMainWindow.Bar.Bar.Select(start, end);
+            TheMainWindow.TitleText.InnerTextBox.Select(start, end);
         }
 
         internal static void HandleRename()
         {
-            if (FileFunctions.RenameFile(Pics[FolderIndex], TheMainWindow.Bar.Text))
+            if (FileFunctions.RenameFile(Pics[FolderIndex], TheMainWindow.TitleText.Text))
             {
-                Pics[FolderIndex] = TheMainWindow.Bar.Text;
+                Pics[FolderIndex] = TheMainWindow.TitleText.Text;
                 Refocus();
                 Error_Handling.Reload(); // TODO proper renaming of window title, tooltip, etc.
             }
             else
             {
-                Tooltip.ShowTooltipMessage("An error occured moving file");
+                Tooltip.ShowTooltipMessage("An error occured moving file"); // TODO add to translation
                 Refocus();
             }
         }
@@ -87,16 +87,16 @@ namespace PicView.UI
         /// </summary>
         internal static void Refocus()
         {
-            if (!TheMainWindow.Bar.IsFocused)
+            if (!TheMainWindow.TitleText.IsFocused)
             {
                 return;
             }
 
-            FocusManager.SetFocusedElement(FocusManager.GetFocusScope(TheMainWindow.Bar), null);
+            FocusManager.SetFocusedElement(FocusManager.GetFocusScope(TheMainWindow.TitleText), null);
             Keyboard.ClearFocus();
             TheMainWindow.Focus();
 
-            TheMainWindow.Bar.Text = backupTitle;
+            TheMainWindow.TitleText.Text = backupTitle;
             backupTitle = string.Empty;
         }
     }

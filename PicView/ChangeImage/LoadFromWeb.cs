@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.ChangeImage.Error_Handling;
@@ -23,7 +24,7 @@ namespace PicView.ChangeImage
         /// <param name="path"></param>
         internal static async void PicWeb(string path)
         {
-            TheMainWindow.Bar.Text = Loading;
+            TheMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
 
             BitmapSource pic;
             if (Pics != null && Pics.Count > 0)
@@ -70,8 +71,9 @@ namespace PicView.ChangeImage
                 client.DownloadProgressChanged += (sender, e) =>
                 TheMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                 {
-                    TheMainWindow.Title = TheMainWindow.Bar.Text = e.BytesReceived + "/" + e.TotalBytesToReceive + ". " + e.ProgressPercentage + "% complete...";
-                    TheMainWindow.Bar.ToolTip = TheMainWindow.Title;
+                    // TODO add to translation
+                    TheMainWindow.Title = TheMainWindow.TitleText.Text = e.BytesReceived + "/" + e.TotalBytesToReceive + ". " + e.ProgressPercentage + "% complete...";
+                    TheMainWindow.TitleText.ToolTip = TheMainWindow.Title;
                 }));
                 client.DownloadDataCompleted += (sender, e) =>
                 TheMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>

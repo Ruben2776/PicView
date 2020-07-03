@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <TextBox
-        x:Name="Bar"
+        x:Name="InnerTextBox"
         Margin="2,0,2,0"
         VerticalAlignment="Center"
         AcceptsReturn="True"

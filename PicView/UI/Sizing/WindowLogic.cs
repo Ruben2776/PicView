@@ -69,7 +69,7 @@ namespace PicView.UI.Sizing
                 return;
             }
 
-            if (TheMainWindow.Bar.Bar.IsFocused)
+            if (TheMainWindow.TitleText.InnerTextBox.IsFocused)
             {
                 if (e.ClickCount == 2)
                 {

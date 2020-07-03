@@ -144,9 +144,9 @@ namespace PicView.UI.Loading
             galleryShortcut.MouseEnter += Interface_MouseEnter_Negative;
 
             // Bar
-            TheMainWindow.Bar.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
-            TheMainWindow.Bar.Bar.PreviewKeyDown += CustomTextBoxShortcuts.CustomTextBox_KeyDown;
-            TheMainWindow.Bar.PreviewMouseLeftButtonDown += EditTitleBar.Bar_PreviewMouseLeftButtonDown;
+            TheMainWindow.TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
+            TheMainWindow.TitleText.InnerTextBox.PreviewKeyDown += CustomTextBoxShortcuts.CustomTextBox_KeyDown;
+            TheMainWindow.TitleText.PreviewMouseLeftButtonDown += EditTitleBar.Bar_PreviewMouseLeftButtonDown;
 
             // img
             TheMainWindow.MainImage.PreviewMouseLeftButtonDown += DragAndDrop.DragToExplorer.DragFile;

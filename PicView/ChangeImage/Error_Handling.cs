@@ -183,7 +183,7 @@ namespace PicView.ChangeImage
             else
             {
                 // TODO extract url from path or get alternative method
-                s = Path.GetFileName(TheMainWindow.Bar.Text);
+                s = Path.GetFileName(TheMainWindow.TitleText.Text);
             }
 
             if (File.Exists(s))
@@ -222,7 +222,7 @@ namespace PicView.ChangeImage
             else
             {
                 Unload();
-                ShowTooltipMessage("Unknown error occured");
+                ShowTooltipMessage("Unknown error occured"); // TODO add to translation
             }
         }
 
@@ -231,8 +231,8 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static void Unload()
         {
-            TheMainWindow.Bar.ToolTip = TheMainWindow.Bar.Text = NoImage;
-            TheMainWindow.Title = NoImage + " - " + AppName;
+            TheMainWindow.TitleText.ToolTip = TheMainWindow.TitleText.Text = Application.Current.Resources["NoImage"] as string;
+            TheMainWindow.Title = Application.Current.Resources["NoImage"] as string + " - " + AppName;
             CanNavigate = false;
             TheMainWindow.MainImage.Source = null;
             FreshStartup = true;

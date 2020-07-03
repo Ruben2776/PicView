@@ -13,13 +13,13 @@ namespace PicView.UI.UserControls
         }
 
         public string Text {
-            get => Bar.Text;
-            set => Bar.Text = value;
+            get => InnerTextBox.Text;
+            set => InnerTextBox.Text = value;
         }
 
         public new bool IsFocused {
             get {
-                return Bar.IsFocused; 
+                return InnerTextBox.IsFocused; 
             }
         }
     }

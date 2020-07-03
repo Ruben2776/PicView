@@ -30,7 +30,7 @@ namespace PicView.Editing.Crop
             cropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? xWidth : xHeight;
             cropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? xHeight : xWidth;
 
-            TheMainWindow.Bar.Text = "Press Esc to close, Enter to save";
+            TheMainWindow.TitleText.Text = "Press Esc to close, Enter to save"; // TODO add to translation
 
             if (!TheMainWindow.ParentContainer.Children.Contains(cropppingTool))
             {
@@ -107,6 +107,7 @@ namespace PicView.Editing.Crop
                 {
                     Tooltip.ShowTooltipMessage(
                         $"An error occured while saving {fileName} to {Savedlg.FileName}");
+                    // TODO add to translation
                 }
 
                 TheMainWindow.ParentContainer.Children.Remove(cropppingTool);

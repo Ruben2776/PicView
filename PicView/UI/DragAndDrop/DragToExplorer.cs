@@ -22,7 +22,8 @@ namespace PicView.UI.DragAndDrop
                 || TheMainWindow.MainImage.Source == null 
                 || Keyboard.Modifiers == ModifierKeys.Control
                 || Keyboard.Modifiers == ModifierKeys.Shift
-                || Properties.Settings.Default.PicGallery == 2)
+                || Properties.Settings.Default.PicGallery == 2
+                || Scroll.IsAutoScrolling)
             {
                 return;
             }
@@ -36,7 +37,7 @@ namespace PicView.UI.DragAndDrop
                 return;
             }
 
-            if (TheMainWindow.Bar.IsFocused)
+            if (TheMainWindow.TitleText.IsFocused)
             {
                 EditTitleBar.Refocus();
                 return;
@@ -46,7 +47,7 @@ namespace PicView.UI.DragAndDrop
 
             if (Pics.Count == 0)
             {
-                string url = Utilities.GetURL(TheMainWindow.Bar.Text);
+                string url = Utilities.GetURL(TheMainWindow.TitleText.Text);
                 if (Uri.IsWellFormedUriString(url, UriKind.Absolute)) // Check if from web
                 {
                     // Create temp directory

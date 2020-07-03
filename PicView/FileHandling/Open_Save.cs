@@ -3,7 +3,7 @@ using PicView.ImageHandling;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
@@ -37,7 +37,7 @@ namespace PicView.FileHandling
             try
             {
                 Close_UserControls();
-                ShowTooltipMessage(ExpFind);
+                ShowTooltipMessage(Application.Current.Resources["FileCut"] as string);
                 Process.Start("explorer.exe", "/select,\"" + Pics[FolderIndex] + "\"");
             }
 #if DEBUG
@@ -60,7 +60,7 @@ namespace PicView.FileHandling
             var dlg = new OpenFileDialog()
             {
                 Filter = FilterFiles,
-                Title = "Open image - PicView"
+                Title = "Open image - PicView" // TODO add to translation
             };
             if (dlg.ShowDialog().Value)
             {
@@ -120,7 +120,7 @@ namespace PicView.FileHandling
             var Savedlg = new SaveFileDialog()
             {
                 Filter = FilterFiles,
-                Title = "Save image - PicView",
+                Title = "Save image - PicView", // TODO add to translation
                 FileName = fileName
             };
 
@@ -135,14 +135,14 @@ namespace PicView.FileHandling
             {
                 if (!SaveImages.TrySaveImage(Rotateint, Flipped, Pics[FolderIndex], Savedlg.FileName))
                 {
-                    ShowTooltipMessage("Saving file failed");
+                    ShowTooltipMessage("Saving file failed"); // TODO add to translation
                 }
             }
             else
             {
                 if (!SaveImages.TrySaveImage(Rotateint, Flipped, TheMainWindow.MainImage.Source as BitmapSource, Savedlg.FileName))
                 {
-                    ShowTooltipMessage("Saving file failed");
+                    ShowTooltipMessage("Saving file failed"); // TODO add to translation
                 }
             }
 

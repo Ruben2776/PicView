@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Error_Handling;
@@ -25,7 +24,7 @@ namespace PicView.FileHandling
         internal static void CopyText()
         {
             Clipboard.SetText(Pics[FolderIndex]);
-            ShowTooltipMessage(TxtCopy);
+            ShowTooltipMessage(Application.Current.Resources["FileCopyPath"] as string);
         }
 
         /// <summary>
@@ -62,7 +61,7 @@ namespace PicView.FileHandling
         {
             var paths = new System.Collections.Specialized.StringCollection { path };
             Clipboard.SetFileDropList(paths);
-            ShowTooltipMessage(FileCopy);
+            ShowTooltipMessage(Application.Current.Resources["FileCopy"] as string);
         }
 
         internal static void CopyBitmap()
@@ -84,7 +83,7 @@ namespace PicView.FileHandling
                 return;
             }
 
-            ShowTooltipMessage("Copied Image to clipboard");
+            ShowTooltipMessage("Copied Image to clipboard"); // TODO add to translation
         }
 
         /// <summary>
@@ -139,7 +138,7 @@ namespace PicView.FileHandling
             // Clipboard Image
             if (Clipboard.ContainsImage())
             {
-                Pic(Clipboard.GetImage(), "Clipboard Image");
+                Pic(Clipboard.GetImage(), "Clipboard Image"); // TODO add to translation
                 return;
             }
 
@@ -198,7 +197,7 @@ namespace PicView.FileHandling
             }
             else
             {
-                ShowTooltipMessage("An error occured while trying to paste file");
+                ShowTooltipMessage("An error occured while trying to paste file"); // TODO add to translation
             }
         }
 
@@ -228,7 +227,7 @@ namespace PicView.FileHandling
             // Force Preloader to add new images, to minimize slowdown errors
             PreloadCount = 4;
 
-            ShowTooltipMessage(ImageCut);
+            ShowTooltipMessage(Application.Current.Resources["FileCut"] as string);
         }
     }
 }
