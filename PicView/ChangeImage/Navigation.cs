@@ -120,6 +120,12 @@ namespace PicView.ChangeImage
             // Navigate to picture using obtained index
             Pic(FolderIndex);
 
+            // Load new gallery values, if changing folder
+            if (picGallery != null && Properties.Settings.Default.PicGallery == 2 && !GalleryFunctions.IsLoading)
+            {
+                await GalleryLoad.Load().ConfigureAwait(false);
+            }
+
             prevPicResource = null; // Make sure to not waste memory
         }
 
@@ -204,6 +210,13 @@ namespace PicView.ChangeImage
                         }
 
                         Pics.RemoveAt(x);
+                        if (picGallery != null)
+                        {
+                            if (picGallery.grid.Children.Count > x)
+                            {
+                                picGallery.grid.Children.RemoveAt(x);
+                            }
+                        }
                         CanNavigate = true;
                         Pic();
                         return;
@@ -320,7 +333,7 @@ namespace PicView.ChangeImage
             ChangeFolder(true);
             Pics = FileList(folder);
 
-            Pic(0);
+            Pic(Pics[0]);
 
             quickSettingsMenu.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
 

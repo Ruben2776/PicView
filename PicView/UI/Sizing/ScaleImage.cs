@@ -99,7 +99,14 @@ namespace PicView.UI.Sizing
             var monitorWidth = MonitorInfo.Width - borderSpaceWidth;
             var monitorHeight = MonitorInfo.Height - borderSpaceHeight;
 
-            if (Properties.Settings.Default.AutoFitWindow) // If non resizeable behaviour
+            if (Properties.Settings.Default.PicGallery == 2)
+            {
+                /// Extra padding for picgallery required
+                padding += picGalleryItem_Size * 2; // Fixes Math.Min returning incorrectly
+                maxWidth = Math.Min(monitorWidth - padding, width);
+                maxHeight = Math.Min(monitorHeight, height);
+            }
+            else if (Properties.Settings.Default.AutoFitWindow) // If non resizeable behaviour
             {
                 if (Properties.Settings.Default.FillImage) // Max to monitor height if scaling enabled, else go by min pixel width
                 {
@@ -108,14 +115,7 @@ namespace PicView.UI.Sizing
                 }
                 else
                 {
-                    if (Properties.Settings.Default.PicGallery == 2)
-                    {
-                        /// Extra padding for picgallery required
-                        padding += picGalleryItem_Size; // Fixes Math.Min returning incorrectly
-                        maxWidth = Math.Min(monitorWidth - padding, width);
-                        maxHeight = Math.Min(monitorHeight, height);
-                    }
-                    else if (showInterface)
+                    if (showInterface)
                     {
                         /// Use padding for shown interface
                         maxWidth = Math.Min(monitorWidth - padding, width);
@@ -193,7 +193,6 @@ namespace PicView.UI.Sizing
                 var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(xWidth, TheMainWindow.MinWidth) : Math.Max(xHeight, TheMainWindow.MinHeight);
                 TheMainWindow.Bar.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
 
-                // TODO Loses position gradually if not forced to center
                 if (!Properties.Settings.Default.Fullscreen)
                 {
                     if (Properties.Settings.Default.PicGallery == 2 && xWidth >= monitorWidth - (picGalleryItem_Size + 200))
@@ -206,6 +205,7 @@ namespace PicView.UI.Sizing
                     }
                     else
                     {
+                        // TODO Loses position gradually if not forced to center
                         CenterWindowOnScreen();
                     }
                 }

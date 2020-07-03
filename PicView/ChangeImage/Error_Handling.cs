@@ -156,13 +156,12 @@ namespace PicView.ChangeImage
                 }
             }
 
-
             Pics.Clear();
+            GalleryFunctions.Clear();
             Preloader.Clear();
-            DeleteTempFiles();
             PreloadCount = 0;
             FreshStartup = true;
-            GalleryFunctions.Clear();
+            DeleteTempFiles();
         }
 
         /// <summary>

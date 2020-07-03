@@ -148,16 +148,8 @@ namespace PicView.UI.Loading
                 }
                 else
                 {
-                    // Execute logic for first time startup
-                    TheMainWindow.Width = 815;
-                    TheMainWindow.Height = 970;
                     CenterWindowOnScreen();
                 }
-            }
-            else
-            {
-                TheMainWindow.MainImage.Width = 815;
-                TheMainWindow.MainImage.Height = 970;
             }
         }
 
