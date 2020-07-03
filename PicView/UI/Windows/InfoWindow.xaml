@@ -14,12 +14,19 @@
     <DockPanel
         Width="560"
         MinHeight="650"
-        Margin="20,45,20,45"
+        Margin="0,45,0,45"
         LastChildFill="True">
+        <DockPanel.Effect>
+            <DropShadowEffect
+                BlurRadius="7"
+                Direction="306"
+                ShadowDepth="3"
+                Color="#42000000" />
+        </DockPanel.Effect>
         <DockPanel
             x:Name="TitleBar"
             Height="35"
-            Background="{StaticResource BackgroundColorBrushAltW}"
+            Background="{StaticResource BackgroundColorBrushAlt}"
             DockPanel.Dock="Top">
 
             <uc:Logo Margin="6,0,7,0" />
@@ -31,18 +38,20 @@
 
             <TextBlock
                 x:Name="Bar"
-                Margin="85,0,0,0"
+                Height="35"
+                Padding="5,7,45,0"
                 VerticalAlignment="Center"
                 FontSize="16"
                 FontWeight="Bold"
                 Foreground="{StaticResource MainColorBrush}"
                 Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                TextAlignment="Center"
                 TextTrimming="CharacterEllipsis" />
         </DockPanel>
 
         <ScrollViewer
             x:Name="Scroller"
-            Background="{StaticResource NoisyBg}"
+            Background="{StaticResource BackgroundColorBrushFadeSubtle}"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
 
@@ -52,8 +61,7 @@
                     Margin="1,22,0,11"
                     HorizontalAlignment="Center"
                     Content="Application Shortcuts"
-                    FontSize="16"
-                    Style="{StaticResource LabelShadow}" />
+                    FontSize="16" />
 
                 <Label
                     Width="490"
@@ -101,7 +109,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="A" />
                     </Border>
 
@@ -117,7 +124,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="Left" />
                     </Border>
 
@@ -147,7 +153,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="D" />
                     </Border>
 
@@ -163,7 +168,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="Right" />
                     </Border>
 
@@ -192,18 +196,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Ctrl" />
+                            <TextBlock FontSize="14" Text="Ctrl" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="A" />
+                            <TextBlock FontSize="14" Text="A" />
                         </StackPanel>
                     </Border>
 
@@ -219,7 +217,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="Ctrl + Left" />
                     </Border>
 
@@ -248,18 +245,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Ctrl" />
+                            <TextBlock FontSize="14" Text="Ctrl" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="D" />
+                            <TextBlock FontSize="14" Text="D" />
                         </StackPanel>
                     </Border>
 
@@ -275,7 +266,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="Ctrl + Right" />
                     </Border>
 
@@ -303,7 +293,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="L" />
                     </Border>
 
@@ -369,7 +358,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="15"
-                            Opacity=".96"
                             Text="W" />
                     </Border>
 
@@ -385,7 +373,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="15"
-                            Opacity=".96"
                             Text="Up" />
                     </Border>
 
@@ -415,7 +402,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="15"
-                            Opacity=".96"
                             Text="S" />
                     </Border>
 
@@ -431,7 +417,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="15"
-                            Opacity=".96"
                             Text="Down" />
                     </Border>
 
@@ -460,7 +445,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="15"
-                            Opacity=".96"
                             Text="F" />
                     </Border>
 
@@ -520,18 +504,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Ctrl" />
+                            <TextBlock FontSize="14" Text="Ctrl" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Mouse Wheel" />
+                            <TextBlock FontSize="14" Text="Mouse Wheel" />
                         </StackPanel>
                     </Border>
 
@@ -547,7 +525,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="Numpad +" />
                     </Border>
 
@@ -577,18 +554,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Ctrl" />
+                            <TextBlock FontSize="14" Text="Ctrl" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Mouse Wheel" />
+                            <TextBlock FontSize="14" Text="Mouse Wheel" />
                         </StackPanel>
                     </Border>
 
@@ -604,7 +575,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="Numpad -" />
                     </Border>
 
@@ -632,18 +602,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Ctrl" />
+                            <TextBlock FontSize="14" Text="Ctrl" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Mouse Drag" />
+                            <TextBlock FontSize="14" Text="Mouse Drag" />
                         </StackPanel>
                     </Border>
 
@@ -681,18 +645,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Ctrl" />
+                            <TextBlock FontSize="14" Text="Ctrl" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Double Click" />
+                            <TextBlock FontSize="14" Text="Double Click" />
                         </StackPanel>
                     </Border>
 
@@ -729,7 +687,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="X" />
                     </Border>
 
@@ -797,7 +754,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="1" />
                     </Border>
 
@@ -843,7 +799,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="2" />
                     </Border>
 
@@ -888,7 +843,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="3" />
                     </Border>
 
@@ -933,7 +887,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="4" />
                     </Border>
 
@@ -1002,18 +955,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Alt" />
+                            <TextBlock FontSize="14" Text="Alt" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Z" />
+                            <TextBlock FontSize="14" Text="Z" />
                         </StackPanel>
                     </Border>
 
@@ -1059,7 +1006,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="T" />
                     </Border>
 
@@ -1104,7 +1050,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="F11" />
                     </Border>
 
@@ -1120,18 +1065,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Alt" />
+                            <TextBlock FontSize="14" Text="Alt" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Enter" />
+                            <TextBlock FontSize="14" Text="Enter" />
                         </StackPanel>
                     </Border>
 
@@ -1160,7 +1099,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="F5" />
                     </Border>
 
@@ -1227,18 +1165,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Ctrl" />
+                            <TextBlock FontSize="14" Text="Ctrl" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="O" />
+                            <TextBlock FontSize="14" Text="O" />
                         </StackPanel>
                     </Border>
 
@@ -1254,7 +1186,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="O" />
                     </Border>
 
@@ -1284,18 +1215,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Ctrl" />
+                            <TextBlock FontSize="14" Text="Ctrl" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="S" />
+                            <TextBlock FontSize="14" Text="S" />
                         </StackPanel>
                     </Border>
 
@@ -1333,18 +1258,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Ctrl" />
+                            <TextBlock FontSize="14" Text="Ctrl" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="P" />
+                            <TextBlock FontSize="14" Text="P" />
                         </StackPanel>
                     </Border>
 
@@ -1381,18 +1300,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Ctrl" />
+                            <TextBlock FontSize="14" Text="Ctrl" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="C" />
+                            <TextBlock FontSize="14" Text="C" />
                         </StackPanel>
                     </Border>
 
@@ -1409,18 +1322,12 @@
                             VerticalAlignment="Center"
                             Orientation="Horizontal"
                             ToolTip="Drag file to Windows Explorer or another application">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Ctrl" />
+                            <TextBlock FontSize="14" Text="Ctrl" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Drag Image" />
+                            <TextBlock FontSize="14" Text="Drag Image" />
                         </StackPanel>
                     </Border>
 
@@ -1449,18 +1356,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Ctrl" />
+                            <TextBlock FontSize="14" Text="Ctrl" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="P" />
+                            <TextBlock FontSize="14" Text="P" />
                         </StackPanel>
                     </Border>
 
@@ -1498,7 +1399,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="Delete" />
                     </Border>
 
@@ -1514,18 +1414,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Shift" />
+                            <TextBlock FontSize="14" Text="Shift" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="P" />
+                            <TextBlock FontSize="14" Text="P" />
                         </StackPanel>
                     </Border>
 
@@ -1553,7 +1447,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="F2" />
                     </Border>
 
@@ -1591,7 +1484,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="F3" />
                     </Border>
 
@@ -1628,18 +1520,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Ctrl" />
+                            <TextBlock FontSize="14" Text="Ctrl" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="I" />
+                            <TextBlock FontSize="14" Text="I" />
                         </StackPanel>
                     </Border>
 
@@ -1698,7 +1584,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="F1" />
                     </Border>
 
@@ -1737,7 +1622,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="F4" />
                     </Border>
 
@@ -1775,7 +1659,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="Esc"
                             ToolTip="Closes currently opened window/menu" />
                     </Border>
@@ -1793,18 +1676,12 @@
                             VerticalAlignment="Center"
                             Orientation="Horizontal"
                             ToolTip="Closes the whole application">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Ctrl" />
+                            <TextBlock FontSize="14" Text="Ctrl" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Q" />
+                            <TextBlock FontSize="14" Text="Q" />
                         </StackPanel>
                     </Border>
 
@@ -1855,7 +1732,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="E" />
                     </Border>
 
@@ -1894,7 +1770,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="Space" />
                     </Border>
 
@@ -1932,18 +1807,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Ctrl" />
+                            <TextBlock FontSize="14" Text="Ctrl" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="I" />
+                            <TextBlock FontSize="14" Text="I" />
                         </StackPanel>
                     </Border>
 
@@ -1981,7 +1850,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="C" />
                     </Border>
 
@@ -2038,18 +1906,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Shift" />
+                            <TextBlock FontSize="14" Text="Shift" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Mouse Wheel" />
+                            <TextBlock FontSize="14" Text="Mouse Wheel" />
                         </StackPanel>
                     </Border>
 
@@ -2065,7 +1927,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="Browser Forward" />
                     </Border>
 
@@ -2095,18 +1956,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Shift" />
+                            <TextBlock FontSize="14" Text="Shift" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="14"
-                                Opacity=".96"
-                                Text="Mouse Wheel" />
+                            <TextBlock FontSize="14" Text="Mouse Wheel" />
                         </StackPanel>
                     </Border>
 
@@ -2122,7 +1977,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Opacity=".96"
                             Text="Browser Backward" />
                     </Border>
 
@@ -2135,8 +1989,7 @@
                         Margin="1,0,0,11"
                         HorizontalAlignment="Center"
                         Content="Attributions and Credits"
-                        FontSize="17"
-                        Style="{StaticResource LabelShadow}" />
+                        FontSize="17" />
 
                     <Label
                         Margin="0,3,0,10"
@@ -2286,7 +2139,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Bottom"
                         FontSize="12"
-                        Text="Made by Ruben Hyldgaard Negendahl" />
+                        Text="2017 - 2020 © Ruben Hyldgaard Negendahl" />
 
                     <Label
                         x:Name="appVersion"

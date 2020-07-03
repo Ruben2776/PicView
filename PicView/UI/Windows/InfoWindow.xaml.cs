@@ -140,8 +140,8 @@ namespace PicView.UI.Windows
                 Hide();
             };
 
-            BeginAnimation(OpacityProperty, da);
             TheMainWindow.Effect = null;
+            BeginAnimation(OpacityProperty, da);
             TheMainWindow.Focus();
         }
 

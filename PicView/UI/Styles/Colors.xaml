@@ -38,6 +38,10 @@
     <Color x:Key="BackgroundColorFade">#A5171717</Color>
     <SolidColorBrush x:Key="BackgroundColorBrushFade" Color="{StaticResource BackgroundColorFade}" />
 
+    <!--  Background Color Fade  Subtle  -->
+    <Color x:Key="BackgroundColorFadeSubtle">#BE222222</Color>
+    <SolidColorBrush x:Key="BackgroundColorBrushFadeSubtle" Color="{StaticResource BackgroundColorFadeSubtle}" />
+
     <!--  Border Brush  -->
     <Color x:Key="BorderColor">#FF3A3A3A</Color>
     <Color x:Key="BorderColorAlt">#FF1B1B1B</Color>
