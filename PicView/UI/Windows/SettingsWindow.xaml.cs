@@ -66,95 +66,13 @@ namespace PicView.UI.Windows
                     break;
             }
 
-            KeyUp += KeysUp;
-            KeyDown += KeysDown;
-
             ContentRendered += (s, x) =>
             {
-                // CloseButton
-                CloseButton.TheButton.Click += delegate { Hide(); };
-
-                // MinButton
-                MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
-
-                TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
-
-                // BlueRadio
-                BlueRadio.PreviewMouseLeftButtonDown += BlueRadio_PreviewMouseLeftButtonDown;
-                BlueRadio.MouseEnter += BlueRadio_MouseEnter;
-                BlueRadio.MouseLeave += BlueRadio_MouseLeave;
-                BlueRadio.Click += Blue;
-
-                // PinkRadio
-                PinkRadio.PreviewMouseLeftButtonDown += PinkRadio_PreviewMouseLeftButtonDown;
-                PinkRadio.MouseEnter += PinkRadio_MouseEnter;
-                PinkRadio.MouseLeave += PinkRadio_MouseLeave;
-                PinkRadio.Click += Pink;
-
-                // OrangeRadio
-                OrangeRadio.PreviewMouseLeftButtonDown += OrangeRadio_PreviewMouseLeftButtonDown;
-                OrangeRadio.MouseEnter += OrangeRadio_MouseEnter;
-                OrangeRadio.MouseLeave += OrangeRadio_MouseLeave;
-                OrangeRadio.Click += Orange;
-
-                // GreenRadio
-                GreenRadio.PreviewMouseLeftButtonDown += GreenRadio_PreviewMouseLeftButtonDown;
-                GreenRadio.MouseEnter += GreenRadio_MouseEnter;
-                GreenRadio.MouseLeave += GreenRadio_MouseLeave;
-                GreenRadio.Click += Green;
-
-                // RedRadio
-                RedRadio.PreviewMouseLeftButtonDown += RedRadio_PreviewMouseLeftButtonDown;
-                RedRadio.MouseEnter += RedRadio_MouseEnter;
-                RedRadio.MouseLeave += RedRadio_MouseLeave;
-                RedRadio.Click += Red;
-
-                // TealRadio
-                TealRadio.PreviewMouseLeftButtonDown += TealRadio_PreviewMouseLeftButtonDown;
-                TealRadio.MouseEnter += TealRadio_MouseEnter;
-                TealRadio.MouseLeave += TealRadio_MouseLeave;
-                TealRadio.Click += Teal;
-
-                // AquaRadio
-                AquaRadio.PreviewMouseLeftButtonDown += AquaRadio_PreviewMouseLeftButtonDown;
-                AquaRadio.MouseEnter += AquaRadio_MouseEnter;
-                AquaRadio.MouseLeave += AquaRadio_MouseLeave;
-                AquaRadio.Click += Aqua;
-
-                // BeigeRadio
-                BeigeRadio.PreviewMouseLeftButtonDown += BeigeRadio_PreviewMouseLeftButtonDown;
-                BeigeRadio.MouseEnter += BeigeRadio_MouseEnter;
-                BeigeRadio.MouseLeave += BeigeRadio_MouseLeave;
-                BeigeRadio.Click += Beige;
-
-                // PurpleRadio
-                PurpleRadio.PreviewMouseLeftButtonDown += PurpleRadio_PreviewMouseLeftButtonDown;
-                PurpleRadio.MouseEnter += PurpleRadio_MouseEnter;
-                PurpleRadio.MouseLeave += PurpleRadio_MouseLeave;
-                PurpleRadio.Click += Purple;
-
-                // CyanRadio
-                CyanRadio.PreviewMouseLeftButtonDown += CyanRadio_PreviewMouseLeftButtonDown;
-                CyanRadio.MouseEnter += CyanRadio_MouseEnter;
-                CyanRadio.MouseLeave += CyanRadio_MouseLeave;
-                CyanRadio.Click += Cyan;
-
-                // MagentaRadio
-                MagentaRadio.PreviewMouseLeftButtonDown += MagentaRadio_PreviewMouseLeftButtonDown;
-                MagentaRadio.MouseEnter += MagentaRadio_MouseEnter;
-                MagentaRadio.MouseLeave += MagentaRadio_MouseLeave;
-                MagentaRadio.Click += Magenta;
-
-                // GreyRadio
-                GreyRadio.PreviewMouseLeftButtonDown += GreyRadio_PreviewMouseLeftButtonDown;
-                GreyRadio.MouseEnter += GreyRadio_MouseEnter;
-                GreyRadio.MouseLeave += GreyRadio_MouseLeave;
-                GreyRadio.Click += Grey;
+                KeyUp += KeysUp;
+                KeyDown += KeysDown;
+                AddGenericEvents();
 
                 // SubDirRadio
-                SubDirRadio.PreviewMouseLeftButtonDown += SubDirRadio_PreviewMouseLeftButtonDown;
-                SubDirRadio.MouseEnter += SubDirRadio_MouseEnter;
-                SubDirRadio.MouseLeave += SubDirRadio_MouseLeave;
                 SubDirRadio.IsChecked = Properties.Settings.Default.IncludeSubDirectories;
                 SubDirRadio.Click += delegate { 
                     Properties.Settings.Default.IncludeSubDirectories = !Properties.Settings.Default.IncludeSubDirectories;
@@ -162,9 +80,6 @@ namespace PicView.UI.Windows
                 };
 
                 // BorderColorRadio
-                BorderRadio.PreviewMouseLeftButtonDown += BorderRadio_PreviewMouseLeftButtonDown;
-                BorderRadio.MouseEnter += BorderRadio_MouseEnter;
-                BorderRadio.MouseLeave += BorderRadio_MouseLeave;
                 BorderRadio.Click += UpdateUIValues.SetBorderColorEnabled;
                 if (Properties.Settings.Default.WindowBorderColorEnabled)
                 {
@@ -172,45 +87,33 @@ namespace PicView.UI.Windows
                 }
 
                 // Fill
-                Fill.PreviewMouseLeftButtonDown += Fill_PreviewMouseLeftButtonDown;
-                Fill.MouseEnter += Fill_MouseEnter;
-                Fill.MouseLeave += Fill_MouseLeave;
                 Fill.Click += delegate
                 {
                     SetWallpaper(WallpaperStyle.Fill);
                 };
 
                 // Fit
-                Fit.PreviewMouseLeftButtonDown += Fit_PreviewMouseLeftButtonDown;
-                Fit.MouseEnter += Fit_MouseEnter;
-                Fit.MouseLeave += Fit_MouseLeave;
                 Fit.Click += delegate
                 {
                     SetWallpaper(WallpaperStyle.Fit);
                 };
 
                 // Center
-                Center.PreviewMouseLeftButtonDown += Center_PreviewMouseLeftButtonDown;
-                Center.MouseEnter += Center_MouseEnter;
-                Center.MouseLeave += Center_MouseLeave;
+
                 Center.Click += delegate
                 {
                     SetWallpaper(WallpaperStyle.Center);
                 };
 
                 // Tile
-                Tile.PreviewMouseLeftButtonDown += Tile_PreviewMouseLeftButtonDown;
-                Tile.MouseEnter += Tile_MouseEnter;
-                Tile.MouseLeave += Tile_MouseLeave;
+
                 Tile.Click += delegate
                 {
                     SetWallpaper(WallpaperStyle.Tile);
                 };
 
                 // Stretch
-                Stretch.PreviewMouseLeftButtonDown += Stretch_PreviewMouseLeftButtonDown;
-                Stretch.MouseEnter += Stretch_MouseEnter;
-                Stretch.MouseLeave += Stretch_MouseLeave;
+
                 Stretch.Click += delegate
                 {
                     SetWallpaper(WallpaperStyle.Stretch);
@@ -220,6 +123,8 @@ namespace PicView.UI.Windows
                 SlideshowSlider.ValueChanged += SlideshowSlider_ValueChanged;
             };
         }
+
+        
 
         private void SlideshowSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
@@ -268,6 +173,117 @@ namespace PicView.UI.Windows
         }
 
         #region EventHandlers
+
+        private void AddGenericEvents()
+        {
+            // CloseButton
+            CloseButton.TheButton.Click += delegate { Hide(); };
+
+            // MinButton
+            MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
+
+            TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
+
+            // BlueRadio
+            BlueRadio.PreviewMouseLeftButtonDown += BlueRadio_PreviewMouseLeftButtonDown;
+            BlueRadio.MouseEnter += BlueRadio_MouseEnter;
+            BlueRadio.MouseLeave += BlueRadio_MouseLeave;
+            BlueRadio.Click += Blue;
+
+            // PinkRadio
+            PinkRadio.PreviewMouseLeftButtonDown += PinkRadio_PreviewMouseLeftButtonDown;
+            PinkRadio.MouseEnter += PinkRadio_MouseEnter;
+            PinkRadio.MouseLeave += PinkRadio_MouseLeave;
+            PinkRadio.Click += Pink;
+
+            // OrangeRadio
+            OrangeRadio.PreviewMouseLeftButtonDown += OrangeRadio_PreviewMouseLeftButtonDown;
+            OrangeRadio.MouseEnter += OrangeRadio_MouseEnter;
+            OrangeRadio.MouseLeave += OrangeRadio_MouseLeave;
+            OrangeRadio.Click += Orange;
+
+            // GreenRadio
+            GreenRadio.PreviewMouseLeftButtonDown += GreenRadio_PreviewMouseLeftButtonDown;
+            GreenRadio.MouseEnter += GreenRadio_MouseEnter;
+            GreenRadio.MouseLeave += GreenRadio_MouseLeave;
+            GreenRadio.Click += Green;
+
+            // RedRadio
+            RedRadio.PreviewMouseLeftButtonDown += RedRadio_PreviewMouseLeftButtonDown;
+            RedRadio.MouseEnter += RedRadio_MouseEnter;
+            RedRadio.MouseLeave += RedRadio_MouseLeave;
+            RedRadio.Click += Red;
+
+            // TealRadio
+            TealRadio.PreviewMouseLeftButtonDown += TealRadio_PreviewMouseLeftButtonDown;
+            TealRadio.MouseEnter += TealRadio_MouseEnter;
+            TealRadio.MouseLeave += TealRadio_MouseLeave;
+            TealRadio.Click += Teal;
+
+            // AquaRadio
+            AquaRadio.PreviewMouseLeftButtonDown += AquaRadio_PreviewMouseLeftButtonDown;
+            AquaRadio.MouseEnter += AquaRadio_MouseEnter;
+            AquaRadio.MouseLeave += AquaRadio_MouseLeave;
+            AquaRadio.Click += Aqua;
+
+            // BeigeRadio
+            BeigeRadio.PreviewMouseLeftButtonDown += BeigeRadio_PreviewMouseLeftButtonDown;
+            BeigeRadio.MouseEnter += BeigeRadio_MouseEnter;
+            BeigeRadio.MouseLeave += BeigeRadio_MouseLeave;
+            BeigeRadio.Click += Beige;
+
+            // PurpleRadio
+            PurpleRadio.PreviewMouseLeftButtonDown += PurpleRadio_PreviewMouseLeftButtonDown;
+            PurpleRadio.MouseEnter += PurpleRadio_MouseEnter;
+            PurpleRadio.MouseLeave += PurpleRadio_MouseLeave;
+            PurpleRadio.Click += Purple;
+
+            // CyanRadio
+            CyanRadio.PreviewMouseLeftButtonDown += CyanRadio_PreviewMouseLeftButtonDown;
+            CyanRadio.MouseEnter += CyanRadio_MouseEnter;
+            CyanRadio.MouseLeave += CyanRadio_MouseLeave;
+            CyanRadio.Click += Cyan;
+
+            // MagentaRadio
+            MagentaRadio.PreviewMouseLeftButtonDown += MagentaRadio_PreviewMouseLeftButtonDown;
+            MagentaRadio.MouseEnter += MagentaRadio_MouseEnter;
+            MagentaRadio.MouseLeave += MagentaRadio_MouseLeave;
+            MagentaRadio.Click += Magenta;
+
+            // GreyRadio
+            GreyRadio.Click += Grey;
+            GreyRadio.PreviewMouseLeftButtonDown += GreyRadio_PreviewMouseLeftButtonDown;
+            GreyRadio.MouseEnter += GreyRadio_MouseEnter;
+            GreyRadio.MouseLeave += GreyRadio_MouseLeave;
+
+            SubDirRadio.PreviewMouseLeftButtonDown += SubDirRadio_PreviewMouseLeftButtonDown;
+            SubDirRadio.MouseEnter += SubDirRadio_MouseEnter;
+            SubDirRadio.MouseLeave += SubDirRadio_MouseLeave;
+
+            BorderRadio.PreviewMouseLeftButtonDown += BorderRadio_PreviewMouseLeftButtonDown;
+            BorderRadio.MouseEnter += BorderRadio_MouseEnter;
+            BorderRadio.MouseLeave += BorderRadio_MouseLeave;
+
+            Fill.PreviewMouseLeftButtonDown += Fill_PreviewMouseLeftButtonDown;
+            Fill.MouseEnter += Fill_MouseEnter;
+            Fill.MouseLeave += Fill_MouseLeave;
+
+            Fit.PreviewMouseLeftButtonDown += Fit_PreviewMouseLeftButtonDown;
+            Fit.MouseEnter += Fit_MouseEnter;
+            Fit.MouseLeave += Fit_MouseLeave;
+
+            Center.PreviewMouseLeftButtonDown += Center_PreviewMouseLeftButtonDown;
+            Center.MouseEnter += Center_MouseEnter;
+            Center.MouseLeave += Center_MouseLeave;
+
+            Tile.PreviewMouseLeftButtonDown += Tile_PreviewMouseLeftButtonDown;
+            Tile.MouseEnter += Tile_MouseEnter;
+            Tile.MouseLeave += Tile_MouseLeave;
+
+            Stretch.PreviewMouseLeftButtonDown += Stretch_PreviewMouseLeftButtonDown;
+            Stretch.MouseEnter += Stretch_MouseEnter;
+            Stretch.MouseLeave += Stretch_MouseLeave;
+        }
 
         // Blue
         private void BlueRadio_MouseLeave(object sender, MouseEventArgs e)

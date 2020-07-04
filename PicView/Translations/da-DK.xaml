@@ -1,0 +1,33 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!--  TitleText  -->
+    <system:String x:Key="Loading">Indlæser</system:String>
+    <system:String x:Key="NoImage">Intet billede indlæst</system:String>
+    <system:String x:Key="Files">filer</system:String>
+
+    <!--  Info window  -->
+    <system:String x:Key="InfoWindowTitle">Information, hjælp &amp; genveje</system:String>
+    <system:String x:Key="ApplicationShortcuts">Genveje til programmet</system:String>
+
+    <!--  Navigation related  -->
+    <system:String x:Key="Navigation">Navigering</system:String>
+    <system:String x:Key="NextImage">Næste billede</system:String>
+    <system:String x:Key="PrevImage">Forrige billede</system:String>
+
+    <!--  File related  -->
+    <system:String x:Key="Open">Åben</system:String>
+    <system:String x:Key="Close">Luk</system:String>
+    <system:String x:Key="Save">Gem</system:String>
+
+    <!--  Tooltip Messages  -->
+    <system:String x:Key="FileCopy">Filen er blevet tilføjet til udklipsholderen</system:String>
+    <system:String x:Key="FileCopyPath">Fil stien er blevet tilføjet til udklipsholderen</system:String>
+    <system:String x:Key="ImageCopy">Image added to move clipboard</system:String>
+    <system:String x:Key="OpeningInExplorer">Opening file in Windows Explorer</system:String>
+    <system:String x:Key="FileCut">Image added to move clipboard</system:String>
+    <system:String x:Key="DragOverString">Drop to load image</system:String>
+
+</ResourceDictionary>
