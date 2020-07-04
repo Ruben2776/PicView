@@ -2127,7 +2127,7 @@
                                 </Hyperlink.Foreground>
                                 <TextBlock
                                     x:Name="GitHub"
-                                    FontSize="14"
+                                    FontSize="16"
                                     Text="Github repository"
                                     TextAlignment="Center"
                                     ToolTip="https://github.com/Ruben2776/PicView" />
@@ -2146,12 +2146,28 @@
                         Margin="0,7,0,2"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Bottom"
-                        FontSize="12"
+                        FontSize="14"
                         Text="2017 - 2020 © Ruben Hyldgaard Negendahl" />
+
+                    <TextBlock
+                        Margin="0,8,0,2"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom">
+                        <Hyperlink NavigateUri="https://github.com/Ruben2776/PicView/blob/master/LICENSE.txt" RequestNavigate="Hyperlink_RequestNavigate">
+                            <Hyperlink.Foreground>
+                                <SolidColorBrush x:Name="LicenseBrush" Color="{StaticResource MainColor}" />
+                            </Hyperlink.Foreground>
+                            <TextBlock
+                                x:Name="License"
+                                FontSize="14"
+                                Text="GNU GPLv3"
+                                ToolTip="View license file" />
+                        </Hyperlink>
+                    </TextBlock>
 
                     <Label
                         x:Name="appVersion"
-                        Margin="0,12,0,15"
+                        Margin="0,17,0,15"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Bottom"
                         Content="Version : " />

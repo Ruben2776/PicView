@@ -10,6 +10,10 @@
     Foreground="{StaticResource MainColorBrush}"
     SizeToContent="Height"
     Style="{DynamicResource MyWindowStyle}">
+    <Window.Resources>
+        <ResourceDictionary Source="\UI\Styles\ComboBox.xaml" />
+    </Window.Resources>
+
     <DockPanel LastChildFill="True">
         <DockPanel
             x:Name="TitleBar"
@@ -305,6 +309,15 @@
                             </Button.Background>
                         </Button>
                     </WrapPanel>
+
+                    <Label
+                        Margin="0,3,0,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Content="Language"
+                        Style="{StaticResource LabelShadow}" />
+
+                    <ComboBox Margin="0,9,0,20" HorizontalAlignment="Center" />
 
 
                     <Label
