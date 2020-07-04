@@ -20,6 +20,7 @@ namespace PicView.UI.DragAndDrop
         {
             if (ZoomLogic.ZoomValue > 1.0
                 || TheMainWindow.MainImage.Source == null 
+                || !TheMainWindow.IsFocused
                 || Keyboard.Modifiers == ModifierKeys.Control
                 || Keyboard.Modifiers == ModifierKeys.Shift
                 || Properties.Settings.Default.PicGallery == 2
