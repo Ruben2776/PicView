@@ -6,8 +6,8 @@
     Foreground="{StaticResource MainColorBrush}">
     <StackPanel>
         <Border
-            Width="316"
-            Height="168"
+            Width="360"
+            Height="178"
             Background="{StaticResource NoisyBg}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="2"
@@ -23,15 +23,15 @@
             <Canvas VerticalAlignment="Top">
                 <Canvas.Effect>
                     <DropShadowEffect
-                        BlurRadius="4"
-                        Direction="268"
+                        BlurRadius="1"
+                        Direction="265"
                         ShadowDepth="1"
-                        Color="Black" />
+                        Color="{StaticResource AltInterface}" />
                 </Canvas.Effect>
 
                 <Rectangle
                     Canvas.Top="50"
-                    Width="312"
+                    Width="357"
                     Panel.ZIndex="1"
                     Stroke="{StaticResource BorderBrush}"
                     StrokeThickness="1" />
@@ -52,7 +52,7 @@
                     Stroke="{StaticResource BorderBrush}"
                     StrokeThickness="1" />
                 <Rectangle
-                    Canvas.Left="260"
+                    Canvas.Left="304"
                     Width="1"
                     Height="50"
                     Panel.ZIndex="1"
@@ -132,7 +132,7 @@
                 <Button
                     x:Name="GoToPic"
                     Canvas.Left="155"
-                    Width="105"
+                    Width="150"
                     Height="50"
                     ToolTip="Go to image at specified index">
                     <Button.Background>
@@ -198,15 +198,16 @@
 
                 <uc:MenuCloseButton
                     x:Name="CloseButton"
-                    Canvas.Left="261"
+                    Canvas.Left="305"
+                    Canvas.Top="-1"
                     ToolTip="Close" />
 
                 <CheckBox
                     x:Name="SetFit"
-                    Canvas.Left="15"
-                    Canvas.Top="61"
-                    Width="135"
-                    Height="40"
+                    Canvas.Left="6"
+                    Canvas.Top="58"
+                    Width="167"
+                    Height="51"
                     BorderThickness="1"
                     Content="Auto fit window"
                     Style="{StaticResource Checkstyle}"
@@ -218,10 +219,10 @@
 
                 <CheckBox
                     x:Name="ToggleFill"
-                    Canvas.Left="164"
-                    Canvas.Top="61"
-                    Width="136"
-                    Height="40"
+                    Canvas.Left="184"
+                    Canvas.Top="58"
+                    Width="167"
+                    Height="51"
                     Content="Fill image height"
                     Style="{StaticResource Checkstyle}"
                     ToolTip="Fill image height to window">
@@ -232,10 +233,10 @@
 
                 <CheckBox
                     x:Name="ToggleScroll"
-                    Canvas.Left="164"
-                    Canvas.Top="110"
-                    Width="136"
-                    Height="40"
+                    Canvas.Left="184"
+                    Canvas.Top="114"
+                    Width="167"
+                    Height="51"
                     Content="Toggle scroll"
                     Style="{StaticResource Checkstyle}">
                     <CheckBox.Background>
@@ -245,10 +246,10 @@
 
                 <CheckBox
                     x:Name="ToggleLooping"
-                    Canvas.Left="15"
-                    Canvas.Top="110"
-                    Width="135"
-                    Height="40"
+                    Canvas.Left="6"
+                    Canvas.Top="115"
+                    Width="167"
+                    Height="51"
                     Content="Toggle looping"
                     Style="{StaticResource Checkstyle}">
                     <CheckBox.Background>
@@ -260,7 +261,7 @@
         <Rectangle
             Width="23"
             Height="2"
-            Margin="0,-2,46,0"
+            Margin="0,-2,89,0"
             HorizontalAlignment="Right"
             Fill="{StaticResource BorderBrushAlt}" />
         <Polygon

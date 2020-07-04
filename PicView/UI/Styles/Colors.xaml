@@ -30,7 +30,7 @@
     <Color x:Key="BackgroundColorAlt">#F81F1F1F</Color>
     <SolidColorBrush x:Key="BackgroundColorBrushAlt" Color="{StaticResource BackgroundColorAlt}" />
 
-    <!--  Background Color Alt  -->
+    <!--  Background Color Alt W  -->
     <Color x:Key="BackgroundColorAltW">#FF161413</Color>
     <SolidColorBrush x:Key="BackgroundColorBrushAltW" Color="{StaticResource BackgroundColorAltW}" />
 

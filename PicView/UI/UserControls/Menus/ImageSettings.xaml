@@ -14,18 +14,18 @@
             <Border.Effect>
                 <DropShadowEffect
                     BlurRadius="12"
-                    Direction="85"
-                    ShadowDepth="5"
-                    Color="{StaticResource AltInterfaceW}" />
+                    Direction="105"
+                    ShadowDepth="6"
+                    Color="{StaticResource AltInterface}" />
             </Border.Effect>
 
             <Canvas>
                 <Canvas.Effect>
                     <DropShadowEffect
-                        BlurRadius="4"
-                        Direction="268"
+                        BlurRadius="1"
+                        Direction="265"
                         ShadowDepth="1"
-                        Color="Black" />
+                        Color="{StaticResource AltInterface}" />
                 </Canvas.Effect>
 
                 <Rectangle

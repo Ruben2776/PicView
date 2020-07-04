@@ -48,9 +48,9 @@ namespace PicView.UI.Loading
             // FileMenuButton
             TheMainWindow.FileMenuButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.FolderFill);
             TheMainWindow.FileMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(TheMainWindow.FolderFill);
-            TheMainWindow.FileMenuButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgColor(TheMainWindow.FileMenuBg);
+            TheMainWindow.FileMenuButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(TheMainWindow.FileMenuBg);
             TheMainWindow.FileMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(TheMainWindow.FolderFill);
-            TheMainWindow.FileMenuButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgColor(TheMainWindow.FileMenuBg);
+            TheMainWindow.FileMenuButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(TheMainWindow.FileMenuBg);
             TheMainWindow.FileMenuButton.Click += Toggle_open_menu;
 
             fileMenu.Open.Click += (s, x) => Open();
@@ -69,9 +69,9 @@ namespace PicView.UI.Loading
             // image_button
             TheMainWindow.image_button.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.ImagePath1Fill, TheMainWindow.ImagePath2Fill, TheMainWindow.ImagePath3Fill);
             TheMainWindow.image_button.MouseEnter += (s, x) => ButtonMouseOverAnim(TheMainWindow.ImagePath1Fill, TheMainWindow.ImagePath2Fill, TheMainWindow.ImagePath3Fill);
-            TheMainWindow.image_button.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgColor(TheMainWindow.ImageMenuBg);
+            TheMainWindow.image_button.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(TheMainWindow.ImageMenuBg);
             TheMainWindow.image_button.MouseLeave += (s, x) => ButtonMouseLeaveAnim(TheMainWindow.ImagePath1Fill, TheMainWindow.ImagePath2Fill, TheMainWindow.ImagePath3Fill);
-            TheMainWindow.image_button.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgColor(TheMainWindow.ImageMenuBg);
+            TheMainWindow.image_button.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(TheMainWindow.ImageMenuBg);
             TheMainWindow.image_button.Click += Toggle_image_menu;
 
             // imageSettingsMenu Buttons
@@ -107,18 +107,18 @@ namespace PicView.UI.Loading
             // SettingsButton
             TheMainWindow.SettingsButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.SettingsButtonFill);
             TheMainWindow.SettingsButton.MouseEnter += (s, x) => ButtonMouseOverAnim(TheMainWindow.SettingsButtonFill);
-            TheMainWindow.SettingsButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgColor(TheMainWindow.SettingsMenuBg);
+            TheMainWindow.SettingsButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(TheMainWindow.SettingsMenuBg);
             TheMainWindow.SettingsButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(TheMainWindow.SettingsButtonFill);
-            TheMainWindow.SettingsButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgColor(TheMainWindow.SettingsMenuBg);
+            TheMainWindow.SettingsButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(TheMainWindow.SettingsMenuBg);
             TheMainWindow.SettingsButton.Click += Toggle_quick_settings_menu;
 
             //FunctionButton
             var MagicBrush = TheMainWindow.TryFindResource("MagicBrush") as SolidColorBrush;
             TheMainWindow.FunctionMenuButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(MagicBrush);
             TheMainWindow.FunctionMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(MagicBrush);
-            TheMainWindow.FunctionMenuButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgColor(TheMainWindow.EffectsMenuBg);
+            TheMainWindow.FunctionMenuButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(TheMainWindow.EffectsMenuBg);
             TheMainWindow.FunctionMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(MagicBrush);
-            TheMainWindow.FunctionMenuButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgColor(TheMainWindow.EffectsMenuBg);
+            TheMainWindow.FunctionMenuButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(TheMainWindow.EffectsMenuBg);
             TheMainWindow.FunctionMenuButton.Click += Toggle_Functions_menu;
 
             // FlipButton

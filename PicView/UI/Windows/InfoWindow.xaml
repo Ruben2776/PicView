@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.UI.UserControls"
-    Title="{DynamicResource ResourceKey=InfoWindowTitle}"
+    Title="{StaticResource ResourceKey=InfoWindowTitle}"
     AllowsTransparency="True"
     Background="#990F0F0F"
     FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
@@ -48,7 +48,7 @@
                 FontSize="16"
                 FontWeight="Bold"
                 Foreground="{StaticResource MainColorBrush}"
-                Text="{DynamicResource ResourceKey=InfoWindowTitle}"
+                Text="{StaticResource ResourceKey=InfoWindowTitle}"
                 TextAlignment="Center"
                 TextTrimming="CharacterEllipsis" />
         </DockPanel>
@@ -66,7 +66,7 @@
                     Margin="1,22,0,11"
                     HorizontalAlignment="Center"
                     d:Content="Application Shortcuts"
-                    Content="{DynamicResource ResourceKey=ApplicationShortcuts}"
+                    Content="{StaticResource ResourceKey=ApplicationShortcuts}"
                     FontSize="16" />
 
                 <Label
@@ -74,7 +74,7 @@
                     Margin="5,0,0,11"
                     HorizontalAlignment="Center"
                     d:Content="Navigation"
-                    Content="{DynamicResource ResourceKey=Navigation}"
+                    Content="{StaticResource ResourceKey=Navigation}"
                     FontSize="16" />
 
                 <Grid Width="480" Margin="0,0,0,20">
@@ -103,7 +103,7 @@
                             Margin="10,3,0,3"
                             d:Text="Next Image"
                             FontSize="15"
-                            Text="{DynamicResource ResourceKey=NextImage}" />
+                            Text="{StaticResource ResourceKey=NextImage}" />
                     </Border>
 
                     <Border

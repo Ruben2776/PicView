@@ -9,6 +9,7 @@
         <SolidColorBrush x:Key="FlaskBrush" Color="{StaticResource MainColor}" />
         <SolidColorBrush x:Key="ImagesBrush" Color="{StaticResource MainColor}" />
     </UserControl.Resources>
+
     <StackPanel>
         <Border
             Width="360"
@@ -23,7 +24,7 @@
                     BlurRadius="10"
                     Direction="77"
                     ShadowDepth="5"
-                    Color="{StaticResource AltInterfaceW}" />
+                    Color="{StaticResource AltInterface}" />
             </Border.Effect>
 
             <Canvas>
@@ -33,11 +34,12 @@
                     VerticalAlignment="Top">
                     <Canvas.Effect>
                         <DropShadowEffect
-                            BlurRadius="4"
-                            Direction="268"
+                            BlurRadius="1"
+                            Direction="265"
                             ShadowDepth="1"
-                            Color="Black" />
+                            Color="{StaticResource AltInterface}" />
                     </Canvas.Effect>
+
                     <Rectangle
                         Canvas.Top="50"
                         Width="358"
