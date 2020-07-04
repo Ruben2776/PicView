@@ -19,8 +19,7 @@ namespace PicView.UI.DragAndDrop
         internal static void DragFile(object sender, MouseButtonEventArgs e)
         {
             if (ZoomLogic.ZoomValue > 1.0
-                || TheMainWindow.MainImage.Source == null 
-                || !TheMainWindow.IsFocused
+                || TheMainWindow.MainImage.Source == null
                 || Keyboard.Modifiers == ModifierKeys.Control
                 || Keyboard.Modifiers == ModifierKeys.Shift
                 || Properties.Settings.Default.PicGallery == 2

@@ -296,6 +296,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Translations\da-DK.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="UI\UserControls\Buttons\MenuCloseButton.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -319,7 +322,7 @@
   </ItemGroup>
   <PropertyGroup>
     <FileVersion>0.9.9.2</FileVersion>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <PackageLicenseFile></PackageLicenseFile>
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
     <PackageProjectUrl>https://github.com/Ruben2776/PicView</PackageProjectUrl>
