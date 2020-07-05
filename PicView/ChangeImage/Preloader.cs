@@ -436,12 +436,18 @@ namespace PicView.ChangeImage
                         // Add first elements
                         for (int i = index + 1; i < index + 1 + toLoad; i++)
                         {
-                            await Add(i % Pics.Count).ConfigureAwait(false);
+                            if (i != 0 || Pics.Count != 0)
+                            {
+                                await Add(i % Pics.Count).ConfigureAwait(false);
+                            }
                         }
                         // Add second elements behind
                         for (int i = index - 1; i > index - 1 - extraToLoad; i--)
                         {
-                            await Add(i % Pics.Count).ConfigureAwait(false);
+                            if (i != 0 || Pics.Count != 0)
+                            {
+                                await Add(i % Pics.Count).ConfigureAwait(false);
+                            }
                         }
 
                         //Clean up behind
@@ -475,7 +481,10 @@ namespace PicView.ChangeImage
                         // Add second elements
                         for (int i = index + 1; i <= index + 1 + toLoad; i++)
                         {
-                            await Add(i % Pics.Count).ConfigureAwait(false);
+                            if (i != 0 || Pics.Count != 0)
+                            {
+                                await Add(i % Pics.Count).ConfigureAwait(false);
+                            }
                         }
 
                         //Clean up infront
