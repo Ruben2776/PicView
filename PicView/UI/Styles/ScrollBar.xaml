@@ -14,10 +14,10 @@
                         Name="ellipse"
                         Width="12"
                         Margin="2"
-                        Fill="{StaticResource BackgroundColorBrush}" />
+                        Fill="{StaticResource MainColorFadedBrush}" />
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="ellipse" Property="Fill" Value="{StaticResource BorderBrush}" />
+                            <Setter TargetName="ellipse" Property="Fill" Value="{StaticResource MainColorBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

@@ -84,7 +84,7 @@
                 Width="425"
                 Height="35"
                 HorizontalAlignment="Center"
-                Background="{StaticResource AltInterfaceWBrush}">
+                Background="{StaticResource BackgroundSubtleHighlightBrush}">
 
                 <Rectangle
                     Width="1"

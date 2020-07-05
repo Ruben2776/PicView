@@ -42,6 +42,10 @@
     <Color x:Key="BackgroundColorFadeSubtle">#BE222222</Color>
     <SolidColorBrush x:Key="BackgroundColorBrushFadeSubtle" Color="{StaticResource BackgroundColorFadeSubtle}" />
 
+    <!--  Background Subtle Highlight  -->
+    <Color x:Key="BackgroundSubtleHighlight">#2b2929</Color>
+    <SolidColorBrush x:Key="BackgroundSubtleHighlightBrush" Color="{StaticResource BackgroundColorFadeSubtle}" />
+
     <!--  Border Brush  -->
     <Color x:Key="BorderColor">#FF3A3A3A</Color>
     <Color x:Key="BorderColorAlt">#FF1B1B1B</Color>
@@ -50,7 +54,7 @@
 
     <!--  Alt Interface  -->
     <Color x:Key="AltInterface">#A7222222</Color>
-    <Color x:Key="AltInterfaceW">#A7202020</Color>
+    <Color x:Key="AltInterfaceW">#A72e2c2c</Color>
     <SolidColorBrush x:Key="AltInterfaceBrush" Color="{StaticResource AltInterface}" />
     <SolidColorBrush x:Key="AltInterfaceWBrush" Color="{StaticResource AltInterfaceW}" />
 </ResourceDictionary>
