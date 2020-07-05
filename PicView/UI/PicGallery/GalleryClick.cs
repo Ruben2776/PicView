@@ -1,6 +1,5 @@
 ﻿using PicView.ChangeImage;
 using System;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -15,6 +14,10 @@ using static PicView.UI.UserControls.UC;
 
 namespace PicView.UI.PicGallery
 {
+    /// <summary>
+    /// Logick for what happens when user clicks on
+    /// thumbnail gallery item
+    /// </summary>
     internal static class GalleryClick
     {
         internal static void Click(int id)
@@ -64,7 +67,8 @@ namespace PicView.UI.PicGallery
                     To = to[0],
                     Duration = duration,
                     AccelerationRatio = acceleration,
-                    DecelerationRatio = deceleration
+                    DecelerationRatio = deceleration,
+                    FillBehavior = FillBehavior.Stop
                 };
 
                 var da0 = new DoubleAnimation
@@ -73,7 +77,8 @@ namespace PicView.UI.PicGallery
                     To = to[1],
                     Duration = duration,
                     AccelerationRatio = acceleration,
-                    DecelerationRatio = deceleration
+                    DecelerationRatio = deceleration,
+                    FillBehavior = FillBehavior.Stop
                 };
 
                 da.Completed += delegate
@@ -82,7 +87,6 @@ namespace PicView.UI.PicGallery
                     picGallery.grid.Children.Remove(border);
                     img = null;
                     IsOpen = false;
-                    
                 };
 
                 border.BeginAnimation(FrameworkElement.WidthProperty, da);
@@ -123,13 +127,10 @@ namespace PicView.UI.PicGallery
                 picGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
 
                 // Restore interface elements if needed
-                if (!Properties.Settings.Default.ShowInterface)
+                if (!Properties.Settings.Default.ShowInterface || Properties.Settings.Default.Fullscreen)
                 {
-                    clickArrowLeft.Visibility =
-                    clickArrowRight.Visibility =
-                    x2.Visibility =
-                    minus.Visibility =
-                    galleryShortcut.Visibility = Visibility.Visible;
+                    HideInterfaceLogic.ShowNavigation(true);
+                    HideInterfaceLogic.ShowShortcuts(true);
                 }
             }
 

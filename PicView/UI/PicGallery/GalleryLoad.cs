@@ -25,7 +25,12 @@ namespace PicView.UI.PicGallery
             // TODO Make this code more clean and explain what's going on?
             if (Properties.Settings.Default.PicGallery == 1)
             {
-                if (Properties.Settings.Default.ShowInterface)
+                if (Properties.Settings.Default.Fullscreen)
+                {
+                    picGallery.Width = SystemParameters.PrimaryScreenWidth;
+                    picGallery.Height = SystemParameters.PrimaryScreenHeight;
+                }
+                else if (Properties.Settings.Default.ShowInterface)
                 {
                     picGallery.Width = TheMainWindow.Width - 15;
                     picGallery.Height = TheMainWindow.ActualHeight - 70;

@@ -96,44 +96,46 @@ namespace PicView.UI.Loading
             if (arg == null)
             {
                 Unload();
-                if (Properties.Settings.Default.Maximized)
+            }
+            else
+            {
+                Pic(arg.ToString());
+            }
+
+            AddUIElementsAndUpdateValues();
+
+            if (Properties.Settings.Default.Fullscreen)
+            {
+                if (!ScaleImage.TryFitImage(arg.ToString()))
                 {
-                    Maximize();
+                    SetDefaultSize();
+                }
+
+                Fullscreen_Restore(true);
+            }
+            else if (Properties.Settings.Default.Maximized)
+            {
+                if (!ScaleImage.TryFitImage(arg.ToString()))
+                {
+                    SetDefaultSize();
+                }
+
+                Maximize();
+            }
+            else
+            {
+                if (AutoFitWindow)
+                {
+                    if (!ScaleImage.TryFitImage(arg.ToString()))
+                    {
+                        SetDefaultSize();
+                    }
                 }
                 else
                 {
                     SetDefaultSize();
                 }
             }
-            else
-            {
-                if (Properties.Settings.Default.Fullscreen)
-                {
-                    Fullscreen_Restore(true);
-                }
-                else if (Properties.Settings.Default.Maximized)
-                {
-                    Maximize();
-                }
-                else
-                {
-                    if (AutoFitWindow)
-                    {
-                        if (!ScaleImage.TryFitImage(arg.ToString()))
-                        {
-                            SetDefaultSize();
-                        }
-                    }
-                    else
-                    {
-                        SetDefaultSize();
-                    }
-                }
-
-                Pic(arg.ToString());
-            }
-
-            AddUIElementsAndUpdateValues();
 
 #if DEBUG
             Trace.WriteLine("Start Completed ");

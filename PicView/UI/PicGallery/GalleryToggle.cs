@@ -160,13 +160,11 @@ namespace PicView.UI.PicGallery
         {
             IsOpen = false;
 
-            if (!Properties.Settings.Default.ShowInterface)
+            // Restore interface elements if needed
+            if (!Properties.Settings.Default.ShowInterface || Properties.Settings.Default.Fullscreen)
             {
-                clickArrowLeft.Visibility =
-                clickArrowRight.Visibility =
-                x2.Visibility =
-                minus.Visibility =
-                galleryShortcut.Visibility = Visibility.Visible;
+                HideInterfaceLogic.ShowNavigation(true);
+                HideInterfaceLogic.ShowShortcuts(true);
             }
 
             var da = new DoubleAnimation

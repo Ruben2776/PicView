@@ -62,14 +62,6 @@ namespace PicView.UI.PicGallery
             }
         }
 
-        //static int Total_pages
-        // {
-        //     get
-        //     {
-        //         return (int)Math.Floor((double)Pics.Count / Items_per_page);
-        //     }
-        // }
-
         #endregion int calculations
 
         #region ScrollTo

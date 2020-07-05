@@ -298,7 +298,14 @@ namespace PicView.Shortcuts
                             }
                             else
                             {
-                                Fullscreen_Restore();
+                                if (GalleryFunctions.IsOpen)
+                                {
+                                    Toggle();
+                                }
+                                else
+                                {
+                                    Fullscreen_Restore();
+                                }
                             }
                             return;
                         }

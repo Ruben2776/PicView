@@ -1,4 +1,5 @@
 ﻿using PicView.SystemIntegration;
+using PicView.UI.PicGallery;
 using PicView.UI.Windows;
 using System;
 using System.Windows;
@@ -74,13 +75,7 @@ namespace PicView.UI.Sizing
                 if (e.ClickCount == 2)
                 {
                     Maximize_Restore();
-                    //EditTitleBar.Refocus();
-                    //e.Handled = true;
                 }
-                //if (e.ClickCount == 2)
-                //{
-                //    mainWindow.Bar.Bar.SelectAll();
-                //}
                 return;
             }
 
@@ -200,26 +195,19 @@ namespace PicView.UI.Sizing
         /// <summary>
         /// Fullscreen/restore window
         /// </summary>
-        internal static void Fullscreen_Restore(bool startup = false)
+        internal static void Fullscreen_Restore(bool forceFullscreen = false)
         {
-            if (startup || !Properties.Settings.Default.Fullscreen)
+            if (forceFullscreen || !Properties.Settings.Default.Fullscreen)
             {
-                if (!AutoFitWindow)
-                {
-                    Properties.Settings.Default.Save();
-                }
-
                 Properties.Settings.Default.Fullscreen = true;
-                // Update new setting and sizing
-                //FitToWindow = false;
 
                 ShowTopandBottom(false);
-                ShowNavigation(false);
-                ShowShortcuts(false);
+                ShowNavigation(true);
+                ShowShortcuts(true);
 
                 TheMainWindow.ResizeMode = ResizeMode.CanMinimize;
                 TheMainWindow.SizeToContent = SizeToContent.Manual;
-                TheMainWindow.Width = TheMainWindow.ParentContainer.Width = SystemParameters.PrimaryScreenWidth;
+                TheMainWindow.Width = SystemParameters.PrimaryScreenWidth;
                 TheMainWindow.Height = SystemParameters.PrimaryScreenHeight;
 
                 TheMainWindow.Top = 0;
@@ -227,7 +215,14 @@ namespace PicView.UI.Sizing
 
                 TheMainWindow.Topmost = true;
 
+                if (GalleryFunctions.IsOpen)
+                {
+                    picGallery.Width = SystemParameters.PrimaryScreenWidth;
+                    picGallery.Height = SystemParameters.PrimaryScreenHeight;
+                }
+
                 ConfigColors.UpdateColor(true);
+                Properties.Settings.Default.Save();
             }
             else
             {
@@ -258,8 +253,8 @@ namespace PicView.UI.Sizing
 
                     TheMainWindow.WindowState = WindowState.Normal;
 
-                    TheMainWindow.Width = TheMainWindow.ParentContainer.Width = double.NaN;
-                    TheMainWindow.Height = TheMainWindow.ParentContainer.Height = double.NaN;
+                    TheMainWindow.Width = double.NaN;
+                    TheMainWindow.Height = double.NaN;
 
                     TheMainWindow.Top -= TheMainWindow.LowerBar.ActualHeight / 2; // It works...
                 }
