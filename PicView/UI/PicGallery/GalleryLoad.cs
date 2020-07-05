@@ -22,6 +22,18 @@ namespace PicView.UI.PicGallery
 
         internal static void LoadLayout()
         {
+            if (picGallery == null)
+            {
+                picGallery = new UserControls.PicGallery
+                {
+                    Opacity = 0,
+                    Visibility = Visibility.Collapsed
+                };
+
+                TheMainWindow.ParentContainer.Children.Add(picGallery);
+                Panel.SetZIndex(picGallery, 999);
+            }
+
             // TODO Make this code more clean and explain what's going on?
             if (Properties.Settings.Default.PicGallery == 1)
             {

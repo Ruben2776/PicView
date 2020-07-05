@@ -99,41 +99,53 @@ namespace PicView.UI.Loading
             }
             else
             {
-                Pic(arg.ToString());
-            }
-
-            AddUIElementsAndUpdateValues();
-
-            if (Properties.Settings.Default.Fullscreen)
-            {
-                if (!ScaleImage.TryFitImage(arg.ToString()))
+                if (!AutoFitWindow)
                 {
                     SetDefaultSize();
                 }
-
-                Fullscreen_Restore(true);
-            }
-            else if (Properties.Settings.Default.Maximized)
-            {
-                if (!ScaleImage.TryFitImage(arg.ToString()))
-                {
-                    SetDefaultSize();
-                }
-
-                Maximize();
-            }
-            else
-            {
-                if (AutoFitWindow)
+                else
                 {
                     if (!ScaleImage.TryFitImage(arg.ToString()))
                     {
                         SetDefaultSize();
                     }
                 }
+
+                Pic(arg.ToString());
+            }
+
+            // Load UI and events
+            AddUIElementsAndUpdateValues();
+
+            // Change into prefered UI, if needed.
+            if (Properties.Settings.Default.Fullscreen)
+            {
+                if (arg == null)
+                {
+                    // Don't start it in fullscreen with no image
+                    Properties.Settings.Default.Fullscreen = false;
+                }
                 else
                 {
-                    SetDefaultSize();
+                    Fullscreen_Restore(true);
+                }
+            }
+            else if (Properties.Settings.Default.Maximized)
+            {
+                Maximize();
+            }
+            // Load PicGallery, if needed
+            else if (Properties.Settings.Default.PicGallery == 2)
+            {
+                if (arg == null)
+                {
+                    // Reset PicGallery and don't allow it to run,
+                    // if only 1 image
+                    Properties.Settings.Default.PicGallery = 1;
+                }
+                else
+                {
+                    GalleryToggle.OpenFullscreenGallery();
                 }
             }
 
@@ -190,24 +202,6 @@ namespace PicView.UI.Loading
                 minus.Visibility =
                 galleryShortcut.Visibility =
                 Visibility.Visible;
-            }
-
-            // Load PicGallery, if needed
-            if (Properties.Settings.Default.PicGallery > 0)
-            {
-                picGallery = new UserControls.PicGallery
-                {
-                    Opacity = 0,
-                    Visibility = Visibility.Collapsed
-                };
-
-                TheMainWindow.ParentContainer.Children.Add(picGallery);
-                Panel.SetZIndex(picGallery, 999);
-
-                if (Properties.Settings.Default.PicGallery == 2)
-                {
-                    GalleryToggle.OpenFullscreenGallery();
-                }
             }
 
             // Add UserControls :)
