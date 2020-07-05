@@ -23,6 +23,7 @@ namespace PicView.UI.DragAndDrop
                 || Keyboard.Modifiers == ModifierKeys.Control
                 || Keyboard.Modifiers == ModifierKeys.Shift
                 || Properties.Settings.Default.PicGallery == 2
+                || Properties.Settings.Default.Fullscreen
                 || Scroll.IsAutoScrolling)
             {
                 return;
