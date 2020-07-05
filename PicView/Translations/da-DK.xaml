@@ -5,7 +5,7 @@
 
     <!--  TitleText  -->
     <system:String x:Key="Loading">Indlæser</system:String>
-    <system:String x:Key="NoImage">Intet billede indlæst</system:String>
+    <system:String x:Key="NoImage">Intet billede er indlæst</system:String>
     <system:String x:Key="Files">filer</system:String>
 
     <!--  Info window  -->
@@ -25,9 +25,9 @@
     <!--  Tooltip Messages  -->
     <system:String x:Key="FileCopy">Filen er blevet tilføjet til udklipsholderen</system:String>
     <system:String x:Key="FileCopyPath">Fil stien er blevet tilføjet til udklipsholderen</system:String>
-    <system:String x:Key="ImageCopy">Image added to move clipboard</system:String>
-    <system:String x:Key="OpeningInExplorer">Opening file in Windows Explorer</system:String>
-    <system:String x:Key="FileCut">Image added to move clipboard</system:String>
-    <system:String x:Key="DragOverString">Drop to load image</system:String>
+    <system:String x:Key="ImageCopy">Billedet er tilføjet til udklipsholderen</system:String>
+    <system:String x:Key="OpeningInExplorer">Åbner filen i stifinderen</system:String>
+    <system:String x:Key="FileCut">Filen er blevet tilføjet til flytte udklipsholderen</system:String>
+    <system:String x:Key="DragOverString">Slip for at indlæse billede</system:String>
 
 </ResourceDictionary>
