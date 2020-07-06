@@ -1,12 +1,8 @@
 ﻿using PicView.Library;
-using PicView.SystemIntegration;
 using PicView.UI;
 using PicView.UI.Loading;
 using PicView.UI.TransformImage;
 using PicView.UI.UserControls;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -55,7 +51,10 @@ namespace PicView.Editing
             Fields.TheMainWindow.Cursor = Cursors.Arrow;
 
             // Hide it
-            UC.GetColorPicker.Opacity = 0;
+            if (UC.GetColorPicker != null)
+            {
+                UC.GetColorPicker.Opacity = 0;
+            }
 
             // Set values, if needed
             if (setText)
