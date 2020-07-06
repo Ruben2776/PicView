@@ -189,18 +189,18 @@ namespace PicView.UI.Loading
             // Update WindowStyle
             if (!Properties.Settings.Default.ShowInterface)
             {
-                clickArrowLeft.Opacity =
-                clickArrowRight.Opacity =
-                x2.Opacity =
-                minus.Opacity =
-                galleryShortcut.Opacity =
+                GetClickArrowLeft.Opacity =
+                GetClickArrowRight.Opacity =
+                Getx2.Opacity =
+                GetMinus.Opacity =
+                GetGalleryShortcut.Opacity =
                 0;
 
-                clickArrowLeft.Visibility =
-                clickArrowRight.Visibility =
-                x2.Visibility =
-                minus.Visibility =
-                galleryShortcut.Visibility =
+                GetClickArrowLeft.Visibility =
+                GetClickArrowRight.Visibility =
+                Getx2.Visibility =
+                GetMinus.Visibility =
+                GetGalleryShortcut.Visibility =
                 Visibility.Visible;
             }
 

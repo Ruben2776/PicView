@@ -89,41 +89,41 @@ namespace PicView.UI
         /// <param name="show"></param>
         internal static void ShowNavigation(bool show)
         {
-            if (clickArrowLeft == null && clickArrowRight == null && x2 == null && minus == null)
+            if (GetClickArrowLeft == null && GetClickArrowRight == null && Getx2 == null && GetMinus == null)
             {
                 return;
             }
 
             if (show)
             {
-                clickArrowLeft.Visibility =
-                clickArrowRight.Visibility =
-                x2.Visibility =
-                minus.Visibility = Visibility.Visible;
+                GetClickArrowLeft.Visibility =
+                GetClickArrowRight.Visibility =
+                Getx2.Visibility =
+                GetMinus.Visibility = Visibility.Visible;
             }
             else
             {
-                clickArrowLeft.Visibility =
-                clickArrowRight.Visibility =
-                x2.Visibility =
-                minus.Visibility = Visibility.Collapsed;
+                GetClickArrowLeft.Visibility =
+                GetClickArrowRight.Visibility =
+                Getx2.Visibility =
+                GetMinus.Visibility = Visibility.Collapsed;
             }
         }
 
         internal static void ShowShortcuts(bool show)
         {
-            if (galleryShortcut == null)
+            if (GetGalleryShortcut == null)
             {
                 return;
             }
 
             if (show)
             {
-                galleryShortcut.Visibility = Visibility.Visible;
+                GetGalleryShortcut.Visibility = Visibility.Visible;
             }
             else
             {
-                galleryShortcut.Visibility = Visibility.Collapsed;
+                GetGalleryShortcut.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -165,9 +165,9 @@ namespace PicView.UI
                 return;
             }
 
-            if (cropppingTool != null)
+            if (GetCropppingTool != null)
             {
-                if (cropppingTool.IsVisible)
+                if (GetCropppingTool.IsVisible)
                 {
                     return;
                 }

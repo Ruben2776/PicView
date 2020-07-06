@@ -16,29 +16,29 @@ namespace PicView.UI
         /// <param name="time">How long until it fades away</param>
         internal static void ShowTooltipMessage(object message, bool center, TimeSpan time)
         {
-            if (toolTipMessage == null)
+            if (GetToolTipMessage == null)
             {
                 return;
             }
 
-            toolTipMessage.Visibility = Visibility.Visible;
+            GetToolTipMessage.Visibility = Visibility.Visible;
 
             if (center)
             {
-                toolTipMessage.Margin = new Thickness(0, 0, 0, 0);
-                toolTipMessage.VerticalAlignment = VerticalAlignment.Center;
+                GetToolTipMessage.Margin = new Thickness(0, 0, 0, 0);
+                GetToolTipMessage.VerticalAlignment = VerticalAlignment.Center;
             }
             else
             {
-                toolTipMessage.Margin = new Thickness(0, 0, 0, 15);
-                toolTipMessage.VerticalAlignment = VerticalAlignment.Bottom;
+                GetToolTipMessage.Margin = new Thickness(0, 0, 0, 15);
+                GetToolTipMessage.VerticalAlignment = VerticalAlignment.Bottom;
             }
 
-            toolTipMessage.ToolTipUIText.Text = message.ToString();
+            GetToolTipMessage.ToolTipUIText.Text = message.ToString();
             var anim = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
-            anim.Completed += (s, _) => AnimationHelper.Fade(toolTipMessage, TimeSpan.FromSeconds(1.5), time, 1, 0);
+            anim.Completed += (s, _) => AnimationHelper.Fade(GetToolTipMessage, TimeSpan.FromSeconds(1.5), time, 1, 0);
 
-            toolTipMessage.BeginAnimation(UIElement.OpacityProperty, anim);
+            GetToolTipMessage.BeginAnimation(UIElement.OpacityProperty, anim);
         }
 
         /// <summary>
@@ -55,9 +55,9 @@ namespace PicView.UI
         /// </summary>
         internal static void CloseToolTipMessage()
         {
-            if (toolTipMessage.CheckAccess())
+            if (GetToolTipMessage.CheckAccess())
             {
-                toolTipMessage.Visibility = Visibility.Hidden;
+                GetToolTipMessage.Visibility = Visibility.Hidden;
             }
         }
     }

@@ -49,13 +49,13 @@ namespace PicView.UI.Windows
             }
             else if (ClickArrowRightClicked)
             {
-                Point p = clickArrowRight.PointToScreen(new Point(25, 30));
+                Point p = GetClickArrowRight.PointToScreen(new Point(25, 30));
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 ClickArrowRightClicked = false;
             }
             else if (ClickArrowLeftClicked)
             {
-                Point p = clickArrowLeft.PointToScreen(new Point(25, 30));
+                Point p = GetClickArrowLeft.PointToScreen(new Point(25, 30));
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 ClickArrowLeftClicked = false;
             }

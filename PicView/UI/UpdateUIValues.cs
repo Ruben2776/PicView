@@ -137,13 +137,13 @@ namespace PicView.UI
             {
                 IsScrollEnabled = false;
                 scrollcmHeader.IsChecked = false;
-                UC.quickSettingsMenu.ToggleScroll.IsChecked = false;
+                UC.GetQuickSettingsMenu.ToggleScroll.IsChecked = false;
             }
             else
             {
                 IsScrollEnabled = true;
                 scrollcmHeader.IsChecked = true;
-                UC.quickSettingsMenu.ToggleScroll.IsChecked = true;
+                UC.GetQuickSettingsMenu.ToggleScroll.IsChecked = true;
             }
         }
 
@@ -190,23 +190,23 @@ namespace PicView.UI
             if (windowBehaviour)
             {
                 WindowLogic.AutoFitWindow = true;
-                UC.quickSettingsMenu.SetFit.IsChecked = true;
+                UC.GetQuickSettingsMenu.SetFit.IsChecked = true;
             }
             else
             {
                 WindowLogic.AutoFitWindow = false;
-                UC.quickSettingsMenu.SetFit.IsChecked = false;
+                UC.GetQuickSettingsMenu.SetFit.IsChecked = false;
             }
 
             if (fill)
             {
                 Properties.Settings.Default.FillImage = true;
-                UC.quickSettingsMenu.ToggleFill.IsChecked = true;
+                UC.GetQuickSettingsMenu.ToggleFill.IsChecked = true;
             }
             else
             {
                 Properties.Settings.Default.FillImage = false;
-                UC.quickSettingsMenu.ToggleFill.IsChecked = false;
+                UC.GetQuickSettingsMenu.ToggleFill.IsChecked = false;
             }
 
             ScaleImage.TryFitImage();

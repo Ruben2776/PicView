@@ -87,20 +87,20 @@ namespace PicView.UI.PicGallery
                 From = 0
             };
 
-            picGallery.BeginAnimation(UIElement.OpacityProperty, da);
+            GetPicGallery.BeginAnimation(UIElement.OpacityProperty, da);
 
-            clickArrowLeft.Visibility =
-            clickArrowRight.Visibility =
-            x2.Visibility =
-            minus.Visibility =
-            galleryShortcut.Visibility = Visibility.Hidden;
+            GetClickArrowLeft.Visibility =
+            GetClickArrowRight.Visibility =
+            Getx2.Visibility =
+            GetMinus.Visibility =
+            GetGalleryShortcut.Visibility = Visibility.Hidden;
 
             if (fakeWindow != null)
             {
-                if (fakeWindow.grid.Children.Contains(picGallery))
+                if (fakeWindow.grid.Children.Contains(GetPicGallery))
                 {
-                    fakeWindow.grid.Children.Remove(picGallery);
-                    TheMainWindow.ParentContainer.Children.Add(picGallery);
+                    fakeWindow.grid.Children.Remove(GetPicGallery);
+                    TheMainWindow.ParentContainer.Children.Add(GetPicGallery);
                 }
             }
 
@@ -128,10 +128,10 @@ namespace PicView.UI.PicGallery
             }
 
             // Switch gallery container to the correct window
-            if (TheMainWindow.ParentContainer.Children.Contains(picGallery))
+            if (TheMainWindow.ParentContainer.Children.Contains(GetPicGallery))
             {
-                TheMainWindow.ParentContainer.Children.Remove(picGallery);
-                fakeWindow.grid.Children.Add(picGallery);
+                TheMainWindow.ParentContainer.Children.Remove(GetPicGallery);
+                fakeWindow.grid.Children.Add(GetPicGallery);
             }
 
             fakeWindow.Show();
@@ -144,7 +144,7 @@ namespace PicView.UI.PicGallery
             }
 
             // Fix not showing up opacity bug..
-            VisualStateManager.GoToElementState(picGallery, "Opacity", false);
+            VisualStateManager.GoToElementState(GetPicGallery, "Opacity", false);
 
             if (!IsLoading)
             {
@@ -176,11 +176,11 @@ namespace PicView.UI.PicGallery
             };
             da.Completed += delegate
             {
-                picGallery.Visibility = Visibility.Collapsed;
-                picGallery.Opacity = 1;
+                GetPicGallery.Visibility = Visibility.Collapsed;
+                GetPicGallery.Opacity = 1;
             };
 
-            picGallery.BeginAnimation(UIElement.OpacityProperty, da);
+            GetPicGallery.BeginAnimation(UIElement.OpacityProperty, da);
         }
 
         internal static void CloseFullscreenGallery()
@@ -203,10 +203,10 @@ namespace PicView.UI.PicGallery
             Properties.Settings.Default.PicGallery = 1;
             LoadLayout();
 
-            if (fakeWindow.grid.Children.Contains(picGallery))
+            if (fakeWindow.grid.Children.Contains(GetPicGallery))
             {
-                fakeWindow.grid.Children.Remove(picGallery);
-                TheMainWindow.ParentContainer.Children.Add(picGallery);
+                fakeWindow.grid.Children.Remove(GetPicGallery);
+                TheMainWindow.ParentContainer.Children.Add(GetPicGallery);
             }
 
             fakeWindow.Hide();
@@ -219,17 +219,17 @@ namespace PicView.UI.PicGallery
 
             if (fakeWindow != null)
             {
-                if (!fakeWindow.grid.Children.Contains(picGallery))
+                if (!fakeWindow.grid.Children.Contains(GetPicGallery))
                 {
-                    TheMainWindow.ParentContainer.Children.Remove(picGallery);
-                    fakeWindow.grid.Children.Add(picGallery);
+                    TheMainWindow.ParentContainer.Children.Remove(GetPicGallery);
+                    fakeWindow.grid.Children.Add(GetPicGallery);
                 }
             }
             else
             {
-                TheMainWindow.ParentContainer.Children.Remove(picGallery);
+                TheMainWindow.ParentContainer.Children.Remove(GetPicGallery);
                 fakeWindow = new FakeWindow();
-                fakeWindow.grid.Children.Add(picGallery);
+                fakeWindow.grid.Children.Add(GetPicGallery);
             }
 
             fakeWindow.Show();

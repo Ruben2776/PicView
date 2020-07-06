@@ -12,7 +12,7 @@ namespace PicView.ChangeImage
     {
         internal static async void GoToPicEvent(object sender, RoutedEventArgs e)
         {
-            if (int.TryParse(quickSettingsMenu.GoToPicBox.Text.ToString(), out int x))
+            if (int.TryParse(GetQuickSettingsMenu.GoToPicBox.Text.ToString(), out int x))
             {
                 x--;
                 x = x <= 0 ? 0 : x;
@@ -20,20 +20,20 @@ namespace PicView.ChangeImage
                 Navigation.Pic(x);
                 await TheMainWindow.Dispatcher.BeginInvoke((Action)(() =>
                 {
-                    quickSettingsMenu.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture);
+                    GetQuickSettingsMenu.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture);
                 }));
             }
             else
             {
-                quickSettingsMenu.GoToPicBox.Text = FolderIndex.ToString(CultureInfo.CurrentCulture);
+                GetQuickSettingsMenu.GoToPicBox.Text = FolderIndex.ToString(CultureInfo.CurrentCulture);
                 // TODO add error message or something..
             }
         }
 
         internal static void ClearGoTo()
         {
-            quickSettingsMenu.GoToPicBox.CaretBrush = new SolidColorBrush(Colors.Transparent);
-            FocusManager.SetFocusedElement(FocusManager.GetFocusScope(quickSettingsMenu.GoToPicBox), null);
+            GetQuickSettingsMenu.GoToPicBox.CaretBrush = new SolidColorBrush(Colors.Transparent);
+            FocusManager.SetFocusedElement(FocusManager.GetFocusScope(GetQuickSettingsMenu.GoToPicBox), null);
             Close_UserControls();
             Keyboard.ClearFocus();
             TheMainWindow.Focus();

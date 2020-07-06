@@ -32,12 +32,12 @@ namespace PicView.UI.PicGallery
                 }
                 else
                 {
-                    var z = picGallery.Container.Children[id] as UserControls.PicGalleryItem;
+                    var z = GetPicGallery.Container.Children[id] as UserControls.PicGalleryItem;
                     PreviewItemClick(z.img.Source, id);
                 }
 
-                picGallery.Width = xWidth;
-                picGallery.Height = xHeight;
+                GetPicGallery.Width = xWidth;
+                GetPicGallery.Height = xHeight;
 
                 var img = new Image()
                 {
@@ -53,7 +53,7 @@ namespace PicView.UI.PicGallery
                     Background = ConfigColors.GetBackgroundColorBrush()
                 };
                 border.Child = img;
-                picGallery.grid.Children.Add(border);
+                GetPicGallery.grid.Children.Add(border);
 
                 var from = picGalleryItem_Size;
                 var to = new double[] { xWidth, xHeight };
@@ -84,7 +84,7 @@ namespace PicView.UI.PicGallery
                 da.Completed += delegate
                 {
                     ItemClick(id);
-                    picGallery.grid.Children.Remove(border);
+                    GetPicGallery.grid.Children.Remove(border);
                     img = null;
                     IsOpen = false;
                 };
@@ -124,7 +124,7 @@ namespace PicView.UI.PicGallery
 
             if (Properties.Settings.Default.PicGallery == 1)
             {
-                picGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
+                GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
 
                 // Restore interface elements if needed
                 if (!Properties.Settings.Default.ShowInterface || Properties.Settings.Default.Fullscreen)

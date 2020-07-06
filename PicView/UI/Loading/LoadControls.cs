@@ -1,4 +1,5 @@
 ﻿using PicView.UI.UserControls;
+using PicView.UI.UserControls.Misc;
 using System.Diagnostics;
 using System.Windows;
 using static PicView.Library.Fields;
@@ -17,7 +18,7 @@ namespace PicView.UI.Loading
         {
             if (right)
             {
-                clickArrowRight = new ClickArrow(true)
+                GetClickArrowRight = new ClickArrow(true)
                 {
                     Focusable = false,
                     VerticalAlignment = VerticalAlignment.Center,
@@ -25,11 +26,11 @@ namespace PicView.UI.Loading
                     HorizontalAlignment = HorizontalAlignment.Right
                 };
 
-                TheMainWindow.ParentContainer.Children.Add(clickArrowRight);
+                TheMainWindow.ParentContainer.Children.Add(GetClickArrowRight);
             }
             else
             {
-                clickArrowLeft = new ClickArrow(false)
+                GetClickArrowLeft = new ClickArrow(false)
                 {
                     Focusable = false,
                     VerticalAlignment = VerticalAlignment.Center,
@@ -37,10 +38,11 @@ namespace PicView.UI.Loading
                     HorizontalAlignment = HorizontalAlignment.Left
                 };
 
-                TheMainWindow.ParentContainer.Children.Add(clickArrowLeft);
+                TheMainWindow.ParentContainer.Children.Add(GetClickArrowLeft);
 
 #if DEBUG
-                Trace.WriteLine("LoadClickArrow loaded " + right);
+                var x = right ? nameof(GetClickArrowRight) : nameof(GetClickArrowLeft);
+                Trace.WriteLine(x + " loaded ");
 #endif
             }
         }
@@ -50,7 +52,7 @@ namespace PicView.UI.Loading
         /// </summary>
         internal static void Loadx2()
         {
-            x2 = new X2()
+            Getx2 = new X2()
             {
                 Focusable = false,
                 VerticalAlignment = VerticalAlignment.Top,
@@ -58,10 +60,10 @@ namespace PicView.UI.Loading
                 HorizontalAlignment = HorizontalAlignment.Right
             };
 
-            TheMainWindow.ParentContainer.Children.Add(x2);
+            TheMainWindow.ParentContainer.Children.Add(Getx2);
 
 #if DEBUG
-            Trace.WriteLine("Loadx2 loaded ");
+            Trace.WriteLine(nameof(Getx2) + " loaded ");
 #endif
         }
 
@@ -70,7 +72,7 @@ namespace PicView.UI.Loading
         /// </summary>
         internal static void LoadMinus()
         {
-            minus = new Minus()
+            GetMinus = new Minus()
             {
                 Focusable = false,
                 VerticalAlignment = VerticalAlignment.Top,
@@ -79,10 +81,10 @@ namespace PicView.UI.Loading
                 Margin = new Thickness(0, 0, 50, 0)
             };
 
-            TheMainWindow.ParentContainer.Children.Add(minus);
+            TheMainWindow.ParentContainer.Children.Add(GetMinus);
 
 #if DEBUG
-            Trace.WriteLine("LoadMinus loaded ");
+            Trace.WriteLine(nameof(GetMinus) + " loaded ");
 #endif
         }
 
@@ -91,7 +93,7 @@ namespace PicView.UI.Loading
         /// </summary>
         internal static void LoadGalleryShortcut()
         {
-            galleryShortcut = new GalleryShortcut()
+            GetGalleryShortcut = new GalleryShortcut()
             {
                 Focusable = false,
                 VerticalAlignment = VerticalAlignment.Bottom,
@@ -99,10 +101,10 @@ namespace PicView.UI.Loading
                 HorizontalAlignment = HorizontalAlignment.Right
             };
 
-            TheMainWindow.ParentContainer.Children.Add(galleryShortcut);
+            TheMainWindow.ParentContainer.Children.Add(GetGalleryShortcut);
 
 #if DEBUG
-            Trace.WriteLine("LoadGalleryShortcut loaded ");
+            Trace.WriteLine(nameof(GetGalleryShortcut) + " loaded ");
 #endif
         }
 
@@ -111,7 +113,7 @@ namespace PicView.UI.Loading
         /// </summary>
         internal static void LoadFileMenu()
         {
-            fileMenu = new FileMenu
+            GetFileMenu = new FileMenu
             {
                 Focusable = false,
                 Opacity = 0,
@@ -121,10 +123,10 @@ namespace PicView.UI.Loading
                 Margin = new Thickness(0, 0, 188, 0)
             };
 
-            TheMainWindow.ParentContainer.Children.Add(fileMenu);
+            TheMainWindow.ParentContainer.Children.Add(GetFileMenu);
 
 #if DEBUG
-            Trace.WriteLine("LoadFileMenu loaded ");
+            Trace.WriteLine(nameof(GetFileMenu) + " loaded ");
 #endif
         }
 
@@ -133,7 +135,7 @@ namespace PicView.UI.Loading
         /// </summary>
         internal static void LoadImageSettingsMenu()
         {
-            imageSettingsMenu = new ImageSettings
+            GetImageSettingsMenu = new ImageSettings
             {
                 Focusable = false,
                 Opacity = 0,
@@ -143,10 +145,10 @@ namespace PicView.UI.Loading
                 Margin = new Thickness(0, 0, 95, 0)
             };
 
-            TheMainWindow.ParentContainer.Children.Add(imageSettingsMenu);
+            TheMainWindow.ParentContainer.Children.Add(GetImageSettingsMenu);
 
 #if DEBUG
-            Trace.WriteLine("LoadImageSettingsMenu loaded ");
+            Trace.WriteLine(nameof(GetImageSettingsMenu) + " loaded ");
 #endif
         }
 
@@ -155,7 +157,7 @@ namespace PicView.UI.Loading
         /// </summary>
         internal static void LoadQuickSettingsMenu()
         {
-            quickSettingsMenu = new QuickSettingsMenu
+            GetQuickSettingsMenu = new QuickSettingsMenu
             {
                 Focusable = false,
                 Opacity = 0,
@@ -165,12 +167,12 @@ namespace PicView.UI.Loading
                 Margin = new Thickness(52, 0, 0, 0)
             };
 
-            quickSettingsMenu.SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
+            GetQuickSettingsMenu.SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
 
-            TheMainWindow.ParentContainer.Children.Add(quickSettingsMenu);
+            TheMainWindow.ParentContainer.Children.Add(GetQuickSettingsMenu);
 
 #if DEBUG
-            Trace.WriteLine("LoadQuickSettingsMenu loaded ");
+            Trace.WriteLine(nameof(GetQuickSettingsMenu) + " loaded ");
 #endif
         }
 
@@ -179,7 +181,7 @@ namespace PicView.UI.Loading
         /// </summary>
         internal static void LoadToolsAndEffectsMenu()
         {
-            toolsAndEffectsMenu = new ToolsAndEffectsMenu
+            GetToolsAndEffectsMenu = new ToolsAndEffectsMenu
             {
                 Focusable = false,
                 Opacity = 0,
@@ -189,10 +191,10 @@ namespace PicView.UI.Loading
                 Margin = new Thickness(87, 0, 0, 0)
             };
 
-            TheMainWindow.ParentContainer.Children.Add(toolsAndEffectsMenu);
+            TheMainWindow.ParentContainer.Children.Add(GetToolsAndEffectsMenu);
 
 #if DEBUG
-            Trace.WriteLine("LoadFunctionsMenu loaded ");
+            Trace.WriteLine(nameof(GetToolsAndEffectsMenu) + " loaded ");
 #endif
         }
 
@@ -203,17 +205,17 @@ namespace PicView.UI.Loading
         /// </summary>
         internal static void LoadTooltipStyle()
         {
-            toolTipMessage = new ToolTipMessage
+            GetToolTipMessage = new ToolTipMessage
             {
                 Focusable = false,
                 Opacity = 0,
                 Visibility = Visibility.Hidden
             };
 
-            TheMainWindow.ParentContainer.Children.Add(toolTipMessage);
+            TheMainWindow.ParentContainer.Children.Add(GetToolTipMessage);
 
 #if DEBUG
-            Trace.WriteLine("LoadTooltipStyle loaded ");
+            Trace.WriteLine(nameof(GetToolTipMessage) + " loaded ");
 #endif
         }
 
@@ -222,7 +224,7 @@ namespace PicView.UI.Loading
         /// </summary>
         internal static void LoadAutoScrollSign()
         {
-            autoScrollSign = new AutoScrollSign
+            GetAutoScrollSign = new AutoScrollSign
             {
                 Focusable = false,
                 Opacity = 0,
@@ -231,10 +233,10 @@ namespace PicView.UI.Loading
                 Height = 35
             };
 
-            TheMainWindow.topLayer.Children.Add(autoScrollSign);
+            TheMainWindow.topLayer.Children.Add(GetAutoScrollSign);
 
 #if DEBUG
-            Trace.WriteLine("LoadAutoScrollSign loaded ");
+            Trace.WriteLine(nameof(GetAutoScrollSign) + " loaded ");
 #endif
         }
 
@@ -243,14 +245,30 @@ namespace PicView.UI.Loading
         /// </summary>
         internal static void LoadCroppingTool()
         {
-            cropppingTool = new CroppingTool
+            GetCropppingTool = new CroppingTool
             {
             };
 
-            TheMainWindow.ParentContainer.Children.Add(cropppingTool);
+            TheMainWindow.ParentContainer.Children.Add(GetCropppingTool);
 
 #if DEBUG
-            Trace.WriteLine("cropppingTool loaded ");
+            Trace.WriteLine(nameof(GetCropppingTool) + " loaded ");
+#endif
+        }
+
+        /// <summary>
+        /// Loads ColorPicker and adds it to the window
+        /// </summary>
+        internal static void LoadColorPicker()
+        {
+            GetColorPicker = new ColorPicker
+            {
+            };
+
+            TheMainWindow.topLayer.Children.Add(GetColorPicker);
+
+#if DEBUG
+            Trace.WriteLine(nameof(GetColorPicker) + " loaded ");
 #endif
         }
     }

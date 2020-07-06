@@ -33,9 +33,9 @@ namespace PicView.UI.Sizing
                     TheMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
                     TheMainWindow.ResizeMode = ResizeMode.CanMinimize;
 
-                    if (quickSettingsMenu != null)
+                    if (GetQuickSettingsMenu != null)
                     {
-                        quickSettingsMenu.SetFit.IsChecked = value;
+                        GetQuickSettingsMenu.SetFit.IsChecked = value;
                     }
 
                     TheMainWindow.WindowState = WindowState.Normal;
@@ -45,9 +45,9 @@ namespace PicView.UI.Sizing
                     TheMainWindow.SizeToContent = SizeToContent.Manual;
                     TheMainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
 
-                    if (quickSettingsMenu != null)
+                    if (GetQuickSettingsMenu != null)
                     {
-                        quickSettingsMenu.SetFit.IsChecked = value;
+                        GetQuickSettingsMenu.SetFit.IsChecked = value;
                     }
                 }
 
@@ -217,8 +217,8 @@ namespace PicView.UI.Sizing
 
                 if (GalleryFunctions.IsOpen)
                 {
-                    picGallery.Width = SystemParameters.PrimaryScreenWidth;
-                    picGallery.Height = SystemParameters.PrimaryScreenHeight;
+                    GetPicGallery.Width = SystemParameters.PrimaryScreenWidth;
+                    GetPicGallery.Height = SystemParameters.PrimaryScreenHeight;
                 }
 
                 ConfigColors.UpdateColor(true);
@@ -246,9 +246,9 @@ namespace PicView.UI.Sizing
                     TheMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
                     TheMainWindow.ResizeMode = ResizeMode.NoResize;
 
-                    if (quickSettingsMenu != null)
+                    if (GetQuickSettingsMenu != null)
                     {
-                        quickSettingsMenu.SetFit.IsChecked = true;
+                        GetQuickSettingsMenu.SetFit.IsChecked = true;
                     }
 
                     TheMainWindow.WindowState = WindowState.Normal;
@@ -263,9 +263,9 @@ namespace PicView.UI.Sizing
                     TheMainWindow.SizeToContent = SizeToContent.Manual;
                     TheMainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
 
-                    if (quickSettingsMenu != null)
+                    if (GetQuickSettingsMenu != null)
                     {
-                        quickSettingsMenu.SetFit.IsChecked = false;
+                        GetQuickSettingsMenu.SetFit.IsChecked = false;
                     }
 
                     TheMainWindow.Top = Properties.Settings.Default.Top;

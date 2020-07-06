@@ -38,19 +38,19 @@ namespace PicView.UI.PicGallery
                 {
                     GalleryClick.Click(id);
                 };
-                picGallery.Container.Children.Add(item);
+                GetPicGallery.Container.Children.Add(item);
             }));
         }
 
         internal static void Clear()
         {
-            if (picGallery == null)
+            if (GetPicGallery == null)
             {
                 return;
             }
 
             IsLoading = false;
-            picGallery.Container.Children.Clear();
+            GetPicGallery.Container.Children.Clear();
 
 #if DEBUG
             Trace.WriteLine("Cleared Gallery children");
@@ -59,20 +59,20 @@ namespace PicView.UI.PicGallery
 
         internal static void SetSelected(int x)
         {
-            if (x > picGallery.Container.Children.Count) { return; }
+            if (x > GetPicGallery.Container.Children.Count) { return; }
 
             // Select next item
-            var nextItem = picGallery.Container.Children[x] as UserControls.PicGalleryItem;
+            var nextItem = GetPicGallery.Container.Children[x] as UserControls.PicGalleryItem;
             nextItem.innerborder.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
             nextItem.innerborder.Width = nextItem.innerborder.Height = picGalleryItem_Size;
         }
 
         internal static void SetUnselected(int x)
         {
-            if (x > picGallery.Container.Children.Count) { return; }
+            if (x > GetPicGallery.Container.Children.Count) { return; }
 
             // Deselect current item
-            var prevItem = picGallery.Container.Children[x] as UserControls.PicGalleryItem;
+            var prevItem = GetPicGallery.Container.Children[x] as UserControls.PicGalleryItem;
             prevItem.innerborder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
             prevItem.innerborder.Width = prevItem.innerborder.Height = picGalleryItem_Size_s;
         }

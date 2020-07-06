@@ -106,11 +106,7 @@ namespace PicView.UI.TransformImage
 
             if ((Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
             {
-                var w32Mouse = new NativeMethods.Win32Point();
-                NativeMethods.GetCursorPos(ref w32Mouse);
-                var c = NativeMethods.GetColorAt(w32Mouse.X, w32Mouse.Y);
-
-                Clipboard.SetText(HexConverter(c));
+                Editing.Color_Picking.StopRunning(true);
             }
 
             // Fix focus
@@ -302,7 +298,7 @@ namespace PicView.UI.TransformImage
                 SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height, FolderIndex);
             }
 
-            UC.quickSettingsMenu.ZoomSlider.Value = 1.0;
+            UC.GetQuickSettingsMenu.ZoomSlider.Value = 1.0;
         }
 
         /// <summary>
@@ -312,7 +308,7 @@ namespace PicView.UI.TransformImage
         internal static void Zoom(bool increment)
         {
             /// Don't zoom when gallery is open
-            if (UC.picGallery != null)
+            if (UC.GetPicGallery != null)
             {
                 if (GalleryFunctions.IsOpen)
                 {
@@ -370,7 +366,7 @@ namespace PicView.UI.TransformImage
 
         internal static void Zoom(double value)
         {
-            if (value > UC.quickSettingsMenu.ZoomSlider.Maximum)
+            if (value > UC.GetQuickSettingsMenu.ZoomSlider.Maximum)
             {
                 return;
             }
@@ -400,9 +396,9 @@ namespace PicView.UI.TransformImage
                 SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height, FolderIndex);
             }
 
-            if (UC.quickSettingsMenu.ZoomSlider.Value != value)
+            if (UC.GetQuickSettingsMenu.ZoomSlider.Value != value)
             {
-                UC.quickSettingsMenu.ZoomSlider.Value = value;
+                UC.GetQuickSettingsMenu.ZoomSlider.Value = value;
             }
 
         }

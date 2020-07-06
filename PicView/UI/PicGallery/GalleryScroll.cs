@@ -15,12 +15,12 @@ namespace PicView.UI.PicGallery
         {
             get
             {
-                if (picGallery == null)
+                if (GetPicGallery == null)
                 {
                     return 0;
                 }
 
-                return (int)Math.Floor(picGallery.Width / picGalleryItem_Size);
+                return (int)Math.Floor(GetPicGallery.Width / picGalleryItem_Size);
             }
         }
 
@@ -28,13 +28,13 @@ namespace PicView.UI.PicGallery
         {
             get
             {
-                if (picGallery == null)
+                if (GetPicGallery == null)
                 {
                     return 0;
                 }
 
                 return Properties.Settings.Default.PicGallery == 1 ?
-                    (int)Math.Floor(picGallery.Height / picGalleryItem_Size) :
+                    (int)Math.Floor(GetPicGallery.Height / picGalleryItem_Size) :
                     ChangeImage.Navigation.Pics.Count;
             }
         }
@@ -43,14 +43,14 @@ namespace PicView.UI.PicGallery
         {
             get
             {
-                if (picGallery == null)
+                if (GetPicGallery == null)
                 {
                     return 0;
                 }
 
                 return Properties.Settings.Default.PicGallery == 1 ?
                     Horizontal_items * Vertical_items :
-                    (int)Math.Floor(picGallery.Height / picGalleryItem_Size);
+                    (int)Math.Floor(GetPicGallery.Height / picGalleryItem_Size);
             }
         }
 
@@ -74,11 +74,11 @@ namespace PicView.UI.PicGallery
         {
             if (Properties.Settings.Default.PicGallery == 1)
             {
-                picGallery.Scroller.ScrollToHorizontalOffset((picGalleryItem_Size * Horizontal_items) * Current_page);
+                GetPicGallery.Scroller.ScrollToHorizontalOffset((picGalleryItem_Size * Horizontal_items) * Current_page);
             }
             else
             {
-                picGallery.Scroller.ScrollToVerticalOffset((picGalleryItem_Size * Items_per_page) * Current_page);
+                GetPicGallery.Scroller.ScrollToVerticalOffset((picGalleryItem_Size * Items_per_page) * Current_page);
             }
         }
 
@@ -105,31 +105,31 @@ namespace PicView.UI.PicGallery
             {
                 if (next)
                 {
-                    picGallery.Scroller.ScrollToRightEnd();
+                    GetPicGallery.Scroller.ScrollToRightEnd();
                 }
                 else
                 {
-                    picGallery.Scroller.ScrollToLeftEnd();
+                    GetPicGallery.Scroller.ScrollToLeftEnd();
                 }
             }
             else
             {
                 var speed = speedUp ? picGalleryItem_Size * 4.7 : picGalleryItem_Size;
-                var direction = next ? picGallery.Scroller.HorizontalOffset - speed : picGallery.Scroller.HorizontalOffset + speed;
+                var direction = next ? GetPicGallery.Scroller.HorizontalOffset - speed : GetPicGallery.Scroller.HorizontalOffset + speed;
 
                 if (Properties.Settings.Default.PicGallery == 1)
                 {
-                    picGallery.Scroller.ScrollToHorizontalOffset(direction);
+                    GetPicGallery.Scroller.ScrollToHorizontalOffset(direction);
                 }
                 else
                 {
                     if (next)
                     {
-                        picGallery.Scroller.ScrollToVerticalOffset(picGallery.Scroller.VerticalOffset - speed);
+                        GetPicGallery.Scroller.ScrollToVerticalOffset(GetPicGallery.Scroller.VerticalOffset - speed);
                     }
                     else
                     {
-                        picGallery.Scroller.ScrollToVerticalOffset(picGallery.Scroller.VerticalOffset + speed);
+                        GetPicGallery.Scroller.ScrollToVerticalOffset(GetPicGallery.Scroller.VerticalOffset + speed);
                     }
                 }
             }

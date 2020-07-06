@@ -53,16 +53,16 @@ namespace PicView.UI.TransformImage
 
         internal static void HideAutoScrollSign()
         {
-            autoScrollSign.Visibility = Visibility.Collapsed;
-            autoScrollSign.Opacity = 0;
+            GetAutoScrollSign.Visibility = Visibility.Collapsed;
+            GetAutoScrollSign.Opacity = 0;
         }
 
         internal static void ShowAutoScrollSign()
         {
-            Canvas.SetTop(autoScrollSign, AutoScrollOrigin.Value.Y);
-            Canvas.SetLeft(autoScrollSign, AutoScrollOrigin.Value.X);
-            autoScrollSign.Visibility = Visibility.Visible;
-            autoScrollSign.Opacity = 1;
+            Canvas.SetTop(GetAutoScrollSign, AutoScrollOrigin.Value.Y);
+            Canvas.SetLeft(GetAutoScrollSign, AutoScrollOrigin.Value.X);
+            GetAutoScrollSign.Visibility = Visibility.Visible;
+            GetAutoScrollSign.Opacity = 1;
         }
 
         // Auto scroll

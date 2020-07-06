@@ -122,7 +122,7 @@ namespace PicView.ChangeImage
             Pic(FolderIndex);
 
             // Load new gallery values, if changing folder
-            if (picGallery != null && Properties.Settings.Default.PicGallery == 2 && !GalleryFunctions.IsLoading)
+            if (GetPicGallery != null && Properties.Settings.Default.PicGallery == 2 && !GalleryFunctions.IsLoading)
             {
                 await GalleryLoad.Load().ConfigureAwait(false);
             }
@@ -211,11 +211,11 @@ namespace PicView.ChangeImage
                         }
 
                         Pics.RemoveAt(x);
-                        if (picGallery != null)
+                        if (GetPicGallery != null)
                         {
-                            if (picGallery.grid.Children.Count > x)
+                            if (GetPicGallery.grid.Children.Count > x)
                             {
-                                picGallery.grid.Children.RemoveAt(x);
+                                GetPicGallery.grid.Children.RemoveAt(x);
                             }
                         }
                         CanNavigate = true;
@@ -336,7 +336,7 @@ namespace PicView.ChangeImage
 
             Pic(Pics[0]);
 
-            quickSettingsMenu.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
+            GetQuickSettingsMenu.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
 
             prevPicResource = null; // Make sure to not waste memory
         }
@@ -360,7 +360,7 @@ namespace PicView.ChangeImage
             }
 
             // exit if browsing PicGallery
-            if (picGallery != null)
+            if (GetPicGallery != null)
             {
                 if (Properties.Settings.Default.PicGallery == 1)
                 {
@@ -439,9 +439,9 @@ namespace PicView.ChangeImage
             Pic(FolderIndex);
 
             // Update PicGallery selected item, if needed
-            if (picGallery != null)
+            if (GetPicGallery != null)
             {
-                if (picGallery.Container.Children.Count > FolderIndex && picGallery.Container.Children.Count > x)
+                if (GetPicGallery.Container.Children.Count > FolderIndex && GetPicGallery.Container.Children.Count > x)
                 {
                     if (x != FolderIndex)
                     {

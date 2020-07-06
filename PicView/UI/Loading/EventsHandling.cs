@@ -53,18 +53,18 @@ namespace PicView.UI.Loading
             TheMainWindow.FileMenuButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(TheMainWindow.FileMenuBg);
             TheMainWindow.FileMenuButton.Click += Toggle_open_menu;
 
-            fileMenu.Open.Click += (s, x) => Open();
-            fileMenu.FileLocation.Click += (s, x) => Open_In_Explorer();
-            fileMenu.Print.Click += (s, x) => Print(Pics[FolderIndex]);
-            fileMenu.SaveBorder.Click += (s, x) => SaveFiles();
+            GetFileMenu.Open.Click += (s, x) => Open();
+            GetFileMenu.FileLocation.Click += (s, x) => Open_In_Explorer();
+            GetFileMenu.Print.Click += (s, x) => Print(Pics[FolderIndex]);
+            GetFileMenu.SaveBorder.Click += (s, x) => SaveFiles();
 
-            fileMenu.OpenBorder.MouseLeftButtonUp += (s, x) => Open();
-            fileMenu.FileLocationBorder.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
-            fileMenu.PrintBorder.MouseLeftButtonUp += (s, x) => Print(Pics[FolderIndex]);
-            fileMenu.Save_File_Location_Border.MouseLeftButtonUp += (s, x) => SaveFiles();
+            GetFileMenu.OpenBorder.MouseLeftButtonUp += (s, x) => Open();
+            GetFileMenu.FileLocationBorder.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
+            GetFileMenu.PrintBorder.MouseLeftButtonUp += (s, x) => Print(Pics[FolderIndex]);
+            GetFileMenu.Save_File_Location_Border.MouseLeftButtonUp += (s, x) => SaveFiles();
 
-            fileMenu.PasteButton.Click += (s, x) => Paste();
-            fileMenu.CopyButton.Click += (s, x) => Copyfile();
+            GetFileMenu.PasteButton.Click += (s, x) => Paste();
+            GetFileMenu.CopyButton.Click += (s, x) => Copyfile();
 
             // image_button
             TheMainWindow.image_button.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.ImagePath1Fill, TheMainWindow.ImagePath2Fill, TheMainWindow.ImagePath3Fill);
@@ -75,18 +75,18 @@ namespace PicView.UI.Loading
             TheMainWindow.image_button.Click += Toggle_image_menu;
 
             // imageSettingsMenu Buttons
-            imageSettingsMenu.RotateRightButton.Click += (s, x) => Rotate(true);
-            imageSettingsMenu.RotateLeftButton.Click += (s, x) => Rotate(false);
+            GetImageSettingsMenu.RotateRightButton.Click += (s, x) => Rotate(true);
+            GetImageSettingsMenu.RotateLeftButton.Click += (s, x) => Rotate(false);
 
-            imageSettingsMenu.Contained_Gallery.Click += delegate {
+            GetImageSettingsMenu.Contained_Gallery.Click += delegate {
                 Close_UserControls();
                 GalleryToggle.OpenContainedGallery();
             };
-            imageSettingsMenu.Fullscreen_Gallery.Click += delegate {
+            GetImageSettingsMenu.Fullscreen_Gallery.Click += delegate {
                 Close_UserControls();
                 GalleryToggle.OpenFullscreenGallery();
             };
-            imageSettingsMenu.SlideshowButton.Click += delegate { Slideshow.StartSlideshow(); };
+            GetImageSettingsMenu.SlideshowButton.Click += delegate { Slideshow.StartSlideshow(); };
 
             // LeftButton
             TheMainWindow.LeftButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.LeftArrowFill);
@@ -122,26 +122,26 @@ namespace PicView.UI.Loading
             TheMainWindow.FunctionMenuButton.Click += Toggle_Functions_menu;
 
             // FlipButton
-            imageSettingsMenu.FlipButton.Click += (s, x) => Flip();
+            GetImageSettingsMenu.FlipButton.Click += (s, x) => Flip();
 
             // ClickArrows
-            clickArrowLeft.MouseLeftButtonDown += (s, x) => PicButton(true, false);
-            clickArrowLeft.MouseEnter += Interface_MouseEnter_Negative;
+            GetClickArrowLeft.MouseLeftButtonDown += (s, x) => PicButton(true, false);
+            GetClickArrowLeft.MouseEnter += Interface_MouseEnter_Negative;
 
-            clickArrowRight.MouseLeftButtonDown += (s, x) => PicButton(true, true);
-            clickArrowRight.MouseEnter += Interface_MouseEnter_Negative;
+            GetClickArrowRight.MouseLeftButtonDown += (s, x) => PicButton(true, true);
+            GetClickArrowRight.MouseEnter += Interface_MouseEnter_Negative;
 
             // x2
-            x2.MouseLeftButtonDown += (x, xx) => SystemCommands.CloseWindow(TheMainWindow);
-            x2.MouseEnter += Interface_MouseEnter_Negative;
+            Getx2.MouseLeftButtonDown += (x, xx) => SystemCommands.CloseWindow(TheMainWindow);
+            Getx2.MouseEnter += Interface_MouseEnter_Negative;
 
             // Minus
-            minus.MouseLeftButtonDown += (s, x) => SystemCommands.MinimizeWindow(TheMainWindow);
-            minus.MouseEnter += Interface_MouseEnter_Negative;
+            GetMinus.MouseLeftButtonDown += (s, x) => SystemCommands.MinimizeWindow(TheMainWindow);
+            GetMinus.MouseEnter += Interface_MouseEnter_Negative;
 
             // GalleryShortcut
-            galleryShortcut.MouseLeftButtonDown += (s, x) => GalleryToggle.Toggle();
-            galleryShortcut.MouseEnter += Interface_MouseEnter_Negative;
+            GetGalleryShortcut.MouseLeftButtonDown += (s, x) => GalleryToggle.Toggle();
+            GetGalleryShortcut.MouseEnter += Interface_MouseEnter_Negative;
 
             // Bar
             TheMainWindow.TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
@@ -166,7 +166,7 @@ namespace PicView.UI.Loading
             TheMainWindow.ParentContainer.MouseLeave += Interface_MouseLeave;
 
             // TooltipStyle
-            toolTipMessage.MouseWheel += MainImage_MouseWheel;
+            GetToolTipMessage.MouseWheel += MainImage_MouseWheel;
 
             // TitleBar
             TheMainWindow.TitleBar.MouseLeftButtonDown += Move;
