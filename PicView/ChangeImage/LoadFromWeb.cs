@@ -54,6 +54,12 @@ namespace PicView.ChangeImage
             Pic(pic, path);
             RecentFiles.Add(path);
             CanNavigate = false;
+
+            // Fix not having focus after drag and drop
+            if (!TheMainWindow.IsFocused)
+            {
+                TheMainWindow.Focus();
+            }
         }
 
         /// <summary>
@@ -86,10 +92,9 @@ namespace PicView.ChangeImage
                     CanNavigate = false;
                 }));
 
-                var bytes = await client.DownloadDataTaskAsync(new Uri(address)).ConfigureAwait(false);
-                var stream = new MemoryStream(bytes);
-                pic = GetMagickImage(stream);
-            }).ConfigureAwait(false);
+                var bytes = await client.DownloadDataTaskAsync(new Uri(address)).ConfigureAwait(true);
+                pic = GetMagickImage(bytes);
+            }).ConfigureAwait(true);
             return pic;
         }
     }

@@ -102,7 +102,7 @@ namespace PicView.ImageHandling
         /// <summary>Gets the magick image.</summary>
         /// <param name="s">The stream</param>
         /// <returns></returns>
-        internal static BitmapSource GetMagickImage(Stream s)
+        internal static BitmapSource GetMagickImage(byte[] bytes)
         {
             BitmapSource pic;
 
@@ -111,7 +111,7 @@ namespace PicView.ImageHandling
                 Quality = 100
             };
 
-            magick.Read(s);
+            magick.Read(bytes);
             magick.ColorSpace = ColorSpace.Transparent;
             pic = magick.ToBitmapSource();
 
