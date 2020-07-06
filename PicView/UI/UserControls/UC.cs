@@ -1,5 +1,6 @@
 ﻿using PicView.UI.Animations;
 using PicView.UI.PicGallery;
+using PicView.UI.UserControls.Misc;
 using PicView.UI.Windows;
 using System;
 using System.Windows;
@@ -9,19 +10,20 @@ namespace PicView.UI.UserControls
 {
     internal static class UC
     {
-        internal static ImageSettings imageSettingsMenu;
-        internal static FileMenu fileMenu;
-        internal static QuickSettingsMenu quickSettingsMenu;
-        internal static ToolsAndEffectsMenu toolsAndEffectsMenu;
-        internal static ToolTipMessage toolTipMessage;
-        internal static AutoScrollSign autoScrollSign;
-        internal static ClickArrow clickArrowLeft;
-        internal static ClickArrow clickArrowRight;
-        internal static X2 x2;
-        internal static Minus minus;
-        internal static PicGallery picGallery;
-        internal static GalleryShortcut galleryShortcut;
-        internal static CroppingTool cropppingTool;
+        internal static ImageSettings GetImageSettingsMenu;
+        internal static FileMenu GetFileMenu;
+        internal static QuickSettingsMenu GetQuickSettingsMenu;
+        internal static ToolsAndEffectsMenu GetToolsAndEffectsMenu;
+        internal static ToolTipMessage GetToolTipMessage;
+        internal static AutoScrollSign GetAutoScrollSign;
+        internal static ClickArrow GetClickArrowLeft;
+        internal static ClickArrow GetClickArrowRight;
+        internal static X2 Getx2;
+        internal static Minus GetMinus;
+        internal static PicGallery GetPicGallery;
+        internal static GalleryShortcut GetGalleryShortcut;
+        internal static CroppingTool GetCropppingTool;
+        internal static ColorPicker GetColorPicker;
 
         private static bool imageSettingsMenuOpen;
         private static bool fileMenuOpen;
@@ -39,21 +41,21 @@ namespace PicView.UI.UserControls
             set
             {
                 imageSettingsMenuOpen = value;
-                imageSettingsMenu.Visibility = Visibility.Visible;
+                GetImageSettingsMenu.Visibility = Visibility.Visible;
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
                 if (!value)
                 {
                     da.To = 0;
-                    da.Completed += delegate { imageSettingsMenu.Visibility = Visibility.Hidden; };
+                    da.Completed += delegate { GetImageSettingsMenu.Visibility = Visibility.Hidden; };
                 }
                 else
                 {
                     da.To = 1;
                 }
 
-                if (imageSettingsMenu != null)
+                if (GetImageSettingsMenu != null)
                 {
-                    imageSettingsMenu.BeginAnimation(UIElement.OpacityProperty, da);
+                    GetImageSettingsMenu.BeginAnimation(UIElement.OpacityProperty, da);
                 }
             }
         }
@@ -67,21 +69,21 @@ namespace PicView.UI.UserControls
             set
             {
                 fileMenuOpen = value;
-                fileMenu.Visibility = Visibility.Visible;
+                GetFileMenu.Visibility = Visibility.Visible;
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
                 if (!value)
                 {
                     da.To = 0;
-                    da.Completed += delegate { fileMenu.Visibility = Visibility.Hidden; };
+                    da.Completed += delegate { GetFileMenu.Visibility = Visibility.Hidden; };
                 }
                 else
                 {
                     da.To = 1;
                 }
 
-                if (fileMenu != null)
+                if (GetFileMenu != null)
                 {
-                    fileMenu.BeginAnimation(UIElement.OpacityProperty, da);
+                    GetFileMenu.BeginAnimation(UIElement.OpacityProperty, da);
                 }
             }
         }
@@ -95,30 +97,30 @@ namespace PicView.UI.UserControls
             set
             {
                 quickSettingsMenuOpen = value;
-                quickSettingsMenu.Visibility = Visibility.Visible;
+                GetQuickSettingsMenu.Visibility = Visibility.Visible;
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
                 if (!value)
                 {
                     da.To = 0;
                     da.Completed += delegate { 
-                        quickSettingsMenu.Visibility = Visibility.Hidden;
-                        quickSettingsMenu.ZoomSliderParent.Visibility = Visibility.Collapsed; };
+                        GetQuickSettingsMenu.Visibility = Visibility.Hidden;
+                        GetQuickSettingsMenu.ZoomSliderParent.Visibility = Visibility.Collapsed; };
                 }
                 else
                 {
                     da.To = 1;
                 }
 
-                if (quickSettingsMenu != null)
+                if (GetQuickSettingsMenu != null)
                 {
                     if (Library.Fields.TheMainWindow.MainImage.Source != null)
                     {
-                        quickSettingsMenu.GoToPicBox.Text =
+                        GetQuickSettingsMenu.GoToPicBox.Text =
                             (Library.Fields.FolderIndex + 1)
                             .ToString(System.Globalization.CultureInfo.CurrentCulture);
                     }
 
-                    quickSettingsMenu.BeginAnimation(UIElement.OpacityProperty, da);
+                    GetQuickSettingsMenu.BeginAnimation(UIElement.OpacityProperty, da);
                 }
             }
         }
@@ -132,21 +134,21 @@ namespace PicView.UI.UserControls
             set
             {
                 toolsAndEffectsMenuOpen = value;
-                toolsAndEffectsMenu.Visibility = Visibility.Visible;
+                GetToolsAndEffectsMenu.Visibility = Visibility.Visible;
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
                 if (!value)
                 {
                     da.To = 0;
-                    da.Completed += delegate { toolsAndEffectsMenu.Visibility = Visibility.Hidden; };
+                    da.Completed += delegate { GetToolsAndEffectsMenu.Visibility = Visibility.Hidden; };
                 }
                 else
                 {
                     da.To = 1;
                 }
 
-                if (toolsAndEffectsMenu != null)
+                if (GetToolsAndEffectsMenu != null)
                 {
-                    toolsAndEffectsMenu.BeginAnimation(UIElement.OpacityProperty, da);
+                    GetToolsAndEffectsMenu.BeginAnimation(UIElement.OpacityProperty, da);
                 }
             }
         }

@@ -34,9 +34,9 @@ namespace PicView.Shortcuts
 
             #region CroppingKeys
 
-            if (cropppingTool != null)
+            if (GetCropppingTool != null)
             {
-                if (cropppingTool.IsVisible)
+                if (GetCropppingTool.IsVisible)
                 {
                     if (e.Key == Key.Escape)
                     {
@@ -48,7 +48,7 @@ namespace PicView.Shortcuts
                         {
                             SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height, FolderIndex);
                         }
-                        TheMainWindow.ParentContainer.Children.Remove(cropppingTool);
+                        TheMainWindow.ParentContainer.Children.Remove(GetCropppingTool);
                         CanNavigate = true;
                         e.Handled = true;
                         return;
@@ -84,7 +84,7 @@ namespace PicView.Shortcuts
                 case Key.BrowserForward:
                 case Key.Right:
                 case Key.D:
-                    if (picGallery != null)
+                    if (GetPicGallery != null)
                     {
                         if (GalleryFunctions.IsOpen)
                         {
@@ -115,7 +115,7 @@ namespace PicView.Shortcuts
                 case Key.BrowserBack:
                 case Key.Left:
                 case Key.A:
-                    if (picGallery != null)
+                    if (GetPicGallery != null)
                     {
                         if (GalleryFunctions.IsOpen)
                         {
@@ -144,7 +144,7 @@ namespace PicView.Shortcuts
                     return;
 
                 case Key.PageUp:
-                    if (picGallery != null)
+                    if (GetPicGallery != null)
                     {
                         if (GalleryFunctions.IsOpen)
                         {
@@ -160,7 +160,7 @@ namespace PicView.Shortcuts
                     return;
 
                 case Key.PageDown:
-                    if (picGallery != null)
+                    if (GetPicGallery != null)
                     {
                         if (GalleryFunctions.IsOpen)
                         {
@@ -188,7 +188,7 @@ namespace PicView.Shortcuts
                             TheMainWindow.Scroller.ScrollToVerticalOffset(TheMainWindow.Scroller.VerticalOffset - 30);
                         }
                     }
-                    else if (picGallery != null)
+                    else if (GetPicGallery != null)
                     {
                         if (GalleryFunctions.IsOpen)
                         {
@@ -220,7 +220,7 @@ namespace PicView.Shortcuts
 
                 case Key.Down:
                 case Key.S:
-                    if (ctrlDown && picGallery != null && !GalleryFunctions.IsOpen)
+                    if (ctrlDown && GetPicGallery != null && !GalleryFunctions.IsOpen)
                     {
                         SaveFiles();
                     }
@@ -228,7 +228,7 @@ namespace PicView.Shortcuts
                     {
                         TheMainWindow.Scroller.ScrollToVerticalOffset(TheMainWindow.Scroller.VerticalOffset + 30);
                     }
-                    else if (picGallery != null)
+                    else if (GetPicGallery != null)
                     {
                         if (GalleryFunctions.IsOpen)
                         {
@@ -455,7 +455,7 @@ namespace PicView.Shortcuts
 
                     // Space
                     case Key.Space:
-                        if (picGallery != null)
+                        if (GetPicGallery != null)
                         {
                             if (GalleryFunctions.IsOpen)
                             {
@@ -556,9 +556,6 @@ namespace PicView.Shortcuts
 
             if (altDown)
             {
-                // Set cursor for coloc picking
-                TheMainWindow.Cursor = Cursors.Pen;
-
                 // Alt + Z
                 if ((e.SystemKey == Key.Z))
                 {
@@ -566,6 +563,8 @@ namespace PicView.Shortcuts
                     {
                         HideInterfaceLogic.ToggleInterface();
                     }
+
+                    return;
                 }
 
                 // Alt + Enter
@@ -575,7 +574,11 @@ namespace PicView.Shortcuts
                     {
                         Fullscreen_Restore();
                     }
+
+                    return;
                 }
+
+                Editing.Color_Picking.StartRunning();
             }
 
             
@@ -586,8 +589,7 @@ namespace PicView.Shortcuts
 
         internal static void MainWindow_KeysUp(object sender, KeyEventArgs e)
         {
-            // Set cursor for coloc picking
-            TheMainWindow.Cursor = Cursors.Arrow;
+            Editing.Color_Picking.StopRunning(false);
 
             // Don't allow keys when typing in text
             if (TheMainWindow.TitleText.IsKeyboardFocusWithin) { return; }

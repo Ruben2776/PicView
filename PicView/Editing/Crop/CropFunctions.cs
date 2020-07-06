@@ -22,19 +22,19 @@ namespace PicView.Editing.Crop
         {
             if (TheMainWindow.MainImage.Source == null) { return; }
 
-            if (cropppingTool == null)
+            if (GetCropppingTool == null)
             {
                 LoadControls.LoadCroppingTool();
             }
 
-            cropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? xWidth : xHeight;
-            cropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? xHeight : xWidth;
+            GetCropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? xWidth : xHeight;
+            GetCropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? xHeight : xWidth;
 
             TheMainWindow.TitleText.Text = "Press Esc to close, Enter to save"; // TODO add to translation
 
-            if (!TheMainWindow.ParentContainer.Children.Contains(cropppingTool))
+            if (!TheMainWindow.ParentContainer.Children.Contains(GetCropppingTool))
             {
-                TheMainWindow.ParentContainer.Children.Add(cropppingTool);
+                TheMainWindow.ParentContainer.Children.Add(GetCropppingTool);
             }
 
             CanNavigate = false;
@@ -42,13 +42,13 @@ namespace PicView.Editing.Crop
 
         internal static void InitilizeCrop()
         {
-            cropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? xWidth : xHeight;
-            cropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? xHeight : xWidth;
+            GetCropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? xWidth : xHeight;
+            GetCropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? xHeight : xWidth;
 
-            CropService = new CropService(cropppingTool);
+            CropService = new CropService(GetCropppingTool);
 
             var chosenColorBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
-            cropppingTool.RootGrid.Background =
+            GetCropppingTool.RootGrid.Background =
                 new SolidColorBrush(Color.FromArgb(
                     25,
                     chosenColorBrush.Color.R,
@@ -56,8 +56,8 @@ namespace PicView.Editing.Crop
                     chosenColorBrush.Color.B
                 ));
 
-            cropppingTool.RootGrid.PreviewMouseDown += (s, e) => CropService.Adorner.RaiseEvent(e);
-            cropppingTool.RootGrid.PreviewMouseLeftButtonUp += (s, e) => CropService.Adorner.RaiseEvent(e);
+            GetCropppingTool.RootGrid.PreviewMouseDown += (s, e) => CropService.Adorner.RaiseEvent(e);
+            GetCropppingTool.RootGrid.PreviewMouseLeftButtonUp += (s, e) => CropService.Adorner.RaiseEvent(e);
         }
 
         internal static async void SaveCrop()
@@ -110,7 +110,7 @@ namespace PicView.Editing.Crop
                     // TODO add to translation
                 }
 
-                TheMainWindow.ParentContainer.Children.Remove(cropppingTool);
+                TheMainWindow.ParentContainer.Children.Remove(GetCropppingTool);
             }));
         }
 

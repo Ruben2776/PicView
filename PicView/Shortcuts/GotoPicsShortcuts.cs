@@ -49,7 +49,7 @@ namespace PicView.Shortcuts
                         return;
                     }
                 case Key.Escape: // Escape logic
-                    quickSettingsMenu.GoToPicBox.Text = FolderIndex.ToString(CultureInfo.CurrentCulture);
+                    GetQuickSettingsMenu.GoToPicBox.Text = FolderIndex.ToString(CultureInfo.CurrentCulture);
                     ClearGoTo();
                     break;
 
