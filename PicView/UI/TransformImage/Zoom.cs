@@ -1,6 +1,9 @@
-﻿using PicView.UI.PicGallery;
+﻿using PicView.Library;
+using PicView.SystemIntegration;
+using PicView.UI.PicGallery;
 using PicView.UI.UserControls;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -99,6 +102,15 @@ namespace PicView.UI.TransformImage
             {
                 Move(sender, e);
                 return;
+            }
+
+            if ((Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
+            {
+                var w32Mouse = new NativeMethods.Win32Point();
+                NativeMethods.GetCursorPos(ref w32Mouse);
+                var c = NativeMethods.GetColorAt(w32Mouse.X, w32Mouse.Y);
+
+                Clipboard.SetText(HexConverter(c));
             }
 
             // Fix focus

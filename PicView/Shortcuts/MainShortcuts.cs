@@ -1,5 +1,4 @@
-﻿using PicView.Editing;
-using PicView.Editing.Crop;
+﻿using PicView.Editing.Crop;
 using PicView.ImageHandling;
 using PicView.UI;
 using PicView.UI.PicGallery;
@@ -553,31 +552,43 @@ namespace PicView.Shortcuts
             #endregion Key is not held down
 
             #region Alt + keys
-
             // Alt doesn't work in switch? Waiting for key up is confusing in this case
-            // Alt + Z
-            if (altDown && (e.SystemKey == Key.Z))
+
+            if (altDown)
             {
-                if (!e.IsRepeat)
+                // Set cursor for coloc picking
+                TheMainWindow.Cursor = Cursors.Pen;
+
+                // Alt + Z
+                if ((e.SystemKey == Key.Z))
                 {
-                    HideInterfaceLogic.ToggleInterface();
+                    if (!e.IsRepeat)
+                    {
+                        HideInterfaceLogic.ToggleInterface();
+                    }
+                }
+
+                // Alt + Enter
+                else if ((e.SystemKey == Key.Enter))
+                {
+                    if (!e.IsRepeat)
+                    {
+                        Fullscreen_Restore();
+                    }
                 }
             }
 
-            // Alt + Enter
-            else if (altDown && (e.SystemKey == Key.Enter))
-            {
-                if (!e.IsRepeat)
-                {
-                    Fullscreen_Restore();
-                }
-            }
+            
+
 
             #endregion Alt + keys
         }
 
         internal static void MainWindow_KeysUp(object sender, KeyEventArgs e)
         {
+            // Set cursor for coloc picking
+            TheMainWindow.Cursor = Cursors.Arrow;
+
             // Don't allow keys when typing in text
             if (TheMainWindow.TitleText.IsKeyboardFocusWithin) { return; }
 

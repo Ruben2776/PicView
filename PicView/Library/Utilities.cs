@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -63,6 +64,22 @@ namespace PicView.Library
 #endif
                 return string.Empty;
             }
+        }
+
+        internal static string HexConverter(System.Drawing.Color c)
+        {
+            return "#" +
+                c.R.ToString("X2", CultureInfo.InvariantCulture) +
+                c.G.ToString("X2", CultureInfo.InvariantCulture) +
+                c.B.ToString("X2", CultureInfo.InvariantCulture);
+        }
+
+        internal static string RGBConverter(System.Drawing.Color c)
+        {
+            return "RGB(" +
+                c.R.ToString("X2", CultureInfo.InvariantCulture) +
+                c.G.ToString("X2", CultureInfo.InvariantCulture) +
+                c.B.ToString("X2", CultureInfo.InvariantCulture) + ")";
         }
     }
 }
