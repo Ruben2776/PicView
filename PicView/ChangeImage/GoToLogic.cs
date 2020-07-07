@@ -24,10 +24,9 @@ namespace PicView.ChangeImage
                     GetQuickSettingsMenu.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture);
                 }));
             }
-            else
+            else if (Pics.Count > 0 && Pics.Count > FolderIndex)
             {
                 GetQuickSettingsMenu.GoToPicBox.Text = FolderIndex.ToString(CultureInfo.CurrentCulture);
-                // TODO add error message or something..
             }
         }
 

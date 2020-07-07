@@ -7,8 +7,7 @@
         Width="51"
         Height="51"
         Margin="0"
-        BorderThickness="0"
-        FontWeight="Bold">
+        BorderThickness="0">
         <Button.Background>
             <SolidColorBrush x:Name="CopyButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
         </Button.Background>

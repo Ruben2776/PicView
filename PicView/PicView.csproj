@@ -277,6 +277,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Update="UI\UserControls\Buttons\PasteButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="UI\UserControls\Buttons\MenuCloseButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -310,6 +313,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UI\Styles\ColorThemes\Light.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UI\UserControls\Buttons\PasteButton.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UI\UserControls\Buttons\MenuCloseButton.xaml">

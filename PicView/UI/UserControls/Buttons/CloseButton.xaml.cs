@@ -14,6 +14,9 @@ namespace PicView.UI.UserControls
                 PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(CloseButtonBrush);
                 MouseEnter += (s, x) => ButtonMouseOverAnim(CloseButtonBrush, true);
                 MouseLeave += (s, x) => ButtonMouseLeaveAnim(CloseButtonBrush, true);
+
+
+                ToolTip = "Close"; // TODO add translation
             };
         }
     }

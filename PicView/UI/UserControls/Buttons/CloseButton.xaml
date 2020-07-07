@@ -10,8 +10,7 @@
         BorderThickness="0"
         DockPanel.Dock="Right"
         FocusVisualStyle="{x:Null}"
-        Focusable="False"
-        ToolTip="Close">
+        Focusable="False">
         <Button.Background>
             <SolidColorBrush x:Name="CloseButtonBrush" />
         </Button.Background>

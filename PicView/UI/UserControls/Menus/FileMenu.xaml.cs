@@ -12,9 +12,7 @@ namespace PicView.UI.UserControls
         {
             InitializeComponent();
 
-            PasteButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(PasteButtonBrush);
-            PasteButton.MouseEnter += (s, x) => ButtonMouseOverAnim(PasteButtonBrush, true);
-            PasteButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(PasteButtonBrush, false);
+            PasteButton.PreviewMouseLeftButtonDown += delegate { UC.Close_UserControls(); };
 
             OpenBorder.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(OpenBorderBrush);
             OpenBorder.MouseEnter += (s, x) => ButtonMouseOverAnim(OpenBorderBrush, true);
