@@ -1,5 +1,6 @@
 ﻿using PicView.Library;
 using PicView.UI.TransformImage;
+using PicView.UI.UserControls;
 using System;
 using System.Collections.Specialized;
 using System.IO;
@@ -28,6 +29,14 @@ namespace PicView.UI.DragAndDrop
                 || Scroll.IsAutoScrolling)
             {
                 return;
+            }
+
+            if (UC.GetColorPicker != null)
+            {
+                if (UC.GetColorPicker.Opacity == 1)
+                {
+                    return;
+                }
             }
 
             var pos = Utilities.GetMousePos(TheMainWindow.ParentContainer);

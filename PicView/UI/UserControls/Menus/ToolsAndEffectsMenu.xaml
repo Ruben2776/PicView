@@ -176,7 +176,7 @@
                     <Button
                         x:Name="ColorPickerButton"
                         FontWeight="Bold"
-                        ToolTip="Pick color from image (not implemented yet)">
+                        ToolTip="Pick color from image [Alt]">
                         <Canvas>
                             <TextBlock
                                 Canvas.Left="-69"

@@ -45,6 +45,17 @@ namespace PicView.UI.UserControls
                 UC.Close_UserControls();
                 CropFunctions.StartCrop();
             };
+
+            // ColorPickerButton
+            ColorPickerButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ColorPickerButtonBrush);
+            ColorPickerButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ColorPickerButtonBrush, true);
+            ColorPickerButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ColorPickerButtonBrush, false);
+            ColorPickerButton.Click += delegate
+            {
+                UC.Close_UserControls();
+                Color_Picking.StartRunning();
+            };
+
         }
     }
 }

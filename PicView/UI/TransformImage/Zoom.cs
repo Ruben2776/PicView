@@ -104,11 +104,6 @@ namespace PicView.UI.TransformImage
                 return;
             }
 
-            if ((Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
-            {
-                Editing.Color_Picking.StopRunning(true);
-            }
-
             // Fix focus
             EditTitleBar.Refocus();
 
@@ -183,6 +178,14 @@ namespace PicView.UI.TransformImage
                 // Start automainWindow.Scroller and report position
                 AutoScrollPos = e.GetPosition(TheMainWindow.Scroller);
                 AutoScrollTimer.Start();
+            }
+
+            if (Keyboard.Modifiers != ModifierKeys.Alt && UC.GetColorPicker != null)
+            {
+                if (UC.GetColorPicker.Opacity == 1)
+                {
+                    Editing.Color_Picking.StartRunning();
+                }
             }
 
             // Don't drag when full scale

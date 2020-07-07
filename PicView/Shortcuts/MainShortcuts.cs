@@ -581,9 +581,6 @@ namespace PicView.Shortcuts
                 Editing.Color_Picking.StartRunning();
             }
 
-            
-
-
             #endregion Alt + keys
         }
 
@@ -619,8 +616,13 @@ namespace PicView.Shortcuts
                     if (IsAutoScrolling)
                     {
                         StopAutoScroll();
+                        return;
                     }
-                    break;
+                    else
+                    {
+                        Editing.Color_Picking.StopRunning(true);
+                        return;
+                    }
 
                 case MouseButton.Middle:
                     if (!IsAutoScrolling)
