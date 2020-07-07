@@ -162,7 +162,7 @@ namespace PicView.UI.TransformImage
             }
             else if (UC.GetColorPicker != null)
             {
-                Editing.Color_Picking.StopRunning();
+                Color_Picking.StopRunning();
             }
             else
             {

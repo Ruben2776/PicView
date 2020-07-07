@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using System.Windows.Input;
 using static PicView.ChangeImage.GoToLogic;
-using static PicView.Library.Fields;
 using static PicView.UI.UserControls.UC;
 
 namespace PicView.Shortcuts
@@ -49,7 +48,7 @@ namespace PicView.Shortcuts
                         return;
                     }
                 case Key.Escape: // Escape logic
-                    GetQuickSettingsMenu.GoToPicBox.Text = FolderIndex.ToString(CultureInfo.CurrentCulture);
+                    GetQuickSettingsMenu.GoToPicBox.Text = ChangeImage.Navigation.FolderIndex.ToString(CultureInfo.CurrentCulture);
                     ClearGoTo();
                     break;
 

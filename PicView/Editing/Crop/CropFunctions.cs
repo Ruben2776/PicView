@@ -63,7 +63,7 @@ namespace PicView.Editing.Crop
         internal static async void SaveCrop()
         {
             var fileName = Navigation.Pics.Count == 0 ? Path.GetRandomFileName()
-                : Path.GetFileName(Navigation.Pics[FolderIndex]);
+                : Path.GetFileName(Navigation.Pics[Navigation.FolderIndex]);
 
             var Savedlg = new SaveFileDialog()
             {
@@ -87,7 +87,7 @@ namespace PicView.Editing.Crop
                 await Task.Run(() =>
                     success = SaveImages.TrySaveImage(
                         crop,
-                        Navigation.Pics[FolderIndex],
+                        Navigation.Pics[Navigation.FolderIndex],
                         Savedlg.FileName)).ConfigureAwait(false);
             }
             else

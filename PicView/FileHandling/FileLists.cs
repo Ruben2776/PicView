@@ -6,7 +6,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using static PicView.FileHandling.ArchiveExtraction;
-using static PicView.Library.Fields;
 
 namespace PicView.FileHandling
 {
@@ -204,7 +203,7 @@ namespace PicView.FileHandling
                 return;
             }
 
-            FolderIndex = Navigation.Pics.IndexOf(path);
+            Navigation.FolderIndex = Navigation.Pics.IndexOf(path);
 
 #if DEBUG
             Trace.WriteLine("Getvalues completed ");

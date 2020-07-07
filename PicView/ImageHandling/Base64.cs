@@ -65,7 +65,7 @@ namespace PicView.ImageHandling
 
         internal static void SendToClipboard()
         {
-            var base64 = ConvertToBase64(Navigation.Pics[Fields.FolderIndex]);
+            var base64 = ConvertToBase64(Navigation.Pics[Navigation.FolderIndex]);
             if (!string.IsNullOrWhiteSpace(base64))
             {
                 Clipboard.SetText(base64);

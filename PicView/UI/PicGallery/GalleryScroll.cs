@@ -1,12 +1,11 @@
-﻿using System;
+﻿using PicView.ChangeImage;
+using System;
 using System.Windows.Input;
 using static PicView.Library.Fields;
 using static PicView.UI.UserControls.UC;
 
 namespace PicView.UI.PicGallery
 {
-    // TODO Get scrolling calculation working for PicGallery 2
-
     internal static class GalleryScroll
     {
         #region int calculations
@@ -34,8 +33,7 @@ namespace PicView.UI.PicGallery
                 }
 
                 return Properties.Settings.Default.PicGallery == 1 ?
-                    (int)Math.Floor(GetPicGallery.Height / picGalleryItem_Size) :
-                    ChangeImage.Navigation.Pics.Count;
+                    (int)Math.Floor(GetPicGallery.Height / picGalleryItem_Size) : Navigation.Pics.Count;
             }
         }
 
@@ -58,7 +56,7 @@ namespace PicView.UI.PicGallery
         {
             get
             {
-                return (int)Math.Floor((double)FolderIndex / Items_per_page);
+                return (int)Math.Floor((double)Navigation.FolderIndex / Items_per_page);
             }
         }
 

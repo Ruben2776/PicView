@@ -32,7 +32,7 @@ namespace PicView.UI.PicGallery
         {
             await TheMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
             {
-                var selected = id == FolderIndex;
+                var selected = id == ChangeImage.Navigation.FolderIndex;
                 var item = new UserControls.PicGalleryItem(pic, id, selected);
                 item.MouseLeftButtonDown += delegate
                 {

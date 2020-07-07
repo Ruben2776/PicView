@@ -89,11 +89,6 @@ namespace PicView.Library
         internal static double xHeight;
 
         /// <summary>
-        /// Counter used to get/set current index
-        /// </summary>
-        internal static int FolderIndex { get; set; }
-
-        /// <summary>
         /// Counter used to check if preloading is neccesary.
         /// </summary>
         internal static int PreloadCount { get; set; }

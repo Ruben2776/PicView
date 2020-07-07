@@ -1,4 +1,4 @@
-﻿using PicView.Library;
+﻿using PicView.ChangeImage;
 using PicView.UI.UserControls;
 using System;
 using System.Windows;
@@ -567,7 +567,7 @@ namespace PicView.UI.Animations
 
         internal static void HoverSizeAnim(PicGalleryItem item, bool unHover, double from, double to)
         {
-            if (item.Id == Fields.FolderIndex)
+            if (item.Id == Navigation.FolderIndex)
             {
                 return;
             }

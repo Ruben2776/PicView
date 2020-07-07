@@ -1,7 +1,6 @@
-﻿using PicView.UI.Animations;
+﻿using PicView.ChangeImage;
 using PicView.UI.PicGallery;
 using PicView.UI.UserControls.Misc;
-using PicView.UI.Windows;
 using System;
 using System.Windows;
 using System.Windows.Media.Animation;
@@ -116,7 +115,7 @@ namespace PicView.UI.UserControls
                     if (Library.Fields.TheMainWindow.MainImage.Source != null)
                     {
                         GetQuickSettingsMenu.GoToPicBox.Text =
-                            (Library.Fields.FolderIndex + 1)
+                            (Navigation.FolderIndex + 1)
                             .ToString(System.Globalization.CultureInfo.CurrentCulture);
                     }
 

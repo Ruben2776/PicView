@@ -283,6 +283,15 @@
     <Compile Update="UI\UserControls\Buttons\FullscreenButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="UI\UserControls\Buttons\CopyButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UI\UserControls\Buttons\RecycleButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UI\UserControls\Buttons\ReloadButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="UI\UserControls\Buttons\MinButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -307,6 +316,15 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UI\UserControls\Buttons\FullscreenButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UI\UserControls\Buttons\CopyButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UI\UserControls\Buttons\RecycleButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UI\UserControls\Buttons\ReloadButton.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UI\UserControls\Buttons\MinButton.xaml">

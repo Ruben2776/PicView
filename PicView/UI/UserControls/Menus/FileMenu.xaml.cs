@@ -16,18 +16,6 @@ namespace PicView.UI.UserControls
             PasteButton.MouseEnter += (s, x) => ButtonMouseOverAnim(PasteButtonBrush, true);
             PasteButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(PasteButtonBrush, false);
 
-            CopyButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(CopyButtonBrush);
-            CopyButton.MouseEnter += (s, x) => ButtonMouseOverAnim(CopyButtonBrush, true);
-            CopyButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(CopyButtonBrush, false);
-
-            ReloadButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ReloadButtonBrush);
-            ReloadButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ReloadButtonBrush, true);
-            ReloadButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ReloadButtonBrush, false);
-
-            RecycleButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(RecycleButtonBrush);
-            RecycleButton.MouseEnter += (s, x) => ButtonMouseOverAnim(RecycleButtonBrush, true);
-            RecycleButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(RecycleButtonBrush, true);
-
             OpenBorder.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(OpenBorderBrush);
             OpenBorder.MouseEnter += (s, x) => ButtonMouseOverAnim(OpenBorderBrush, true);
             OpenBorder.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(OpenBorderBrush);

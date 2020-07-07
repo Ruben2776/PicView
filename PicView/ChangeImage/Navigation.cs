@@ -30,6 +30,11 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static System.Collections.Generic.List<string> Pics { get; set; }
 
+        /// <summary>
+        /// Counter used to get/set current index
+        /// </summary>
+        internal static int FolderIndex { get; set; }
+
 
         #region Update Image values
 

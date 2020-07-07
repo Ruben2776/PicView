@@ -1,9 +1,10 @@
-﻿using System;
+﻿using PicView.Library;
+using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using static PicView.Library.Fields;
+using static PicView.ChangeImage.Navigation;
 using static PicView.UI.UserControls.UC;
 
 namespace PicView.ChangeImage
@@ -16,9 +17,9 @@ namespace PicView.ChangeImage
             {
                 x--;
                 x = x <= 0 ? 0 : x;
-                x = x >= Navigation.Pics.Count ? Navigation.Pics.Count - 1 : x;
-                Navigation.Pic(x);
-                await TheMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+                x = x >= Pics.Count ? Pics.Count - 1 : x;
+                Pic(x);
+                await Fields.TheMainWindow.Dispatcher.BeginInvoke((Action)(() =>
                 {
                     GetQuickSettingsMenu.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture);
                 }));
@@ -36,7 +37,7 @@ namespace PicView.ChangeImage
             FocusManager.SetFocusedElement(FocusManager.GetFocusScope(GetQuickSettingsMenu.GoToPicBox), null);
             Close_UserControls();
             Keyboard.ClearFocus();
-            TheMainWindow.Focus();
+            Fields.TheMainWindow.Focus();
         }
     }
 }
