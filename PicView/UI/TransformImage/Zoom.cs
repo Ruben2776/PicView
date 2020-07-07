@@ -137,6 +137,10 @@ namespace PicView.UI.TransformImage
                 EditTitleBar.Refocus();
                 return;
             }
+            if (Color_Picking.IsRunning)
+            {
+                Color_Picking.StopRunning();
+            }
 
             // Reset zoom on double click
             if (e.ClickCount == 2)
@@ -156,10 +160,6 @@ namespace PicView.UI.TransformImage
             if (IsAutoScrolling)
             {
                 StopAutoScroll();
-            }
-            else if (UC.GetColorPicker != null)
-            {
-                Color_Picking.StopRunning();
             }
             else
             {

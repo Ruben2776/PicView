@@ -164,7 +164,7 @@ namespace PicView.UI.Loading
                 Visibility = Visibility.Hidden,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(52, 0, 0, 0)
+                Margin = new Thickness(96, 0, 0, 0)
             };
 
             GetQuickSettingsMenu.SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;

@@ -1,0 +1,93 @@
+﻿<UserControl
+    x:Class="PicView.UI.UserControls.BackGroundButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Button
+        x:Name="TheButton"
+        Width="51"
+        Height="51"
+        Margin="0"
+        BorderThickness="0">
+        <Button.Background>
+            <SolidColorBrush x:Name="bgBrush" Color="{StaticResource BackgroundColorAlt}" />
+        </Button.Background>
+        <Image Width="17" Height="17">
+            <Image.Source>
+                <DrawingImage>
+                    <DrawingImage.Drawing>
+                        <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                            <GeometryDrawing>
+                                <GeometryDrawing.Pen>
+                                    <Pen
+                                        Brush="{StaticResource IconColorBrush}"
+                                        EndLineCap="Flat"
+                                        LineJoin="Round"
+                                        StartLineCap="Flat"
+                                        Thickness="32" />
+                                </GeometryDrawing.Pen>
+                                <GeometryDrawing.Geometry>
+                                    <RectangleGeometry
+                                        RadiusX="32"
+                                        RadiusY="32"
+                                        Rect="48,80,416,272" />
+                                </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                            <GeometryDrawing>
+                                <GeometryDrawing.Pen>
+                                    <Pen
+                                        Brush="{StaticResource IconColorBrush}"
+                                        EndLineCap="Round"
+                                        LineJoin="Round"
+                                        StartLineCap="Round"
+                                        Thickness="32" />
+                                </GeometryDrawing.Pen>
+                                <GeometryDrawing.Geometry>
+                                    <LineGeometry StartPoint="256,416" EndPoint="256,352" />
+                                </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                            <GeometryDrawing>
+                                <GeometryDrawing.Pen>
+                                    <Pen
+                                        Brush="{StaticResource IconColorBrush}"
+                                        EndLineCap="Round"
+                                        LineJoin="Round"
+                                        StartLineCap="Round"
+                                        Thickness="32" />
+                                </GeometryDrawing.Pen>
+                                <GeometryDrawing.Geometry>
+                                    <LineGeometry StartPoint="256,80" EndPoint="256,48" />
+                                </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                            <GeometryDrawing>
+                                <GeometryDrawing.Pen>
+                                    <Pen
+                                        Brush="{StaticResource IconColorBrush}"
+                                        EndLineCap="Round"
+                                        LineJoin="Round"
+                                        StartLineCap="Round"
+                                        Thickness="32" />
+                                </GeometryDrawing.Pen>
+                                <GeometryDrawing.Geometry>
+                                    <LineGeometry StartPoint="400,464" EndPoint="368,352" />
+                                </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                            <GeometryDrawing>
+                                <GeometryDrawing.Pen>
+                                    <Pen
+                                        Brush="{StaticResource IconColorBrush}"
+                                        EndLineCap="Round"
+                                        LineJoin="Round"
+                                        StartLineCap="Round"
+                                        Thickness="32" />
+                                </GeometryDrawing.Pen>
+                                <GeometryDrawing.Geometry>
+                                    <LineGeometry StartPoint="112,464" EndPoint="144,352" />
+                                </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                        </DrawingGroup>
+                    </DrawingImage.Drawing>
+                </DrawingImage>
+            </Image.Source>
+        </Image>
+    </Button>
+</UserControl>

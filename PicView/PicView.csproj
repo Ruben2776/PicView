@@ -245,7 +245,7 @@
     <Resource Include="Library\Resources\fonts\texgyreheros-bolditalic.otf" />
     <Resource Include="Library\Resources\fonts\texgyreheros-italic.otf" />
     <Resource Include="Library\Resources\fonts\texgyreheros-regular.otf" />
-    <Resource Include="Library\Resources\img\noisy-texture-100x100-o5-d10-c-f5f3ed-t0.png" />
+    <Resource Include="Library\Resources\img\noisy-texture-100x100-o4-d13-c-fafafa-t0.png" />
     <Resource Include="Library\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
     <Resource Include="Library\Resources\img\noisy-texture-200x200-o4-d30-c-101010-t0.png" />
     <Resource Include="Library\Resources\img\camera.ico" />
@@ -276,6 +276,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Update="UI\UserControls\Buttons\BackgroundButton.xaml.cs">
+      <SubType>Code</SubType>
     </Compile>
     <Compile Update="UI\UserControls\Buttons\PasteButton.xaml.cs">
       <SubType>Code</SubType>
@@ -315,6 +318,9 @@
     <Page Update="UI\Styles\ColorThemes\Light.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="UI\UserControls\Buttons\BackgroundButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="UI\UserControls\Buttons\PasteButton.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -346,6 +352,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Library\Resources\img\noisy-texture-100x100-o4-d13-c-fafafa-t0.png" />
     <None Remove="Library\Resources\img\noisy-texture-100x100-o5-d10-c-f5f3ed-t0.png" />
   </ItemGroup>
   <ItemGroup>

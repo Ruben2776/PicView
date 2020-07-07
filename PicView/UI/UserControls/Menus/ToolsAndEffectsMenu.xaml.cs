@@ -54,7 +54,7 @@ namespace PicView.UI.UserControls
             {
                 UC.Close_UserControls();
                 Color_Picking.IsRunning = true;
-                Color_Picking.StartRunning();
+                Color_Picking.Start();
             };
 
         }

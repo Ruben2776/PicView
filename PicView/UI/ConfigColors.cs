@@ -27,7 +27,7 @@ namespace PicView.UI
         {
             if (remove)
             {
-                Application.Current.Resources["WindowBackgroundColorBrush"] = new SolidColorBrush(Colors.Black);
+                Application.Current.Resources["WindowBorderColorBrush"] = new SolidColorBrush(Colors.Black);
                 return;
             }
 
@@ -41,7 +41,7 @@ namespace PicView.UI
             {
                 try
                 {
-                    Application.Current.Resources["WindowBackgroundColorBrush"] = getColorBrush;
+                    Application.Current.Resources["WindowBorderColorBrush"] = getColorBrush;
                 }
                 catch (System.Exception e)
                 {

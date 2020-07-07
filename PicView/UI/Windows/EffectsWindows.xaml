@@ -14,7 +14,7 @@
         <DockPanel
             x:Name="TitleBar"
             Height="33"
-            Background="{StaticResource BackgroundColorBrushAltW}"
+            Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
             <uc:Logo />
@@ -67,7 +67,7 @@
             Width="7"
             DockPanel.Dock="Left">
             <Rectangle.Fill>
-                <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
+                <SolidColorBrush Color="{StaticResource WindowBackgroundColor}" />
             </Rectangle.Fill>
         </Rectangle>
 
@@ -77,7 +77,7 @@
             Margin="-1,0,0,0"
             DockPanel.Dock="Right">
             <Rectangle.Fill>
-                <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
+                <SolidColorBrush Color="{StaticResource WindowBackgroundColor}" />
             </Rectangle.Fill>
         </Rectangle>
 
@@ -87,7 +87,7 @@
             Margin="-1,0,0,0"
             DockPanel.Dock="Bottom">
             <Rectangle.Fill>
-                <SolidColorBrush Color="{StaticResource BackgroundColorAltW}" />
+                <SolidColorBrush Color="{StaticResource WindowBackgroundColor}" />
             </Rectangle.Fill>
         </Rectangle>
 

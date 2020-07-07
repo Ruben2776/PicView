@@ -18,7 +18,7 @@
         <DockPanel
             x:Name="TitleBar"
             Height="33"
-            Background="{StaticResource BackgroundColorBrushAltW}"
+            Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
             <uc:Logo />
@@ -71,21 +71,21 @@
             Width="7"
             Panel.ZIndex="1"
             DockPanel.Dock="Left"
-            Fill="{StaticResource BackgroundColorBrushAltW}" />
+            Fill="{StaticResource WindowBackgroundColorBrush}" />
 
         <Rectangle
             x:Name="RightBorderRectangle"
             Width="7"
             Panel.ZIndex="1"
             DockPanel.Dock="Right"
-            Fill="{StaticResource BackgroundColorBrushAltW}" />
+            Fill="{StaticResource WindowBackgroundColorBrush}" />
 
         <Rectangle
             x:Name="BottomBorderRectangle"
             Height="7"
             Panel.ZIndex="1"
             DockPanel.Dock="Bottom"
-            Fill="{StaticResource BackgroundColorBrushAltW}" />
+            Fill="{StaticResource WindowBackgroundColorBrush}" />
 
         <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
             <ScrollViewer

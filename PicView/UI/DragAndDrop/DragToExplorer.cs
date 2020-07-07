@@ -1,22 +1,17 @@
 ﻿using PicView.Library;
 using PicView.UI.TransformImage;
-using PicView.UI.UserControls;
 using System;
 using System.Collections.Specialized;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
-using static PicView.SystemIntegration.NativeMethods;
 
 namespace PicView.UI.DragAndDrop
 {
     internal static class DragToExplorer
     {
-        internal static Window dragdropWindow;
-
         internal static void DragFile(object sender, MouseButtonEventArgs e)
         {
             if (TheMainWindow.MainImage.Source == null
@@ -28,14 +23,6 @@ namespace PicView.UI.DragAndDrop
                 || Scroll.IsAutoScrolling)
             {
                 return;
-            }
-
-            if (UC.GetColorPicker != null)
-            {
-                if (UC.GetColorPicker.Opacity == 1)
-                {
-                    return;
-                }
             }
 
             if (TheMainWindow.TitleText.IsFocused)

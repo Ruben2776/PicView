@@ -8,7 +8,7 @@
                     <Border
                         x:Name="WindowBorder"
                         Margin="0"
-                        Background="{StaticResource WindowBackgroundColorBrushDefault}">
+                        Background="{StaticResource WindowBorderColorBrushDefault}">
                         <Grid>
                             <Border BorderThickness="1">
                                 <AdornerDecorator>
@@ -18,7 +18,7 @@
                                 </AdornerDecorator>
                             </Border>
                             <Border
-                                BorderBrush="{DynamicResource WindowBackgroundColorBrush}"
+                                BorderBrush="{DynamicResource WindowBorderColorBrush}"
                                 BorderThickness="1"
                                 Opacity=".9"
                                 Visibility="{Binding IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource bool2VisibilityConverter}}" />

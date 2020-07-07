@@ -54,7 +54,7 @@
                     StrokeThickness="1" />
                 <Rectangle
                     Canvas.Left="154"
-                    Canvas.Top="1"
+                    Canvas.Top="0"
                     Width="1"
                     Height="50"
                     Panel.ZIndex="1"
@@ -123,10 +123,21 @@
                         StrokeThickness="2" />
                 </Canvas>
 
+                <uc:BackGroundButton x:Name="BackgroundButton" Canvas.Left="155" />
+
+                <Rectangle
+                    Canvas.Left="206"
+                    Canvas.Top="0"
+                    Width="1"
+                    Height="50"
+                    Panel.ZIndex="1"
+                    Stroke="{StaticResource BorderBrush}"
+                    StrokeThickness="1" />
+
                 <Button
                     x:Name="GoToPic"
-                    Canvas.Left="155"
-                    Width="150"
+                    Canvas.Left="207"
+                    Width="97"
                     Height="50"
                     ToolTip="Go to image at specified index">
                     <Button.Background>
@@ -134,14 +145,51 @@
                     </Button.Background>
                     <Button.Content>
                         <Canvas>
-                            <Label Canvas.Left="-45" Canvas.Top="-13">Go to:</Label>
+                            <Image
+                                Canvas.Left="-35"
+                                Canvas.Top="-12"
+                                Width="13"
+                                Height="24">
+                                <Image.Source>
+                                    <DrawingImage>
+                                        <DrawingImage.Drawing>
+                                            <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                                <GeometryDrawing Geometry="F1 M512,512z M0,0z M112,111L112,401C112,418.44,129,429.52,143,421.16L390.9,272.79C403.02,265.54,403.02,246.46,390.9,239.21L143,90.84C129,82.48,112,93.56,112,111z">
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            Brush="{StaticResource IconColorBrush}"
+                                                            EndLineCap="Flat"
+                                                            LineJoin="Miter"
+                                                            StartLineCap="Flat"
+                                                            Thickness="32" />
+                                                    </GeometryDrawing.Pen>
+                                                </GeometryDrawing>
+                                                <GeometryDrawing>
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            Brush="{StaticResource IconColorBrush}"
+                                                            EndLineCap="Round"
+                                                            LineJoin="Miter"
+                                                            StartLineCap="Round"
+                                                            Thickness="32" />
+                                                    </GeometryDrawing.Pen>
+                                                    <GeometryDrawing.Geometry>
+                                                        <LineGeometry StartPoint="400,80" EndPoint="400,432" />
+                                                    </GeometryDrawing.Geometry>
+                                                </GeometryDrawing>
+                                            </DrawingGroup>
+                                        </DrawingImage.Drawing>
+                                    </DrawingImage>
+                                </Image.Source>
+                            </Image>
                             <TextBox
                                 x:Name="GoToPicBox"
-                                Canvas.Left="2"
+                                Canvas.Left="-13"
                                 Canvas.Top="-11"
-                                Width="42"
+                                Width="51"
                                 Panel.ZIndex="1"
                                 AcceptsTab="False"
+                                BorderBrush="{StaticResource IconColorBrush}"
                                 IsTabStop="False"
                                 Text="1"
                                 TextAlignment="Center" />

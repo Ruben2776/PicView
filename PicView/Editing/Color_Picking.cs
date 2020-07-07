@@ -15,8 +15,10 @@ namespace PicView.Editing
     {
         internal static bool IsRunning { get; set; }
 
-        internal static void StartRunning()
+        internal static void Start()
         {
+            IsRunning = true;
+
             if (UC.GetColorPicker == null || !Fields.TheMainWindow.topLayer.Children.Contains(UC.GetColorPicker))
             {
                 LoadControls.LoadColorPicker();
@@ -24,7 +26,10 @@ namespace PicView.Editing
 
             // Set cursor for coloc picking
             Fields.TheMainWindow.Cursor = Cursors.Pen;
+        }
 
+        internal static void StartRunning()
+        {
             // Get values
             var w32Mouse = new Win32Point();
             GetCursorPos(ref w32Mouse);
@@ -59,6 +64,8 @@ namespace PicView.Editing
 
             Fields.TheMainWindow.topLayer.Children.Remove(UC.GetColorPicker);
             IsRunning = false;
+
+            Fields.TheMainWindow.Focus();
         }
     }
 }
