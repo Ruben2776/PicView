@@ -1,4 +1,5 @@
-﻿using PicView.Library;
+﻿using PicView.Editing;
+using PicView.Library;
 using PicView.SystemIntegration;
 using PicView.UI.PicGallery;
 using PicView.UI.UserControls;
@@ -159,6 +160,10 @@ namespace PicView.UI.TransformImage
             {
                 StopAutoScroll();
             }
+            else if (UC.GetColorPicker != null)
+            {
+                Editing.Color_Picking.StopRunning();
+            }
             else
             {
                 TheMainWindow.MainImage.ReleaseMouseCapture();
@@ -180,11 +185,11 @@ namespace PicView.UI.TransformImage
                 AutoScrollTimer.Start();
             }
 
-            if (Keyboard.Modifiers != ModifierKeys.Alt && UC.GetColorPicker != null)
+            if (Color_Picking.IsRunning)
             {
                 if (UC.GetColorPicker.Opacity == 1)
                 {
-                    Editing.Color_Picking.StartRunning();
+                    Color_Picking.StartRunning();
                 }
             }
 

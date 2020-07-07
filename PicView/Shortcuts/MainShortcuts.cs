@@ -577,8 +577,6 @@ namespace PicView.Shortcuts
 
                     return;
                 }
-
-                Editing.Color_Picking.StartRunning();
             }
 
             #endregion Alt + keys
@@ -586,8 +584,6 @@ namespace PicView.Shortcuts
 
         internal static void MainWindow_KeysUp(object sender, KeyEventArgs e)
         {
-            Editing.Color_Picking.StopRunning(false);
-
             // Don't allow keys when typing in text
             if (TheMainWindow.TitleText.IsKeyboardFocusWithin) { return; }
 
@@ -618,11 +614,7 @@ namespace PicView.Shortcuts
                         StopAutoScroll();
                         return;
                     }
-                    else
-                    {
-                        Editing.Color_Picking.StopRunning(true);
-                        return;
-                    }
+                    break;
 
                 case MouseButton.Middle:
                     if (!IsAutoScrolling)

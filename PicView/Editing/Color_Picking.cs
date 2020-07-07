@@ -13,14 +13,14 @@ namespace PicView.Editing
 {
     internal static class Color_Picking
     {
+        internal static bool IsRunning { get; set; }
+
         internal static void StartRunning()
         {
-            if (UC.GetColorPicker == null)
+            if (UC.GetColorPicker == null || !Fields.TheMainWindow.topLayer.Children.Contains(UC.GetColorPicker))
             {
                 LoadControls.LoadColorPicker();
             }
-
-            UC.GetColorPicker.Opacity = 1;
 
             // Set cursor for coloc picking
             Fields.TheMainWindow.Cursor = Cursors.Pen;
@@ -45,25 +45,20 @@ namespace PicView.Editing
             Canvas.SetLeft(UC.GetColorPicker, Scroll.AutoScrollOrigin.Value.X);
         }
 
-        internal static void StopRunning(bool setText)
+        internal static void StopRunning()
         {
             // Reset cursor from coloc picking
             Fields.TheMainWindow.Cursor = Cursors.Arrow;
 
-            // Hide it
             if (UC.GetColorPicker != null)
-            {
-                UC.GetColorPicker.Opacity = 0;
-            }
-
-            // Set values, if needed
-            if (setText)
             {
                 var x = UC.GetColorPicker.HexCodePresenter.Content.ToString();
                 Clipboard.SetText(x);
                 Tooltip.ShowTooltipMessage($"Copied {x}"); // TODO add translation
             }
-            
+
+            Fields.TheMainWindow.topLayer.Children.Remove(UC.GetColorPicker);
+            IsRunning = false;
         }
     }
 }
