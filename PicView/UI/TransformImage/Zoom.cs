@@ -1,10 +1,7 @@
 ﻿using PicView.Editing;
-using PicView.Library;
-using PicView.SystemIntegration;
 using PicView.UI.PicGallery;
 using PicView.UI.UserControls;
 using System;
-using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -269,7 +266,7 @@ namespace PicView.UI.TransformImage
                 Pic(e.Delta > 0);
             }
             // Zoom
-            else if (!IsAutoScrolling && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            else if (!IsAutoScrolling)
             {
                 Zoom(e.Delta > 0);
             }

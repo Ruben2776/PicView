@@ -508,17 +508,11 @@
                         Background="{StaticResource AltInterfaceBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,0">
-                        <StackPanel
+                        <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="Ctrl" />
-                            <TextBlock
-                                FontSize="14"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                Text=" + " />
-                            <TextBlock FontSize="14" Text="Mouse Wheel" />
-                        </StackPanel>
+                            FontSize="14"
+                            Text="Mouse Wheel" />
                     </Border>
 
 
@@ -558,17 +552,11 @@
                         Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,0">
-                        <StackPanel
+                        <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="Ctrl" />
-                            <TextBlock
-                                FontSize="14"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                Text=" + " />
-                            <TextBlock FontSize="14" Text="Mouse Wheel" />
-                        </StackPanel>
+                            FontSize="14"
+                            Text="Mouse Wheel" />
                     </Border>
 
 
@@ -606,17 +594,11 @@
                         Background="{StaticResource AltInterfaceBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,0">
-                        <StackPanel
+                        <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="Ctrl" />
-                            <TextBlock
-                                FontSize="14"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                Text=" + " />
-                            <TextBlock FontSize="14" Text="Mouse Drag" />
-                        </StackPanel>
+                            FontSize="14"
+                            Text="Mouse Drag" />
                     </Border>
 
 
@@ -649,17 +631,11 @@
                         Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1,0,1,1">
-                        <StackPanel
+                        <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="Ctrl" />
-                            <TextBlock
-                                FontSize="14"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                Text=" + " />
-                            <TextBlock FontSize="14" Text="Double Click" />
-                        </StackPanel>
+                            FontSize="14"
+                            Text="Double Click" />
                     </Border>
 
 

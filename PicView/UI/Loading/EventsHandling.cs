@@ -63,8 +63,6 @@ namespace PicView.UI.Loading
             GetFileMenu.PrintBorder.MouseLeftButtonUp += (s, x) => Print(Pics[FolderIndex]);
             GetFileMenu.Save_File_Location_Border.MouseLeftButtonUp += (s, x) => SaveFiles();
 
-            GetFileMenu.PasteButton.Click += (s, x) => Paste();
-
             // image_button
             TheMainWindow.image_button.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.ImagePath1Fill, TheMainWindow.ImagePath2Fill, TheMainWindow.ImagePath3Fill);
             TheMainWindow.image_button.MouseEnter += (s, x) => ButtonMouseOverAnim(TheMainWindow.ImagePath1Fill, TheMainWindow.ImagePath2Fill, TheMainWindow.ImagePath3Fill);
@@ -149,7 +147,6 @@ namespace PicView.UI.Loading
 
             // img
             TheMainWindow.MainImage.PreviewMouseLeftButtonDown += DragAndDrop.DragToExplorer.DragFile;
-            TheMainWindow.MainImage.PreviewGiveFeedback += DragAndDrop.DragToExplorer.UIElement_OnPreviewGiveFeedback;
             TheMainWindow.MainImage.MouseLeftButtonDown += MainImage_MouseLeftButtonDown;
             TheMainWindow.MainImage.MouseLeftButtonUp += MainImage_MouseLeftButtonUp;
             TheMainWindow.MainImage.MouseMove += MainImage_MouseMove;
