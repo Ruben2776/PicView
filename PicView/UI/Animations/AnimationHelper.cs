@@ -56,6 +56,20 @@ namespace PicView.UI.Animations
 
         #region Color Events
 
+        internal static void MouseEnterBgTexColor(Brush brush)
+        {
+            ccAnim.From = Color.FromArgb(0, 0, 0, 0);
+            ccAnim.To = (Color)Application.Current.Resources["BackgroundHoverHighlight"];
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+        }
+
+        internal static void MouseLeaveBgTexColor(Brush brush)
+        {
+            ccAnim.From = (Color)Application.Current.Resources["BackgroundHoverHighlight"];
+            ccAnim.To = Color.FromArgb(0, 0, 0, 0);
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+        }
+
         internal static void MouseLeaveColorEvent(byte a, byte r, byte g, byte b, Brush brush, bool alpha)
         {
             ccAnim.From = !alpha ? GetPrefferedColorOver() : GetPrefferedColorOverAlpha();
@@ -264,34 +278,6 @@ namespace PicView.UI.Animations
                     ccAnim.To = Properties.Settings.Default.GreyAlpha;
                     break;
             }
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
-        }
-
-        internal static void MouseEnterBgColor(Brush brush)
-        {
-            ccAnim.From = Color.FromArgb(0, 0, 0, 0);
-            ccAnim.To = UI.ConfigColors.backgroundBorderColor;
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
-        }
-
-        internal static void MouseLeaveBgColor(Brush brush)
-        {
-            ccAnim.From = UI.ConfigColors.backgroundBorderColor;
-            ccAnim.To = Color.FromArgb(0, 0, 0, 0);
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
-        }
-
-        internal static void MouseEnterBgTexColor(Brush brush)
-        {
-            ccAnim.From = Color.FromArgb(0, 0, 0, 0);
-            ccAnim.To = Color.FromArgb(100, 75, 75, 75);
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
-        }
-
-        internal static void MouseLeaveBgTexColor(Brush brush)
-        {
-            ccAnim.From = Color.FromArgb(100, 75, 75, 75);
-            ccAnim.To = Color.FromArgb(0, 0, 0, 0);
             brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
         }
 

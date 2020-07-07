@@ -34,7 +34,7 @@ namespace PicView.UI.UserControls
             bb = (Color)Application.Current.Resources["BorderColor"];
             bg = (Color)Application.Current.Resources["AltInterface"];
             bg2 = (Color)Application.Current.Resources["AltInterfaceW"];
-            fg = (Color)Application.Current.Resources["MainColor"];
+            fg = (Color)Application.Current.Resources["IconColor"];
 
             PreviewMouseLeftButtonDown += (sender, e) =>
             {

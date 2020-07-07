@@ -54,7 +54,7 @@ namespace PicView.UI
 
         public static void SetColors()
         {
-            mainColor = (Color)Application.Current.Resources["MainColor"];
+            mainColor = (Color)Application.Current.Resources["IconColor"];
 
             switch (Properties.Settings.Default.BgColorChoice)
             {

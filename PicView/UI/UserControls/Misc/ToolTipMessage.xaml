@@ -22,7 +22,6 @@
             FontStyle="Italic"
             FontWeight="Bold"
             Foreground="{StaticResource MainColorBrush}"
-            Text="My Awesome Tooltip style :)"
             TextWrapping="WrapWithOverflow" />
     </Border>
 </UserControl>

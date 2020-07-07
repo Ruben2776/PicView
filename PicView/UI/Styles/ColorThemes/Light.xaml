@@ -11,11 +11,15 @@
     <SolidColorBrush x:Key="ChosenColorBrush" Color="{DynamicResource ChosenColor}" />
 
     <!--  Main Color  -->
-    <Color x:Key="MainColor">#FFf6f4f4</Color>
+    <Color x:Key="MainColor">#262626</Color>
     <SolidColorBrush x:Key="MainColorBrush" Color="{StaticResource MainColor}" />
 
+    <!--  Icon Color  -->
+    <Color x:Key="IconColor">#363636</Color>
+    <SolidColorBrush x:Key="IconColorBrush" Color="{StaticResource IconColor}" />
+
     <!--  Main Color faded  -->
-    <Color x:Key="MainColorFaded">#FFB1B1B1</Color>
+    <Color x:Key="MainColorFaded">#61574a</Color>
     <SolidColorBrush x:Key="MainColorFadedBrush" Color="{StaticResource MainColorFaded}" />
 
     <!--  Fade Color  -->
@@ -23,15 +27,15 @@
     <SolidColorBrush x:Key="FadeColorBrush" Color="{StaticResource FadeColor}" />
 
     <!--  Background Color  -->
-    <Color x:Key="BackgroundColor">#FF2e2e2e</Color>
+    <Color x:Key="BackgroundColor">#f0ece3</Color>
     <SolidColorBrush x:Key="BackgroundColorBrush" Color="{StaticResource BackgroundColor}" />
 
     <!--  Background Color Alt  -->
-    <Color x:Key="BackgroundColorAlt">#F81F1F1F</Color>
+    <Color x:Key="BackgroundColorAlt">#eef0e4</Color>
     <SolidColorBrush x:Key="BackgroundColorBrushAlt" Color="{StaticResource BackgroundColorAlt}" />
 
     <!--  Background Color Alt W  -->
-    <Color x:Key="BackgroundColorAltW">#FF161413</Color>
+    <Color x:Key="BackgroundColorAltW">#f7f4eb</Color>
     <SolidColorBrush x:Key="BackgroundColorBrushAltW" Color="{StaticResource BackgroundColorAltW}" />
 
     <!--  Background Color Fade  -->
@@ -39,22 +43,43 @@
     <SolidColorBrush x:Key="BackgroundColorBrushFade" Color="{StaticResource BackgroundColorFade}" />
 
     <!--  Background Color Fade  Subtle  -->
-    <Color x:Key="BackgroundColorFadeSubtle">#BE222222</Color>
+    <Color x:Key="BackgroundColorFadeSubtle">#B2F5F3ED</Color>
     <SolidColorBrush x:Key="BackgroundColorBrushFadeSubtle" Color="{StaticResource BackgroundColorFadeSubtle}" />
 
     <!--  Background Subtle Highlight  -->
-    <Color x:Key="BackgroundSubtleHighlight">#2b2929</Color>
-    <SolidColorBrush x:Key="BackgroundSubtleHighlightBrush" Color="{StaticResource BackgroundColorFadeSubtle}" />
+    <Color x:Key="BackgroundSubtleHighlight">#e8e4dc</Color>
+    <SolidColorBrush x:Key="BackgroundSubtleHighlightBrush" Color="{StaticResource BackgroundSubtleHighlight}" />
+
+    <!--  Background Hover Highlight  -->
+    <Color x:Key="BackgroundHoverHighlight">#ddcfcbc2</Color>
+    <SolidColorBrush x:Key="BackgroundHoverHighlightBrush" Color="{StaticResource BackgroundHoverHighlight}" />
 
     <!--  Border Brush  -->
-    <Color x:Key="BorderColor">#FF3A3A3A</Color>
-    <Color x:Key="BorderColorAlt">#FF1B1B1B</Color>
+    <Color x:Key="BorderColor">#dfd3c3</Color>
+    <Color x:Key="BorderColorAlt">#edebda</Color>
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
     <SolidColorBrush x:Key="BorderBrushAlt" Color="{StaticResource BorderColorAlt}" />
 
     <!--  Alt Interface  -->
-    <Color x:Key="AltInterface">#A7222222</Color>
-    <Color x:Key="AltInterfaceW">#A72e2c2c</Color>
+    <Color x:Key="AltInterface">#A7dfd3c3</Color>
+    <Color x:Key="AltInterfaceW">#A7d9cfc3</Color>
     <SolidColorBrush x:Key="AltInterfaceBrush" Color="{StaticResource AltInterface}" />
     <SolidColorBrush x:Key="AltInterfaceWBrush" Color="{StaticResource AltInterfaceW}" />
+
+    <!--  Shadows  -->
+    <DropShadowEffect
+        x:Key="MenuShadow"
+        BlurRadius="5"
+        Direction="85"
+        ShadowDepth="3"
+        Color="#2B3E392D" />
+
+    <!--  Texture  -->
+    <ImageBrush
+        x:Key="NoisyBg"
+        ImageSource="\Library\Resources\img\noisy-texture-100x100-o5-d10-c-f5f3ed-t0.png"
+        TileMode="FlipXY"
+        Viewport="0,0,100,100"
+        ViewportUnits="Absolute" />
+
 </ResourceDictionary>

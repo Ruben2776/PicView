@@ -25,7 +25,7 @@
                 RenderTransformOrigin="0.5,0.5"
                 Stretch="Uniform">
                 <Polygon.Fill>
-                    <SolidColorBrush x:Name="PolyFill" Color="{StaticResource MainColor}" />
+                    <SolidColorBrush x:Name="PolyFill" Color="{StaticResource IconColor}" />
                 </Polygon.Fill>
             </Polygon>
             <Canvas.Background>

@@ -245,6 +245,7 @@
     <Resource Include="Library\Resources\fonts\texgyreheros-bolditalic.otf" />
     <Resource Include="Library\Resources\fonts\texgyreheros-italic.otf" />
     <Resource Include="Library\Resources\fonts\texgyreheros-regular.otf" />
+    <Resource Include="Library\Resources\img\noisy-texture-100x100-o5-d10-c-f5f3ed-t0.png" />
     <Resource Include="Library\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
     <Resource Include="Library\Resources\img\noisy-texture-200x200-o4-d30-c-101010-t0.png" />
     <Resource Include="Library\Resources\img\camera.ico" />
@@ -299,6 +300,9 @@
     <Page Update="Translations\da-DK.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="UI\Styles\ColorThemes\Light.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="UI\UserControls\Buttons\MenuCloseButton.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -316,6 +320,9 @@
     <Content Include="Editing\ShaderEffects\PsEffects\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Library\Resources\img\noisy-texture-100x100-o5-d10-c-f5f3ed-t0.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />

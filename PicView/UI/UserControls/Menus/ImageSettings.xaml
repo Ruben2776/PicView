@@ -10,14 +10,8 @@
             Background="{StaticResource NoisyBg}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="2"
-            CornerRadius="2">
-            <Border.Effect>
-                <DropShadowEffect
-                    BlurRadius="12"
-                    Direction="105"
-                    ShadowDepth="6"
-                    Color="{StaticResource AltInterface}" />
-            </Border.Effect>
+            CornerRadius="2"
+            Effect="{StaticResource MenuShadow}">
 
             <Canvas>
                 <Canvas.Effect>
@@ -81,7 +75,7 @@
                         Data="M20 16v16l10-8-10-8zm18-10h-28c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4v-28c0-2.21-1.79-4-4-4zm0 32h-28v-28h28v28z"
                         Stretch="Fill">
                         <Path.Fill>
-                            <SolidColorBrush x:Name="SlideshowBrush" Color="{StaticResource MainColor}" />
+                            <SolidColorBrush x:Name="SlideshowBrush" Color="{StaticResource IconColor}" />
                         </Path.Fill>
                     </Path>
                 </Button>
@@ -103,7 +97,7 @@
                         Width="15"
                         Height="15"
                         Data="M255.545 8c-66.269.119-126.438 26.233-170.86 68.685L48.971 40.971C33.851 25.851 8 36.559 8 57.941V192c0 13.255 10.745 24 24 24h134.059c21.382 0 32.09-25.851 16.971-40.971l-41.75-41.75c30.864-28.899 70.801-44.907 113.23-45.273 92.398-.798 170.283 73.977 169.484 169.442C423.236 348.009 349.816 424 256 424c-41.127 0-79.997-14.678-110.63-41.556-4.743-4.161-11.906-3.908-16.368.553L89.34 422.659c-4.872 4.872-4.631 12.815.482 17.433C133.798 479.813 192.074 504 256 504c136.966 0 247.999-111.033 248-247.998C504.001 119.193 392.354 7.755 255.545 8z"
-                        Fill="{StaticResource MainColorBrush}"
+                        Fill="{StaticResource IconColorBrush}"
                         RenderTransformOrigin="0.5,0.5"
                         Stretch="Fill">
                         <Path.RenderTransform>
@@ -134,7 +128,7 @@
                         Width="15"
                         Height="15"
                         Data="M255.545 8c-66.269.119-126.438 26.233-170.86 68.685L48.971 40.971C33.851 25.851 8 36.559 8 57.941V192c0 13.255 10.745 24 24 24h134.059c21.382 0 32.09-25.851 16.971-40.971l-41.75-41.75c30.864-28.899 70.801-44.907 113.23-45.273 92.398-.798 170.283 73.977 169.484 169.442C423.236 348.009 349.816 424 256 424c-41.127 0-79.997-14.678-110.63-41.556-4.743-4.161-11.906-3.908-16.368.553L89.34 422.659c-4.872 4.872-4.631 12.815.482 17.433C133.798 479.813 192.074 504 256 504c136.966 0 247.999-111.033 248-247.998C504.001 119.193 392.354 7.755 255.545 8z"
-                        Fill="{StaticResource MainColorBrush}"
+                        Fill="{StaticResource IconColorBrush}"
                         Stretch="Fill" />
                 </Button>
 
@@ -157,7 +151,7 @@
                             Height="13"
                             Margin="19,17,0,0"
                             Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
-                            Fill="{StaticResource MainColorBrush}"
+                            Fill="{StaticResource IconColorBrush}"
                             Stretch="Fill" />
                     </CheckBox.Content>
                 </CheckBox>
@@ -173,8 +167,7 @@
                     <Button
                         x:Name="Fullscreen_Gallery"
                         FocusVisualStyle="{x:Null}"
-                        FontSize="14"
-                        FontWeight="Bold">
+                        FontSize="14">
                         <Canvas>
                             <Image
                                 Canvas.Left="79"
@@ -196,7 +189,6 @@
                                 Canvas.Left="-89"
                                 Canvas.Top="-9"
                                 FontSize="14"
-                                FontWeight="Bold"
                                 Text="Show fullscreen gallery" />
                         </Canvas>
                     </Button>
@@ -214,8 +206,7 @@
                     <Button
                         x:Name="Contained_Gallery"
                         FocusVisualStyle="{x:Null}"
-                        FontSize="14"
-                        FontWeight="Bold">
+                        FontSize="14">
                         <Canvas>
                             <Image
                                 Canvas.Left="79"
@@ -236,7 +227,6 @@
                                 Canvas.Left="-89"
                                 Canvas.Top="-9"
                                 FontSize="14"
-                                FontWeight="Bold"
                                 Text="Show contained gallery" />
                         </Canvas>
                     </Button>

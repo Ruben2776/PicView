@@ -11,14 +11,8 @@
             Background="{StaticResource NoisyBg}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="2"
-            CornerRadius="2">
-            <Border.Effect>
-                <DropShadowEffect
-                    BlurRadius="9"
-                    Direction="89"
-                    ShadowDepth="5"
-                    Color="Black" />
-            </Border.Effect>
+            CornerRadius="2"
+            Effect="{StaticResource MenuShadow}">
 
             <Canvas VerticalAlignment="Top">
                 <Canvas.Effect>

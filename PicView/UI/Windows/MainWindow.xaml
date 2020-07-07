@@ -14,7 +14,7 @@
     WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
-        <SolidColorBrush x:Key="MagicBrush" Color="{StaticResource MainColor}" />
+        <SolidColorBrush x:Key="MagicBrush" Color="{StaticResource IconColor}" />
     </Window.Resources>
 
     <DockPanel LastChildFill="True">
@@ -66,7 +66,7 @@
             <uc:CustomTextBox
                 x:Name="TitleText"
                 Padding="2,0,2,0"
-                Background="{StaticResource AltInterfaceWBrush}"
+                Background="{StaticResource BackgroundSubtleHighlightBrush}"
                 FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
                 FontSize="15"
                 FontWeight="Bold"
@@ -84,7 +84,7 @@
                 Width="425"
                 Height="35"
                 HorizontalAlignment="Center"
-                Background="{StaticResource BackgroundSubtleHighlightBrush}">
+                Background="{DynamicResource BackgroundColorBrushAlt}">
 
                 <Rectangle
                     Width="1"
@@ -108,7 +108,7 @@
                         Data="M30.718,23.404l0.007-19.877c-0.003-0.611-0.499-1.107-1.109-1.107H15.597  c-0.433-0.01-0.771-0.807-0.771-1.111V1.182c0-0.648-0.528-1.182-1.18-1.182h-7.46C5.535,0,5.008,0.533,5.008,1.182v0.127  c0,0.309-0.341,1.117-0.784,1.117h0.013c-0.604,0.008-1.094,0.5-1.094,1.105l0.005,5.754H0.763c0,0-1.056-0.057-0.683,1.199  l2.516,12.92c0,0.65,0.453,1.176,1.104,1.176h26.474C30.824,24.58,30.718,23.404,30.718,23.404z M29.359,10.949l-0.014,12.975  l-2.502-13.908c-0.212-0.764-1.075-0.711-1.075-0.711H4.51V4.891h24.85V10.949z"
                         Stretch="Fill">
                         <Path.Fill>
-                            <SolidColorBrush x:Name="FolderFill" Color="{StaticResource MainColor}" />
+                            <SolidColorBrush x:Name="FolderFill" Color="{StaticResource IconColor}" />
                         </Path.Fill>
                     </Path>
                 </Button>
@@ -144,7 +144,7 @@
                             Data="F1M27.242,10.47L5.429,0.05C5.173,-0.072,4.868,0.035,4.748,0.287L0,10.223 2.587,10.223 6.073,2.922 24.983,11.956 19.071,24.335 15.741,22.744 15.741,29.289 17.786,30.267C18.042,30.39,18.346,30.28,18.467,30.027L27.484,11.149C27.605,10.897,27.497,10.593,27.242,10.47"
                             Stretch="Fill">
                             <Path.Fill>
-                                <SolidColorBrush x:Name="ImagePath1Fill" Color="{StaticResource MainColor}" />
+                                <SolidColorBrush x:Name="ImagePath1Fill" Color="{StaticResource IconColor}" />
                             </Path.Fill>
                         </Path>
                         <Path
@@ -157,7 +157,7 @@
                             Data="F1M23.29,16.034L21.76,16.034C20.866,13.747 19.768,10.543 18.102,10.97 16.146,11.47 15.168,16.034 15.168,16.034 15.168,16.034 14.172,10.883 11.414,8.124 8.654,5.367 5.983,16.034 5.983,16.034L2.333,16.034 2.333,2.314 23.29,2.314z M24.688,0L0.511,0C0.228,0,0,0.229,0,0.509L0,21.429C0,21.71,0.228,21.94,0.511,21.94L24.688,21.94C24.97,21.94,25.198,21.71,25.198,21.429L25.198,0.509C25.198,0.229,24.97,0,24.688,0"
                             Stretch="Fill">
                             <Path.Fill>
-                                <SolidColorBrush x:Name="ImagePath2Fill" Color="{StaticResource MainColor}" />
+                                <SolidColorBrush x:Name="ImagePath2Fill" Color="{StaticResource IconColor}" />
                             </Path.Fill>
                         </Path>
                         <Path
@@ -168,7 +168,7 @@
                             Height="7"
                             Data="F1M1.711,3.42C2.655,3.42 3.422,2.655 3.422,1.71 3.422,0.766 2.655,0 1.711,0 0.765,0 0,0.766 0,1.71 0,2.655 0.765,3.42 1.711,3.42">
                             <Path.Fill>
-                                <SolidColorBrush x:Name="ImagePath3Fill" Color="{StaticResource MainColor}" />
+                                <SolidColorBrush x:Name="ImagePath3Fill" Color="{StaticResource IconColor}" />
                             </Path.Fill>
                         </Path>
                     </Canvas>
@@ -218,7 +218,7 @@
                             Data="F1M27.008,0L27.01,31.062 0,15.529z"
                             Stretch="Fill">
                             <Path.Fill>
-                                <SolidColorBrush x:Name="LeftArrowFill" Color="{StaticResource MainColor}" />
+                                <SolidColorBrush x:Name="LeftArrowFill" Color="{StaticResource IconColor}" />
                             </Path.Fill>
                         </Path>
                     </Button>
@@ -273,7 +273,7 @@
                         Data="M413.967,276.8c1.06-6.235,1.06-13.518,1.06-20.8s-1.06-13.518-1.06-20.8l44.667-34.318   c4.26-3.118,5.319-8.317,2.13-13.518L418.215,115.6c-2.129-4.164-8.507-6.235-12.767-4.164l-53.186,20.801   c-10.638-8.318-23.394-15.601-36.16-20.801l-7.448-55.117c-1.06-4.154-5.319-8.318-10.638-8.318h-85.098   c-5.318,0-9.577,4.164-10.637,8.318l-8.508,55.117c-12.767,5.2-24.464,12.482-36.171,20.801l-53.186-20.801   c-5.319-2.071-10.638,0-12.767,4.164l-42.549,71.765c-2.119,4.153-1.061,10.399,2.129,13.518L96.97,235.2   c0,7.282-1.06,13.518-1.06,20.8s1.06,13.518,1.06,20.8l-44.668,34.318c-4.26,3.118-5.318,8.317-2.13,13.518L92.721,396.4   c2.13,4.164,8.508,6.235,12.767,4.164l53.187-20.801c10.637,8.318,23.394,15.601,36.16,20.801l8.508,55.117   c1.069,5.2,5.318,8.318,10.637,8.318h85.098c5.319,0,9.578-4.164,10.638-8.318l8.518-55.117c12.757-5.2,24.464-12.482,36.16-20.801   l53.187,20.801c5.318,2.071,10.637,0,12.767-4.164l42.549-71.765c2.129-4.153,1.06-10.399-2.13-13.518L413.967,276.8z    M255.468,328.8c-41.489,0-74.46-32.235-74.46-72.8s32.971-72.8,74.46-72.8s74.461,32.235,74.461,72.8S296.957,328.8,255.468,328.8   z"
                         Stretch="Fill">
                         <Path.Fill>
-                            <SolidColorBrush x:Name="SettingsButtonFill" Color="{StaticResource MainColor}" />
+                            <SolidColorBrush x:Name="SettingsButtonFill" Color="{StaticResource IconColor}" />
                         </Path.Fill>
                     </Path>
                 </Button>

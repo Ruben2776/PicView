@@ -53,6 +53,7 @@ namespace PicView.UI.UserControls
             ColorPickerButton.Click += delegate
             {
                 UC.Close_UserControls();
+                Color_Picking.IsRunning = true;
                 Color_Picking.StartRunning();
             };
 
