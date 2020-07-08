@@ -162,7 +162,7 @@
                     <Border.Background>
                         <SolidColorBrush x:Name="ColorPickerButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Border.Background>
-                    <Button x:Name="ColorPickerButton" ToolTip="Pick color from image [Alt]">
+                    <Button x:Name="ColorPickerButton" ToolTip="Pick color from image">
                         <Canvas>
                             <TextBlock
                                 Canvas.Left="-69"

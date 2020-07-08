@@ -63,14 +63,8 @@
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
-            <uc:CustomTextBox
-                x:Name="TitleText"
-                Padding="2,0,2,0"
-                Background="{StaticResource BackgroundSubtleHighlightBrush}"
-                FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
-                FontSize="15"
-                FontWeight="Bold"
-                Foreground="{StaticResource MainColorBrush}" />
+            <uc:CustomTextBox x:Name="TitleText" Background="{StaticResource BackgroundSubtleHighlightBrush}" />
+
         </DockPanel>
 
         <StackPanel

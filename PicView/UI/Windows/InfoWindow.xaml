@@ -1305,7 +1305,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal"
-                            ToolTip="Drag file to Windows Explorer or another application">
+                            ToolTip="Drag file to Windows Explorer or another application/browser">
                             <TextBlock FontSize="14" Text="Ctrl" />
                             <TextBlock
                                 FontSize="14"
