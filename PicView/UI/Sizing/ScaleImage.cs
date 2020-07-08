@@ -186,7 +186,7 @@ namespace PicView.UI.Sizing
             }
 
             /// Update TitleBar
-            var interfaceSize = 180; // logo and buttons width + extra padding
+            var interfaceSize = 174; // logo and buttons width
             if (Properties.Settings.Default.AutoFitWindow)
             {
                 /// Update mainWindow.TitleBar width to dynamically fit new size

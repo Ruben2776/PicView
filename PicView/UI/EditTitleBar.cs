@@ -24,6 +24,14 @@ namespace PicView.UI
             e.Handled = true; // Disable text clicking
         }
 
+        internal static void Bar_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (Pics == null || !Properties.Settings.Default.ShowInterface || Pics.Count == 0)
+            {
+                e.Handled = true; // Disable text clicking
+            }
+        }
+
         internal static void EditTitleBar_Text()
         {
             if (Pics == null || !Properties.Settings.Default.ShowInterface || Pics.Count == 0)

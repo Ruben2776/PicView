@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <TextBox
         x:Name="InnerTextBox"
-        Margin="2,0,2,0"
         VerticalAlignment="Center"
         AcceptsReturn="True"
         AcceptsTab="True"
@@ -30,7 +29,6 @@
                         <ControlTemplate TargetType="{x:Type TextBox}">
                             <Border
                                 x:Name="bg"
-                                Margin="0,0,0,2"
                                 Padding="5,7,5,3"
                                 BorderBrush="{DynamicResource ChosenColorBrush}"
                                 BorderThickness="1">
