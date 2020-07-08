@@ -18,18 +18,6 @@ namespace PicView.UI.UserControls
             FlipButton.Checked += FlipButton_Checked;
             FlipButton.Unchecked += FlipButton_Unchecked;
 
-            SlideshowButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(SlideshowButtonBrush);
-            SlideshowButton.MouseEnter += (s, x) => ButtonMouseOverAnim(SlideshowButtonBrush, true);
-            SlideshowButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(SlideshowButtonBrush, false);
-
-            RotateLeftButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(RotateLeftButtonBrush);
-            RotateLeftButton.MouseEnter += (s, x) => ButtonMouseOverAnim(RotateLeftButtonBrush, true);
-            RotateLeftButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(RotateLeftButtonBrush, false);
-
-            RotateRightButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(RotateRightButtonBrush);
-            RotateRightButton.MouseEnter += (s, x) => ButtonMouseOverAnim(RotateRightButtonBrush, true);
-            RotateRightButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(RotateRightButtonBrush, false);
-
             Fullscreen_Gallery.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(FullscreenBorderBrush);
             Fullscreen_Gallery.MouseEnter += (s, x) => ButtonMouseOverAnim(FullscreenBorderBrush, true);
             Fullscreen_Gallery.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(FullscreenBorderBrush, false);

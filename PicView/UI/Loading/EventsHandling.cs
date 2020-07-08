@@ -72,8 +72,6 @@ namespace PicView.UI.Loading
             TheMainWindow.image_button.Click += Toggle_image_menu;
 
             // imageSettingsMenu Buttons
-            GetImageSettingsMenu.RotateRightButton.Click += (s, x) => Rotate(true);
-            GetImageSettingsMenu.RotateLeftButton.Click += (s, x) => Rotate(false);
 
             GetImageSettingsMenu.Contained_Gallery.Click += delegate {
                 Close_UserControls();
@@ -83,7 +81,6 @@ namespace PicView.UI.Loading
                 Close_UserControls();
                 GalleryToggle.OpenFullscreenGallery();
             };
-            GetImageSettingsMenu.SlideshowButton.Click += delegate { Slideshow.StartSlideshow(); };
 
             // LeftButton
             TheMainWindow.LeftButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.LeftArrowFill);
