@@ -139,7 +139,7 @@ namespace PicView.UI.TransformImage
             }
             if (Color_Picking.IsRunning)
             {
-                Color_Picking.StopRunning();
+                Color_Picking.StopRunning(true);
             }
 
             // Reset zoom on double click

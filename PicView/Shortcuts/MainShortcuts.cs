@@ -334,6 +334,11 @@ namespace PicView.Shortcuts
                                 return;
                             }
                         }
+                        if (Editing.Color_Picking.IsRunning)
+                        {
+                            Editing.Color_Picking.StopRunning(false);
+                            return;
+                        }
                         if (!cm.IsVisible)
                         {
                             SystemCommands.CloseWindow(TheMainWindow);
@@ -608,6 +613,17 @@ namespace PicView.Shortcuts
             switch (e.ChangedButton)
             {
                 case MouseButton.Right:
+                    // Stop running color picking when right clicking
+                    if (Editing.Color_Picking.IsRunning)
+                    {
+                        Editing.Color_Picking.StopRunning(false);
+                    }
+                    else if (IsAutoScrolling)
+                    {
+                        StopAutoScroll();
+                        return;
+                    }
+                    break;
                 case MouseButton.Left:
                     if (IsAutoScrolling)
                     {

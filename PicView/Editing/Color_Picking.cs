@@ -50,19 +50,23 @@ namespace PicView.Editing
             Canvas.SetLeft(UC.GetColorPicker, Scroll.AutoScrollOrigin.Value.X);
         }
 
-        internal static void StopRunning()
+        internal static void StopRunning(bool addValue)
         {
             // Reset cursor from coloc picking
             Fields.TheMainWindow.Cursor = Cursors.Arrow;
 
             if (UC.GetColorPicker != null)
             {
-                var x = UC.GetColorPicker.HexCodePresenter.Content.ToString();
-                Clipboard.SetText(x);
-                Tooltip.ShowTooltipMessage($"Copied {x}"); // TODO add translation
+                if (addValue)
+                {
+                    var x = UC.GetColorPicker.HexCodePresenter.Content.ToString();
+                    Clipboard.SetText(x);
+                    Tooltip.ShowTooltipMessage($"Copied {x}"); // TODO add translation
+                }
+
+                Fields.TheMainWindow.topLayer.Children.Remove(UC.GetColorPicker);
             }
 
-            Fields.TheMainWindow.topLayer.Children.Remove(UC.GetColorPicker);
             IsRunning = false;
 
             Fields.TheMainWindow.Focus();
