@@ -341,7 +341,7 @@ namespace PicView.ChangeImage
 
             Pic(Pics[0]);
 
-            GetQuickSettingsMenu.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
+            GetQuickSettingsMenu.GoToPic.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
 
             prevPicResource = null; // Make sure to not waste memory
         }

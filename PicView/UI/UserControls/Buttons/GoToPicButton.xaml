@@ -1,0 +1,65 @@
+﻿<UserControl
+    x:Class="PicView.UI.UserControls.GoToPicButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Button
+        x:Name="TheButton"
+        Width="97"
+        Height="50">
+        <Button.Background>
+            <SolidColorBrush x:Name="GoToPicBrush" Color="{StaticResource BackgroundColorAlt}" />
+        </Button.Background>
+        <Button.Content>
+            <Canvas>
+                <Image
+                    Canvas.Left="-35"
+                    Canvas.Top="-12"
+                    Width="13"
+                    Height="24">
+                    <Image.Source>
+                        <DrawingImage>
+                            <DrawingImage.Drawing>
+                                <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                    <GeometryDrawing Geometry="F1 M512,512z M0,0z M112,111L112,401C112,418.44,129,429.52,143,421.16L390.9,272.79C403.02,265.54,403.02,246.46,390.9,239.21L143,90.84C129,82.48,112,93.56,112,111z">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource IconColorBrush}"
+                                                EndLineCap="Flat"
+                                                LineJoin="Miter"
+                                                StartLineCap="Flat"
+                                                Thickness="32" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing>
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource IconColorBrush}"
+                                                EndLineCap="Round"
+                                                LineJoin="Miter"
+                                                StartLineCap="Round"
+                                                Thickness="32" />
+                                        </GeometryDrawing.Pen>
+                                        <GeometryDrawing.Geometry>
+                                            <LineGeometry StartPoint="400,80" EndPoint="400,432" />
+                                        </GeometryDrawing.Geometry>
+                                    </GeometryDrawing>
+                                </DrawingGroup>
+                            </DrawingImage.Drawing>
+                        </DrawingImage>
+                    </Image.Source>
+                </Image>
+                <TextBox
+                    x:Name="GoToPicBox"
+                    Canvas.Left="-13"
+                    Canvas.Top="-11"
+                    Width="51"
+                    Panel.ZIndex="1"
+                    AcceptsTab="False"
+                    BorderBrush="{StaticResource IconColorBrush}"
+                    IsTabStop="False"
+                    Text="1"
+                    TextAlignment="Center" />
+            </Canvas>
+        </Button.Content>
+    </Button>
+</UserControl>

@@ -114,7 +114,7 @@ namespace PicView.UI.UserControls
                 {
                     if (Library.Fields.TheMainWindow.MainImage.Source != null)
                     {
-                        GetQuickSettingsMenu.GoToPicBox.Text =
+                        GetQuickSettingsMenu.GoToPic.GoToPicBox.Text =
                             (Navigation.FolderIndex + 1)
                             .ToString(System.Globalization.CultureInfo.CurrentCulture);
                     }
