@@ -197,10 +197,6 @@ namespace PicView.Shortcuts
                                 ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
                                 return;
                             }
-                            if (ctrlDown)
-                            {
-                                Rotate(false);
-                            }
                             else
                             {
                                 Pic(false);
@@ -220,7 +216,7 @@ namespace PicView.Shortcuts
 
                 case Key.Down:
                 case Key.S:
-                    if (ctrlDown && GetPicGallery != null && !GalleryFunctions.IsOpen)
+                    if (ctrlDown)
                     {
                         SaveFiles();
                     }
@@ -235,11 +231,6 @@ namespace PicView.Shortcuts
                             if (Properties.Settings.Default.PicGallery == 1)
                             {
                                 ScrollTo(true, ctrlDown);
-                                return;
-                            }
-                            if (ctrlDown)
-                            {
-                                Rotate(true);
                             }
                             else
                             {
