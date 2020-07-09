@@ -194,52 +194,10 @@
                         Height="35"
                         Fill="{StaticResource BorderBrush}" />
 
-                    <Button
-                        x:Name="LeftButton"
-                        Width="100"
-                        Height="35"
-                        FocusVisualStyle="{x:Null}"
-                        Focusable="False"
-                        KeyboardNavigation.DirectionalNavigation="None"
-                        KeyboardNavigation.TabNavigation="None">
-                        <Button.Background>
-                            <SolidColorBrush x:Name="LeftButtonBrush" Color="Transparent" />
-                        </Button.Background>
-                        <Path
-                            x:Name="LeftArrow"
-                            Width="19.669"
-                            Height="22.62"
-                            Data="F1M27.008,0L27.01,31.062 0,15.529z"
-                            Stretch="Fill">
-                            <Path.Fill>
-                                <SolidColorBrush x:Name="LeftArrowFill" Color="{StaticResource IconColor}" />
-                            </Path.Fill>
-                        </Path>
-                    </Button>
+                    <uc:LeftButton x:Name="LeftButton" />
 
-                    <Button
-                        x:Name="RightButton"
-                        Canvas.Left="100"
-                        Width="100"
-                        Height="35"
-                        FocusVisualStyle="{x:Null}"
-                        Focusable="False"
-                        KeyboardNavigation.DirectionalNavigation="None"
-                        KeyboardNavigation.TabNavigation="None">
-                        <Button.Background>
-                            <SolidColorBrush x:Name="RightButtonBrush" Color="Transparent" />
-                        </Button.Background>
-                        <Path
-                            x:Name="RightArrow"
-                            Width="19.669"
-                            Height="22.619"
-                            Data="F1M0.002,31.062L0,0 27.01,15.534z"
-                            Stretch="Fill">
-                            <Path.Fill>
-                                <SolidColorBrush x:Name="RightArrowFill" Color="{StaticResource MainColor}" />
-                            </Path.Fill>
-                        </Path>
-                    </Button>
+                    <uc:RightButton x:Name="RightButton" Canvas.Left="100" />
+
                 </Canvas>
 
                 <Rectangle

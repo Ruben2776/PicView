@@ -1,0 +1,27 @@
+﻿<UserControl
+    x:Class="PicView.UI.UserControls.RightButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Button
+        x:Name="TheButton"
+        Width="100"
+        Height="35"
+        FocusVisualStyle="{x:Null}"
+        Focusable="False"
+        KeyboardNavigation.DirectionalNavigation="None"
+        KeyboardNavigation.TabNavigation="None">
+        <Button.Background>
+            <SolidColorBrush x:Name="RightButtonBrush" Color="Transparent" />
+        </Button.Background>
+        <Path
+            x:Name="RightArrow"
+            Width="19.669"
+            Height="22.619"
+            Data="F1M0.002,31.062L0,0 27.01,15.534z"
+            Stretch="Fill">
+            <Path.Fill>
+                <SolidColorBrush x:Name="RightArrowFill" Color="{StaticResource IconColor}" />
+            </Path.Fill>
+        </Path>
+    </Button>
+</UserControl>

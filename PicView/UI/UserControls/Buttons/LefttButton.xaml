@@ -1,0 +1,27 @@
+﻿<UserControl
+    x:Class="PicView.UI.UserControls.LeftButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Button
+        x:Name="TheButton"
+        Width="100"
+        Height="35"
+        FocusVisualStyle="{x:Null}"
+        Focusable="False"
+        KeyboardNavigation.DirectionalNavigation="None"
+        KeyboardNavigation.TabNavigation="None">
+        <Button.Background>
+            <SolidColorBrush x:Name="LeftButtonBrush" Color="Transparent" />
+        </Button.Background>
+        <Path
+            x:Name="LeftArrow"
+            Width="19.669"
+            Height="22.62"
+            Data="F1M27.008,0L27.01,31.062 0,15.529z"
+            Stretch="Fill">
+            <Path.Fill>
+                <SolidColorBrush x:Name="LeftArrowFill" Color="{StaticResource IconColor}" />
+            </Path.Fill>
+        </Path>
+    </Button>
+</UserControl>

@@ -82,22 +82,6 @@ namespace PicView.UI.Loading
                 GalleryToggle.OpenFullscreenGallery();
             };
 
-            // LeftButton
-            TheMainWindow.LeftButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.LeftArrowFill);
-            TheMainWindow.LeftButton.MouseEnter += (s, x) => ButtonMouseOverAnim(TheMainWindow.LeftArrowFill);
-            TheMainWindow.LeftButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(TheMainWindow.LeftButtonBrush);
-            TheMainWindow.LeftButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(TheMainWindow.LeftArrowFill);
-            TheMainWindow.LeftButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(TheMainWindow.LeftButtonBrush);
-            TheMainWindow.LeftButton.Click += (s, x) => PicButton(false, false);
-
-            // RightButton
-            TheMainWindow.RightButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.RightArrowFill);
-            TheMainWindow.RightButton.MouseEnter += (s, x) => ButtonMouseOverAnim(TheMainWindow.RightArrowFill);
-            TheMainWindow.RightButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(TheMainWindow.RightButtonBrush);
-            TheMainWindow.RightButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(TheMainWindow.RightArrowFill);
-            TheMainWindow.RightButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(TheMainWindow.RightButtonBrush);
-            TheMainWindow.RightButton.Click += (s, x) => PicButton(false, true);
-
             // SettingsButton
             TheMainWindow.SettingsButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.SettingsButtonFill);
             TheMainWindow.SettingsButton.MouseEnter += (s, x) => ButtonMouseOverAnim(TheMainWindow.SettingsButtonFill);

@@ -280,7 +280,13 @@
     <Compile Update="UI\UserControls\Buttons\BackgroundButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="UI\UserControls\Buttons\LefttButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="UI\UserControls\Buttons\RotateLeftButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UI\UserControls\Buttons\RightButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="UI\UserControls\Buttons\RotateRightButton.xaml.cs">
@@ -330,7 +336,13 @@
     <Page Update="UI\UserControls\Buttons\BackgroundButton.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="UI\UserControls\Buttons\LefttButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="UI\UserControls\Buttons\RotateLeftButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UI\UserControls\Buttons\RightButton.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UI\UserControls\Buttons\RotateRightButton.xaml">
