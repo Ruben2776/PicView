@@ -1,5 +1,6 @@
 ﻿using PicView.ChangeImage;
 using PicView.UI.PicGallery;
+using PicView.UI.UserControls.Gallery;
 using PicView.UI.UserControls.Misc;
 using System;
 using System.Windows;
@@ -23,6 +24,7 @@ namespace PicView.UI.UserControls
         internal static GalleryShortcut GetGalleryShortcut;
         internal static CroppingTool GetCropppingTool;
         internal static ColorPicker GetColorPicker;
+        internal static GalleryMenu GetGalleryMenu;
 
         private static bool imageSettingsMenuOpen;
         private static bool fileMenuOpen;

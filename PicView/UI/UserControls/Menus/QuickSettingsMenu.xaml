@@ -123,7 +123,11 @@
                         StrokeThickness="2" />
                 </Canvas>
 
-                <uc:BackGroundButton x:Name="BackgroundButton" Canvas.Left="155" />
+                <uc:BackGroundButton
+                    x:Name="BackgroundButton"
+                    Canvas.Left="155"
+                    Width="51"
+                    Height="51" />
 
                 <Rectangle
                     Canvas.Left="206"

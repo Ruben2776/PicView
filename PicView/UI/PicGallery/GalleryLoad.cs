@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using PicView.UI.Sizing;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.Library.Fields;
@@ -74,8 +75,23 @@ namespace PicView.UI.PicGallery
                 ShowTopandBottom(false);
                 ConfigColors.UpdateColor(true);
 
-                TheMainWindow.Margin = new Thickness(0, 0, -GetPicGallery.Width, 0);
+#if DEBUG
+                if (GetGalleryMenu == null)
+                {
+                    GetGalleryMenu = new UserControls.Gallery.GalleryMenu
+                    {
+                    };
+
+                    if (WindowLogic.fakeWindow == null)
+                    {
+                        WindowLogic.fakeWindow = new Windows.FakeWindow();
+                    }
+
+                    WindowLogic.fakeWindow.grid.Children.Add(GetGalleryMenu);
+                }
+#endif
             }
+
 
             GetPicGallery.Visibility = Visibility.Visible;
             GetPicGallery.Opacity = 1;

@@ -59,7 +59,11 @@
 
                 <uc:ReloadButton x:Name="ReloadButton" />
 
-                <uc:RecycleButton x:Name="RecycleButton" Canvas.Left="51" />
+                <uc:RecycleButton
+                    x:Name="RecycleButton"
+                    Canvas.Left="51"
+                    Width="51"
+                    Height="51" />
 
                 <uc:CopyButton x:Name="CopyButton" Canvas.Left="102" />
 
