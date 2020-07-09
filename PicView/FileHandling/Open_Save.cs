@@ -37,7 +37,6 @@ namespace PicView.FileHandling
             try
             {
                 Close_UserControls();
-                ShowTooltipMessage(Application.Current.Resources["FileCut"] as string);
                 Process.Start("explorer.exe", "/select,\"" + Pics[FolderIndex] + "\"");
             }
 #if DEBUG
@@ -120,9 +119,9 @@ namespace PicView.FileHandling
             var Savedlg = new SaveFileDialog()
             {
                 Filter = FilterFiles,
-                Title = "Save image - PicView", // TODO add to translation
+                Title = Application.Current.Resources["Save"] as string + $" - {AppName}",
                 FileName = fileName
-            };
+        };
 
             if (!Savedlg.ShowDialog().Value)
             {
