@@ -520,7 +520,7 @@ namespace PicView.UI.Loading
                 Header = "Copy image",
                 ToolTip = "Copy as Windows clipboard image [Ctrl + Alt + C]",
             };
-            cpxbm.Click += (s, x) => Base64.SendToClipboard();
+            cpxbm.Click += (s, x) => CopyBitmap();
             cpm.Items.Add(cpxbm);
 
             ///////////////////////////
