@@ -134,14 +134,14 @@ namespace PicView.FileHandling
             {
                 if (!SaveImages.TrySaveImage(Rotateint, Flipped, Pics[FolderIndex], Savedlg.FileName))
                 {
-                    ShowTooltipMessage("Saving file failed"); // TODO add to translation
+                    ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
                 }
             }
             else
             {
                 if (!SaveImages.TrySaveImage(Rotateint, Flipped, TheMainWindow.MainImage.Source as BitmapSource, Savedlg.FileName))
                 {
-                    ShowTooltipMessage("Saving file failed"); // TODO add to translation
+                    ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
                 }
             }
 

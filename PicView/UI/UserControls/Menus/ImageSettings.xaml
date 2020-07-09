@@ -94,7 +94,7 @@
                     Canvas.Left="7.5"
                     Canvas.Top="59"
                     Width="240"
-                    Style="{StaticResource SexyBorder}">
+                    Style="{StaticResource ButtonBorder}">
                     <Button
                         x:Name="Fullscreen_Gallery"
                         FocusVisualStyle="{x:Null}"
@@ -133,7 +133,7 @@
                     Canvas.Left="7.5"
                     Canvas.Top="116"
                     Width="240"
-                    Style="{StaticResource SexyBorder}">
+                    Style="{StaticResource ButtonBorder}">
                     <Button
                         x:Name="Contained_Gallery"
                         FocusVisualStyle="{x:Null}"

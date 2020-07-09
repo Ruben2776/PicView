@@ -125,11 +125,11 @@
 
                 <Border
                     x:Name="CropButtonBorder"
-                    Canvas.Left="6"
+                    Canvas.Left="8"
                     Canvas.Top="58"
                     Width="156"
                     Height="51"
-                    Style="{StaticResource SexyBorder}">
+                    Style="{StaticResource ButtonBorder}">
                     <Border.Background>
                         <SolidColorBrush x:Name="CropButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Border.Background>
@@ -158,7 +158,7 @@
                     Canvas.Top="58"
                     Width="176"
                     Height="51"
-                    Style="{StaticResource SexyBorder}">
+                    Style="{StaticResource ButtonBorder}">
                     <Border.Background>
                         <SolidColorBrush x:Name="ColorPickerButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Border.Background>
@@ -183,11 +183,11 @@
 
                 <Border
                     x:Name="ExifButtonBorder"
-                    Canvas.Left="6"
+                    Canvas.Left="8"
                     Canvas.Top="115"
                     Width="156"
                     Height="51"
-                    Style="{StaticResource SexyBorder}">
+                    Style="{StaticResource ButtonBorder}">
                     <Border.Background>
                         <SolidColorBrush x:Name="ExifButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Border.Background>
