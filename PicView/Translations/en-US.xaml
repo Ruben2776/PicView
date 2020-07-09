@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:system="clr-namespace:System;assembly=mscorlib">
 
-    <!--  TitleText  -->
+    <!--  Text in the title bar  -->
     <system:String x:Key="Loading">Loading...</system:String>
     <system:String x:Key="NoImage">No image loaded</system:String>
     <system:String x:Key="Files">files</system:String>
@@ -14,7 +14,6 @@
     <system:String x:Key="Minimize">Minimize</system:String>
     <system:String x:Key="Fullscreen">Fullscreen</system:String>
 
-
     <!--  Info window  -->
     <system:String x:Key="InfoWindowTitle">Information, help &amp; shortcuts</system:String>
     <system:String x:Key="ApplicationShortcuts">Application Shortcuts</system:String>
@@ -24,24 +23,62 @@
     <system:String x:Key="NextImage">Next Image</system:String>
     <system:String x:Key="PrevImage">Previous Image</system:String>
 
-
     <!--  File related  -->
     <system:String x:Key="Open">Open</system:String>
+    <system:String x:Key="OpenWith">Open with...</system:String>
     <system:String x:Key="OpenFileDialog">Open file dialog</system:String>
     <system:String x:Key="ShowInFolder">Show in folder</system:String>
     <system:String x:Key="Save">Save</system:String>
     <system:String x:Key="Print">Print</system:String>
+    <system:String x:Key="RecentFiles">Recent files</system:String>
+    <system:String x:Key="FileDetails">File details</system:String>
+
+    <!--  Sort files  -->
+    <system:String x:Key="SortFilesBy">Sort files by</system:String>
+    <system:String x:Key="FileName">File name</system:String>
+    <system:String x:Key="FileSize">File size</system:String>
+    <system:String x:Key="CreationTime">Creation time</system:String>
+    <system:String x:Key="FileExtension">File extension</system:String>
+    <system:String x:Key="LastAccessTime">Last access time</system:String>
+    <system:String x:Key="LastWriteTime">Last write time</system:String>
+    <system:String x:Key="Random">Random</system:String>
+
+    <!--  Settings  -->
+    <system:String x:Key="Settings">Settings</system:String>
+    <system:String x:Key="Scrolling">Scrolling</system:String>
+    <system:String x:Key="Looping">Looping</system:String>
+    <system:String x:Key="FitToWindow">Fit to window/image</system:String>
+    <system:String x:Key="ShowHideUI">Show/hide interface</system:String>
+    <system:String x:Key="ChangeBg">Change background</system:String>
+    <system:String x:Key="ChangeBgTooltip">Change between background color for images with transparent background</system:String>
 
     <!--  Copy related  -->
+    <system:String x:Key="Copy">Copy</system:String>
     <system:String x:Key="FileCopy">File added to clipboard</system:String>
     <system:String x:Key="FileCopyPath">File path added to clipboard</system:String>
-    <system:String x:Key="ImageCopy">Image added to move clipboard</system:String>
+    <system:String x:Key="CopyImage">Copy image</system:String>
+    <system:String x:Key="CopyImageTooltip">Copy as Windows clipboard image</system:String>
     <system:String x:Key="FileCut">Image added to move clipboard</system:String>
+
+    <!--  Keyboard and mouse key names  -->
+    <system:String x:Key="Delete">Delete</system:String>
+    <system:String x:Key="Ctrl">Ctrl</system:String>
+    <system:String x:Key="Shift">Shift</system:String>
+    <system:String x:Key="Alt">Alt</system:String>
+    <system:String x:Key="Space">Space</system:String>
+    <system:String x:Key="Enter">Enter</system:String>
+    <system:String x:Key="Esc">Esc</system:String>
+    <system:String x:Key="MouseWheel">Mouse wheel</system:String>
+    <system:String x:Key="MouseKeyForward">Mouse key forward</system:String>
+    <system:String x:Key="MouseKeyBack">Mouse key back</system:String>
 
     <!--  Error messages  -->
     <system:String x:Key="SavingFileFailed">Saving file failed</system:String>
 
     <!--  Drag and drop  -->
     <system:String x:Key="DragOverString">Drop to load image</system:String>
+
+    <!--  Wallpaper  -->
+    <system:String x:Key="SetAsWallpaper">Set as wallpaper</system:String>
 
 </ResourceDictionary>
