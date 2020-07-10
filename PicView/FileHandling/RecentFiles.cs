@@ -24,7 +24,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// How many max recent files
         /// </summary>
-        private const int MRUcount = 10;
+        private const int MRUcount = 11;
 
         internal static bool IsZipped { get; set; }
 
