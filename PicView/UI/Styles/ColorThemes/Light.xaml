@@ -55,8 +55,8 @@
     <SolidColorBrush x:Key="BackgroundHoverHighlightBrush" Color="{StaticResource BackgroundHoverHighlight}" />
 
     <!--  Border Brush  -->
-    <Color x:Key="BorderColor">#564952</Color>
-    <Color x:Key="BorderColorAlt">#ddd</Color>
+    <Color x:Key="BorderColor">#c4bcc2</Color>
+    <Color x:Key="BorderColorAlt">#ededf0</Color>
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
     <SolidColorBrush x:Key="BorderBrushAlt" Color="{StaticResource BorderColorAlt}" />
 

@@ -6,7 +6,7 @@
         x:Name="InnerTextBox"
         VerticalAlignment="Center"
         AcceptsReturn="True"
-        AcceptsTab="True"
+        AcceptsTab="False"
         AutoWordSelection="True"
         Background="{x:Null}"
         CaretBrush="{StaticResource MainColorBrush}"
@@ -29,7 +29,7 @@
                         <ControlTemplate TargetType="{x:Type TextBox}">
                             <Border
                                 x:Name="bg"
-                                Padding="5,7,5,3"
+                                Padding="5,5,5,5"
                                 BorderBrush="{DynamicResource ChosenColorBrush}"
                                 BorderThickness="1">
                                 <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
@@ -48,7 +48,7 @@
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="TextBox">
-                                    <TextBlock Text="{TemplateBinding Text}" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{TemplateBinding Text}" TextTrimming="CharacterEllipsis" Margin="9,0,9,0" />
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>

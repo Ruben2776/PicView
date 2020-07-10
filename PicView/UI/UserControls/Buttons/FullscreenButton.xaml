@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Button
         x:Name="TheButton"
-        Width="33"
-        Height="33"
+        Width="35"
+        Height="35"
         VerticalAlignment="Center"
         BorderThickness="0"
         DockPanel.Dock="Right"

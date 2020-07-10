@@ -165,7 +165,7 @@
 
     <Style x:Key="MetroAlphaFlatRadioButton" TargetType="{x:Type RadioButton}">
         <Setter Property="Margin" Value="0" />
-        <Setter Property="Foreground" Value="WhiteSmoke" />
+        <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Aller" />
         <Setter Property="FontSize" Value="14" />
@@ -341,7 +341,7 @@
 
     <Style TargetType="{x:Type CheckBox}">
         <Setter Property="Margin" Value="0" />
-        <Setter Property="Foreground" Value="WhiteSmoke" />
+        <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="FontFamily" Value="/PicView;component/Resources/fonts/#Aller" />
         <Setter Property="FontSize" Value="14" />

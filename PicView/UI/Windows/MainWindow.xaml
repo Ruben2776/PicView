@@ -20,7 +20,7 @@
     <DockPanel LastChildFill="True">
         <DockPanel
             x:Name="TitleBar"
-            Height="33"
+            Height="35"
             MinWidth="444"
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
@@ -78,7 +78,7 @@
                 Width="425"
                 Height="35"
                 HorizontalAlignment="Center"
-                Background="{DynamicResource BackgroundColorBrushAlt}">
+                Background="{StaticResource BackgroundSubtleHighlightBrush}">
 
                 <Rectangle
                     Width="1"
