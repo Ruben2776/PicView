@@ -20,19 +20,21 @@ namespace PicView.UI.Animations
         /// <param name="show"></param>
         internal static async void FadeControlsAsync(bool show, double time = .5)
         {
+            if (Properties.Settings.Default.ShowInterface
+                || GetClickArrowRight == null
+                || GetClickArrowLeft == null
+                || Getx2 == null
+                || GetGalleryShortcut == null)
+            { 
+                return;
+            }
+
             await TheMainWindow.Dispatcher.BeginInvoke((Action)(() =>
             {
                 if (Properties.Settings.Default.ScrollEnabled && TheMainWindow.Scroller.ScrollableHeight > 0)
                 {
                     ScrollbarFade(show);
                 }
-
-                if (Properties.Settings.Default.ShowInterface
-                    || GetClickArrowRight == null
-                    || GetClickArrowLeft == null
-                    || Getx2 == null
-                    || GetGalleryShortcut == null)
-                { return; }
 
                 TimeSpan timespan = TimeSpan.FromSeconds(time);
 

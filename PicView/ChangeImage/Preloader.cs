@@ -36,34 +36,12 @@ namespace PicView.ChangeImage
             string,
             BitmapSource> Sources = new ConcurrentDictionary<string, BitmapSource>();
 
-        private static bool isLoading;
-        private static bool isReset;
-
-        internal static bool GetIsReset()
-        {
-            return isReset;
-        }
-
-        internal static void SetIsReset(bool value)
-        {
-            isReset = value;
-        }
-
         /// <summary>
         /// When Preloader is adding an image
         /// </summary>
-        internal static bool GetIsLoading()
-        {
-            return isLoading;
-        }
+        internal static bool IsLoading { get; set; }
 
-        /// <summary>
-        /// When Preloader is adding an image
-        /// </summary>
-        internal static void SetIsLoading(bool value)
-        {
-            isLoading = value;
-        }
+        internal static bool IsReset { get; set; }
 
         /// <summary>
         /// Add file to prelader
@@ -73,16 +51,16 @@ namespace PicView.ChangeImage
         {
             if (Contains(file) || Pics.Count == 0 || Pics.IndexOf(file) == -1)
             {
-                SetIsLoading(false);
+                IsLoading = false;
                 return false;
             }
 
-            SetIsLoading(true);
+            IsLoading =  true;
 
-            var pic = await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(true);
+            var pic = await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(false);
             if (pic == null)
             {
-                SetIsLoading(false);
+                IsLoading = false;
                 return false;
             }
 
@@ -91,7 +69,7 @@ namespace PicView.ChangeImage
                 pic.Freeze();
             }
 
-            SetIsLoading(false);
+            IsLoading = false;
 
 #if DEBUG
             Trace.WriteLine("Add string file = " + file + " to Preloader, index " + Pics.IndexOf(file));
@@ -111,13 +89,13 @@ namespace PicView.ChangeImage
                 return false;
             }
 
-            SetIsLoading(true);
+            IsLoading =  true;
 
             if (File.Exists(Pics[i]))
             {
                 if (!Contains(Pics[i]))
                 {
-                    return await Add(Pics[i]).ConfigureAwait(true);
+                    return await Add(Pics[i]).ConfigureAwait(false);
                 }
                 else
                 {
@@ -134,7 +112,7 @@ namespace PicView.ChangeImage
 #if DEBUG
                 Trace.WriteLine("Preloader removed = " + Pics[i] + " from Pics, index " + i);
 #endif
-                SetIsLoading(false);
+                IsLoading =  false;
                 return false;
             }
         }
@@ -165,7 +143,7 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            SetIsLoading(true);
+            IsLoading = true;
 
             if (!bmp.IsFrozen)
             {
@@ -183,7 +161,7 @@ namespace PicView.ChangeImage
 #else
             Sources.TryAdd(key, bmp);
 #endif
-            SetIsLoading(false);
+            IsLoading = false;
         }
 
         /// <summary>
@@ -311,7 +289,7 @@ namespace PicView.ChangeImage
             if (!Contains(file))
             {
                 PreloadCount = 4;
-                SetIsReset(true);
+                IsReset = true;
                 await Add(file).ConfigureAwait(false);
             }
         }
@@ -492,13 +470,16 @@ namespace PicView.ChangeImage
                         {
                             for (int i = index + 1 + cleanUp; i > index + 1 + cleanUp - extraToLoad; i--)
                             {
-                                Remove(i % Pics.Count);
+                                if (i != 0 || Pics.Count != 0)
+                                {
+                                    Remove(i % Pics.Count);
+                                }
                             }
                         }
                     }
                 }
 
-                SetIsLoading(false); // Fixes loading erros
+            IsLoading = false; // Fixes loading erros
             });
         }
     }
