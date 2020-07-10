@@ -33,7 +33,7 @@ namespace PicView.UI.Loading
             var opencm = new MenuItem
             {
                 Header = Application.Current.Resources["Open"] as string,
-                InputGestureText = "Ctrl + O"
+                InputGestureText = $"{Application.Current.Resources["Ctrl"] as string} + O"
             };
             var opencmIcon = new System.Windows.Shapes.Path
             {
@@ -54,7 +54,7 @@ namespace PicView.UI.Loading
             var savecm = new MenuItem()
             {
                 Header = Application.Current.Resources["Save"] as string,
-                InputGestureText = "Ctrl + S"
+                InputGestureText = $"{Application.Current.Resources["Ctrl"] as string} + S"
             };
             var savecmIcon = new System.Windows.Shapes.Path
             {
@@ -75,7 +75,7 @@ namespace PicView.UI.Loading
             var printcm = new MenuItem
             {
                 Header = Application.Current.Resources["Print"] as string,
-                InputGestureText = "Ctrl + P"
+                InputGestureText = $"{Application.Current.Resources["Ctrl"] as string} + P"
             };
             var printcmIcon = new System.Windows.Shapes.Path
             {
@@ -324,28 +324,6 @@ namespace PicView.UI.Loading
             settingscm.Items.Add(settingscmScroll);
 
             ///////////////////////////
-            ///   Auto fit         \\\\
-            ///////////////////////////
-            var fitcm = new MenuItem
-            {
-                InputGestureText = "1 || 2"
-            };
-            var fitcmHeader = new CheckBox
-            {
-                Content = Application.Current.Resources["FitToWindow"] as string,
-                IsChecked = Properties.Settings.Default.AutoFitWindow,
-                FontSize = 13,
-                MinWidth = 125,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                Width = double.NaN,
-                Height = double.NaN
-            };
-            fitcmHeader.Click += delegate { WindowLogic.AutoFitWindow = WindowLogic.AutoFitWindow ? false : true; };
-            fitcm.Header = fitcmHeader;
-            fitcm.Click += delegate { WindowLogic.AutoFitWindow = WindowLogic.AutoFitWindow ? false : true; };
-            settingscm.Items.Add(fitcm);
-
-            ///////////////////////////
             ///   Alt interface    \\\\
             ///////////////////////////
             var altcm = new MenuItem
@@ -447,7 +425,7 @@ namespace PicView.UI.Loading
             var fildecm = new MenuItem
             {
                 Header = Application.Current.Resources["FileDetails"] as string,
-                InputGestureText = "Ctrl + I"
+                InputGestureText = $"{Application.Current.Resources["Ctrl"] as string} + I"
             };
             var fildecmIcon = new System.Windows.Shapes.Path
             {
@@ -523,8 +501,7 @@ namespace PicView.UI.Loading
             ///////////////////////////
             var cppfm = new MenuItem
             {
-                Header = "Copy file path",
-                ToolTip = "Copy file path to clipboard holder",
+                Header = Application.Current.Resources["FileCopyPath"] as string,
             };
             cppfm.Click += (s, x) => CopyText();
             cpm.Items.Add(cppfm);
@@ -538,8 +515,8 @@ namespace PicView.UI.Loading
             ///////////////////////////
             var cpccm = new MenuItem
             {
-                Header = "Cut file",
-                InputGestureText = "Ctrl + X"
+                Header = Application.Current.Resources["FileCut"] as string,
+                InputGestureText = $"{Application.Current.Resources["Ctrl"] as string} + X"
             };
             var cpccmIcon = new System.Windows.Shapes.Path
             {
@@ -559,8 +536,8 @@ namespace PicView.UI.Loading
             ///////////////////////////
             var pastecm = new MenuItem
             {
-                Header = "Paste file",
-                InputGestureText = "Ctrl + V"
+                Header = Application.Current.Resources["FilePaste"] as string,
+                InputGestureText = $"{Application.Current.Resources["Ctrl"] as string} + V"
             };
             var pastecmIcon = new System.Windows.Shapes.Path
             {
@@ -581,8 +558,8 @@ namespace PicView.UI.Loading
             ///////////////////////////
             var MovetoRecycleBin = new MenuItem
             {
-                Header = "Delete file",
-                InputGestureText = "Delete"
+                Header = Application.Current.Resources["DeleteFile"] as string,
+                InputGestureText = Application.Current.Resources["Delete"] as string,
             };
             var MovetoRecycleBinIcon = new System.Windows.Shapes.Path
             {
@@ -604,8 +581,8 @@ namespace PicView.UI.Loading
             cm.Items.Add(new Separator());
             var clcm = new MenuItem
             {
-                Header = "Close",
-                InputGestureText = "Esc",
+                Header = Application.Current.Resources["Close"] as string,
+                InputGestureText = Application.Current.Resources["Esc"] as string,
                 StaysOpenOnClick = false
             };
             var mclcmIcon = new System.Windows.Shapes.Path

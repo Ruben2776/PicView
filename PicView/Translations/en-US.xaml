@@ -20,8 +20,10 @@
 
     <!--  Navigation related  -->
     <system:String x:Key="Navigation">Navigation</system:String>
-    <system:String x:Key="NextImage">Next Image</system:String>
-    <system:String x:Key="PrevImage">Previous Image</system:String>
+    <system:String x:Key="NextImage">Next image</system:String>
+    <system:String x:Key="PrevImage">Previous image</system:String>
+    <system:String x:Key="LastImage">Last image</system:String>
+    <system:String x:Key="FirstImage">First image</system:String>
 
     <!--  File related  -->
     <system:String x:Key="Open">Open</system:String>
@@ -32,6 +34,7 @@
     <system:String x:Key="Print">Print</system:String>
     <system:String x:Key="RecentFiles">Recent files</system:String>
     <system:String x:Key="FileDetails">File details</system:String>
+    <system:String x:Key="DeleteFile">Delete file</system:String>
 
     <!--  Sort files  -->
     <system:String x:Key="SortFilesBy">Sort files by</system:String>
@@ -55,10 +58,16 @@
     <!--  Copy related  -->
     <system:String x:Key="Copy">Copy</system:String>
     <system:String x:Key="FileCopy">File added to clipboard</system:String>
-    <system:String x:Key="FileCopyPath">File path added to clipboard</system:String>
+    <system:String x:Key="FileCopyPath">Copy file path</system:String>
+    <system:String x:Key="FileCopyPathMessage">File path added to clipboard</system:String>
+
     <system:String x:Key="CopyImage">Copy image</system:String>
     <system:String x:Key="CopyImageTooltip">Copy as Windows clipboard image</system:String>
-    <system:String x:Key="FileCut">Image added to move clipboard</system:String>
+
+    <system:String x:Key="FileCut">Cut file</system:String>
+    <system:String x:Key="FileCutMessage">Image added to move clipboard</system:String>
+
+    <system:String x:Key="FilePaste">Paste file</system:String>
 
     <!--  Keyboard and mouse key names  -->
     <system:String x:Key="Delete">Delete</system:String>
