@@ -78,6 +78,10 @@
                     x:Name="OpenBorder"
                     Canvas.Left="5"
                     Canvas.Top="59"
+                    Width="120"
+                    Height="50"
+                    BorderThickness="1"
+                    CornerRadius="2"
                     Style="{StaticResource ButtonBorder}">
                     <Button
                         x:Name="Open"

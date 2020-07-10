@@ -31,11 +31,11 @@
     <SolidColorBrush x:Key="BackgroundColorBrush" Color="{StaticResource BackgroundColor}" />
 
     <!--  Window Background Color  -->
-    <Color x:Key="WindowBackgroundColor">#fafafa</Color>
+    <Color x:Key="WindowBackgroundColor">#fff</Color>
     <SolidColorBrush x:Key="WindowBackgroundColorBrush" Color="{StaticResource WindowBackgroundColor}" />
 
     <!--  Background Color Alt  -->
-    <Color x:Key="BackgroundColorAlt">#eee</Color>
+    <Color x:Key="BackgroundColorAlt">#ebebeb</Color>
     <SolidColorBrush x:Key="BackgroundColorBrushAlt" Color="{StaticResource BackgroundColorAlt}" />
 
     <!--  Background Color Fade  -->
@@ -51,11 +51,16 @@
     <SolidColorBrush x:Key="BackgroundSubtleHighlightBrush" Color="{StaticResource BackgroundSubtleHighlight}" />
 
     <!--  Background Hover Highlight  -->
-    <Color x:Key="BackgroundHoverHighlight">#ddcfcbc2</Color>
+    <Color
+        x:Key="BackgroundHoverHighlight"
+        A="100"
+        B="210"
+        G="210"
+        R="210" />
     <SolidColorBrush x:Key="BackgroundHoverHighlightBrush" Color="{StaticResource BackgroundHoverHighlight}" />
 
     <!--  Border Brush  -->
-    <Color x:Key="BorderColor">#c4bcc2</Color>
+    <Color x:Key="BorderColor">#e0dadf</Color>
     <Color x:Key="BorderColorAlt">#ededf0</Color>
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
     <SolidColorBrush x:Key="BorderBrushAlt" Color="{StaticResource BorderColorAlt}" />
@@ -73,6 +78,13 @@
         Direction="85"
         ShadowDepth="3"
         Color="#2B3E392D" />
+
+    <DropShadowEffect
+        x:Key="MenuShadowButtonBorder"
+        BlurRadius="1"
+        Direction="355"
+        ShadowDepth="1"
+        Color="#FFF3EBEB" />
 
     <!--  Texture  -->
     <ImageBrush

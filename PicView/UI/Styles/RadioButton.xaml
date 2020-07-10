@@ -258,15 +258,7 @@
         <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Aller" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Effect">
-            <Setter.Value>
-                <DropShadowEffect
-                    BlurRadius="4"
-                    Direction="268"
-                    ShadowDepth="1"
-                    Color="Black" />
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Effect" Value="{StaticResource MenuShadowButtonBorder}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type CheckBox}">

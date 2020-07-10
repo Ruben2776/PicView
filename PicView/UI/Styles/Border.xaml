@@ -6,14 +6,6 @@
         <Setter Property="CornerRadius" Value="2" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
-        <Setter Property="Effect">
-            <Setter.Value>
-                <DropShadowEffect
-                    BlurRadius="7"
-                    Direction="358"
-                    ShadowDepth="1"
-                    Color="Black" />
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Effect" Value="{StaticResource MenuShadowButtonBorder}" />
     </Style>
 </ResourceDictionary>

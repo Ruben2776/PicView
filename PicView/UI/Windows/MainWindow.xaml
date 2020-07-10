@@ -173,7 +173,7 @@
                     Canvas.Left="112"
                     Width="200"
                     Height="35"
-                    Background="{StaticResource BorderBrushAlt}">
+                    Background="{DynamicResource BackgroundColorBrushFadeSubtle}">
                     <Rectangle
                         Canvas.Left="100"
                         Canvas.Top="0"
@@ -360,21 +360,14 @@
             <Rectangle
                 x:Name="LeftBorderRectangle"
                 Width="7"
-                DockPanel.Dock="Left">
-                <Rectangle.Fill>
-                    <SolidColorBrush Color="{StaticResource WindowBackgroundColor}" />
-                </Rectangle.Fill>
-            </Rectangle>
+                DockPanel.Dock="Left"
+                Fill="{StaticResource WindowBackgroundColorBrush}" />
 
             <Rectangle
                 x:Name="RightBorderRectangle"
                 Width="7"
-                Margin="-1,0,0,0"
-                DockPanel.Dock="Right">
-                <Rectangle.Fill>
-                    <SolidColorBrush Color="{StaticResource WindowBackgroundColor}" />
-                </Rectangle.Fill>
-            </Rectangle>
+                DockPanel.Dock="Right"
+                Fill="{StaticResource WindowBackgroundColorBrush}" />
 
             <Border
                 Background="{StaticResource NoisyBg}"

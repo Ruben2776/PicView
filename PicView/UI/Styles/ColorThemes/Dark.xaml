@@ -47,7 +47,7 @@
     <SolidColorBrush x:Key="BackgroundColorBrushFadeSubtle" Color="{StaticResource BackgroundColorFadeSubtle}" />
 
     <!--  Background Subtle Highlight  -->
-    <Color x:Key="BackgroundSubtleHighlight">#2b2929</Color>
+    <Color x:Key="BackgroundSubtleHighlight">#1f1c1c</Color>
     <SolidColorBrush x:Key="BackgroundSubtleHighlightBrush" Color="{StaticResource BackgroundSubtleHighlight}" />
 
     <!--  Background Hover Highlight  -->
@@ -78,6 +78,13 @@
         Direction="85"
         ShadowDepth="3"
         Color="#2B3E392D" />
+
+    <DropShadowEffect
+        x:Key="MenuShadowButtonBorder"
+        BlurRadius="7"
+        Direction="358"
+        ShadowDepth="1"
+        Color="Black" />
 
     <!--  Texture  -->
     <ImageBrush

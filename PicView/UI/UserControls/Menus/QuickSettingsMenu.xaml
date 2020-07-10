@@ -67,21 +67,44 @@
                     Width="51"
                     Height="51"
                     BorderBrush="{x:Null}"
-                    FontWeight="Bold"
                     Foreground="{x:Null}"
                     ToolTip="Adjust zoom level">
                     <Button.Background>
                         <SolidColorBrush x:Name="ZoomButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Button.Background>
-                    <Path
-                        Width="17"
-                        Height="17"
-                        Data="M337.509,305.372h-17.501l-6.571-5.486c20.791-25.232,33.922-57.054,33.922-93.257      C347.358,127.632,283.896,64,205.135,64C127.422,64,64,127.632,64,206.629s63.422,142.628,142.225,142.628      c35.011,0,67.831-13.167,92.991-34.008l6.561,5.487v17.551L415.18,448L448,415.086L337.509,305.372z M206.225,305.372      c-54.702,0-98.463-43.887-98.463-98.743c0-54.858,43.761-98.742,98.463-98.742c54.7,0,98.462,43.884,98.462,98.742      C304.687,261.485,260.925,305.372,206.225,305.372z"
-                        Stretch="Fill">
-                        <Path.Fill>
-                            <SolidColorBrush x:Name="ZoomBrush" Color="{StaticResource MainColor}" />
-                        </Path.Fill>
-                    </Path>
+                    <Image Width="17" Height="17">
+                        <Image.Source>
+                            <DrawingImage>
+                                <DrawingImage.Drawing>
+                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M221.09,64A157.09,157.09,0,1,0,378.18,221.09A157.1,157.1,0,0,0,221.09,64z">
+                                            <GeometryDrawing.Pen>
+                                                <Pen
+                                                    Brush="{StaticResource IconColorBrush}"
+                                                    EndLineCap="Flat"
+                                                    LineJoin="Miter"
+                                                    StartLineCap="Flat"
+                                                    Thickness="32" />
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                        <GeometryDrawing>
+                                            <GeometryDrawing.Pen>
+                                                <Pen
+                                                    Brush="{StaticResource IconColorBrush}"
+                                                    EndLineCap="Round"
+                                                    LineJoin="Miter"
+                                                    StartLineCap="Round"
+                                                    Thickness="32" />
+                                            </GeometryDrawing.Pen>
+                                            <GeometryDrawing.Geometry>
+                                                <LineGeometry StartPoint="338.29,338.29" EndPoint="448,448" />
+                                            </GeometryDrawing.Geometry>
+                                        </GeometryDrawing>
+                                    </DrawingGroup>
+                                </DrawingImage.Drawing>
+                            </DrawingImage>
+                        </Image.Source>
+                    </Image>
                 </Button>
 
                 <Canvas
@@ -145,21 +168,33 @@
                     Canvas.Left="0"
                     Width="51"
                     Height="51"
-                    Margin="0"
-                    Padding="0"
-                    BorderThickness="0"
                     ToolTip="Show info window [F1]">
                     <Button.Background>
                         <SolidColorBrush x:Name="InfoButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Button.Background>
-                    <Path
+                    <Image
                         Canvas.Left="29"
                         Canvas.Top="-7"
-                        Width="9"
-                        Height="13"
-                        Data="M1216 1344v128q0 26-19 42t-42 19h-512q-26 0-42-19t-19-42v-128q0-26 19-42t42-19h64v-384h-64q-26 0-42-19t-19-42v-128q0-26 19-42t42-19h384q26 0 42 19t19 42v576h64q26 0 42 19t19 42zm-128-1152v192q0 26-19 42t-42 19h-256q-26 0-42-19t-19-42v-192q0-26 19-42t42-19h256q26 0 42 19t19 42z"
-                        Fill="{StaticResource MainColorBrush}"
-                        Stretch="Fill" />
+                        Width="30"
+                        Height="33">
+                        <Image.Source>
+                            <DrawingImage>
+                                <DrawingImage.Drawing>
+                                    <DrawingGroup ClipGeometry="M0,0 V16 H16 V0 H0 Z">
+                                        <GeometryDrawing Brush="{StaticResource IconColorBrush}" Geometry="F1 M16,16z M0,0z M8.93,6.588L6.64,6.875 6.558,7.255 7.008,7.338C7.302,7.408,7.36,7.514,7.296,7.807L6.558,11.275C6.364,12.172 6.663,12.594 7.366,12.594 7.911,12.594 8.544,12.342 8.831,11.996L8.919,11.58C8.719,11.756 8.427,11.826 8.233,11.826 7.958,11.826 7.858,11.633 7.929,11.293L8.93,6.588z" />
+                                        <GeometryDrawing Brush="{StaticResource IconColorBrush}">
+                                            <GeometryDrawing.Geometry>
+                                                <EllipseGeometry
+                                                    Center="8,4.5"
+                                                    RadiusX="1"
+                                                    RadiusY="1" />
+                                            </GeometryDrawing.Geometry>
+                                        </GeometryDrawing>
+                                    </DrawingGroup>
+                                </DrawingImage.Drawing>
+                            </DrawingImage>
+                        </Image.Source>
+                    </Image>
                 </Button>
 
                 <Button
@@ -174,8 +209,8 @@
                     <Path
                         Canvas.Left="23"
                         Canvas.Top="-7"
-                        Width="15"
-                        Height="15"
+                        Width="18"
+                        Height="18"
                         Data="M450,138.3l-47.7,48.5l-2.7,2.8l-1.6,1.7c-1.1,0.8-2.4,1.2-3.9,1.2c-1.6,0-3.1-0.6-4.3-1.6l-0.9-0.9l-2.7-2.7l-41.3-42.1  l-2.2-2.2l-1.7-1.7c-1-1.5-1.6-3.4-1.6-5.3c0-1.7,0.6-3.2,1.6-4.4l0.7-0.8l2.6-2.6l47.9-48.7c-5.1-10.1-24.7-14.9-35.1-14.1  c-17.1,1.3-34.7,7-52.8,25.5c-0.7,0.8-1.5,1.6-2.2,2.3C277.5,120,272.6,156,282.6,189c0.7,1.4,1.3,3.1,1.6,4.6  c1.1,5.5-0.4,10.2-4,13.5l-37.9,36.4c-11.8-12-13.5-13.6-13.5-13.6c-2-2-6-3.3-9.5-1.2l-5.9,3.6c-22.7-23.1-32.3-32.4-35.4-43.6  c-3.2-11.7-0.3-27.3,2.7-33.1c2.5-4.6,10.3-8.9,16.9-9.4l8.6,8.8c2,2,5.1,2,7.1,0l30.9-31.4c2-2,2-5.3,0-7.3l-49.9-50.7  c-2-2-5.2-2-7.1,0l-30.9,31.4c-2,2-2,5.3,0,7.3l3.3,3.4c0,4.9-0.7,12.5-4.7,16.6c-6.2,6.3-18.5-1-26.5,4.7  c-7.9,5.6-17.9,14.6-24.3,21c-6.3,6.4-30.5,31.8-47.8,74.6c-17.3,42.8-4,82.5,5.4,92.9c5,5.5,14.1,11.1,12.5,0.7  c-1.6-10.5-4.2-46.9,7.7-61.8c11.9-14.9,27.6-27.1,48-28.1c19.6-1,30.9,5.7,56.3,31.5l-2.8,5.2c-1.8,3.4-0.8,7.7,1.2,9.7  c0,0,1.5,1.6,12.1,12.4l-97.2,93.2c-16.2,14.3-15.3,40.5-0.3,56c15.2,15.2,41.1,16.3,55.2-0.2l91.4-98.6  c49.1,52.3,93.3,107.4,93.3,107.4c2,2,5.2,2,7.1,0l49.9-50.7c2-2,2-5.2,0-7.3c0,0-55.2-45.7-107-96.2l35.5-38.3  c3.3-3.7,7.9-5.2,13.3-4.1c1.5,0.3,3.1,1,4.5,1.7c32.4,10.2,67.8,5.2,94-19.8c0.8-0.7,1.5-1.5,2.3-2.3c18.1-18.4,23.7-36.4,25-53.8  C464.7,163.5,460.2,143.8,450,138.3z"
                         Fill="{StaticResource MainColorBrush}"
                         Stretch="Fill" />
