@@ -101,7 +101,7 @@ namespace PicView.ChangeImage
                     }
                     else
                     {
-                        TheMainWindow.TitleText.Text = "Unzipping...";
+                        TheMainWindow.TitleText.Text = "Unzipping..."; // TODO add translation
                         TheMainWindow.TitleText.ToolTip = TheMainWindow.TitleText.Text;
                     }
                     TheMainWindow.Focus();
@@ -138,31 +138,31 @@ namespace PicView.ChangeImage
         /// <summary>
         /// Loads image based on overloaded int.
         /// </summary>
-        /// <param name="x">The index of file to load from Pics</param>
-        internal static async void Pic(int x)
+        /// <param name="index">The index of file to load from Pics</param>
+        internal static async void Pic(int index)
         {
 #if DEBUG
             var stopWatch = new Stopwatch();
             stopWatch.Start();
 #endif
 
-            BitmapSource pic;
+            BitmapSource bitmapSource;
 
-            if (Pics.Count < x)
+            if (Pics.Count < index)
             {
-                pic = await PicErrorFix(x).ConfigureAwait(true);
-                if (pic == null)
+                bitmapSource = await PicErrorFix(index).ConfigureAwait(true);
+                if (bitmapSource == null)
                 {
                     Reload(true);
                     return;
                 }
             }
-            else if(File.Exists(Pics[x]))
+            else if(File.Exists(Pics[index]))
             {
                 /// Add "pic" as local variable used for the image.
                 /// Use the Load() function load image from memory if available
                 /// if not, it will be null
-                pic = Preloader.Load(Pics[x]);
+                bitmapSource = Preloader.Load(Pics[index]);
             }
             else
             {
@@ -170,13 +170,13 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            if (pic == null)
+            if (bitmapSource == null)
             {
                 TheMainWindow.Title = Application.Current.Resources["Loading"] as string;
                 TheMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
                 TheMainWindow.TitleText.ToolTip = Application.Current.Resources["Loading"] as string;
 
-                var thumb = GetThumb(x, true);
+                var thumb = GetThumb(index, true);
 
                 if (thumb != null)
                 {
@@ -188,7 +188,7 @@ namespace PicView.ChangeImage
 
                 if (FreshStartup || Preloader.GetIsReset())
                 {
-                    await Preloader.Add(Pics[x]).ConfigureAwait(false);
+                    await Preloader.Add(Pics[index]).ConfigureAwait(false);
                     Preloader.SetIsReset(false);
 #if DEBUG
                     Trace.WriteLine("Pic(int x) loading new pic manually");
@@ -198,16 +198,16 @@ namespace PicView.ChangeImage
                 do
                 {
                     // Try again while loading
-                    pic = Preloader.Load(Pics[x]);
+                    bitmapSource = Preloader.Load(Pics[index]);
                     await Task.Delay(25).ConfigureAwait(false);
                 } while (Preloader.GetIsLoading());
 
                 // If pic is still null, image can't be rendered
-                if (pic == null)
+                if (bitmapSource == null)
                 {
                     // Attempt to load new image
-                    pic = await PicErrorFix(x).ConfigureAwait(true);
-                    if (pic == null)
+                    bitmapSource = await PicErrorFix(index).ConfigureAwait(true);
+                    if (bitmapSource == null)
                     {
                         if (Pics.Count <= 1)
                         {
@@ -215,12 +215,12 @@ namespace PicView.ChangeImage
                             return;
                         }
 
-                        Pics.RemoveAt(x);
+                        Pics.RemoveAt(index);
                         if (GetPicGallery != null)
                         {
-                            if (GetPicGallery.grid.Children.Count > x)
+                            if (GetPicGallery.grid.Children.Count > index)
                             {
-                                GetPicGallery.grid.Children.RemoveAt(x);
+                                GetPicGallery.grid.Children.RemoveAt(index);
                             }
                         }
                         CanNavigate = true;
@@ -233,9 +233,9 @@ namespace PicView.ChangeImage
             await TheMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
             {
                 // Show the image! :)
-                TheMainWindow.MainImage.Source = pic;
-                FitImage(pic.PixelWidth, pic.PixelHeight);
-                SetTitleString(pic.PixelWidth, pic.PixelHeight, x);
+                TheMainWindow.MainImage.Source = bitmapSource;
+                FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+                SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index);
 
                 // Scroll to top if scroll enabled
                 if (IsScrollEnabled)
@@ -247,22 +247,22 @@ namespace PicView.ChangeImage
 
             // Update values
             CanNavigate = true;
-            FolderIndex = x;
+            FolderIndex = index;
 
             if (Pics.Count > 1)
             {
-                Taskbar.Progress(x, Pics.Count);
+                Taskbar.Progress(index, Pics.Count);
 
                 // Preload images \\
                 if (Preloader.StartPreload())
                 {
-                    await Preloader.PreLoad(x).ConfigureAwait(false);
+                    await Preloader.PreLoad(index).ConfigureAwait(false);
                 }
             }
 
             if (!FreshStartup)
             {
-                RecentFiles.Add(Pics[x]);
+                RecentFiles.Add(Pics[index]);
 
                 if (prevPicResource != null)
                 {
@@ -334,6 +334,10 @@ namespace PicView.ChangeImage
             CanNavigate = false;
         }
 
+        /// <summary>
+        /// Handle logic if user wants to load from a folder
+        /// </summary>
+        /// <param name="folder"></param>
         internal static void PicFolder(string folder)
         {
             ChangeFolder(true);
@@ -377,24 +381,9 @@ namespace PicView.ChangeImage
             }
 
             // Make backup
-            var x = FolderIndex;
-
-            // Go to first or last
-            if (end)
-            {
-                FolderIndex = next ? Pics.Count - 1 : 0;
-                x = FolderIndex;
-
-                // Reset preloader values to prevent errors
-                if (Pics.Count > 20)
-                {
-                    Preloader.Clear();
-                }
-
-                PreloadCount = 4;
-            }
-            // Go to next or previous
-            else
+            var indexBackup = FolderIndex;
+            
+            if (!end) // Go to next or previous
             {
                 if (next)
                 {
@@ -439,6 +428,19 @@ namespace PicView.ChangeImage
                     Reverse = true;
                 }
             }
+            else // Go to first or last
+            {
+                FolderIndex = next ? Pics.Count - 1 : 0;
+                indexBackup = FolderIndex;
+
+                // Reset preloader values to prevent errors
+                if (Pics.Count > 20)
+                {
+                    Preloader.Clear();
+                }
+
+                PreloadCount = 4;
+            }
 
             // Go to the image!
             Pic(FolderIndex);
@@ -446,11 +448,11 @@ namespace PicView.ChangeImage
             // Update PicGallery selected item, if needed
             if (GetPicGallery != null)
             {
-                if (GetPicGallery.Container.Children.Count > FolderIndex && GetPicGallery.Container.Children.Count > x)
+                if (GetPicGallery.Container.Children.Count > FolderIndex && GetPicGallery.Container.Children.Count > indexBackup)
                 {
-                    if (x != FolderIndex)
+                    if (indexBackup != FolderIndex)
                     {
-                        GalleryFunctions.SetUnselected(x);
+                        GalleryFunctions.SetUnselected(indexBackup);
                     }
 
                     GalleryFunctions.SetSelected(FolderIndex);
@@ -465,27 +467,15 @@ namespace PicView.ChangeImage
             CloseToolTipMessage();
         }
 
+        /// <summary>
+        /// Extra functionality and error checking when clicking
+        /// on the navigation buttons
+        /// </summary>
+        /// <param name="arrow"></param>
+        /// <param name="right"></param>
         internal static void PicButton(bool arrow, bool right)
         {
-            if (arrow)
-            {
-                if (!CanNavigate)
-                {
-                    return;
-                }
-
-                if (right)
-                {
-                    ClickArrowRightClicked = true;
-                    Pic();
-                }
-                else
-                {
-                    ClickArrowLeftClicked = true;
-                    Pic(false, false);
-                }
-            }
-            else
+            if (!arrow) // Normal buttons
             {
                 if (GalleryFunctions.IsOpen)
                 {
@@ -509,10 +499,28 @@ namespace PicView.ChangeImage
                     Pic(false, false);
                 }
             }
+            else // Alternative interface buttons
+            {
+                if (!CanNavigate)
+                {
+                    return;
+                }
+
+                if (right)
+                {
+                    ClickArrowRightClicked = true;
+                    Pic();
+                }
+                else
+                {
+                    ClickArrowLeftClicked = true;
+                    Pic(false, false);
+                }
+            }
         }
 
         /// <summary>
-        /// Only load image without resizing
+        /// Only load thumb without resizing
         /// </summary>
         /// <param name="forwards">The direction</param>
         internal static void FastPic(bool forwards)
