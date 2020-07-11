@@ -47,62 +47,54 @@ namespace PicView.ChangeImage
         /// Add file to prelader
         /// </summary>
         /// <param name="file">file path</param>
-        internal static async Task<bool> Add(string file)
+        internal static Task<bool> Add(string file)
         {
-            if (Contains(file) || Pics.Count == 0 || Pics.IndexOf(file) == -1)
+            IsLoading = true;
+
+            return Task.Run(() =>
             {
+                var pic = ImageDecoder.RenderToBitmapSource(file);
+                if (pic == null)
+                {
+                    IsLoading = false;
+                    return false;
+                }
+
+
                 IsLoading = false;
-                return false;
-            }
-
-            IsLoading =  true;
-
-            var pic = await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(false);
-            if (pic == null)
-            {
-                IsLoading = false;
-                return false;
-            }
-
-            if (!pic.IsFrozen)
-            {
-                pic.Freeze();
-            }
-
-            IsLoading = false;
 
 #if DEBUG
-            Trace.WriteLine("Add string file = " + file + " to Preloader, index " + Pics.IndexOf(file));
+                Trace.WriteLine($"Added {file} to Preloader, index {Pics.IndexOf(file)}");
 #endif
 
-            return Sources.TryAdd(file, pic);
+                return Sources.TryAdd(file, pic);
+            });
         }
 
         /// <summary>
         /// Add file to preloader from index
         /// </summary>
         /// <param name="i">Index of Pics</param>
-        internal static async Task<bool> Add(int i)
+        internal static void Add(int i)
         {
             if (i >= Pics.Count || i < 0)
             {
-                return false;
+                return;
             }
 
-            IsLoading =  true;
+            IsLoading = true;
 
             if (File.Exists(Pics[i]))
             {
                 if (!Contains(Pics[i]))
                 {
-                    return await Add(Pics[i]).ConfigureAwait(false);
+                    Add(Pics[i]);
                 }
                 else
                 {
 #if DEBUG
                     Trace.WriteLine("Skipped at index " + i);
 #endif
-                    return false;
                 }
             }
             else
@@ -110,10 +102,9 @@ namespace PicView.ChangeImage
                 Pics.Remove(Pics[i]);
 
 #if DEBUG
-                Trace.WriteLine("Preloader removed = " + Pics[i] + " from Pics, index " + i);
+                Trace.WriteLine($"Preloader removed: {Pics[i]} from Pics, index {i}");
 #endif
-                IsLoading =  false;
-                return false;
+                IsLoading = false;
             }
         }
 
@@ -190,11 +181,11 @@ namespace PicView.ChangeImage
 #if DEBUG
             if (Sources.TryRemove(key, out _))
             {
-                Trace.WriteLine($"Removed = {key} from Preloader, index {Pics.IndexOf(key)}");
+                Trace.WriteLine($"Removed {key} from Preloader, index {Pics.IndexOf(key)}");
             }
             else
             {
-                Trace.WriteLine($"Failed to Remove = {key} from Preloader, index {Pics.IndexOf(key)}");
+                Trace.WriteLine($"Failed to Remove {key} from Preloader, index {Pics.IndexOf(key)}");
             }
 #else
             Sources.TryRemove(key, out _);
@@ -248,7 +239,7 @@ namespace PicView.ChangeImage
             {
                 Remove(array[i]);
 #if DEBUG
-                Trace.WriteLine("Removed = " + array[i] + " from Preloader");
+                Trace.WriteLine($"Removed = {array[i]} from Preloader");
 #endif
             }
         }
@@ -284,13 +275,13 @@ namespace PicView.ChangeImage
             return Sources.ContainsKey(key);
         }
 
-        internal static async void PreloaderFix(string file)
+        internal static void PreloaderFix(string file)
         {
             if (!Contains(file))
             {
                 PreloadCount = 4;
                 IsReset = true;
-                await Add(file).ConfigureAwait(false);
+                Add(file);
             }
         }
 
@@ -308,7 +299,7 @@ namespace PicView.ChangeImage
                 + string.Concat(Reverse ? "backwards" : "forwards"));
 #endif
 
-            return Task.Run(async () =>
+            return Task.Run(() =>
             {
                 var toLoad = 8;
                 var extraToLoad = toLoad / 2;
@@ -328,7 +319,7 @@ namespace PicView.ChangeImage
                                 break;
                             }
 
-                            await Add(i).ConfigureAwait(false);
+                            Add(i);
                         }
                         // Add second elements behind
                         for (int i = index - 1; i > index - 1 - extraToLoad; i--)
@@ -338,7 +329,7 @@ namespace PicView.ChangeImage
                                 break;
                             }
 
-                            await Add(i).ConfigureAwait(false);
+                            Add(i);
                         }
 
                         //Clean up behind
@@ -371,7 +362,7 @@ namespace PicView.ChangeImage
                                 break;
                             }
 
-                            await Add(i).ConfigureAwait(false);
+                            Add(i);
                         }
                         // Add second elements
                         for (int i = index + 1; i <= index + 1 + toLoad; i++)
@@ -381,7 +372,7 @@ namespace PicView.ChangeImage
                                 break;
                             }
 
-                            await Add(i).ConfigureAwait(false);
+                            Add(i);
                         }
 
                         //Clean up infront
@@ -416,7 +407,7 @@ namespace PicView.ChangeImage
                         {
                             if (i != 0 || Pics.Count != 0)
                             {
-                                await Add(i % Pics.Count).ConfigureAwait(false);
+                                Add(i % Pics.Count);
                             }
                         }
                         // Add second elements behind
@@ -424,7 +415,7 @@ namespace PicView.ChangeImage
                         {
                             if (i != 0 || Pics.Count != 0)
                             {
-                                await Add(i % Pics.Count).ConfigureAwait(false);
+                                Add(i % Pics.Count);
                             }
                         }
 
@@ -449,11 +440,11 @@ namespace PicView.ChangeImage
                             {
                                 for (int x = Pics.Count - 1; x >= Pics.Count - y; x--)
                                 {
-                                    await Add(x).ConfigureAwait(false);
+                                    Add(x);
                                 }
                                 break;
                             }
-                            await Add(i).ConfigureAwait(false);
+                            Add(i);
                         }
 
                         // Add second elements
@@ -461,7 +452,7 @@ namespace PicView.ChangeImage
                         {
                             if (i != 0 || Pics.Count != 0)
                             {
-                                await Add(i % Pics.Count).ConfigureAwait(false);
+                                Add(i % Pics.Count);
                             }
                         }
 
@@ -479,7 +470,7 @@ namespace PicView.ChangeImage
                     }
                 }
 
-            IsLoading = false; // Fixes loading erros
+                IsLoading = false; // Fixes loading erros
             });
         }
     }

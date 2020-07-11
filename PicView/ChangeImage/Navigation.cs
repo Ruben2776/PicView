@@ -193,7 +193,7 @@ namespace PicView.ChangeImage
                 // Check if need to add value to preloader before attempting to load it
                 if (FreshStartup || Preloader.IsReset)
                 {
-                    await Preloader.Add(Pics[index]).ConfigureAwait(false);
+                    Preloader.Add(Pics[index]);
                     Preloader.IsReset = false;
 #if DEBUG
                     Trace.WriteLine("Pic(int index) loading new pic manually");
