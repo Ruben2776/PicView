@@ -160,19 +160,6 @@ namespace PicView.UI
         /// <param name="e"></param>
         internal static void Interface_MouseMove(object sender, MouseEventArgs e)
         {
-            if (Scroll.IsAutoScrolling)
-            {
-                return;
-            }
-
-            if (GetCropppingTool != null)
-            {
-                if (GetCropppingTool.IsVisible)
-                {
-                    return;
-                }
-            }
-
             FadeControlsAsync(true);
         }
 
@@ -183,8 +170,7 @@ namespace PicView.UI
         /// <param name="e"></param>
         internal static void Interface_MouseLeave(object sender, MouseEventArgs e)
         {
-            // Start timer when mouse leaves mainwindow
-            //activityTimer.Start();
+            // Fade controis when mouse leaves mainwindow
             FadeControlsAsync(false);
         }
     }

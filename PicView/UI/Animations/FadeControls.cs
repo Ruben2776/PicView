@@ -24,12 +24,21 @@ namespace PicView.UI.Animations
                 || GetClickArrowRight == null
                 || GetClickArrowLeft == null
                 || Getx2 == null
-                || GetGalleryShortcut == null)
+                || GetGalleryShortcut == null
+                || Scroll.IsAutoScrolling)
             { 
                 return;
             }
 
-            await TheMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            if (GetCropppingTool != null)
+            {
+                if (GetCropppingTool.IsVisible)
+                {
+                    return;
+                }
+            }
+
+            await TheMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input, (Action)(() =>
             {
                 if (Properties.Settings.Default.ScrollEnabled && TheMainWindow.Scroller.ScrollableHeight > 0)
                 {

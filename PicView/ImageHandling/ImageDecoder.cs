@@ -6,7 +6,6 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
@@ -20,7 +19,7 @@ namespace PicView.ImageHandling
         /// </summary>
         /// <param name="file">Absolute path of the file</param>
         /// <returns></returns>
-        internal static async Task<BitmapSource> RenderToBitmapSource(string file)
+        internal static BitmapSource RenderToBitmapSource(string file)
         {
             var ext = Path.GetExtension(file).ToLower(CultureInfo.CurrentCulture);
             switch (ext)
@@ -43,17 +42,15 @@ namespace PicView.ImageHandling
 
                     try
                     {
-                        using var filestream = new FileStream(file, FileMode.Open, FileAccess.Read);
-                        using var memStream = new MemoryStream();
-                        // Have to wait for it, or it will produce an unfinished image
-                        await filestream.CopyToAsync(memStream).ConfigureAwait(true);
-                        memStream.Seek(0, SeekOrigin.Begin);
+                        using var filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);
 
-                        var sKBitmap = SKBitmap.Decode(memStream);
+                        var sKBitmap = SKBitmap.Decode(filestream);
                         if (sKBitmap == null) { return null; }
 
                         var pic = sKBitmap.ToWriteableBitmap();
                         pic.Freeze();
+                        sKBitmap.Dispose();
+
                         return pic;
                     }
                     catch (Exception e)
