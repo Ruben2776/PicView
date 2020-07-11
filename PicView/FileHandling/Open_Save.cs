@@ -9,6 +9,7 @@ using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 using static PicView.UI.Tooltip;
+using static PicView.UI.TransformImage.Rotation;
 using static PicView.UI.UserControls.UC;
 
 namespace PicView.FileHandling

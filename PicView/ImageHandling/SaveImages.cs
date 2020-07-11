@@ -1,10 +1,10 @@
 ﻿using ImageMagick;
-using PicView.Library;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using static PicView.UI.TransformImage.Rotation;
 
 namespace PicView.ImageHandling
 {
@@ -96,9 +96,9 @@ namespace PicView.ImageHandling
 
                 SaveImage.Read(path);
 
-                if (Fields.Rotateint != 0)
+                if (Rotateint != 0)
                 {
-                    SaveImage.Rotate(Fields.Rotateint);
+                    SaveImage.Rotate(Rotateint);
                 }
 
                 SaveImage.Crop(new MagickGeometry(rect.X, rect.Y, rect.Width, rect.Height));
@@ -128,9 +128,9 @@ namespace PicView.ImageHandling
                     SaveImage.Read(stream.ToArray());
                 }
 
-                if (Fields.Rotateint != 0)
+                if (Rotateint != 0)
                 {
-                    SaveImage.Rotate(Fields.Rotateint);
+                    SaveImage.Rotate(Rotateint);
                 }
 
                 SaveImage.Crop(new MagickGeometry(rect.X, rect.Y, rect.Width, rect.Height));

@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static PicView.Library.Fields;
+using static PicView.UI.TransformImage.Rotation;
 using static PicView.UI.UserControls.UC;
 
 namespace PicView.Editing.Crop

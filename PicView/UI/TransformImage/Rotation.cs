@@ -7,6 +7,13 @@ namespace PicView.UI.TransformImage
 {
     internal static class Rotation
     {
+        internal static bool Flipped { get; set; }
+
+        /// <summary>
+        /// Used to get and set image rotation by degrees
+        /// </summary>
+        internal static int Rotateint { get; set; }
+
         /// <summary>
         /// Rotates the image the specified degrees
         /// </summary>

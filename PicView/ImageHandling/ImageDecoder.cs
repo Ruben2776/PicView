@@ -73,7 +73,7 @@ namespace PicView.ImageHandling
 
                         try
                         {
-                            using var filestream = new FileStream(file, FileMode.Open, FileAccess.Read);
+                            using var filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);
                             magick.Read(filestream, mrs);
                         }
                         catch (MagickException e)
@@ -90,6 +90,8 @@ namespace PicView.ImageHandling
 
                         var pic = magick.ToBitmapSource();
                         pic.Freeze();
+                        magick.Dispose();
+
                         return pic;
                     }
             };

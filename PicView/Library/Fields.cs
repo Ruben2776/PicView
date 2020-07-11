@@ -68,7 +68,7 @@ namespace PicView.Library
         internal static bool LeftbuttonClicked { get; set; }
         internal static bool RightbuttonClicked { get; set; }
         internal static bool FastPicRunning { get; set; }
-        internal static bool Flipped { get; set; }
+        
         internal static bool CanNavigate { get; set; }
         internal static bool FreshStartup { get; set; }
         
@@ -98,17 +98,11 @@ namespace PicView.Library
         /// </summary>
         internal static double AspectRatio { get; set; }
 
-        /// <summary>
-        /// Used to get and set image rotation by degrees
-        /// </summary>
-        internal static int Rotateint { get; set; }
 
         /// <summary>
         /// Used to get and set monitor size
         /// </summary>
         internal static MonitorSize MonitorInfo { get; set; }
-
-
 
         /// <summary>
         /// Backup of image

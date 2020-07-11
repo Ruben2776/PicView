@@ -67,7 +67,7 @@
 
         </DockPanel>
 
-        <StackPanel
+        <DockPanel
             x:Name="LowerBar"
             Height="35"
             MinWidth="444"
@@ -353,7 +353,9 @@
                     Height="35"
                     Fill="{StaticResource BorderBrush}" />
             </Canvas>
-        </StackPanel>
+
+        </DockPanel>
+
 
         <DockPanel LastChildFill="True">
 
