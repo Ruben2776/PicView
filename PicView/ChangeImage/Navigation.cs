@@ -7,7 +7,6 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Error_Handling;
@@ -136,7 +135,7 @@ namespace PicView.ChangeImage
         }
 
         /// <summary>
-        /// Loads image based on overloaded int.
+        /// Loads image at specified index
         /// </summary>
         /// <param name="index">The index of file to load from Pics</param>
         internal static async void Pic(int index)
@@ -154,12 +153,13 @@ namespace PicView.ChangeImage
                 bitmapSource = await PicErrorFix(index).ConfigureAwait(true);
                 if (bitmapSource == null)
                 {
-                    // Try to recover
+                    /// Try to recover
+                    /// TODO needs testing
                     Reload(true);
                     return;
                 }
             }
-            else if(File.Exists(Pics[index]))
+            else if (File.Exists(Pics[index])) // Checking if file exists fixes rare crashes
             {
                 /// Use the Load() function load image from memory if available
                 /// if not, it will be null
@@ -167,7 +167,8 @@ namespace PicView.ChangeImage
             }
             else
             {
-                // Try to reload from backup if file does not exist
+                /// Try to reload from backup if file does not exist
+                /// TODO needs testing
                 Reload(true);
                 return;
             }
@@ -190,39 +191,21 @@ namespace PicView.ChangeImage
                 // Dissallow changing image while loading
                 CanNavigate = false;
 
-                // Check if need to add value to preloader before attempting to load it
-                if (FreshStartup || Preloader.IsReset)
-                {
-                    Preloader.Add(Pics[index]);
-                    Preloader.IsReset = false;
-#if DEBUG
-                    Trace.WriteLine("Pic(int index) loading new pic manually");
-#endif
-                }
+                // Get it!
+                await Preloader.Add(Pics[index]).ConfigureAwait(true);
 
-                do
-                {
-                    // Try again while loading
-                    bitmapSource = Preloader.Load(Pics[index]);
-                    await Task.Delay(25).ConfigureAwait(false);
-                } while (Preloader.IsLoading);
-
-                // If pic is still null, image can't be rendered
                 if (bitmapSource == null)
                 {
-                    // Attempt to load new image
+                    // Attempt to fix it
                     bitmapSource = await PicErrorFix(index).ConfigureAwait(true);
+
+                    // If pic is still null, image can't be rendered
                     if (bitmapSource == null)
                     {
+                        // Clean up
                         Pics.RemoveAt(index);
+                        Preloader.Remove(index);
 
-                        // Check if images still exists
-                        if (Pics.Count == 0)
-                        {
-                            Unload();
-                            return;
-                        }
-                        
                         // Sync with gallery, if needed
                         if (GetPicGallery != null)
                         {
@@ -232,7 +215,15 @@ namespace PicView.ChangeImage
                             }
                         }
 
-                        // Retry
+                        // Check if images still exists
+                        if (Pics.Count == 0)
+                        {
+                            Unload();
+                            return;
+                        }
+
+                        /// Retry
+                        /// TODO needs testing
                         CanNavigate = true;
                         Pic();
                         return;
@@ -240,19 +231,16 @@ namespace PicView.ChangeImage
                 }
             }
 
-            await TheMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
-            {
-                // Show the image! :)
-                TheMainWindow.MainImage.Source = bitmapSource;
-                FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
-                SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index);
+            // Show the image! :)
+            TheMainWindow.MainImage.Source = bitmapSource;
+            FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+            SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index);
 
-                // Scroll to top if scroll enabled
-                if (IsScrollEnabled)
-                {
-                    TheMainWindow.Scroller.ScrollToTop();
-                }
-            }));            
+            // Scroll to top if scroll enabled
+            if (IsScrollEnabled)
+            {
+                TheMainWindow.Scroller.ScrollToTop();
+            }
 
             // Update values
             CanNavigate = true;
@@ -391,7 +379,7 @@ namespace PicView.ChangeImage
 
             // Make backup
             var indexBackup = FolderIndex;
-            
+
             if (!end) // Go to next or previous
             {
                 if (next)

@@ -37,37 +37,20 @@ namespace PicView.ChangeImage
             BitmapSource> Sources = new ConcurrentDictionary<string, BitmapSource>();
 
         /// <summary>
-        /// When Preloader is adding an image
-        /// </summary>
-        internal static bool IsLoading { get; set; }
-
-        internal static bool IsReset { get; set; }
-
-        /// <summary>
         /// Add file to prelader
         /// </summary>
         /// <param name="file">file path</param>
-        internal static Task<bool> Add(string file)
+        internal static Task Add(string file)
         {
-            IsLoading = true;
-
             return Task.Run(() =>
             {
-                var pic = ImageDecoder.RenderToBitmapSource(file);
-                if (pic == null)
-                {
-                    IsLoading = false;
-                    return false;
-                }
-
-
-                IsLoading = false;
+                var pic = ImageDecoder.RenderToBitmapSource(file);               
 
 #if DEBUG
                 Trace.WriteLine($"Added {file} to Preloader, index {Pics.IndexOf(file)}");
 #endif
 
-                return Sources.TryAdd(file, pic);
+                Sources.TryAdd(file, pic);
             });
         }
 
@@ -81,8 +64,6 @@ namespace PicView.ChangeImage
             {
                 return;
             }
-
-            IsLoading = true;
 
             if (File.Exists(Pics[i]))
             {
@@ -104,7 +85,6 @@ namespace PicView.ChangeImage
 #if DEBUG
                 Trace.WriteLine($"Preloader removed: {Pics[i]} from Pics, index {i}");
 #endif
-                IsLoading = false;
             }
         }
 
@@ -125,21 +105,6 @@ namespace PicView.ChangeImage
 #endif
                 return;
             }
-
-            if (bmp == null)
-            {
-#if DEBUG
-                Trace.WriteLine("Preloader.Add bmp null " + key);
-#endif
-                return;
-            }
-
-            IsLoading = true;
-
-            if (!bmp.IsFrozen)
-            {
-                bmp.Freeze();
-            }
 #if DEBUG
             if (Sources.TryAdd(key, bmp))
             {
@@ -152,7 +117,6 @@ namespace PicView.ChangeImage
 #else
             Sources.TryAdd(key, bmp);
 #endif
-            IsLoading = false;
         }
 
         /// <summary>
@@ -280,7 +244,6 @@ namespace PicView.ChangeImage
             if (!Contains(file))
             {
                 PreloadCount = 4;
-                IsReset = true;
                 Add(file);
             }
         }
@@ -469,8 +432,6 @@ namespace PicView.ChangeImage
                         }
                     }
                 }
-
-                IsLoading = false; // Fixes loading erros
             });
         }
     }
