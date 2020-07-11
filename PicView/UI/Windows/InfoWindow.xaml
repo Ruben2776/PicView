@@ -1542,6 +1542,7 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
                     <Border
@@ -1668,6 +1669,50 @@
                             <TextBlock FontSize="14" Text="Q" />
                         </StackPanel>
                     </Border>
+
+
+                    <Border
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1,1,1,0">
+                        <TextBlock
+                            Margin="10,3,0,3"
+                            FontSize="15"
+                            Text="Move Window" />
+                    </Border>
+
+                    <Border
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,1,1,0">
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <TextBlock FontSize="14" Text="Shift" />
+                            <TextBlock
+                                FontSize="14"
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text=" + " />
+                            <TextBlock FontSize="14" Text="Drag" />
+                        </StackPanel>
+                    </Border>
+
+
+                    <Border
+                        Grid.Row="3"
+                        Grid.Column="2"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,1,1,0" />
+
 
                 </Grid>
 
