@@ -231,6 +231,15 @@ namespace PicView.ChangeImage
                 }
             }
 
+            // Reset transforms if needed
+            if (UI.TransformImage.Rotation.Flipped || UI.TransformImage.Rotation.Rotateint != 0)
+            {
+                UI.TransformImage.Rotation.Flipped = false;
+                UI.TransformImage.Rotation.Rotateint = 0;
+
+                TheMainWindow.MainImage.LayoutTransform = null;
+            }
+
             // Show the image! :)
             TheMainWindow.MainImage.Source = bitmapSource;
             FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
