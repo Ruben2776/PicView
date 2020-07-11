@@ -313,13 +313,17 @@
 
 
                     <Label
+                        x:Name="LanguageLabel"
                         Margin="0,3,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Content="Language"
                         Style="{StaticResource LabelShadow}" />
 
-                    <ComboBox Margin="0,9,0,20" HorizontalAlignment="Center" />
+                    <ComboBox
+                        x:Name="LanguageBox"
+                        Margin="0,9,0,20"
+                        HorizontalAlignment="Center" />
 
 
                     <Label

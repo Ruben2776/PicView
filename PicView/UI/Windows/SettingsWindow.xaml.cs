@@ -15,6 +15,12 @@ namespace PicView.UI.Windows
         {
             InitializeComponent();
 
+#if RELEASE
+            LanguageLabel.Visibility = Visibility.Collapsed;
+            LanguageBox.Visibility = Visibility.Collapsed;
+#endif
+
+
             switch (Properties.Settings.Default.ColorTheme)
             {
                 case 1:
@@ -172,7 +178,7 @@ namespace PicView.UI.Windows
             }
         }
 
-        #region EventHandlers
+#region EventHandlers
 
         private void AddGenericEvents()
         {
@@ -705,9 +711,9 @@ namespace PicView.UI.Windows
             AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, BorderBrushColor, false);
         }
 
-        #endregion EventHandlers
+#endregion EventHandlers
 
-        #region Set ColorTheme
+#region Set ColorTheme
 
         private static void Blue(object sender, RoutedEventArgs e)
         {
@@ -781,9 +787,9 @@ namespace PicView.UI.Windows
             ConfigColors.UpdateColor();
         }
 
-        #endregion Set ColorTheme
+#endregion Set ColorTheme
 
-        #region Mouseover Events
+#region Mouseover Events
 
         // Fill Button
         private void Fill_MouseLeave(object sender, MouseEventArgs e)
@@ -935,6 +941,6 @@ namespace PicView.UI.Windows
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(StretchBrush, false);
         }
 
-        #endregion Mouseover Events
+#endregion Mouseover Events
     }
 }
