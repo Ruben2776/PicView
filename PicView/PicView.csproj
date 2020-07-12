@@ -328,6 +328,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Translations\da-DK.xaml">
@@ -395,17 +399,18 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <PropertyGroup>
-    <FileVersion>0.9.9.2</FileVersion>
-    <SignAssembly>false</SignAssembly>
-    <PackageLicenseFile></PackageLicenseFile>
+    <FileVersion>0.9.9.4</FileVersion>
+    <SignAssembly>true</SignAssembly>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
     <PackageProjectUrl>https://github.com/Ruben2776/PicView</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Ruben2776/PicView</RepositoryUrl>
-    <PackageLicenseExpression>GPL-3.0</PackageLicenseExpression>
+    <PackageLicenseExpression></PackageLicenseExpression>
     <AssemblyOriginatorKeyFile>PicViewKeyFile.pfx</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
     <LangVersion>8.0</LangVersion>
     <Authors>Ruben2776</Authors>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
