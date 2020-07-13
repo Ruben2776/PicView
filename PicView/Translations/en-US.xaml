@@ -7,12 +7,14 @@
     <system:String x:Key="Loading">Loading...</system:String>
     <system:String x:Key="NoImage">No image loaded</system:String>
     <system:String x:Key="Files">files</system:String>
+    <system:String x:Key="File">file</system:String>
 
     <!--  Generic Window  -->
     <system:String x:Key="Close">Close</system:String>
     <system:String x:Key="Maximize">Maximize</system:String>
     <system:String x:Key="Minimize">Minimize</system:String>
     <system:String x:Key="Fullscreen">Fullscreen</system:String>
+    <system:String x:Key="NewWindow">New window</system:String>
 
     <!--  Info window  -->
     <system:String x:Key="InfoWindowTitle">Information, help &amp; shortcuts</system:String>
@@ -33,8 +35,10 @@
     <system:String x:Key="Save">Save</system:String>
     <system:String x:Key="Print">Print</system:String>
     <system:String x:Key="RecentFiles">Recent files</system:String>
-    <system:String x:Key="FileDetails">File details</system:String>
+    <system:String x:Key="FileProperties">File properties</system:String>
     <system:String x:Key="DeleteFile">Delete file</system:String>
+    <system:String x:Key="Folder">Folder</system:String>
+    <system:String x:Key="FullPath">Full path</system:String>
 
     <!--  Sort files  -->
     <system:String x:Key="SortFilesBy">Sort files by</system:String>
@@ -57,17 +61,32 @@
 
     <!--  Copy related  -->
     <system:String x:Key="Copy">Copy</system:String>
+    <system:String x:Key="CopyFile">Copy file</system:String>
     <system:String x:Key="FileCopy">File added to clipboard</system:String>
     <system:String x:Key="FileCopyPath">Copy file path</system:String>
     <system:String x:Key="FileCopyPathMessage">File path added to clipboard</system:String>
-
     <system:String x:Key="CopyImage">Copy image</system:String>
     <system:String x:Key="CopyImageTooltip">Copy as Windows clipboard image</system:String>
-
     <system:String x:Key="FileCut">Cut file</system:String>
     <system:String x:Key="FileCutMessage">Image added to move clipboard</system:String>
-
     <system:String x:Key="FilePaste">Paste file</system:String>
+
+    <!--  Image info  -->
+    <system:String x:Key="Image">Image</system:String>
+    <system:String x:Key="Date">Date</system:String>
+    <system:String x:Key="Created">Created</system:String>
+    <system:String x:Key="Modified">Modified</system:String>
+    <system:String x:Key="Size">Size</system:String>
+    <system:String x:Key="SizePx">Size (px)</system:String>
+    <system:String x:Key="Pixels">pixels</system:String>
+    <system:String x:Key="SizeMp">Size (mp)</system:String>
+    <system:String x:Key="MegaPixels">megapixels</system:String>
+    <system:String x:Key="Resolution">Resolution</system:String>
+    <system:String x:Key="Dpi">DPI</system:String>
+    <system:String x:Key="DiskSize">Disk size</system:String>
+    <system:String x:Key="AspectRatio">Aspect ratio</system:String>
+    <system:String x:Key="Portrait">Portrait</system:String>
+    <system:String x:Key="Landscape">Landscape</system:String>
 
     <!--  Keyboard and mouse key names  -->
     <system:String x:Key="Delete">Delete</system:String>
@@ -89,5 +108,16 @@
 
     <!--  Wallpaper  -->
     <system:String x:Key="SetAsWallpaper">Set as wallpaper</system:String>
+    <system:String x:Key="SetAsLockScreenImage">Set as lock screen image</system:String>
+
+    <!--  Edit  -->
+    <system:String x:Key="Crop">Crop</system:String>
+    <system:String x:Key="RotateRight">Rotate right</system:String>
+    <system:String x:Key="RotateLeft">Rotate left</system:String>
+    <system:String x:Key="Flip">Flip</system:String>
+    <system:String x:Key="Unflip">Unflip</system:String>
+
+
+
 
 </ResourceDictionary>

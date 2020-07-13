@@ -424,7 +424,7 @@ namespace PicView.UI.Loading
             ///////////////////////////
             var fildecm = new MenuItem
             {
-                Header = Application.Current.Resources["FileDetails"] as string,
+                Header = Application.Current.Resources["FileProperties"] as string,
                 InputGestureText = $"{Application.Current.Resources["Ctrl"] as string} + I"
             };
             var fildecmIcon = new System.Windows.Shapes.Path
@@ -463,8 +463,8 @@ namespace PicView.UI.Loading
             ///////////////////////////
             var cppcm = new MenuItem
             {
-                Header = Application.Current.Resources["Copy"] as string,
-                ToolTip = Application.Current.Resources["Copy"] as string
+                Header = Application.Current.Resources["CopyFile"] as string,
+                ToolTip = Application.Current.Resources["CopyFile"] as string
                 + $" [{Application.Current.Resources["Ctrl"] as string}] + C]",
             };
             cppcm.Click += (s, x) => Copyfile();

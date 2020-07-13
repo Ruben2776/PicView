@@ -3,10 +3,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:system="clr-namespace:System;assembly=mscorlib">
 
-    <!--  TitleText  -->
+    <!--  Text in the title bar  -->
     <system:String x:Key="Loading">Indlæser</system:String>
     <system:String x:Key="NoImage">Intet billede er indlæst</system:String>
     <system:String x:Key="Files">filer</system:String>
+
+    <!--  Generic Window  -->
+    <system:String x:Key="Close">Luk</system:String>
+    <system:String x:Key="Maximize">Maximize</system:String>
+    <system:String x:Key="Minimize">Minimize</system:String>
+    <system:String x:Key="Fullscreen">Fullscreen</system:String>
+    <system:String x:Key="NewWindow">New window</system:String>
 
     <!--  Info window  -->
     <system:String x:Key="InfoWindowTitle">Information, hjælp &amp; genveje</system:String>
@@ -16,18 +23,95 @@
     <system:String x:Key="Navigation">Navigering</system:String>
     <system:String x:Key="NextImage">Næste billede</system:String>
     <system:String x:Key="PrevImage">Forrige billede</system:String>
+    <system:String x:Key="LastImage">Last image</system:String>
+    <system:String x:Key="FirstImage">First image</system:String>
 
     <!--  File related  -->
     <system:String x:Key="Open">Åben</system:String>
-    <system:String x:Key="Close">Luk</system:String>
+    <system:String x:Key="OpenWith">Open with...</system:String>
+    <system:String x:Key="OpenFileDialog">Open file dialog</system:String>
+    <system:String x:Key="ShowInFolder">Show in folder</system:String>
     <system:String x:Key="Save">Gem</system:String>
+    <system:String x:Key="Print">Print</system:String>
+    <system:String x:Key="RecentFiles">Seneste filer</system:String>
+    <system:String x:Key="FileProperties">File properties</system:String>
+    <system:String x:Key="DeleteFile">Delete file</system:String>
+    <system:String x:Key="Folder">Folder</system:String>
+    <system:String x:Key="FullPath">Full path</system:String>
 
-    <!--  Tooltip Messages  -->
-    <system:String x:Key="FileCopy">Filen er blevet tilføjet til udklipsholderen</system:String>
-    <system:String x:Key="FileCopyPath">Fil stien er blevet tilføjet til udklipsholderen</system:String>
-    <system:String x:Key="ImageCopy">Billedet er tilføjet til udklipsholderen</system:String>
-    <system:String x:Key="OpeningInExplorer">Åbner filen i stifinderen</system:String>
-    <system:String x:Key="FileCut">Filen er blevet tilføjet til flytte udklipsholderen</system:String>
-    <system:String x:Key="DragOverString">Slip for at indlæse billede</system:String>
+    <!--  Sort files  -->
+    <system:String x:Key="SortFilesBy">Sort files by</system:String>
+    <system:String x:Key="FileName">File name</system:String>
+    <system:String x:Key="FileSize">File size</system:String>
+    <system:String x:Key="CreationTime">Creation time</system:String>
+    <system:String x:Key="FileExtension">File extension</system:String>
+    <system:String x:Key="LastAccessTime">Last access time</system:String>
+    <system:String x:Key="LastWriteTime">Last write time</system:String>
+    <system:String x:Key="Random">Random</system:String>
+
+    <!--  Settings  -->
+    <system:String x:Key="Settings">Settings</system:String>
+    <system:String x:Key="Scrolling">Scrolling</system:String>
+    <system:String x:Key="Looping">Looping</system:String>
+    <system:String x:Key="FitToWindow">Fit to window/image</system:String>
+    <system:String x:Key="ShowHideUI">Show/hide interface</system:String>
+    <system:String x:Key="ChangeBg">Change background</system:String>
+    <system:String x:Key="ChangeBgTooltip">Change between background color for images with transparent background</system:String>
+
+    <!--  Copy related  -->
+    <system:String x:Key="Copy">Copy</system:String>
+    <system:String x:Key="FileCopy">File added to clipboard</system:String>
+    <system:String x:Key="FileCopyPath">Copy file path</system:String>
+    <system:String x:Key="FileCopyPathMessage">File path added to clipboard</system:String>
+    <system:String x:Key="CopyImage">Copy image</system:String>
+    <system:String x:Key="CopyImageTooltip">Copy as Windows clipboard image</system:String>
+    <system:String x:Key="FileCut">Cut file</system:String>
+    <system:String x:Key="FileCutMessage">Image added to move clipboard</system:String>
+    <system:String x:Key="FilePaste">Paste file</system:String>
+
+    <!--  Image info  -->
+    <system:String x:Key="Date">Date</system:String>
+    <system:String x:Key="Created">Created</system:String>
+    <system:String x:Key="Modified">Modified</system:String>
+    <system:String x:Key="Size">Size</system:String>
+    <system:String x:Key="SizePx">Size (px)</system:String>
+    <system:String x:Key="Pixels">pixels</system:String>
+    <system:String x:Key="SizeMp">Size (mp)</system:String>
+    <system:String x:Key="MegaPixels">megapixels</system:String>
+    <system:String x:Key="Resolution">Resolution</system:String>
+    <system:String x:Key="Dpi">DPI</system:String>
+    <system:String x:Key="DiskSize">Disk size</system:String>
+    <system:String x:Key="AspectRatio">Aspect ratio</system:String>
+    <system:String x:Key="Portrait">Portrait</system:String>
+    <system:String x:Key="Landscape">Landscape</system:String>
+
+    <!--  Keyboard and mouse key names  -->
+    <system:String x:Key="Delete">Delete</system:String>
+    <system:String x:Key="Ctrl">Ctrl</system:String>
+    <system:String x:Key="Shift">Shift</system:String>
+    <system:String x:Key="Alt">Alt</system:String>
+    <system:String x:Key="Space">Space</system:String>
+    <system:String x:Key="Enter">Enter</system:String>
+    <system:String x:Key="Esc">Esc</system:String>
+    <system:String x:Key="MouseWheel">Mouse wheel</system:String>
+    <system:String x:Key="MouseKeyForward">Mouse key forward</system:String>
+    <system:String x:Key="MouseKeyBack">Mouse key back</system:String>
+
+    <!--  Error messages  -->
+    <system:String x:Key="SavingFileFailed">Saving file failed</system:String>
+
+    <!--  Drag and drop  -->
+    <system:String x:Key="DragOverString">Drop to load image</system:String>
+
+    <!--  Wallpaper  -->
+    <system:String x:Key="SetAsWallpaper">Set as wallpaper</system:String>
+    <system:String x:Key="SetAsLockScreenImage">Set as lock screen image</system:String>
+
+    <!--  Edit  -->
+    <system:String x:Key="Crop">Crop</system:String>
+    <system:String x:Key="RotateRight">Rotate right</system:String>
+    <system:String x:Key="RotateLeft">Rotate left</system:String>
+    <system:String x:Key="Flip">Flip</system:String>
+    <system:String x:Key="Unflip">Unflip</system:String>
 
 </ResourceDictionary>
