@@ -15,12 +15,6 @@ namespace PicView.UI.Windows
         {
             InitializeComponent();
 
-#if RELEASE
-            LanguageLabel.Visibility = Visibility.Collapsed;
-            LanguageBox.Visibility = Visibility.Collapsed;
-#endif
-
-
             switch (Properties.Settings.Default.ColorTheme)
             {
                 case 1:
@@ -80,7 +74,8 @@ namespace PicView.UI.Windows
 
                 // SubDirRadio
                 SubDirRadio.IsChecked = Properties.Settings.Default.IncludeSubDirectories;
-                SubDirRadio.Click += delegate { 
+                SubDirRadio.Click += delegate
+                {
                     Properties.Settings.Default.IncludeSubDirectories = !Properties.Settings.Default.IncludeSubDirectories;
                     Error_Handling.Reload();
                 };
@@ -127,10 +122,21 @@ namespace PicView.UI.Windows
 
                 SlideshowSlider.Value = Properties.Settings.Default.SlideTimer / 1000;
                 SlideshowSlider.ValueChanged += SlideshowSlider_ValueChanged;
+
+                if (Properties.Settings.Default.LightTheme)
+                {
+                    DarkThemeRadio.IsChecked = true;
+                }
+                else
+                {
+                    LightThemeRadio.IsChecked = true;
+                }
+
+                DarkThemeRadio.Click += delegate { ChangeToDarkTheme(); };
+                LightThemeRadio.Click += delegate { ChangeToLightTheme(); };
+
             };
         }
-
-        
 
         private void SlideshowSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
@@ -178,7 +184,7 @@ namespace PicView.UI.Windows
             }
         }
 
-#region EventHandlers
+        #region EventHandlers
 
         private void AddGenericEvents()
         {
@@ -711,9 +717,9 @@ namespace PicView.UI.Windows
             AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, BorderBrushColor, false);
         }
 
-#endregion EventHandlers
+        #endregion EventHandlers
 
-#region Set ColorTheme
+        #region Set ColorTheme
 
         private static void Blue(object sender, RoutedEventArgs e)
         {
@@ -787,9 +793,9 @@ namespace PicView.UI.Windows
             ConfigColors.UpdateColor();
         }
 
-#endregion Set ColorTheme
+        #endregion Set ColorTheme
 
-#region Mouseover Events
+        #region Mouseover Events
 
         // Fill Button
         private void Fill_MouseLeave(object sender, MouseEventArgs e)
@@ -941,6 +947,6 @@ namespace PicView.UI.Windows
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(StretchBrush, false);
         }
 
-#endregion Mouseover Events
+        #endregion Mouseover Events
     }
 }

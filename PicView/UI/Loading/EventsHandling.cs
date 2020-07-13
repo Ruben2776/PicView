@@ -99,9 +99,6 @@ namespace PicView.UI.Loading
             TheMainWindow.FunctionMenuButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(TheMainWindow.EffectsMenuBg);
             TheMainWindow.FunctionMenuButton.Click += Toggle_Functions_menu;
 
-            // FlipButton
-            GetImageSettingsMenu.FlipButton.Click += (s, x) => Flip();
-
             // ClickArrows
             GetClickArrowLeft.MouseLeftButtonDown += (s, x) => PicButton(true, false);
             GetClickArrowLeft.MouseEnter += Interface_MouseEnter_Negative;

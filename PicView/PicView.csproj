@@ -292,6 +292,9 @@
     <Compile Update="UI\UserControls\Buttons\RightButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="UI\UserControls\Buttons\FlipButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="UI\UserControls\Buttons\RotateRightButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -353,6 +356,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UI\UserControls\Buttons\RightButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UI\UserControls\Buttons\FlipButton.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UI\UserControls\Buttons\RotateRightButton.xaml">

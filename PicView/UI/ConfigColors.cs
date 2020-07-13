@@ -1,5 +1,6 @@
 ﻿using PicView.Library.Resources;
 using PicView.UI.Animations;
+using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
@@ -127,5 +128,28 @@ namespace PicView.UI
                 _ => new SolidColorBrush(Colors.Transparent),
             };
         }
+
+        internal static void ChangeToLightTheme()
+        {
+            Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
+            {
+                Source = new Uri(@"/PicView;component/UI\Styles\ColorThemes\Light.xaml", UriKind.Relative)
+            };
+
+            Properties.Settings.Default.LightTheme = true;
+        }
+
+
+        internal static void ChangeToDarkTheme()
+        {
+            Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary 
+            {
+                Source = new Uri(@"/PicView;component/UI\Styles\ColorThemes\Dark.xaml", UriKind.Relative)
+            };
+
+            Properties.Settings.Default.LightTheme = false;
+        }
+
+
     }
 }

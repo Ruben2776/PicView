@@ -208,6 +208,46 @@
                             </RadioButton.Background>
                         </RadioButton>
                     </WrapPanel>
+
+                    <Label
+                        Margin="0,3,0,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Content="Misc Settings"
+                        Foreground="{StaticResource MainColorBrush}" />
+
+                    <WrapPanel
+                        Margin="0,3,0,8"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Orientation="Horizontal">
+                        <CheckBox
+                            x:Name="DarkThemeRadio"
+                            Width="225"
+                            Height="40"
+                            Margin="5,3"
+                            BorderThickness="2"
+                            Content="Dark theme"
+                            Style="{StaticResource Checkstyle}">
+                            <CheckBox.Background>
+                                <SolidColorBrush x:Name="DarkThemeBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </CheckBox.Background>
+                        </CheckBox>
+                        <CheckBox
+                            x:Name="LightThemeRadio"
+                            Width="210"
+                            Height="40"
+                            Margin="5,3"
+                            BorderThickness="2"
+                            Content="Light theme"
+                            Style="{StaticResource Checkstyle}">
+                            <CheckBox.Background>
+                                <SolidColorBrush x:Name="LightThemeBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </CheckBox.Background>
+                        </CheckBox>
+                    </WrapPanel>
+
+
                     <Label
                         Margin="0,3,0,0"
                         HorizontalAlignment="Center"

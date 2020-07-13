@@ -173,7 +173,7 @@
                     Canvas.Left="112"
                     Width="200"
                     Height="35"
-                    Background="{DynamicResource BackgroundColorBrushFadeSubtle}">
+                    Background="{StaticResource BackgroundColorBrushFadeSubtle}">
                     <Rectangle
                         Canvas.Left="100"
                         Canvas.Top="0"

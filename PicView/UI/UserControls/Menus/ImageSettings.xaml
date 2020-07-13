@@ -63,29 +63,11 @@
 
                 <uc:RotateRightButton x:Name="RotateRightButton" Canvas.Left="102" />
 
-                <CheckBox
+                <uc:FlipButton
                     x:Name="FlipButton"
                     Canvas.Left="153"
                     Width="51"
-                    Height="51"
-                    BorderBrush="{x:Null}"
-                    FontWeight="Bold"
-                    Foreground="{x:Null}"
-                    ToolTip="Flip image [F]">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="FlipButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
-                    </CheckBox.Background>
-                    <CheckBox.Content>
-                        <Path
-                            x:Name="FlipPath"
-                            Width="13"
-                            Height="13"
-                            Margin="19,17,0,0"
-                            Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
-                            Fill="{StaticResource IconColorBrush}"
-                            Stretch="Fill" />
-                    </CheckBox.Content>
-                </CheckBox>
+                    Height="51" />
 
                 <uc:MenuCloseButton x:Name="CloseButton" Canvas.Left="204" />
 

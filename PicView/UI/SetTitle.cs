@@ -30,10 +30,13 @@ namespace PicView.UI
                 return null;
             }
 
+            var files = Pics.Count == 1 ?
+                Application.Current.Resources["File"] : Application.Current.Resources["Files"];
+
             var s1 = new StringBuilder(90);
             s1.Append(fileInfo.Name).Append(" ").Append(index + 1).Append("/").Append(Pics.Count).Append(" ")
-                .Append(Application.Current.Resources["Files"] as string)
-                .Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height))
+                .Append(files) .Append(" (").Append(width).Append(" x ").Append(height)
+                .Append(StringAspect(width, height))
                 .Append(GetSizeReadable(fileInfo.Length));
 
             if (!string.IsNullOrEmpty(ZoomPercentage))

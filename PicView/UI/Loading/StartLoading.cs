@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Interop;
 using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
@@ -53,38 +52,6 @@ namespace PicView.UI.Loading
 #endif
 
             ConfigColors.UpdateColor();
-
-            #region Add dictionaries 
-
-            Application.Current.Resources.MergedDictionaries.Add(
-                new ResourceDictionary
-                {
-                    Source = new Uri(@"/PicView;component/Translations/en-US.xaml", UriKind.Relative)
-                }
-            );
-
-            Application.Current.Resources.MergedDictionaries.Add(
-                new ResourceDictionary
-                {
-                    Source = new Uri(@"/PicView;component/UI/Styles/Menu.xaml", UriKind.Relative)
-                }
-            );
-
-            Application.Current.Resources.MergedDictionaries.Add(
-                new ResourceDictionary
-                {
-                    Source = new Uri(@"/PicView;component/UI/Styles/ToolTip.xaml", UriKind.Relative)
-                }
-            );
-
-            Application.Current.Resources.MergedDictionaries.Add(
-                new ResourceDictionary
-                {
-                    Source = new Uri(@"/PicView;component/UI/Styles/Slider.xaml", UriKind.Relative)
-                }
-            );
-
-            #endregion
 
             MonitorInfo = MonitorSize.GetMonitorSize();
             AutoFitWindow = Properties.Settings.Default.AutoFitWindow;

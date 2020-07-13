@@ -6,7 +6,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="UI\Styles\ColorThemes\Dark.xaml" />
+                <ResourceDictionary x:Name="ThemeColors" Source="UI\Styles\ColorThemes\Dark.xaml" />
                 <ResourceDictionary Source="UI\Styles\MyWindowStyle.xaml" />
                 <ResourceDictionary Source="UI\Styles\Button.xaml" />
                 <ResourceDictionary Source="UI\Styles\Border.xaml" />
@@ -15,6 +15,9 @@
                 <ResourceDictionary Source="UI\Styles\RadioButton.xaml" />
                 <ResourceDictionary Source="UI\Styles\Label.xaml" />
                 <ResourceDictionary Source="UI\Styles\TextBox.xaml" />
+                <ResourceDictionary Source="UI\Styles\Menu.xaml" />
+                <ResourceDictionary Source="UI\Styles\ToolTip.xaml" />
+                <ResourceDictionary Source="UI\Styles\Slider.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

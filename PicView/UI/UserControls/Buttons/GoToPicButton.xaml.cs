@@ -88,6 +88,8 @@ namespace PicView.UI.UserControls
                 case Key.NumPad9:
                 case Key.Back:
                 case Key.Delete:
+                case Key.Left:
+                case Key.Right:
                     break;  // Allow these keys
                 case Key.A:
                 case Key.C:

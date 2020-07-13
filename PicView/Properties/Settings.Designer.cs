@@ -538,5 +538,29 @@ namespace PicView.Properties {
                 this["IncludeSubDirectories"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LightTheme {
+            get {
+                return ((bool)(this["LightTheme"]));
+            }
+            set {
+                this["LightTheme"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int UserLanguage {
+            get {
+                return ((int)(this["UserLanguage"]));
+            }
+            set {
+                this["UserLanguage"] = value;
+            }
+        }
     }
 }

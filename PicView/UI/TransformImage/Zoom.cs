@@ -1,5 +1,4 @@
-﻿using PicView.Editing;
-using PicView.UI.PicGallery;
+﻿using PicView.UI.PicGallery;
 using PicView.UI.UserControls;
 using System;
 using System.Linq;
@@ -10,8 +9,6 @@ using System.Windows.Media.Animation;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 using static PicView.Library.Utilities;
-using static PicView.UI.Sizing.WindowLogic;
-using static PicView.UI.TransformImage.Scroll;
 
 namespace PicView.UI.TransformImage
 {
@@ -87,109 +84,16 @@ namespace PicView.UI.TransformImage
             translateTransform = (TranslateTransform)((TransformGroup)TheMainWindow.MainImage.RenderTransform).Children.First(tr => tr is TranslateTransform);
         }
 
-        // Zoom
-        /// <summary>
-        /// Pan and Zoom, reset zoom and double click to reset
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        internal static void MainImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        internal static void PreparePanImage(object sender, MouseButtonEventArgs e)
         {
-            // Move window when Shift is being held down
-            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
-            {
-                Move(sender, e);
-                return;
-            }
-
-            // Fix focus
-            EditTitleBar.Refocus();
-
-            // Logic for auto scrolling
-            if (IsAutoScrolling)
-            {
-                // Report position and enable autoscrolltimer
-                AutoScrollOrigin = e.GetPosition(TheMainWindow);
-                AutoScrollTimer.Enabled = true;
-                return;
-            }
-            // Reset zoom on double click
-            if (e.ClickCount == 2)
-            {
-                ResetZoom();
-                return;
-            }
-            // Drag logic
-            if (!IsScrollEnabled)
-            {
-                // Report position for image drag
-                TheMainWindow.MainImage.CaptureMouse();
-                start = e.GetPosition(TheMainWindow.MainImageBorder);
-                origin = new Point(translateTransform.X, translateTransform.Y);
-            }
+            // Report position for image drag
+            TheMainWindow.MainImage.CaptureMouse();
+            start = e.GetPosition(TheMainWindow.MainImageBorder);
+            origin = new Point(translateTransform.X, translateTransform.Y);
         }
 
-        internal static void Bg_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        internal static void PanImage(object sender, MouseEventArgs e)
         {
-            if (TheMainWindow.TitleText.InnerTextBox.IsKeyboardFocusWithin)
-            {
-                // Fix focus
-                EditTitleBar.Refocus();
-                return;
-            }
-            if (Color_Picking.IsRunning)
-            {
-                Color_Picking.StopRunning(true);
-            }
-
-            // Reset zoom on double click
-            if (e.ClickCount == 2)
-            {
-                ResetZoom();
-                return;
-            }
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        internal static void MainImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            // Stop autoscrolling or dragging image
-            if (IsAutoScrolling)
-            {
-                StopAutoScroll();
-            }
-            else
-            {
-                TheMainWindow.MainImage.ReleaseMouseCapture();
-            }
-        }
-
-        /// <summary>
-        /// Used to drag image
-        /// or getting position for autoscrolltimer
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        internal static void MainImage_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (IsAutoScrolling)
-            {
-                // Start automainWindow.Scroller and report position
-                AutoScrollPos = e.GetPosition(TheMainWindow.Scroller);
-                AutoScrollTimer.Start();
-            }
-
-            if (Color_Picking.IsRunning)
-            {
-                if (UC.GetColorPicker.Opacity == 1)
-                {
-                    Color_Picking.StartRunning();
-                }
-            }
-
             // Don't drag when full scale
             // and don't drag it if mouse not held down on image
             if (!TheMainWindow.MainImage.IsMouseCaptured || scaleTransform.ScaleX == 1)
@@ -231,48 +135,6 @@ namespace PicView.UI.TransformImage
         }
 
         /// <summary>
-        /// Zooms, scrolls or changes image with mousewheel
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        internal static void MainImage_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            // Disable normal scroll, so we can use our own values
-            e.Handled = true;
-
-            if (Properties.Settings.Default.ScrollEnabled && !IsAutoScrolling)
-            {
-                if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
-                {
-                    Pic(e.Delta > 0);
-                }
-                else
-                {
-                    // Scroll vertical when scroll enabled
-                    var zoomSpeed = 45;
-                    if (e.Delta > 0)
-                    {
-                        TheMainWindow.Scroller.ScrollToVerticalOffset(TheMainWindow.Scroller.VerticalOffset - zoomSpeed);
-                    }
-                    else if (e.Delta < 0)
-                    {
-                        TheMainWindow.Scroller.ScrollToVerticalOffset(TheMainWindow.Scroller.VerticalOffset + zoomSpeed);
-                    }
-                }
-            }
-            // Change image with shift being held down
-            else if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
-            {
-                Pic(e.Delta > 0);
-            }
-            // Zoom
-            else if (!IsAutoScrolling)
-            {
-                Zoom(e.Delta > 0);
-            }
-        }
-
-        /// <summary>
         /// Resets element values to their loaded values
         /// </summary>
         internal static void ResetZoom(bool animate = true)
@@ -307,7 +169,7 @@ namespace PicView.UI.TransformImage
         }
 
         /// <summary>
-        /// Scales or zooms, depending on given values
+        /// Determine zoom direction and speed
         /// </summary>
         /// <param name="i">increment</param>
         internal static void Zoom(bool increment)
@@ -369,6 +231,10 @@ namespace PicView.UI.TransformImage
             Zoom(ZoomValue);
         }
 
+        /// <summary>
+        /// Zooms to given value
+        /// </summary>
+        /// <param name="value"></param>
         internal static void Zoom(double value)
         {
             if (value > UC.GetQuickSettingsMenu.ZoomSlider.Maximum)

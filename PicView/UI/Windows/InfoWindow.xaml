@@ -26,10 +26,11 @@
                 ShadowDepth="3"
                 Color="#42000000" />
         </DockPanel.Effect>
+        
         <DockPanel
             x:Name="TitleBar"
             Height="35"
-            Background="{StaticResource BackgroundColorBrushAlt}"
+            Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
             <uc:Logo Margin="6,0,7,0" />
@@ -45,6 +46,7 @@
                 Padding="5,7,45,0"
                 VerticalAlignment="Center"
                 d:Text="Information, help &amp; shortcuts"
+                Background="{StaticResource BackgroundSubtleHighlightBrush}"
                 FontSize="16"
                 FontWeight="Bold"
                 Foreground="{StaticResource MainColorBrush}"

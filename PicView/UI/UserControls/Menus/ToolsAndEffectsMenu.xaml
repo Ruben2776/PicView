@@ -136,13 +136,13 @@
                     <Button x:Name="CropButton" ToolTip="Crop image [C] (Rotation not yet working)">
                         <Canvas>
                             <TextBlock
-                                Canvas.Left="-59"
+                                Canvas.Left="-65"
                                 Canvas.Top="-8"
                                 FontSize="14"
                                 Text="Crop Picture" />
                             <Path
-                                Canvas.Left="42"
-                                Canvas.Top="-8"
+                                Canvas.Left="49.616"
+                                Canvas.Top="-8.047"
                                 Width="17"
                                 Height="17"
                                 Data="M488 352h-40V109.25l59.31-59.31c6.25-6.25 6.25-16.38 0-22.63L484.69 4.69c-6.25-6.25-16.38-6.25-22.63 0L402.75 64H192v96h114.75L160 306.75V24c0-13.26-10.75-24-24-24H88C74.75 0 64 10.74 64 24v40H24C10.75 64 0 74.74 0 88v48c0 13.25 10.75 24 24 24h40v264c0 13.25 10.75 24 24 24h232v-96H205.25L352 205.25V488c0 13.25 10.75 24 24 24h48c13.25 0 24-10.75 24-24v-40h40c13.25 0 24-10.75 24-24v-48c0-13.26-10.75-24-24-24z"
@@ -165,7 +165,7 @@
                     <Button x:Name="ColorPickerButton" ToolTip="Pick color from image">
                         <Canvas>
                             <TextBlock
-                                Canvas.Left="-69"
+                                Canvas.Left="-75"
                                 Canvas.Top="-8"
                                 FontSize="14"
                                 Text="Color Picker Tool" />
@@ -194,13 +194,13 @@
                     <Button x:Name="ExifButton" ToolTip="Show EXIF (not implemented yet)">
                         <Canvas>
                             <TextBlock
-                                Canvas.Left="-59"
+                                Canvas.Left="-65"
                                 Canvas.Top="-8"
                                 FontSize="14"
-                                Text="Show EXIF Info" />
+                                Text="Show Image Info" />
                             <Path
-                                Canvas.Left="43"
-                                Canvas.Top="-8"
+                                Canvas.Left="50.453"
+                                Canvas.Top="-9.523"
                                 Width="20"
                                 Height="20"
                                 Data="M48 32C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48H48zm0 32h106c3.3 0 6 2.7 6 6v20c0 3.3-2.7 6-6 6H38c-3.3 0-6-2.7-6-6V80c0-8.8 7.2-16 16-16zm426 96H38c-3.3 0-6-2.7-6-6v-36c0-3.3 2.7-6 6-6h138l30.2-45.3c1.1-1.7 3-2.7 5-2.7H464c8.8 0 16 7.2 16 16v74c0 3.3-2.7 6-6 6zM256 424c-66.2 0-120-53.8-120-120s53.8-120 120-120 120 53.8 120 120-53.8 120-120 120zm0-208c-48.5 0-88 39.5-88 88s39.5 88 88 88 88-39.5 88-88-39.5-88-88-88zm-48 104c-8.8 0-16-7.2-16-16 0-35.3 28.7-64 64-64 8.8 0 16 7.2 16 16s-7.2 16-16 16c-17.6 0-32 14.4-32 32 0 8.8-7.2 16-16 16z"

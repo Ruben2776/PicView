@@ -7,6 +7,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Error_Handling;
@@ -562,12 +563,15 @@ namespace PicView.ChangeImage
                 }
             }
 
+            var image = Application.Current.Resources["Image"] as string;
+
             TheMainWindow.MainImage.Width = xWidth;
             TheMainWindow.MainImage.Height = xHeight;
 
             TheMainWindow.TitleText.ToolTip =
             TheMainWindow.Title =
-            TheMainWindow.TitleText.Text = "Image " + (FolderIndex + 1) + " of " + Pics.Count; // TODO add to translation
+            TheMainWindow.TitleText.Text 
+            = $"{image} {(FolderIndex + 1)} / {Pics.Count}";
 
             var thumb = GetThumb(FolderIndex);
 

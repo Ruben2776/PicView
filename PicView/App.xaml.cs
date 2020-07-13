@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace PicView
 {
@@ -17,6 +18,14 @@ namespace PicView
                 }
                 base.OnStartup(e);
             }
+
+            // Set language choice
+            Current.Resources.MergedDictionaries.Add(
+                new ResourceDictionary
+                {
+                    Source = new Uri(@"/PicView;component/Translations/en-US.xaml", UriKind.Relative)
+                }
+            );
 
             System.Runtime.ProfileOptimization.SetProfileRoot(Library.Utilities.GetWritingPath());
             System.Runtime.ProfileOptimization.StartProfile("ProfileOptimization");

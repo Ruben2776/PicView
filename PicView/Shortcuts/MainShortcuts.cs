@@ -1,7 +1,9 @@
-﻿using PicView.Editing.Crop;
+﻿using PicView.Editing;
+using PicView.Editing.Crop;
 using PicView.ImageHandling;
 using PicView.UI;
 using PicView.UI.PicGallery;
+using PicView.UI.TransformImage;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.ChangeImage.Error_Handling;
@@ -646,5 +648,152 @@ namespace PicView.Shortcuts
                 default: break;
             }
         }
+
+        /// <summary>
+        /// Pan and Zoom, reset zoom and double click to reset
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        internal static void MainImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // Move window when Shift is being held down
+            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            {
+                Move(sender, e);
+                return;
+            }
+
+            // Fix focus
+            EditTitleBar.Refocus();
+
+            // Logic for auto scrolling
+            if (IsAutoScrolling)
+            {
+                // Report position and enable autoscrolltimer
+                AutoScrollOrigin = e.GetPosition(TheMainWindow);
+                AutoScrollTimer.Enabled = true;
+                return;
+            }
+            // Reset zoom on double click
+            if (e.ClickCount == 2)
+            {
+                ResetZoom();
+                return;
+            }
+            // Drag logic
+            if (!IsScrollEnabled)
+            {
+                PreparePanImage(sender, e);
+            }
+        }
+
+        internal static void Bg_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (TheMainWindow.TitleText.InnerTextBox.IsKeyboardFocusWithin)
+            {
+                // Fix focus
+                EditTitleBar.Refocus();
+                return;
+            }
+            if (Color_Picking.IsRunning)
+            {
+                Color_Picking.StopRunning(true);
+            }
+
+            // Reset zoom on double click
+            if (e.ClickCount == 2)
+            {
+                ResetZoom();
+                return;
+            }
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        internal static void MainImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            // Stop autoscrolling or dragging image
+            if (IsAutoScrolling)
+            {
+                StopAutoScroll();
+            }
+            else
+            {
+                TheMainWindow.MainImage.ReleaseMouseCapture();
+            }
+        }
+
+        /// <summary>
+        /// Used to drag image
+        /// or getting position for autoscrolltimer
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        internal static void MainImage_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (IsAutoScrolling)
+            {
+                // Start automainWindow.Scroller and report position
+                AutoScrollPos = e.GetPosition(TheMainWindow.Scroller);
+                AutoScrollTimer.Start();
+            }
+
+            if (Color_Picking.IsRunning)
+            {
+                if (GetColorPicker.Opacity == 1)
+                {
+                    Color_Picking.StartRunning();
+                }
+
+                return;
+            }
+
+            PanImage(sender, e);
+        }
+
+        /// <summary>
+        /// Zooms, scrolls or changes image with mousewheel
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        internal static void MainImage_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            // Disable normal scroll, so we can use our own values
+            e.Handled = true;
+
+            if (Properties.Settings.Default.ScrollEnabled && !IsAutoScrolling)
+            {
+                if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+                {
+                    Pic(e.Delta > 0);
+                }
+                else
+                {
+                    // Scroll vertical when scroll enabled
+                    var zoomSpeed = 45;
+                    if (e.Delta > 0)
+                    {
+                        TheMainWindow.Scroller.ScrollToVerticalOffset(TheMainWindow.Scroller.VerticalOffset - zoomSpeed);
+                    }
+                    else if (e.Delta < 0)
+                    {
+                        TheMainWindow.Scroller.ScrollToVerticalOffset(TheMainWindow.Scroller.VerticalOffset + zoomSpeed);
+                    }
+                }
+            }
+            // Change image with shift being held down
+            else if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            {
+                Pic(e.Delta > 0);
+            }
+            // Zoom
+            else if (!IsAutoScrolling)
+            {
+                Zoom(e.Delta > 0);
+            }
+        }
+
     }
 }
