@@ -10,26 +10,27 @@ namespace PicView.UI.UserControls
 {
     internal static class UC
     {
-        internal static ImageSettings GetImageSettingsMenu;
-        internal static FileMenu GetFileMenu;
-        internal static QuickSettingsMenu GetQuickSettingsMenu;
-        internal static ToolsAndEffectsMenu GetToolsAndEffectsMenu;
-        internal static ToolTipMessage GetToolTipMessage;
-        internal static AutoScrollSign GetAutoScrollSign;
-        internal static ClickArrow GetClickArrowLeft;
-        internal static ClickArrow GetClickArrowRight;
-        internal static X2 Getx2;
-        internal static Minus GetMinus;
-        internal static PicGallery GetPicGallery;
-        internal static GalleryShortcut GetGalleryShortcut;
-        internal static CroppingTool GetCropppingTool;
-        internal static ColorPicker GetColorPicker;
-        internal static GalleryMenu GetGalleryMenu;
+        internal static ImageSettings GetImageSettingsMenu { get; set; }
+        internal static FileMenu GetFileMenu { get; set; }
+        internal static QuickSettingsMenu GetQuickSettingsMenu { get; set; }
+        internal static ToolsAndEffectsMenu GetToolsAndEffectsMenu { get; set; }
+        internal static ToolTipMessage GetToolTipMessage { get; set; }
+        internal static AutoScrollSign GetAutoScrollSign { get; set; }
+        internal static ClickArrow GetClickArrowLeft { get; set; }
+        internal static ClickArrow GetClickArrowRight { get; set; }
+        internal static X2 Getx2 { get; set; }
+        internal static Minus GetMinus { get; set; }
+        internal static Restorebutton GetRestorebutton { get; set; }
+        internal static PicGallery GetPicGallery { get; set; }
+        internal static GalleryShortcut GetGalleryShortcut { get; set; }
+        internal static CroppingTool GetCropppingTool { get; set; }
+        internal static ColorPicker GetColorPicker { get; set; }
+        internal static GalleryMenu GetGalleryMenu { get; set; }
 
-        private static bool imageSettingsMenuOpen;
-        private static bool fileMenuOpen;
-        private static bool quickSettingsMenuOpen;
-        private static bool toolsAndEffectsMenuOpen;
+        private static bool imageSettingsMenuOpen { get; set; }
+        private static bool fileMenuOpen { get; set; }
+        private static bool quickSettingsMenuOpen { get; set; }
+        private static bool toolsAndEffectsMenuOpen { get; set; }
 
         #region Toggle open close menus
 

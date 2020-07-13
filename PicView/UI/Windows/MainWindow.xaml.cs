@@ -11,6 +11,11 @@ namespace PicView.UI.Windows
     {
         public MainWindow()
         {
+            if (Properties.Settings.Default.LightTheme)
+            {
+                ConfigColors.ChangeToLightTheme();
+            }
+
             InitializeComponent();
             Loaded += delegate { StartLoading.PreStart(); };
             ContentRendered += delegate { StartLoading.Start(); };

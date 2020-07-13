@@ -78,13 +78,34 @@ namespace PicView.UI.Loading
                 VerticalAlignment = VerticalAlignment.Top,
                 Visibility = Visibility.Collapsed,
                 HorizontalAlignment = HorizontalAlignment.Right,
-                Margin = new Thickness(0, 0, 50, 0)
+                Margin = new Thickness(0, 0, 90, 0)
             };
 
             TheMainWindow.ParentContainer.Children.Add(GetMinus);
 
 #if DEBUG
             Trace.WriteLine(nameof(GetMinus) + " loaded ");
+#endif
+        }
+
+        /// <summary>
+        /// Loads RestoreButton and adds it to the window
+        /// </summary>
+        internal static void LoadRestoreButton()
+        {
+            GetRestorebutton = new Restorebutton()
+            {
+                Focusable = false,
+                VerticalAlignment = VerticalAlignment.Top,
+                Visibility = Visibility.Collapsed,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Margin = new Thickness(0, 0, 50, 0)
+            };
+
+            TheMainWindow.ParentContainer.Children.Add(GetRestorebutton);
+
+#if DEBUG
+            Trace.WriteLine(nameof(GetRestorebutton) + " loaded ");
 #endif
         }
 

@@ -50,8 +50,40 @@ namespace PicView.UI.Loading
 #if DEBUG
             Trace.WriteLine("ContentRendered started");
 #endif
-
             ConfigColors.UpdateColor();
+
+            #region Add dictionaries 
+
+            Application.Current.Resources.MergedDictionaries.Add(
+                new ResourceDictionary
+                {
+                    Source = new Uri(@"/PicView;component/Translations/en-US.xaml", UriKind.Relative)
+                }
+            );
+
+            Application.Current.Resources.MergedDictionaries.Add(
+                new ResourceDictionary
+                {
+                    Source = new Uri(@"/PicView;component/UI/Styles/Menu.xaml", UriKind.Relative)
+                }
+            );
+
+            Application.Current.Resources.MergedDictionaries.Add(
+                new ResourceDictionary
+                {
+                    Source = new Uri(@"/PicView;component/UI/Styles/ToolTip.xaml", UriKind.Relative)
+                }
+            );
+
+            Application.Current.Resources.MergedDictionaries.Add(
+                new ResourceDictionary
+                {
+                    Source = new Uri(@"/PicView;component/UI/Styles/Slider.xaml", UriKind.Relative)
+                }
+            );
+
+            #endregion
+            
 
             MonitorInfo = MonitorSize.GetMonitorSize();
             AutoFitWindow = Properties.Settings.Default.AutoFitWindow;
@@ -151,6 +183,7 @@ namespace PicView.UI.Loading
             LoadClickArrow(false);
             Loadx2();
             LoadMinus();
+            LoadRestoreButton();
             LoadGalleryShortcut();
 
             // Update WindowStyle

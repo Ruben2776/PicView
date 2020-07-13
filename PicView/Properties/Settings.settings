@@ -23,8 +23,8 @@
     <Setting Name="Aqua" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#FF36E6CC</Value>
     </Setting>
-    <Setting Name="Beige" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#FFE2C290</Value>
+    <Setting Name="Golden" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#FFFEA955</Value>
     </Setting>
     <Setting Name="Teal" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#FF44A1A0</Value>
@@ -35,8 +35,8 @@
     <Setting Name="Cyan" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#FF1BA1E2</Value>
     </Setting>
-    <Setting Name="Grey" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#FF5F5449</Value>
+    <Setting Name="Lime" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#FF22CB97</Value>
     </Setting>
     <Setting Name="CallUpgrade" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -57,7 +57,7 @@
       <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="SlideTimer" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">7000</Value>
+      <Value Profile="(Default)">5000</Value>
     </Setting>
     <Setting Name="Looping" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -113,8 +113,8 @@
     <Setting Name="AquaAlpha" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#F209A68E</Value>
     </Setting>
-    <Setting Name="BeigeAlpha" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#F2E2C290</Value>
+    <Setting Name="GoldenAlpha" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#F2FEA955</Value>
     </Setting>
     <Setting Name="PurpleAlpha" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#F29E46E9</Value>
@@ -122,8 +122,8 @@
     <Setting Name="CyanAlpha" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#F259BAE9</Value>
     </Setting>
-    <Setting Name="GreyAlpha" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#F25F5449</Value>
+    <Setting Name="LimeAlpha" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#F222CB97</Value>
     </Setting>
     <Setting Name="MagentaAlpha" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#F2FF6CD4</Value>

@@ -199,11 +199,14 @@ namespace PicView.UI.Sizing
         {
             if (forceFullscreen || !Properties.Settings.Default.Fullscreen)
             {
+                // Show fullscreen logic
+
                 Properties.Settings.Default.Fullscreen = true;
 
                 ShowTopandBottom(false);
                 ShowNavigation(true);
                 ShowShortcuts(true);
+                ShowRestorebutton(true);
 
                 TheMainWindow.ResizeMode = ResizeMode.CanMinimize;
                 TheMainWindow.SizeToContent = SizeToContent.Manual;
@@ -240,6 +243,8 @@ namespace PicView.UI.Sizing
                     ShowTopandBottom(false);
                     ShowShortcuts(true);
                 }
+
+                ShowRestorebutton(false);
 
                 if (AutoFitWindow)
                 {

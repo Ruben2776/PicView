@@ -109,13 +109,13 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#FFE2C290")]
-        public global::System.Windows.Media.Color Beige {
+        [global::System.Configuration.DefaultSettingValueAttribute("#FFFEA955")]
+        public global::System.Windows.Media.Color Golden {
             get {
-                return ((global::System.Windows.Media.Color)(this["Beige"]));
+                return ((global::System.Windows.Media.Color)(this["Golden"]));
             }
             set {
-                this["Beige"] = value;
+                this["Golden"] = value;
             }
         }
         
@@ -157,13 +157,13 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#FF5F5449")]
-        public global::System.Windows.Media.Color Grey {
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF22CB97")]
+        public global::System.Windows.Media.Color Lime {
             get {
-                return ((global::System.Windows.Media.Color)(this["Grey"]));
+                return ((global::System.Windows.Media.Color)(this["Lime"]));
             }
             set {
-                this["Grey"] = value;
+                this["Lime"] = value;
             }
         }
         
@@ -241,7 +241,7 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("7000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("5000")]
         public double SlideTimer {
             get {
                 return ((double)(this["SlideTimer"]));
@@ -469,13 +469,13 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#F2E2C290")]
-        public global::System.Windows.Media.Color BeigeAlpha {
+        [global::System.Configuration.DefaultSettingValueAttribute("#F2FEA955")]
+        public global::System.Windows.Media.Color GoldenAlpha {
             get {
-                return ((global::System.Windows.Media.Color)(this["BeigeAlpha"]));
+                return ((global::System.Windows.Media.Color)(this["GoldenAlpha"]));
             }
             set {
-                this["BeigeAlpha"] = value;
+                this["GoldenAlpha"] = value;
             }
         }
         
@@ -505,13 +505,13 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#F25F5449")]
-        public global::System.Windows.Media.Color GreyAlpha {
+        [global::System.Configuration.DefaultSettingValueAttribute("#F222CB97")]
+        public global::System.Windows.Media.Color LimeAlpha {
             get {
-                return ((global::System.Windows.Media.Color)(this["GreyAlpha"]));
+                return ((global::System.Windows.Media.Color)(this["LimeAlpha"]));
             }
             set {
-                this["GreyAlpha"] = value;
+                this["LimeAlpha"] = value;
             }
         }
         

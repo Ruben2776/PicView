@@ -110,6 +110,24 @@ namespace PicView.UI
             }
         }
 
+        internal static void ShowRestorebutton(bool show)
+        {
+            if (GetRestorebutton == null)
+            {
+                return;
+            }
+
+            if (show)
+            {
+                GetRestorebutton.Visibility = Visibility.Visible;
+
+            }
+            else
+            {
+                GetRestorebutton.Visibility = Visibility.Collapsed;
+            }
+        }
+
         internal static void ShowShortcuts(bool show)
         {
             if (GetGalleryShortcut == null)

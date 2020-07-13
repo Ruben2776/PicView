@@ -8,21 +8,5 @@
         <Setter Property="FontSize" Value="14" />
     </Style>
 
-    <Style x:Key="LabelShadow" TargetType="Label">
-        <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
-        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Aller" />
-        <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="FontSize" Value="14" />
-        <Setter Property="Effect">
-            <Setter.Value>
-                <DropShadowEffect
-                    BlurRadius="2"
-                    Direction="291"
-                    ShadowDepth="3"
-                    Color="#47000000" />
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <!--</SnippetLabel>-->
 </ResourceDictionary>

@@ -26,7 +26,7 @@
                 ShadowDepth="3"
                 Color="#42000000" />
         </DockPanel.Effect>
-        
+
         <DockPanel
             x:Name="TitleBar"
             Height="35"
@@ -1545,6 +1545,8 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
                     <Border
@@ -1715,6 +1717,84 @@
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,0" />
 
+                    <Border
+                        Grid.Row="4"
+                        Grid.Column="0"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource AltInterfaceBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1,0,1,1">
+                        <TextBlock
+                            Margin="10,3,0,3"
+                            FontSize="15"
+                            Text="Center Window" />
+                    </Border>
+
+                    <Border
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource AltInterfaceBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1,0,1,1">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            Text="Space" />
+                    </Border>
+
+
+                    <Border
+                        Grid.Row="4"
+                        Grid.Column="2"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource AltInterfaceBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1,0,1,1" />
+
+                    <Border
+                        Grid.Row="5"
+                        Grid.Column="0"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1,1,1,0">
+                        <TextBlock
+                            Margin="10,3,0,3"
+                            FontSize="15"
+                            Text="Maximize window" />
+                    </Border>
+
+                    <Border
+                        Grid.Row="5"
+                        Grid.Column="1"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,1,1,0">
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <TextBlock FontSize="14" Text="Shift" />
+                            <TextBlock
+                                FontSize="14"
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text=" + " />
+                            <TextBlock FontSize="14" Text="Double click" />
+                        </StackPanel>
+                    </Border>
+
+
+                    <Border
+                        Grid.Row="5"
+                        Grid.Column="2"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,1,1,0" />
+
 
                 </Grid>
 
@@ -1733,7 +1813,6 @@
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
@@ -1787,7 +1866,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             FontSize="15"
-                            Text="Center Window" />
+                            Text="Reload" />
                     </Border>
 
                     <Border
@@ -1797,11 +1876,17 @@
                         Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,0">
-                        <TextBlock
+                        <StackPanel
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="14"
-                            Text="Space" />
+                            Orientation="Horizontal">
+                            <TextBlock FontSize="14" Text="Ctrl" />
+                            <TextBlock
+                                FontSize="14"
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text=" + " />
+                            <TextBlock FontSize="14" Text="R" />
+                        </StackPanel>
                     </Border>
 
 
@@ -1824,7 +1909,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             FontSize="15"
-                            Text="Reload" />
+                            Text="Crop image" />
                     </Border>
 
                     <Border
@@ -1834,17 +1919,11 @@
                         Background="{StaticResource AltInterfaceBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1,0,1,1">
-                        <StackPanel
+                        <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="Ctrl" />
-                            <TextBlock
-                                FontSize="14"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                Text=" + " />
-                            <TextBlock FontSize="14" Text="I" />
-                        </StackPanel>
+                            FontSize="14"
+                            Text="C" />
                     </Border>
 
 
@@ -1855,43 +1934,6 @@
                         Background="{StaticResource AltInterfaceBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1,0,1,1" />
-
-
-                    <Border
-                        Grid.Row="3"
-                        Grid.Column="0"
-                        Padding="0,3,0,3"
-                        Background="{StaticResource BackgroundColorBrush}"
-                        BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="1,1,1,0">
-                        <TextBlock
-                            Margin="10,3,0,3"
-                            FontSize="15"
-                            Text="Crop Image" />
-                    </Border>
-
-                    <Border
-                        Grid.Row="3"
-                        Grid.Column="1"
-                        Padding="0,3,0,3"
-                        Background="{StaticResource BackgroundColorBrush}"
-                        BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="0,1,1,0">
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="14"
-                            Text="C" />
-                    </Border>
-
-
-                    <Border
-                        Grid.Row="3"
-                        Grid.Column="2"
-                        Padding="0,3,0,3"
-                        Background="{StaticResource BackgroundColorBrush}"
-                        BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="0,1,1,0" />
 
                 </Grid>
 

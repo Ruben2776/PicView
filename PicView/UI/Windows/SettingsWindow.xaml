@@ -5,7 +5,7 @@
     xmlns:uc="clr-namespace:PicView.UI.UserControls"
     Title="PicView settings"
     Width="500"
-    Height="620"
+    Height="710"
     FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
     Foreground="{StaticResource MainColorBrush}"
     SizeToContent="Height"
@@ -100,8 +100,7 @@
                         Margin="0,3,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Content="Color Themes"
-                        Style="{StaticResource LabelShadow}" />
+                        Content="Highlight color" />
 
                     <WrapPanel
                         Margin="0,3,0,8"
@@ -135,38 +134,7 @@
                                 <SolidColorBrush x:Name="AquaBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
-                        <RadioButton
-                            x:Name="GreenRadio"
-                            Content="Green"
-                            Style="{StaticResource MetroFlatRadioButton}">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="GreenBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                        </RadioButton>
-                        <RadioButton
-                            x:Name="MagentaRadio"
-                            Content="Magenta"
-                            Style="{StaticResource MetroFlatRadioButton}">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="MagentaBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                        </RadioButton>
-                        <RadioButton
-                            x:Name="PinkRadio"
-                            Content="Pink"
-                            Style="{StaticResource MetroFlatRadioButton}">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="PinkBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                        </RadioButton>
-                        <RadioButton
-                            x:Name="PurpleRadio"
-                            Content="Purple"
-                            Style="{StaticResource MetroFlatRadioButton}">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="PurpleBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                        </RadioButton>
+
                         <RadioButton
                             x:Name="TealRadio"
                             Content="Teal"
@@ -175,14 +143,34 @@
                                 <SolidColorBrush x:Name="TealBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
+
                         <RadioButton
-                            x:Name="RedRadio"
-                            Content="Red"
+                            x:Name="LimeRadio"
+                            Content="Lime"
                             Style="{StaticResource MetroFlatRadioButton}">
                             <RadioButton.Background>
-                                <SolidColorBrush x:Name="RedBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                <SolidColorBrush x:Name="GreyBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
+
+                        <RadioButton
+                            x:Name="GreenRadio"
+                            Content="Green"
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="GreenBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="GoldenRadio"
+                            Content="Golden"
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="BeigeBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
                         <RadioButton
                             x:Name="OrangeRadio"
                             Content="Orange"
@@ -191,29 +179,50 @@
                                 <SolidColorBrush x:Name="OrangeBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
+
                         <RadioButton
-                            x:Name="GreyRadio"
-                            Content="Grey"
+                            x:Name="RedRadio"
+                            Content="Red"
                             Style="{StaticResource MetroFlatRadioButton}">
                             <RadioButton.Background>
-                                <SolidColorBrush x:Name="GreyBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                <SolidColorBrush x:Name="RedBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
+
                         <RadioButton
-                            x:Name="BeigeRadio"
-                            Content="Beige"
+                            x:Name="PinkRadio"
+                            Content="Pink"
                             Style="{StaticResource MetroFlatRadioButton}">
                             <RadioButton.Background>
-                                <SolidColorBrush x:Name="BeigeBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                <SolidColorBrush x:Name="PinkBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
+
+                        <RadioButton
+                            x:Name="MagentaRadio"
+                            Content="Magenta"
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="MagentaBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
+                        <RadioButton
+                            x:Name="PurpleRadio"
+                            Content="Purple"
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <RadioButton.Background>
+                                <SolidColorBrush x:Name="PurpleBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </RadioButton.Background>
+                        </RadioButton>
+
                     </WrapPanel>
 
                     <Label
                         Margin="0,3,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Content="Misc Settings"
+                        Content="Theme"
                         Foreground="{StaticResource MainColorBrush}" />
 
                     <WrapPanel
@@ -223,10 +232,9 @@
                         Orientation="Horizontal">
                         <CheckBox
                             x:Name="DarkThemeRadio"
-                            Width="225"
+                            Width="211"
                             Height="40"
                             Margin="5,3"
-                            BorderThickness="2"
                             Content="Dark theme"
                             Style="{StaticResource Checkstyle}">
                             <CheckBox.Background>
@@ -235,10 +243,9 @@
                         </CheckBox>
                         <CheckBox
                             x:Name="LightThemeRadio"
-                            Width="210"
+                            Width="211"
                             Height="40"
                             Margin="5,3"
-                            BorderThickness="2"
                             Content="Light theme"
                             Style="{StaticResource Checkstyle}">
                             <CheckBox.Background>
@@ -262,11 +269,10 @@
                         Orientation="Horizontal">
                         <CheckBox
                             x:Name="SubDirRadio"
-                            Width="225"
+                            Width="211"
                             Height="40"
                             Margin="5,3"
-                            BorderThickness="2"
-                            Content="Enable Subdirectory Searching"
+                            Content="Search subdirectories"
                             Style="{StaticResource Checkstyle}">
                             <CheckBox.Background>
                                 <SolidColorBrush x:Name="SubDirBrush" Color="{StaticResource BackgroundColorAlt}" />
@@ -274,11 +280,10 @@
                         </CheckBox>
                         <CheckBox
                             x:Name="BorderRadio"
-                            Width="210"
+                            Width="211"
                             Height="40"
                             Margin="5,3"
-                            BorderThickness="2"
-                            Content="Enable Window Color Brush"
+                            Content="Colored window border"
                             Style="{StaticResource Checkstyle}">
                             <CheckBox.Background>
                                 <SolidColorBrush x:Name="BorderBrushColor" Color="{StaticResource BackgroundColorAlt}" />
@@ -290,8 +295,7 @@
                         Margin="0,3,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Content="Set as wallpaper"
-                        Style="{StaticResource LabelShadow}" />
+                        Content="Set current image as wallpaper:" />
 
                     <WrapPanel
                         Margin="0,3,0,8"
@@ -357,8 +361,7 @@
                         Margin="0,3,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Content="Language"
-                        Style="{StaticResource LabelShadow}" />
+                        Content="Language" />
 
                     <ComboBox
                         x:Name="LanguageBox"
@@ -370,8 +373,7 @@
                         Margin="0,3,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Content="Adjust timing for slideshow"
-                        Style="{StaticResource LabelShadow}" />
+                        Content="Adjust timing for slideshow" />
 
                     <StackPanel
                         Margin="0,3,0,10"
@@ -386,9 +388,9 @@
                             IsSnapToTickEnabled="True"
                             Maximum="15"
                             Minimum="1"
-                            TickFrequency="1"
+                            TickFrequency=".5"
                             TickPlacement="BottomRight"
-                            Value="7" />
+                            Value="5" />
 
                         <TextBox
                             x:Name="txtSlide"
@@ -400,7 +402,7 @@
                             TextAlignment="Center"
                             ToolTip="Enter the slideshow amount in seconds." />
 
-                        <Label Content="Sec." Style="{StaticResource LabelShadow}" />
+                        <Label Content="Sec." />
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>

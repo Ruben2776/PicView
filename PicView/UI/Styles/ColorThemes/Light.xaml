@@ -11,11 +11,11 @@
     <SolidColorBrush x:Key="ChosenColorBrush" Color="{DynamicResource ChosenColor}" />
 
     <!--  Main Color  -->
-    <Color x:Key="MainColor">#262626</Color>
+    <Color x:Key="MainColor">#2e2e2d</Color>
     <SolidColorBrush x:Key="MainColorBrush" Color="{StaticResource MainColor}" />
 
     <!--  Icon Color  -->
-    <Color x:Key="IconColor">#363636</Color>
+    <Color x:Key="IconColor">#3b3b32</Color>
     <SolidColorBrush x:Key="IconColorBrush" Color="{StaticResource IconColor}" />
 
     <!--  Main Color faded  -->
@@ -43,7 +43,7 @@
     <SolidColorBrush x:Key="BackgroundColorBrushFade" Color="{StaticResource BackgroundColorFade}" />
 
     <!--  Background Color Fade  Subtle  -->
-    <Color x:Key="BackgroundColorFadeSubtle">#B2EAE6D9</Color>
+    <Color x:Key="BackgroundColorFadeSubtle">#BBEAE6D9</Color>
     <SolidColorBrush x:Key="BackgroundColorBrushFadeSubtle" Color="{StaticResource BackgroundColorFadeSubtle}" />
 
     <!--  Background Subtle Highlight  -->

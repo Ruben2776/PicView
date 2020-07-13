@@ -46,7 +46,7 @@ namespace PicView.UI.Windows
                     break;
 
                 case 8:
-                    BeigeRadio.IsChecked = true;
+                    GoldenRadio.IsChecked = true;
                     break;
 
                 case 9:
@@ -62,7 +62,7 @@ namespace PicView.UI.Windows
                     break;
 
                 case 12:
-                    GreyRadio.IsChecked = true;
+                    LimeRadio.IsChecked = true;
                     break;
             }
 
@@ -123,18 +123,19 @@ namespace PicView.UI.Windows
                 SlideshowSlider.Value = Properties.Settings.Default.SlideTimer / 1000;
                 SlideshowSlider.ValueChanged += SlideshowSlider_ValueChanged;
 
-                if (Properties.Settings.Default.LightTheme)
-                {
-                    DarkThemeRadio.IsChecked = true;
-                }
-                else
-                {
-                    LightThemeRadio.IsChecked = true;
-                }
+                LightThemeRadio.IsChecked = Properties.Settings.Default.LightTheme;
+                DarkThemeRadio.IsChecked = !Properties.Settings.Default.LightTheme;
 
-                DarkThemeRadio.Click += delegate { ChangeToDarkTheme(); };
-                LightThemeRadio.Click += delegate { ChangeToLightTheme(); };
-
+                DarkThemeRadio.Click += delegate
+                {
+                    ChangeToDarkTheme();
+                    LightThemeRadio.IsChecked = false;
+                };
+                LightThemeRadio.Click += delegate
+                {
+                    ChangeToLightTheme();
+                    DarkThemeRadio.IsChecked = false;
+                };
             };
         }
 
@@ -238,11 +239,11 @@ namespace PicView.UI.Windows
             AquaRadio.MouseLeave += AquaRadio_MouseLeave;
             AquaRadio.Click += Aqua;
 
-            // BeigeRadio
-            BeigeRadio.PreviewMouseLeftButtonDown += BeigeRadio_PreviewMouseLeftButtonDown;
-            BeigeRadio.MouseEnter += BeigeRadio_MouseEnter;
-            BeigeRadio.MouseLeave += BeigeRadio_MouseLeave;
-            BeigeRadio.Click += Beige;
+            // GoldenRadio
+            GoldenRadio.PreviewMouseLeftButtonDown += BeigeRadio_PreviewMouseLeftButtonDown;
+            GoldenRadio.MouseEnter += BeigeRadio_MouseEnter;
+            GoldenRadio.MouseLeave += BeigeRadio_MouseLeave;
+            GoldenRadio.Click += Golden;
 
             // PurpleRadio
             PurpleRadio.PreviewMouseLeftButtonDown += PurpleRadio_PreviewMouseLeftButtonDown;
@@ -262,11 +263,11 @@ namespace PicView.UI.Windows
             MagentaRadio.MouseLeave += MagentaRadio_MouseLeave;
             MagentaRadio.Click += Magenta;
 
-            // GreyRadio
-            GreyRadio.Click += Grey;
-            GreyRadio.PreviewMouseLeftButtonDown += GreyRadio_PreviewMouseLeftButtonDown;
-            GreyRadio.MouseEnter += GreyRadio_MouseEnter;
-            GreyRadio.MouseLeave += GreyRadio_MouseLeave;
+            // LimeRadio
+            LimeRadio.Click += Lime;
+            LimeRadio.PreviewMouseLeftButtonDown += GreyRadio_PreviewMouseLeftButtonDown;
+            LimeRadio.MouseEnter += GreyRadio_MouseEnter;
+            LimeRadio.MouseLeave += GreyRadio_MouseLeave;
 
             SubDirRadio.PreviewMouseLeftButtonDown += SubDirRadio_PreviewMouseLeftButtonDown;
             SubDirRadio.MouseEnter += SubDirRadio_MouseEnter;
@@ -724,13 +725,13 @@ namespace PicView.UI.Windows
         private static void Blue(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 1;
-            ConfigColors.UpdateColor();
+            UpdateColor();
         }
 
         private static void Pink(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 2;
-            ConfigColors.UpdateColor();
+            UpdateColor();
         }
 
         private static void Orange(object sender, RoutedEventArgs e)
@@ -742,13 +743,13 @@ namespace PicView.UI.Windows
         private static void Green(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 4;
-            ConfigColors.UpdateColor();
+            UpdateColor();
         }
 
         private static void Red(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 5;
-            ConfigColors.UpdateColor();
+            UpdateColor();
         }
 
         private static void Teal(object sender, RoutedEventArgs e)
@@ -760,37 +761,37 @@ namespace PicView.UI.Windows
         private static void Aqua(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 7;
-            ConfigColors.UpdateColor();
+            UpdateColor();
         }
 
-        private static void Beige(object sender, RoutedEventArgs e)
+        private static void Golden(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 8;
-            ConfigColors.UpdateColor();
+            UpdateColor();
         }
 
         private static void Purple(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 9;
-            ConfigColors.UpdateColor();
+            UpdateColor();
         }
 
         private static void Cyan(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 10;
-            ConfigColors.UpdateColor();
+            UpdateColor();
         }
 
         private static void Magenta(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 11;
-            ConfigColors.UpdateColor();
+            UpdateColor();
         }
 
-        private static void Grey(object sender, RoutedEventArgs e)
+        private static void Lime(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.ColorTheme = 12;
-            ConfigColors.UpdateColor();
+            UpdateColor();
         }
 
         #endregion Set ColorTheme

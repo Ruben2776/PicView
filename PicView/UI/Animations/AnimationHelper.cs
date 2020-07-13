@@ -133,7 +133,7 @@ namespace PicView.UI.Animations
                     break;
 
                 case 8:
-                    ccAnim.From = Properties.Settings.Default.Beige;
+                    ccAnim.From = Properties.Settings.Default.Golden;
                     break;
 
                 case 9:
@@ -149,7 +149,7 @@ namespace PicView.UI.Animations
                     break;
 
                 case 12:
-                    ccAnim.From = Properties.Settings.Default.Grey;
+                    ccAnim.From = Properties.Settings.Default.Lime;
                     break;
             }
             ccAnim.To = Color.FromArgb(a, r, g, b);
@@ -191,7 +191,7 @@ namespace PicView.UI.Animations
                     break;
 
                 case 8:
-                    ccAnim.To = Properties.Settings.Default.Beige;
+                    ccAnim.To = Properties.Settings.Default.Golden;
                     break;
 
                 case 9:
@@ -207,7 +207,7 @@ namespace PicView.UI.Animations
                     break;
 
                 case 12:
-                    ccAnim.To = Properties.Settings.Default.Grey;
+                    ccAnim.To = Properties.Settings.Default.Lime;
                     break;
             }
             brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
@@ -254,8 +254,8 @@ namespace PicView.UI.Animations
                     break;
 
                 case 8:
-                    ccAnim.From = Properties.Settings.Default.Beige;
-                    ccAnim.To = Properties.Settings.Default.BeigeAlpha;
+                    ccAnim.From = Properties.Settings.Default.Golden;
+                    ccAnim.To = Properties.Settings.Default.GoldenAlpha;
                     break;
 
                 case 9:
@@ -274,8 +274,8 @@ namespace PicView.UI.Animations
                     break;
 
                 case 12:
-                    ccAnim.From = Properties.Settings.Default.Grey;
-                    ccAnim.To = Properties.Settings.Default.GreyAlpha;
+                    ccAnim.From = Properties.Settings.Default.Lime;
+                    ccAnim.To = Properties.Settings.Default.LimeAlpha;
                     break;
             }
             brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
@@ -314,7 +314,7 @@ namespace PicView.UI.Animations
                     return Properties.Settings.Default.Aqua;
 
                 case 8:
-                    return Properties.Settings.Default.Beige;
+                    return Properties.Settings.Default.Golden;
 
                 case 9:
                     return Properties.Settings.Default.Purple;
@@ -326,7 +326,7 @@ namespace PicView.UI.Animations
                     return Properties.Settings.Default.Magenta;
 
                 case 12:
-                    return Properties.Settings.Default.Grey;
+                    return Properties.Settings.Default.Lime;
             }
         }
 
@@ -357,7 +357,7 @@ namespace PicView.UI.Animations
                     return Properties.Settings.Default.AquaAlpha;
 
                 case 8:
-                    return Properties.Settings.Default.BeigeAlpha;
+                    return Properties.Settings.Default.GoldenAlpha;
 
                 case 9:
                     return Properties.Settings.Default.PurpleAlpha;
@@ -369,7 +369,7 @@ namespace PicView.UI.Animations
                     return Properties.Settings.Default.MagentaAlpha;
 
                 case 12:
-                    return Properties.Settings.Default.GreyAlpha;
+                    return Properties.Settings.Default.LimeAlpha;
             }
         }
 
@@ -432,9 +432,9 @@ namespace PicView.UI.Animations
                 case 8:
                     return Color.FromArgb(
                         160,
-                        Properties.Settings.Default.BeigeAlpha.R,
-                        Properties.Settings.Default.BeigeAlpha.G,
-                        Properties.Settings.Default.BeigeAlpha.B);
+                        Properties.Settings.Default.GoldenAlpha.R,
+                        Properties.Settings.Default.GoldenAlpha.G,
+                        Properties.Settings.Default.GoldenAlpha.B);
 
                 case 9:
                     return Color.FromArgb(
@@ -460,9 +460,9 @@ namespace PicView.UI.Animations
                 case 12:
                     return Color.FromArgb(
                         160,
-                        Properties.Settings.Default.GreyAlpha.R,
-                        Properties.Settings.Default.GreyAlpha.G,
-                        Properties.Settings.Default.GreyAlpha.B);
+                        Properties.Settings.Default.LimeAlpha.R,
+                        Properties.Settings.Default.LimeAlpha.G,
+                        Properties.Settings.Default.LimeAlpha.B);
             }
         }
 
@@ -523,9 +523,9 @@ namespace PicView.UI.Animations
                 case 8:
                     return Color.FromArgb(
                         160,
-                        Properties.Settings.Default.Beige.R,
-                        Properties.Settings.Default.Beige.G,
-                        Properties.Settings.Default.Beige.B);
+                        Properties.Settings.Default.Golden.R,
+                        Properties.Settings.Default.Golden.G,
+                        Properties.Settings.Default.Golden.B);
 
                 case 9:
                     return Color.FromArgb(
@@ -551,9 +551,9 @@ namespace PicView.UI.Animations
                 case 12:
                     return Color.FromArgb(
                         160,
-                        Properties.Settings.Default.Grey.R,
-                        Properties.Settings.Default.Grey.G,
-                        Properties.Settings.Default.Grey.B);
+                        Properties.Settings.Default.Lime.R,
+                        Properties.Settings.Default.Lime.G,
+                        Properties.Settings.Default.Lime.B);
             }
         }
 

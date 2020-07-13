@@ -107,6 +107,7 @@ namespace PicView.UI.UserControls
                 case Key.Escape: // Escape logic
                     GoToPicBox.Text = FolderIndex.ToString(CultureInfo.CurrentCulture);
                     ClearGoTo();
+                    e.Handled = true;
                     break;
 
                 case Key.Enter: // Execute it!

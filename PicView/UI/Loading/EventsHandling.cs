@@ -2,13 +2,13 @@
 using PicView.SystemIntegration;
 using PicView.UI.Animations;
 using PicView.UI.PicGallery;
+using PicView.UI.Sizing;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using static PicView.ChangeImage.Navigation;
-using static PicView.FileHandling.Copy_Paste;
 using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.Open_Save;
 using static PicView.Library.Fields;
@@ -18,8 +18,6 @@ using static PicView.UI.DragAndDrop.Image_DragAndDrop;
 using static PicView.UI.HideInterfaceLogic;
 using static PicView.UI.Sizing.ScaleImage;
 using static PicView.UI.Sizing.WindowLogic;
-using static PicView.UI.TransformImage.Rotation;
-using static PicView.UI.TransformImage.ZoomLogic;
 using static PicView.UI.UserControls.UC;
 
 namespace PicView.UI.Loading
@@ -113,6 +111,9 @@ namespace PicView.UI.Loading
             // Minus
             GetMinus.MouseLeftButtonDown += (s, x) => SystemCommands.MinimizeWindow(TheMainWindow);
             GetMinus.MouseEnter += Interface_MouseEnter_Negative;
+
+            // Restorebutton
+            GetRestorebutton.MouseLeftButtonDown += delegate { Fullscreen_Restore(); };
 
             // GalleryShortcut
             GetGalleryShortcut.MouseLeftButtonDown += (s, x) => GalleryToggle.Toggle();

@@ -3,7 +3,6 @@ using PicView.Editing.Crop;
 using PicView.ImageHandling;
 using PicView.UI;
 using PicView.UI.PicGallery;
-using PicView.UI.TransformImage;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.ChangeImage.Error_Handling;
@@ -327,9 +326,9 @@ namespace PicView.Shortcuts
                                 return;
                             }
                         }
-                        if (Editing.Color_Picking.IsRunning)
+                        if (Color_Picking.IsRunning)
                         {
-                            Editing.Color_Picking.StopRunning(false);
+                            Color_Picking.StopRunning(false);
                             return;
                         }
                         if (!cm.IsVisible)
@@ -607,9 +606,9 @@ namespace PicView.Shortcuts
             {
                 case MouseButton.Right:
                     // Stop running color picking when right clicking
-                    if (Editing.Color_Picking.IsRunning)
+                    if (Color_Picking.IsRunning)
                     {
-                        Editing.Color_Picking.StopRunning(false);
+                        Color_Picking.StopRunning(false);
                     }
                     else if (IsAutoScrolling)
                     {
