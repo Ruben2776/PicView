@@ -1,11 +1,11 @@
 <h1 align="center">
-<img src="https://picview.app/wp-content/uploads/2020/07/Rectangle-Image.png" height="215" />
+<img src="https://picview.app/wp-content/uploads/2020/07/Rectangle-Image-Copy.png" height="215" />
   <br>
 </h1>
 
 PicView is an Open Source Image Viewer for Windows, designed to be easy to use. 
 
-It is designed to quickly and efficiently browses through images supporting all common file formats, including `.heic`, `.psd`, `.png`, `.jpg` & RAW camera image files.
+It is built to quickly and efficiently browses through images supporting all common file formats, including `.heic`, `.psd`, `.png`, `.jpg` & RAW camera image files.
 
 [![Total Downloads](https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=downloads&style=for-the-badge)](https://github.com/Ruben2776/PicView/releases)
  [![GPL Licence](https://img.shields.io/badge/license-GPLv3-green.svg?maxAge=3600&style=for-the-badge)](https://github.com/Ruben2776/PicView/blob/master/LICENSE.txt)
