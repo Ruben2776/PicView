@@ -1,13 +1,11 @@
-<img src="https://picview.app/wp-content/uploads/2020/07/Rectangle-Image.png" width="200" align="left"/>
+<img src="https://picview.app/wp-content/uploads/2020/07/Rectangle-Image.png" width="230" align="left"/>
 
+PicView is an Open Source Image Viewer for Windows, designed to be easy to use. 
 
-[![Total Downloads](https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=downloads&style=for-the-badge)](https://github.com/Ruben2776/PicView/releases)
-
-PicView is an Open Source Image Viewer for Windows, designed to be easy to use. It is a neat looking app that quickly and efficiently browses through images supporting all common file formats, including `.heic`, `.psd`, `.png`, `.jpg` & RAW camera image files. 
+It is a neat looking app that quickly and efficiently browses through images supporting all common file formats, including `.heic`, `.psd`, `.png`, `.jpg` & RAW camera image files. 
  
- [![GPL Licence](https://img.shields.io/badge/license-GPLv3-orange.svg?maxAge=3600)](https://github.com/Ruben2776/PicView/blob/master/LICENSE.txt)
-![Visual Studio 2019](https://img.shields.io/badge/IDE-Visual%20Studio%202019-964ad4.svg?maxAge=3600)
-![.NET Core 3.1](https://img.shields.io/badge/.NET-Core%203.1-lightgrey.svg?maxAge=3600)
+ [![GPL Licence](https://img.shields.io/badge/license-GPLv3-green.svg?maxAge=3600)](https://github.com/Ruben2776/PicView/blob/master/LICENSE.txt)
+ [![Total Downloads](https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=downloads&style=for-the-badge)](https://github.com/Ruben2776/PicView/releases)
 ![Windows OS](https://img.shields.io/badge/OS-Windows%207+-00adef.svg?maxAge=3600)
 
 
@@ -36,7 +34,9 @@ Portable, free to use. No pop-ups, no installtation required, no registry edits 
 If you have 7-Zip or WinRAR installed, you can view images inside archives, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
 
 
-**Switch between image scaling modes;** Pressing `1` Centers the image in the window, while retaining the image's original size. <br> Pressing `2` Also centers the image in the window, but the image will be stretched to window height, while retaining aspect ratio. 
+**Switch between image scaling modes;** 
+
+Pressing `1` Centers the image in the window, while retaining the image's original size. <br> Pressing `2` Also centers the image in the window, but the image will be stretched to window height, while retaining aspect ratio. 
 
 Pressing `3` enables the auto window sizing feature. It will resize the window to the image's size, while keeping the window centered.<br> Pressing `4` also enables the window sizing feature, but the image will be stretched to the monitor's height, while retaining aspect ratio. 
 
@@ -87,6 +87,11 @@ View all files in current folder as a fullscreen thumbnail gallery, where you ca
 View all files in current folder as a thumbnail gallery, with custom animations.
 
 
-## Reach out
+## Contributions
+![Visual Studio 2019](https://img.shields.io/badge/IDE-Visual%20Studio%202019-964ad4.svg?maxAge=3600)
+![.NET Core 3.1](https://img.shields.io/badge/.NET-Core%203.1-lightgrey.svg?maxAge=3600)
+
+_Coming soon!_
+
 I am just a single developer working on this in my spare time. So if you like what I have created please star it to show your support, as it would motive me to keep working on it! <br>
 Feedback and questions are always appreciated. Create an issue or take a look at an existing one if you want to report a bug or request a feature, or have something on your mind! 😊
