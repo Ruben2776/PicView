@@ -1,4 +1,4 @@
-<img src="https://picview.app/wp-content/uploads/2020/07/Rectangle-Image.png" width="200"/>
+<img src="https://picview.app/wp-content/uploads/2020/07/Rectangle-Image.png" width="200" align="left"/>
 
 
 [![Total Downloads](https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=downloads&style=for-the-badge)](https://github.com/Ruben2776/PicView/releases)
@@ -13,8 +13,8 @@ PicView is an Open Source Image Viewer for Windows, designed to efficiently and 
 
 ---
 
+<img src="https://picview.app/wp-content/uploads/2020/06/Annotation-2020-06-18-104748.png" align="left" height="670"/>
 
-<img src="/.github/Annotation%202020-06-06%20070000.png" align="left" width="350"/>
 
 ### Features:
 
@@ -36,10 +36,6 @@ If you have 7-Zip or WinRAR installed, you can view images inside archives, such
 **Switch between image scaling modes;** Pressing `1` Centers the image in the window, while retaining the image's original size. <br> Pressing `2` Also centers the image in the window, but the image will be stretched to window height, while retaining aspect ratio. 
 
 Pressing `3` enables the auto window sizing feature. It will resize the window to the image's size, while keeping the window centered.<br> Pressing `4` also enables the window sizing feature, but the image will be stretched to the monitor's height, while retaining aspect ratio. 
-
-
-<img src="https://i.imgur.com/2I1wtFu.png" align="right" width="428" height="459"/>
-
 
 Slideshow `F11` with adjustable timer in the Settings window `F4`.
 
@@ -82,7 +78,7 @@ Rename/move files `F2`, for easy file management of photos/images.
 
 <h2>Configurable Interface Design</h2>
 <img src="/.github/Screenshot%20(29)-min.png" align="left" height="660"/> 
-<img src="https://picview.app/wp-content/uploads/2020/06/Annotation-2020-06-18-104748.png" align="right" height="670"/>
+
 
 
 
