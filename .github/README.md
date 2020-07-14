@@ -1,4 +1,4 @@
-<img src="/.github/PicView-logo.svg" width="170"/>
+<img src="https://picview.app/wp-content/uploads/2020/07/Rectangle-Image.png" width="200"/>
 
 
 [![Total Downloads](https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=downloads&style=for-the-badge)](https://github.com/Ruben2776/PicView/releases)
@@ -43,6 +43,7 @@ Pressing `3` enables the auto window sizing feature. It will resize the window t
 
 Slideshow `F11` with adjustable timer in the Settings window `F4`.
 
+Integrated color tool to quickly pick a color from the shown image.
 
 Drag and drop from files Windows explorer or your browser. You can also hold `Ctrl` to drag currently viewed image to your file system.
 
