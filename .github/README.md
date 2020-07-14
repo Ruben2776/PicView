@@ -73,18 +73,7 @@ Rename/move files `F2`, for easy file management of photos/images.
  > The file name can be renamed or moved right in the title bar!
 
 
-
-
-
-<h2>Configurable Interface Design</h2>
-<img src="/.github/Screenshot%20(29)-min.png" align="left" height="660"/> 
-
-
-
-
-... <br>
- > The interface can be toggled to just show the image by pressing `Alt + Z`. <br> For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
- 
+The interface can be toggled to just show the image by pressing `Alt + Z`. <br> For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
 
 
 <h2>Fullscreen Image Gallery:</h2>
@@ -94,8 +83,6 @@ View all files in current folder as a fullscreen thumbnail gallery, where you ca
 <h2>Contained Image Gallery:</h2>
 <img src="/.github/Annotation%202020-06-06%20070001-min.png"/>
 View all files in current folder as a thumbnail gallery, with custom animations.
-
-
 
 
 ## Reach out
