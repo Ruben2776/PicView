@@ -50,9 +50,10 @@
                 </Image>
                 <TextBox
                     x:Name="GoToPicBox"
-                    Canvas.Left="-13"
+                    Canvas.Left="-14"
                     Canvas.Top="-11"
                     Width="51"
+                    Padding="0,2,0,2"
                     Panel.ZIndex="1"
                     AcceptsTab="False"
                     BorderBrush="{StaticResource IconColorBrush}"

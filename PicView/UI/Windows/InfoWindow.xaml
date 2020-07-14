@@ -8,7 +8,7 @@
     Title="{StaticResource ResourceKey=InfoWindowTitle}"
     AllowsTransparency="True"
     Background="#990F0F0F"
-    FontFamily="/PicView;component/Library/Resources/fonts/#Be Vietnam"
+    FontFamily="/PicView;component/Library/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
     ShowInTaskbar="False"
     WindowStyle="None"
@@ -17,8 +17,9 @@
         <Style x:Key="txtItalic" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Be Vietnam LightItalic" />
+            <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Roboto LightItalic" />
             <Setter Property="FontStyle" Value="Italic" />
+            <Setter Property="FontSize" Value="11" />
             <Setter Property="Foreground" Value="{StaticResource MainColorFadedBrush}" />
         </Style>
     </Window.Resources>
@@ -56,7 +57,7 @@
                 VerticalAlignment="Center"
                 d:Text="Information, help &amp; shortcuts"
                 Background="{StaticResource BackgroundSubtleHighlightBrush}"
-                FontFamily="/PicView;component/Library/Resources/fonts/#Be Vietnam Bold"
+                FontFamily="/PicView;component/Library/Resources/fonts/#Roboto Bold"
                 FontSize="15"
                 Foreground="{StaticResource MainColorBrush}"
                 Text="{StaticResource ResourceKey=InfoWindowTitle}"
@@ -78,15 +79,13 @@
                     HorizontalAlignment="Center"
                     d:Content="Application Shortcuts"
                     Content="{StaticResource ResourceKey=ApplicationShortcuts}"
+                    FontFamily="/PicView;component/Library/Resources/fonts/#Roboto Bold"
                     FontSize="15" />
 
                 <Label
-                    Width="490"
-                    Margin="5,0,0,11"
-                    HorizontalAlignment="Center"
+                    Margin="37,0,0,11"
                     d:Content="Navigation"
-                    Content="{StaticResource ResourceKey=Navigation}"
-                    FontSize="15" />
+                    Content="{StaticResource ResourceKey=Navigation}" />
 
                 <Grid Width="480" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
@@ -329,12 +328,7 @@
                 </Grid>
 
 
-                <Label
-                    Width="490"
-                    Margin="5,0,0,11"
-                    HorizontalAlignment="Center"
-                    Content="Image Control"
-                    FontSize="15" />
+                <Label Margin="37,0,0,11" Content="Image Control" />
 
                 <Grid Width="480" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
@@ -473,12 +467,7 @@
 
                 </Grid>
 
-                <Label
-                    Width="490"
-                    Margin="5,0,0,11"
-                    HorizontalAlignment="Center"
-                    Content="Zoom"
-                    FontSize="15" />
+                <Label Margin="37,0,0,11" Content="Zoom" />
 
                 <Grid Width="480" Margin="0,0,0,16">
                     <Grid.ColumnDefinitions>
@@ -695,12 +684,7 @@
                 </Grid>
 
 
-                <Label
-                    Width="490"
-                    Margin="5,0,0,11"
-                    HorizontalAlignment="Center"
-                    Content="Window Scaling"
-                    FontSize="15" />
+                <Label Margin="37,0,0,11" Content="Window Scaling" />
 
                 <Grid Width="480" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
@@ -868,12 +852,7 @@
                         Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1,0,1,1">
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontStyle="Italic"
-                            Foreground="{StaticResource MainColorFadedBrush}"
-                            Text="(Saved on next startup)" />
+                        <TextBlock Style="{StaticResource txtItalic}" Text="(Saved on next startup)" />
                     </Border>
 
                 </Grid>
@@ -881,12 +860,7 @@
 
 
 
-                <Label
-                    Width="490"
-                    Margin="5,0,0,11"
-                    HorizontalAlignment="Center"
-                    Content="Interface Configuration"
-                    FontSize="15" />
+                <Label Margin="37,0,0,11" Content="Interface Configuration" />
 
                 <Grid Width="480" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
@@ -1074,12 +1048,7 @@
                 </Grid>
 
 
-                <Label
-                    Width="490"
-                    Margin="5,0,0,11"
-                    HorizontalAlignment="Center"
-                    Content="File Management"
-                    FontSize="15" />
+                <Label Margin="37,0,0,11" Content="File Management" />
 
 
                 <Grid Width="480" Margin="0,0,0,20">
@@ -1501,12 +1470,7 @@
                 </Grid>
 
 
-                <Label
-                    Width="490"
-                    Margin="5,0,0,11"
-                    HorizontalAlignment="Center"
-                    Content="Window Management"
-                    FontSize="15" />
+                <Label Margin="37,0,0,11" Content="Window Management" />
 
                 <Grid Width="480" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
@@ -1773,12 +1737,7 @@
                 </Grid>
 
 
-                <Label
-                    Width="490"
-                    Margin="5,0,0,11"
-                    HorizontalAlignment="Center"
-                    Content="Additional Functions"
-                    FontSize="15" />
+                <Label Margin="37,0,0,11" Content="Additional Functions" />
 
                 <Grid Width="480" Margin="0,0,0,16">
                     <Grid.ColumnDefinitions>
@@ -1911,12 +1870,7 @@
 
                 </Grid>
 
-                <Label
-                    Width="490"
-                    Margin="5,0,0,11"
-                    HorizontalAlignment="Center"
-                    Content="Extra Mouse Key Functions"
-                    FontSize="15" />
+                <Label Margin="37,0,0,11" Content="Extra Mouse Key Functions" />
 
                 <Grid Width="480" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>

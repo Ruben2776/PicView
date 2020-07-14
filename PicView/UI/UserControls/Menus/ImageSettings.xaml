@@ -81,12 +81,12 @@
                         x:Name="Fullscreen_Gallery"
                         FocusVisualStyle="{x:Null}"
                         FontSize="14">
-                        <Canvas>
-                            <Image
-                                Canvas.Left="79"
-                                Canvas.Top="-8"
-                                Width="17"
-                                Height="17">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                Margin="0,0,7,0"
+                                FontSize="14"
+                                Text="Show fullscreen gallery" />
+                            <Image Width="17" Height="17">
                                 <Image.Source>
                                     <DrawingImage>
                                         <DrawingImage.Drawing>
@@ -98,12 +98,8 @@
                                     </DrawingImage>
                                 </Image.Source>
                             </Image>
-                            <TextBlock
-                                Canvas.Left="-100"
-                                Canvas.Top="-10"
-                                FontSize="14"
-                                Text="Show fullscreen gallery" />
-                        </Canvas>
+
+                        </StackPanel>
                     </Button>
                     <Border.Background>
                         <SolidColorBrush x:Name="FullscreenBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
@@ -120,12 +116,12 @@
                         x:Name="Contained_Gallery"
                         FocusVisualStyle="{x:Null}"
                         FontSize="14">
-                        <Canvas>
-                            <Image
-                                Canvas.Left="79"
-                                Canvas.Top="-8"
-                                Width="17"
-                                Height="17">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                Margin="0,0,7,0"
+                                FontSize="14"
+                                Text="Show contained gallery" />
+                            <Image Width="17" Height="17">
                                 <Image.Source>
                                     <DrawingImage>
                                         <DrawingImage.Drawing>
@@ -136,12 +132,8 @@
                                     </DrawingImage>
                                 </Image.Source>
                             </Image>
-                            <TextBlock
-                                Canvas.Left="-100"
-                                Canvas.Top="-10"
-                                FontSize="14"
-                                Text="Show contained gallery" />
-                        </Canvas>
+
+                        </StackPanel>
                     </Button>
                     <Border.Background>
                         <SolidColorBrush x:Name="ContainedBorderBrush" Color="{StaticResource BackgroundColorAlt}" />

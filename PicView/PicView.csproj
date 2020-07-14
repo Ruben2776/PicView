@@ -235,20 +235,22 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Library\Resources\fonts\BeVietnam-Bold.ttf" />
-    <Resource Include="Library\Resources\fonts\BeVietnam-BoldItalic.ttf" />
-    <Resource Include="Library\Resources\fonts\BeVietnam-ExtraBold.ttf" />
-    <Resource Include="Library\Resources\fonts\BeVietnam-ExtraBoldItalic.ttf" />
-    <Resource Include="Library\Resources\fonts\BeVietnam-Italic.ttf" />
-    <Resource Include="Library\Resources\fonts\BeVietnam-Light.ttf" />
-    <Resource Include="Library\Resources\fonts\BeVietnam-LightItalic.ttf" />
-    <Resource Include="Library\Resources\fonts\BeVietnam-Medium.ttf" />
-    <Resource Include="Library\Resources\fonts\BeVietnam-MediumItalic.ttf" />
-    <Resource Include="Library\Resources\fonts\BeVietnam-Regular.ttf" />
-    <Resource Include="Library\Resources\fonts\BeVietnam-SemiBold.ttf" />
-    <Resource Include="Library\Resources\fonts\BeVietnam-SemiBoldItalic.ttf" />
-    <Resource Include="Library\Resources\fonts\BeVietnam-Thin.ttf" />
-    <Resource Include="Library\Resources\fonts\BeVietnam-ThinItalic.ttf" />
+    <Resource Include="Library\Resources\fonts\Roboto-Black.ttf" />
+    <Resource Include="Library\Resources\fonts\Roboto-BlackItalic.ttf" />
+    <Resource Include="Library\Resources\fonts\Roboto-Bold.ttf" />
+    <Resource Include="Library\Resources\fonts\Roboto-BoldItalic.ttf" />
+    <Resource Include="Library\Resources\fonts\Roboto-Italic.ttf" />
+    <Resource Include="Library\Resources\fonts\Roboto-Light.ttf" />
+    <Resource Include="Library\Resources\fonts\Roboto-LightItalic.ttf" />
+    <Resource Include="Library\Resources\fonts\Roboto-Medium.ttf" />
+    <Resource Include="Library\Resources\fonts\Roboto-MediumItalic.ttf" />
+    <Resource Include="Library\Resources\fonts\Roboto-Regular.ttf" />
+    <Resource Include="Library\Resources\fonts\Roboto-Thin.ttf" />
+    <Resource Include="Library\Resources\fonts\Roboto-ThinItalic.ttf" />
+    <Resource Include="Library\Resources\fonts\texgyreheros-bold.otf" />
+    <Resource Include="Library\Resources\fonts\texgyreheros-bolditalic.otf" />
+    <Resource Include="Library\Resources\fonts\texgyreheros-italic.otf" />
+    <Resource Include="Library\Resources\fonts\texgyreheros-regular.otf" />
     <Resource Include="Library\Resources\img\icon-raster.128.png" />
     <Resource Include="Library\Resources\img\noisy-texture-100x100-o4-d13-c-fafafa-t0.png" />
     <Resource Include="Library\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
@@ -401,20 +403,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Library\Resources\fonts\BeVietnam-Bold.ttf" />
-    <None Remove="Library\Resources\fonts\BeVietnam-BoldItalic.ttf" />
-    <None Remove="Library\Resources\fonts\BeVietnam-ExtraBold.ttf" />
-    <None Remove="Library\Resources\fonts\BeVietnam-ExtraBoldItalic.ttf" />
-    <None Remove="Library\Resources\fonts\BeVietnam-Italic.ttf" />
-    <None Remove="Library\Resources\fonts\BeVietnam-Light.ttf" />
-    <None Remove="Library\Resources\fonts\BeVietnam-LightItalic.ttf" />
-    <None Remove="Library\Resources\fonts\BeVietnam-Medium.ttf" />
-    <None Remove="Library\Resources\fonts\BeVietnam-MediumItalic.ttf" />
-    <None Remove="Library\Resources\fonts\BeVietnam-Regular.ttf" />
-    <None Remove="Library\Resources\fonts\BeVietnam-SemiBold.ttf" />
-    <None Remove="Library\Resources\fonts\BeVietnam-SemiBoldItalic.ttf" />
-    <None Remove="Library\Resources\fonts\BeVietnam-Thin.ttf" />
-    <None Remove="Library\Resources\fonts\BeVietnam-ThinItalic.ttf" />
     <None Remove="Library\Resources\fonts\Montserrat-Black.ttf" />
     <None Remove="Library\Resources\fonts\Montserrat-BlackItalic.ttf" />
     <None Remove="Library\Resources\fonts\Montserrat-Bold.ttf" />
@@ -465,6 +453,18 @@
     <None Remove="Library\Resources\fonts\Poppins-SemiBoldItalic.ttf" />
     <None Remove="Library\Resources\fonts\Poppins-Thin.ttf" />
     <None Remove="Library\Resources\fonts\Poppins-ThinItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Roboto-Black.ttf" />
+    <None Remove="Library\Resources\fonts\Roboto-BlackItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Roboto-Bold.ttf" />
+    <None Remove="Library\Resources\fonts\Roboto-BoldItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Roboto-Italic.ttf" />
+    <None Remove="Library\Resources\fonts\Roboto-Light.ttf" />
+    <None Remove="Library\Resources\fonts\Roboto-LightItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Roboto-Medium.ttf" />
+    <None Remove="Library\Resources\fonts\Roboto-MediumItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Roboto-Regular.ttf" />
+    <None Remove="Library\Resources\fonts\Roboto-Thin.ttf" />
+    <None Remove="Library\Resources\fonts\Roboto-ThinItalic.ttf" />
     <None Remove="Library\Resources\fonts\Sen-Bold.ttf" />
     <None Remove="Library\Resources\fonts\Sen-ExtraBold.ttf" />
     <None Remove="Library\Resources\fonts\Sen-Regular.ttf" />
@@ -480,6 +480,10 @@
     <None Remove="Library\Resources\fonts\SourceSansPro-Regular.ttf" />
     <None Remove="Library\Resources\fonts\SourceSansPro-SemiBold.ttf" />
     <None Remove="Library\Resources\fonts\SourceSansPro-SemiBoldItalic.ttf" />
+    <None Remove="Library\Resources\fonts\texgyreheros-bold.otf" />
+    <None Remove="Library\Resources\fonts\texgyreheros-bolditalic.otf" />
+    <None Remove="Library\Resources\fonts\texgyreheros-italic.otf" />
+    <None Remove="Library\Resources\fonts\texgyreheros-regular.otf" />
     <None Remove="Library\Resources\img\icon-raster.128.png" />
     <None Remove="Library\Resources\img\noisy-texture-100x100-o4-d13-c-fafafa-t0.png" />
     <None Remove="Library\Resources\img\noisy-texture-100x100-o5-d10-c-f5f3ed-t0.png" />

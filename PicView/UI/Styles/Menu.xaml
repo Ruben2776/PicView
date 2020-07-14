@@ -149,7 +149,6 @@
                     Grid.Column="2"
                     Margin="5,0,0,0"
                     DockPanel.Dock="Right"
-                    FontFamily="/PicView;component/Library/Resources/fonts/#Be Vietnam Light"
                     Foreground="{StaticResource MainColorFadedBrush}"
                     Text="{TemplateBinding InputGestureText}" />
             </Grid>
@@ -257,7 +256,7 @@
     <!--  MenuItem Style  -->
     <Style x:Key="{x:Type MenuItem}" TargetType="{x:Type MenuItem}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Be Vietnam" />
+        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#TeX Gyre Heros" />
         <Style.Triggers>
             <Trigger Property="Role" Value="TopLevelHeader">
                 <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelHeaderTemplateKey}}" />

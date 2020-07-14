@@ -4,7 +4,7 @@
         <Setter Property="Margin" Value="0" />
         <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Be Vietnam" />
+        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Tex Gyre Heros" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">

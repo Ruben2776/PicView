@@ -4,9 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uc="clr-namespace:PicView.UI.UserControls"
     Title="HLSL Picture FX"
-    Width="394"
-    Height="811"
-    FontFamily="/PicView;component/Library/Resources/fonts/#Be Vietnam"
+    Width="556"
+    Height="605"
+    FontFamily="/PicView;component/Library/Resources/fonts/#Tex Gyre Heros"
     Foreground="{StaticResource MainColorBrush}"
     Style="{DynamicResource MyWindowStyle}">
 
@@ -388,7 +388,10 @@
                         </RadioButton>
                     </WrapPanel>
 
-                    <TextBlock HorizontalAlignment="Center" Text="Click button to add specified shader effect to image" />
+                    <TextBlock
+                        Margin="0,9,0,4"
+                        HorizontalAlignment="Center"
+                        Text="Click button to add specified shader effect to image" />
                     <TextBlock HorizontalAlignment="Center" Text="Uncheck to remove effect" />
                 </StackPanel>
             </ScrollViewer>
