@@ -3,7 +3,7 @@
 
 [![Total Downloads](https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=downloads&style=for-the-badge)](https://github.com/Ruben2776/PicView/releases)
 
-PicView is an Open Source Image Viewer for Windows, designed to efficiently and quickly browse through images supporting all common file formats, including `.heic`, `.psd`, `.png`, `.jpg` & RAW camera image files. 
+PicView is an Open Source Image Viewer for Windows, designed to be easy to use. It is a neat looking app that quickly and efficiently browses through images supporting all common file formats, including `.heic`, `.psd`, `.png`, `.jpg` & RAW camera image files. 
  
  [![GPL Licence](https://img.shields.io/badge/license-GPLv3-orange.svg?maxAge=3600)](https://github.com/Ruben2776/PicView/blob/master/LICENSE.txt)
 ![Visual Studio 2019](https://img.shields.io/badge/IDE-Visual%20Studio%202019-964ad4.svg?maxAge=3600)
@@ -41,10 +41,12 @@ Slideshow `F11` with adjustable timer in the Settings window `F4`.
 
 Integrated color tool to quickly pick a color from the shown image.
 
+ > The interface can be toggled to just show the image by pressing `Alt + Z`. <br> For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
+
 Drag and drop from files Windows explorer or your browser. You can also hold `Ctrl` to drag currently viewed image to your file system.
 
 
-> You can Change how the application sorts through the files right from the context menu.
+You can Change how the application sorts through the files from the context menu.
 
 
 Copy `Ctrl + C`, Move `Ctrl + X`, Paste `Ctrl + V` images, file paths, web addresses or base64 images.
@@ -71,9 +73,6 @@ Rename/move files `F2`, for easy file management of photos/images.
 <img src="https://i.imgur.com/1I6GwDP.png" width="918"/>
 
  > The file name can be renamed or moved right in the title bar!
-
-
-The interface can be toggled to just show the image by pressing `Alt + Z`. <br> For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
 
 
 <h2>Fullscreen Image Gallery:</h2>
