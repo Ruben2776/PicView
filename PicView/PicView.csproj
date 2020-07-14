@@ -70,7 +70,7 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>camera.ico</ApplicationIcon>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -245,11 +245,9 @@
     <Resource Include="Library\Resources\fonts\texgyreheros-bolditalic.otf" />
     <Resource Include="Library\Resources\fonts\texgyreheros-italic.otf" />
     <Resource Include="Library\Resources\fonts\texgyreheros-regular.otf" />
+    <Resource Include="Library\Resources\img\icon-raster.128.png" />
     <Resource Include="Library\Resources\img\noisy-texture-100x100-o4-d13-c-fafafa-t0.png" />
     <Resource Include="Library\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
-    <Resource Include="Library\Resources\img\noisy-texture-200x200-o4-d30-c-101010-t0.png" />
-    <Resource Include="Library\Resources\img\camera.ico" />
-    <Resource Include="Library\Resources\img\camera.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Magick.NET-Q16-x64" Version="7.20.0.1" />
@@ -399,6 +397,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Library\Resources\img\icon-raster.128.png" />
     <None Remove="Library\Resources\img\noisy-texture-100x100-o4-d13-c-fafafa-t0.png" />
     <None Remove="Library\Resources\img\noisy-texture-100x100-o5-d10-c-f5f3ed-t0.png" />
   </ItemGroup>

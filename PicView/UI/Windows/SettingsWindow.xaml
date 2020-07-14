@@ -57,7 +57,6 @@
                 Padding="0,8.4,0,0"
                 VerticalAlignment="Center"
                 Background="{StaticResource AltInterfaceWBrush}"
-                FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
                 FontSize="15"
                 FontWeight="Bold"
                 Foreground="{StaticResource MainColorBrush}"

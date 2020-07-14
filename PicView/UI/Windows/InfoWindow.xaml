@@ -2184,6 +2184,12 @@
 
                 <StackPanel Margin="0,36,0,0">
 
+                    <Image
+                        Width="128"
+                        Height="123"
+                        Margin="0,0,0,12"
+                        Source="/PicView;component/Library/Resources/img/icon-raster.128.png" />
+
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                         <TextBlock>
                             <Hyperlink NavigateUri="https://github.com/Ruben2776/PicView" RequestNavigate="Hyperlink_RequestNavigate">
