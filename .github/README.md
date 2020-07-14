@@ -1,4 +1,4 @@
-<img src="https://picview.app/wp-content/uploads/2020/07/Rectangle-Image.png" width="230" align="left"/>
+<img src="https://picview.app/wp-content/uploads/2020/07/Rectangle-Image.png" width="220" align="left"/>
 
 PicView is an Open Source Image Viewer for Windows, designed to be easy to use. 
 
@@ -6,6 +6,8 @@ It is a neat looking app in active development that quickly and efficiently brow
 
 
 [![Total Downloads](https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=downloads&style=for-the-badge)](https://github.com/Ruben2776/PicView/releases)
+
+
  [![GPL Licence](https://img.shields.io/badge/license-GPLv3-green.svg?maxAge=3600)](https://github.com/Ruben2776/PicView/blob/master/LICENSE.txt)
 ![Windows OS](https://img.shields.io/badge/OS-Windows%207+-00adef.svg?maxAge=3600)
 
