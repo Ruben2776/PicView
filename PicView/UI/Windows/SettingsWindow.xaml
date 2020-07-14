@@ -6,7 +6,7 @@
     Title="PicView settings"
     Width="500"
     Height="710"
-    FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
+    FontFamily="/PicView;component/Library/Resources/fonts/#Poppins"
     Foreground="{StaticResource MainColorBrush}"
     SizeToContent="Height"
     Style="{DynamicResource MyWindowStyle}">

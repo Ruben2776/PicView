@@ -34,14 +34,6 @@ namespace PicView.UI.Windows
 
             TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
 
-            Aller.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(AllerBrush); };
-            Aller.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(AllerBrush); };
-            Aller.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(AllerBrush); };
-
-            TexGyre.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(TexGyreBrush); };
-            TexGyre.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(TexGyreBrush); };
-            TexGyre.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(TexGyreBrush); };
-
             Iconic.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(IconicBrush); };
             Iconic.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(IconicBrush); };
             Iconic.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(IconicBrush); };

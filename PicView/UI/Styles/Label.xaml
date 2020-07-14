@@ -3,8 +3,7 @@
     <!--<SnippetLabel>-->
     <Style TargetType="Label">
         <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
-        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Aller" />
-        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Be Vietnam SemiBold" />
         <Setter Property="FontSize" Value="14" />
     </Style>
 

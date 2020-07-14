@@ -220,12 +220,6 @@
     <Resource Include="Editing\ShaderEffects\PsEffects\WaveWarperEffect.ps">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Library\Resources\fonts\Aller_Rg.ttf" />
-    <Resource Include="Library\Resources\fonts\Aller_Bd.ttf" />
-    <Resource Include="Library\Resources\fonts\Aller_BdIt.ttf" />
-    <Resource Include="Library\Resources\fonts\Aller_It.ttf" />
-    <Resource Include="Library\Resources\fonts\Aller_Lt.ttf" />
-    <Resource Include="Library\Resources\fonts\Aller_LtIt.ttf" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
@@ -241,10 +235,20 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Library\Resources\fonts\texgyreheros-bold.otf" />
-    <Resource Include="Library\Resources\fonts\texgyreheros-bolditalic.otf" />
-    <Resource Include="Library\Resources\fonts\texgyreheros-italic.otf" />
-    <Resource Include="Library\Resources\fonts\texgyreheros-regular.otf" />
+    <Resource Include="Library\Resources\fonts\BeVietnam-Bold.ttf" />
+    <Resource Include="Library\Resources\fonts\BeVietnam-BoldItalic.ttf" />
+    <Resource Include="Library\Resources\fonts\BeVietnam-ExtraBold.ttf" />
+    <Resource Include="Library\Resources\fonts\BeVietnam-ExtraBoldItalic.ttf" />
+    <Resource Include="Library\Resources\fonts\BeVietnam-Italic.ttf" />
+    <Resource Include="Library\Resources\fonts\BeVietnam-Light.ttf" />
+    <Resource Include="Library\Resources\fonts\BeVietnam-LightItalic.ttf" />
+    <Resource Include="Library\Resources\fonts\BeVietnam-Medium.ttf" />
+    <Resource Include="Library\Resources\fonts\BeVietnam-MediumItalic.ttf" />
+    <Resource Include="Library\Resources\fonts\BeVietnam-Regular.ttf" />
+    <Resource Include="Library\Resources\fonts\BeVietnam-SemiBold.ttf" />
+    <Resource Include="Library\Resources\fonts\BeVietnam-SemiBoldItalic.ttf" />
+    <Resource Include="Library\Resources\fonts\BeVietnam-Thin.ttf" />
+    <Resource Include="Library\Resources\fonts\BeVietnam-ThinItalic.ttf" />
     <Resource Include="Library\Resources\img\icon-raster.128.png" />
     <Resource Include="Library\Resources\img\noisy-texture-100x100-o4-d13-c-fafafa-t0.png" />
     <Resource Include="Library\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
@@ -397,6 +401,85 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Library\Resources\fonts\BeVietnam-Bold.ttf" />
+    <None Remove="Library\Resources\fonts\BeVietnam-BoldItalic.ttf" />
+    <None Remove="Library\Resources\fonts\BeVietnam-ExtraBold.ttf" />
+    <None Remove="Library\Resources\fonts\BeVietnam-ExtraBoldItalic.ttf" />
+    <None Remove="Library\Resources\fonts\BeVietnam-Italic.ttf" />
+    <None Remove="Library\Resources\fonts\BeVietnam-Light.ttf" />
+    <None Remove="Library\Resources\fonts\BeVietnam-LightItalic.ttf" />
+    <None Remove="Library\Resources\fonts\BeVietnam-Medium.ttf" />
+    <None Remove="Library\Resources\fonts\BeVietnam-MediumItalic.ttf" />
+    <None Remove="Library\Resources\fonts\BeVietnam-Regular.ttf" />
+    <None Remove="Library\Resources\fonts\BeVietnam-SemiBold.ttf" />
+    <None Remove="Library\Resources\fonts\BeVietnam-SemiBoldItalic.ttf" />
+    <None Remove="Library\Resources\fonts\BeVietnam-Thin.ttf" />
+    <None Remove="Library\Resources\fonts\BeVietnam-ThinItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Montserrat-Black.ttf" />
+    <None Remove="Library\Resources\fonts\Montserrat-BlackItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Montserrat-Bold.ttf" />
+    <None Remove="Library\Resources\fonts\Montserrat-BoldItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Montserrat-ExtraBold.ttf" />
+    <None Remove="Library\Resources\fonts\Montserrat-ExtraBoldItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Montserrat-ExtraLight.ttf" />
+    <None Remove="Library\Resources\fonts\Montserrat-ExtraLightItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Montserrat-Italic.ttf" />
+    <None Remove="Library\Resources\fonts\Montserrat-Light.ttf" />
+    <None Remove="Library\Resources\fonts\Montserrat-LightItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Montserrat-Medium.ttf" />
+    <None Remove="Library\Resources\fonts\Montserrat-MediumItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Montserrat-Regular.ttf" />
+    <None Remove="Library\Resources\fonts\Montserrat-SemiBold.ttf" />
+    <None Remove="Library\Resources\fonts\Montserrat-SemiBoldItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Montserrat-Thin.ttf" />
+    <None Remove="Library\Resources\fonts\Montserrat-ThinItalic.ttf" />
+    <None Remove="Library\Resources\fonts\NunitoSans-Black.ttf" />
+    <None Remove="Library\Resources\fonts\NunitoSans-BlackItalic.ttf" />
+    <None Remove="Library\Resources\fonts\NunitoSans-Bold.ttf" />
+    <None Remove="Library\Resources\fonts\NunitoSans-BoldItalic.ttf" />
+    <None Remove="Library\Resources\fonts\NunitoSans-ExtraBold.ttf" />
+    <None Remove="Library\Resources\fonts\NunitoSans-ExtraBoldItalic.ttf" />
+    <None Remove="Library\Resources\fonts\NunitoSans-ExtraLight.ttf" />
+    <None Remove="Library\Resources\fonts\NunitoSans-ExtraLightItalic.ttf" />
+    <None Remove="Library\Resources\fonts\NunitoSans-Italic.ttf" />
+    <None Remove="Library\Resources\fonts\NunitoSans-Light.ttf" />
+    <None Remove="Library\Resources\fonts\NunitoSans-LightItalic.ttf" />
+    <None Remove="Library\Resources\fonts\NunitoSans-Regular.ttf" />
+    <None Remove="Library\Resources\fonts\NunitoSans-SemiBold.ttf" />
+    <None Remove="Library\Resources\fonts\NunitoSans-SemiBoldItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Poppins-Black.ttf" />
+    <None Remove="Library\Resources\fonts\Poppins-BlackItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Poppins-Bold.ttf" />
+    <None Remove="Library\Resources\fonts\Poppins-BoldItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Poppins-ExtraBold.ttf" />
+    <None Remove="Library\Resources\fonts\Poppins-ExtraBoldItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Poppins-ExtraLight.ttf" />
+    <None Remove="Library\Resources\fonts\Poppins-ExtraLightItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Poppins-Italic.ttf" />
+    <None Remove="Library\Resources\fonts\Poppins-Light.ttf" />
+    <None Remove="Library\Resources\fonts\Poppins-LightItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Poppins-Medium.ttf" />
+    <None Remove="Library\Resources\fonts\Poppins-MediumItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Poppins-Regular.ttf" />
+    <None Remove="Library\Resources\fonts\Poppins-SemiBold.ttf" />
+    <None Remove="Library\Resources\fonts\Poppins-SemiBoldItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Poppins-Thin.ttf" />
+    <None Remove="Library\Resources\fonts\Poppins-ThinItalic.ttf" />
+    <None Remove="Library\Resources\fonts\Sen-Bold.ttf" />
+    <None Remove="Library\Resources\fonts\Sen-ExtraBold.ttf" />
+    <None Remove="Library\Resources\fonts\Sen-Regular.ttf" />
+    <None Remove="Library\Resources\fonts\SourceSansPro-Black.ttf" />
+    <None Remove="Library\Resources\fonts\SourceSansPro-BlackItalic.ttf" />
+    <None Remove="Library\Resources\fonts\SourceSansPro-Bold.ttf" />
+    <None Remove="Library\Resources\fonts\SourceSansPro-BoldItalic.ttf" />
+    <None Remove="Library\Resources\fonts\SourceSansPro-ExtraLight.ttf" />
+    <None Remove="Library\Resources\fonts\SourceSansPro-ExtraLightItalic.ttf" />
+    <None Remove="Library\Resources\fonts\SourceSansPro-Italic.ttf" />
+    <None Remove="Library\Resources\fonts\SourceSansPro-Light.ttf" />
+    <None Remove="Library\Resources\fonts\SourceSansPro-LightItalic.ttf" />
+    <None Remove="Library\Resources\fonts\SourceSansPro-Regular.ttf" />
+    <None Remove="Library\Resources\fonts\SourceSansPro-SemiBold.ttf" />
+    <None Remove="Library\Resources\fonts\SourceSansPro-SemiBoldItalic.ttf" />
     <None Remove="Library\Resources\img\icon-raster.128.png" />
     <None Remove="Library\Resources\img\noisy-texture-100x100-o4-d13-c-fafafa-t0.png" />
     <None Remove="Library\Resources\img\noisy-texture-100x100-o5-d10-c-f5f3ed-t0.png" />

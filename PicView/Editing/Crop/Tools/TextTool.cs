@@ -30,7 +30,7 @@ namespace PicView.Editing.Crop.Tools
             };
             TextBlock = new TextBlock
             {
-                FontFamily = new FontFamily("/PicView;component/Library/Resources/fonts/#Aller"),
+                FontFamily = new FontFamily("/PicView;component/Library/Resources/fonts/#Be Vietnam"),
                 FontSize = 16,
                 Foreground = new SolidColorBrush(ConfigColors.mainColor),
             };

@@ -11,9 +11,8 @@
         Background="{x:Null}"
         CaretBrush="{StaticResource MainColorBrush}"
         ContextMenu="{x:Null}"
-        FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
+        FontFamily="/PicView;component/Library/Resources/fonts/#Be Vietnam SemiBold"
         FontSize="15"
-        FontWeight="Bold"
         Foreground="{StaticResource MainColorBrush}"
         OverridesDefaultStyle="True"
         SelectionBrush="{DynamicResource ChosenColorBrush}"
@@ -48,7 +47,7 @@
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="TextBox">
-                                    <TextBlock Text="{TemplateBinding Text}" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="{TemplateBinding Text}" TextTrimming="CharacterEllipsis" />
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>

@@ -99,8 +99,8 @@
                                 </Image.Source>
                             </Image>
                             <TextBlock
-                                Canvas.Left="-89"
-                                Canvas.Top="-9"
+                                Canvas.Left="-100"
+                                Canvas.Top="-10"
                                 FontSize="14"
                                 Text="Show fullscreen gallery" />
                         </Canvas>
@@ -137,8 +137,8 @@
                                 </Image.Source>
                             </Image>
                             <TextBlock
-                                Canvas.Left="-89"
-                                Canvas.Top="-9"
+                                Canvas.Left="-100"
+                                Canvas.Top="-10"
                                 FontSize="14"
                                 Text="Show contained gallery" />
                         </Canvas>

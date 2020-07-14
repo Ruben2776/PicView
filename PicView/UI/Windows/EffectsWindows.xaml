@@ -4,9 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uc="clr-namespace:PicView.UI.UserControls"
     Title="HLSL Picture FX"
-    Width="555"
-    Height="565"
-    FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
+    Width="394"
+    Height="811"
+    FontFamily="/PicView;component/Library/Resources/fonts/#Be Vietnam"
     Foreground="{StaticResource MainColorBrush}"
     Style="{DynamicResource MyWindowStyle}">
 
@@ -53,7 +53,7 @@
                 Padding="0,8.4,0,0"
                 VerticalAlignment="Center"
                 Background="{StaticResource AltInterfaceWBrush}"
-                FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
+                FontFamily="/PicView;component/Library/Resources/fonts/#Poppins"
                 FontSize="15"
                 FontWeight="Bold"
                 Foreground="{StaticResource MainColorBrush}"
@@ -388,8 +388,8 @@
                         </RadioButton>
                     </WrapPanel>
 
-                    <Label HorizontalAlignment="Center" Content="Click button to add specified shader effect to image" />
-                    <Label HorizontalAlignment="Center" Content="Uncheck to remove effect" />
+                    <TextBlock HorizontalAlignment="Center" Text="Click button to add specified shader effect to image" />
+                    <TextBlock HorizontalAlignment="Center" Text="Uncheck to remove effect" />
                 </StackPanel>
             </ScrollViewer>
         </Border>

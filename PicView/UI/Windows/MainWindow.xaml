@@ -6,7 +6,7 @@
     Title="Loading..."
     MinWidth="565"
     MinHeight="695"
-    FontFamily="/PicView;component/Library/Resources/fonts/#Aller"
+    FontFamily="/PicView;component/Library/Resources/fonts/#Poppins"
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="CanMinimize"
     SizeToContent="WidthAndHeight"
