@@ -30,6 +30,9 @@ PicView is an Open Source Image Viewer for Windows, designed to be easy to use. 
 [View shortcuts](https://github.com/Ruben2776/PicView/wiki/Keyboard-and-mouse-shortcuts)
 
 
+Portable, free to use. No pop-ups, no installtation required, no registry edits or system files changed.
+
+
 If you have 7-Zip or WinRAR installed, you can view images inside archives, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
 
 
