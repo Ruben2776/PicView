@@ -1,5 +1,4 @@
 <h1 align="center">
-  <br>
 <img src="https://picview.app/wp-content/uploads/2020/07/Rectangle-Image.png" height="215" />
   <br>
 </h1>
