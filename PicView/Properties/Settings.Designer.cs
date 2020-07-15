@@ -133,7 +133,7 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#FFD40FD4")]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF9738EB")]
         public global::System.Windows.Media.Color Purple {
             get {
                 return ((global::System.Windows.Media.Color)(this["Purple"]));
@@ -481,7 +481,7 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#F29E46E9")]
+        [global::System.Configuration.DefaultSettingValueAttribute("#F2A953F5")]
         public global::System.Windows.Media.Color PurpleAlpha {
             get {
                 return ((global::System.Windows.Media.Color)(this["PurpleAlpha"]));

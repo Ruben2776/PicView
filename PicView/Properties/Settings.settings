@@ -30,7 +30,7 @@
       <Value Profile="(Default)">#FF44A1A0</Value>
     </Setting>
     <Setting Name="Purple" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#FFD40FD4</Value>
+      <Value Profile="(Default)">#FF9738EB</Value>
     </Setting>
     <Setting Name="Cyan" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#FF1BA1E2</Value>
@@ -117,7 +117,7 @@
       <Value Profile="(Default)">#F2FEA955</Value>
     </Setting>
     <Setting Name="PurpleAlpha" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#F29E46E9</Value>
+      <Value Profile="(Default)">#F2A953F5</Value>
     </Setting>
     <Setting Name="CyanAlpha" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#F259BAE9</Value>

@@ -63,6 +63,7 @@
                         Width="138"
                         Height="51"
                         FontFamily="/PicView;component/Library/Resources/fonts/#Roboto Bold"
+                        Foreground="{StaticResource IconColorBrush}"
                         ToolTip="Show effects window">
                         <Button.Background>
                             <SolidColorBrush x:Name="EffectsButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
@@ -97,6 +98,7 @@
                         Width="166"
                         Height="51"
                         FontFamily="/PicView;component/Library/Resources/fonts/#Roboto Bold"
+                        Foreground="{StaticResource IconColorBrush}"
                         ToolTip="Batch resize &amp; optimize images">
                         <Button.Background>
                             <SolidColorBrush x:Name="ResizeButtonBrush" Color="{StaticResource BackgroundColorAlt}" />

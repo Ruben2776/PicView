@@ -12,44 +12,6 @@ namespace PicView.UI.Animations
 
         */
 
-        #region logo
-
-        // Logo Mouse Over
-        //internal static void LogoMouseOver(object sender, MouseEventArgs e)
-        //{
-        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, pBrush, false);
-        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, iBrush, false);
-        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, cBrush, false);
-        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, vBrush, false);
-        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, iiBrush, false);
-        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, eBrush, false);
-        //    AnimationHelper.MouseEnterColorEvent(255, 245, 245, 245, wBrush, false);
-        //}
-
-        //internal static void LogoMouseLeave(object sender, MouseEventArgs e)
-        //{
-        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, pBrush, false);
-        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, iBrush, false);
-        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, cBrush, false);
-        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, vBrush, false);
-        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, iiBrush, false);
-        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, eBrush, false);
-        //    AnimationHelper.MouseLeaveColorEvent(255, 245, 245, 245, wBrush, false);
-        //}
-
-        //internal static void LogoMouseButtonDown(object sender, MouseButtonEventArgs e)
-        //{
-        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(pBrush, false);
-        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(iBrush, false);
-        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(cBrush, false);
-        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(vBrush, false);
-        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(iiBrush, false);
-        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(eBrush, false);
-        //    AnimationHelper.PreviewMouseLeftButtonDownColorEvent(wBrush, false);
-        //}
-
-        #endregion logo
-
         #region 1x
 
         internal static void PreviewMouseButtonDownAnim(Brush brush, bool alpha = false)
