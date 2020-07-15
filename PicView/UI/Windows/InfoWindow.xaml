@@ -2013,19 +2013,6 @@
                             </Hyperlink.Foreground>
                         </Hyperlink>
                     </TextBlock>
-                    <TextBlock
-                        x:Name="FlatIcon"
-                        Margin="0,0,0,2"
-                        FontSize="14"
-                        TextAlignment="Center"
-                        ToolTip="https://www.flaticon.com/free-icon/camera_2905172">
-                        <Hyperlink NavigateUri="https://www.flaticon.com/free-icon/camera_2905172" RequestNavigate="Hyperlink_RequestNavigate">
-                            Flaticon Camera
-                            <Hyperlink.Foreground>
-                                <SolidColorBrush x:Name="FlatIconBrush" Color="{StaticResource MainColor}" />
-                            </Hyperlink.Foreground>
-                        </Hyperlink>
-                    </TextBlock>
 
                     <TextBlock
                         x:Name="Ionic"

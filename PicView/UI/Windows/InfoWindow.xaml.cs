@@ -38,10 +38,6 @@ namespace PicView.UI.Windows
             Iconic.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(IconicBrush); };
             Iconic.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(IconicBrush); };
 
-            FlatIcon.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(FlatIconBrush); };
-            FlatIcon.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(FlatIconBrush); };
-            FlatIcon.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(FlatIconBrush); };
-
             Ionic.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(IonicBrush); };
             Ionic.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(IonicBrush); };
             Ionic.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(IonicBrush); };
