@@ -103,7 +103,7 @@ namespace PicView.UI.Sizing
             if (Properties.Settings.Default.PicGallery == 2)
             {
                 /// Extra padding for picgallery required
-                padding += picGalleryItem_Size - 50; // Fixes Math.Min returning incorrectly
+                padding += picGalleryItem_Size - 50;
                 maxWidth = Math.Min(monitorWidth - padding, width);
                 maxHeight = Math.Min(monitorHeight, height);
             }
@@ -203,11 +203,6 @@ namespace PicView.UI.Sizing
                                           + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
                         TheMainWindow.Top = ((MonitorInfo.WorkArea.Height
                                            - (TheMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
-                    }
-                    else
-                    {
-                        // TODO Loses position gradually if not forced to center
-                        CenterWindowOnScreen();
                     }
                 }
             }

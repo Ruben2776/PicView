@@ -184,10 +184,6 @@ namespace PicView.UI.Sizing
                     TheMainWindow.Width = Properties.Settings.Default.Width;
                 }
             }
-            else
-            {
-                CenterWindowOnScreen();
-            }
 
             ConfigColors.UpdateColor();
         }

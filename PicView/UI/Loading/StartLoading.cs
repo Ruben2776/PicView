@@ -165,10 +165,6 @@ namespace PicView.UI.Loading
                     TheMainWindow.Width = Properties.Settings.Default.Width;
                     TheMainWindow.Height = Properties.Settings.Default.Height;
                 }
-                else
-                {
-                    CenterWindowOnScreen();
-                }
             }
         }
 
