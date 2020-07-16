@@ -7,7 +7,6 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Error_Handling;
@@ -186,6 +185,18 @@ namespace PicView.ChangeImage
                 var thumb = GetThumb(index, true);
                 if (thumb != null)
                 {
+                    // Don't allow image size to stretch the whole screen
+                    if (xWidth == 0)
+                    {
+                        TheMainWindow.MainImage.Width = TheMainWindow.Scroller.ActualWidth;
+                        TheMainWindow.MainImage.Height = TheMainWindow.Scroller.ActualHeight;
+                    }
+                    else
+                    {
+                        TheMainWindow.MainImage.Width = xWidth;
+                        TheMainWindow.MainImage.Height = xHeight;
+                    }
+
                     TheMainWindow.MainImage.Source = thumb;
                 }
 
@@ -570,7 +581,7 @@ namespace PicView.ChangeImage
 
             TheMainWindow.TitleText.ToolTip =
             TheMainWindow.Title =
-            TheMainWindow.TitleText.Text 
+            TheMainWindow.TitleText.Text
             = $"{image} {(FolderIndex + 1)} / {Pics.Count}";
 
             var thumb = GetThumb(FolderIndex);
