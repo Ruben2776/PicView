@@ -19,6 +19,42 @@
     <!--  Info window  -->
     <system:String x:Key="InfoWindowTitle">Information, help &amp; shortcuts</system:String>
     <system:String x:Key="ApplicationShortcuts">Application Shortcuts</system:String>
+    <system:String x:Key="SavedOnNextStartUp">(Saved on next startup)</system:String>
+    <system:String x:Key="ImageControl">Image control</system:String>
+    <system:String x:Key="FileManagement">File management</system:String>
+    <system:String x:Key="DragFileTo">Drag file to Windows Explorer or another application/browser</system:String>
+    <system:String x:Key="DragImage">Drag image</system:String>
+    <system:String x:Key="AdditionalFunctions">Additional functions</system:String>
+    <system:String x:Key="Reload">Reload</system:String>
+    <system:String x:Key="ExtraMouseKeyFunctions">Extra mouse key functions</system:String>
+    <system:String x:Key="AttributionAndCredits">Attributions and credits</system:String>
+    <system:String x:Key="IconsUsed">Icons used:</system:String>
+    <system:String x:Key="GithubRepo">Github repository</system:String>
+    <system:String x:Key="ViewLicenseFile">View license file</system:String>
+    <system:String x:Key="Version">Version:</system:String>
+
+
+    <!--  Info window, window scaling  -->
+    <system:String x:Key="WindowScaling">Window scaling</system:String>
+    <system:String x:Key="NormalWindow">Normal window</system:String>
+    <system:String x:Key="FillHeight">⇔ Fill height</system:String>
+    <system:String x:Key="AutoFitWindow">Auto fit window</system:String>
+
+    <!--  info window, interface configuration  -->
+    <system:String x:Key="InterfaceConfiguration">Interface configuration</system:String>
+    <system:String x:Key="HideShowInterface">Hide/show interface</system:String>
+    <system:String x:Key="ChangeBackground">Change background</system:String>
+    <system:String x:Key="ToggleFullscreen">Toggle fullscreen</system:String>
+
+    <!--  Info window, window management  -->
+    <system:String x:Key="WindowManagement">Window management</system:String>
+    <system:String x:Key="InfoWindow">Info window</system:String>
+    <system:String x:Key="SettingsWindow">Settings window</system:String>
+    <system:String x:Key="EscCloseTooltip">Closes currently opened window/menu</system:String>
+    <system:String x:Key="CloseApp">Close the whole application</system:String>
+    <system:String x:Key="MoveWindow">Move window</system:String>
+    <system:String x:Key="CenterWindow">Center window</system:String>
+
 
     <!--  Navigation related  -->
     <system:String x:Key="Navigation">Navigation</system:String>
@@ -26,6 +62,17 @@
     <system:String x:Key="PrevImage">Previous image</system:String>
     <system:String x:Key="LastImage">Last image</system:String>
     <system:String x:Key="FirstImage">First image</system:String>
+    <system:String x:Key="ToggleLooping">Toggle looping</system:String>
+    <system:String x:Key="Slideshow">Slideshow</system:String>
+
+    <!--  Zoom related  -->
+    <system:String x:Key="Zoom">Zoom</system:String>
+    <system:String x:Key="ZoomIn">Zoom In</system:String>
+    <system:String x:Key="ZoomOut">Zoom Out</system:String>
+    <system:String x:Key="Pan">Pan</system:String>
+    <system:String x:Key="MouseDrag">Mouse drag</system:String>
+    <system:String x:Key="ResetZoom">Reset zoom</system:String>
+    <system:String x:Key="ToggleScroll">Toggle scroll</system:String>
 
     <!--  File related  -->
     <system:String x:Key="Open">Open</system:String>
@@ -39,6 +86,7 @@
     <system:String x:Key="DeleteFile">Delete file</system:String>
     <system:String x:Key="Folder">Folder</system:String>
     <system:String x:Key="FullPath">Full path</system:String>
+    <system:String x:Key="RenameFile">Rename file</system:String>
 
     <!--  Sort files  -->
     <system:String x:Key="SortFilesBy">Sort files by</system:String>
@@ -88,7 +136,7 @@
     <system:String x:Key="Portrait">Portrait</system:String>
     <system:String x:Key="Landscape">Landscape</system:String>
 
-    <!--  Keyboard and mouse key names  -->
+    <!--  Keyboard key names  -->
     <system:String x:Key="Delete">Delete</system:String>
     <system:String x:Key="Ctrl">Ctrl</system:String>
     <system:String x:Key="Shift">Shift</system:String>
@@ -96,9 +144,20 @@
     <system:String x:Key="Space">Space</system:String>
     <system:String x:Key="Enter">Enter</system:String>
     <system:String x:Key="Esc">Esc</system:String>
+    <system:String x:Key="NumpadPlus">Numpad +</system:String>
+    <system:String x:Key="NumpadMinus">Numpad -</system:String>
+    <!--  Mouse key names  -->
     <system:String x:Key="MouseWheel">Mouse wheel</system:String>
     <system:String x:Key="MouseKeyForward">Mouse key forward</system:String>
     <system:String x:Key="MouseKeyBack">Mouse key back</system:String>
+    <system:String x:Key="DoubleClick">Double Click</system:String>
+    <!--  Arrow key names  -->
+    <system:String x:Key="Left">Left</system:String>
+    <system:String x:Key="Right">Right</system:String>
+    <system:String x:Key="Up">Up</system:String>
+    <system:String x:Key="Down">Down</system:String>
+
+
 
     <!--  Error messages  -->
     <system:String x:Key="SavingFileFailed">Saving file failed</system:String>
@@ -114,7 +173,7 @@
     <system:String x:Key="Crop">Crop</system:String>
     <system:String x:Key="RotateRight">Rotate right</system:String>
     <system:String x:Key="RotateLeft">Rotate left</system:String>
-    <system:String x:Key="Flip">Flip</system:String>
+    <system:String x:Key="Flip">Flip horizontally</system:String>
     <system:String x:Key="Unflip">Unflip</system:String>
 
 
