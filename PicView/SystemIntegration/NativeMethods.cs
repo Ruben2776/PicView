@@ -108,14 +108,14 @@ namespace PicView.SystemIntegration
         /// Executes when user manually resized window
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA1801:Review unused parameters", Justification = "<Pending>")]
 #pragma warning disable IDE0060 // Remove unused parameter
-        public static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 #pragma warning restore IDE0060 // Remove unused parameter
+        public static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             if (msg == WM_SIZING)
             {
                 if (WindowWasResized == false)
                 {
-                    //    'indicate the the user is resizing and not moving the window
+                    // 'indicate the the user is resizing and not moving the window
                     WindowWasResized = true;
                 }
             }

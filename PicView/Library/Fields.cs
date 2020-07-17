@@ -89,11 +89,6 @@ namespace PicView.Library
         internal static double xHeight;
 
         /// <summary>
-        /// Counter used to check if preloading is neccesary.
-        /// </summary>
-        internal static int PreloadCount { get; set; }
-
-        /// <summary>
         /// Used to get and set Aspect Ratio
         /// </summary>
         internal static double AspectRatio { get; set; }

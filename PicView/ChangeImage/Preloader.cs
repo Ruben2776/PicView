@@ -14,20 +14,6 @@ namespace PicView.ChangeImage
     /// </summary>
     internal static class Preloader
     {
-        /// <summary>
-        ///  Start preload every third entry
-        /// </summary>
-        /// <returns></returns>
-        internal static bool StartPreload()
-        {
-            if (FreshStartup || PreloadCount > 2 || PreloadCount < -2)
-            {
-                PreloadCount = 0;
-                return true;
-            }
-
-            return false;
-        }
 
         /// <summary>
         /// Preloader list of BitmapSources
@@ -187,7 +173,6 @@ namespace PicView.ChangeImage
             }
 
             Sources.Clear();
-            PreloadCount = 4; // Reset to make sure
 #if DEBUG
             Trace.WriteLine("Cleared Preloader");
 #endif
@@ -243,7 +228,6 @@ namespace PicView.ChangeImage
         {
             if (!Contains(file))
             {
-                PreloadCount = 4;
                 Add(file);
             }
         }
@@ -264,8 +248,8 @@ namespace PicView.ChangeImage
 
             return Task.Run(() =>
             {
-                var toLoad = 8;
-                var extraToLoad = toLoad / 2;
+                var toLoad = 3;
+                var extraToLoad = 2;
                 var cleanUp = toLoad + extraToLoad;
 
                 // Not looping

@@ -26,7 +26,6 @@ namespace PicView.UI
             if (!string.IsNullOrWhiteSpace(tmp))
             {
                 Pics = FileList(Path.GetDirectoryName(tmp));
-                PreloadCount = 4;
                 Pic(Pics.IndexOf(tmp));
             }
             var sortcm = cm.Items[6] as MenuItem;

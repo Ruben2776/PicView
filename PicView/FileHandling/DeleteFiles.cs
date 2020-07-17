@@ -98,8 +98,6 @@ namespace PicView.FileHandling
                 return;
             }
 
-            PreloadCount = Reverse ? PreloadCount - 1 : PreloadCount + 1;
-
             Pic(false);
 
             var filename = Path.GetFileName(file);

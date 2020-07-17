@@ -154,7 +154,6 @@ namespace PicView.ChangeImage
             Pics.Clear();
             GalleryFunctions.Clear();
             Preloader.Clear();
-            PreloadCount = 0;
             FreshStartup = true;
             DeleteTempFiles();
         }
@@ -236,7 +235,6 @@ namespace PicView.ChangeImage
                 Pics.Clear();
             }
 
-            PreloadCount = 0;
             Preloader.Clear();
             GalleryFunctions.Clear();
             FolderIndex = 0;

@@ -217,8 +217,6 @@ namespace PicView.FileHandling
                 Clipboard.Clear();
                 Clipboard.SetDataObject(data, true);
             }
-            // Force Preloader to add new images, to minimize slowdown errors
-            PreloadCount = 4;
 
             ShowTooltipMessage(Application.Current.Resources["FileCut"] as string);
         }

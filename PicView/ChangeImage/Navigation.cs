@@ -208,6 +208,9 @@ namespace PicView.ChangeImage
                 // Get it!
                 await Preloader.Add(Pics[index]).ConfigureAwait(true);
 
+                // Retry
+                bitmapSource = Preloader.Load(Pics[index]);
+
                 if (bitmapSource == null)
                 {
                     // Attempt to fix it
@@ -274,10 +277,7 @@ namespace PicView.ChangeImage
                 Taskbar.Progress(index, Pics.Count);
 
                 // Preload images \\
-                if (Preloader.StartPreload())
-                {
-                    await Preloader.PreLoad(index).ConfigureAwait(false);
-                }
+                await Preloader.PreLoad(index).ConfigureAwait(false);
             }
 
             if (!FreshStartup)
@@ -422,8 +422,6 @@ namespace PicView.ChangeImage
 
                         FolderIndex++;
                     }
-
-                    PreloadCount++;
                     Reverse = false;
                 }
                 else
@@ -443,8 +441,6 @@ namespace PicView.ChangeImage
 
                         FolderIndex--;
                     }
-
-                    PreloadCount--;
                     Reverse = true;
                 }
             }
@@ -458,8 +454,6 @@ namespace PicView.ChangeImage
                 {
                     Preloader.Clear();
                 }
-
-                PreloadCount = 4;
             }
 
             // Go to the image!
@@ -610,7 +604,6 @@ namespace PicView.ChangeImage
 
             if (!Preloader.Contains(Pics[FolderIndex]))
             {
-                PreloadCount = 0;
                 Preloader.Clear();
             }
 

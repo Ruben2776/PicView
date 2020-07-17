@@ -6,6 +6,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary x:Name="Language" Source="Translations\en-US.xaml" />
                 <ResourceDictionary x:Name="ThemeColors" Source="UI\Styles\ColorThemes\Dark.xaml" />
                 <ResourceDictionary Source="UI\Styles\MyWindowStyle.xaml" />
                 <ResourceDictionary Source="UI\Styles\Button.xaml" />
