@@ -32,8 +32,6 @@ namespace PicView.UI.Windows
             // CloseButton
             CloseButton.TheButton.Click += delegate { HideLogic(); };
 
-            TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
-
             Iconic.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(IconicBrush); };
             Iconic.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(IconicBrush); };
             Iconic.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(IconicBrush); };

@@ -83,7 +83,8 @@
                     FontSize="15" />
 
                 <Label
-                    Margin="37,0,0,11"
+                    Width="480"
+                    Margin="-4,0,0,10"
                     d:Content="Navigation"
                     Content="{StaticResource ResourceKey=Navigation}" />
 
@@ -141,6 +142,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
+                            d:Text="Left"
                             FontSize="14"
                             Text="{StaticResource ResourceKey=Left}" />
                     </Border>
@@ -156,6 +158,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Previous image"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=PrevImage}" />
                     </Border>
@@ -185,6 +188,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
+                            d:Text="Right"
                             FontSize="14"
                             Text="{StaticResource ResourceKey=Right}" />
                     </Border>
@@ -199,8 +203,9 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="First Image"
                             FontSize="15"
-                            Text="{StaticResource ResourceKey=LastImage}" />
+                            Text="{StaticResource ResourceKey=FirstImage}" />
                     </Border>
 
                     <Border
@@ -214,7 +219,10 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock
+                                d:Text="Ctrl"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -235,12 +243,18 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock
+                                d:Text="Ctrl"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Right}" />
+                            <TextBlock
+                                d:Text="Left"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Left}" />
                         </StackPanel>
                     </Border>
 
@@ -254,6 +268,7 @@
                         BorderThickness="1,0,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Last image"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=LastImage}" />
                     </Border>
@@ -269,7 +284,10 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock
+                                d:Text="Ctrl"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -290,12 +308,18 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock
+                                d:Text="Ctrl"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Right}" />
+                            <TextBlock
+                                d:Text="Right"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Right}" />
                         </StackPanel>
                     </Border>
 
@@ -308,6 +332,7 @@
                         BorderThickness="1,1,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Toggle looping"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=ToggleLooping}" />
                     </Border>
@@ -334,13 +359,20 @@
                         Background="{StaticResource AltInterfaceBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,1">
-                        <TextBlock Style="{StaticResource txtItalic}" Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
+                        <TextBlock
+                            d:Text="(Saved on next startup)"
+                            Style="{StaticResource txtItalic}"
+                            Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
                     </Border>
 
                 </Grid>
 
 
-                <Label Margin="37,0,0,11" Content="{StaticResource ResourceKey=ImageControl}" />
+                <Label
+                    Width="480"
+                    Margin="-4,0,0,10"
+                    d:Content="Image control"
+                    Content="{StaticResource ResourceKey=ImageControl}" />
 
                 <Grid Width="480" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
@@ -363,6 +395,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Rotate right"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=RotateRight}" />
                     </Border>
@@ -392,6 +425,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
+                            d:Text="Up"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=Up}" />
                     </Border>
@@ -407,6 +441,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Rotate left"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=RotateLeft}" />
                     </Border>
@@ -436,6 +471,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
+                            d:Text="Down"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=Down}" />
                     </Border>
@@ -450,6 +486,7 @@
                         BorderThickness="1,0,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Flip"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=Flip}" />
                     </Border>
@@ -479,7 +516,11 @@
 
                 </Grid>
 
-                <Label Margin="37,0,0,11" Content="{StaticResource ResourceKey=Zoom}" />
+                <Label
+                    Width="480"
+                    Margin="-4,0,0,10"
+                    d:Content="Zoom"
+                    Content="{StaticResource ResourceKey=Zoom}" />
 
                 <Grid Width="480" Margin="0,0,0,16">
                     <Grid.ColumnDefinitions>
@@ -504,6 +545,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Zoom in"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=ZoomIn}" />
                     </Border>
@@ -518,6 +560,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
+                            d:Text="Mouse wheel"
                             FontSize="14"
                             Text="{StaticResource ResourceKey=MouseWheel}" />
                     </Border>
@@ -533,6 +576,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
+                            d:Text="Numpad +"
                             FontSize="14"
                             Text="{StaticResource ResourceKey=NumpadPlus}" />
                     </Border>
@@ -548,6 +592,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Zoom out"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=ZoomOut}" />
                     </Border>
@@ -562,6 +607,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
+                            d:Text="Mouse wheel"
                             FontSize="14"
                             Text="{StaticResource ResourceKey=MouseWheel}" />
                     </Border>
@@ -577,6 +623,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
+                            d:Text="Numpad -"
                             FontSize="14"
                             Text="{StaticResource ResourceKey=NumpadMinus}" />
                     </Border>
@@ -590,6 +637,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Pan"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=Pan}" />
                     </Border>
@@ -604,6 +652,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
+                            d:Text="Mouse drag"
                             FontSize="14"
                             Text="{StaticResource ResourceKey=MouseDrag}" />
                     </Border>
@@ -627,6 +676,7 @@
                         BorderThickness="1,0,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Reset zoom"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=ResetZoom}" />
                     </Border>
@@ -641,6 +691,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
+                            d:Text="Double click"
                             FontSize="14"
                             Text="{StaticResource ResourceKey=DoubleClick}" />
                     </Border>
@@ -663,6 +714,7 @@
                         BorderThickness="1,0,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Toggle scroll"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=ToggleScroll}" />
                     </Border>
@@ -689,14 +741,21 @@
                         Background="{StaticResource AltInterfaceBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1,0,1,1">
-                        <TextBlock Style="{StaticResource txtItalic}" Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
+                        <TextBlock
+                            d:Text="(Saved on next startup)"
+                            Style="{StaticResource txtItalic}"
+                            Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
                     </Border>
 
 
                 </Grid>
 
 
-                <Label Margin="37,0,0,11" Content="{StaticResource ResourceKey=WindowScaling}" />
+                <Label
+                    Width="480"
+                    Margin="-4,0,0,10"
+                    d:Content="Window scaling"
+                    Content="{StaticResource ResourceKey=WindowScaling}" />
 
                 <Grid Width="480" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
@@ -720,6 +779,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Normal window"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=NormalWindow}" />
                     </Border>
@@ -746,7 +806,10 @@
                         Background="{StaticResource AltInterfaceBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,0">
-                        <TextBlock Style="{StaticResource txtItalic}" Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
+                        <TextBlock
+                            d:Text="(Saved on next startup)"
+                            Style="{StaticResource txtItalic}"
+                            Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
                     </Border>
 
 
@@ -760,6 +823,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Fill height"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=FillHeight}" />
                     </Border>
@@ -786,7 +850,10 @@
                         Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,0">
-                        <TextBlock Style="{StaticResource txtItalic}" Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
+                        <TextBlock
+                            d:Text="(Saved on next startup)"
+                            Style="{StaticResource txtItalic}"
+                            Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
                     </Border>
 
 
@@ -799,6 +866,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Auto fit window"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=AutoFitWindow}" />
                     </Border>
@@ -825,7 +893,10 @@
                         Background="{StaticResource AltInterfaceBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,0">
-                        <TextBlock Style="{StaticResource txtItalic}" Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
+                        <TextBlock
+                            d:Text="(Saved on next startup)"
+                            Style="{StaticResource txtItalic}"
+                            Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
                     </Border>
 
 
@@ -838,6 +909,7 @@
                         BorderThickness="1,0,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Fill height"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=FillHeight}" />
                     </Border>
@@ -864,7 +936,10 @@
                         Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1,0,1,1">
-                        <TextBlock Style="{StaticResource txtItalic}" Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
+                        <TextBlock
+                            d:Text="(Saved on next startup)"
+                            Style="{StaticResource txtItalic}"
+                            Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
                     </Border>
 
                 </Grid>
@@ -872,7 +947,11 @@
 
 
 
-                <Label Margin="37,0,0,11" Content="{StaticResource ResourceKey=InterfaceConfiguration}" />
+                <Label
+                    Width="480"
+                    Margin="-4,0,0,10"
+                    d:Content="Interface configuration"
+                    Content="{StaticResource ResourceKey=InterfaceConfiguration}" />
 
                 <Grid Width="480" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
@@ -896,6 +975,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Hide/show interface"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=HideShowInterface}" />
                     </Border>
@@ -911,7 +991,10 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Alt}" />
+                            <TextBlock
+                                d:Text="Alt"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Alt}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -928,7 +1011,10 @@
                         Background="{StaticResource AltInterfaceBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,0">
-                        <TextBlock Style="{StaticResource txtItalic}" Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
+                        <TextBlock
+                            d:Text="(Saved on next startup)"
+                            Style="{StaticResource txtItalic}"
+                            Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
                     </Border>
 
 
@@ -942,6 +1028,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Change background"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=ChangeBackground}" />
                     </Border>
@@ -968,7 +1055,10 @@
                         Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,0">
-                        <TextBlock Style="{StaticResource txtItalic}" Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
+                        <TextBlock
+                            d:Text="(Saved on next startup)"
+                            Style="{StaticResource txtItalic}"
+                            Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
                     </Border>
 
 
@@ -981,6 +1071,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Toggle fullscreen"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=ToggleFullscreen}" />
                     </Border>
@@ -1011,12 +1102,18 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Alt}" />
+                            <TextBlock
+                                d:Text="Alt"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Alt}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Enter}" />
+                            <TextBlock
+                                d:Text="Enter"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Enter}" />
                         </StackPanel>
                     </Border>
 
@@ -1030,6 +1127,7 @@
                         BorderThickness="1,0,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Slideshow"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=Slideshow}" />
                     </Border>
@@ -1060,7 +1158,11 @@
                 </Grid>
 
 
-                <Label Margin="37,0,0,11" Content="{StaticResource ResourceKey=FileManagement}" />
+                <Label
+                    Width="480"
+                    Margin="-4,0,0,10"
+                    d:Content="File management"
+                    Content="{StaticResource ResourceKey=FileManagement}" />
 
 
                 <Grid Width="480" Margin="0,0,0,20">
@@ -1091,6 +1193,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Open"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=Open}" />
                     </Border>
@@ -1106,7 +1209,10 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock
+                                d:Text="Ctrl"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -1141,6 +1247,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Save"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=Save}" />
                     </Border>
@@ -1156,7 +1263,10 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock
+                                d:Text="Ctrl"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -1184,6 +1294,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Print"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=Print}" />
                     </Border>
@@ -1226,6 +1337,7 @@
                         BorderThickness="1,0,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Copy file"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=CopyFile}" />
                     </Border>
@@ -1241,7 +1353,10 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock
+                                d:Text="Ctrl"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -1263,12 +1378,18 @@
                             VerticalAlignment="Center"
                             Orientation="Horizontal"
                             ToolTip="{StaticResource ResourceKey=DragFileTo}">
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock
+                                d:Text="Ctrl"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=DragImage}" />
+                            <TextBlock
+                                d:Text="Drag image"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=DragImage}" />
                         </StackPanel>
                     </Border>
 
@@ -1282,6 +1403,7 @@
                         BorderThickness="1,0,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Cut file"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=FileCut}" />
                     </Border>
@@ -1297,7 +1419,10 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock
+                                d:Text="Ctrl"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -1325,6 +1450,7 @@
                         BorderThickness="1,0,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Delete file"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=DeleteFile}" />
                     </Border>
@@ -1339,6 +1465,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
+                            d:Text="Delete"
                             FontSize="14"
                             Text="{StaticResource ResourceKey=Delete}" />
                     </Border>
@@ -1355,12 +1482,18 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Shift}" />
+                            <TextBlock
+                                d:Text="Shift"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Shift}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock FontSize="14" Text="P" />
+                            <TextBlock
+                                d:Text="Delete"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Delete}" />
                         </StackPanel>
                     </Border>
 
@@ -1373,6 +1506,7 @@
                         BorderThickness="1,0,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Rename file"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=RenameFile}" />
                     </Border>
@@ -1409,9 +1543,9 @@
                         BorderThickness="1,0,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Show in folder"
                             FontSize="15"
-                            Text="Locate File"
-                            ToolTip="{StaticResource ResourceKey=ShowInFolder}" />
+                            Text="{StaticResource ResourceKey=ShowInFolder}" />
                     </Border>
 
                     <Border
@@ -1446,6 +1580,7 @@
                         BorderThickness="1,0,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="File properties"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=FileProperties}" />
                     </Border>
@@ -1461,7 +1596,10 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock
+                                d:Text="Ctrl"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -1482,7 +1620,11 @@
                 </Grid>
 
 
-                <Label Margin="37,0,0,11" Content="{StaticResource ResourceKey=WindowManagement}" />
+                <Label
+                    Width="480"
+                    Margin="-4,0,0,10"
+                    d:Content="Window management"
+                    Content="{StaticResource ResourceKey=WindowManagement}" />
 
                 <Grid Width="480" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
@@ -1508,6 +1650,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Info window"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=InfoWindow}" />
                     </Border>
@@ -1546,6 +1689,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Settings window"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=SettingsWindow}" />
                     </Border>
@@ -1583,6 +1727,7 @@
                         BorderThickness="1,0,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Close"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=Close}" />
                     </Border>
@@ -1597,8 +1742,9 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
+                            d:Text="Esc"
                             FontSize="14"
-                            Text="Esc"
+                            Text="{StaticResource ResourceKey=Esc}"
                             ToolTip="{StaticResource ResourceKey=EscCloseTooltip}" />
                     </Border>
 
@@ -1615,7 +1761,10 @@
                             VerticalAlignment="Center"
                             Orientation="Horizontal"
                             ToolTip="{StaticResource ResourceKey=CloseApp}">
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock
+                                d:Text="Ctrl"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -1634,6 +1783,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Move window"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=MoveWindow}" />
                     </Border>
@@ -1649,12 +1799,18 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Shift}" />
+                            <TextBlock
+                                d:Text="Shift"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Shift}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=MouseDrag}" />
+                            <TextBlock
+                                d:Text="Mouse drag"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=MouseDrag}" />
                         </StackPanel>
                     </Border>
 
@@ -1676,6 +1832,7 @@
                         BorderThickness="1,0,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Center window"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=CenterWindow}" />
                     </Border>
@@ -1690,6 +1847,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
+                            d:Text="Space"
                             FontSize="14"
                             Text="{StaticResource ResourceKey=Space}" />
                     </Border>
@@ -1712,6 +1870,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Maximize"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=Maximize}" />
                     </Border>
@@ -1727,12 +1886,18 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Shift}" />
+                            <TextBlock
+                                d:Text="Shift"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Shift}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=DoubleClick}" />
+                            <TextBlock
+                                d:Text="Double click"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=DoubleClick}" />
                         </StackPanel>
                     </Border>
 
@@ -1749,7 +1914,11 @@
                 </Grid>
 
 
-                <Label Margin="37,0,0,11" Content="{StaticResource ResourceKey=AdditionalFunctions}" />
+                <Label
+                    Width="480"
+                    Margin="-4,0,0,10"
+                    d:Content="Additional functions"
+                    Content="{StaticResource ResourceKey=AdditionalFunctions}" />
 
                 <Grid Width="480" Margin="0,0,0,16">
                     <Grid.ColumnDefinitions>
@@ -1772,6 +1941,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Open with.."
                             FontSize="15"
                             Text="{StaticResource ResourceKey=OpenWith}" />
                     </Border>
@@ -1810,6 +1980,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Reload"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=Reload}" />
                     </Border>
@@ -1825,7 +1996,10 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock
+                                d:Text="Ctrl"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -1853,6 +2027,7 @@
                         BorderThickness="1,0,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Crop"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=Crop}" />
                     </Border>
@@ -1882,7 +2057,11 @@
 
                 </Grid>
 
-                <Label Margin="37,0,0,11" Content="{StaticResource ResourceKey=ExtraMouseKeyFunctions}" />
+                <Label
+                    Width="480"
+                    Margin="-4,0,0,10"
+                    d:Content="Extra mouse key funtions"
+                    Content="{StaticResource ResourceKey=ExtraMouseKeyFunctions}" />
 
                 <Grid Width="480" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
@@ -1904,6 +2083,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Next image"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=NextImage}" />
                     </Border>
@@ -1919,12 +2099,18 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="Shift" />
+                            <TextBlock
+                                d:Text="Shift"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Shift}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=MouseWheel}" />
+                            <TextBlock
+                                d:Text="Mouse wheel"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=MouseWheel}" />
                         </StackPanel>
                     </Border>
 
@@ -1939,6 +2125,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
+                            d:Text="Mouse key forward"
                             FontSize="14"
                             Text="{StaticResource ResourceKey=MouseKeyForward}" />
                     </Border>
@@ -1954,6 +2141,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
+                            d:Text="Previous image"
                             FontSize="15"
                             Text="{StaticResource ResourceKey=PrevImage}" />
                     </Border>
@@ -1969,12 +2157,18 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Shift}" />
+                            <TextBlock
+                                d:Text="Shift"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Shift}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=MouseWheel}" />
+                            <TextBlock
+                                d:Text="Mouse wheel"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=MouseWheel}" />
                         </StackPanel>
                     </Border>
 
@@ -1989,6 +2183,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
+                            d:Text="Mouse key back"
                             FontSize="14"
                             Text="{StaticResource ResourceKey=MouseKeyBack}" />
                     </Border>
@@ -2001,12 +2196,14 @@
                     <Label
                         Margin="1,0,0,11"
                         HorizontalAlignment="Center"
+                        d:Content="Attribtution and credits"
                         Content="{StaticResource ResourceKey=AttributionAndCredits}"
                         FontSize="16" />
 
                     <Label
                         Margin="0,20,0,10"
                         HorizontalAlignment="Center"
+                        d:Content="Icons used:"
                         Content="{StaticResource ResourceKey=IconsUsed}"
                         FontSize="15" />
 
@@ -2084,6 +2281,7 @@
                                 </Hyperlink.Foreground>
                                 <TextBlock
                                     x:Name="GitHub"
+                                    d:Text="Github repository"
                                     FontSize="16"
                                     Text="{StaticResource ResourceKey=GithubRepo}"
                                     TextAlignment="Center"
