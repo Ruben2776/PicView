@@ -15,7 +15,7 @@
     <SolidColorBrush x:Key="MainColorBrush" Color="{StaticResource MainColor}" />
 
     <!--  Icon Color  -->
-    <Color x:Key="IconColor">#3b3b32</Color>
+    <Color x:Key="IconColor">#33403f</Color>
     <SolidColorBrush x:Key="IconColorBrush" Color="{StaticResource IconColor}" />
 
     <!--  Main Color faded  -->
@@ -27,7 +27,7 @@
     <SolidColorBrush x:Key="FadeColorBrush" Color="{StaticResource FadeColor}" />
 
     <!--  Background Color  -->
-    <Color x:Key="BackgroundColor">#f0ece3</Color>
+    <Color x:Key="BackgroundColor">#fff</Color>
     <SolidColorBrush x:Key="BackgroundColorBrush" Color="{StaticResource BackgroundColor}" />
 
     <!--  Window Background Color  -->
@@ -35,7 +35,7 @@
     <SolidColorBrush x:Key="WindowBackgroundColorBrush" Color="{StaticResource WindowBackgroundColor}" />
 
     <!--  Background Color Alt  -->
-    <Color x:Key="BackgroundColorAlt">#ebebeb</Color>
+    <Color x:Key="BackgroundColorAlt">#fff</Color>
     <SolidColorBrush x:Key="BackgroundColorBrushAlt" Color="{StaticResource BackgroundColorAlt}" />
 
     <!--  Background Color Fade  -->
@@ -43,7 +43,7 @@
     <SolidColorBrush x:Key="BackgroundColorBrushFade" Color="{StaticResource BackgroundColorFade}" />
 
     <!--  Background Color Fade  Subtle  -->
-    <Color x:Key="BackgroundColorFadeSubtle">#BBEAE6D9</Color>
+    <Color x:Key="BackgroundColorFadeSubtle">#BBf7f6f2</Color>
     <SolidColorBrush x:Key="BackgroundColorBrushFadeSubtle" Color="{StaticResource BackgroundColorFadeSubtle}" />
 
     <!--  Background Subtle Highlight  -->
@@ -61,12 +61,12 @@
 
     <!--  Border Brush  -->
     <Color x:Key="BorderColor">#dbd7ca</Color>
-    <Color x:Key="BorderColorAlt">#c7c3c6</Color>
+    <Color x:Key="BorderColorAlt">#ebf6f7</Color>
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
     <SolidColorBrush x:Key="BorderBrushAlt" Color="{StaticResource BorderColorAlt}" />
 
     <!--  Alt Interface  -->
-    <Color x:Key="AltInterface">#ded8cc</Color>
+    <Color x:Key="AltInterface">#edeae4</Color>
     <Color x:Key="AltInterfaceW">#A7d9cfc3</Color>
     <SolidColorBrush x:Key="AltInterfaceBrush" Color="{StaticResource AltInterface}" />
     <SolidColorBrush x:Key="AltInterfaceWBrush" Color="{StaticResource AltInterfaceW}" />
