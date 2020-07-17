@@ -61,7 +61,7 @@ namespace PicView.Editing
                 {
                     var x = UC.GetColorPicker.HexCodePresenter.Content.ToString();
                     Clipboard.SetText(x);
-                    Tooltip.ShowTooltipMessage($"Copied {x}"); // TODO add translation
+                    Tooltip.ShowTooltipMessage(x + " " + Application.Current.Resources["AddedToClipboard"]); 
                 }
 
                 Fields.TheMainWindow.topLayer.Children.Remove(UC.GetColorPicker);

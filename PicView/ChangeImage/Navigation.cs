@@ -94,13 +94,13 @@ namespace PicView.ChangeImage
                     var recovery = await RecoverFailedArchiveAsync().ConfigureAwait(true);
                     if (!recovery)
                     {
-                        ShowTooltipMessage("Archive could not be processed"); // TODO add to translation
+                        ShowTooltipMessage(Application.Current.Resources["Loading"]);
                         Reload(true);
                         return;
                     }
                     else
                     {
-                        TheMainWindow.TitleText.Text = "Unzipping..."; // TODO add translation
+                        TheMainWindow.TitleText.Text = Application.Current.Resources["Unzipping"] as string;
                         TheMainWindow.TitleText.ToolTip = TheMainWindow.TitleText.Text;
                     }
                     TheMainWindow.Focus();
@@ -119,7 +119,9 @@ namespace PicView.ChangeImage
 
 #if DEBUG
             if (FreshStartup)
+            {
                 Trace.WriteLine("Pic(string path) entering Pic(int x)");
+            }
 #endif
 
             // Navigate to picture using obtained index
@@ -345,7 +347,7 @@ namespace PicView.ChangeImage
             FitImage(pic.PixelWidth, pic.PixelHeight);
             CloseToolTipMessage();
 
-            SetTitleString(pic.PixelWidth, pic.PixelHeight, "Base64 image"); // TODO add to translation
+            SetTitleString(pic.PixelWidth, pic.PixelHeight, Application.Current.Resources["Base64Image"] as string);
 
             Taskbar.NoProgress();
 

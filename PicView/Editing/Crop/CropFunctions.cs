@@ -31,7 +31,7 @@ namespace PicView.Editing.Crop
             GetCropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? xWidth : xHeight;
             GetCropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? xHeight : xWidth;
 
-            TheMainWindow.TitleText.Text = "Press Esc to close, Enter to save"; // TODO add to translation
+            TheMainWindow.TitleText.Text = Application.Current.Resources["CropMessage"] as string;
 
             if (!TheMainWindow.ParentContainer.Children.Contains(GetCropppingTool))
             {
@@ -69,7 +69,7 @@ namespace PicView.Editing.Crop
             var Savedlg = new SaveFileDialog()
             {
                 Filter = FilterFiles,
-                Title = "Save image - PicView",
+                Title = $"{Application.Current.Resources["SaveImage"]} - {AppName}",
                 FileName = fileName
             };
 
@@ -106,9 +106,7 @@ namespace PicView.Editing.Crop
             {
                 if (!success)
                 {
-                    Tooltip.ShowTooltipMessage(
-                        $"An error occured while saving {fileName} to {Savedlg.FileName}");
-                    // TODO add to translation
+                    Tooltip.ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
                 }
 
                 TheMainWindow.ParentContainer.Children.Remove(GetCropppingTool);

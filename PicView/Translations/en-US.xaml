@@ -8,6 +8,10 @@
     <system:String x:Key="NoImage">No image loaded</system:String>
     <system:String x:Key="Files">files</system:String>
     <system:String x:Key="File">file</system:String>
+    <system:String x:Key="PercentComplete">% complete...</system:String>
+    <system:String x:Key="CropMessage">Press Esc to close, Enter to save</system:String>
+    <system:String x:Key="ClipboardImage">Clipboard image</system:String>
+    <system:String x:Key="Base64Image">Base64 image</system:String>
 
     <!--  Generic Window  -->
     <system:String x:Key="Close">Close</system:String>
@@ -80,6 +84,7 @@
     <system:String x:Key="OpenFileDialog">Open file dialog</system:String>
     <system:String x:Key="ShowInFolder">Show in folder</system:String>
     <system:String x:Key="Save">Save</system:String>
+    <system:String x:Key="SaveImage">Save image</system:String>
     <system:String x:Key="Print">Print</system:String>
     <system:String x:Key="RecentFiles">Recent files</system:String>
     <system:String x:Key="FileProperties">File properties</system:String>
@@ -109,15 +114,25 @@
 
     <!--  Copy related  -->
     <system:String x:Key="Copy">Copy</system:String>
+    <system:String x:Key="AddedToClipboard">added to clipboard</system:String>
+
+    <!--  Copy file  -->
     <system:String x:Key="CopyFile">Copy file</system:String>
     <system:String x:Key="FileCopy">File added to clipboard</system:String>
     <system:String x:Key="FileCopyPath">Copy file path</system:String>
     <system:String x:Key="FileCopyPathMessage">File path added to clipboard</system:String>
+    <system:String x:Key="FileCutMessage">File added to move clipboard</system:String>
+
+    <!--  Copy image  -->
     <system:String x:Key="CopyImage">Copy image</system:String>
+    <system:String x:Key="CopiedImage">Copied image to clipboard</system:String>
     <system:String x:Key="CopyImageTooltip">Copy as Windows clipboard image</system:String>
-    <system:String x:Key="FileCut">Cut file</system:String>
-    <system:String x:Key="FileCutMessage">Image added to move clipboard</system:String>
+
+    <!--  Paste  -->
     <system:String x:Key="FilePaste">Paste file</system:String>
+
+    <!--  Cut  -->
+    <system:String x:Key="FileCut">Cut file</system:String>
 
     <!--  Image info  -->
     <system:String x:Key="Image">Image</system:String>
@@ -158,9 +173,10 @@
     <system:String x:Key="Down">Down</system:String>
 
 
-
     <!--  Error messages  -->
     <system:String x:Key="SavingFileFailed">Saving file failed</system:String>
+    <system:String x:Key="UnexpectedError">An unknown error occured</system:String>
+    <system:String x:Key="NoImages">NoImages</system:String>
 
     <!--  Drag and drop  -->
     <system:String x:Key="DragOverString">Drop to load image</system:String>
@@ -176,7 +192,10 @@
     <system:String x:Key="Flip">Flip horizontally</system:String>
     <system:String x:Key="Unflip">Unflip</system:String>
 
-
+    <!--  Archives  -->
+    <system:String x:Key="Unzipping">Unzipping...</system:String>
+    <system:String x:Key="BadArchive">Archive could not be processed</system:String>
+    <system:String x:Key="PasswordArchive">Password protected archive not supported</system:String>
 
 
 </ResourceDictionary>

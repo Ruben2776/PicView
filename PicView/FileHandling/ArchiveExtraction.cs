@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.FileLists;
@@ -175,7 +176,7 @@ namespace PicView.FileHandling
                 return true;
             }
 
-            TheMainWindow.TitleText.Text = "Unzipping..."; // TODO add to translation
+            TheMainWindow.TitleText.Text = Application.Current.Resources["Unzipping"] as string;
             TheMainWindow.TitleText.ToolTip = TheMainWindow.TitleText.Text;
             await Task.Delay(100).ConfigureAwait(true);
 
@@ -216,7 +217,7 @@ namespace PicView.FileHandling
 #if DEBUG
                                 Trace.WriteLine("Process killed");
 #endif
-                                ShowTooltipMessage("Password protected archive not supported"); // TODO add to translation
+                                ShowTooltipMessage(Application.Current.Resources["PasswordArchive"]);
                                 Error_Handling.Reload(true);
                                 getProcesses[0].Kill();
                                 return false;

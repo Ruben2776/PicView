@@ -61,7 +61,7 @@ namespace PicView.FileHandling
         {
             var paths = new System.Collections.Specialized.StringCollection { path };
             Clipboard.SetFileDropList(paths);
-            ShowTooltipMessage(Application.Current.Resources["FileCopy"] as string);
+            ShowTooltipMessage(Application.Current.Resources["FileCopy"]);
         }
 
         internal static void CopyBitmap()
@@ -83,7 +83,7 @@ namespace PicView.FileHandling
                 return;
             }
 
-            ShowTooltipMessage("Copied Image to clipboard"); // TODO add to translation
+            ShowTooltipMessage(Application.Current.Resources["FileCutMessage"]);
         }
 
         /// <summary>
@@ -111,13 +111,11 @@ namespace PicView.FileHandling
                         }
                         else
                         {
-                            //await Pic(x).ConfigureAwait(false);
                             Pic(x);
                         }
                     }
                     else
                     {
-                        //await Pic(x).ConfigureAwait(false);
                         Pic(x);
                     }
 
@@ -138,7 +136,7 @@ namespace PicView.FileHandling
             // Clipboard Image
             if (Clipboard.ContainsImage())
             {
-                Pic(Clipboard.GetImage(), "Clipboard Image"); // TODO add to translation
+                Pic(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]);
                 return;
             }
 
@@ -167,7 +165,6 @@ namespace PicView.FileHandling
 
             if (File.Exists(s))
             {
-                //await Pic(s).ConfigureAwait(false);
                 Pic(s);
             }
             else if (Directory.Exists(s))
@@ -194,10 +191,6 @@ namespace PicView.FileHandling
             else if (Uri.IsWellFormedUriString(s, UriKind.Absolute)) // Check if from web
             {
                 LoadFromWeb.PicWeb(s);
-            }
-            else
-            {
-                ShowTooltipMessage("An error occured while trying to paste file"); // TODO add to translation
             }
         }
 

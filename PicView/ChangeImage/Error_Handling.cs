@@ -41,7 +41,7 @@ namespace PicView.ChangeImage
 
             if (Pics.Count < 0)
             {
-                ShowTooltipMessage("Unexpected error", true, TimeSpan.FromSeconds(3));
+                ShowTooltipMessage(Application.Current.Resources["UnexpectedError"], true, TimeSpan.FromSeconds(3));
                 Unload();
                 return null;
             }
@@ -89,7 +89,7 @@ namespace PicView.ChangeImage
 
             if (file == null)
             {
-                ShowTooltipMessage("Unexpected error", true, TimeSpan.FromSeconds(3));
+                ShowTooltipMessage(Application.Current.Resources["UnexpectedError"], true, TimeSpan.FromSeconds(3));
                 Unload();
                 return null;
             }
@@ -112,7 +112,7 @@ namespace PicView.ChangeImage
             // Check if there's still images in folder
             if (Pics.Count < 0)
             {
-                ShowTooltipMessage("No images in folder", true, TimeSpan.FromSeconds(3));
+                ShowTooltipMessage(Application.Current.Resources["No images"], true, TimeSpan.FromSeconds(3));
                 Unload();
 
                 return null;
@@ -126,11 +126,6 @@ namespace PicView.ChangeImage
             else
             {
                 FolderIndex = FolderIndex == Pics.Count - 1 ? Pics.Count - 2 : FolderIndex;
-            }
-
-            if (File.Exists(file))
-            {
-                ShowTooltipMessage("File not found or unable to render, " + file, false, TimeSpan.FromSeconds(2.5));
             }
 
             // Repeat process if the next image was not found
@@ -222,7 +217,7 @@ namespace PicView.ChangeImage
             else
             {
                 Unload();
-                ShowTooltipMessage("Unknown error occured"); // TODO add to translation
+                ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
             }
         }
 

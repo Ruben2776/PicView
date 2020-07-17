@@ -34,7 +34,7 @@ namespace PicView.ImageHandling
 #if DEBUG
                     catch (MagickException e)
                     {
-                        Trace.WriteLine("ase64StringToBitmap " + base64String + " null, \n" + e.Message);
+                        Trace.WriteLine("Base64StringToBitmap " + base64String + " null, \n" + e.Message);
                         return null;
                     }
 #else
@@ -69,7 +69,7 @@ namespace PicView.ImageHandling
             if (!string.IsNullOrWhiteSpace(base64))
             {
                 Clipboard.SetText(base64);
-                Tooltip.ShowTooltipMessage("Converted to base 64");
+                Tooltip.ShowTooltipMessage("Converted to base 64"); // TODO add to translation
             }
         }
     }

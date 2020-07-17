@@ -77,8 +77,8 @@ namespace PicView.ChangeImage
                 client.DownloadProgressChanged += (sender, e) =>
                 TheMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                 {
-                    // TODO add to translation
-                    TheMainWindow.Title = TheMainWindow.TitleText.Text = e.BytesReceived + "/" + e.TotalBytesToReceive + ". " + e.ProgressPercentage + "% complete...";
+                    TheMainWindow.Title = TheMainWindow.TitleText.Text =
+                        $"{e.BytesReceived} / {e.TotalBytesToReceive} {e.ProgressPercentage} {Application.Current.Resources["PercentComplete"]}";
                     TheMainWindow.TitleText.ToolTip = TheMainWindow.Title;
                 }));
                 client.DownloadDataCompleted += (sender, e) =>
