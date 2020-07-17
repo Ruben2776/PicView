@@ -89,7 +89,8 @@ namespace PicView.UI
         /// <param name="show"></param>
         internal static void ShowNavigation(bool show)
         {
-            if (GetClickArrowLeft == null && GetClickArrowRight == null && Getx2 == null && GetMinus == null)
+            if (GetClickArrowLeft == null || GetClickArrowRight == null 
+                || Getx2 == null || GetMinus == null || GetRestorebutton == null)
             {
                 return;
             }
@@ -99,6 +100,7 @@ namespace PicView.UI
                 GetClickArrowLeft.Visibility =
                 GetClickArrowRight.Visibility =
                 Getx2.Visibility =
+                GetRestorebutton.Visibility =
                 GetMinus.Visibility = Visibility.Visible;
             }
             else
@@ -106,25 +108,8 @@ namespace PicView.UI
                 GetClickArrowLeft.Visibility =
                 GetClickArrowRight.Visibility =
                 Getx2.Visibility =
+                GetRestorebutton.Visibility =
                 GetMinus.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        internal static void ShowRestorebutton(bool show)
-        {
-            if (GetRestorebutton == null)
-            {
-                return;
-            }
-
-            if (show)
-            {
-                GetRestorebutton.Visibility = Visibility.Visible;
-
-            }
-            else
-            {
-                GetRestorebutton.Visibility = Visibility.Collapsed;
             }
         }
 

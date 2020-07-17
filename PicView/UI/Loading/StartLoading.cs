@@ -189,6 +189,7 @@ namespace PicView.UI.Loading
                 GetClickArrowRight.Opacity =
                 Getx2.Opacity =
                 GetMinus.Opacity =
+                GetRestorebutton.Opacity =
                 GetGalleryShortcut.Opacity =
                 0;
 
@@ -197,6 +198,7 @@ namespace PicView.UI.Loading
                 Getx2.Visibility =
                 GetMinus.Visibility =
                 GetGalleryShortcut.Visibility =
+                GetRestorebutton.Visibility =
                 Visibility.Visible;
             }
 
