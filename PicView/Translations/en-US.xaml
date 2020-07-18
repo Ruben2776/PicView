@@ -16,6 +16,7 @@
     <!--  Generic Window  -->
     <system:String x:Key="Close">Close</system:String>
     <system:String x:Key="Maximize">Maximize</system:String>
+    <system:String x:Key="RestoreDown">Restore Down</system:String>
     <system:String x:Key="Minimize">Minimize</system:String>
     <system:String x:Key="Fullscreen">Fullscreen</system:String>
     <system:String x:Key="NewWindow">New window</system:String>
@@ -222,6 +223,17 @@
 
     <!--  Misc messages  -->
     <system:String x:Key="ConvertedToBase64">Converted to base 64</system:String>
+    <system:String x:Key="LoopingEnabled">Looping enabled</system:String>
+    <system:String x:Key="LoopingDisabled">Looping disabled</system:String>
+
+    <!--  Button hover tooltips  -->
+    <system:String x:Key="ToggleBackgroundColor">Toggle background color</system:String>
+    <system:String x:Key="ShowImageGallery">Show image gallery</system:String>
+    <system:String x:Key="GoToImageAtSpecifiedIndex">Go to image at specified index</system:String>
+    <system:String x:Key="PasteImageFromClipholder">Paste image from clipholder</system:String>
+    <system:String x:Key="SendCurrentImageToRecycleBin">Send current image to recycle bin</system:String>
+    <system:String x:Key="StartSlideshow">Start slideshow</system:String>
+    <system:String x:Key="CloseGallery">Close gallery</system:String>
 
 
 </ResourceDictionary>

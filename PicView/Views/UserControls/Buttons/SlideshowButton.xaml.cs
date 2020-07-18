@@ -1,4 +1,5 @@
 ﻿using PicView.FileHandling;
+using System.Windows;
 using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
@@ -17,7 +18,9 @@ namespace PicView.UILogic.UserControls
                 TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(SlideshowButtonBrush, false);
                 TheButton.Click += delegate { UC.Close_UserControls(); Slideshow.StartSlideshow(); };
 
-                ToolTip = "Start Slideshow [F5]"; // TODO add translation
+                var s = Application.Current.Resources["StartSlideshow"] as string;
+                s += " [F5]";
+                ToolTip = s;
             };
         }
     }

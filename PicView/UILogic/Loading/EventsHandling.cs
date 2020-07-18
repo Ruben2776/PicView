@@ -99,25 +99,17 @@ namespace PicView.UILogic.Loading
 
             // ClickArrows
             GetClickArrowLeft.MouseLeftButtonDown += (s, x) => PicButton(true, false);
-            GetClickArrowLeft.MouseEnter += Interface_MouseEnter_Negative;
 
             GetClickArrowRight.MouseLeftButtonDown += (s, x) => PicButton(true, true);
-            GetClickArrowRight.MouseEnter += Interface_MouseEnter_Negative;
 
             // x2
             Getx2.MouseLeftButtonDown += (x, xx) => SystemCommands.CloseWindow(TheMainWindow);
-            Getx2.MouseEnter += Interface_MouseEnter_Negative;
 
             // Minus
             GetMinus.MouseLeftButtonDown += (s, x) => SystemCommands.MinimizeWindow(TheMainWindow);
-            GetMinus.MouseEnter += Interface_MouseEnter_Negative;
-
-            // Restorebutton
-            GetRestorebutton.MouseLeftButtonDown += delegate { Fullscreen_Restore(); };
 
             // GalleryShortcut
             GetGalleryShortcut.MouseLeftButtonDown += (s, x) => GalleryToggle.Toggle();
-            GetGalleryShortcut.MouseEnter += Interface_MouseEnter_Negative;
 
             // Bar
             TheMainWindow.TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;

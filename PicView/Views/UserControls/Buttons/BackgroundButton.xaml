@@ -1,10 +1,9 @@
 ﻿<UserControl
     x:Class="PicView.UILogic.UserControls.BackGroundButton"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Button
-        x:Name="TheButton"
-        BorderThickness="0">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    ToolTip="{StaticResource ToggleBackgroundColor}">
+    <Button x:Name="TheButton" BorderThickness="0">
         <Button.Background>
             <SolidColorBrush x:Name="bgBrush" Color="{StaticResource BackgroundColorAlt}" />
         </Button.Background>

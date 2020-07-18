@@ -1,4 +1,5 @@
 ﻿using PicView.FileHandling;
+using System.Windows;
 using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
@@ -16,8 +17,6 @@ namespace PicView.UILogic.UserControls
                 TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(PasteButtonBrush, true);
                 TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(PasteButtonBrush, false);
                 TheButton.Click += delegate { Copy_Paste.Paste(); };
-
-                ToolTip = "Paste image from clipholder"; // TODO add translation
             };
         }
     }

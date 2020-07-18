@@ -1,5 +1,4 @@
 ﻿using System.Windows.Controls;
-using System.Windows.Media;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
 namespace PicView.UILogic.UserControls
@@ -12,12 +11,26 @@ namespace PicView.UILogic.UserControls
 
             Loaded += delegate
             {
-                TheButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(RotateButtonBrush);
-                TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(RotateButtonBrush, true);
-                TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(RotateButtonBrush, false);
-                TheButton.Click += delegate { UC.Close_UserControls(); TransformImage.Rotation.Rotate(true); };
+                TheButton.PreviewMouseLeftButtonDown += delegate
+                {
+                    PreviewMouseButtonDownAnim(RotateButtonBrush);
+                };
 
-                ToolTip = "Rotate right"; // TODO add translation
+                TheButton.MouseEnter += delegate
+                {
+                    ButtonMouseOverAnim(RotateButtonBrush, true);
+                };
+
+                TheButton.MouseLeave += delegate
+                {
+                    ButtonMouseLeaveAnimBgColor(RotateButtonBrush, false);
+                };
+
+                TheButton.Click += delegate 
+                {
+                    TransformImage.Rotation.Rotate(true);
+                };
+
             };
         }
     }

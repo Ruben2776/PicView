@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
 namespace PicView.UILogic.UserControls
@@ -16,7 +17,7 @@ namespace PicView.UILogic.UserControls
                 MouseLeave += (s, x) => ButtonMouseLeaveAnim(CloseButtonBrush, true);
 
 
-                ToolTip = "Close"; // TODO add translation
+                ToolTip = Application.Current.Resources["Close"];
             };
         }
     }

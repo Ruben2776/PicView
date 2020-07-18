@@ -198,7 +198,6 @@
                             BorderThickness="1,1,1,0">
                             <TextBlock
                                 Margin="10,3,0,3"
-                                d:Text="First Image"
                                 FontSize="15"
                                 Text="{StaticResource ResourceKey=FirstImage}" />
                         </Border>

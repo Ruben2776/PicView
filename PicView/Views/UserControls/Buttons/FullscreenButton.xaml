@@ -11,7 +11,7 @@
         DockPanel.Dock="Right"
         FocusVisualStyle="{x:Null}"
         Focusable="False"
-        ToolTip="Fullscreen">
+        ToolTip="{StaticResource Fullscreen}">
         <Button.Background>
             <SolidColorBrush x:Name="FullscreenButtonBrush" />
         </Button.Background>

@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
 namespace PicView.UILogic.UserControls
@@ -15,8 +16,6 @@ namespace PicView.UILogic.UserControls
                 TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(bgBrush, true);
                 TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(bgBrush, false);
                 TheButton.Click += ConfigColors.ChangeBackground;
-
-                ToolTip = "Toggle background color"; // TODO add translation
             };
         }
     }

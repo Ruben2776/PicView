@@ -29,8 +29,6 @@ namespace PicView.UILogic.UserControls
                     GoToPicBox.CaretBrush = new SolidColorBrush(ConfigColors.mainColor);
                 };
                 GoToPicBox.PreviewKeyDown += GoToPicPreviewKeys;
-
-                ToolTip = "Go to image at specified index"; // TODO add translation
             };
         }
 

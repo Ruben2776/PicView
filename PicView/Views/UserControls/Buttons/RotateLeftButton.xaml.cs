@@ -11,12 +11,23 @@ namespace PicView.UILogic.UserControls
 
             Loaded += delegate
             {
-                TheButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(RotateButtonBrush);
-                TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(RotateButtonBrush, true);
-                TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(RotateButtonBrush, false);
-                TheButton.Click += delegate { TransformImage.Rotation.Rotate(false); }; // TODO move cursor if necessary
-
-                ToolTip = "Rotate left"; // TODO add translation
+                TheButton.PreviewMouseLeftButtonDown += delegate
+                {
+                    PreviewMouseButtonDownAnim(RotateButtonBrush);
+                };
+                TheButton.MouseEnter += delegate
+                {
+                    ButtonMouseOverAnim(RotateButtonBrush, true);
+                };
+                TheButton.MouseLeave += delegate
+                {
+                    ButtonMouseLeaveAnimBgColor(RotateButtonBrush, false);
+                };
+                TheButton.Click += delegate 
+                {
+                    TransformImage.Rotation.Rotate(false);
+                    // TODO move cursor if necessary
+                }; 
             };
         }
     }

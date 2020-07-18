@@ -1,7 +1,8 @@
 ﻿<UserControl
     x:Class="PicView.UILogic.UserControls.PasteButton"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    ToolTip="{StaticResource PasteImageFromClipholder}">
     <Button
         x:Name="TheButton"
         Width="51"

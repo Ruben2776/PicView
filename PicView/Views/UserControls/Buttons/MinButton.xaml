@@ -8,7 +8,7 @@
         Height="35"
         FocusVisualStyle="{x:Null}"
         Focusable="False"
-        ToolTip="Minimize">
+        ToolTip="{StaticResource Minimize}">
         <Button.Background>
             <SolidColorBrush x:Name="MinButtonBrush" />
         </Button.Background>

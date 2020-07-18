@@ -1,4 +1,5 @@
 ﻿using PicView.UILogic.Animations;
+using PicView.UILogic.Sizing;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -45,8 +46,18 @@ namespace PicView.UILogic.UserControls
                 AnimationHelper.MouseOverColorEvent(alpha.A, alpha.R, alpha.G, alpha.B, BorderBrushKey, true);
             };
 
+            MouseLeftButtonDown += delegate 
+            { 
+                WindowLogic.Fullscreen_Restore();
+            };
+
             MouseEnter += (sender, e) =>
             {
+
+                ToolTip = Properties.Settings.Default.Maximized ?
+                    Application.Current.Resources["RestoreDown"] :
+                    Application.Current.Resources["Maximize"];
+
                 if (ccAnim == null)
                 {
                     ccAnim = new ColorAnimation
