@@ -25,7 +25,7 @@
                                 MaxWidth="{TemplateBinding MaxWidth}"
                                 MaxHeight="{TemplateBinding MaxHeight}"
                                 Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="Left"
+                                HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Foreground="{TemplateBinding Foreground}">
                                 <ContentPresenter />
@@ -159,7 +159,7 @@
         <Setter Property="Margin" Value="0" />
         <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Be Vietnam SemiBold" />
+        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Roboto Medium" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Effect">
