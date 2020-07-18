@@ -1,6 +1,7 @@
 ﻿using PicView.Library;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -166,7 +167,7 @@ namespace PicView.FileHandling
             }
 
             // Add if not exist
-            for (int i = fileNames.Length - 1; i >= 0; i--)
+            for (int i = 0; i < fileNames.Length; i++)
             {
                 // Don't add the same item more than once
                 var item = fileNames[i];
@@ -175,13 +176,14 @@ namespace PicView.FileHandling
                     continue;
                 }
 
-                var cmIcon = new System.Windows.Shapes.Path
+                var cmIcon = new TextBlock
                 {
-                    Data = Geometry.Parse(SVGiconCamera),
-                    Stretch = Stretch.Fill,
+                    Text = (i + 1).ToString(CultureInfo.CurrentCulture),
+                    FontFamily = new FontFamily("/PicView;component/Library/Resources/fonts/#Tex Gyre Heros"),
+                    FontSize = 12,
                     Width = 12,
                     Height = 12,
-                    Fill = (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"]
+                    Foreground = (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"]
                 };
 
                 var header = Path.GetFileNameWithoutExtension(item);
@@ -190,11 +192,11 @@ namespace PicView.FileHandling
                 var menuItem = new MenuItem()
                 {
                     Header = header,
-                    ToolTip = item
+                    ToolTip = item,
+                    Icon = cmIcon
                 };
                 // Set tooltip as argument to avoid subscribing and unsubscribing to events
                 menuItem.Click += delegate { Pic(menuItem.ToolTip.ToString()); };
-                menuItem.Icon = cmIcon;
                 var ext = Path.GetExtension(item);
                 var ext5 = !string.IsNullOrWhiteSpace(ext) && ext.Length >= 5 ? ext.Substring(0, 5) : ext;
                 menuItem.InputGestureText = ext5;
