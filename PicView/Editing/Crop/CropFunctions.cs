@@ -15,9 +15,9 @@ using static PicView.UILogic.UserControls.UC;
 
 namespace PicView.Editing.Crop
 {
-    internal class CropFunctions
+    internal static class CropFunctions
     {
-        public static CropService CropService { get; private set; }
+        internal static CropService CropService { get; private set; }
 
         internal static void StartCrop()
         {
@@ -95,7 +95,7 @@ namespace PicView.Editing.Crop
             var fileName = Pics.Count == 0 ? Path.GetRandomFileName()
                 : Path.GetFileName(Pics[FolderIndex]);
 
-            var Savedlg = new SaveFileDialog()
+            var Savedlg = new SaveFileDialog
             {
                 Filter = FilterFiles,
                 Title = $"{Application.Current.Resources["SaveImage"]} - {AppName}",

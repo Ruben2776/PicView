@@ -24,7 +24,7 @@ namespace PicView.Shortcuts
 {
     internal static class MainShortcuts
     {
-        internal static async void MainWindow_KeysDown(object sender, KeyEventArgs e)
+        internal static void MainWindow_KeysDown(object sender, KeyEventArgs e)
         {
             // Don't allow keys when typing in text
             if (TheMainWindow.TitleText.IsKeyboardFocusWithin) { return; }

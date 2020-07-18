@@ -57,12 +57,12 @@ namespace PicView.ChangeImage
                 {
                     Add(Pics[i]);
                 }
+#if DEBUG
                 else
                 {
-#if DEBUG
                     Trace.WriteLine("Skipped at index " + i);
-#endif
                 }
+#endif
             }
             else
             {
@@ -72,37 +72,6 @@ namespace PicView.ChangeImage
                 Trace.WriteLine($"Preloader removed: {Pics[i]} from Pics, index {i}");
 #endif
             }
-        }
-
-        internal static void Add(BitmapSource bmp, string key)
-        {
-            if (string.IsNullOrWhiteSpace(key))
-            {
-#if DEBUG
-                Trace.WriteLine("Preloader.Add key is null");
-#endif
-                return;
-            }
-
-            if (Contains(key))
-            {
-#if DEBUG
-                Trace.WriteLine("Preloader.Add already contains " + key);
-#endif
-                return;
-            }
-#if DEBUG
-            if (Sources.TryAdd(key, bmp))
-            {
-                Trace.WriteLine("Manually added = " + key + " to Preloader, index " + Pics.IndexOf(key));
-            }
-            else
-            {
-                Trace.WriteLine("Preloader failed to add = " + key + " , index " + Pics.IndexOf(key));
-            }
-#else
-            Sources.TryAdd(key, bmp);
-#endif
         }
 
         /// <summary>

@@ -17,13 +17,13 @@ namespace PicView.Editing.Crop.Tools
             PreviewMouseLeftButtonUp += ThumbCrop_PreviewMouseLeftButtonUp;
         }
 
-        private void ThumbCrop_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private static void ThumbCrop_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             ThumbCrop thumb = sender as ThumbCrop;
             thumb?.ReleaseMouseCapture();
         }
 
-        private void ThumbCrop_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private static void ThumbCrop_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             ThumbCrop thumb = sender as ThumbCrop;
             thumb?.CaptureMouse();
