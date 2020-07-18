@@ -194,16 +194,17 @@ namespace PicView.UI.Sizing
                 var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(xWidth, TheMainWindow.MinWidth) : Math.Max(xHeight, TheMainWindow.MinHeight);
                 TheMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
 
-                if (!Properties.Settings.Default.Fullscreen)
+                if (Properties.Settings.Default.PicGallery == 2 && xWidth >= monitorWidth - (picGalleryItem_Size + 200))
                 {
-                    if (Properties.Settings.Default.PicGallery == 2 && xWidth >= monitorWidth - (picGalleryItem_Size + 200))
-                    {
-                        // Offset window to not overlap gallery
-                        TheMainWindow.Left = ((MonitorInfo.WorkArea.Width - picGalleryItem_Size - (TheMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
-                                          + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
-                        TheMainWindow.Top = ((MonitorInfo.WorkArea.Height
-                                           - (TheMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
-                    }
+                    // Offset window to not overlap gallery
+                    TheMainWindow.Left = ((MonitorInfo.WorkArea.Width - picGalleryItem_Size - (TheMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
+                                      + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
+                    TheMainWindow.Top = ((MonitorInfo.WorkArea.Height
+                                       - (TheMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
+                }
+                else
+                {
+                    CenterWindowOnScreen();
                 }
             }
             else

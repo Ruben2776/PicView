@@ -288,8 +288,9 @@ namespace PicView.UI.Sizing
         internal static void CenterWindowOnScreen()
         {
             //move to the centre
-            TheMainWindow.Left = (((MonitorInfo.WorkArea.Width - (TheMainWindow.Width * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling));
             TheMainWindow.Top = ((MonitorInfo.WorkArea.Height - (TheMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
+            TheMainWindow.Left = (MonitorInfo.WorkArea.Width - TheMainWindow.ActualWidth) / 2 + MonitorInfo.WorkArea.Left;
+            TheMainWindow.Top = (MonitorInfo.WorkArea.Height - TheMainWindow.ActualHeight) / 2 + MonitorInfo.WorkArea.Top;
         }
 
         #endregion Window Functions

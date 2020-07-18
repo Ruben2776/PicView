@@ -133,6 +133,7 @@ namespace PicView.UI.DragAndDrop
         /// <param name="e"></param>
         internal static void Image_Drop(object sender, DragEventArgs e)
         {
+            // Load dropped URL
             if (e.Data.GetData(DataFormats.Html) != null)
             {
                 MemoryStream data = (MemoryStream)e.Data.GetData("text/x-moz-url");
@@ -142,6 +143,7 @@ namespace PicView.UI.DragAndDrop
                     string[] parts = dataStr.Split((char)10);
 
                     Pic(parts[0]);
+                    TheMainWindow.Activate();
                     return;
                 }
             }
@@ -161,6 +163,7 @@ namespace PicView.UI.DragAndDrop
                     if (Directory.GetFiles(files[0]).Length > 0)
                     {
                         PicFolder(files[0]);
+                        TheMainWindow.Activate();
                     }
                     return;
                 }
@@ -184,6 +187,8 @@ namespace PicView.UI.DragAndDrop
 
             // Don't show drop message any longer
             CloseToolTipMessage();
+
+            TheMainWindow.Activate();
 
             // Start multiple clients if user drags multiple files
             // TODO no longer working after converting to .NET Core...

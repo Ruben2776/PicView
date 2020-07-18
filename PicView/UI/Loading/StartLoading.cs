@@ -52,14 +52,12 @@ namespace PicView.UI.Loading
 #endif
             ConfigColors.UpdateColor();
 
-            #region Add dictionaries 
+            #region Add dictionaries
 
-            Application.Current.Resources.MergedDictionaries.Add(
-                new ResourceDictionary
-                {
-                    Source = new Uri(@"/PicView;component/Translations/en-US.xaml", UriKind.Relative)
-                }
-            );
+            Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
+            {
+                Source = new Uri(@"/PicView;component/Translations/en-US.xaml", UriKind.Relative)
+            };
 
             Application.Current.Resources.MergedDictionaries.Add(
                 new ResourceDictionary
@@ -82,8 +80,7 @@ namespace PicView.UI.Loading
                 }
             );
 
-            #endregion
-            
+            #endregion Add dictionaries
 
             MonitorInfo = MonitorSize.GetMonitorSize();
             AutoFitWindow = Properties.Settings.Default.AutoFitWindow;

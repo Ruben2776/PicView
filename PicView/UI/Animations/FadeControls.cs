@@ -70,7 +70,9 @@ namespace PicView.UI.Animations
 
                 var pos = Mouse.GetPosition(TheMainWindow.ParentContainer);
 
-                if (pos.X < 400 && GetClickArrowLeft.Opacity != 1)
+                /// uncomment for position Tooltip.ShowTooltipMessage($"x = {pos.X} Y = {pos.Y}");
+
+                if (pos.X < 230 && GetClickArrowLeft.Opacity != 1)
                 {
                     AnimationHelper.Fade(GetClickArrowLeft, 1, timespan);
                 }
@@ -79,7 +81,7 @@ namespace PicView.UI.Animations
                     AnimationHelper.Fade(GetClickArrowLeft, 0, timespan);
                 }
 
-                if (pos.X > 850 && GetClickArrowRight.Opacity != 1)
+                if (pos.X < 1050 && pos.X > 400 && GetClickArrowRight.Opacity != 1)
                 {
                     AnimationHelper.Fade(GetClickArrowRight, 1, timespan);
                 }

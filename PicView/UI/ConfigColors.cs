@@ -131,7 +131,7 @@ namespace PicView.UI
 
         internal static void ChangeToLightTheme()
         {
-            Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
+            Application.Current.Resources.MergedDictionaries[1] = new ResourceDictionary
             {
                 Source = new Uri(@"/PicView;component/UI/Styles/ColorThemes/Light.xaml", UriKind.Relative)
             };
