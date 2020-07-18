@@ -345,7 +345,7 @@
     <Page Update="Translations\da-DK.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="UI\Styles\ColorThemes\Light.xaml">
+    <Page Update="Styles\ColorThemes\Light.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UI\UserControls\Buttons\GoToPicButton.xaml">
