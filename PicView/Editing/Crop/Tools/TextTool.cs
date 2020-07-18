@@ -69,7 +69,7 @@ namespace PicView.Editing.Crop.Tools
 
             Canvas.SetLeft(Border, _cropTool.TopLeftX + OffsetLeft);
             Canvas.SetTop(Border, calculateTop);
-            TextBlock.Text = $"Width: {_cropTool.Width}, Height: {_cropTool.Height}";
+            TextBlock.Text = $"{Application.Current.Resources["Width"]} : {_cropTool.Width}, {Application.Current.Resources["Height"]}: {_cropTool.Height}";
         }
     }
 }

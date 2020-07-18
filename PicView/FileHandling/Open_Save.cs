@@ -60,7 +60,7 @@ namespace PicView.FileHandling
             var dlg = new OpenFileDialog()
             {
                 Filter = FilterFiles,
-                Title = "Open image - PicView" // TODO add to translation
+                Title = $"{Application.Current.Resources["OpenFileDialog"]} - {AppName}" 
             };
             if (dlg.ShowDialog().Value)
             {

@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Windows;
 using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileFunctions;
@@ -88,7 +89,7 @@ namespace PicView.FileHandling
         {
             if (!TryDeleteFile(file, Recyclebin))
             {
-                ShowTooltipMessage("An error occured when deleting \n" + file);
+                ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredWhenDeleting"] + Environment.NewLine + file);
                 return;
             }
 
@@ -100,11 +101,7 @@ namespace PicView.FileHandling
 
             Pic(false);
 
-            var filename = Path.GetFileName(file);
-
-            filename = filename.Length >= 25 ? Shorten(filename, 21) : filename;
-
-            ShowTooltipMessage(Recyclebin ? $"Sent {filename} to the recyle bin" : $"Deleted {filename}");
+            ShowTooltipMessage(Recyclebin ? Application.Current.Resources["SentFileToRecycleBin"] : Application.Current.Resources["Deleted"]);
         }
     }
 }

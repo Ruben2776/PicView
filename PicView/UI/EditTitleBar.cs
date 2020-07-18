@@ -2,6 +2,7 @@
 using PicView.FileHandling;
 using PicView.UI.Sizing;
 using System.IO;
+using System.Windows;
 using System.Windows.Input;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
@@ -85,7 +86,7 @@ namespace PicView.UI
             }
             else
             {
-                Tooltip.ShowTooltipMessage("An error occured moving file"); // TODO add to translation
+                Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]); 
                 Refocus();
             }
         }

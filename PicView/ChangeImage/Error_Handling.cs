@@ -26,7 +26,7 @@ namespace PicView.ChangeImage
         {
             BitmapSource pic = null;
 #if DEBUG
-            Trace.WriteLine("Entered PicErrorFix"); // We don't want to go in here
+            Trace.WriteLine("Entered PicErrorFix");
 #endif
             if (Pics == null)
             {

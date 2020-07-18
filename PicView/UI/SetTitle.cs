@@ -137,6 +137,13 @@ namespace PicView.UI
             TheMainWindow.TitleText.ToolTip = titleString[1];
         }
 
+        internal static void SetLoadingString()
+        {
+            TheMainWindow.Title = Application.Current.Resources["Loading"] as string;
+            TheMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
+            TheMainWindow.TitleText.ToolTip = Application.Current.Resources["Loading"] as string;
+        }
+
 
 
 

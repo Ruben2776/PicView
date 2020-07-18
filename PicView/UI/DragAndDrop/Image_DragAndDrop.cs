@@ -118,7 +118,7 @@ namespace PicView.UI.DragAndDrop
             {
                 TheMainWindow.MainImage.Source = prevPicResource;
             }
-            else if (TheMainWindow.TitleText.Text == "No image loaded")
+            else if (TheMainWindow.TitleText.Text == Application.Current.Resources["NoImage"] as string)
             {
                 TheMainWindow.MainImage.Source = null;
             }

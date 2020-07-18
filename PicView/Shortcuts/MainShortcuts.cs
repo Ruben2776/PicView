@@ -260,7 +260,7 @@ namespace PicView.Shortcuts
                 case Key.OemMinus:
                     Zoom(false);
                     return;
-                default: break; // Please automatic code analyzers...
+                default: break;
             }
 
             #endregion Keys where it can be held down
@@ -466,28 +466,28 @@ namespace PicView.Shortcuts
                     // 1
                     case Key.D1:
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen) { break; }
-                        Tooltip.ShowTooltipMessage("Set to center image in window"); // TODO add to translation
+                        Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterImageInWindow"]);
                         UpdateUIValues.SetScalingBehaviour(false, false);
                         break;
 
                     // 2
                     case Key.D2:
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen) { break; }
-                        Tooltip.ShowTooltipMessage("Center image in window, fill height"); // TODO add to translation
+                        Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterImageInWindowFillHeight"]);
                         UpdateUIValues.SetScalingBehaviour(false, true);
                         break;
 
                     // 3
                     case Key.D3:
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen) { break; }
-                        Tooltip.ShowTooltipMessage("Center application to window"); // TODO add to translation
+                        Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterApplicationToWindow"]);
                         UpdateUIValues.SetScalingBehaviour(true, false);
                         break;
 
                     // 4
                     case Key.D4:
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen) { break; }
-                        Tooltip.ShowTooltipMessage("Center application to window, fill height"); // TODO add to translation
+                        Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterApplicationToWindowFillHeight"]);
                         UpdateUIValues.SetScalingBehaviour(true, true);
                         break;
 

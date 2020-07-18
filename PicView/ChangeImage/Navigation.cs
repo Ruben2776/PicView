@@ -44,8 +44,7 @@ namespace PicView.ChangeImage
         internal static async void Pic(string path)
         {
             // Set Loading
-            TheMainWindow.Title = TheMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
-            TheMainWindow.TitleText.ToolTip = Application.Current.Resources["Loading"] as string;
+            SetLoadingString();
 
             // Handle if from web
             if (!File.Exists(path))
@@ -94,7 +93,6 @@ namespace PicView.ChangeImage
                     var recovery = await RecoverFailedArchiveAsync().ConfigureAwait(true);
                     if (!recovery)
                     {
-                        ShowTooltipMessage(Application.Current.Resources["Loading"]);
                         Reload(true);
                         return;
                     }
@@ -179,9 +177,7 @@ namespace PicView.ChangeImage
             if (bitmapSource == null)
             {
                 // Set loading from translation service
-                TheMainWindow.Title = Application.Current.Resources["Loading"] as string;
-                TheMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
-                TheMainWindow.TitleText.ToolTip = Application.Current.Resources["Loading"] as string;
+                SetLoadingString();
 
                 // Show a thumbnail while loading
                 var thumb = GetThumb(index, true);

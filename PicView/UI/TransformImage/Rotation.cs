@@ -48,7 +48,6 @@ namespace PicView.UI.TransformImage
         /// Rotates left or right
         /// </summary>
         /// <param name="right"></param>
-        // https://stackoverflow.com/a/62136307/13646636
         internal static void Rotate(bool right)
         {
             if (TheMainWindow.MainImage.Source == null ||

@@ -44,7 +44,7 @@ namespace PicView.UI.TransformImage
                 if (ChangeImage.Navigation.Pics != null)
                 {
                     TryFitImage();
-                    ShowTooltipMessage(value ? "Scrolling enabled" : "Scrolling disabled"); // TODO add to translation
+                    ShowTooltipMessage(value ? Application.Current.Resources["ScrollingEnabled"] : Application.Current.Resources["ScrollingDisabled"]);
                 }
             }
         }
