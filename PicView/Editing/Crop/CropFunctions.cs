@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32;
-using PicView.ChangeImage;
 using PicView.ImageHandling;
 using PicView.UILogic;
 using PicView.UILogic.Loading;
@@ -9,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 using static PicView.UILogic.TransformImage.Rotation;
 using static PicView.UILogic.UserControls.UC;
@@ -41,6 +41,35 @@ namespace PicView.Editing.Crop
             CanNavigate = false;
         }
 
+        internal static async void PerformCrop()
+        {
+            if (Pics.Count == 0)
+            {
+                SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height);
+            }
+            else
+            {
+                SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height, FolderIndex);
+            }
+
+            await SaveCrop().ConfigureAwait(false);
+            CanNavigate = true;
+        }
+
+        internal static void CloseCrop()
+        {
+            if (Pics.Count == 0)
+            {
+                SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height);
+            }
+            else
+            {
+                SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height, FolderIndex);
+            }
+            TheMainWindow.ParentContainer.Children.Remove(GetCropppingTool);
+            CanNavigate = true;
+        }
+
         internal static void InitilizeCrop()
         {
             GetCropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? xWidth : xHeight;
@@ -61,10 +90,10 @@ namespace PicView.Editing.Crop
             GetCropppingTool.RootGrid.PreviewMouseLeftButtonUp += (s, e) => CropService.Adorner.RaiseEvent(e);
         }
 
-        internal static async void SaveCrop()
+        internal static async Task SaveCrop()
         {
-            var fileName = Navigation.Pics.Count == 0 ? Path.GetRandomFileName()
-                : Path.GetFileName(Navigation.Pics[Navigation.FolderIndex]);
+            var fileName = Pics.Count == 0 ? Path.GetRandomFileName()
+                : Path.GetFileName(Pics[FolderIndex]);
 
             var Savedlg = new SaveFileDialog()
             {
@@ -83,12 +112,12 @@ namespace PicView.Editing.Crop
             var crop = GetCrop();
             var success = false;
 
-            if (Navigation.Pics.Count > 0)
+            if (Pics.Count > 0)
             {
                 await Task.Run(() =>
                     success = SaveImages.TrySaveImage(
                         crop,
-                        Navigation.Pics[Navigation.FolderIndex],
+                        Pics[FolderIndex],
                         Savedlg.FileName)).ConfigureAwait(false);
             }
             else

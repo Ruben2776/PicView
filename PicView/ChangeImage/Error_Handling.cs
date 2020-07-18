@@ -147,7 +147,7 @@ namespace PicView.ChangeImage
                 // Make a backup of xPicPath and FolderIndex
                 if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]))
                 {
-                    xPicPath = Pics[FolderIndex];
+                    BackupPath = Pics[FolderIndex];
                 }
             }
 
@@ -163,7 +163,7 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static void Reload(bool fromBackup = false)
         {
-            if (fromBackup && string.IsNullOrWhiteSpace(xPicPath))
+            if (fromBackup && string.IsNullOrWhiteSpace(BackupPath))
             {
                 Unload();
                 return;
@@ -172,7 +172,7 @@ namespace PicView.ChangeImage
             string s;
             if (Pics != null && Pics.Count > 0)
             {
-                s = fromBackup ? xPicPath : Pics[FolderIndex];
+                s = fromBackup ? BackupPath : Pics[FolderIndex];
             }
             else
             {

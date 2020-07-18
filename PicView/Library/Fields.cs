@@ -45,12 +45,12 @@ namespace PicView.Library
         /// <summary>
         /// The Main Window?
         /// </summary>
-        internal static Views.Windows.MainWindow TheMainWindow = (Views.Windows.MainWindow)Application.Current.MainWindow;
+        internal static readonly Views.Windows.MainWindow TheMainWindow = (Views.Windows.MainWindow)Application.Current.MainWindow;
 
         /// <summary>
         /// Backup of Previous file, if changed folder etc.
         /// </summary>
-        internal static string xPicPath;
+        internal static string BackupPath { get; set; }
 
         /// <summary>
         /// File path for the extracted folder
@@ -73,7 +73,6 @@ namespace PicView.Library
         internal static bool ClickArrowLeftClicked { get; set; }
         internal static bool Reverse { get; set; }
         internal static bool IsDialogOpen { get; set; }
-        internal static bool IsUnsupported { get; set; }
 
         /// <summary>
         /// Backup of Width data

@@ -28,7 +28,7 @@ namespace PicView.ChangeImage
             BitmapSource pic;
             if (Pics != null && Pics.Count > 0)
             {
-                xPicPath = Pics[FolderIndex];
+                BackupPath = Pics[FolderIndex];
             }
 
             try

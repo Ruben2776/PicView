@@ -24,7 +24,7 @@ namespace PicView.Shortcuts
 {
     internal static class MainShortcuts
     {
-        internal static void MainWindow_KeysDown(object sender, KeyEventArgs e)
+        internal static async void MainWindow_KeysDown(object sender, KeyEventArgs e)
         {
             // Don't allow keys when typing in text
             if (TheMainWindow.TitleText.IsKeyboardFocusWithin) { return; }
@@ -41,33 +41,14 @@ namespace PicView.Shortcuts
                 {
                     if (e.Key == Key.Escape)
                     {
-                        if (Pics.Count == 0)
-                        {
-                            SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height);
-                        }
-                        else
-                        {
-                            SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height, FolderIndex);
-                        }
-                        TheMainWindow.ParentContainer.Children.Remove(GetCropppingTool);
-                        CanNavigate = true;
+                        CropFunctions.CloseCrop();
                         e.Handled = true;
                         return;
                     }
 
                     if (e.Key == Key.Enter)
                     {
-                        if (Pics.Count == 0)
-                        {
-                            SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height);
-                        }
-                        else
-                        {
-                            SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height, FolderIndex);
-                        }
-
-                        CropFunctions.SaveCrop();
-                        CanNavigate = true;
+                        CropFunctions.PerformCrop();
                         e.Handled = true;
                         return;
                     }
