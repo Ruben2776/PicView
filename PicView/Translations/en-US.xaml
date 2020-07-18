@@ -214,5 +214,8 @@
     <system:String x:Key="ScrollingEnabled">Scrolling enabled</system:String>
     <system:String x:Key="ScrollingDisabled">Scrolling disabled</system:String>
 
+    <!--  Misc messages  -->
+    <system:String x:Key="ConvertedToBase64">Converted to base 64</system:String>
+
 
 </ResourceDictionary>

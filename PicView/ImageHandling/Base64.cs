@@ -1,6 +1,5 @@
 ﻿using ImageMagick;
 using PicView.ChangeImage;
-using PicView.Library;
 using PicView.UI;
 using System;
 using System.Diagnostics;
@@ -69,8 +68,9 @@ namespace PicView.ImageHandling
             if (!string.IsNullOrWhiteSpace(base64))
             {
                 Clipboard.SetText(base64);
-                Tooltip.ShowTooltipMessage("Converted to base 64"); // TODO add to translation
+                Tooltip.ShowTooltipMessage(Application.Current.Resources["ConvertedToBase64"]); // TODO add to translation
             }
         }
+
     }
 }
