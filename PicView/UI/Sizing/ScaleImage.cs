@@ -3,6 +3,7 @@ using PicView.UI.TransformImage;
 using System;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
+using static PicView.UI.PicGallery.GalleryFunctions;
 using static PicView.UI.Sizing.WindowLogic;
 using static PicView.UI.TransformImage.Rotation;
 using static PicView.UI.TransformImage.Scroll;

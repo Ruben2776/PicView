@@ -12,6 +12,8 @@ namespace PicView.UI.PicGallery
 {
     internal static class GalleryFunctions
     {
+        internal static int picGalleryItem_Size;
+        internal static int picGalleryItem_Size_s;
         internal static bool IsLoading { get; set; }
 
         private static bool Open;

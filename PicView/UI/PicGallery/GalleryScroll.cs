@@ -1,7 +1,7 @@
 ﻿using PicView.ChangeImage;
 using System;
 using System.Windows.Input;
-using static PicView.Library.Fields;
+using static PicView.UI.PicGallery.GalleryFunctions;
 using static PicView.UI.UserControls.UC;
 
 namespace PicView.UI.PicGallery

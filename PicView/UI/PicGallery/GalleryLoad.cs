@@ -1,5 +1,4 @@
-﻿using PicView.UI.Sizing;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.Library.Fields;
@@ -19,6 +18,30 @@ namespace PicView.UI.PicGallery
             GetPicGallery.Scroller.ScrollChanged += (s, x) => TheMainWindow.Focus(); // Maintain window focus when scrolling manually
             GetPicGallery.grid.MouseLeftButtonDown += (s, x) => TheMainWindow.Focus();
             GetPicGallery.x2.MouseLeftButtonDown += delegate { GalleryToggle.CloseContainedGallery(); };
+
+            SetSize();
+        }
+
+        internal static void SetSize()
+        {
+            if (MonitorInfo.Width > 2100)
+            {
+                picGalleryItem_Size = 260;
+            }
+            else if (MonitorInfo.Width > 1700)
+            {
+                picGalleryItem_Size = 210;
+            }
+            else if (MonitorInfo.Width > 1200)
+            {
+                picGalleryItem_Size = 150;
+            }
+            else
+            {
+                picGalleryItem_Size = 100;
+            }
+
+            picGalleryItem_Size_s = picGalleryItem_Size - 30;
         }
 
         internal static void LoadLayout()
@@ -33,6 +56,11 @@ namespace PicView.UI.PicGallery
 
                 TheMainWindow.ParentContainer.Children.Add(GetPicGallery);
                 Panel.SetZIndex(GetPicGallery, 999);
+            }
+
+            if (picGalleryItem_Size == 0)
+            {
+                SetSize();
             }
 
             // TODO Make this code more clean and explain what's going on?
@@ -75,21 +103,21 @@ namespace PicView.UI.PicGallery
                 ShowTopandBottom(false);
                 ConfigColors.UpdateColor(true);
 
-#if DEBUG
-                if (GetGalleryMenu == null)
-                {
-                    GetGalleryMenu = new UserControls.Gallery.GalleryMenu
-                    {
-                    };
+//#if DEBUG
+//                if (GetGalleryMenu == null)
+//                {
+//                    GetGalleryMenu = new UserControls.Gallery.GalleryMenu
+//                    {
+//                    };
 
-                    if (WindowLogic.fakeWindow == null)
-                    {
-                        WindowLogic.fakeWindow = new Windows.FakeWindow();
-                    }
+//                    if (WindowLogic.fakeWindow == null)
+//                    {
+//                        WindowLogic.fakeWindow = new Windows.FakeWindow();
+//                    }
 
-                    WindowLogic.fakeWindow.grid.Children.Add(GetGalleryMenu);
-                }
-#endif
+//                    WindowLogic.fakeWindow.grid.Children.Add(GetGalleryMenu);
+//                }
+//#endif
             }
 
 

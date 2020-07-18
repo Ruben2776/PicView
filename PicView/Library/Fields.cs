@@ -40,9 +40,6 @@ namespace PicView.Library
             + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz"                                                        // Comics
             + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw";      // Camera files
 
-        internal const int picGalleryItem_Size = 260;
-        internal const int picGalleryItem_Size_s = picGalleryItem_Size - 30;
-
         internal const int zoomSpeed = 45;
 
         /// <summary>

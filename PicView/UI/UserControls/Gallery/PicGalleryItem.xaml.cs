@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using static PicView.Library.Fields;
+using static PicView.UI.PicGallery.GalleryFunctions;
 
 namespace PicView.UI.UserControls
 {
