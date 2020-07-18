@@ -12,7 +12,7 @@ using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileFunctions;
 using static PicView.FileHandling.FileLists;
 using static PicView.Library.Fields;
-using static PicView.UI.Tooltip;
+using static PicView.UILogic.Tooltip;
 
 namespace PicView.FileHandling
 {

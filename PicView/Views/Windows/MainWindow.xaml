@@ -1,8 +1,8 @@
 ﻿<Window
-    x:Class="PicView.UI.Windows.MainWindow"
+    x:Class="PicView.Views.Windows.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:uc="clr-namespace:PicView.UI.UserControls"
+    xmlns:uc="clr-namespace:PicView.UILogic.UserControls"
     Title="Loading..."
     MinWidth="565"
     MinHeight="695"

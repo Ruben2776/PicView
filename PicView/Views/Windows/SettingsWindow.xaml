@@ -1,8 +1,8 @@
 ﻿<Window
-    x:Class="PicView.UI.Windows.SettingsWindow"
+    x:Class="PicView.Views.Windows.SettingsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:uc="clr-namespace:PicView.UI.UserControls"
+    xmlns:uc="clr-namespace:PicView.UILogic.UserControls"
     Title="PicView settings"
     Width="500"
     Height="710"

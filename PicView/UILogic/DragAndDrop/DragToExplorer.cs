@@ -1,5 +1,5 @@
 ﻿using PicView.Library;
-using PicView.UI.TransformImage;
+using PicView.UILogic.TransformImage;
 using System;
 using System.Collections.Specialized;
 using System.IO;
@@ -8,7 +8,7 @@ using System.Windows.Input;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 
-namespace PicView.UI.DragAndDrop
+namespace PicView.UILogic.DragAndDrop
 {
     internal static class DragToExplorer
     {

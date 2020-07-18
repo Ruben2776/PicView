@@ -1,4 +1,4 @@
-﻿using PicView.UI;
+﻿using PicView.UILogic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;

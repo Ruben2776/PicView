@@ -1,4 +1,4 @@
-﻿using PicView.UI;
+﻿using PicView.UILogic;
 using System.Windows.Input;
 using static PicView.Library.Fields;
 

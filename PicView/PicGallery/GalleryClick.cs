@@ -8,11 +8,11 @@ using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.ImageDecoder;
 using static PicView.ImageHandling.Thumbnails;
 using static PicView.Library.Fields;
-using static PicView.UI.PicGallery.GalleryFunctions;
-using static PicView.UI.Sizing.ScaleImage;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.PicGallery.GalleryFunctions;
+using static PicView.UILogic.Sizing.ScaleImage;
+using static PicView.UILogic.UserControls.UC;
 
-namespace PicView.UI.PicGallery
+namespace PicView.UILogic.PicGallery
 {
     /// <summary>
     /// Logick for what happens when user clicks on

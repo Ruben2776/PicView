@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PicView.UI.UserControls.Misc
+namespace PicView.UILogic.UserControls.Misc
 {
     /// <summary>
     /// Interaction logic for ColorPicker.xaml

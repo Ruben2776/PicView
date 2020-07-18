@@ -1,10 +1,10 @@
 ﻿<UserControl
-    x:Class="PicView.UI.UserControls.FileMenu"
+    x:Class="PicView.UILogic.UserControls.FileMenu"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="clr-namespace:PicView.UI.UserControls"
+    xmlns:uc="clr-namespace:PicView.UILogic.UserControls"
     Foreground="{StaticResource MainColorBrush}"
     mc:Ignorable="d">
     <StackPanel>

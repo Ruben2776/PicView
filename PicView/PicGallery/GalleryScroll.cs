@@ -1,10 +1,10 @@
 ﻿using PicView.ChangeImage;
 using System;
 using System.Windows.Input;
-using static PicView.UI.PicGallery.GalleryFunctions;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.PicGallery.GalleryFunctions;
+using static PicView.UILogic.UserControls.UC;
 
-namespace PicView.UI.PicGallery
+namespace PicView.UILogic.PicGallery
 {
     internal static class GalleryScroll
     {

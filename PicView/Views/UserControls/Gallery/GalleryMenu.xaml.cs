@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PicView.UI.UserControls.Gallery
+namespace PicView.UILogic.UserControls.Gallery
 {
     /// <summary>
     /// Interaction logic for GalleryMenu.xaml

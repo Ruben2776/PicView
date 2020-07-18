@@ -1,11 +1,11 @@
 ﻿using ImageMagick;
 using PicView.FileHandling;
-using PicView.UI.UserControls;
+using PicView.UILogic.UserControls;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.UserControls.UC;
 
 namespace PicView.ImageHandling
 {

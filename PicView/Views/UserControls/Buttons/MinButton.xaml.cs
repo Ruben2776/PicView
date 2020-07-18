@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
-using static PicView.UI.Animations.MouseOverAnimations;
+using static PicView.UILogic.Animations.MouseOverAnimations;
 
-namespace PicView.UI.UserControls
+namespace PicView.UILogic.UserControls
 {
     public partial class MinButton : UserControl
     {

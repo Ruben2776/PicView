@@ -1,12 +1,12 @@
 ﻿using PicView.ChangeImage;
-using PicView.UI.PicGallery;
-using PicView.UI.UserControls.Gallery;
-using PicView.UI.UserControls.Misc;
+using PicView.UILogic.PicGallery;
+using PicView.UILogic.UserControls.Gallery;
+using PicView.UILogic.UserControls.Misc;
 using System;
 using System.Windows;
 using System.Windows.Media.Animation;
 
-namespace PicView.UI.UserControls
+namespace PicView.UILogic.UserControls
 {
     internal static class UC
     {

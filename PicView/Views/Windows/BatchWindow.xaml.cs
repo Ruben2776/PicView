@@ -3,9 +3,9 @@ using System;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.Library.Fields;
-using static PicView.UI.Animations.MouseOverAnimations;
+using static PicView.UILogic.Animations.MouseOverAnimations;
 
-namespace PicView.UI.Windows
+namespace PicView.Views.Windows
 {
     public partial class BatchWindow : Window
     {

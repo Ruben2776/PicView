@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace PicView.UI.UserControls
+namespace PicView.UILogic.UserControls
 {
     /// <summary>
     /// Interaction logic for CroppingTool.xaml

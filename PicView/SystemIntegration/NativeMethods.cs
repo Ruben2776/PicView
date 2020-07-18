@@ -1,4 +1,4 @@
-﻿using PicView.UI.Sizing;
+﻿using PicView.UILogic.Sizing;
 using System;
 using System.Runtime.InteropServices;
 using System.Security;

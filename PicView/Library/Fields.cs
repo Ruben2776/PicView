@@ -45,7 +45,7 @@ namespace PicView.Library
         /// <summary>
         /// The Main Window?
         /// </summary>
-        internal static UI.Windows.MainWindow TheMainWindow = (UI.Windows.MainWindow)Application.Current.MainWindow;
+        internal static Views.Windows.MainWindow TheMainWindow = (Views.Windows.MainWindow)Application.Current.MainWindow;
 
         /// <summary>
         /// Backup of Previous file, if changed folder etc.

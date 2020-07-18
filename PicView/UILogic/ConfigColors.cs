@@ -1,12 +1,12 @@
 ﻿using PicView.Library.Resources;
-using PicView.UI.Animations;
+using PicView.UILogic.Animations;
 using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using static PicView.Library.Fields;
 
-namespace PicView.UI
+namespace PicView.UILogic
 {
     public static class ConfigColors
     {

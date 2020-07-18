@@ -1,12 +1,12 @@
 ﻿using PicView.Library;
-using PicView.UI.TransformImage;
+using PicView.UILogic.TransformImage;
 using System;
 using System.Timers;
 using System.Windows.Input;
 using static PicView.Library.Fields;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.UserControls.UC;
 
-namespace PicView.UI.Animations
+namespace PicView.UILogic.Animations
 {
     internal static class FadeControls
     {

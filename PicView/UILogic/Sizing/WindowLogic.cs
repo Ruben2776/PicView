@@ -1,15 +1,15 @@
 ﻿using PicView.SystemIntegration;
-using PicView.UI.PicGallery;
-using PicView.UI.Windows;
+using PicView.UILogic.PicGallery;
+using PicView.Views.Windows;
 using System;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.Library.Fields;
-using static PicView.UI.HideInterfaceLogic;
-using static PicView.UI.Sizing.ScaleImage;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.HideInterfaceLogic;
+using static PicView.UILogic.Sizing.ScaleImage;
+using static PicView.UILogic.UserControls.UC;
 
-namespace PicView.UI.Sizing
+namespace PicView.UILogic.Sizing
 {
     internal static class WindowLogic
     {

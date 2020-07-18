@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using static PicView.UI.TransformImage.Rotation;
+using static PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.ImageHandling
 {

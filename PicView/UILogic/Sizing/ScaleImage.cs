@@ -1,14 +1,14 @@
 ﻿using PicView.ImageHandling;
-using PicView.UI.TransformImage;
+using PicView.UILogic.TransformImage;
 using System;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
-using static PicView.UI.PicGallery.GalleryFunctions;
-using static PicView.UI.Sizing.WindowLogic;
-using static PicView.UI.TransformImage.Rotation;
-using static PicView.UI.TransformImage.Scroll;
+using static PicView.UILogic.PicGallery.GalleryFunctions;
+using static PicView.UILogic.Sizing.WindowLogic;
+using static PicView.UILogic.TransformImage.Rotation;
+using static PicView.UILogic.TransformImage.Scroll;
 
-namespace PicView.UI.Sizing
+namespace PicView.UILogic.Sizing
 {
     internal static class ScaleImage
     {

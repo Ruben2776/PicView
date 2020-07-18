@@ -1,7 +1,7 @@
 ﻿using PicView.FileHandling;
 using PicView.SystemIntegration;
-using PicView.UI.PicGallery;
-using PicView.UI.Sizing;
+using PicView.UILogic.PicGallery;
+using PicView.UILogic.Sizing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,14 +11,14 @@ using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 using static PicView.Library.Resources.Timers;
-using static PicView.UI.Loading.LoadContextMenus;
-using static PicView.UI.Loading.LoadControls;
-using static PicView.UI.Sizing.WindowLogic;
-using static PicView.UI.TransformImage.Scroll;
-using static PicView.UI.TransformImage.ZoomLogic;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.Loading.LoadContextMenus;
+using static PicView.UILogic.Loading.LoadControls;
+using static PicView.UILogic.Sizing.WindowLogic;
+using static PicView.UILogic.TransformImage.Scroll;
+using static PicView.UILogic.TransformImage.ZoomLogic;
+using static PicView.UILogic.UserControls.UC;
 
-namespace PicView.UI.Loading
+namespace PicView.UILogic.Loading
 {
     internal static class StartLoading
     {

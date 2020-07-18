@@ -9,9 +9,9 @@ using System.Windows;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.Thumbnails;
 using static PicView.Library.Fields;
-using static PicView.UI.Tooltip;
+using static PicView.UILogic.Tooltip;
 
-namespace PicView.UI.DragAndDrop
+namespace PicView.UILogic.DragAndDrop
 {
     internal static class Image_DragAndDrop
     {

@@ -1,8 +1,8 @@
 ﻿using PicView.FileHandling;
 using PicView.SystemIntegration;
-using PicView.UI.Animations;
-using PicView.UI.PicGallery;
-using PicView.UI.Sizing;
+using PicView.UILogic.Animations;
+using PicView.UILogic.PicGallery;
+using PicView.UILogic.Sizing;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -13,14 +13,14 @@ using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.Open_Save;
 using static PicView.Library.Fields;
 using static PicView.Shortcuts.MainShortcuts;
-using static PicView.UI.Animations.MouseOverAnimations;
-using static PicView.UI.DragAndDrop.Image_DragAndDrop;
-using static PicView.UI.HideInterfaceLogic;
-using static PicView.UI.Sizing.ScaleImage;
-using static PicView.UI.Sizing.WindowLogic;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.Animations.MouseOverAnimations;
+using static PicView.UILogic.DragAndDrop.Image_DragAndDrop;
+using static PicView.UILogic.HideInterfaceLogic;
+using static PicView.UILogic.Sizing.ScaleImage;
+using static PicView.UILogic.Sizing.WindowLogic;
+using static PicView.UILogic.UserControls.UC;
 
-namespace PicView.UI.Loading
+namespace PicView.UILogic.Loading
 {
     internal static class Eventshandling
     {

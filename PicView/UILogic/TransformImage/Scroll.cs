@@ -4,11 +4,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static PicView.Library.Fields;
-using static PicView.UI.Sizing.ScaleImage;
-using static PicView.UI.Tooltip;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.Sizing.ScaleImage;
+using static PicView.UILogic.Tooltip;
+using static PicView.UILogic.UserControls.UC;
 
-namespace PicView.UI.TransformImage
+namespace PicView.UILogic.TransformImage
 {
     internal static class Scroll
     {

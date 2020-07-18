@@ -1,16 +1,16 @@
-﻿using PicView.UI.PicGallery;
-using PicView.UI.Sizing;
-using PicView.UI.UserControls;
+﻿using PicView.UILogic.PicGallery;
+using PicView.UILogic.Sizing;
+using PicView.UILogic.UserControls;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileLists;
 using static PicView.Library.Fields;
-using static PicView.UI.Tooltip;
-using static PicView.UI.TransformImage.Scroll;
+using static PicView.UILogic.Tooltip;
+using static PicView.UILogic.TransformImage.Scroll;
 
-namespace PicView.UI
+namespace PicView.UILogic
 {
     internal static class UpdateUIValues
     {

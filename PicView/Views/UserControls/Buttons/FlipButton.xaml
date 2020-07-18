@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="PicView.UI.UserControls.FlipButton"
+    x:Class="PicView.UILogic.UserControls.FlipButton"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <CheckBox

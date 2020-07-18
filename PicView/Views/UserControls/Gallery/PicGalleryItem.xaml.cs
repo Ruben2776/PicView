@@ -1,10 +1,10 @@
-﻿using PicView.UI.Animations;
+﻿using PicView.UILogic.Animations;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using static PicView.UI.PicGallery.GalleryFunctions;
+using static PicView.UILogic.PicGallery.GalleryFunctions;
 
-namespace PicView.UI.UserControls
+namespace PicView.UILogic.UserControls
 {
     /// <summary>
     /// The usercontrol (UI element) of PicGallery

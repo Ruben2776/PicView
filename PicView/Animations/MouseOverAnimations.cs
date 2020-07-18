@@ -1,7 +1,7 @@
 ﻿using System.Windows.Media;
-using static PicView.UI.ConfigColors;
+using static PicView.UILogic.ConfigColors;
 
-namespace PicView.UI.Animations
+namespace PicView.UILogic.Animations
 {
     internal static class MouseOverAnimations
     {

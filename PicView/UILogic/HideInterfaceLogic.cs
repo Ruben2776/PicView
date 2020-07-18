@@ -1,13 +1,13 @@
-﻿using PicView.UI.PicGallery;
-using PicView.UI.TransformImage;
+﻿using PicView.UILogic.PicGallery;
+using PicView.UILogic.TransformImage;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.Library.Fields;
-using static PicView.UI.Animations.FadeControls;
-using static PicView.UI.Sizing.ScaleImage;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.Animations.FadeControls;
+using static PicView.UILogic.Sizing.ScaleImage;
+using static PicView.UILogic.UserControls.UC;
 
-namespace PicView.UI
+namespace PicView.UILogic
 {
     internal static class HideInterfaceLogic
     {

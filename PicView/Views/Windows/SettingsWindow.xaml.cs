@@ -1,13 +1,14 @@
 ﻿using PicView.ChangeImage;
-using PicView.UI.Animations;
+using PicView.UILogic;
+using PicView.UILogic.Animations;
 using System;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.Library.Fields;
 using static PicView.SystemIntegration.Wallpaper;
-using static PicView.UI.ConfigColors;
+using static PicView.UILogic.ConfigColors;
 
-namespace PicView.UI.Windows
+namespace PicView.Views.Windows
 {
     public partial class SettingsWindow : Window
     {

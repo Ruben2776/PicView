@@ -1,11 +1,11 @@
-﻿using PicView.UI.Animations;
+﻿using PicView.UILogic.Animations;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace PicView.UI.UserControls
+namespace PicView.UILogic.UserControls
 {
     public partial class ClickArrow : UserControl
     {

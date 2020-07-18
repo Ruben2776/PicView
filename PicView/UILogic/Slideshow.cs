@@ -1,13 +1,13 @@
 ﻿using PicView.SystemIntegration;
-using PicView.UI.Animations;
-using PicView.UI.UserControls;
+using PicView.UILogic.Animations;
+using PicView.UILogic.UserControls;
 using System;
 using System.Timers;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
-using static PicView.UI.Sizing.WindowLogic;
+using static PicView.UILogic.Sizing.WindowLogic;
 
-namespace PicView.UI
+namespace PicView.UILogic
 {
     internal static class Slideshow
     {

@@ -1,4 +1,4 @@
-﻿using PicView.UI.Animations;
+﻿using PicView.UILogic.Animations;
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -8,7 +8,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using static PicView.Library.Fields;
 
-namespace PicView.UI.Windows
+namespace PicView.Views.Windows
 {
     public partial class InfoWindow : Window
     {

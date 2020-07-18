@@ -4,9 +4,9 @@ using System.Windows;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileFunctions;
 using static PicView.Library.Fields;
-using static PicView.UI.TransformImage.ZoomLogic;
+using static PicView.UILogic.TransformImage.ZoomLogic;
 
-namespace PicView.UI
+namespace PicView.UILogic
 {
     internal static class SetTitle
     {

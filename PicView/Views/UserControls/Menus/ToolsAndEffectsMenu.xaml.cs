@@ -1,10 +1,10 @@
 ﻿using PicView.Editing;
 using PicView.Editing.Crop;
-using PicView.UI.Loading;
+using PicView.UILogic.Loading;
 using System.Windows.Controls;
-using static PicView.UI.Animations.MouseOverAnimations;
+using static PicView.UILogic.Animations.MouseOverAnimations;
 
-namespace PicView.UI.UserControls
+namespace PicView.UILogic.UserControls
 {
     /// <summary>
     /// Menu to open functions

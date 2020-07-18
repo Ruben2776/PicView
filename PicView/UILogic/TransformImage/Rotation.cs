@@ -1,9 +1,9 @@
-﻿using PicView.UI.PicGallery;
-using PicView.UI.Sizing;
+﻿using PicView.UILogic.PicGallery;
+using PicView.UILogic.Sizing;
 using System.Windows.Media;
 using static PicView.Library.Fields;
 
-namespace PicView.UI.TransformImage
+namespace PicView.UILogic.TransformImage
 {
     internal static class Rotation
     {

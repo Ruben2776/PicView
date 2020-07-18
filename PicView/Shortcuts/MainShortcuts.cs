@@ -1,8 +1,8 @@
 ﻿using PicView.Editing;
 using PicView.Editing.Crop;
 using PicView.ImageHandling;
-using PicView.UI;
-using PicView.UI.PicGallery;
+using PicView.UILogic;
+using PicView.UILogic.PicGallery;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.ChangeImage.Error_Handling;
@@ -11,14 +11,14 @@ using static PicView.FileHandling.Copy_Paste;
 using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.Open_Save;
 using static PicView.Library.Fields;
-using static PicView.UI.Loading.LoadWindows;
-using static PicView.UI.PicGallery.GalleryScroll;
-using static PicView.UI.PicGallery.GalleryToggle;
-using static PicView.UI.Sizing.WindowLogic;
-using static PicView.UI.TransformImage.Rotation;
-using static PicView.UI.TransformImage.Scroll;
-using static PicView.UI.TransformImage.ZoomLogic;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.Loading.LoadWindows;
+using static PicView.UILogic.PicGallery.GalleryScroll;
+using static PicView.UILogic.PicGallery.GalleryToggle;
+using static PicView.UILogic.Sizing.WindowLogic;
+using static PicView.UILogic.TransformImage.Rotation;
+using static PicView.UILogic.TransformImage.Scroll;
+using static PicView.UILogic.TransformImage.ZoomLogic;
+using static PicView.UILogic.UserControls.UC;
 
 namespace PicView.Shortcuts
 {

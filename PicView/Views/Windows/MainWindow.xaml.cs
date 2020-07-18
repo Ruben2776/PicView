@@ -1,11 +1,12 @@
 ﻿using PicView.SystemIntegration;
-using PicView.UI.Loading;
+using PicView.UILogic;
+using PicView.UILogic.Loading;
 using System.Windows;
 using static PicView.Library.Fields;
-using static PicView.UI.Sizing.WindowLogic;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.Sizing.WindowLogic;
+using static PicView.UILogic.UserControls.UC;
 
-namespace PicView.UI.Windows
+namespace PicView.Views.Windows
 {
     public partial class MainWindow : Window
     {

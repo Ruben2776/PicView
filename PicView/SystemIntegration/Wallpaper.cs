@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
-using static PicView.UI.TransformImage.Rotation;
+using static PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.SystemIntegration
 {

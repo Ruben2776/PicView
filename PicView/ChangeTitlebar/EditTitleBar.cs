@@ -1,13 +1,13 @@
 ﻿using PicView.ChangeImage;
 using PicView.FileHandling;
-using PicView.UI.Sizing;
+using PicView.UILogic.Sizing;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 
-namespace PicView.UI
+namespace PicView.UILogic
 {
     internal static class EditTitleBar
     {

@@ -1,17 +1,17 @@
-﻿using PicView.UI.Sizing;
-using PicView.UI.Windows;
+﻿using PicView.UILogic.Sizing;
+using PicView.Views.Windows;
 using System;
 using System.Windows;
 using System.Windows.Media.Animation;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
-using static PicView.UI.PicGallery.GalleryFunctions;
-using static PicView.UI.PicGallery.GalleryLoad;
-using static PicView.UI.PicGallery.GalleryScroll;
-using static PicView.UI.Sizing.WindowLogic;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.PicGallery.GalleryFunctions;
+using static PicView.UILogic.PicGallery.GalleryLoad;
+using static PicView.UILogic.PicGallery.GalleryScroll;
+using static PicView.UILogic.Sizing.WindowLogic;
+using static PicView.UILogic.UserControls.UC;
 
-namespace PicView.UI.PicGallery
+namespace PicView.UILogic.PicGallery
 {
     internal static class GalleryToggle
     {

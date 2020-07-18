@@ -1,8 +1,8 @@
 ﻿using PicView.Library;
-using PicView.UI;
-using PicView.UI.Loading;
-using PicView.UI.TransformImage;
-using PicView.UI.UserControls;
+using PicView.UILogic;
+using PicView.UILogic.Loading;
+using PicView.UILogic.TransformImage;
+using PicView.UILogic.UserControls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;

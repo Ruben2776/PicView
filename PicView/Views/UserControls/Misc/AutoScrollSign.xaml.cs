@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace PicView.UI.UserControls
+namespace PicView.UILogic.UserControls
 {
     /// <summary>
     /// Interaction logic for AutoScrollSign.xaml

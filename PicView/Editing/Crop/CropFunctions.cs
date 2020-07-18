@@ -1,8 +1,8 @@
 ﻿using Microsoft.Win32;
 using PicView.ChangeImage;
 using PicView.ImageHandling;
-using PicView.UI;
-using PicView.UI.Loading;
+using PicView.UILogic;
+using PicView.UILogic.Loading;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -10,8 +10,8 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static PicView.Library.Fields;
-using static PicView.UI.TransformImage.Rotation;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.TransformImage.Rotation;
+using static PicView.UILogic.UserControls.UC;
 
 namespace PicView.Editing.Crop
 {

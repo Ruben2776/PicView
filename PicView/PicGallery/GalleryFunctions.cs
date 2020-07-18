@@ -6,9 +6,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.Library.Fields;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.UserControls.UC;
 
-namespace PicView.UI.PicGallery
+namespace PicView.UILogic.PicGallery
 {
     internal static class GalleryFunctions
     {

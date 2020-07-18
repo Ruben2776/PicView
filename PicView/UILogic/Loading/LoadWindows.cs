@@ -1,4 +1,4 @@
-﻿using PicView.UI.Windows;
+﻿using PicView.Views.Windows;
 using System;
 using System.Diagnostics;
 using System.Windows;
@@ -6,7 +6,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using static PicView.Library.Fields;
 
-namespace PicView.UI.Loading
+namespace PicView.UILogic.Loading
 {
     internal static class LoadWindows
     {

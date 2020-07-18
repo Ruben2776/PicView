@@ -1,7 +1,6 @@
 ﻿using PicView.FileHandling;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,8 +10,8 @@ using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.ImageDecoder;
 using static PicView.Library.Fields;
-using static PicView.UI.SetTitle;
-using static PicView.UI.Tooltip;
+using static PicView.UILogic.SetTitle;
+using static PicView.UILogic.Tooltip;
 
 namespace PicView.ChangeImage
 {

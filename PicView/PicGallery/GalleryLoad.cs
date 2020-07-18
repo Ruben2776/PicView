@@ -2,12 +2,12 @@
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.Library.Fields;
-using static PicView.UI.HideInterfaceLogic;
-using static PicView.UI.PicGallery.GalleryFunctions;
-using static PicView.UI.PicGallery.GalleryScroll;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.HideInterfaceLogic;
+using static PicView.UILogic.PicGallery.GalleryFunctions;
+using static PicView.UILogic.PicGallery.GalleryScroll;
+using static PicView.UILogic.UserControls.UC;
 
-namespace PicView.UI.PicGallery
+namespace PicView.UILogic.PicGallery
 {
     internal static class GalleryLoad
     {

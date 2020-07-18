@@ -1,5 +1,5 @@
 ﻿using PicView.ImageHandling;
-using PicView.UI.PicGallery;
+using PicView.UILogic.PicGallery;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -11,8 +11,8 @@ using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.FileLists;
 using static PicView.ImageHandling.ImageDecoder;
 using static PicView.Library.Fields;
-using static PicView.UI.Tooltip;
-using static PicView.UI.TransformImage.Rotation;
+using static PicView.UILogic.Tooltip;
+using static PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.ChangeImage
 {

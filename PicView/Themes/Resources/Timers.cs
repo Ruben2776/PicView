@@ -1,7 +1,7 @@
 ﻿using System.Timers;
 using static PicView.Library.Fields;
-using static PicView.UI.Animations.FadeControls;
-using static PicView.UI.TransformImage.Scroll;
+using static PicView.UILogic.Animations.FadeControls;
+using static PicView.UILogic.TransformImage.Scroll;
 
 namespace PicView.Library.Resources
 {

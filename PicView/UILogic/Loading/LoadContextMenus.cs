@@ -1,7 +1,7 @@
 ﻿using PicView.ImageHandling;
 using PicView.SystemIntegration;
-using PicView.UI.PicGallery;
-using PicView.UI.Sizing;
+using PicView.UILogic.PicGallery;
+using PicView.UILogic.Sizing;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,7 +15,7 @@ using static PicView.Library.Fields;
 using static PicView.Library.Resources.SvgIcons;
 using static PicView.SystemIntegration.Wallpaper;
 
-namespace PicView.UI.Loading
+namespace PicView.UILogic.Loading
 {
     internal static class LoadContextMenus
     {

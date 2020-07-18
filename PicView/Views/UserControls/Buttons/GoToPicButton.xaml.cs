@@ -6,10 +6,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using static PicView.ChangeImage.Navigation;
-using static PicView.UI.Animations.MouseOverAnimations;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.Animations.MouseOverAnimations;
+using static PicView.UILogic.UserControls.UC;
 
-namespace PicView.UI.UserControls
+namespace PicView.UILogic.UserControls
 {
     public partial class GoToPicButton : UserControl
     {

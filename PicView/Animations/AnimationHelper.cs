@@ -1,11 +1,11 @@
 ﻿using PicView.ChangeImage;
-using PicView.UI.UserControls;
+using PicView.UILogic.UserControls;
 using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace PicView.UI.Animations
+namespace PicView.UILogic.Animations
 {
     internal static class AnimationHelper
     {

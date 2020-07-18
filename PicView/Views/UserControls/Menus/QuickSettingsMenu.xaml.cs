@@ -1,12 +1,12 @@
-﻿using PicView.UI.Animations;
-using PicView.UI.Loading;
+﻿using PicView.UILogic.Animations;
+using PicView.UILogic.Loading;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using static PicView.UI.Animations.MouseOverAnimations;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.Animations.MouseOverAnimations;
+using static PicView.UILogic.UserControls.UC;
 
-namespace PicView.UI.UserControls
+namespace PicView.UILogic.UserControls
 {
     /// <summary>
     /// Interaction logic for QuickSettingsMenu.xaml

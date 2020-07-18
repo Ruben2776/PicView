@@ -5,9 +5,9 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using static PicView.Library.Fields;
 using static PicView.SystemIntegration.NativeMethods;
-using static PicView.UI.PicGallery.GalleryScroll;
+using static PicView.UILogic.PicGallery.GalleryScroll;
 
-namespace PicView.UI.Windows
+namespace PicView.Views.Windows
 {
     /// <summary>
     /// Interaction logic for FakeWindow.xaml

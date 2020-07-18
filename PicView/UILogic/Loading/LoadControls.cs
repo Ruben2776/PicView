@@ -1,11 +1,11 @@
-﻿using PicView.UI.UserControls;
-using PicView.UI.UserControls.Misc;
+﻿using PicView.UILogic.UserControls;
+using PicView.UILogic.UserControls.Misc;
 using System.Diagnostics;
 using System.Windows;
 using static PicView.Library.Fields;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.UserControls.UC;
 
-namespace PicView.UI.Loading
+namespace PicView.UILogic.Loading
 {
     internal static class LoadControls
     {

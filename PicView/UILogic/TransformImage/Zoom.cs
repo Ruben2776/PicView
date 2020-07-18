@@ -1,5 +1,5 @@
-﻿using PicView.UI.PicGallery;
-using PicView.UI.UserControls;
+﻿using PicView.UILogic.PicGallery;
+using PicView.UILogic.UserControls;
 using System;
 using System.Linq;
 using System.Windows;
@@ -10,7 +10,7 @@ using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 using static PicView.Library.Utilities;
 
-namespace PicView.UI.TransformImage
+namespace PicView.UILogic.TransformImage
 {
     internal static class ZoomLogic
     {

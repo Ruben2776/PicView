@@ -1,6 +1,6 @@
 ﻿using ImageMagick;
 using PicView.ChangeImage;
-using PicView.UI;
+using PicView.UILogic;
 using System;
 using System.Diagnostics;
 using System.IO;

@@ -1,8 +1,8 @@
 ﻿using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.SystemIntegration;
-using PicView.UI;
-using PicView.UI.PicGallery;
+using PicView.UILogic;
+using PicView.UILogic.PicGallery;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -14,11 +14,11 @@ using static PicView.FileHandling.ArchiveExtraction;
 using static PicView.FileHandling.FileLists;
 using static PicView.ImageHandling.Thumbnails;
 using static PicView.Library.Fields;
-using static PicView.UI.SetTitle;
-using static PicView.UI.Sizing.ScaleImage;
-using static PicView.UI.Tooltip;
-using static PicView.UI.TransformImage.Scroll;
-using static PicView.UI.UserControls.UC;
+using static PicView.UILogic.SetTitle;
+using static PicView.UILogic.Sizing.ScaleImage;
+using static PicView.UILogic.Tooltip;
+using static PicView.UILogic.TransformImage.Scroll;
+using static PicView.UILogic.UserControls.UC;
 
 namespace PicView.ChangeImage
 {
@@ -245,10 +245,10 @@ namespace PicView.ChangeImage
             }
 
             // Reset transforms if needed
-            if (UI.TransformImage.Rotation.Flipped || UI.TransformImage.Rotation.Rotateint != 0)
+            if (UILogic.TransformImage.Rotation.Flipped || UILogic.TransformImage.Rotation.Rotateint != 0)
             {
-                UI.TransformImage.Rotation.Flipped = false;
-                UI.TransformImage.Rotation.Rotateint = 0;
+                UILogic.TransformImage.Rotation.Flipped = false;
+                UILogic.TransformImage.Rotation.Rotateint = 0;
 
                 TheMainWindow.MainImage.LayoutTransform = null;
             }

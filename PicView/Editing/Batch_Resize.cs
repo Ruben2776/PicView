@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
-using static PicView.UI.Loading.LoadWindows;
+using static PicView.UILogic.Loading.LoadWindows;
 
 namespace PicView.Editing
 {
