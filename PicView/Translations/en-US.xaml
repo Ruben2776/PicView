@@ -195,6 +195,12 @@
     <system:String x:Key="Flip">Flip horizontally</system:String>
     <system:String x:Key="Unflip">Unflip</system:String>
 
+    <!--  Batch resize window  -->
+    <system:String x:Key="Rotate">Rotate:</system:String>
+    <system:String x:Key="Misc">Misc:</system:String>
+    <system:String x:Key="Quality">Quality:</system:String>
+
+
     <!--  Archives  -->
     <system:String x:Key="Unzipping">Unzipping...</system:String>
     <system:String x:Key="BadArchive">Archive could not be processed</system:String>

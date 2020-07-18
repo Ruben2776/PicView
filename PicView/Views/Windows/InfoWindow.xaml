@@ -109,7 +109,6 @@
                             BorderThickness="1,1,1,0">
                             <TextBlock
                                 Margin="10,3,0,3"
-                                d:Text="Next Image"
                                 FontSize="15"
                                 Text="{StaticResource ResourceKey=NextImage}" />
                         </Border>
@@ -139,7 +138,6 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                d:Text="Left"
                                 FontSize="14"
                                 Text="{StaticResource ResourceKey=Left}" />
                         </Border>

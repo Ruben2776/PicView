@@ -4,8 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uc="clr-namespace:PicView.UILogic.UserControls"
     Title="Batch resize &amp; optimize"
-    Width="530"
-    Height="520"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Be Vietnam"
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="CanMinimize"
@@ -96,10 +94,10 @@
             <StackPanel Background="{StaticResource NoisyBg}">
 
                 <StackPanel
-                    Margin="7,3,0,8"
+                    Margin="7,3,7,8"
                     VerticalAlignment="Top"
                     Orientation="Horizontal">
-                    <Label Margin="0,6,0,0" Content="Rotate:" />
+                    <Label Margin="0,6,0,0" Content="{StaticResource ResourceKey=Rotate}" />
 
                     <Grid Margin="37,3,5,3">
                         <TextBox
@@ -312,7 +310,7 @@
 
                     <Border
                         Height="28"
-                        Margin="16,0,0,7"
+                        Margin="16,0,7,7"
                         Padding="4,3,4,3"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1">
