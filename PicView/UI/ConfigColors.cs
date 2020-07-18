@@ -28,7 +28,7 @@ namespace PicView.UI
         {
             if (remove)
             {
-                Application.Current.Resources["WindowBorderColorBrush"] = new SolidColorBrush(Colors.Black);
+                Application.Current.Resources["WindowBorderColorBrush"] = Brushes.Black;
                 return;
             }
 
@@ -44,7 +44,7 @@ namespace PicView.UI
                 {
                     Application.Current.Resources["WindowBorderColorBrush"] = getColorBrush;
                 }
-                catch (System.Exception e)
+                catch (Exception e)
                 {
 #if DEBUG
                     Trace.WriteLine(nameof(UpdateColor) + " threw exception:  " + e.Message);
@@ -60,11 +60,12 @@ namespace PicView.UI
             switch (Properties.Settings.Default.BgColorChoice)
             {
                 case 0:
-                    TheMainWindow.ParentContainer.Background = new SolidColorBrush(Colors.Transparent);
+                    TheMainWindow.ParentContainer.Background = Brushes.Transparent;
                     break;
 
                 case 1:
-                    TheMainWindow.ParentContainer.Background = new SolidColorBrush(Colors.White);
+                    var brush = Properties.Settings.Default.LightTheme ? Brushes.Black : Brushes.White;
+                    TheMainWindow.ParentContainer.Background = brush;
                     break;
 
                 case 2:
@@ -101,7 +102,8 @@ namespace PicView.UI
                     break;
 
                 case 1:
-                    TheMainWindow.ParentContainer.Background = new SolidColorBrush(Colors.White);
+                    var brush = Properties.Settings.Default.LightTheme ? Brushes.Black : Brushes.White;
+                    TheMainWindow.ParentContainer.Background = brush;
                     break;
 
                 case 2:
@@ -113,7 +115,7 @@ namespace PicView.UI
                     break;
 
                 default:
-                    TheMainWindow.ParentContainer.Background = new SolidColorBrush(Colors.Transparent);
+                    TheMainWindow.ParentContainer.Background = Brushes.Transparent;
                     break;
             }
         }
@@ -122,10 +124,10 @@ namespace PicView.UI
         {
             return Properties.Settings.Default.BgColorChoice switch
             {
-                0 => new SolidColorBrush(Colors.Transparent),
-                1 => new SolidColorBrush(Colors.White),
+                0 => Brushes.Transparent,
+                1 => Properties.Settings.Default.LightTheme ? Brushes.Black : Brushes.White,
                 2 => DrawingBrushes.CheckerboardDrawingBrush(Colors.White),
-                _ => new SolidColorBrush(Colors.Transparent),
+                _ => Brushes.Transparent,
             };
         }
 
