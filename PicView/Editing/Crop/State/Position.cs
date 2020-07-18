@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PicView.Editing.Crop.State
 {
@@ -17,20 +18,24 @@ namespace PicView.Editing.Crop.State
             Height = height;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object obj) => obj != null && obj is Position size && Equals(size);
+
+        public static bool operator ==(Position e1, Position e2)
         {
-            return obj is Position position && Equals(position);
+            return e1.Equals(e2);
         }
 
-        public bool Equals(Position other)
+        public static bool operator !=(Position e1, Position e2)
         {
-            return Left == other.Left &&
-                   Top == other.Top &&
-                   Width == other.Width &&
-                   Height == other.Height;
+            return !(e1 == e2);
         }
 
         public override int GetHashCode()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Equals([AllowNull] Position other)
         {
             throw new NotImplementedException();
         }
