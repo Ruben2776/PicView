@@ -22,7 +22,7 @@ namespace PicView.UILogic.UserControls
 
             MouseEnter += (sender, e) =>
             {
-                ccAnim.From = (Color)Application.Current.Resources["MainColor"];
+                ccAnim.From = (Color)Application.Current.Resources["IconColor"];
                 ccAnim.To = AnimationHelper.GetPrefferedColorOver();
 
                 PolyFill.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
@@ -44,7 +44,7 @@ namespace PicView.UILogic.UserControls
             {
 
                 ccAnim.From = AnimationHelper.GetPrefferedColorOver();
-                ccAnim.To = (Color)Application.Current.Resources["MainColor"];
+                ccAnim.To = (Color)Application.Current.Resources["IconColor"];
 
                 PolyFill.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
 
