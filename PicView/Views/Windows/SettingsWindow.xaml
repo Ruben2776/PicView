@@ -11,7 +11,7 @@
     SizeToContent="Height"
     Style="{DynamicResource MyWindowStyle}">
     <Window.Resources>
-        <ResourceDictionary Source="\UI\Styles\ComboBox.xaml" />
+        <ResourceDictionary Source="\Themes\Styles\ComboBox.xaml" />
     </Window.Resources>
 
     <DockPanel LastChildFill="True">
