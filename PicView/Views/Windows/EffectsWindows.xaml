@@ -6,7 +6,7 @@
     Title="HLSL Picture FX"
     Width="556"
     Height="605"
-    FontFamily="/PicView;component/Library/Resources/fonts/#Tex Gyre Heros"
+    FontFamily="/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros"
     Foreground="{StaticResource MainColorBrush}"
     Style="{DynamicResource MyWindowStyle}">
 
@@ -53,7 +53,7 @@
                 Padding="0,8.4,0,0"
                 VerticalAlignment="Center"
                 Background="{StaticResource AltInterfaceWBrush}"
-                FontFamily="/PicView;component/Library/Resources/fonts/#Poppins"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Poppins"
                 FontSize="15"
                 FontWeight="Bold"
                 Foreground="{StaticResource MainColorBrush}"

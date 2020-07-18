@@ -135,7 +135,7 @@ namespace PicView.UI
         {
             Application.Current.Resources.MergedDictionaries[1] = new ResourceDictionary
             {
-                Source = new Uri(@"/PicView;component/UI/Styles/ColorThemes/Light.xaml", UriKind.Relative)
+                Source = new Uri(@"/PicView;component/Themes/Styles/ColorThemes/Light.xaml", UriKind.Relative)
             };
 
             Properties.Settings.Default.LightTheme = true;
@@ -146,7 +146,7 @@ namespace PicView.UI
         {
             Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary 
             {
-                Source = new Uri(@"/PicView;component/UI/Styles/ColorThemes/Dark.xaml", UriKind.Relative)
+                Source = new Uri(@"/PicView;component/Themes/Styles/ColorThemes/Dark.xaml", UriKind.Relative)
             };
 
             Properties.Settings.Default.LightTheme = false;

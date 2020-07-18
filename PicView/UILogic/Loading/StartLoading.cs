@@ -62,21 +62,21 @@ namespace PicView.UI.Loading
             Application.Current.Resources.MergedDictionaries.Add(
                 new ResourceDictionary
                 {
-                    Source = new Uri(@"/PicView;component/UI/Styles/Menu.xaml", UriKind.Relative)
+                    Source = new Uri(@"/PicView;component/Themes/Styles/Menu.xaml", UriKind.Relative)
                 }
             );
 
             Application.Current.Resources.MergedDictionaries.Add(
                 new ResourceDictionary
                 {
-                    Source = new Uri(@"/PicView;component/UI/Styles/ToolTip.xaml", UriKind.Relative)
+                    Source = new Uri(@"/PicView;component/Themes/Styles/ToolTip.xaml", UriKind.Relative)
                 }
             );
 
             Application.Current.Resources.MergedDictionaries.Add(
                 new ResourceDictionary
                 {
-                    Source = new Uri(@"/PicView;component/UI/Styles/Slider.xaml", UriKind.Relative)
+                    Source = new Uri(@"/PicView;component/Themes/Styles/Slider.xaml", UriKind.Relative)
                 }
             );
 

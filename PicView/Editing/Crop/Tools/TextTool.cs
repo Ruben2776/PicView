@@ -30,7 +30,7 @@ namespace PicView.Editing.Crop.Tools
             };
             TextBlock = new TextBlock
             {
-                FontFamily = new FontFamily("/PicView;component/Library/Resources/fonts/#Tex Gyre Heros"),
+                FontFamily = new FontFamily("/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros"),
                 FontSize = 16,
                 Foreground = new SolidColorBrush(ConfigColors.mainColor),
             };

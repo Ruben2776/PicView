@@ -4,7 +4,7 @@
         <Setter Property="Margin" Value="0" />
         <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#TeX Gyre Heros" />
+        <Setter Property="FontFamily" Value="/PicView;component/Themes/Resources/fonts/#TeX Gyre Heros" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Template">
@@ -82,7 +82,7 @@
         <Setter Property="Padding" Value="20,8,0,8" />
         <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Roboto Medium" />
+        <Setter Property="FontFamily" Value="/PicView;component/Themes/Resources/fonts/#Roboto Medium" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Effect" Value="{StaticResource MenuShadowButtonBorder}" />
@@ -159,7 +159,7 @@
         <Setter Property="Margin" Value="0" />
         <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Roboto Medium" />
+        <Setter Property="FontFamily" Value="/PicView;component/Themes/Resources/fonts/#Roboto Medium" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Effect">
@@ -247,7 +247,7 @@
         <Setter Property="Margin" Value="0" />
         <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Roboto Medium" />
+        <Setter Property="FontFamily" Value="/PicView;component/Themes/Resources/fonts/#Roboto Medium" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Effect" Value="{StaticResource MenuShadowButtonBorder}" />
@@ -327,7 +327,7 @@
         <Setter Property="Margin" Value="0" />
         <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#TeX Gyre Heros" />
+        <Setter Property="FontFamily" Value="/PicView;component/Themes/Resources/fonts/#TeX Gyre Heros" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">

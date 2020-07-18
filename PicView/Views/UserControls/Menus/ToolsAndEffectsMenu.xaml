@@ -62,7 +62,7 @@
                         Canvas.Left="166"
                         Width="138"
                         Height="51"
-                        FontFamily="/PicView;component/Library/Resources/fonts/#Roboto SemiBold"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold"
                         ToolTip="Show effects window">
                         <Button.Background>
                             <SolidColorBrush x:Name="EffectsButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
@@ -97,7 +97,7 @@
                         Canvas.Left="0"
                         Width="166"
                         Height="51"
-                        FontFamily="/PicView;component/Library/Resources/fonts/#Roboto SemiBold"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold"
                         ToolTip="Batch resize &amp; optimize images">
                         <Button.Background>
                             <SolidColorBrush x:Name="ResizeButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
@@ -132,7 +132,7 @@
                     </Border.Background>
                     <Button
                         x:Name="CropButton"
-                        FontFamily="/PicView;component/Library/Resources/fonts/#Roboto SemiBold"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold"
                         ToolTip="Crop image [C] (Rotation not yet working)">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
@@ -161,7 +161,7 @@
                     </Border.Background>
                     <Button
                         x:Name="ColorPickerButton"
-                        FontFamily="/PicView;component/Library/Resources/fonts/#Roboto SemiBold"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold"
                         ToolTip="Pick color from image">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
@@ -190,7 +190,7 @@
                     </Border.Background>
                     <Button
                         x:Name="ExifButton"
-                        FontFamily="/PicView;component/Library/Resources/fonts/#Roboto SemiBold"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold"
                         ToolTip="Show EXIF (not implemented yet)">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock

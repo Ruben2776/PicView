@@ -179,7 +179,7 @@ namespace PicView.FileHandling
                 var cmIcon = new TextBlock
                 {
                     Text = (i + 1).ToString(CultureInfo.CurrentCulture),
-                    FontFamily = new FontFamily("/PicView;component/Library/Resources/fonts/#Tex Gyre Heros"),
+                    FontFamily = new FontFamily("/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros"),
                     FontSize = 12,
                     Width = 13,
                     Height = 12,

@@ -11,7 +11,7 @@
         Background="{x:Null}"
         CaretBrush="{StaticResource MainColorBrush}"
         ContextMenu="{x:Null}"
-        FontFamily="/PicView;component/Library/Resources/fonts/#Roboto Bold"
+        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
         FontSize="14"
         Foreground="{StaticResource MainColorBrush}"
         OverridesDefaultStyle="True"

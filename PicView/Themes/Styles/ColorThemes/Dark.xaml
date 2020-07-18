@@ -89,7 +89,7 @@
     <!--  Texture  -->
     <ImageBrush
         x:Key="NoisyBg"
-        ImageSource="\Library\Resources/img/noisy-texture-200x200-o4-d31-c-161616-t0.png"
+        ImageSource="\Themes\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png"
         TileMode="FlipXY"
         Viewport="0,0,100,100"
         ViewportUnits="Absolute" />

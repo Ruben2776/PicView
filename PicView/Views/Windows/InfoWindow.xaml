@@ -8,7 +8,7 @@
     Title="{StaticResource ResourceKey=InfoWindowTitle}"
     AllowsTransparency="True"
     Background="#990F0F0F"
-    FontFamily="/PicView;component/Library/Resources/fonts/#Roboto"
+    FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
     ShowInTaskbar="False"
     WindowStyle="None"
@@ -17,7 +17,7 @@
         <Style x:Key="txtItalic" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="FontFamily" Value="/PicView;component/Library/Resources/fonts/#Roboto LightItalic" />
+            <Setter Property="FontFamily" Value="/PicView;component/Themes/Resources/fonts/#Roboto LightItalic" />
             <Setter Property="FontStyle" Value="Italic" />
             <Setter Property="FontSize" Value="11" />
             <Setter Property="Foreground" Value="{StaticResource MainColorFadedBrush}" />
@@ -54,7 +54,7 @@
                     VerticalAlignment="Center"
                     d:Text="Information, help &amp; shortcuts"
                     Background="{StaticResource BackgroundSubtleHighlightBrush}"
-                    FontFamily="/PicView;component/Library/Resources/fonts/#Roboto Bold"
+                    FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                     FontSize="15"
                     Foreground="{StaticResource MainColorBrush}"
                     Text="{StaticResource ResourceKey=InfoWindowTitle}"
@@ -76,7 +76,7 @@
                         HorizontalAlignment="Center"
                         d:Content="Application Shortcuts"
                         Content="{StaticResource ResourceKey=ApplicationShortcuts}"
-                        FontFamily="/PicView;component/Library/Resources/fonts/#Roboto Bold"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                         FontSize="15" />
 
                     <Label

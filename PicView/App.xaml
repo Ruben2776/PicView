@@ -2,20 +2,20 @@
     x:Class="PicView.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    StartupUri="/UI/Windows/MainWindow.xaml">
+    StartupUri="/Views/Windows/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary x:Name="Language" Source="Translations\en-US.xaml" />
-                <ResourceDictionary x:Name="ThemeColors" Source="UI\Styles\ColorThemes\Dark.xaml" />
-                <ResourceDictionary Source="UI\Styles\MyWindowStyle.xaml" />
-                <ResourceDictionary Source="UI\Styles\Button.xaml" />
-                <ResourceDictionary Source="UI\Styles\Border.xaml" />
-                <ResourceDictionary Source="UI\Styles\ToggleButton.xaml" />
-                <ResourceDictionary Source="UI\Styles\ScrollBar.xaml" />
-                <ResourceDictionary Source="UI\Styles\RadioButton.xaml" />
-                <ResourceDictionary Source="UI\Styles\Label.xaml" />
-                <ResourceDictionary Source="UI\Styles\TextBox.xaml" />
+                <ResourceDictionary x:Name="ThemeColors" Source="Themes\Styles\ColorThemes\Dark.xaml" />
+                <ResourceDictionary Source="Themes\Styles\MyWindowStyle.xaml" />
+                <ResourceDictionary Source="Themes\Styles\Button.xaml" />
+                <ResourceDictionary Source="Themes\Styles\Border.xaml" />
+                <ResourceDictionary Source="Themes\Styles\ToggleButton.xaml" />
+                <ResourceDictionary Source="Themes\Styles\ScrollBar.xaml" />
+                <ResourceDictionary Source="Themes\Styles\RadioButton.xaml" />
+                <ResourceDictionary Source="Themes\Styles\Label.xaml" />
+                <ResourceDictionary Source="Themes\Styles\TextBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
