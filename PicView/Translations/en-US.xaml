@@ -60,6 +60,47 @@
     <system:String x:Key="MoveWindow">Move window</system:String>
     <system:String x:Key="CenterWindow">Center window</system:String>
 
+    <!--  Settings window, colors  -->
+    <system:String x:Key="HighlightColor">Highlight color</system:String>
+
+    <system:String x:Key="Blue">Blue</system:String>
+    <system:String x:Key="Cyan">Cyan</system:String>
+    <system:String x:Key="Aqua">Aqua</system:String>
+    <system:String x:Key="Teal">Teal</system:String>
+
+    <system:String x:Key="Lime">Lime</system:String>
+    <system:String x:Key="Green">Green</system:String>
+    <system:String x:Key="Golden">Golden</system:String>
+    <system:String x:Key="Orange">Orange</system:String>
+
+    <system:String x:Key="Red">Red</system:String>
+    <system:String x:Key="Pink">Pink</system:String>
+    <system:String x:Key="Magenta">Magenta</system:String>
+    <system:String x:Key="Purple">Purple</system:String>
+
+    <!--  Settings window, theme  -->
+    <system:String x:Key="Theme">Theme</system:String>
+    <system:String x:Key="DarkTheme">Dark theme</system:String>
+    <system:String x:Key="LightTheme">Light theme</system:String>
+    <system:String x:Key="ChangingThemeRequiresRestart">* Changing theme requires restart</system:String>
+
+    <!--  Settings window, misc  -->
+    <system:String x:Key="MiscSettings">Misc settings</system:String>
+    <system:String x:Key="SearchSubdirectory">Search subdirectories</system:String>
+    <system:String x:Key="ColoredWindowBorder">Colored window border</system:String>
+
+    <!--  Settings window, wallpaper  -->
+    <system:String x:Key="SetCurrentImageAsWallpaper">Set current image as wallpaper:</system:String>
+
+    <system:String x:Key="Fill">Fill</system:String>
+    <system:String x:Key="Center">Center</system:String>
+    <system:String x:Key="Fit">Fit</system:String>
+    <system:String x:Key="Tile">Tile</system:String>
+    <system:String x:Key="Stretch">Stretch</system:String>
+
+    <!--  Settings window, language  -->
+    <system:String x:Key="Language">Language</system:String>
+    <system:String x:Key="ChangingLanguageRequiresRestart">* Changing language requires restart</system:String>
 
     <!--  Navigation related  -->
     <system:String x:Key="Navigation">Navigation</system:String>
