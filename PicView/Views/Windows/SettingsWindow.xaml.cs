@@ -1,7 +1,9 @@
 ﻿using PicView.ChangeImage;
+using PicView.Translations;
 using PicView.UILogic;
 using PicView.UILogic.Animations;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.Library.Fields;
@@ -18,6 +20,9 @@ namespace PicView.Views.Windows
 
             ContentRendered += (s, x) =>
             {
+                LanguageBox.ItemsSource = Enum.GetValues(typeof(Languages));
+                LanguageBox.SelectedIndex = 0;
+
                 KeyUp += KeysUp;
                 KeyDown += KeysDown;
                 AddGenericEvents();

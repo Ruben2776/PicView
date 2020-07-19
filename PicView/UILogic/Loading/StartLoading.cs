@@ -43,6 +43,12 @@ namespace PicView.UILogic.Loading
                 TheMainWindow.RightBorderRectangle.Visibility
                 = Visibility.Collapsed;
             }
+
+            // Set user language
+            Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
+            {
+                Source = new Uri(@"/PicView;component/Translations/en-US.xaml", UriKind.Relative)
+            };
         }
 
         internal static void Start()
@@ -53,11 +59,6 @@ namespace PicView.UILogic.Loading
             ConfigColors.UpdateColor();
 
             #region Add dictionaries
-
-            Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
-            {
-                Source = new Uri(@"/PicView;component/Translations/en-US.xaml", UriKind.Relative)
-            };
 
             Application.Current.Resources.MergedDictionaries.Add(
                 new ResourceDictionary
@@ -99,12 +100,9 @@ namespace PicView.UILogic.Loading
                 {
                     SetDefaultSize();
                 }
-                else
+                else if (!ScaleImage.TryFitImage(arg.ToString()))
                 {
-                    if (!ScaleImage.TryFitImage(arg.ToString()))
-                    {
-                        SetDefaultSize();
-                    }
+                    SetDefaultSize();
                 }
 
                 Pic(arg.ToString());
