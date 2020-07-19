@@ -676,6 +676,14 @@ namespace PicView.Shortcuts
                 EditTitleBar.Refocus();
                 return;
             }
+
+            // Move window when Shift is being held down
+            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            {
+                Move(sender, e);
+                return;
+            }
+
             if (Color_Picking.IsRunning)
             {
                 Color_Picking.StopRunning(true);
@@ -713,7 +721,18 @@ namespace PicView.Shortcuts
         /// <param name="sender"></param>
         /// <param name="e"></param>
         internal static void MainImage_MouseMove(object sender, MouseEventArgs e)
-        {
+        {   
+            // Show hand cursor when shift held down, to indicate it can be moved
+            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            {
+                TheMainWindow.Cursor = Cursors.Hand;
+                return;
+            }
+            else
+            {
+                TheMainWindow.Cursor = Cursors.Arrow;
+            }
+
             if (IsAutoScrolling)
             {
                 // Start automainWindow.Scroller and report position

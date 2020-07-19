@@ -144,19 +144,6 @@ namespace PicView.UILogic
         }
 
         /// <summary>
-        /// Logic for mouse enter mainwindow event
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        internal static void Interface_MouseEnter_Negative(object sender, MouseEventArgs e)
-        {
-            if (ActivityTimer.Enabled)
-            {
-                ActivityTimer.Stop();
-            }
-        }
-
-        /// <summary>
         /// Logic for mouse movements on MainWindow
         /// </summary>
         /// <param name="sender"></param>

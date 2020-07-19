@@ -231,7 +231,7 @@
     <system:String x:Key="ShowImageGallery">Show image gallery</system:String>
     <system:String x:Key="GoToImageAtSpecifiedIndex">Go to image at specified index</system:String>
     <system:String x:Key="PasteImageFromClipholder">Paste image from clipholder</system:String>
-    <system:String x:Key="SendCurrentImageToRecycleBin">Send current image to recycle bin</system:String>
+    <system:String x:Key="SendCurrentImageToRecycleBin">Send current image to the recycle bin</system:String>
     <system:String x:Key="StartSlideshow">Start slideshow</system:String>
     <system:String x:Key="CloseGallery">Close gallery</system:String>
 
