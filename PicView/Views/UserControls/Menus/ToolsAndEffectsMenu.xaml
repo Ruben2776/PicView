@@ -63,7 +63,7 @@
                         Width="138"
                         Height="51"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold"
-                        ToolTip="Show effects window">
+                        ToolTip="{StaticResource ShaderEffectsTooltip}">
                         <Button.Background>
                             <SolidColorBrush x:Name="EffectsButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Button.Background>
@@ -72,7 +72,7 @@
                                 Margin="0,0,6,0"
                                 FontSize="14"
                                 Foreground="{StaticResource IconColorBrush}"
-                                Text="Shader Effects" />
+                                Text="{StaticResource ShaderEffects}" />
                             <Image
                                 Width="17"
                                 Height="17"
@@ -98,7 +98,7 @@
                         Width="166"
                         Height="51"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold"
-                        ToolTip="Batch resize &amp; optimize images">
+                        ToolTip="{StaticResource OptimizeResizeTooltip}">
                         <Button.Background>
                             <SolidColorBrush x:Name="ResizeButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Button.Background>
@@ -107,7 +107,7 @@
                                 Margin="0,0,6,0"
                                 FontSize="14"
                                 Foreground="{StaticResource IconColorBrush}"
-                                Text="Optimize &amp; Resize" />
+                                Text="{StaticResource OptimizeResize}" />
                             <Path
                                 Width="16"
                                 Height="16"
@@ -130,15 +130,12 @@
                     <Border.Background>
                         <SolidColorBrush x:Name="CropButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Border.Background>
-                    <Button
-                        x:Name="CropButton"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold"
-                        ToolTip="Crop image [C] (Rotation not yet working)">
+                    <Button x:Name="CropButton" FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
                                 Margin="0,0,6,0"
                                 FontSize="14"
-                                Text="Crop Picture" />
+                                Text="{StaticResource CropPicture}" />
                             <Path
                                 Width="17"
                                 Height="17"
@@ -162,12 +159,12 @@
                     <Button
                         x:Name="ColorPickerButton"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold"
-                        ToolTip="Pick color from image">
+                        ToolTip="{StaticResource ColorPickerToolTooltip}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
                                 Margin="0,0,6,0"
                                 FontSize="14"
-                                Text="Color Picker Tool" />
+                                Text="{StaticResource ColorPickerTool}" />
                             <Path
                                 Width="20"
                                 Height="20"
@@ -188,15 +185,12 @@
                     <Border.Background>
                         <SolidColorBrush x:Name="ExifButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Border.Background>
-                    <Button
-                        x:Name="ExifButton"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold"
-                        ToolTip="Show EXIF (not implemented yet)">
+                    <Button x:Name="ExifButton" FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
                                 Margin="0,0,6,0"
                                 FontSize="14"
-                                Text="Show Image Info" />
+                                Text="{StaticResource ShowImageInfo}" />
                             <Path
                                 Width="17"
                                 Height="17"

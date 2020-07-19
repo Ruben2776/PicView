@@ -251,7 +251,7 @@
                     Width="167"
                     Height="51"
                     BorderThickness="1"
-                    Content="Auto fit window"
+                    Content="{StaticResource AutoFitWindow}"
                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                     Style="{StaticResource Checkstyle}"
                     ToolTip="Resize window to image size">
@@ -266,10 +266,9 @@
                     Canvas.Top="58"
                     Width="167"
                     Height="51"
-                    Content="Fill image height"
+                    Content="{StaticResource FillImageHeight}"
                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                    Style="{StaticResource Checkstyle}"
-                    ToolTip="Fill image height to window">
+                    Style="{StaticResource Checkstyle}">
                     <CheckBox.Background>
                         <SolidColorBrush x:Name="ToggleFillBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </CheckBox.Background>
@@ -281,7 +280,7 @@
                     Canvas.Top="114"
                     Width="167"
                     Height="51"
-                    Content="Toggle scroll"
+                    Content="{StaticResource ToggleScroll}"
                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                     Style="{StaticResource Checkstyle}">
                     <CheckBox.Background>
@@ -295,7 +294,7 @@
                     Canvas.Top="115"
                     Width="167"
                     Height="51"
-                    Content="Toggle looping"
+                    Content="{StaticResource ToggleLooping}"
                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                     Style="{StaticResource Checkstyle}">
                     <CheckBox.Background>

@@ -85,7 +85,7 @@
                             <TextBlock
                                 Margin="0,0,7,0"
                                 FontSize="14"
-                                Text="Show fullscreen gallery" />
+                                Text="{StaticResource ShowFullscreenGallery}" />
                             <Image Width="17" Height="17">
                                 <Image.Source>
                                     <DrawingImage>
@@ -120,7 +120,7 @@
                             <TextBlock
                                 Margin="0,0,7,0"
                                 FontSize="14"
-                                Text="Show contained gallery" />
+                                Text="{StaticResource ShowContainedGallery}" />
                             <Image Width="17" Height="17">
                                 <Image.Source>
                                     <DrawingImage>

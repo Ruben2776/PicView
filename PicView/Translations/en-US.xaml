@@ -235,5 +235,23 @@
     <system:String x:Key="StartSlideshow">Start slideshow</system:String>
     <system:String x:Key="CloseGallery">Close gallery</system:String>
 
+    <!--  Menu buttons text  -->
+    <system:String x:Key="ShowFullscreenGallery">Show fullscreen gallery</system:String>
+    <system:String x:Key="ShowContainedGallery">Show contained gallery</system:String>
+
+    <system:String x:Key="FillImageHeight">Fill image height</system:String>
+
+    <system:String x:Key="OptimizeResize">Optimize &amp; Resize</system:String>
+    <system:String x:Key="OptimizeResizeTooltip">Batch resize &amp; optimize images</system:String>
+
+    <system:String x:Key="ShaderEffects">Shader Effects</system:String>
+    <system:String x:Key="ShaderEffectsTooltip">Show image effects window</system:String>
+
+    <system:String x:Key="CropPicture">Crop Picture</system:String>
+
+    <system:String x:Key="ShowImageInfo">Show Image Info</system:String>
+
+    <system:String x:Key="ColorPickerTool">Color Picker Tool</system:String>
+    <system:String x:Key="ColorPickerToolTooltip">Pick color from image</system:String>
 
 </ResourceDictionary>

@@ -85,7 +85,6 @@
                     Style="{StaticResource ButtonBorder}">
                     <Button
                         x:Name="Open"
-                        d:Content="Open"
                         Content="{StaticResource ResourceKey=Open}"
                         FocusVisualStyle="{x:Null}"
                         FontSize="14"
@@ -107,7 +106,6 @@
                         <Button.Content>
                             <TextBlock
                                 Margin="3,0,3,0"
-                                d:Text="Show in folder"
                                 Text="{StaticResource ResourceKey=ShowInFolder}"
                                 TextWrapping="Wrap" />
                         </Button.Content>
@@ -125,7 +123,6 @@
                     Style="{StaticResource ButtonBorder}">
                     <Button
                         x:Name="Print"
-                        d:Content="Print"
                         Content="{StaticResource ResourceKey=Print}"
                         FocusVisualStyle="{x:Null}"
                         FontSize="14" />
@@ -141,7 +138,6 @@
                     Style="{StaticResource ButtonBorder}">
                     <Button
                         x:Name="SaveBorder"
-                        d:Content="Save"
                         Content="{StaticResource ResourceKey=Save}"
                         FocusVisualStyle="{x:Null}"
                         FontSize="14" />
