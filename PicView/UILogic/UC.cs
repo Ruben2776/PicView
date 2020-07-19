@@ -1,6 +1,5 @@
 ﻿using PicView.ChangeImage;
 using PicView.UILogic.PicGallery;
-using PicView.UILogic.UserControls.Gallery;
 using PicView.UILogic.UserControls.Misc;
 using System;
 using System.Windows;
@@ -25,12 +24,11 @@ namespace PicView.UILogic.UserControls
         internal static GalleryShortcut GetGalleryShortcut { get; set; }
         internal static CroppingTool GetCropppingTool { get; set; }
         internal static ColorPicker GetColorPicker { get; set; }
-        internal static GalleryMenu GetGalleryMenu { get; set; }
 
-        private static bool imageSettingsMenuOpen { get; set; }
-        private static bool fileMenuOpen { get; set; }
-        private static bool quickSettingsMenuOpen { get; set; }
-        private static bool toolsAndEffectsMenuOpen { get; set; }
+        private static bool imageSettingsMenuOpen;
+        private static bool fileMenuOpen;
+        private static bool quickSettingsMenuOpen;
+        private static bool toolsAndEffectsMenuOpen;
 
         #region Toggle open close menus
 

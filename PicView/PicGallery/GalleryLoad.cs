@@ -107,22 +107,6 @@ namespace PicView.UILogic.PicGallery
                 ShowNavigation(false);
                 ShowTopandBottom(false);
                 ConfigColors.UpdateColor(true);
-
-#if DEBUG
-                if (GetGalleryMenu == null)
-                {
-                    GetGalleryMenu = new UserControls.Gallery.GalleryMenu
-                    {
-                    };
-
-                    if (WindowLogic.fakeWindow == null)
-                    {
-                        WindowLogic.fakeWindow = new Views.Windows.FakeWindow();
-                    }
-
-                    WindowLogic.fakeWindow.grid.Children.Add(GetGalleryMenu);
-                }
-#endif
             }
 
 

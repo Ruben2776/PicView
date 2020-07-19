@@ -194,7 +194,7 @@ namespace PicView.UILogic.PicGallery
             HideInterfaceLogic.ShowStandardInterface();
 
             // Restore settings
-            AutoFitWindow = AutoFitWindow;
+            AutoFitWindow = Properties.Settings.Default.AutoFitWindow;
         }
 
         #endregion Close

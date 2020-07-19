@@ -1,5 +1,4 @@
 ﻿using PicView.SystemIntegration;
-using PicView.UILogic.PicGallery;
 using PicView.Views.Windows;
 using System;
 using System.Windows;
