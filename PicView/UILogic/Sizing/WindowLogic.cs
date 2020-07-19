@@ -213,12 +213,6 @@ namespace PicView.UILogic.Sizing
                 TheMainWindow.Top = MonitorInfo.WorkArea.Top;
                 TheMainWindow.Left = MonitorInfo.WorkArea.Left;
 
-                //if (GalleryFunctions.IsOpen)
-                //{
-                //    GetPicGallery.Width = SystemParameters.PrimaryScreenWidth;
-                //    GetPicGallery.Height = SystemParameters.PrimaryScreenHeight;
-                //}
-
                 ConfigColors.UpdateColor(true);
                 Properties.Settings.Default.Save();
             }

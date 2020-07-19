@@ -78,8 +78,8 @@ namespace PicView.UILogic.PicGallery
                 }
                 else
                 {
-                    GetPicGallery.Width = TheMainWindow.Width - 2;
-                    GetPicGallery.Height = TheMainWindow.Height - 2; // 2px for borders
+                    GetPicGallery.Width = TheMainWindow.ActualWidth - 2;
+                    GetPicGallery.Height = TheMainWindow.ActualHeight - 2; // 2px for borders
                 }
 
                 GetPicGallery.HorizontalAlignment = HorizontalAlignment.Stretch;
