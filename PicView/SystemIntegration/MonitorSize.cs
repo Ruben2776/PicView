@@ -8,8 +8,8 @@ namespace PicView.SystemIntegration
     /// </summary>
     internal readonly struct MonitorSize : IEquatable<MonitorSize>
     {
-        internal readonly int Width { get; }
-        internal readonly int Height { get; }
+        internal readonly double Width { get; }
+        internal readonly double Height { get; }
 
         internal readonly double DpiScaling { get; }
 
@@ -44,7 +44,7 @@ namespace PicView.SystemIntegration
         /// <param name="height">The WorkArea Pixel Height</param>
         /// <param name="dpiScaling"></param>
         /// <param name="workArea"></param>
-        private MonitorSize(int width, int height, double dpiScaling, Rect workArea)
+        private MonitorSize(double width, double height, double dpiScaling, Rect workArea)
         {
             Width = width;
             Height = height;
@@ -73,10 +73,10 @@ namespace PicView.SystemIntegration
 
             //get the available area of the monitor
             var workArea = currentMonitor.WorkingArea;
-            var workAreaWidth = (int)Math.Floor(workArea.Width * dpiScaling);
-            var workAreaHeight = (int)Math.Floor(workArea.Height * dpiScaling);
+            var Width = currentMonitor.Bounds.Width;
+            var Height = currentMonitor.Bounds.Height;
 
-            return new MonitorSize(workAreaWidth, workAreaHeight, dpiScaling, workArea);
+            return new MonitorSize(Width, Height, dpiScaling, workArea);
         }
     }
 }

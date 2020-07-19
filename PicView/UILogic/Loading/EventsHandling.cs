@@ -2,7 +2,6 @@
 using PicView.SystemIntegration;
 using PicView.UILogic.Animations;
 using PicView.UILogic.PicGallery;
-using PicView.UILogic.Sizing;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;

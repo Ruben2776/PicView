@@ -446,28 +446,36 @@ namespace PicView.Shortcuts
 
                     // 1
                     case Key.D1:
-                        if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen) { break; }
+                        if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen
+                        || Properties.Settings.Default.Fullscreen) { break; }
+
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterImageInWindow"]);
                         UpdateUIValues.SetScalingBehaviour(false, false);
                         break;
 
                     // 2
                     case Key.D2:
-                        if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen) { break; }
+                        if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen
+                        || Properties.Settings.Default.Fullscreen) { break; }
+
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterImageInWindowFillHeight"]);
                         UpdateUIValues.SetScalingBehaviour(false, true);
                         break;
 
                     // 3
                     case Key.D3:
-                        if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen) { break; }
+                        if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen
+                        || Properties.Settings.Default.Fullscreen) { break; }
+
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterApplicationToWindow"]);
                         UpdateUIValues.SetScalingBehaviour(true, false);
                         break;
 
                     // 4
                     case Key.D4:
-                        if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen) { break; }
+                        if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen
+                        || Properties.Settings.Default.Fullscreen) { break; }
+
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterApplicationToWindowFillHeight"]);
                         UpdateUIValues.SetScalingBehaviour(true, true);
                         break;
@@ -532,28 +540,21 @@ namespace PicView.Shortcuts
             #region Alt + keys
             // Alt doesn't work in switch? Waiting for key up is confusing in this case
 
-            if (altDown)
+            if (altDown && !e.IsRepeat)
             {
                 // Alt + Z
                 if ((e.SystemKey == Key.Z))
                 {
-                    if (!e.IsRepeat)
-                    {
-                        HideInterfaceLogic.ToggleInterface();
-                    }
-
-                    return;
+                    HideInterfaceLogic.ToggleInterface();
                 }
 
                 // Alt + Enter
                 else if ((e.SystemKey == Key.Enter))
                 {
-                    if (!e.IsRepeat)
+                    if (Properties.Settings.Default.PicGallery != 2)
                     {
                         Fullscreen_Restore();
                     }
-
-                    return;
                 }
             }
 

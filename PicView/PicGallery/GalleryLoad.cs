@@ -68,8 +68,8 @@ namespace PicView.UILogic.PicGallery
             {
                 if (Properties.Settings.Default.Fullscreen)
                 {
-                    GetPicGallery.Width = SystemParameters.PrimaryScreenWidth;
-                    GetPicGallery.Height = SystemParameters.PrimaryScreenHeight;
+                    GetPicGallery.Width = MonitorInfo.Width;
+                    GetPicGallery.Height = MonitorInfo.Height;
                 }
                 else if (Properties.Settings.Default.ShowInterface)
                 {
@@ -91,7 +91,7 @@ namespace PicView.UILogic.PicGallery
             else
             {
                 GetPicGallery.Width = picGalleryItem_Size + 14; // 17 for scrollbar width + 2 for borders
-                GetPicGallery.Height = MonitorInfo.Height;
+                GetPicGallery.Height = MonitorInfo.WorkArea.Height;
 
                 GetPicGallery.HorizontalAlignment = HorizontalAlignment.Right;
                 GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;

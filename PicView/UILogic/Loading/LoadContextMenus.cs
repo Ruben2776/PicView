@@ -378,7 +378,7 @@ namespace PicView.UILogic.Loading
 
             ///////////////////////////
             ///////////////////////////
-            ///  Set as Wallpaper  \\\\
+            ///  Set as            \\\\
             ///////////////////////////
             ///////////////////////////
             var wallcm = new MenuItem

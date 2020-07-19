@@ -203,21 +203,21 @@ namespace PicView.UILogic.Sizing
                 ShowNavigation(true);
                 ShowShortcuts(true);
 
-                TheMainWindow.ResizeMode = ResizeMode.CanMinimize;
-                TheMainWindow.SizeToContent = SizeToContent.Manual;
-                TheMainWindow.Width = SystemParameters.PrimaryScreenWidth;
-                TheMainWindow.Height = SystemParameters.PrimaryScreenHeight;
-
-                TheMainWindow.Top = 0;
-                TheMainWindow.Left = 0;
-
                 TheMainWindow.Topmost = true;
 
-                if (GalleryFunctions.IsOpen)
-                {
-                    GetPicGallery.Width = SystemParameters.PrimaryScreenWidth;
-                    GetPicGallery.Height = SystemParameters.PrimaryScreenHeight;
-                }
+                TheMainWindow.ResizeMode = ResizeMode.CanMinimize;
+                TheMainWindow.SizeToContent = SizeToContent.Manual;
+                TheMainWindow.Width = MonitorInfo.Width;
+                TheMainWindow.Height = MonitorInfo.Height;
+
+                TheMainWindow.Top = MonitorInfo.WorkArea.Top;
+                TheMainWindow.Left = MonitorInfo.WorkArea.Left;
+
+                //if (GalleryFunctions.IsOpen)
+                //{
+                //    GetPicGallery.Width = SystemParameters.PrimaryScreenWidth;
+                //    GetPicGallery.Height = SystemParameters.PrimaryScreenHeight;
+                //}
 
                 ConfigColors.UpdateColor(true);
                 Properties.Settings.Default.Save();
@@ -288,7 +288,6 @@ namespace PicView.UILogic.Sizing
         internal static void CenterWindowOnScreen()
         {
             //move to the centre
-            TheMainWindow.Top = ((MonitorInfo.WorkArea.Height - (TheMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
             TheMainWindow.Left = (MonitorInfo.WorkArea.Width - TheMainWindow.ActualWidth) / 2 + MonitorInfo.WorkArea.Left;
             TheMainWindow.Top = (MonitorInfo.WorkArea.Height - TheMainWindow.ActualHeight) / 2 + MonitorInfo.WorkArea.Top;
         }

@@ -98,8 +98,8 @@ namespace PicView.UILogic.Sizing
             var borderSpaceHeight = showInterface ? TheMainWindow.LowerBar.Height + TheMainWindow.TitleBar.Height + 6 : 6;
             var borderSpaceWidth = 20; // Based on UI borders
 
-            var monitorWidth = MonitorInfo.Width - borderSpaceWidth;
-            var monitorHeight = MonitorInfo.Height - borderSpaceHeight;
+            var monitorWidth = MonitorInfo.WorkArea.Width - borderSpaceWidth;
+            var monitorHeight = MonitorInfo.WorkArea.Height - borderSpaceHeight;
 
             if (Properties.Settings.Default.PicGallery == 2)
             {
@@ -117,18 +117,9 @@ namespace PicView.UILogic.Sizing
                 }
                 else
                 {
-                    if (showInterface)
-                    {
-                        /// Use padding for shown interface
-                        maxWidth = Math.Min(monitorWidth - padding, width);
-                        maxHeight = Math.Min(monitorHeight - padding, height);
-                    }
-                    else
-                    {
-                        /// Fill users screen
-                        maxWidth = Math.Min(monitorWidth, width);
-                        maxHeight = Math.Min(monitorHeight, height);
-                    }
+                    /// Use padding for shown interface
+                    maxWidth = Math.Min(monitorWidth - padding, width);
+                    maxHeight = Math.Min(monitorHeight - padding, height);
                 }
             }
             else /// Get max width and height, based on window size
@@ -187,31 +178,34 @@ namespace PicView.UILogic.Sizing
                 TheMainWindow.MainImage.Height = xHeight = height * AspectRatio;
             }
 
-            /// Update TitleBar
-            var interfaceSize = 190; // logo and buttons width
-            if (Properties.Settings.Default.AutoFitWindow)
+            if (!Properties.Settings.Default.Fullscreen)
             {
-                /// Update mainWindow.TitleBar width to dynamically fit new size
-                var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(xWidth, TheMainWindow.MinWidth) : Math.Max(xHeight, TheMainWindow.MinHeight);
-                TheMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
-
-                if (Properties.Settings.Default.PicGallery == 2 && xWidth >= monitorWidth - (picGalleryItem_Size + 200))
+                /// Update TitleBar
+                var interfaceSize = 190; // logo and buttons width
+                if (Properties.Settings.Default.AutoFitWindow)
                 {
-                    // Offset window to not overlap gallery
-                    TheMainWindow.Left = ((MonitorInfo.WorkArea.Width - picGalleryItem_Size - (TheMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
-                                      + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
-                    TheMainWindow.Top = ((MonitorInfo.WorkArea.Height
-                                       - (TheMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
+                    /// Update mainWindow.TitleBar width to dynamically fit new size
+                    var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(xWidth, TheMainWindow.MinWidth) : Math.Max(xHeight, TheMainWindow.MinHeight);
+                    TheMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
+
+                    if (Properties.Settings.Default.PicGallery == 2 && xWidth >= monitorWidth - (picGalleryItem_Size + 200))
+                    {
+                        // Offset window to not overlap gallery
+                        TheMainWindow.Left = ((MonitorInfo.WorkArea.Width - picGalleryItem_Size - (TheMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
+                                          + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
+                        TheMainWindow.Top = ((MonitorInfo.WorkArea.Height
+                                           - (TheMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
+                    }
+                    else
+                    {
+                        CenterWindowOnScreen();
+                    }
                 }
                 else
                 {
-                    CenterWindowOnScreen();
+                    /// Fix title width to window size
+                    TheMainWindow.TitleText.MaxWidth = TheMainWindow.ActualWidth - interfaceSize;
                 }
-            }
-            else
-            {
-                /// Fix title width to window size
-                TheMainWindow.TitleText.MaxWidth = TheMainWindow.ActualWidth - interfaceSize;
             }
 
             if (ZoomLogic.ZoomValue == 1.0)

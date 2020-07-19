@@ -1,8 +1,6 @@
-﻿using PicView.Library;
-using PicView.UILogic.TransformImage;
+﻿using PicView.UILogic.TransformImage;
 using System;
 using System.Timers;
-using System.Windows.Input;
 using static PicView.Library.Fields;
 using static PicView.UILogic.UserControls.UC;
 
@@ -68,49 +66,13 @@ namespace PicView.UILogic.Animations
                     return;
                 }
 
-                var pos = Mouse.GetPosition(TheMainWindow.ParentContainer);
+                AnimationHelper.Fade(GetClickArrowLeft, 1, timespan);
+                AnimationHelper.Fade(GetClickArrowRight, 1, timespan);
+                AnimationHelper.Fade(GetGalleryShortcut, 1, timespan);
+                AnimationHelper.Fade(Getx2, 1, timespan);
+                AnimationHelper.Fade(GetMinus, 1, timespan);
+                AnimationHelper.Fade(GetRestorebutton, 1, timespan);
 
-                /// uncomment for position Tooltip.ShowTooltipMessage($"x = {pos.X} Y = {pos.Y}");
-
-                if (pos.X < 230 && GetClickArrowLeft.Opacity != 1)
-                {
-                    AnimationHelper.Fade(GetClickArrowLeft, 1, timespan);
-                }
-                else if (GetClickArrowLeft.Opacity != 0)
-                {
-                    AnimationHelper.Fade(GetClickArrowLeft, 0, timespan);
-                }
-
-                if (pos.X < 1050 && pos.X > 400 && GetClickArrowRight.Opacity != 1)
-                {
-                    AnimationHelper.Fade(GetClickArrowRight, 1, timespan);
-                }
-                else if (GetClickArrowRight.Opacity != 0)
-                {
-                    AnimationHelper.Fade(GetClickArrowRight, 0, timespan);
-                }
-
-                if (pos.Y > 980 && GetGalleryShortcut.Opacity != 1)
-                {
-                    AnimationHelper.Fade(GetGalleryShortcut, 1, timespan);
-                }
-                else if (GetGalleryShortcut.Opacity != 0)
-                {
-                    AnimationHelper.Fade(GetGalleryShortcut, 0, timespan);
-                }
-
-                if (pos.Y < 300 && Getx2.Opacity != 1)
-                {
-                    AnimationHelper.Fade(Getx2, 1, timespan);
-                    AnimationHelper.Fade(GetRestorebutton, 1, timespan);
-                    AnimationHelper.Fade(GetMinus, 1, timespan);
-                }
-                else if (Getx2.Opacity != 0)
-                {
-                    AnimationHelper.Fade(Getx2, 0, timespan);
-                    AnimationHelper.Fade(GetRestorebutton, 0, timespan);
-                    AnimationHelper.Fade(GetMinus, 0, timespan);
-                }
             }));
         }
 
