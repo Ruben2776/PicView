@@ -1,4 +1,6 @@
 ﻿using PicView.ChangeImage;
+using PicView.UILogic.Animations;
+using PicView.UILogic.Sizing;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,8 +38,15 @@ namespace PicView.UILogic.PicGallery
                     PreviewItemClick(z.img.Source, id);
                 }
 
-                GetPicGallery.Width = xWidth;
-                GetPicGallery.Height = xHeight;
+                if (WindowLogic.AutoFitWindow)
+                {
+                    GetPicGallery.Width = xWidth;
+                    GetPicGallery.Height = xHeight;
+                }
+                
+                GetPicGallery.x2.Visibility = Visibility.Hidden;
+
+                TheMainWindow.MainImage.Source = null;
 
                 var img = new Image()
                 {
@@ -61,9 +70,11 @@ namespace PicView.UILogic.PicGallery
                 var deceleration = 0.4;
                 var duration = TimeSpan.FromSeconds(.3);
 
+                AnimationHelper.Fade(GetPicGallery.Container, duration, TimeSpan.Zero, 1, 0);
+
                 var da = new DoubleAnimation
                 {
-                    From = from,
+                    From = 0,
                     To = to[0],
                     Duration = duration,
                     AccelerationRatio = acceleration,
@@ -73,7 +84,7 @@ namespace PicView.UILogic.PicGallery
 
                 var da0 = new DoubleAnimation
                 {
-                    From = from,
+                    From = 0,
                     To = to[1],
                     Duration = duration,
                     AccelerationRatio = acceleration,

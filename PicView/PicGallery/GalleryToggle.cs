@@ -1,4 +1,5 @@
-﻿using PicView.UILogic.Sizing;
+﻿using PicView.UILogic.Animations;
+using PicView.UILogic.Sizing;
 using PicView.Views.Windows;
 using System;
 using System.Windows;
@@ -80,19 +81,14 @@ namespace PicView.UILogic.PicGallery
             Properties.Settings.Default.PicGallery = 1;
             LoadLayout();
 
-            var da = new DoubleAnimation
-            {
-                Duration = TimeSpan.FromSeconds(.5),
-                To = 1,
-                From = 0
-            };
-
-            GetPicGallery.BeginAnimation(UIElement.OpacityProperty, da);
+            GetPicGallery.Opacity = 1;
+            AnimationHelper.Fade(GetPicGallery.Container, TimeSpan.FromSeconds(.5), TimeSpan.Zero, 0, 1);
 
             GetClickArrowLeft.Visibility =
             GetClickArrowRight.Visibility =
             Getx2.Visibility =
             GetMinus.Visibility =
+            GetRestorebutton.Visibility =
             GetGalleryShortcut.Visibility = Visibility.Hidden;
 
             if (fakeWindow != null)

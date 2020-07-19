@@ -1,4 +1,5 @@
 ﻿using PicView.SystemIntegration;
+using PicView.UILogic.PicGallery;
 using PicView.Views.Windows;
 using System;
 using System.Windows;
@@ -199,8 +200,6 @@ namespace PicView.UILogic.Sizing
                 Properties.Settings.Default.Fullscreen = true;
 
                 ShowTopandBottom(false);
-                ShowNavigation(true);
-                ShowShortcuts(true);
 
                 TheMainWindow.Topmost = true;
 
@@ -211,6 +210,26 @@ namespace PicView.UILogic.Sizing
 
                 TheMainWindow.Top = MonitorInfo.WorkArea.Top;
                 TheMainWindow.Left = MonitorInfo.WorkArea.Left;
+
+                // Handle if browsing gallery
+                if (GalleryFunctions.IsOpen)
+                {
+                    GalleryLoad.LoadLayout();
+                    GalleryScroll.ScrollTo();
+                }
+                else
+                {
+                    ShowNavigation(true);
+                    ShowShortcuts(true);
+
+                    GetGalleryShortcut.Opacity =
+                    GetClickArrowLeft.Opacity =
+                    GetClickArrowRight.Opacity =
+                    Getx2.Opacity =
+                    GetRestorebutton.Opacity =
+                    GetMinus.Opacity = 1;
+                }
+
 
                 ConfigColors.UpdateColor(true);
                 Properties.Settings.Default.Save();

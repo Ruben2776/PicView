@@ -141,49 +141,20 @@
     </ControlTemplate>
 
     <ControlTemplate x:Key="HorizontalScrollBar" TargetType="{x:Type ScrollBar}">
-        <Border
-            Background="#D8141414"
-            BorderBrush="{StaticResource BorderBrush}"
-            BorderThickness="0,1,0,0">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition MaxWidth="18" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition MaxWidth="18" />
-                </Grid.ColumnDefinitions>
-                <RepeatButton
-                    Grid.Column="0"
-                    Width="18"
-                    Command="ScrollBar.LineLeftCommand"
-                    Style="{StaticResource LineButtonLeftStyle}" />
-
-                <Track
-                    Name="PART_Track"
-                    Grid.Column="1"
-                    IsDirectionReversed="False">
-                    <Track.DecreaseRepeatButton>
-                        <RepeatButton Command="ScrollBar.PageLeftCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
-                    </Track.DecreaseRepeatButton>
-                    <Track.Thumb>
-                        <Thumb Style="{StaticResource HorizontalScrollBarThumbStyle}" />
-                    </Track.Thumb>
-                    <Track.IncreaseRepeatButton>
-                        <RepeatButton Command="ScrollBar.PageRightCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
-                    </Track.IncreaseRepeatButton>
-                    <Track.Resources>
-                        <!--  Thumb's minimum height is half of this metric  -->
-                        <system:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarButtonWidthKey}">
-                            150
-                        </system:Double>
-                    </Track.Resources>
-                </Track>
-                <RepeatButton
-                    Grid.Column="2"
-                    Width="18"
-                    Command="ScrollBar.LineRightCommand"
-                    Style="{StaticResource LineButtonRightStyle}" />
-            </Grid>
-        </Border>
+        <Track
+            Name="PART_Track"
+            Grid.Column="1"
+            IsDirectionReversed="False">
+            <Track.Thumb>
+                <Thumb Style="{StaticResource HorizontalScrollBarThumbStyle}" />
+            </Track.Thumb>
+            <Track.Resources>
+                <!--  Thumb's minimum height is half of this metric  -->
+                <system:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarButtonWidthKey}">
+                    150
+                </system:Double>
+            </Track.Resources>
+        </Track>
     </ControlTemplate>
 
     <Style TargetType="{x:Type ScrollBar}">
@@ -197,7 +168,8 @@
             </Trigger>
             <Trigger Property="Orientation" Value="Horizontal">
                 <Setter Property="Width" Value="Auto" />
-                <Setter Property="Height" Value="30" />
+                <Setter Property="Margin" Value="0,0,0,10" />
+                <Setter Property="Height" Value="15" />
                 <Setter Property="Template" Value="{StaticResource HorizontalScrollBar}" />
             </Trigger>
         </Style.Triggers>
