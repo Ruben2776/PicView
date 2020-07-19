@@ -1,5 +1,6 @@
 ﻿using PicView.ImageHandling;
 using PicView.UILogic.TransformImage;
+using PicView.UILogic.UserControls;
 using System;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
@@ -182,13 +183,10 @@ namespace PicView.UILogic.Sizing
             {
                 /// Update TitleBar
                 var interfaceSize = 190; // logo and buttons width
-                if (Properties.Settings.Default.AutoFitWindow)
-                {
-                    /// Update mainWindow.TitleBar width to dynamically fit new size
-                    var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(xWidth, TheMainWindow.MinWidth) : Math.Max(xHeight, TheMainWindow.MinHeight);
-                    TheMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
 
-                    if (Properties.Settings.Default.PicGallery == 2 && xWidth >= monitorWidth - (picGalleryItem_Size + 200))
+                if (Properties.Settings.Default.PicGallery == 2)
+                {
+                    if (xWidth >= monitorWidth - (picGalleryItem_Size + 200))
                     {
                         // Offset window to not overlap gallery
                         TheMainWindow.Left = ((MonitorInfo.WorkArea.Width - picGalleryItem_Size - (TheMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
@@ -201,12 +199,21 @@ namespace PicView.UILogic.Sizing
                         CenterWindowOnScreen();
                     }
                 }
+                else if (Properties.Settings.Default.AutoFitWindow)
+                {
+                    /// Update mainWindow.TitleBar width to dynamically fit new size
+                    var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(xWidth, TheMainWindow.MinWidth) : Math.Max(xHeight, TheMainWindow.MinHeight);
+                    TheMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
+
+                    CenterWindowOnScreen();
+                }
                 else
                 {
                     /// Fix title width to window size
                     TheMainWindow.TitleText.MaxWidth = TheMainWindow.ActualWidth - interfaceSize;
                 }
             }
+
 
             if (ZoomLogic.ZoomValue == 1.0)
             {

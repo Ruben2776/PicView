@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using PicView.UILogic.Sizing;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.Library.Fields;
@@ -63,7 +64,6 @@ namespace PicView.UILogic.PicGallery
                 SetSize();
             }
 
-            // TODO Make this code more clean and explain what's going on?
             if (Properties.Settings.Default.PicGallery == 1)
             {
                 if (Properties.Settings.Default.Fullscreen)
@@ -93,6 +93,11 @@ namespace PicView.UILogic.PicGallery
                 GetPicGallery.Width = picGalleryItem_Size + 14; // 17 for scrollbar width + 2 for borders
                 GetPicGallery.Height = MonitorInfo.WorkArea.Height;
 
+                TheMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
+                TheMainWindow.ResizeMode = ResizeMode.CanMinimize;
+
+                WindowLogic.CenterWindowOnScreen();
+
                 GetPicGallery.HorizontalAlignment = HorizontalAlignment.Right;
                 GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
                 GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
@@ -103,21 +108,21 @@ namespace PicView.UILogic.PicGallery
                 ShowTopandBottom(false);
                 ConfigColors.UpdateColor(true);
 
-//#if DEBUG
-//                if (GetGalleryMenu == null)
-//                {
-//                    GetGalleryMenu = new UserControls.Gallery.GalleryMenu
-//                    {
-//                    };
+#if DEBUG
+                if (GetGalleryMenu == null)
+                {
+                    GetGalleryMenu = new UserControls.Gallery.GalleryMenu
+                    {
+                    };
 
-//                    if (WindowLogic.fakeWindow == null)
-//                    {
-//                        WindowLogic.fakeWindow = new Windows.FakeWindow();
-//                    }
+                    if (WindowLogic.fakeWindow == null)
+                    {
+                        WindowLogic.fakeWindow = new Views.Windows.FakeWindow();
+                    }
 
-//                    WindowLogic.fakeWindow.grid.Children.Add(GetGalleryMenu);
-//                }
-//#endif
+                    WindowLogic.fakeWindow.grid.Children.Add(GetGalleryMenu);
+                }
+#endif
             }
 
 

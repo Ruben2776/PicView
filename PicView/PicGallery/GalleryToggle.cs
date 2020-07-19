@@ -192,6 +192,9 @@ namespace PicView.UILogic.PicGallery
             ConfigColors.UpdateColor();
 
             HideInterfaceLogic.ShowStandardInterface();
+
+            // Restore settings
+            AutoFitWindow = AutoFitWindow;
         }
 
         #endregion Close

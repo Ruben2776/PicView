@@ -31,9 +31,16 @@ namespace PicView.Views.Windows
                 return;
             }
 
-            if (!AutoFitWindow || !size.WidthChanged && !size.HeightChanged)
+            if (!size.WidthChanged && !size.HeightChanged)
             {
                 return;
+            }
+            else if (!AutoFitWindow)
+            {
+                if (Properties.Settings.Default.PicGallery != 2)
+                {
+                    return;
+                }
             }
 
             //Keep position when size has changed
