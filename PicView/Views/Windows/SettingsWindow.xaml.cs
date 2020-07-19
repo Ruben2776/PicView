@@ -16,62 +16,13 @@ namespace PicView.Views.Windows
         {
             InitializeComponent();
 
-            switch (Properties.Settings.Default.ColorTheme)
-            {
-                case 1:
-                    BlueRadio.IsChecked = true;
-                    break;
-
-                case 2:
-                    PinkRadio.IsChecked = true;
-                    break;
-
-                case 3:
-                    OrangeRadio.IsChecked = true;
-                    break;
-
-                case 4:
-                    GreenRadio.IsChecked = true;
-                    break;
-
-                case 5:
-                    RedRadio.IsChecked = true;
-                    break;
-
-                case 6:
-                    TealRadio.IsChecked = true;
-                    break;
-
-                case 7:
-                    AquaRadio.IsChecked = true;
-                    break;
-
-                case 8:
-                    GoldenRadio.IsChecked = true;
-                    break;
-
-                case 9:
-                    PurpleRadio.IsChecked = true;
-                    break;
-
-                case 10:
-                    CyanRadio.IsChecked = true;
-                    break;
-
-                case 11:
-                    MagentaRadio.IsChecked = true;
-                    break;
-
-                case 12:
-                    LimeRadio.IsChecked = true;
-                    break;
-            }
-
             ContentRendered += (s, x) =>
             {
                 KeyUp += KeysUp;
                 KeyDown += KeysDown;
                 AddGenericEvents();
+
+                SetCheckedColorEvent();
 
                 // SubDirRadio
                 SubDirRadio.IsChecked = Properties.Settings.Default.IncludeSubDirectories;
@@ -140,6 +91,60 @@ namespace PicView.Views.Windows
             };
         }
 
+        private void SetCheckedColorEvent()
+        {
+            switch (Properties.Settings.Default.ColorTheme)
+            {
+                case 1:
+                    BlueRadio.IsChecked = true;
+                    break;
+
+                case 2:
+                    PinkRadio.IsChecked = true;
+                    break;
+
+                case 3:
+                    OrangeRadio.IsChecked = true;
+                    break;
+
+                case 4:
+                    GreenRadio.IsChecked = true;
+                    break;
+
+                case 5:
+                    RedRadio.IsChecked = true;
+                    break;
+
+                case 6:
+                    TealRadio.IsChecked = true;
+                    break;
+
+                case 7:
+                    AquaRadio.IsChecked = true;
+                    break;
+
+                case 8:
+                    GoldenRadio.IsChecked = true;
+                    break;
+
+                case 9:
+                    PurpleRadio.IsChecked = true;
+                    break;
+
+                case 10:
+                    CyanRadio.IsChecked = true;
+                    break;
+
+                case 11:
+                    MagentaRadio.IsChecked = true;
+                    break;
+
+                case 12:
+                    LimeRadio.IsChecked = true;
+                    break;
+            }
+        }
+
         private void SlideshowSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Properties.Settings.Default.SlideTimer = e.NewValue * 1000;
@@ -198,6 +203,16 @@ namespace PicView.Views.Windows
 
             TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
 
+            // DarkThemeRadio
+            DarkThemeRadio.PreviewMouseLeftButtonDown += DarkTheme_PreviewMouseLeftButtonDown;
+            DarkThemeRadio.MouseEnter += DarkTheme_MouseEnter;
+            DarkThemeRadio.MouseLeave += DarkTheme_MouseLeave;
+
+            // LightThemeRadio
+            LightThemeRadio.PreviewMouseLeftButtonDown += LightTheme_PreviewMouseLeftButtonDown;
+            LightThemeRadio.MouseEnter += LightTheme_MouseEnter;
+            LightThemeRadio.MouseLeave += LightTheme_MouseLeave;
+
             // BlueRadio
             BlueRadio.PreviewMouseLeftButtonDown += BlueRadio_PreviewMouseLeftButtonDown;
             BlueRadio.MouseEnter += BlueRadio_MouseEnter;
@@ -241,9 +256,9 @@ namespace PicView.Views.Windows
             AquaRadio.Click += Aqua;
 
             // GoldenRadio
-            GoldenRadio.PreviewMouseLeftButtonDown += BeigeRadio_PreviewMouseLeftButtonDown;
-            GoldenRadio.MouseEnter += BeigeRadio_MouseEnter;
-            GoldenRadio.MouseLeave += BeigeRadio_MouseLeave;
+            GoldenRadio.PreviewMouseLeftButtonDown += GoldenRadio_PreviewMouseLeftButtonDown;
+            GoldenRadio.MouseEnter += GoldenRadio_MouseEnter;
+            GoldenRadio.MouseLeave += GoldenRadio_MouseLeave;
             GoldenRadio.Click += Golden;
 
             // PurpleRadio
@@ -510,7 +525,7 @@ namespace PicView.Views.Windows
         }
 
         // Beige
-        private void BeigeRadio_MouseLeave(object sender, MouseEventArgs e)
+        private void GoldenRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
@@ -522,7 +537,7 @@ namespace PicView.Views.Windows
             );
         }
 
-        private void BeigeRadio_MouseEnter(object sender, MouseEventArgs e)
+        private void GoldenRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
                 backgroundBorderColor.A,
@@ -534,7 +549,7 @@ namespace PicView.Views.Windows
             );
         }
 
-        private void BeigeRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void GoldenRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(BeigeBrush, 8);
         }
@@ -798,6 +813,66 @@ namespace PicView.Views.Windows
         #endregion Set ColorTheme
 
         #region Mouseover Events
+
+        // DarkTheme
+        private void DarkTheme_MouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                DarkThemeBrush,
+                false
+            );
+        }
+
+        private void DarkTheme_MouseEnter(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseOverColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                DarkThemeBrush,
+                false
+            );
+        }
+
+        private void DarkTheme_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(DarkThemeBrush, false);
+        }
+
+        // LightTheme
+        private void LightTheme_MouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                LightThemeBrush,
+                false
+            );
+        }
+
+        private void LightTheme_MouseEnter(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseOverColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                LightThemeBrush,
+                false
+            );
+        }
+
+        private void LightTheme_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(LightThemeBrush, false);
+        }
 
         // Fill Button
         private void Fill_MouseLeave(object sender, MouseEventArgs e)
