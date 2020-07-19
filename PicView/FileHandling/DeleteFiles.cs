@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualBasic.FileIO;
+using PicView.UILogic.UserControls;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -66,7 +67,6 @@ namespace PicView.FileHandling
             {
                 var recycle = Recycle ? RecycleOption.SendToRecycleBin : RecycleOption.DeletePermanently;
                 FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, recycle);
-                Pics.Remove(file);
             }
 #if DEBUG
             catch (Exception e)
@@ -91,6 +91,14 @@ namespace PicView.FileHandling
             {
                 ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredWhenDeleting"] + Environment.NewLine + file);
                 return;
+            }
+
+            Pics.Remove(file);
+
+            // Sync with gallery
+            if (UC.GetPicGallery != null)
+            {
+                UC.GetPicGallery.Container.Children.RemoveAt(Pics.IndexOf(Pics[FolderIndex]));
             }
 
             if (Pics.Count <= 0)

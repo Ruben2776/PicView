@@ -1,4 +1,5 @@
-﻿using PicView.UILogic.Sizing;
+﻿using PicView.FileHandling;
+using PicView.UILogic.Sizing;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -137,7 +138,11 @@ namespace PicView.UILogic.PicGallery
 
                         await Add(pic, i).ConfigureAwait(false);
                     }
-                    // TODO find a placeholder for null images?
+                    else
+                    {
+                        // Sync with list
+                        ChangeImage.Navigation.Pics.RemoveAt(i);
+                    }
                 }
                 IsLoading = false;
             });
