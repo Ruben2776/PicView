@@ -9,7 +9,6 @@ namespace PicView.UILogic.Animations
 {
     internal static class AnimationHelper
     {
-        //private static DoubleAnimation da = new DoubleAnimation();
         private static readonly ColorAnimation ccAnim = new ColorAnimation { Duration = TimeSpan.FromSeconds(.35) };
 
         #region Fade
