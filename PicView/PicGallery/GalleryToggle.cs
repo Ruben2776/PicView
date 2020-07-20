@@ -185,7 +185,7 @@ namespace PicView.UILogic.PicGallery
             IsOpen = false;
             fakeWindow.Hide();
 
-            ConfigColors.UpdateColor();
+            ConfigureSettings.ConfigColors.UpdateColor();
 
             HideInterfaceLogic.ShowStandardInterface();
 

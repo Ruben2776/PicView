@@ -59,7 +59,7 @@ namespace PicView.UILogic.PicGallery
                 // Need to add border for background to pictures with transparent background
                 var border = new Border()
                 {
-                    Background = ConfigColors.GetBackgroundColorBrush()
+                    Background = ConfigureSettings.ConfigColors.GetBackgroundColorBrush()
                 };
                 border.Child = img;
                 GetPicGallery.grid.Children.Add(border);

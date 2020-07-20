@@ -26,7 +26,7 @@ namespace PicView.UILogic.UserControls
 
                 GoToPicBox.PreviewMouseLeftButtonDown += delegate
                 {
-                    GoToPicBox.CaretBrush = new SolidColorBrush(ConfigColors.mainColor);
+                    GoToPicBox.CaretBrush = new SolidColorBrush(ConfigureSettings.ConfigColors.mainColor);
                 };
                 GoToPicBox.PreviewKeyDown += GoToPicPreviewKeys;
             };

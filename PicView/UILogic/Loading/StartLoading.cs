@@ -73,7 +73,7 @@ namespace PicView.UILogic.Loading
 #if DEBUG
             Trace.WriteLine("ContentRendered started");
 #endif
-            ConfigColors.UpdateColor();
+            PicView.ConfigureSettings.ConfigColors.UpdateColor();
 
             #region Add dictionaries
 
@@ -183,7 +183,7 @@ namespace PicView.UILogic.Loading
         private static void AddUIElementsAndUpdateValues()
         {
             // Update values
-            ConfigColors.SetColors();
+            ConfigureSettings.ConfigColors.SetColors();
             TheMainWindow.AllowDrop = true;
             IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
 

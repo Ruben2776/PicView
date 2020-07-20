@@ -107,7 +107,7 @@ namespace PicView.UILogic.PicGallery
 
                 ShowNavigation(false);
                 ShowTopandBottom(false);
-                ConfigColors.UpdateColor(true);
+                ConfigureSettings.ConfigColors.UpdateColor(true);
             }
 
 

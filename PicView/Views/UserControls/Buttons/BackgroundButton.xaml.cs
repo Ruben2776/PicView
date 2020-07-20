@@ -15,7 +15,7 @@ namespace PicView.UILogic.UserControls
                 TheButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(bgBrush);
                 TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(bgBrush, true);
                 TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(bgBrush, false);
-                TheButton.Click += ConfigColors.ChangeBackground;
+                TheButton.Click += ConfigureSettings.ConfigColors.ChangeBackground;
             };
         }
     }

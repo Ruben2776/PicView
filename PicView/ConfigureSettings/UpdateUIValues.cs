@@ -10,7 +10,7 @@ using static PicView.Library.Fields;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.TransformImage.Scroll;
 
-namespace PicView.UILogic
+namespace PicView.ConfigureSettings
 {
     internal static class UpdateUIValues
     {

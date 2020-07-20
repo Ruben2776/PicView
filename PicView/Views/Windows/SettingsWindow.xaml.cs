@@ -1,14 +1,12 @@
 ﻿using PicView.ChangeImage;
 using PicView.Translations;
-using PicView.UILogic;
 using PicView.UILogic.Animations;
 using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using static PicView.ConfigureSettings.ConfigColors;
 using static PicView.Library.Fields;
 using static PicView.SystemIntegration.Wallpaper;
-using static PicView.UILogic.ConfigColors;
 
 namespace PicView.Views.Windows
 {
@@ -42,7 +40,7 @@ namespace PicView.Views.Windows
                 };
 
                 // BorderColorRadio
-                BorderRadio.Click += UpdateUIValues.SetBorderColorEnabled;
+                BorderRadio.Click += ConfigureSettings.UpdateUIValues.SetBorderColorEnabled;
                 if (Properties.Settings.Default.WindowBorderColorEnabled)
                 {
                     BorderRadio.IsChecked = true;
@@ -745,81 +743,7 @@ namespace PicView.Views.Windows
 
         #endregion EventHandlers
 
-        #region Set ColorTheme
-
-        private static void Blue(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 1;
-            UpdateColor();
-        }
-
-        private static void Pink(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 2;
-            UpdateColor();
-        }
-
-        private static void Orange(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 3;
-            UpdateColor();
-        }
-
-        private static void Green(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 4;
-            UpdateColor();
-        }
-
-        private static void Red(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 5;
-            UpdateColor();
-        }
-
-        private static void Teal(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 6;
-            UpdateColor();
-        }
-
-        private static void Aqua(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 7;
-            UpdateColor();
-        }
-
-        private static void Golden(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 8;
-            UpdateColor();
-        }
-
-        private static void Purple(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 9;
-            UpdateColor();
-        }
-
-        private static void Cyan(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 10;
-            UpdateColor();
-        }
-
-        private static void Magenta(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 11;
-            UpdateColor();
-        }
-
-        private static void Lime(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 12;
-            UpdateColor();
-        }
-
-        #endregion Set ColorTheme
+        
 
         #region Mouseover Events
 

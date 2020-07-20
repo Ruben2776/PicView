@@ -185,7 +185,7 @@ namespace PicView.UILogic.Sizing
                 }
             }
 
-            ConfigColors.UpdateColor();
+            ConfigureSettings.ConfigColors.UpdateColor();
         }
 
         /// <summary>
@@ -231,7 +231,7 @@ namespace PicView.UILogic.Sizing
                 }
 
 
-                ConfigColors.UpdateColor(true);
+                ConfigureSettings.ConfigColors.UpdateColor(true);
                 Properties.Settings.Default.Save();
             }
             else
@@ -288,7 +288,7 @@ namespace PicView.UILogic.Sizing
                 }
 
                 TryFitImage();
-                ConfigColors.UpdateColor(); // Regain border
+                ConfigureSettings.ConfigColors.UpdateColor(); // Regain border
 
                 Properties.Settings.Default.Fullscreen = false;
             }

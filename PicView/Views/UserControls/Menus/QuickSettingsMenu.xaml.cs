@@ -18,7 +18,7 @@ namespace PicView.UILogic.UserControls
             InitializeComponent();
 
             ToggleScroll.IsChecked = Properties.Settings.Default.ScrollEnabled;
-            ToggleScroll.Click += (s, x) => UpdateUIValues.SetScrolling(Properties.Settings.Default.ScrollEnabled);
+            ToggleScroll.Click += (s, x) => ConfigureSettings.UpdateUIValues.SetScrolling(Properties.Settings.Default.ScrollEnabled);
 
             SettingsButton.Click += (s, x) => LoadWindows.AllSettingsWindow();
 
@@ -35,13 +35,13 @@ namespace PicView.UILogic.UserControls
             };
 
             ToggleFill.IsChecked = Properties.Settings.Default.FillImage;
-            ToggleFill.Click += UpdateUIValues.SetAutoFill;
+            ToggleFill.Click += ConfigureSettings.UpdateUIValues.SetAutoFill;
 
             ToggleLooping.IsChecked = Properties.Settings.Default.Looping;
-            ToggleLooping.Click += UpdateUIValues.SetLooping;
+            ToggleLooping.Click += ConfigureSettings.UpdateUIValues.SetLooping;
 
             SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
-            SetFit.Click += UpdateUIValues.SetAutoFit;
+            SetFit.Click += ConfigureSettings.UpdateUIValues.SetAutoFit;
 
 
             ZoomButton.Click += delegate

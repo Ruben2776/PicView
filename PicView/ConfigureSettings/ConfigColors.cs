@@ -6,10 +6,14 @@ using System.Windows;
 using System.Windows.Media;
 using static PicView.Library.Fields;
 
-namespace PicView.UILogic
+namespace PicView.ConfigureSettings
 {
+    /// <summary>
+    /// Used for color and theming related coding
+    /// </summary>
     public static class ConfigColors
     {
+        #region Update and set colors
         /// <summary>
         /// Helper for user color settings
         /// </summary>
@@ -76,6 +80,10 @@ namespace PicView.UILogic
             backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
         }
 
+        #endregion
+
+        #region Change background
+
         public static void ChangeBackground(object sender, RoutedEventArgs e)
         {
             if (TheMainWindow.ParentContainer == null)
@@ -131,6 +139,10 @@ namespace PicView.UILogic
             };
         }
 
+        #endregion
+
+        #region Change Theme
+
         internal static void ChangeToLightTheme()
         {
             Application.Current.Resources.MergedDictionaries[1] = new ResourceDictionary
@@ -152,6 +164,82 @@ namespace PicView.UILogic
             Properties.Settings.Default.LightTheme = false;
         }
 
+        #endregion
 
+        #region Set ColorTheme
+
+        internal static void Blue(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.ColorTheme = 1;
+            UpdateColor();
+        }
+
+        internal static void Pink(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.ColorTheme = 2;
+            UpdateColor();
+        }
+
+        internal static void Orange(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.ColorTheme = 3;
+            UpdateColor();
+        }
+
+        internal static void Green(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.ColorTheme = 4;
+            UpdateColor();
+        }
+
+        internal static void Red(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.ColorTheme = 5;
+            UpdateColor();
+        }
+
+        internal static void Teal(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.ColorTheme = 6;
+            UpdateColor();
+        }
+
+        internal static void Aqua(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.ColorTheme = 7;
+            UpdateColor();
+        }
+
+        internal static void Golden(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.ColorTheme = 8;
+            UpdateColor();
+        }
+
+        internal static void Purple(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.ColorTheme = 9;
+            UpdateColor();
+        }
+
+        internal static void Cyan(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.ColorTheme = 10;
+            UpdateColor();
+        }
+
+        internal static void Magenta(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.ColorTheme = 11;
+            UpdateColor();
+        }
+
+        internal static void Lime(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.ColorTheme = 12;
+            UpdateColor();
+        }
+
+        #endregion Set ColorTheme
     }
 }

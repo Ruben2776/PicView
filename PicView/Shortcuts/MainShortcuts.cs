@@ -340,7 +340,7 @@ namespace PicView.Shortcuts
                         }
                         else
                         {
-                            UpdateUIValues.SetScrolling(sender, e);
+                            ConfigureSettings.UpdateUIValues.SetScrolling(sender, e);
                         }
                         break;
                     // F
@@ -418,7 +418,7 @@ namespace PicView.Shortcuts
 
                     // L
                     case Key.L:
-                        UpdateUIValues.SetLooping(sender, e);
+                        ConfigureSettings.UpdateUIValues.SetLooping(sender, e);
                         break;
 
                     // E
@@ -428,7 +428,7 @@ namespace PicView.Shortcuts
 
                     // T
                     case Key.T:
-                        ConfigColors.ChangeBackground(sender, e);
+                        ConfigureSettings.ConfigColors.ChangeBackground(sender, e);
                         break;
 
                     // Space
@@ -450,7 +450,7 @@ namespace PicView.Shortcuts
                         || Properties.Settings.Default.Fullscreen) { break; }
 
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterImageInWindow"]);
-                        UpdateUIValues.SetScalingBehaviour(false, false);
+                        ConfigureSettings.UpdateUIValues.SetScalingBehaviour(false, false);
                         break;
 
                     // 2
@@ -459,7 +459,7 @@ namespace PicView.Shortcuts
                         || Properties.Settings.Default.Fullscreen) { break; }
 
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterImageInWindowFillHeight"]);
-                        UpdateUIValues.SetScalingBehaviour(false, true);
+                        ConfigureSettings.UpdateUIValues.SetScalingBehaviour(false, true);
                         break;
 
                     // 3
@@ -468,7 +468,7 @@ namespace PicView.Shortcuts
                         || Properties.Settings.Default.Fullscreen) { break; }
 
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterApplicationToWindow"]);
-                        UpdateUIValues.SetScalingBehaviour(true, false);
+                        ConfigureSettings.UpdateUIValues.SetScalingBehaviour(true, false);
                         break;
 
                     // 4
@@ -477,7 +477,7 @@ namespace PicView.Shortcuts
                         || Properties.Settings.Default.Fullscreen) { break; }
 
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterApplicationToWindowFillHeight"]);
-                        UpdateUIValues.SetScalingBehaviour(true, true);
+                        ConfigureSettings.UpdateUIValues.SetScalingBehaviour(true, true);
                         break;
 
                     // F1

@@ -14,7 +14,7 @@ namespace PicView.Views.Windows
         {
             if (Properties.Settings.Default.LightTheme)
             {
-                ConfigColors.ChangeToLightTheme();
+                ConfigureSettings.ConfigColors.ChangeToLightTheme();
             }
 
             InitializeComponent();

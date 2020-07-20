@@ -1,5 +1,5 @@
 ﻿using System.Windows.Media;
-using static PicView.UILogic.ConfigColors;
+using static PicView.ConfigureSettings.ConfigColors;
 
 namespace PicView.UILogic.Animations
 {

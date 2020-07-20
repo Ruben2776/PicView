@@ -158,8 +158,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 0
             };
-            sortcmChild0Header.Click += delegate { UpdateUIValues.ChangeSorting(0); cm.IsOpen = false; };
-            sortcmChild0.Click += delegate { UpdateUIValues.ChangeSorting(0); cm.IsOpen = false; };
+            sortcmChild0Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(0); cm.IsOpen = false; };
+            sortcmChild0.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(0); cm.IsOpen = false; };
             sortcmChild0.Header = sortcmChild0Header;
             sortcm.Items.Add(sortcmChild0);
 
@@ -174,8 +174,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 1
             };
-            sortcmChild1Header.Click += delegate { UpdateUIValues.ChangeSorting(1); cm.IsOpen = false; };
-            sortcmChild1.Click += delegate { UpdateUIValues.ChangeSorting(1); cm.IsOpen = false; };
+            sortcmChild1Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(1); cm.IsOpen = false; };
+            sortcmChild1.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(1); cm.IsOpen = false; };
             sortcmChild1.Header = sortcmChild1Header;
             sortcm.Items.Add(sortcmChild1);
 
@@ -190,8 +190,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 2
             };
-            sortcmChild2Header.Click += delegate { UpdateUIValues.ChangeSorting(2); cm.IsOpen = false; };
-            sortcmChild2.Click += delegate { UpdateUIValues.ChangeSorting(2); cm.IsOpen = false; };
+            sortcmChild2Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(2); cm.IsOpen = false; };
+            sortcmChild2.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(2); cm.IsOpen = false; };
             sortcmChild2.Header = sortcmChild2Header;
             sortcm.Items.Add(sortcmChild2);
 
@@ -206,8 +206,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 3
             };
-            sortcmChild3Header.Click += delegate { UpdateUIValues.ChangeSorting(3); cm.IsOpen = false; };
-            sortcmChild3.Click += delegate { UpdateUIValues.ChangeSorting(3); cm.IsOpen = false; };
+            sortcmChild3Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(3); cm.IsOpen = false; };
+            sortcmChild3.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(3); cm.IsOpen = false; };
             sortcmChild3.Header = sortcmChild3Header;
             sortcm.Items.Add(sortcmChild3);
 
@@ -222,8 +222,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 4
             };
-            sortcmChild4Header.Click += delegate { UpdateUIValues.ChangeSorting(4); cm.IsOpen = false; };
-            sortcmChild4.Click += delegate { UpdateUIValues.ChangeSorting(4); cm.IsOpen = false; };
+            sortcmChild4Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(4); cm.IsOpen = false; };
+            sortcmChild4.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(4); cm.IsOpen = false; };
             sortcmChild4.Header = sortcmChild4Header;
             sortcm.Items.Add(sortcmChild4);
 
@@ -238,8 +238,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 5
             };
-            sortcmChild5Header.Click += delegate { UpdateUIValues.ChangeSorting(5); cm.IsOpen = false; };
-            sortcmChild5.Click += delegate { UpdateUIValues.ChangeSorting(5); cm.IsOpen = false; };
+            sortcmChild5Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(5); cm.IsOpen = false; };
+            sortcmChild5.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(5); cm.IsOpen = false; };
             sortcmChild5.Header = sortcmChild5Header;
             sortcm.Items.Add(sortcmChild5);
 
@@ -254,8 +254,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 6
             };
-            sortcmChild6Header.Click += delegate { UpdateUIValues.ChangeSorting(6); cm.IsOpen = false; };
-            sortcmChild6.Click += delegate { UpdateUIValues.ChangeSorting(6); cm.IsOpen = false; };
+            sortcmChild6Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(6); cm.IsOpen = false; };
+            sortcmChild6.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(6); cm.IsOpen = false; };
             sortcmChild6.Header = sortcmChild6Header;
             sortcm.Items.Add(sortcmChild6);
             cm.Items.Add(sortcm);
@@ -297,8 +297,8 @@ namespace PicView.UILogic.Loading
                 Height = double.NaN
             };
             settingscmLoop.Header = settingscmLoopHeader;
-            settingscmLoop.Click += (s, x) => { UpdateUIValues.SetLooping(s, x); };
-            settingscmLoopHeader.Click += (s, x) => { UpdateUIValues.SetLooping(s, x); };
+            settingscmLoop.Click += (s, x) => { ConfigureSettings.UpdateUIValues.SetLooping(s, x); };
+            settingscmLoopHeader.Click += (s, x) => { ConfigureSettings.UpdateUIValues.SetLooping(s, x); };
             settingscm.Items.Add(settingscmLoop);
 
             ///////////////////////////
@@ -318,9 +318,9 @@ namespace PicView.UILogic.Loading
                 Width = double.NaN,
                 Height = double.NaN
             };
-            settingscmScrollHeader.Click += UpdateUIValues.SetScrolling;
+            settingscmScrollHeader.Click += ConfigureSettings.UpdateUIValues.SetScrolling;
             settingscmScroll.Header = settingscmScrollHeader;
-            settingscmScroll.Click += (s, x) => { UpdateUIValues.SetScrolling(s, x); settingscmScrollHeader.IsChecked = (bool)settingscmScrollHeader.IsChecked ? false : true; };
+            settingscmScroll.Click += (s, x) => { ConfigureSettings.UpdateUIValues.SetScrolling(s, x); settingscmScrollHeader.IsChecked = (bool)settingscmScrollHeader.IsChecked ? false : true; };
             settingscm.Items.Add(settingscmScroll);
 
             ///////////////////////////
@@ -369,9 +369,9 @@ namespace PicView.UILogic.Loading
                 Height = double.NaN,
                 HorizontalAlignment = HorizontalAlignment.Left
             };
-            transcmHeader.Click += ConfigColors.ChangeBackground;
+            transcmHeader.Click += ConfigureSettings.ConfigColors.ChangeBackground;
             transcm.Header = transcmHeader;
-            transcm.Click += ConfigColors.ChangeBackground;
+            transcm.Click += ConfigureSettings.ConfigColors.ChangeBackground;
             settingscm.Items.Add(transcm);
 
             cm.Items.Add(new Separator());
