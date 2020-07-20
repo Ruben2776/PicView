@@ -102,6 +102,64 @@
     <system:String x:Key="Language">Language</system:String>
     <system:String x:Key="ChangingLanguageRequiresRestart">* Changing language requires restart</system:String>
 
+    <!--  Effects Window  -->
+    <system:String x:Key="HLSLPictureFX">HLSL Picture FX</system:String>
+    <system:String x:Key="ClickToAddShaderEffectToImage">Click button to add specified shader effect to image</system:String>
+    <system:String x:Key="UncheckToRemoveEffect">Uncheck to remove effect</system:String>
+
+    <system:String x:Key="NegativeColors">Negative Colors</system:String>
+    <system:String x:Key="BlackAndWhite">Black &amp; White</system:String>
+    <system:String x:Key="ColorTone">Color Tone</system:String>
+
+    <system:String x:Key="OldMovie">Old Movie</system:String>
+    <system:String x:Key="Bloom">Bloom</system:String>
+    <system:String x:Key="Gloom">Gloom</system:String>
+
+    <system:String x:Key="Monochrome">Monochrome</system:String>
+    <system:String x:Key="WaveWarper">Wave Warper</system:String>
+    <system:String x:Key="Underwater">Underwater</system:String>
+
+    <system:String x:Key="BandedSwirl">Banded Swirl</system:String>
+    <system:String x:Key="Ripple">Ripple</system:String>
+    <system:String x:Key="RippleAlt">Ripple Alt</system:String>
+
+    <system:String x:Key="Blur">Blur</system:String>
+    <system:String x:Key="DirectionalBlur">Directional Blur</system:String>
+    <system:String x:Key="TelescopicBlur">Telescopic Blur</system:String>
+
+    <system:String x:Key="Pixelate">Pixelate</system:String>
+    <system:String x:Key="Embossed">Embossed</system:String>
+    <system:String x:Key="SmoothMagnify">Smooth Magnify</system:String>
+
+    <system:String x:Key="Pivot">Pivot</system:String>
+    <system:String x:Key="PaperFold">Paper Fold</system:String>
+    <system:String x:Key="PencilSketch">Pencil Sketch</system:String>
+
+    <system:String x:Key="Sketch">Sketch</system:String>
+    <system:String x:Key="ToneMapping">ToneMapping</system:String>
+    <system:String x:Key="FrostyOutline">Frosty Outline</system:String>
+
+    <system:String x:Key="Bands">Bands</system:String>
+    <system:String x:Key="GlassTile">Glass Tile</system:String>
+
+    <!--  Batch resize window  -->
+    <system:String x:Key="Rotate">Rotate:</system:String>
+    <system:String x:Key="Misc">Misc:</system:String>
+    <system:String x:Key="OptimizeFileSize">Optimize file size</system:String>
+    <system:String x:Key="Quality">Quality:</system:String>
+
+    <system:String x:Key="Resize">Resize:</system:String>
+    <system:String x:Key="KeepAspectRatio">Keep aspect ratio</system:String>
+    <system:String x:Key="FlipImages">Flip image(s)</system:String>
+
+    <system:String x:Key="RenameTo">Rename to:</system:String>
+    <system:String x:Key="Destination">Destination</system:String>
+
+    <system:String x:Key="SelectedImage">Selected image</system:String>
+    <system:String x:Key="FromFolder">From folder:</system:String>
+    <system:String x:Key="Start">Start</system:String>
+
+
     <!--  Navigation related  -->
     <system:String x:Key="Navigation">Navigation</system:String>
     <system:String x:Key="NextImage">Next image</system:String>
@@ -236,11 +294,6 @@
     <system:String x:Key="RotateLeft">Rotate left</system:String>
     <system:String x:Key="Flip">Flip horizontally</system:String>
     <system:String x:Key="Unflip">Unflip</system:String>
-
-    <!--  Batch resize window  -->
-    <system:String x:Key="Rotate">Rotate:</system:String>
-    <system:String x:Key="Misc">Misc:</system:String>
-    <system:String x:Key="Quality">Quality:</system:String>
 
 
     <!--  Archives  -->
