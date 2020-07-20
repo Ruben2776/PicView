@@ -7,24 +7,24 @@
     <system:String x:Key="Loading">Indlæser</system:String>
     <system:String x:Key="NoImage">Intet billede er indlæst</system:String>
     <system:String x:Key="Files">filer</system:String>
-    <system:String x:Key="File">file</system:String>
+    <system:String x:Key="File">fil</system:String>
     <system:String x:Key="PercentComplete">% complete...</system:String>
-    <system:String x:Key="CropMessage">Press Esc to close, Enter to save</system:String>
-    <system:String x:Key="ClipboardImage">Clipboard image</system:String>
-    <system:String x:Key="Base64Image">Base64 image</system:String>
+    <system:String x:Key="CropMessage">Tryk Esc for at lukke, Enter for at gemme</system:String>
+    <system:String x:Key="ClipboardImage">Billede fra udklipsholderen</system:String>
+    <system:String x:Key="Base64Image">Base64 billede</system:String>
 
     <!--  Generic Window  -->
     <system:String x:Key="Close">Luk</system:String>
-    <system:String x:Key="Maximize">Maximize</system:String>
-    <system:String x:Key="RestoreDown">Restore Down</system:String>
+    <system:String x:Key="Maximize">Maksimer</system:String>
+    <system:String x:Key="RestoreDown">Gendan</system:String>
     <system:String x:Key="Minimize">Minimize</system:String>
-    <system:String x:Key="Fullscreen">Fullscreen</system:String>
-    <system:String x:Key="NewWindow">New window</system:String>
+    <system:String x:Key="Fullscreen">Fuldskærm</system:String>
+    <system:String x:Key="NewWindow">Nyt vindue</system:String>
 
     <!--  Info window  -->
     <system:String x:Key="InfoWindowTitle">Information, help &amp; shortcuts</system:String>
-    <system:String x:Key="ApplicationShortcuts">Application Shortcuts</system:String>
-    <system:String x:Key="SavedOnNextStartUp">(Saved on next startup)</system:String>
+    <system:String x:Key="ApplicationShortcuts">Genveje til programmet</system:String>
+    <system:String x:Key="SavedOnNextStartUp">(Gemt ved næste startup)</system:String>
     <system:String x:Key="ImageControl">Image control</system:String>
     <system:String x:Key="FileManagement">File management</system:String>
     <system:String x:Key="DragFileTo">Drag file to Windows Explorer or another application/browser</system:String>
@@ -61,36 +61,36 @@
     <system:String x:Key="CenterWindow">Center window</system:String>
 
     <!--  Settings window, colors  -->
-    <system:String x:Key="HighlightColor">Highlight color</system:String>
+    <system:String x:Key="HighlightColor">Accentfarve</system:String>
 
-    <system:String x:Key="Blue">Blue</system:String>
+    <system:String x:Key="Blue">Blå</system:String>
     <system:String x:Key="Cyan">Cyan</system:String>
     <system:String x:Key="Aqua">Aqua</system:String>
     <system:String x:Key="Teal">Teal</system:String>
 
     <system:String x:Key="Lime">Lime</system:String>
-    <system:String x:Key="Green">Green</system:String>
-    <system:String x:Key="Golden">Golden</system:String>
+    <system:String x:Key="Green">Grøn</system:String>
+    <system:String x:Key="Golden">Gylden</system:String>
     <system:String x:Key="Orange">Orange</system:String>
 
-    <system:String x:Key="Red">Red</system:String>
+    <system:String x:Key="Red">Rød</system:String>
     <system:String x:Key="Pink">Pink</system:String>
     <system:String x:Key="Magenta">Magenta</system:String>
-    <system:String x:Key="Purple">Purple</system:String>
+    <system:String x:Key="Purple">Lilla</system:String>
 
     <!--  Settings window, theme  -->
-    <system:String x:Key="Theme">Theme</system:String>
-    <system:String x:Key="DarkTheme">Dark theme</system:String>
-    <system:String x:Key="LightTheme">Light theme</system:String>
-    <system:String x:Key="ChangingThemeRequiresRestart">* Changing theme requires restart</system:String>
+    <system:String x:Key="Theme">Tema</system:String>
+    <system:String x:Key="DarkTheme">Mørkt tema</system:String>
+    <system:String x:Key="LightTheme">Lyst tema</system:String>
+    <system:String x:Key="ChangingThemeRequiresRestart">* Skiftning af tema kræver genstart</system:String>
 
     <!--  Settings window, misc  -->
-    <system:String x:Key="MiscSettings">Misc settings</system:String>
-    <system:String x:Key="SearchSubdirectory">Search subdirectories</system:String>
-    <system:String x:Key="ColoredWindowBorder">Colored window border</system:String>
+    <system:String x:Key="MiscSettings">Andre indstillinger</system:String>
+    <system:String x:Key="SearchSubdirectory">Søg i undermapper</system:String>
+    <system:String x:Key="ColoredWindowBorder">Farvede vinduekanter</system:String>
 
     <!--  Settings window, wallpaper  -->
-    <system:String x:Key="SetCurrentImageAsWallpaper">Set current image as wallpaper:</system:String>
+    <system:String x:Key="SetCurrentImageAsWallpaper">Sæt nuværende billede som skrivebordsbaggrund:</system:String>
 
     <system:String x:Key="Fill">Fill</system:String>
     <system:String x:Key="Center">Center</system:String>
@@ -179,7 +179,7 @@
     <system:String x:Key="ToggleScroll">Toggle scroll</system:String>
 
     <!--  File related  -->
-    <system:String x:Key="Open">Open</system:String>
+    <system:String x:Key="Open">Åben</system:String>
     <system:String x:Key="OpenWith">Open with...</system:String>
     <system:String x:Key="OpenFileDialog">Open file dialog</system:String>
     <system:String x:Key="ShowInFolder">Show in folder</system:String>
@@ -204,7 +204,7 @@
     <system:String x:Key="Random">Random</system:String>
 
     <!--  Settings  -->
-    <system:String x:Key="Settings">Settings</system:String>
+    <system:String x:Key="Settings">Indstillinger</system:String>
     <system:String x:Key="Scrolling">Scrolling</system:String>
     <system:String x:Key="Looping">Looping</system:String>
     <system:String x:Key="FitToWindow">Fit to window/image</system:String>

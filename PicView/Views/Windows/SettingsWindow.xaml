@@ -60,7 +60,7 @@
                 FontSize="15"
                 FontWeight="Bold"
                 Foreground="{StaticResource MainColorBrush}"
-                Text="Settings"
+                Text="{StaticResource Settings}"
                 TextAlignment="Center"
                 TextTrimming="CharacterEllipsis" />
         </DockPanel>
@@ -234,7 +234,7 @@
                             Width="211"
                             Height="40"
                             Margin="5,3"
-                            Content="Dark theme"
+                            Content="{StaticResource DarkTheme}"
                             Style="{StaticResource Checkstyle}">
                             <CheckBox.Background>
                                 <SolidColorBrush x:Name="DarkThemeBrush" Color="{StaticResource BackgroundColorAlt}" />
@@ -245,7 +245,7 @@
                             Width="211"
                             Height="40"
                             Margin="5,3"
-                            Content="Light theme"
+                            Content="{StaticResource LightTheme}"
                             Style="{StaticResource Checkstyle}">
                             <CheckBox.Background>
                                 <SolidColorBrush x:Name="LightThemeBrush" Color="{StaticResource BackgroundColorAlt}" />

@@ -17,7 +17,7 @@
         OverridesDefaultStyle="True"
         SelectionBrush="{DynamicResource ChosenColorBrush}"
         SelectionTextBrush="{StaticResource MainColorBrush}"
-        Text="Loading..."
+        Text="{StaticResource Loading}"
         TextAlignment="Center"
         UndoLimit="200">
         <TextBox.Style>
