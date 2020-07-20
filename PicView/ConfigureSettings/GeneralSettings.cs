@@ -1,10 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using PicView.Translations;
+using System.Globalization;
+using System.Windows;
 
 namespace PicView.ConfigureSettings
 {
-    class GeneralSettings
+    internal static class GeneralSettings
     {
+        internal static void ChangeLanguage(int language)
+        {
+            var choice = (Languages)language;
+            Properties.Settings.Default.UserCulture = choice.ToString();
+        }
     }
 }

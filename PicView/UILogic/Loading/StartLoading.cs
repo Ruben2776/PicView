@@ -45,24 +45,22 @@ namespace PicView.UILogic.Loading
                 = Visibility.Collapsed;
             }
 
-            if (Properties.Settings.Default.CallUpgrade && Properties.Settings.Default.UserCulture != "en-US")
+            if (Properties.Settings.Default.UserCulture != "en")
             {
                 try
                 {
                     CultureInfo.CurrentCulture = new CultureInfo(Properties.Settings.Default.UserCulture, false);
-
                     Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
                     {
-
-                        Source = new Uri($"//PicView;component//Translations//{Properties.Settings.Default.UserCulture}.xaml", UriKind.Relative)
+                        Source = new Uri(@"/PicView;component/Translations/" + Properties.Settings.Default.UserCulture + ".xaml", UriKind.Relative)
                     };
                 }
                 catch (Exception)
                 {
-                    CultureInfo.CurrentCulture = new CultureInfo("en-US", false);
+                    CultureInfo.CurrentCulture = new CultureInfo("en", false);
                     Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
                     {
-                        Source = new Uri(@"/PicView;component/Translations/en-US.xaml", UriKind.Relative)
+                        Source = new Uri(@"/PicView;component/Translations/en.xaml", UriKind.Relative)
                     };
                 }
             }

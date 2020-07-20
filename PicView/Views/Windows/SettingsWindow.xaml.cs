@@ -1,8 +1,11 @@
 ﻿using PicView.ChangeImage;
+using PicView.ConfigureSettings;
 using PicView.Translations;
 using PicView.UILogic.Animations;
 using System;
+using System.Globalization;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using static PicView.ConfigureSettings.ConfigColors;
 using static PicView.Library.Fields;
@@ -18,13 +21,6 @@ namespace PicView.Views.Windows
 
             ContentRendered += (s, x) =>
             {
-                LanguageBox.ItemsSource = Enum.GetValues(typeof(Languages));
-                LanguageBox.SelectedIndex = 0;
-                LanguageBox.SelectionChanged += delegate
-                {
-
-                };
-
                 KeyUp += KeysUp;
                 KeyDown += KeysDown;
                 AddGenericEvents();
@@ -94,6 +90,20 @@ namespace PicView.Views.Windows
                 {
                     ChangeToLightTheme();
                     DarkThemeRadio.IsChecked = false;
+                };
+
+                foreach (var language in Enum.GetValues(typeof(Languages)))
+                {
+                    LanguageBox.Items.Add(new ComboBoxItem
+                    {
+                        Content = new CultureInfo(language.ToString()).DisplayName
+                    });
+                }
+
+                LanguageBox.SelectedIndex = 0;
+                LanguageBox.SelectionChanged += delegate
+                {
+                    GeneralSettings.ChangeLanguage((LanguageBox.SelectedIndex));
                 };
             };
         }
@@ -741,9 +751,7 @@ namespace PicView.Views.Windows
             AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, BorderBrushColor, false);
         }
 
-        #endregion EventHandlers
-
-        
+        #endregion EventHandlers 
 
         #region Mouseover Events
 

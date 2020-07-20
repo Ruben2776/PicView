@@ -2,7 +2,7 @@
 {
     enum Languages
     {
-        English,
-        Danish
+        en,
+        da
     }
 }

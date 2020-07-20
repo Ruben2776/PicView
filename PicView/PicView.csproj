@@ -342,7 +342,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Translations\da-DK.xaml">
+    <Page Update="Translations\da.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Themes\Styles\ColorThemes\Light.xaml">

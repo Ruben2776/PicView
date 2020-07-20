@@ -135,7 +135,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="UserCulture" Type="System.String" Scope="User">
-      <Value Profile="(Default)">en-US</Value>
+      <Value Profile="(Default)">en</Value>
     </Setting>
   </Settings>
 </SettingsFile>
