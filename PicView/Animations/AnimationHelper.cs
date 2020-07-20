@@ -9,7 +9,7 @@ namespace PicView.UILogic.Animations
 {
     internal static class AnimationHelper
     {
-        private static readonly ColorAnimation ccAnim = new ColorAnimation { Duration = TimeSpan.FromSeconds(.35) };
+        private static readonly ColorAnimation colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.35) };
 
         #region Fade
 
@@ -57,159 +57,87 @@ namespace PicView.UILogic.Animations
 
         internal static void MouseEnterBgTexColor(Brush brush)
         {
-            ccAnim.From = Color.FromArgb(0, 0, 0, 0);
-            ccAnim.To = (Color)Application.Current.Resources["BackgroundHoverHighlight"];
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+            colorAnimation.From = Color.FromArgb(0, 0, 0, 0);
+            colorAnimation.To = (Color)Application.Current.Resources["BackgroundHoverHighlight"];
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
         }
 
         internal static void MouseLeaveBgTexColor(Brush brush)
         {
-            ccAnim.From = (Color)Application.Current.Resources["BackgroundHoverHighlight"];
-            ccAnim.To = Color.FromArgb(0, 0, 0, 0);
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+            colorAnimation.From = (Color)Application.Current.Resources["BackgroundHoverHighlight"];
+            colorAnimation.To = Color.FromArgb(0, 0, 0, 0);
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
         }
 
         internal static void MouseLeaveColorEvent(byte a, byte r, byte g, byte b, Brush brush, bool alpha)
         {
-            ccAnim.From = !alpha ? GetPrefferedColorOver() : GetPrefferedColorOverAlpha();
-            ccAnim.To = Color.FromArgb(a, r, g, b);
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+            colorAnimation.From = !alpha ? GetPrefferedColorOver() : GetPrefferedColorOverAlpha();
+            colorAnimation.To = Color.FromArgb(a, r, g, b);
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
         }
 
         internal static void MouseOverColorEvent(byte a, byte r, byte g, byte b, Brush brush, bool alpha)
         {
-            ccAnim.From = Color.FromArgb(a, r, g, b);
-            ccAnim.To = !alpha ? GetPrefferedColorOver() : GetPrefferedColorOverAlpha();
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+            colorAnimation.From = Color.FromArgb(a, r, g, b);
+            colorAnimation.To = !alpha ? GetPrefferedColorOver() : GetPrefferedColorOverAlpha();
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
         }
 
         internal static void PreviewMouseLeftButtonDownColorEvent(Brush brush, bool alpha)
         {
             if (!alpha)
             {
-                ccAnim.From = GetPrefferedColorOver();
-                ccAnim.To = GetPrefferedColorDown();
+                colorAnimation.From = GetPrefferedColorOver();
+                colorAnimation.To = GetPrefferedColorDown();
             }
             else
             {
-                ccAnim.From = GetPrefferedColorOverAlpha();
-                ccAnim.To = GetPrefferedColorDownAlpha();
+                colorAnimation.From = GetPrefferedColorOverAlpha();
+                colorAnimation.To = GetPrefferedColorDownAlpha();
             }
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
         }
 
         internal static void MouseLeaveColorEvent(byte a, byte r, byte g, byte b, Brush brush, int colortheme)
         {
-            switch (colortheme)
+            colorAnimation.From = colortheme switch
             {
-                case 1:
-                default:
-                    ccAnim.From = Properties.Settings.Default.Blue;
-                    break;
-
-                case 2:
-                    ccAnim.From = Properties.Settings.Default.Pink;
-                    break;
-
-                case 3:
-                    ccAnim.From = Properties.Settings.Default.Orange;
-                    break;
-
-                case 4:
-                    ccAnim.From = Properties.Settings.Default.Green;
-                    break;
-
-                case 5:
-                    ccAnim.From = Properties.Settings.Default.Red;
-                    break;
-
-                case 6:
-                    ccAnim.From = Properties.Settings.Default.Teal;
-                    break;
-
-                case 7:
-                    ccAnim.From = Properties.Settings.Default.Aqua;
-                    break;
-
-                case 8:
-                    ccAnim.From = Properties.Settings.Default.Golden;
-                    break;
-
-                case 9:
-                    ccAnim.From = Properties.Settings.Default.Purple;
-                    break;
-
-                case 10:
-                    ccAnim.From = Properties.Settings.Default.Cyan;
-                    break;
-
-                case 11:
-                    ccAnim.From = Properties.Settings.Default.Magenta;
-                    break;
-
-                case 12:
-                    ccAnim.From = Properties.Settings.Default.Lime;
-                    break;
-            }
-            ccAnim.To = Color.FromArgb(a, r, g, b);
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+                2 => Properties.Settings.Default.Pink,
+                3 => Properties.Settings.Default.Orange,
+                4 => Properties.Settings.Default.Green,
+                5 => Properties.Settings.Default.Red,
+                6 => Properties.Settings.Default.Teal,
+                7 => Properties.Settings.Default.Aqua,
+                8 => Properties.Settings.Default.Golden,
+                9 => Properties.Settings.Default.Purple,
+                10 => Properties.Settings.Default.Cyan,
+                11 => Properties.Settings.Default.Magenta,
+                12 => Properties.Settings.Default.Lime,
+                _ => Properties.Settings.Default.Blue,
+            };
+            colorAnimation.To = Color.FromArgb(a, r, g, b);
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
         }
 
         internal static void MouseEnterColorEvent(byte a, byte r, byte g, byte b, Brush brush, int colortheme)
         {
-            ccAnim.From = Color.FromArgb(a, r, g, b);
-            switch (colortheme)
+            colorAnimation.From = Color.FromArgb(a, r, g, b);
+            colorAnimation.To = colortheme switch
             {
-                case 1:
-                default:
-                    ccAnim.To = Properties.Settings.Default.Blue;
-                    break;
-
-                case 2:
-                    ccAnim.To = Properties.Settings.Default.Pink;
-                    break;
-
-                case 3:
-                    ccAnim.To = Properties.Settings.Default.Orange;
-                    break;
-
-                case 4:
-                    ccAnim.To = Properties.Settings.Default.Green;
-                    break;
-
-                case 5:
-                    ccAnim.To = Properties.Settings.Default.Red;
-                    break;
-
-                case 6:
-                    ccAnim.To = Properties.Settings.Default.Teal;
-                    break;
-
-                case 7:
-                    ccAnim.To = Properties.Settings.Default.Aqua;
-                    break;
-
-                case 8:
-                    ccAnim.To = Properties.Settings.Default.Golden;
-                    break;
-
-                case 9:
-                    ccAnim.To = Properties.Settings.Default.Purple;
-                    break;
-
-                case 10:
-                    ccAnim.To = Properties.Settings.Default.Cyan;
-                    break;
-
-                case 11:
-                    ccAnim.To = Properties.Settings.Default.Magenta;
-                    break;
-
-                case 12:
-                    ccAnim.To = Properties.Settings.Default.Lime;
-                    break;
-            }
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+                2 => Properties.Settings.Default.Pink,
+                3 => Properties.Settings.Default.Orange,
+                4 => Properties.Settings.Default.Green,
+                5 => Properties.Settings.Default.Red,
+                6 => Properties.Settings.Default.Teal,
+                7 => Properties.Settings.Default.Aqua,
+                8 => Properties.Settings.Default.Golden,
+                9 => Properties.Settings.Default.Purple,
+                10 => Properties.Settings.Default.Cyan,
+                11 => Properties.Settings.Default.Magenta,
+                12 => Properties.Settings.Default.Lime,
+                _ => Properties.Settings.Default.Blue,
+            };
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
         }
 
         internal static void PreviewMouseLeftButtonDownColorEvent(Brush brush, int colortheme)
@@ -218,66 +146,66 @@ namespace PicView.UILogic.Animations
             {
                 case 1:
                 default:
-                    ccAnim.From = Properties.Settings.Default.Blue;
-                    ccAnim.To = Properties.Settings.Default.BlueAlpha;
+                    colorAnimation.From = Properties.Settings.Default.Blue;
+                    colorAnimation.To = Properties.Settings.Default.BlueAlpha;
                     break;
 
                 case 2:
-                    ccAnim.From = Properties.Settings.Default.Pink;
-                    ccAnim.To = Properties.Settings.Default.PinkAlpha;
+                    colorAnimation.From = Properties.Settings.Default.Pink;
+                    colorAnimation.To = Properties.Settings.Default.PinkAlpha;
                     break;
 
                 case 3:
-                    ccAnim.From = Properties.Settings.Default.Orange;
-                    ccAnim.To = Properties.Settings.Default.OrangeAlpha;
+                    colorAnimation.From = Properties.Settings.Default.Orange;
+                    colorAnimation.To = Properties.Settings.Default.OrangeAlpha;
                     break;
 
                 case 4:
-                    ccAnim.From = Properties.Settings.Default.Green;
-                    ccAnim.To = Properties.Settings.Default.GreenAlpha;
+                    colorAnimation.From = Properties.Settings.Default.Green;
+                    colorAnimation.To = Properties.Settings.Default.GreenAlpha;
                     break;
 
                 case 5:
-                    ccAnim.From = Properties.Settings.Default.Red;
-                    ccAnim.To = Properties.Settings.Default.RedAlpha;
+                    colorAnimation.From = Properties.Settings.Default.Red;
+                    colorAnimation.To = Properties.Settings.Default.RedAlpha;
                     break;
 
                 case 6:
-                    ccAnim.From = Properties.Settings.Default.Teal;
-                    ccAnim.To = Properties.Settings.Default.TealAlpha;
+                    colorAnimation.From = Properties.Settings.Default.Teal;
+                    colorAnimation.To = Properties.Settings.Default.TealAlpha;
                     break;
 
                 case 7:
-                    ccAnim.From = Properties.Settings.Default.Aqua;
-                    ccAnim.To = Properties.Settings.Default.AquaAlpha;
+                    colorAnimation.From = Properties.Settings.Default.Aqua;
+                    colorAnimation.To = Properties.Settings.Default.AquaAlpha;
                     break;
 
                 case 8:
-                    ccAnim.From = Properties.Settings.Default.Golden;
-                    ccAnim.To = Properties.Settings.Default.GoldenAlpha;
+                    colorAnimation.From = Properties.Settings.Default.Golden;
+                    colorAnimation.To = Properties.Settings.Default.GoldenAlpha;
                     break;
 
                 case 9:
-                    ccAnim.From = Properties.Settings.Default.Purple;
-                    ccAnim.To = Properties.Settings.Default.PurpleAlpha;
+                    colorAnimation.From = Properties.Settings.Default.Purple;
+                    colorAnimation.To = Properties.Settings.Default.PurpleAlpha;
                     break;
 
                 case 10:
-                    ccAnim.From = Properties.Settings.Default.Cyan;
-                    ccAnim.To = Properties.Settings.Default.CyanAlpha;
+                    colorAnimation.From = Properties.Settings.Default.Cyan;
+                    colorAnimation.To = Properties.Settings.Default.CyanAlpha;
                     break;
 
                 case 11:
-                    ccAnim.From = Properties.Settings.Default.Magenta;
-                    ccAnim.To = Properties.Settings.Default.MagentaAlpha;
+                    colorAnimation.From = Properties.Settings.Default.Magenta;
+                    colorAnimation.To = Properties.Settings.Default.MagentaAlpha;
                     break;
 
                 case 12:
-                    ccAnim.From = Properties.Settings.Default.Lime;
-                    ccAnim.To = Properties.Settings.Default.LimeAlpha;
+                    colorAnimation.From = Properties.Settings.Default.Lime;
+                    colorAnimation.To = Properties.Settings.Default.LimeAlpha;
                     break;
             }
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
         }
 
         #endregion Color Events
@@ -288,272 +216,198 @@ namespace PicView.UILogic.Animations
 
         internal static Color GetPrefferedColorOver()
         {
-            switch (Properties.Settings.Default.ColorTheme)
+            return Properties.Settings.Default.ColorTheme switch
             {
-                case 1:
-                default:
-                    return Properties.Settings.Default.Blue;
-
-                case 2:
-                    return Properties.Settings.Default.Pink;
-
-                case 3:
-                    return Properties.Settings.Default.Orange;
-
-                case 4:
-                    return Properties.Settings.Default.Green;
-
-                case 5:
-                    return Properties.Settings.Default.Red;
-
-                case 6:
-                    return Properties.Settings.Default.Teal;
-
-                case 7:
-                    return Properties.Settings.Default.Aqua;
-
-                case 8:
-                    return Properties.Settings.Default.Golden;
-
-                case 9:
-                    return Properties.Settings.Default.Purple;
-
-                case 10:
-                    return Properties.Settings.Default.Cyan;
-
-                case 11:
-                    return Properties.Settings.Default.Magenta;
-
-                case 12:
-                    return Properties.Settings.Default.Lime;
-            }
+                2 => Properties.Settings.Default.Pink,
+                3 => Properties.Settings.Default.Orange,
+                4 => Properties.Settings.Default.Green,
+                5 => Properties.Settings.Default.Red,
+                6 => Properties.Settings.Default.Teal,
+                7 => Properties.Settings.Default.Aqua,
+                8 => Properties.Settings.Default.Golden,
+                9 => Properties.Settings.Default.Purple,
+                10 => Properties.Settings.Default.Cyan,
+                11 => Properties.Settings.Default.Magenta,
+                12 => Properties.Settings.Default.Lime,
+                _ => Properties.Settings.Default.Blue,
+            };
         }
 
         internal static Color GetPrefferedColorDown()
         {
-            switch (Properties.Settings.Default.ColorTheme)
+            return Properties.Settings.Default.ColorTheme switch
             {
-                case 1:
-                default:
-                    return Properties.Settings.Default.BlueAlpha;
-
-                case 2:
-                    return Properties.Settings.Default.PinkAlpha;
-
-                case 3:
-                    return Properties.Settings.Default.OrangeAlpha;
-
-                case 4:
-                    return Properties.Settings.Default.GreenAlpha;
-
-                case 5:
-                    return Properties.Settings.Default.RedAlpha;
-
-                case 6:
-                    return Properties.Settings.Default.TealAlpha;
-
-                case 7:
-                    return Properties.Settings.Default.AquaAlpha;
-
-                case 8:
-                    return Properties.Settings.Default.GoldenAlpha;
-
-                case 9:
-                    return Properties.Settings.Default.PurpleAlpha;
-
-                case 10:
-                    return Properties.Settings.Default.CyanAlpha;
-
-                case 11:
-                    return Properties.Settings.Default.MagentaAlpha;
-
-                case 12:
-                    return Properties.Settings.Default.LimeAlpha;
-            }
+                2 => Properties.Settings.Default.PinkAlpha,
+                3 => Properties.Settings.Default.OrangeAlpha,
+                4 => Properties.Settings.Default.GreenAlpha,
+                5 => Properties.Settings.Default.RedAlpha,
+                6 => Properties.Settings.Default.TealAlpha,
+                7 => Properties.Settings.Default.AquaAlpha,
+                8 => Properties.Settings.Default.GoldenAlpha,
+                9 => Properties.Settings.Default.PurpleAlpha,
+                10 => Properties.Settings.Default.CyanAlpha,
+                11 => Properties.Settings.Default.MagentaAlpha,
+                12 => Properties.Settings.Default.LimeAlpha,
+                _ => Properties.Settings.Default.BlueAlpha,
+            };
         }
 
         #region Alpha
 
         internal static Color GetPrefferedColorDownAlpha()
         {
-            switch (Properties.Settings.Default.ColorTheme)
+            return Properties.Settings.Default.ColorTheme switch
             {
-                case 1:
-                default:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.BlueAlpha.R,
-                        Properties.Settings.Default.BlueAlpha.G,
-                        Properties.Settings.Default.BlueAlpha.B);
+                2 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.PinkAlpha.R,
+                    Properties.Settings.Default.PinkAlpha.G,
+                    Properties.Settings.Default.PinkAlpha.B),
 
-                case 2:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.PinkAlpha.R,
-                        Properties.Settings.Default.PinkAlpha.G,
-                        Properties.Settings.Default.PinkAlpha.B);
+                3 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.OrangeAlpha.R,
+                    Properties.Settings.Default.OrangeAlpha.G,
+                    Properties.Settings.Default.OrangeAlpha.B),
 
-                case 3:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.OrangeAlpha.R,
-                        Properties.Settings.Default.OrangeAlpha.G,
-                        Properties.Settings.Default.OrangeAlpha.B);
+                4 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.GreenAlpha.R,
+                    Properties.Settings.Default.GreenAlpha.G,
+                    Properties.Settings.Default.GreenAlpha.B),
 
-                case 4:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.GreenAlpha.R,
-                        Properties.Settings.Default.GreenAlpha.G,
-                        Properties.Settings.Default.GreenAlpha.B);
+                5 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.RedAlpha.R,
+                    Properties.Settings.Default.RedAlpha.G,
+                    Properties.Settings.Default.RedAlpha.B),
+                
+                6 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.TealAlpha.R,
+                    Properties.Settings.Default.TealAlpha.G,
+                    Properties.Settings.Default.TealAlpha.B),
 
-                case 5:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.RedAlpha.R,
-                        Properties.Settings.Default.RedAlpha.G,
-                        Properties.Settings.Default.RedAlpha.B);
+                7 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.AquaAlpha.R,
+                    Properties.Settings.Default.AquaAlpha.G,
+                    Properties.Settings.Default.AquaAlpha.B),
 
-                case 6:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.TealAlpha.R,
-                        Properties.Settings.Default.TealAlpha.G,
-                        Properties.Settings.Default.TealAlpha.B);
+                8 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.GoldenAlpha.R,
+                    Properties.Settings.Default.GoldenAlpha.G,
+                    Properties.Settings.Default.GoldenAlpha.B),
 
-                case 7:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.AquaAlpha.R,
-                        Properties.Settings.Default.AquaAlpha.G,
-                        Properties.Settings.Default.AquaAlpha.B);
+                9 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.PurpleAlpha.R,
+                    Properties.Settings.Default.PurpleAlpha.G,
+                    Properties.Settings.Default.PurpleAlpha.B),
 
-                case 8:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.GoldenAlpha.R,
-                        Properties.Settings.Default.GoldenAlpha.G,
-                        Properties.Settings.Default.GoldenAlpha.B);
+                10 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.CyanAlpha.R,
+                    Properties.Settings.Default.CyanAlpha.G,
+                    Properties.Settings.Default.CyanAlpha.B),
 
-                case 9:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.PurpleAlpha.R,
-                        Properties.Settings.Default.PurpleAlpha.G,
-                        Properties.Settings.Default.PurpleAlpha.B);
+                11 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.MagentaAlpha.R,
+                    Properties.Settings.Default.MagentaAlpha.G,
+                    Properties.Settings.Default.MagentaAlpha.B),
 
-                case 10:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.CyanAlpha.R,
-                        Properties.Settings.Default.CyanAlpha.G,
-                        Properties.Settings.Default.CyanAlpha.B);
+                12 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.LimeAlpha.R,
+                    Properties.Settings.Default.LimeAlpha.G,
+                    Properties.Settings.Default.LimeAlpha.B),
 
-                case 11:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.MagentaAlpha.R,
-                        Properties.Settings.Default.MagentaAlpha.G,
-                        Properties.Settings.Default.MagentaAlpha.B);
-
-                case 12:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.LimeAlpha.R,
-                        Properties.Settings.Default.LimeAlpha.G,
-                        Properties.Settings.Default.LimeAlpha.B);
-            }
+                _ => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.BlueAlpha.R,
+                    Properties.Settings.Default.BlueAlpha.G,
+                    Properties.Settings.Default.BlueAlpha.B),
+            };
         }
 
         internal static Color GetPrefferedColorOverAlpha()
         {
-            switch (Properties.Settings.Default.ColorTheme)
+            return Properties.Settings.Default.ColorTheme switch
             {
-                case 1:
-                default:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.Blue.R,
-                        Properties.Settings.Default.Blue.G,
-                        Properties.Settings.Default.Blue.B);
+                2 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.Pink.R,
+                    Properties.Settings.Default.Pink.G,
+                    Properties.Settings.Default.Pink.B),
 
-                case 2:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.Pink.R,
-                        Properties.Settings.Default.Pink.G,
-                        Properties.Settings.Default.Pink.B);
+                3 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.Orange.R,
+                    Properties.Settings.Default.Orange.G,
+                    Properties.Settings.Default.Orange.B),
 
-                case 3:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.Orange.R,
-                        Properties.Settings.Default.Orange.G,
-                        Properties.Settings.Default.Orange.B);
+                4 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.Green.R,
+                    Properties.Settings.Default.Green.G,
+                    Properties.Settings.Default.Green.B),
 
-                case 4:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.Green.R,
-                        Properties.Settings.Default.Green.G,
-                        Properties.Settings.Default.Green.B);
+                5 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.Red.R,
+                    Properties.Settings.Default.Red.G,
+                    Properties.Settings.Default.Red.B),
 
-                case 5:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.Red.R,
-                        Properties.Settings.Default.Red.G,
-                        Properties.Settings.Default.Red.B);
+                6 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.Teal.R,
+                    Properties.Settings.Default.Teal.G,
+                    Properties.Settings.Default.Teal.B),
 
-                case 6:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.Teal.R,
-                        Properties.Settings.Default.Teal.G,
-                        Properties.Settings.Default.Teal.B);
+                7 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.Aqua.R,
+                    Properties.Settings.Default.Aqua.G,
+                    Properties.Settings.Default.Aqua.B),
 
-                case 7:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.Aqua.R,
-                        Properties.Settings.Default.Aqua.G,
-                        Properties.Settings.Default.Aqua.B);
+                8 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.Golden.R,
+                    Properties.Settings.Default.Golden.G,
+                    Properties.Settings.Default.Golden.B),
 
-                case 8:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.Golden.R,
-                        Properties.Settings.Default.Golden.G,
-                        Properties.Settings.Default.Golden.B);
+                9 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.Purple.R,
+                    Properties.Settings.Default.Purple.G,
+                    Properties.Settings.Default.Purple.B),
 
-                case 9:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.Purple.R,
-                        Properties.Settings.Default.Purple.G,
-                        Properties.Settings.Default.Purple.B);
+                10 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.Cyan.R,
+                    Properties.Settings.Default.Cyan.G,
+                    Properties.Settings.Default.Cyan.B),
 
-                case 10:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.Cyan.R,
-                        Properties.Settings.Default.Cyan.G,
-                        Properties.Settings.Default.Cyan.B);
+                11 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.Magenta.R,
+                    Properties.Settings.Default.Magenta.G,
+                    Properties.Settings.Default.Magenta.B),
 
-                case 11:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.Magenta.R,
-                        Properties.Settings.Default.Magenta.G,
-                        Properties.Settings.Default.Magenta.B);
+                12 => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.Lime.R,
+                    Properties.Settings.Default.Lime.G,
+                    Properties.Settings.Default.Lime.B),
 
-                case 12:
-                    return Color.FromArgb(
-                        160,
-                        Properties.Settings.Default.Lime.R,
-                        Properties.Settings.Default.Lime.G,
-                        Properties.Settings.Default.Lime.B);
-            }
+                _ => Color.FromArgb(
+                    160,
+                    Properties.Settings.Default.Blue.R,
+                    Properties.Settings.Default.Blue.G,
+                    Properties.Settings.Default.Blue.B),
+            };
         }
 
         #endregion Alpha
