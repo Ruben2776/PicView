@@ -5,6 +5,7 @@ using PicView.UILogic.Sizing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Interop;
 using static PicView.ChangeImage.Error_Handling;
@@ -44,11 +45,27 @@ namespace PicView.UILogic.Loading
                 = Visibility.Collapsed;
             }
 
-            // Set user language
-            Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
+            if (Properties.Settings.Default.CallUpgrade && Properties.Settings.Default.UserCulture != "en-US")
             {
-                Source = new Uri(@"/PicView;component/Translations/en-US.xaml", UriKind.Relative)
-            };
+                try
+                {
+                    CultureInfo.CurrentCulture = new CultureInfo(Properties.Settings.Default.UserCulture, false);
+
+                    Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
+                    {
+
+                        Source = new Uri($"//PicView;component//Translations//{Properties.Settings.Default.UserCulture}.xaml", UriKind.Relative)
+                    };
+                }
+                catch (Exception)
+                {
+                    CultureInfo.CurrentCulture = new CultureInfo("en-US", false);
+                    Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
+                    {
+                        Source = new Uri(@"/PicView;component/Translations/en-US.xaml", UriKind.Relative)
+                    };
+                }
+            }
         }
 
         internal static void Start()

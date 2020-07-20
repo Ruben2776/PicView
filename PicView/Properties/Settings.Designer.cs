@@ -553,13 +553,13 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int UserLanguage {
+        [global::System.Configuration.DefaultSettingValueAttribute("en-US")]
+        public string UserCulture {
             get {
-                return ((int)(this["UserLanguage"]));
+                return ((string)(this["UserCulture"]));
             }
             set {
-                this["UserLanguage"] = value;
+                this["UserCulture"] = value;
             }
         }
     }

@@ -22,6 +22,10 @@ namespace PicView.Views.Windows
             {
                 LanguageBox.ItemsSource = Enum.GetValues(typeof(Languages));
                 LanguageBox.SelectedIndex = 0;
+                LanguageBox.SelectionChanged += delegate
+                {
+
+                };
 
                 KeyUp += KeysUp;
                 KeyDown += KeysDown;
