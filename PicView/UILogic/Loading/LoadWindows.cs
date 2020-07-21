@@ -10,10 +10,11 @@ namespace PicView.UILogic.Loading
 {
     internal static class LoadWindows
     {
-        internal static SettingsWindow settingsWindow;
-        internal static InfoWindow infoWindow;
-        internal static EffectsWindow effects;
-        internal static BatchWindow resizeAndOptimize;
+        internal static SettingsWindow GetSettingsWindow { get; set; }
+        internal static InfoWindow InfoWindow { get; set; }
+        internal static EffectsWindow GetEffectsWindow { get; set; }
+        internal static BatchWindow GetResizeAndOptimize { get; set; }
+        internal static ImageInfoWindow GetImageInfoWindow { get; set; }
 
         #region Windows
 
@@ -22,9 +23,9 @@ namespace PicView.UILogic.Loading
         /// </summary>
         internal static void InfoDialogWindow()
         {
-            if (infoWindow == null)
+            if (InfoWindow == null)
             {
-                infoWindow = new InfoWindow
+                InfoWindow = new InfoWindow
                 {
                     Owner = TheMainWindow,
                     Opacity = 0
@@ -32,17 +33,17 @@ namespace PicView.UILogic.Loading
             }
             else
             {
-                if (infoWindow.Visibility == Visibility.Visible)
+                if (InfoWindow.Visibility == Visibility.Visible)
                 {
-                    infoWindow.Focus();
+                    InfoWindow.Focus();
                 }
             }
 
-            infoWindow.Width = TheMainWindow.ActualWidth;
-            infoWindow.Height = TheMainWindow.ActualHeight;
+            InfoWindow.Width = TheMainWindow.ActualWidth;
+            InfoWindow.Height = TheMainWindow.ActualHeight;
 
-            infoWindow.Left = TheMainWindow.Left + (TheMainWindow.Width - infoWindow.Width) / 2;
-            infoWindow.Top = TheMainWindow.Top + (TheMainWindow.Height - infoWindow.Height) / 2;
+            InfoWindow.Left = TheMainWindow.Left + (TheMainWindow.Width - InfoWindow.Width) / 2;
+            InfoWindow.Top = TheMainWindow.Top + (TheMainWindow.Height - InfoWindow.Height) / 2;
 
             TheMainWindow.Effect = new BlurEffect
             {
@@ -51,14 +52,14 @@ namespace PicView.UILogic.Loading
                 Radius = 9
             };
 
-            infoWindow.BeginAnimation(Window.OpacityProperty, new DoubleAnimation
+            InfoWindow.BeginAnimation(Window.OpacityProperty, new DoubleAnimation
             {
                 From = 0,
                 To = 1,
                 Duration = TimeSpan.FromSeconds(.3)
             });
 
-            infoWindow.ShowDialog();
+            InfoWindow.ShowDialog();
             
 #if DEBUG
             Trace.WriteLine("HelpWindow loaded ");
@@ -70,24 +71,24 @@ namespace PicView.UILogic.Loading
         /// </summary>
         internal static void AllSettingsWindow()
         {
-            if (settingsWindow == null)
+            if (GetSettingsWindow == null)
             {
-                settingsWindow = new SettingsWindow
+                GetSettingsWindow = new SettingsWindow
                 {
                     Owner = TheMainWindow
                 };
 
-                settingsWindow.Show();
+                GetSettingsWindow.Show();
             }
             else
             {
-                if (settingsWindow.Visibility == Visibility.Visible)
+                if (GetSettingsWindow.Visibility == Visibility.Visible)
                 {
-                    settingsWindow.Focus();
+                    GetSettingsWindow.Focus();
                 }
                 else
                 {
-                    settingsWindow.Show();
+                    GetSettingsWindow.Show();
                 }
             }
 
@@ -101,24 +102,24 @@ namespace PicView.UILogic.Loading
         /// </summary>
         internal static void EffectsWindow()
         {
-            if (effects == null)
+            if (GetEffectsWindow == null)
             {
-                effects = new EffectsWindow
+                GetEffectsWindow = new EffectsWindow
                 {
                     Owner = TheMainWindow
                 };
 
-                effects.Show();
+                GetEffectsWindow.Show();
             }
             else
             {
-                if (effects.Visibility == Visibility.Visible)
+                if (GetEffectsWindow.Visibility == Visibility.Visible)
                 {
-                    effects.Focus();
+                    GetEffectsWindow.Focus();
                 }
                 else
                 {
-                    effects.Show();
+                    GetEffectsWindow.Show();
                 }
             }
 
@@ -132,29 +133,60 @@ namespace PicView.UILogic.Loading
         /// </summary>
         internal static void ResizeAndOptimizeWindow()
         {
-            if (resizeAndOptimize == null)
+            if (GetResizeAndOptimize == null)
             {
-                resizeAndOptimize = new BatchWindow
+                GetResizeAndOptimize = new BatchWindow
                 {
                     Owner = TheMainWindow
                 };
 
-                resizeAndOptimize.Show();
+                GetResizeAndOptimize.Show();
             }
             else
             {
-                if (resizeAndOptimize.Visibility == Visibility.Visible)
+                if (GetResizeAndOptimize.Visibility == Visibility.Visible)
                 {
-                    resizeAndOptimize.Focus();
+                    GetResizeAndOptimize.Focus();
                 }
                 else
                 {
-                    resizeAndOptimize.Show();
+                    GetResizeAndOptimize.Show();
                 }
             }
 
 #if DEBUG
             Trace.WriteLine("EffectsWindow loaded ");
+#endif
+        }
+
+        /// <summary>
+        /// Show ImageInfo window
+        /// </summary>
+        internal static void ImageInfoWindow()
+        {
+            if (GetImageInfoWindow == null)
+            {
+                GetImageInfoWindow = new ImageInfoWindow
+                {
+                    Owner = TheMainWindow
+                };
+
+                GetImageInfoWindow.Show();
+            }
+            else
+            {
+                if (GetImageInfoWindow.Visibility == Visibility.Visible)
+                {
+                    GetImageInfoWindow.Focus();
+                }
+                else
+                {
+                    GetImageInfoWindow.Show();
+                }
+            }
+
+#if DEBUG
+            Trace.WriteLine("GetImageInfoWindow loaded ");
 #endif
         }
 

@@ -176,16 +176,16 @@
                 </Border>
 
                 <Border
-                    x:Name="ExifButtonBorder"
+                    x:Name="ImageInfoButtonBorder"
                     Canvas.Left="8"
                     Canvas.Top="115"
                     Width="156"
                     Height="51"
                     Style="{StaticResource ButtonBorder}">
                     <Border.Background>
-                        <SolidColorBrush x:Name="ExifButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        <SolidColorBrush x:Name="ImageInfoButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Border.Background>
-                    <Button x:Name="ExifButton" FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold">
+                    <Button x:Name="ImageInfoButton" FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
                                 Margin="0,0,6,0"

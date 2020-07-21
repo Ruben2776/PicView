@@ -57,6 +57,16 @@ namespace PicView.UILogic.UserControls
                 Color_Picking.Start();
             };
 
+            // ImageInfoButton
+            ImageInfoButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ImageInfoButtonBrush);
+            ImageInfoButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ImageInfoButtonBrush, true);
+            ImageInfoButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ImageInfoButtonBrush, false);
+            ImageInfoButton.Click += delegate
+            {
+                UC.Close_UserControls();
+                LoadWindows.ImageInfoWindow();
+            };
+
         }
     }
 }
