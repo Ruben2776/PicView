@@ -69,7 +69,6 @@ namespace PicView.Views.Windows
                 };
 
                 // Stretch
-
                 Stretch.Click += delegate
                 {
                     SetWallpaper(WallpaperStyle.Stretch);
@@ -104,6 +103,11 @@ namespace PicView.Views.Windows
                 LanguageBox.SelectionChanged += delegate
                 {
                     GeneralSettings.ChangeLanguage((LanguageBox.SelectedIndex));
+                };
+
+                RestartButton.Click += delegate
+                {
+                    GeneralSettings.RestartApp();
                 };
             };
         }
@@ -329,6 +333,12 @@ namespace PicView.Views.Windows
             Stretch.PreviewMouseLeftButtonDown += Stretch_PreviewMouseLeftButtonDown;
             Stretch.MouseEnter += Stretch_MouseEnter;
             Stretch.MouseLeave += Stretch_MouseLeave;
+
+            RestartButton.PreviewMouseLeftButtonDown += Restart_PreviewMouseLeftButtonDown;
+            RestartButton.MouseEnter += Restart_MouseEnter;
+            RestartButton.MouseLeave += Restart_MouseLeave;
+
+
         }
 
         // Blue
@@ -815,6 +825,36 @@ namespace PicView.Views.Windows
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(LightThemeBrush, false);
         }
 
+        // Restart Button
+        private void Restart_MouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseLeaveColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                RestartBrush,
+                false
+            );
+        }
+
+        private void Restart_MouseEnter(object sender, MouseEventArgs e)
+        {
+            AnimationHelper.MouseOverColorEvent(
+                backgroundBorderColor.A,
+                backgroundBorderColor.R,
+                backgroundBorderColor.G,
+                backgroundBorderColor.B,
+                RestartBrush,
+                false
+            );
+        }
+
+        private void Restart_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(RestartBrush, false);
+        }
+
         // Fill Button
         private void Fill_MouseLeave(object sender, MouseEventArgs e)
         {
@@ -823,7 +863,7 @@ namespace PicView.Views.Windows
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
-                FillBrush,
+                RestartBrush,
                 false
             );
         }

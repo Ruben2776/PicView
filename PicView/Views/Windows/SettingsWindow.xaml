@@ -5,7 +5,6 @@
     xmlns:uc="clr-namespace:PicView.UILogic.UserControls"
     Title="PicView settings"
     Width="500"
-    Height="710"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
     SizeToContent="Height"
@@ -415,6 +414,18 @@
 
                         <Label Content="Sec." />
                     </StackPanel>
+                    <Button
+                        x:Name="RestartButton"
+                        Width="183"
+                        Margin="0,7,0,12"
+                        Padding="10"
+                        Content="{StaticResource RestartApp}"
+                        Style="{StaticResource MetroAlphaFlatButton}">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="RestartBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Button.Background>
+                    </Button>
+
                 </StackPanel>
             </ScrollViewer>
         </Border>
