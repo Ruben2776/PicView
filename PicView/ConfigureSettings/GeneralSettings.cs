@@ -1,7 +1,6 @@
 ﻿using PicView.ChangeImage;
 using PicView.Translations;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Windows;
 

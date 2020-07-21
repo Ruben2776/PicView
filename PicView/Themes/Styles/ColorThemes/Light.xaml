@@ -47,7 +47,7 @@
     <SolidColorBrush x:Key="BackgroundColorBrushFadeSubtle" Color="{StaticResource BackgroundColorFadeSubtle}" />
 
     <!--  Background Subtle Highlight  -->
-    <Color x:Key="BackgroundSubtleHighlight">#FFF5F7EF</Color>
+    <Color x:Key="BackgroundSubtleHighlight">#FFF3F3EF</Color>
     <SolidColorBrush x:Key="BackgroundSubtleHighlightBrush" Color="{StaticResource BackgroundSubtleHighlight}" />
 
     <!--  Background Hover Highlight  -->
@@ -61,7 +61,7 @@
 
     <!--  Border Brush  -->
     <Color x:Key="BorderColor">#dbd7ca</Color>
-    <Color x:Key="BorderColorAlt">#ebf6f7</Color>
+    <Color x:Key="BorderColorAlt">#FFF3F3EF</Color>
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
     <SolidColorBrush x:Key="BorderBrushAlt" Color="{StaticResource BorderColorAlt}" />
 

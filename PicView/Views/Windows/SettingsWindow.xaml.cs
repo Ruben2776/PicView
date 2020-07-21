@@ -863,7 +863,7 @@ namespace PicView.Views.Windows
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
-                RestartBrush,
+                FillBrush,
                 false
             );
         }

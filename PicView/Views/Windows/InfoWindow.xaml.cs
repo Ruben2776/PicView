@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using static PicView.Library.Fields;
@@ -22,6 +23,11 @@ namespace PicView.Views.Windows
             appVersion.Content += fvi.FileVersion;
 
             ContentRendered += Window_ContentRendered;
+
+            if (Properties.Settings.Default.LightTheme)
+            {
+                Scroller.Background = Application.Current.Resources["NoisyBg"] as ImageBrush;
+            }
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)
