@@ -4,8 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Button
         x:Name="TheButton"
-        Width="51"
-        Height="51"
         Margin="0"
         BorderThickness="0">
         <Button.Background>

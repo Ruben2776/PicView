@@ -291,19 +291,19 @@ namespace PicView.Shortcuts
                             IsDialogOpen = false;
                             return;
                         }
-                        if (infoWindow != null)
+                        if (InfoWindow != null)
                         {
-                            if (infoWindow.IsVisible)
+                            if (InfoWindow.IsVisible)
                             {
-                                infoWindow.Hide();
+                                InfoWindow.Hide();
                                 return;
                             }
                         }
-                        if (settingsWindow != null)
+                        if (GetSettingsWindow != null)
                         {
-                            if (settingsWindow.IsVisible)
+                            if (GetSettingsWindow.IsVisible)
                             {
-                                settingsWindow.Hide();
+                                GetSettingsWindow.Hide();
                                 return;
                             }
                         }
@@ -357,9 +357,9 @@ namespace PicView.Shortcuts
                     case Key.C:
                         if (ctrlDown)
                         {
-                            if (resizeAndOptimize != null)
+                            if (GetResizeAndOptimize != null)
                             {
-                                if (resizeAndOptimize.IsVisible)
+                                if (GetResizeAndOptimize.IsVisible)
                                 {
                                     return; // Prevent paste errors
                                 }

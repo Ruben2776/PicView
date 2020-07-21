@@ -68,7 +68,11 @@
                     Width="51"
                     Height="51" />
 
-                <uc:CopyButton x:Name="CopyButton" Canvas.Left="102" />
+                <uc:CopyButton
+                    x:Name="CopyButton"
+                    Canvas.Left="102"
+                    Width="51"
+                    Height="51" />
 
                 <uc:PasteButton x:Name="PasteButton" Canvas.Left="154" />
 
