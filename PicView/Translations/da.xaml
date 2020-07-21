@@ -89,6 +89,8 @@
     <system:String x:Key="SearchSubdirectory">Søg i undermapper</system:String>
     <system:String x:Key="ColoredWindowBorder">Farvede vinduekanter</system:String>
 
+    <system:String x:Key="RestartApp">Genstart programmet</system:String>
+
     <!--  Settings window, wallpaper  -->
     <system:String x:Key="SetCurrentImageAsWallpaper">Sæt nuværende billede som skrivebordsbaggrund:</system:String>
 

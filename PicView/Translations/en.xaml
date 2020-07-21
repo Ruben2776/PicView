@@ -89,6 +89,8 @@
     <system:String x:Key="SearchSubdirectory">Search subdirectories</system:String>
     <system:String x:Key="ColoredWindowBorder">Colored window border</system:String>
 
+    <system:String x:Key="RestartApp">Restart the application</system:String>
+
     <!--  Settings window, wallpaper  -->
     <system:String x:Key="SetCurrentImageAsWallpaper">Set current image as wallpaper:</system:String>
 
