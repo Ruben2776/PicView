@@ -238,6 +238,7 @@
     <system:String x:Key="FileCut">Cut file</system:String>
 
     <!--  Image info  -->
+    <system:String x:Key="ImageInfo">Image Info</system:String>
     <system:String x:Key="Image">Image</system:String>
     <system:String x:Key="Width">Width</system:String>
     <system:String x:Key="Height">Height</system:String>
@@ -255,6 +256,10 @@
     <system:String x:Key="AspectRatio">Aspect ratio</system:String>
     <system:String x:Key="Portrait">Portrait</system:String>
     <system:String x:Key="Landscape">Landscape</system:String>
+    <system:String x:Key="PrintSizeIn">Print size (in)</system:String>
+    <system:String x:Key="PrintSizeCm">Print size (cm)</system:String>
+    <system:String x:Key="BitDepth">Bit depth</system:String>
+
 
     <!--  Keyboard key names  -->
     <system:String x:Key="Delete">Delete</system:String>

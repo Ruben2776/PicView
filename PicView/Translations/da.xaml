@@ -238,6 +238,7 @@
     <system:String x:Key="FileCut">Klip fil</system:String>
 
     <!--  Image info  -->
+    <system:String x:Key="ImageInfo">Billede Info</system:String>
     <system:String x:Key="Image">Billede</system:String>
     <system:String x:Key="Width">Bredde</system:String>
     <system:String x:Key="Height">Højde</system:String>
@@ -255,6 +256,9 @@
     <system:String x:Key="AspectRatio">Aspektforhold</system:String>
     <system:String x:Key="Portrait">Portræt</system:String>
     <system:String x:Key="Landscape">Landskab</system:String>
+    <system:String x:Key="PrintSizeIn">Print size (in)</system:String>
+    <system:String x:Key="PrintSizeCm">Print size (cm)</system:String>
+    <system:String x:Key="BitDepth">Bit depth</system:String>
 
     <!--  Keyboard key names  -->
     <system:String x:Key="Delete">Slet</system:String>
