@@ -292,7 +292,7 @@
     <system:String x:Key="SetAsLockScreenImage">Indstil som låseskærmbillede</system:String>
 
     <!--  Edit  -->
-    <system:String x:Key="Beskær">Crop</system:String>
+    <system:String x:Key="Crop">Beskær</system:String>
     <system:String x:Key="RotateRight">Roter til højre</system:String>
     <system:String x:Key="RotateLeft">Roter til venstre</system:String>
     <system:String x:Key="Flip">Spejlvend</system:String>
@@ -324,9 +324,14 @@
     <system:String x:Key="LoopingDisabled">Looping slået fra</system:String>
 
     <!--  Button hover tooltips  -->
+    <system:String x:Key="ShowInfoWindow">Åbn vindue for info og genveje</system:String>
+    <system:String x:Key="ShowAllSettingsWindow">Vis indstillingsvinduet</system:String>
+
     <system:String x:Key="ToggleBackgroundColor">Skift baggrundsfarve</system:String>
     <system:String x:Key="ShowImageGallery">Vis billedgalleri</system:String>
     <system:String x:Key="GoToImageAtSpecifiedIndex">Gå til billede ved specificerede indeks</system:String>
+    <system:String x:Key="AdjustZoomLevel">Juster zoom niveau</system:String>
+
     <system:String x:Key="PasteImageFromClipholder">Indsæt billede fra klipholder</system:String>
     <system:String x:Key="SendCurrentImageToRecycleBin">Send det aktuelle billede til papirkurven</system:String>
     <system:String x:Key="StartSlideshow">Start slideshow</system:String>

@@ -324,9 +324,14 @@
     <system:String x:Key="LoopingDisabled">Looping disabled</system:String>
 
     <!--  Button hover tooltips  -->
+    <system:String x:Key="ShowInfoWindow">Show info window</system:String>
+    <system:String x:Key="ShowAllSettingsWindow">Show all settings window</system:String>
+
     <system:String x:Key="ToggleBackgroundColor">Toggle background color</system:String>
     <system:String x:Key="ShowImageGallery">Show image gallery</system:String>
     <system:String x:Key="GoToImageAtSpecifiedIndex">Go to image at specified index</system:String>
+    <system:String x:Key="AdjustZoomLevel">Adjust zoom level</system:String>
+
     <system:String x:Key="PasteImageFromClipholder">Paste image from clipholder</system:String>
     <system:String x:Key="SendCurrentImageToRecycleBin">Send current image to the recycle bin</system:String>
     <system:String x:Key="StartSlideshow">Start slideshow</system:String>

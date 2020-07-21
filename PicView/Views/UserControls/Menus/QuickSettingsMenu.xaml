@@ -68,7 +68,7 @@
                     Height="51"
                     BorderBrush="{x:Null}"
                     Foreground="{x:Null}"
-                    ToolTip="Adjust zoom level">
+                    ToolTip="{StaticResource AdjustZoomLevel}">
                     <Button.Background>
                         <SolidColorBrush x:Name="ZoomButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Button.Background>
@@ -168,7 +168,7 @@
                     Canvas.Left="0"
                     Width="51"
                     Height="51"
-                    ToolTip="Show info window [F1]">
+                    ToolTip="{StaticResource ShowInfoWindow}">
                     <Button.Background>
                         <SolidColorBrush x:Name="InfoButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Button.Background>
@@ -202,7 +202,7 @@
                     Canvas.Left="51"
                     Width="51"
                     Height="51"
-                    ToolTip="Show all settings window [F4]">
+                    ToolTip="{StaticResource ShowAllSettingsWindow}">
                     <Button.Background>
                         <SolidColorBrush x:Name="SettingsButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Button.Background>
