@@ -25,40 +25,40 @@
     <system:String x:Key="InfoWindowTitle">Information, help &amp; shortcuts</system:String>
     <system:String x:Key="ApplicationShortcuts">Genveje til programmet</system:String>
     <system:String x:Key="SavedOnNextStartUp">(Gemt ved næste startup)</system:String>
-    <system:String x:Key="ImageControl">Image control</system:String>
-    <system:String x:Key="FileManagement">File management</system:String>
-    <system:String x:Key="DragFileTo">Drag file to Windows Explorer or another application/browser</system:String>
-    <system:String x:Key="DragImage">Drag image</system:String>
-    <system:String x:Key="AdditionalFunctions">Additional functions</system:String>
-    <system:String x:Key="Reload">Reload</system:String>
-    <system:String x:Key="ExtraMouseKeyFunctions">Extra mouse key functions</system:String>
-    <system:String x:Key="AttributionAndCredits">Attributions and credits</system:String>
-    <system:String x:Key="IconsUsed">Icons used:</system:String>
-    <system:String x:Key="GithubRepo">Github repository</system:String>
-    <system:String x:Key="ViewLicenseFile">View license file</system:String>
+    <system:String x:Key="ImageControl">Billede kontrol</system:String>
+    <system:String x:Key="FileManagement">Fil behandling</system:String>
+    <system:String x:Key="DragFileTo">Slip filen til stifinderen eller et andet program/browser</system:String>
+    <system:String x:Key="DragImage">Træk billede</system:String>
+    <system:String x:Key="AdditionalFunctions">Diverse funktioner</system:String>
+    <system:String x:Key="Reload">Genindlæs</system:String>
+    <system:String x:Key="ExtraMouseKeyFunctions">Ekstra funktioner med museknapperne</system:String>
+    <system:String x:Key="AttributionAndCredits">Anerkendelser</system:String>
+    <system:String x:Key="IconsUsed">Brugte ikoner:</system:String>
+    <system:String x:Key="GithubRepo">Github side</system:String>
+    <system:String x:Key="ViewLicenseFile">Se licensfilen</system:String>
     <system:String x:Key="Version">Version:</system:String>
 
 
     <!--  Info window, window scaling  -->
-    <system:String x:Key="WindowScaling">Window scaling</system:String>
-    <system:String x:Key="NormalWindow">Normal window</system:String>
-    <system:String x:Key="FillHeight">⇔ Fill height</system:String>
-    <system:String x:Key="AutoFitWindow">Auto fit window</system:String>
+    <system:String x:Key="WindowScaling">Skalering af vindue</system:String>
+    <system:String x:Key="NormalWindow">Normalt vindue</system:String>
+    <system:String x:Key="FillHeight">⇔ Fyld højde</system:String>
+    <system:String x:Key="AutoFitWindow">Auto tilpas vindue</system:String>
 
     <!--  info window, interface configuration  -->
-    <system:String x:Key="InterfaceConfiguration">Interface configuration</system:String>
-    <system:String x:Key="HideShowInterface">Hide/show interface</system:String>
-    <system:String x:Key="ChangeBackground">Change background</system:String>
-    <system:String x:Key="ToggleFullscreen">Toggle fullscreen</system:String>
+    <system:String x:Key="InterfaceConfiguration">Interfacekonfiguration</system:String>
+    <system:String x:Key="HideShowInterface">Vis/skjul interface</system:String>
+    <system:String x:Key="ChangeBackground">Skift baggrund</system:String>
+    <system:String x:Key="ToggleFullscreen">Skift fuldskærmstilstand</system:String>
 
     <!--  Info window, window management  -->
-    <system:String x:Key="WindowManagement">Window management</system:String>
-    <system:String x:Key="InfoWindow">Info window</system:String>
-    <system:String x:Key="SettingsWindow">Settings window</system:String>
-    <system:String x:Key="EscCloseTooltip">Closes currently opened window/menu</system:String>
-    <system:String x:Key="CloseApp">Close the whole application</system:String>
-    <system:String x:Key="MoveWindow">Move window</system:String>
-    <system:String x:Key="CenterWindow">Center window</system:String>
+    <system:String x:Key="WindowManagement">vinduesstyring</system:String>
+    <system:String x:Key="InfoWindow">Info vindue</system:String>
+    <system:String x:Key="SettingsWindow">Indstillingsvindue</system:String>
+    <system:String x:Key="EscCloseTooltip">Lukker nuværende åbne vindue/menu</system:String>
+    <system:String x:Key="CloseApp">Lukker hele programmer</system:String>
+    <system:String x:Key="MoveWindow">Flyt vindue</system:String>
+    <system:String x:Key="CenterWindow">Centrer vindue</system:String>
 
     <!--  Settings window, colors  -->
     <system:String x:Key="HighlightColor">Accentfarve</system:String>
@@ -94,260 +94,261 @@
     <!--  Settings window, wallpaper  -->
     <system:String x:Key="SetCurrentImageAsWallpaper">Sæt nuværende billede som skrivebordsbaggrund:</system:String>
 
-    <system:String x:Key="Fill">Fill</system:String>
-    <system:String x:Key="Center">Center</system:String>
-    <system:String x:Key="Fit">Fit</system:String>
-    <system:String x:Key="Tile">Tile</system:String>
-    <system:String x:Key="Stretch">Stretch</system:String>
+    <system:String x:Key="Fill">Fyld</system:String>
+    <system:String x:Key="Center">Centrer</system:String>
+    <system:String x:Key="Fit">Tilpas</system:String>
+    <system:String x:Key="Tile">Flise</system:String>
+    <system:String x:Key="Stretch">Stræk</system:String>
 
     <!--  Settings window, language  -->
-    <system:String x:Key="Language">Language</system:String>
-    <system:String x:Key="ChangingLanguageRequiresRestart">* Changing language requires restart</system:String>
+    <system:String x:Key="Language">Sprog</system:String>
+    <system:String x:Key="ChangingLanguageRequiresRestart">* Skiftning af sprog kræver genstart</system:String>
 
     <!--  Effects Window  -->
-    <system:String x:Key="HLSLPictureFX">HLSL Picture FX</system:String>
-    <system:String x:Key="ClickToAddShaderEffectToImage">Click button to add specified shader effect to image</system:String>
-    <system:String x:Key="UncheckToRemoveEffect">Uncheck to remove effect</system:String>
+    <system:String x:Key="HLSLPictureFX">HLSL Billede effekter</system:String>
+    <system:String x:Key="ClickToAddShaderEffectToImage">Klik på knappen for at tilføje den specificererede shader-effekt til billedet</system:String>
+    <system:String x:Key="UncheckToRemoveEffect">Fjern markeringen for at fjerne effekten</system:String>
 
-    <system:String x:Key="NegativeColors">Negative Colors</system:String>
-    <system:String x:Key="BlackAndWhite">Black &amp; White</system:String>
-    <system:String x:Key="ColorTone">Color Tone</system:String>
+    <system:String x:Key="NegativeColors">Negative Farver</system:String>
+    <system:String x:Key="BlackAndWhite">Sort/hvid</system:String>
+    <system:String x:Key="ColorTone">Farve Tone</system:String>
 
-    <system:String x:Key="OldMovie">Old Movie</system:String>
+    <system:String x:Key="OldMovie">Gammel film</system:String>
     <system:String x:Key="Bloom">Bloom</system:String>
     <system:String x:Key="Gloom">Gloom</system:String>
 
     <system:String x:Key="Monochrome">Monochrome</system:String>
     <system:String x:Key="WaveWarper">Wave Warper</system:String>
-    <system:String x:Key="Underwater">Underwater</system:String>
+    <system:String x:Key="Underwater">Undersøisk</system:String>
 
-    <system:String x:Key="BandedSwirl">Banded Swirl</system:String>
-    <system:String x:Key="Ripple">Ripple</system:String>
-    <system:String x:Key="RippleAlt">Ripple Alt</system:String>
+    <system:String x:Key="BandedSwirl">Båndet virvel</system:String>
+    <system:String x:Key="Ripple">Bølge effekt</system:String>
+    <system:String x:Key="RippleAlt">Bølge effekt Alt</system:String>
 
-    <system:String x:Key="Blur">Blur</system:String>
-    <system:String x:Key="DirectionalBlur">Directional Blur</system:String>
-    <system:String x:Key="TelescopicBlur">Telescopic Blur</system:String>
+    <system:String x:Key="Blur">Sløring</system:String>
+    <system:String x:Key="DirectionalBlur">Retningsvis Sløring</system:String>
+    <system:String x:Key="TelescopicBlur">Teleskopisk Sløring</system:String>
 
-    <system:String x:Key="Pixelate">Pixelate</system:String>
-    <system:String x:Key="Embossed">Embossed</system:String>
-    <system:String x:Key="SmoothMagnify">Smooth Magnify</system:String>
+    <system:String x:Key="Pixelate">Pixeler</system:String>
+    <system:String x:Key="Embossed">Emboss</system:String>
+    <system:String x:Key="SmoothMagnify">Glat forstørrelse</system:String>
 
-    <system:String x:Key="Pivot">Pivot</system:String>
-    <system:String x:Key="PaperFold">Paper Fold</system:String>
-    <system:String x:Key="PencilSketch">Pencil Sketch</system:String>
+    <system:String x:Key="Pivot">Omdrejning</system:String>
+    <system:String x:Key="PaperFold">Papirfoldning</system:String>
+    <system:String x:Key="PencilSketch">Blyantskitse</system:String>
 
-    <system:String x:Key="Sketch">Sketch</system:String>
+    <system:String x:Key="Sketch">Skitse</system:String>
     <system:String x:Key="ToneMapping">ToneMapping</system:String>
     <system:String x:Key="FrostyOutline">Frosty Outline</system:String>
 
-    <system:String x:Key="Bands">Bands</system:String>
-    <system:String x:Key="GlassTile">Glass Tile</system:String>
+    <system:String x:Key="Bands">Bånd</system:String>
+    <system:String x:Key="GlassTile">Glasflise</system:String>
 
     <!--  Batch resize window  -->
-    <system:String x:Key="Rotate">Rotate:</system:String>
-    <system:String x:Key="Misc">Misc:</system:String>
-    <system:String x:Key="OptimizeFileSize">Optimize file size</system:String>
-    <system:String x:Key="Quality">Quality:</system:String>
+    <system:String x:Key="Rotate">Roter:</system:String>
+    <system:String x:Key="Misc">Diverse:</system:String>
+    <system:String x:Key="OptimizeFileSize">Optimer filstørrelse</system:String>
+    <system:String x:Key="Quality">Kvalitet:</system:String>
 
     <system:String x:Key="Resize">Resize:</system:String>
-    <system:String x:Key="KeepAspectRatio">Keep aspect ratio</system:String>
-    <system:String x:Key="FlipImages">Flip image(s)</system:String>
+    <system:String x:Key="KeepAspectRatio">Hold sideforhold</system:String>
+    <system:String x:Key="FlipImages">Spejlvend billede(r)</system:String>
 
-    <system:String x:Key="RenameTo">Rename to:</system:String>
+    <system:String x:Key="RenameTo">Omdøb til:</system:String>
     <system:String x:Key="Destination">Destination</system:String>
 
-    <system:String x:Key="SelectedImage">Selected image</system:String>
-    <system:String x:Key="FromFolder">From folder:</system:String>
+    <system:String x:Key="SelectedImage">Valgt billede</system:String>
+    <system:String x:Key="FromFolder">Fra mappe:</system:String>
     <system:String x:Key="Start">Start</system:String>
+    <system:String x:Key="Stop">Stop</system:String>
 
 
     <!--  Navigation related  -->
     <system:String x:Key="Navigation">Navigering</system:String>
     <system:String x:Key="NextImage">Næste billede</system:String>
     <system:String x:Key="PrevImage">Forrige billede</system:String>
-    <system:String x:Key="LastImage">Last image</system:String>
-    <system:String x:Key="FirstImage">First image</system:String>
-    <system:String x:Key="ToggleLooping">Toggle looping</system:String>
+    <system:String x:Key="LastImage">Sidste billede</system:String>
+    <system:String x:Key="FirstImage">Første billede</system:String>
+    <system:String x:Key="ToggleLooping">Slå looping til/fra</system:String>
     <system:String x:Key="Slideshow">Slideshow</system:String>
 
     <!--  Zoom related  -->
     <system:String x:Key="Zoom">Zoom</system:String>
-    <system:String x:Key="ZoomIn">Zoom In</system:String>
-    <system:String x:Key="ZoomOut">Zoom Out</system:String>
-    <system:String x:Key="Pan">Pan</system:String>
-    <system:String x:Key="MouseDrag">Mouse drag</system:String>
+    <system:String x:Key="ZoomIn">Zoom Ind</system:String>
+    <system:String x:Key="ZoomOut">Zoom Ud</system:String>
+    <system:String x:Key="Pan">Panorering</system:String>
+    <system:String x:Key="MouseDrag">Mouse træk</system:String>
     <system:String x:Key="ResetZoom">Reset zoom</system:String>
-    <system:String x:Key="ToggleScroll">Toggle scroll</system:String>
+    <system:String x:Key="ToggleScroll">Slå scroll til/fra</system:String>
 
     <!--  File related  -->
     <system:String x:Key="Open">Åben</system:String>
-    <system:String x:Key="OpenWith">Open with...</system:String>
-    <system:String x:Key="OpenFileDialog">Open file dialog</system:String>
-    <system:String x:Key="ShowInFolder">Show in folder</system:String>
-    <system:String x:Key="Save">Save</system:String>
-    <system:String x:Key="SaveImage">Save image</system:String>
+    <system:String x:Key="OpenWith">Åben med...</system:String>
+    <system:String x:Key="OpenFileDialog">Åben fil dialog</system:String>
+    <system:String x:Key="ShowInFolder">Vis i mappe</system:String>
+    <system:String x:Key="Save">Gem</system:String>
+    <system:String x:Key="SaveImage">Gem billede</system:String>
     <system:String x:Key="Print">Print</system:String>
-    <system:String x:Key="RecentFiles">Recent files</system:String>
-    <system:String x:Key="FileProperties">File properties</system:String>
-    <system:String x:Key="DeleteFile">Delete file</system:String>
-    <system:String x:Key="Folder">Folder</system:String>
-    <system:String x:Key="FullPath">Full path</system:String>
-    <system:String x:Key="RenameFile">Rename file</system:String>
+    <system:String x:Key="RecentFiles">Seneste filer</system:String>
+    <system:String x:Key="FileProperties">Filegenskaber</system:String>
+    <system:String x:Key="DeleteFile">Slet fil</system:String>
+    <system:String x:Key="Folder">Mappe</system:String>
+    <system:String x:Key="FullPath">Absolutte sti</system:String>
+    <system:String x:Key="RenameFile">Omdøb fil</system:String>
 
     <!--  Sort files  -->
-    <system:String x:Key="SortFilesBy">Sort files by</system:String>
-    <system:String x:Key="FileName">File name</system:String>
-    <system:String x:Key="FileSize">File size</system:String>
-    <system:String x:Key="CreationTime">Creation time</system:String>
-    <system:String x:Key="FileExtension">File extension</system:String>
-    <system:String x:Key="LastAccessTime">Last access time</system:String>
-    <system:String x:Key="LastWriteTime">Last write time</system:String>
-    <system:String x:Key="Random">Random</system:String>
+    <system:String x:Key="SortFilesBy">Sorter efter</system:String>
+    <system:String x:Key="FileName">Fil navn</system:String>
+    <system:String x:Key="FileSize">Filstørrelse</system:String>
+    <system:String x:Key="CreationTime">Oprettelses tid</system:String>
+    <system:String x:Key="FileExtension">Filtypenavn</system:String>
+    <system:String x:Key="LastAccessTime">Sidst tilgået</system:String>
+    <system:String x:Key="LastWriteTime">Sidst skrevet til</system:String>
+    <system:String x:Key="Random">Vilkårlig</system:String>
 
     <!--  Settings  -->
     <system:String x:Key="Settings">Indstillinger</system:String>
     <system:String x:Key="Scrolling">Scrolling</system:String>
     <system:String x:Key="Looping">Looping</system:String>
-    <system:String x:Key="FitToWindow">Fit to window/image</system:String>
-    <system:String x:Key="ShowHideUI">Show/hide interface</system:String>
-    <system:String x:Key="ChangeBg">Change background</system:String>
-    <system:String x:Key="ChangeBgTooltip">Change between background color for images with transparent background</system:String>
+    <system:String x:Key="FitToWindow">Tilpas til vindue/billede</system:String>
+    <system:String x:Key="ShowHideUI">Vis/skjul interface</system:String>
+    <system:String x:Key="ChangeBg">Skift background</system:String>
+    <system:String x:Key="ChangeBgTooltip">Skift mellem baggrundsfarve til billeder med gennemsigtig baggrund</system:String>
 
     <!--  Copy related  -->
-    <system:String x:Key="Copy">Copy</system:String>
-    <system:String x:Key="AddedToClipboard">added to clipboard</system:String>
+    <system:String x:Key="Copy">Kopier</system:String>
+    <system:String x:Key="AddedToClipboard">tilføjet til udklipsholderen</system:String>
 
     <!--  Copy file  -->
-    <system:String x:Key="CopyFile">Copy file</system:String>
-    <system:String x:Key="FileCopy">File added to clipboard</system:String>
-    <system:String x:Key="FileCopyPath">Copy file path</system:String>
-    <system:String x:Key="FileCopyPathMessage">File path added to clipboard</system:String>
-    <system:String x:Key="FileCutMessage">File added to move clipboard</system:String>
+    <system:String x:Key="CopyFile">Kopier fil</system:String>
+    <system:String x:Key="FileCopy">Fil tilføjet til udklipsholderen</system:String>
+    <system:String x:Key="FileCopyPath">Kopier fil sti</system:String>
+    <system:String x:Key="FileCopyPathMessage">Fil stien tilføjet til udklipsholderen</system:String>
+    <system:String x:Key="FileCutMessage">Fil tilføjet til flytte udklipsholderen</system:String>
 
     <!--  Copy image  -->
-    <system:String x:Key="CopyImage">Copy image</system:String>
-    <system:String x:Key="CopiedImage">Copied image to clipboard</system:String>
-    <system:String x:Key="CopyImageTooltip">Copy as Windows clipboard image</system:String>
+    <system:String x:Key="CopyImage">Kopier billede</system:String>
+    <system:String x:Key="CopiedImage">Kopier billede til udklipsholderen</system:String>
+    <system:String x:Key="CopyImageTooltip">Kopier som Windows-klippebordsbillede</system:String>
 
     <!--  Paste  -->
-    <system:String x:Key="FilePaste">Paste file</system:String>
+    <system:String x:Key="FilePaste">Indsæt fil</system:String>
 
     <!--  Cut  -->
-    <system:String x:Key="FileCut">Cut file</system:String>
+    <system:String x:Key="FileCut">Klip fil</system:String>
 
     <!--  Image info  -->
-    <system:String x:Key="Image">Image</system:String>
-    <system:String x:Key="Width">Width</system:String>
-    <system:String x:Key="Height">Height</system:String>
-    <system:String x:Key="Date">Date</system:String>
-    <system:String x:Key="Created">Created</system:String>
-    <system:String x:Key="Modified">Modified</system:String>
-    <system:String x:Key="Size">Size</system:String>
-    <system:String x:Key="SizePx">Size (px)</system:String>
+    <system:String x:Key="Image">Billede</system:String>
+    <system:String x:Key="Width">Bredde</system:String>
+    <system:String x:Key="Height">Højde</system:String>
+    <system:String x:Key="Date">Dato</system:String>
+    <system:String x:Key="Created">Opretted</system:String>
+    <system:String x:Key="Modified">Modificeret</system:String>
+    <system:String x:Key="Size">Størrelse</system:String>
+    <system:String x:Key="SizePx">Størrelse (px)</system:String>
     <system:String x:Key="Pixels">pixels</system:String>
-    <system:String x:Key="SizeMp">Size (mp)</system:String>
+    <system:String x:Key="SizeMp">Størrelse (mp)</system:String>
     <system:String x:Key="MegaPixels">megapixels</system:String>
-    <system:String x:Key="Resolution">Resolution</system:String>
+    <system:String x:Key="Resolution">Opløsning</system:String>
     <system:String x:Key="Dpi">DPI</system:String>
-    <system:String x:Key="DiskSize">Disk size</system:String>
-    <system:String x:Key="AspectRatio">Aspect ratio</system:String>
-    <system:String x:Key="Portrait">Portrait</system:String>
-    <system:String x:Key="Landscape">Landscape</system:String>
+    <system:String x:Key="DiskSize">Disk størrelse</system:String>
+    <system:String x:Key="AspectRatio">Aspektforhold</system:String>
+    <system:String x:Key="Portrait">Portræt</system:String>
+    <system:String x:Key="Landscape">Landskab</system:String>
 
     <!--  Keyboard key names  -->
-    <system:String x:Key="Delete">Delete</system:String>
+    <system:String x:Key="Delete">Slet</system:String>
     <system:String x:Key="Ctrl">Ctrl</system:String>
-    <system:String x:Key="Shift">Shift</system:String>
+    <system:String x:Key="Shift">Skift</system:String>
     <system:String x:Key="Alt">Alt</system:String>
-    <system:String x:Key="Space">Space</system:String>
+    <system:String x:Key="Space">Mellemrum</system:String>
     <system:String x:Key="Enter">Enter</system:String>
     <system:String x:Key="Esc">Esc</system:String>
     <system:String x:Key="NumpadPlus">Numpad +</system:String>
     <system:String x:Key="NumpadMinus">Numpad -</system:String>
     <!--  Mouse key names  -->
-    <system:String x:Key="MouseWheel">Mouse wheel</system:String>
-    <system:String x:Key="MouseKeyForward">Mouse key forward</system:String>
-    <system:String x:Key="MouseKeyBack">Mouse key back</system:String>
-    <system:String x:Key="DoubleClick">Double Click</system:String>
+    <system:String x:Key="MouseWheel">Mouse hjul</system:String>
+    <system:String x:Key="MouseKeyForward">Mouse knap fremad</system:String>
+    <system:String x:Key="MouseKeyBack">Mouse knap tilbage</system:String>
+    <system:String x:Key="DoubleClick">Dobbeltklik</system:String>
     <!--  Arrow key names  -->
-    <system:String x:Key="Left">Left</system:String>
-    <system:String x:Key="Right">Right</system:String>
-    <system:String x:Key="Up">Up</system:String>
-    <system:String x:Key="Down">Down</system:String>
+    <system:String x:Key="Left">Venstre</system:String>
+    <system:String x:Key="Right">Højre</system:String>
+    <system:String x:Key="Up">Op</system:String>
+    <system:String x:Key="Down">Ned</system:String>
 
 
     <!--  Error messages  -->
-    <system:String x:Key="SavingFileFailed">Saving file failed</system:String>
-    <system:String x:Key="UnexpectedError">An unknown error occured</system:String>
-    <system:String x:Key="NoImages">NoImages</system:String>
-    <system:String x:Key="AnErrorOccuredMovingFile">&quot;An error occured moving file&quot;</system:String>
+    <system:String x:Key="SavingFileFailed">Gemning af fil mislykkedes</system:String>
+    <system:String x:Key="UnexpectedError">Der skete en ukendt fejl</system:String>
+    <system:String x:Key="NoImages">Ingen billeder</system:String>
+    <system:String x:Key="AnErrorOccuredMovingFile">Der skete en fejl ved flytning af fil</system:String>
 
     <!--  Drag and drop  -->
-    <system:String x:Key="DragOverString">Drop to load image</system:String>
+    <system:String x:Key="DragOverString">Slip for at indlæs</system:String>
 
     <!--  Wallpaper  -->
-    <system:String x:Key="SetAsWallpaper">Set as wallpaper</system:String>
-    <system:String x:Key="SetAsLockScreenImage">Set as lock screen image</system:String>
+    <system:String x:Key="SetAsWallpaper">Sæt som baggrund</system:String>
+    <system:String x:Key="SetAsLockScreenImage">Indstil som låseskærmbillede</system:String>
 
     <!--  Edit  -->
-    <system:String x:Key="Crop">Crop</system:String>
-    <system:String x:Key="RotateRight">Rotate right</system:String>
-    <system:String x:Key="RotateLeft">Rotate left</system:String>
-    <system:String x:Key="Flip">Flip horizontally</system:String>
-    <system:String x:Key="Unflip">Unflip</system:String>
+    <system:String x:Key="Beskær">Crop</system:String>
+    <system:String x:Key="RotateRight">Roter til højre</system:String>
+    <system:String x:Key="RotateLeft">Roter til venstre</system:String>
+    <system:String x:Key="Flip">Spejlvend</system:String>
+    <system:String x:Key="Unflip">Spejlvend tilbage</system:String>
 
 
     <!--  Archives  -->
-    <system:String x:Key="Unzipping">Unzipping...</system:String>
-    <system:String x:Key="BadArchive">Archive could not be processed</system:String>
-    <system:String x:Key="PasswordArchive">Password protected archive not supported</system:String>
+    <system:String x:Key="Unzipping">Udpakker...</system:String>
+    <system:String x:Key="BadArchive">Arkivet kunne ikke behandles</system:String>
+    <system:String x:Key="PasswordArchive">Adgangskodebeskyttet arkiv understøttes ikke</system:String>
 
     <!--  Delete file messages  -->
-    <system:String x:Key="SentFileToRecycleBin">Sent file to recycle bin</system:String>
-    <system:String x:Key="DeletedFile">Deleted file</system:String>
-    <system:String x:Key="AnErrorOccuredWhenDeleting">An error occured when deleting</system:String>
+    <system:String x:Key="SentFileToRecycleBin">Sendt fil til papirkurven</system:String>
+    <system:String x:Key="DeletedFile">Slettede filen</system:String>
+    <system:String x:Key="AnErrorOccuredWhenDeleting">Der skete en fejl ved sletning</system:String>
 
     <!--  Scaling messages  -->
-    <system:String x:Key="CenterImageInWindow">Set to center image in window</system:String>
-    <system:String x:Key="CenterImageInWindowFillHeight">Set to center image in window, fill height</system:String>
-    <system:String x:Key="CenterApplicationToWindow">Set to center application to window</system:String>
-    <system:String x:Key="CenterApplicationToWindowFillHeight">Set to center application to window, fill height</system:String>
+    <system:String x:Key="CenterImageInWindow">Indstil til centrering af billedet i vinduet</system:String>
+    <system:String x:Key="CenterImageInWindowFillHeight">Indstil til centrering af billedet i vinduet, fyld højde</system:String>
+    <system:String x:Key="CenterApplicationToWindow">Indstil til at centrere programmet til vinduet</system:String>
+    <system:String x:Key="CenterApplicationToWindowFillHeight">Indstil til at centrere programmet til vinduet, fyld højde</system:String>
 
-    <system:String x:Key="ScrollingEnabled">Scrolling enabled</system:String>
-    <system:String x:Key="ScrollingDisabled">Scrolling disabled</system:String>
+    <system:String x:Key="ScrollingEnabled">Scrolling slået til</system:String>
+    <system:String x:Key="ScrollingDisabled">Scrolling slået fra</system:String>
 
     <!--  Misc messages  -->
-    <system:String x:Key="ConvertedToBase64">Converted to base 64</system:String>
-    <system:String x:Key="LoopingEnabled">Looping enabled</system:String>
-    <system:String x:Key="LoopingDisabled">Looping disabled</system:String>
+    <system:String x:Key="ConvertedToBase64">Konverteret til base64</system:String>
+    <system:String x:Key="LoopingEnabled">Looping slået til</system:String>
+    <system:String x:Key="LoopingDisabled">Looping slået fra</system:String>
 
     <!--  Button hover tooltips  -->
-    <system:String x:Key="ToggleBackgroundColor">Toggle background color</system:String>
-    <system:String x:Key="ShowImageGallery">Show image gallery</system:String>
-    <system:String x:Key="GoToImageAtSpecifiedIndex">Go to image at specified index</system:String>
-    <system:String x:Key="PasteImageFromClipholder">Paste image from clipholder</system:String>
-    <system:String x:Key="SendCurrentImageToRecycleBin">Send current image to the recycle bin</system:String>
+    <system:String x:Key="ToggleBackgroundColor">Skift baggrundsfarve</system:String>
+    <system:String x:Key="ShowImageGallery">Vis billedgalleri</system:String>
+    <system:String x:Key="GoToImageAtSpecifiedIndex">Gå til billede ved specificerede indeks</system:String>
+    <system:String x:Key="PasteImageFromClipholder">Indsæt billede fra klipholder</system:String>
+    <system:String x:Key="SendCurrentImageToRecycleBin">Send det aktuelle billede til papirkurven</system:String>
     <system:String x:Key="StartSlideshow">Start slideshow</system:String>
-    <system:String x:Key="CloseGallery">Close gallery</system:String>
+    <system:String x:Key="CloseGallery">Luk gallery</system:String>
 
     <!--  Menu buttons text  -->
-    <system:String x:Key="ShowFullscreenGallery">Show fullscreen gallery</system:String>
-    <system:String x:Key="ShowContainedGallery">Show contained gallery</system:String>
+    <system:String x:Key="ShowFullscreenGallery">Vis fuldskærmsgalleri</system:String>
+    <system:String x:Key="ShowContainedGallery">Vis indeholdt galleri</system:String>
 
-    <system:String x:Key="FillImageHeight">Fill image height</system:String>
+    <system:String x:Key="FillImageHeight">Fyld billedhøjde</system:String>
 
-    <system:String x:Key="OptimizeResize">Optimize &amp; Resize</system:String>
-    <system:String x:Key="OptimizeResizeTooltip">Batch resize &amp; optimize images</system:String>
+    <system:String x:Key="OptimizeResize">Batch værktøj</system:String>
+    <system:String x:Key="OptimizeResizeTooltip">Batch funktion til størrelse og optimering af billeder</system:String>
 
-    <system:String x:Key="ShaderEffects">Shader Effects</system:String>
-    <system:String x:Key="ShaderEffectsTooltip">Show image effects window</system:String>
+    <system:String x:Key="ShaderEffects">Shader Effekter</system:String>
+    <system:String x:Key="ShaderEffectsTooltip">Vis billedeffektsvinduet</system:String>
 
-    <system:String x:Key="CropPicture">Crop Picture</system:String>
+    <system:String x:Key="CropPicture">Beskær billede</system:String>
 
-    <system:String x:Key="ShowImageInfo">Show Image Info</system:String>
+    <system:String x:Key="ShowImageInfo">Vis billede Info</system:String>
 
-    <system:String x:Key="ColorPickerTool">Color Picker Tool</system:String>
-    <system:String x:Key="ColorPickerToolTooltip">Pick color from image</system:String>
+    <system:String x:Key="ColorPickerTool">Farvelægningsværktøj</system:String>
+    <system:String x:Key="ColorPickerToolTooltip">Vælg en farve fra billedet</system:String>
 
 </ResourceDictionary>

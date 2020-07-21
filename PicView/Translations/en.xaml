@@ -160,6 +160,7 @@
     <system:String x:Key="SelectedImage">Selected image</system:String>
     <system:String x:Key="FromFolder">From folder:</system:String>
     <system:String x:Key="Start">Start</system:String>
+    <system:String x:Key="Stop">Stop</system:String>
 
 
     <!--  Navigation related  -->
@@ -280,8 +281,8 @@
     <!--  Error messages  -->
     <system:String x:Key="SavingFileFailed">Saving file failed</system:String>
     <system:String x:Key="UnexpectedError">An unknown error occured</system:String>
-    <system:String x:Key="NoImages">NoImages</system:String>
-    <system:String x:Key="AnErrorOccuredMovingFile">&quot;An error occured moving file&quot;</system:String>
+    <system:String x:Key="NoImages">No Images</system:String>
+    <system:String x:Key="AnErrorOccuredMovingFile">An error occured moving file</system:String>
 
     <!--  Drag and drop  -->
     <system:String x:Key="DragOverString">Drop to load image</system:String>
@@ -304,7 +305,7 @@
     <system:String x:Key="PasswordArchive">Password protected archive not supported</system:String>
 
     <!--  Delete file messages  -->
-    <system:String x:Key="SentFileToRecycleBin">Sent file to recycle bin</system:String>
+    <system:String x:Key="SentFileToRecycleBin">Sent file to the recycle bin</system:String>
     <system:String x:Key="DeletedFile">Deleted file</system:String>
     <system:String x:Key="AnErrorOccuredWhenDeleting">An error occured when deleting</system:String>
 
@@ -318,7 +319,7 @@
     <system:String x:Key="ScrollingDisabled">Scrolling disabled</system:String>
 
     <!--  Misc messages  -->
-    <system:String x:Key="ConvertedToBase64">Converted to base 64</system:String>
+    <system:String x:Key="ConvertedToBase64">Converted to base64</system:String>
     <system:String x:Key="LoopingEnabled">Looping enabled</system:String>
     <system:String x:Key="LoopingDisabled">Looping disabled</system:String>
 
