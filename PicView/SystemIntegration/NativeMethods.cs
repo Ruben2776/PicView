@@ -1,4 +1,5 @@
-﻿using PicView.UILogic.Sizing;
+﻿using PicView.UILogic.PicGallery;
+using PicView.UILogic.Sizing;
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -127,6 +128,15 @@ namespace PicView.SystemIntegration
                 {
                     // your stuff to do
                     ScaleImage.TryFitImage();
+
+                    if (UILogic.UC.GetPicGallery != null)
+                    {
+                        if (GalleryFunctions.IsOpen)
+                        {
+                            UILogic.UC.GetPicGallery.Width = Library.Fields.TheMainWindow.ParentContainer.Width;
+                            UILogic.UC.GetPicGallery.Height = Library.Fields.TheMainWindow.ParentContainer.Height;
+                        }
+                    }
 
                     // 'set it back to false for the next resize/move
                     WindowWasResized = false;
