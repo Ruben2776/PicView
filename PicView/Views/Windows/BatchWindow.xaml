@@ -6,6 +6,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.UILogic.UserControls"
     Title="Batch resize &amp; optimize"
+    Width="597"
+    Height="542"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="CanMinimize"
@@ -98,15 +100,16 @@
             <StackPanel Background="{StaticResource NoisyBg}">
 
                 <StackPanel
-                    Margin="7,3,7,8"
+                    Height="35"
+                    Margin="18,10,0,5"
                     VerticalAlignment="Top"
                     Orientation="Horizontal">
                     <Label
-                        Width="88"
-                        Margin="0,6,0,0"
+                        Width="115"
+                        VerticalAlignment="Center"
                         Content="{StaticResource ResourceKey=Rotate}" />
 
-                    <Grid Margin="5,0,0,0">
+                    <Grid>
                         <TextBox
                             x:Name="RotBox"
                             Width="55"
@@ -144,21 +147,16 @@
                     </Grid>
                     <Label Margin="0,-4,0,0" Content="º" />
 
-                    <Label Margin="10,5,0,0" Content="{StaticResource Misc}" />
+                    <Label
+                        Width="65"
+                        Margin="10,5,0,0"
+                        Content="{StaticResource Misc}" />
 
                     <Border
                         Height="28"
-                        Margin="15,3,5,3"
-                        Padding="3,3,0,3"
+                        Padding="3,3,3,3"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1">
-                        <Border.Effect>
-                            <DropShadowEffect
-                                BlurRadius="4"
-                                Direction="268"
-                                ShadowDepth="1"
-                                Color="Black" />
-                        </Border.Effect>
                         <CheckBox
                             x:Name="OptimizeBox"
                             Padding="5,0,5,0"
@@ -211,15 +209,16 @@
                 </StackPanel>
 
                 <StackPanel
-                    Margin="6,0,0,0"
+                    Height="35"
+                    Margin="18,5,0,5"
                     HorizontalAlignment="Left"
                     Orientation="Horizontal">
                     <Label
-                        Width="88"
-                        Margin="0,6,0,0"
+                        Width="115"
+                        VerticalAlignment="Center"
                         Content="{StaticResource Resize}" />
 
-                    <Grid Margin="5,0,0,0">
+                    <Grid>
                         <TextBox
                             x:Name="WidthValueBox"
                             Width="55"
@@ -255,14 +254,16 @@
                         </TextBlock>
                     </Grid>
 
-                    <Label Margin="3,4,0,10" Content="x" />
+                    <Label
+                        Margin="4,0,4,0"
+                        VerticalAlignment="Center"
+                        Content="x" />
 
                     <Grid>
                         <TextBox
                             x:Name="HeightValueBox"
                             Width="55"
                             Height="28"
-                            Margin="5,0,0,0"
                             Padding="4,3,0,0"
                             ToolTip="Height">
                             <TextBox.Effect>
@@ -296,17 +297,10 @@
 
                     <Border
                         Height="28"
-                        Margin="11,0,0,7"
+                        Margin="11,0,0,0"
                         Padding="2,3,2,3"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1">
-                        <Border.Effect>
-                            <DropShadowEffect
-                                BlurRadius="4"
-                                Direction="268"
-                                ShadowDepth="1"
-                                Color="Black" />
-                        </Border.Effect>
                         <CheckBox
                             x:Name="AspectRatioBox"
                             Padding="7,0,1,0"
@@ -319,17 +313,9 @@
 
                     <Border
                         Height="28"
-                        Margin="16,0,7,7"
                         Padding="4,3,4,3"
                         BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="1">
-                        <Border.Effect>
-                            <DropShadowEffect
-                                BlurRadius="4"
-                                Direction="268"
-                                ShadowDepth="1"
-                                Color="Black" />
-                        </Border.Effect>
+                        BorderThickness="1" Margin="12,0,0,0">
                         <CheckBox
                             x:Name="FlipBox"
                             Padding="6,0,5,0"
@@ -342,19 +328,19 @@
                 </StackPanel>
 
                 <StackPanel
-                    Margin="6,3,0,8"
+                    Height="35"
+                    Margin="18,5,0,5"
                     HorizontalAlignment="Left"
                     Orientation="Horizontal">
                     <Label
-                        MinWidth="86"
-                        Margin="0,4,4,0"
+                        Width="115"
+                        VerticalAlignment="Center"
                         Content="Rename to:" />
                     <Grid>
                         <TextBox
                             x:Name="RenameBox"
-                            Width="375"
-                            MaxWidth="375"
-                            Margin="5,0,2,0"
+                            Width="384"
+                            Margin="0,0,2,0"
                             Padding="5,4,5,0"
                             IsEnabled="False">
                             <TextBox.Effect>
@@ -407,19 +393,19 @@
                 </StackPanel>
 
                 <StackPanel
-                    Margin="7,3,0,8"
+                    Height="35"
+                    Margin="18,5,0,5"
                     HorizontalAlignment="Left"
                     Orientation="Horizontal">
                     <Label
-                        MinWidth="86"
-                        Margin="0,4,0,0"
+                        Width="115"
+                        VerticalAlignment="Center"
                         Content="Destination:" />
                     <Grid>
                         <TextBox
                             x:Name="DestinationBox"
-                            Width="402"
-                            MaxWidth="402"
-                            Margin="5,0,2,0"
+                            Width="412"
+                            Margin="0,0,2,0"
                             Padding="5,4,5,0"
                             FontFamily="/PicView;component/Resources/fonts/#Aller Light">
                             <TextBox.Effect>
@@ -454,12 +440,15 @@
                     </Grid>
                 </StackPanel>
 
-                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <StackPanel
+                    Width="540"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal">
 
                     <Border
                         x:Name="SelectedRadioBorder"
                         Margin="0,5,5,5"
-                        Padding="12,9,7,9"
+                        Padding="12,9,12,9"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1">
                         <RadioButton
@@ -505,9 +494,8 @@
                     <Grid>
                         <TextBox
                             x:Name="SourceBox"
-                            Width="218"
-                            Height="37"
-                            MaxWidth="218"
+                            Width="243"
+                            Height="40"
                             Margin="7,0,0,0"
                             Padding="7,8,18,8"
                             Text="">
@@ -546,8 +534,9 @@
 
                 <TextBox
                     x:Name="OutputlogBox"
+                    Width="522"
                     Height="130"
-                    Margin="10"
+                    Margin="0,10,17,10"
                     Padding="5,3,5,3"
                     AcceptsReturn="False"
                     Foreground="{StaticResource MainColorFadedBrush}"
@@ -565,8 +554,9 @@
 
                 <ProgressBar
                     x:Name="UIprogressbar"
+                    Width="520"
                     Height="15"
-                    Margin="10"
+                    Margin="0,10,14,10"
                     Background="{StaticResource BackgroundColorBrush}"
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="2" />
