@@ -153,20 +153,30 @@ namespace PicView.UILogic.Sizing
 
         internal static void Maximize()
         {
+            // Save size to get back to it when restoring
+            if (!Properties.Settings.Default.AutoFitWindow)
+            {
+                Properties.Settings.Default.Top = TheMainWindow.Top;
+                Properties.Settings.Default.Left = TheMainWindow.Left;
+                Properties.Settings.Default.Height = TheMainWindow.Height;
+                Properties.Settings.Default.Width = TheMainWindow.Width;
+            }
+
             // Update new setting and sizing
-            AutoFitWindow = false;
             Properties.Settings.Default.Maximized = true;
 
             // Tell Windows that it's maximized
             TheMainWindow.WindowState = WindowState.Maximized;
             SystemCommands.MaximizeWindow(TheMainWindow);
             TheMainWindow.LowerBar.Height = 44; // Seems to fix UI going below Windows taskbar
+
+            TryFitImage();
         }
 
         internal static void Restore()
         {
             // Update new setting and sizing
-            AutoFitWindow = true;
+            AutoFitWindow = Properties.Settings.Default.AutoFitWindow;
             Properties.Settings.Default.Maximized = false;
 
             // Tell Windows that it's normal
@@ -185,7 +195,7 @@ namespace PicView.UILogic.Sizing
                 }
             }
 
-            ConfigureSettings.ConfigColors.UpdateColor();
+            TryFitImage();
         }
 
         /// <summary>
@@ -196,6 +206,15 @@ namespace PicView.UILogic.Sizing
             if (forceFullscreen || !Properties.Settings.Default.Fullscreen)
             {
                 // Show fullscreen logic
+
+                // Save size to get back to it when restoring
+                if (!Properties.Settings.Default.AutoFitWindow)
+                {
+                    Properties.Settings.Default.Top = TheMainWindow.Top;
+                    Properties.Settings.Default.Left = TheMainWindow.Left;
+                    Properties.Settings.Default.Height = TheMainWindow.Height;
+                    Properties.Settings.Default.Width = TheMainWindow.Width;
+                }
 
                 Properties.Settings.Default.Fullscreen = true;
 
