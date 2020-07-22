@@ -1,6 +1,5 @@
 ﻿using PicView.ImageHandling;
 using PicView.UILogic.TransformImage;
-using PicView.UILogic.UserControls;
 using System;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
@@ -13,6 +12,16 @@ namespace PicView.UILogic.Sizing
 {
     internal static class ScaleImage
     {
+        /// <summary>
+        /// Backup of Width data
+        /// </summary>
+        internal static double xWidth;
+
+        /// <summary>
+        /// Backup of Height data
+        /// </summary>
+        internal static double xHeight;
+
         /// <summary>
         /// Tries to call Zoomfit with additional error checking
         /// </summary>

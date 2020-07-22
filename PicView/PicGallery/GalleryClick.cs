@@ -12,7 +12,7 @@ using static PicView.ImageHandling.Thumbnails;
 using static PicView.Library.Fields;
 using static PicView.UILogic.PicGallery.GalleryFunctions;
 using static PicView.UILogic.Sizing.ScaleImage;
-using static PicView.UILogic.UserControls.UC;
+using static PicView.UILogic.UC;
 
 namespace PicView.UILogic.PicGallery
 {

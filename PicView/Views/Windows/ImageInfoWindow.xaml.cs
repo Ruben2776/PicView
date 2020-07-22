@@ -27,6 +27,7 @@ namespace PicView.Views.Windows
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
 
             TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
+            MainBackground.MouseLeftButtonDown += delegate { DragMove(); };
 
             // FileProperties
             FileProperties.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(FilePropertiesFill); };

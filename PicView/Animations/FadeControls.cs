@@ -2,7 +2,7 @@
 using System;
 using System.Timers;
 using static PicView.Library.Fields;
-using static PicView.UILogic.UserControls.UC;
+using static PicView.UILogic.UC;
 
 namespace PicView.UILogic.Animations
 {

@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
-using static PicView.UILogic.UserControls.UC;
+using static PicView.UILogic.UC;
 
 namespace PicView.ImageHandling
 {

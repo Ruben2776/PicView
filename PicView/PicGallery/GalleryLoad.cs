@@ -7,7 +7,6 @@ using static PicView.Library.Fields;
 using static PicView.UILogic.HideInterfaceLogic;
 using static PicView.UILogic.PicGallery.GalleryFunctions;
 using static PicView.UILogic.PicGallery.GalleryScroll;
-using static PicView.UILogic.UserControls.UC;
 
 namespace PicView.UILogic.PicGallery
 {
@@ -16,10 +15,10 @@ namespace PicView.UILogic.PicGallery
         internal static void PicGallery_Loaded(object sender, RoutedEventArgs e)
         {
             // Add events and set fields, when it's loaded.
-            GetPicGallery.Scroller.PreviewMouseWheel += ScrollTo;
-            GetPicGallery.Scroller.ScrollChanged += (s, x) => TheMainWindow.Focus(); // Maintain window focus when scrolling manually
-            GetPicGallery.grid.MouseLeftButtonDown += (s, x) => TheMainWindow.Focus();
-            GetPicGallery.x2.MouseLeftButtonDown += delegate { GalleryToggle.CloseContainedGallery(); };
+            UC.GetPicGallery.Scroller.PreviewMouseWheel += ScrollTo;
+            UC.GetPicGallery.Scroller.ScrollChanged += (s, x) => TheMainWindow.Focus(); // Maintain window focus when scrolling manually
+            UC.GetPicGallery.grid.MouseLeftButtonDown += (s, x) => TheMainWindow.Focus();
+            UC.GetPicGallery.x2.MouseLeftButtonDown += delegate { GalleryToggle.CloseContainedGallery(); };
 
             SetSize();
         }
@@ -48,16 +47,16 @@ namespace PicView.UILogic.PicGallery
 
         internal static void LoadLayout()
         {
-            if (GetPicGallery == null)
+            if (UC.GetPicGallery == null)
             {
-                GetPicGallery = new UserControls.PicGallery
+                UC.GetPicGallery = new UserControls.PicGallery
                 {
                     Opacity = 0,
                     Visibility = Visibility.Collapsed
                 };
 
-                TheMainWindow.ParentContainer.Children.Add(GetPicGallery);
-                Panel.SetZIndex(GetPicGallery, 999);
+                TheMainWindow.ParentContainer.Children.Add(UC.GetPicGallery);
+                Panel.SetZIndex(UC.GetPicGallery, 999);
             }
 
             if (picGalleryItem_Size == 0)
@@ -69,41 +68,41 @@ namespace PicView.UILogic.PicGallery
             {
                 if (Properties.Settings.Default.Fullscreen)
                 {
-                    GetPicGallery.Width = MonitorInfo.Width;
-                    GetPicGallery.Height = MonitorInfo.Height;
+                    UC.GetPicGallery.Width = MonitorInfo.Width;
+                    UC.GetPicGallery.Height = MonitorInfo.Height;
                 }
                 else if (Properties.Settings.Default.ShowInterface)
                 {
-                    GetPicGallery.Width = TheMainWindow.Width - 15;
-                    GetPicGallery.Height = TheMainWindow.ActualHeight - 70;
+                    UC.GetPicGallery.Width = TheMainWindow.Width - 15;
+                    UC.GetPicGallery.Height = TheMainWindow.ActualHeight - 70;
                 }
                 else
                 {
-                    GetPicGallery.Width = TheMainWindow.ActualWidth - 2;
-                    GetPicGallery.Height = TheMainWindow.ActualHeight - 2; // 2px for borders
+                    UC.GetPicGallery.Width = TheMainWindow.ActualWidth - 2;
+                    UC.GetPicGallery.Height = TheMainWindow.ActualHeight - 2; // 2px for borders
                 }
 
-                GetPicGallery.HorizontalAlignment = HorizontalAlignment.Stretch;
-                GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
-                GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
-                GetPicGallery.x2.Visibility = Visibility.Visible;
-                GetPicGallery.Container.Margin = new Thickness(0, 65, 0, 0);
+                UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Stretch;
+                UC.GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+                UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+                UC.GetPicGallery.x2.Visibility = Visibility.Visible;
+                UC.GetPicGallery.Container.Margin = new Thickness(0, 65, 0, 0);
             }
             else
             {
-                GetPicGallery.Width = picGalleryItem_Size + 14; // 17 for scrollbar width + 2 for borders
-                GetPicGallery.Height = MonitorInfo.WorkArea.Height;
+                UC.GetPicGallery.Width = picGalleryItem_Size + 14; // 17 for scrollbar width + 2 for borders
+                UC.GetPicGallery.Height = MonitorInfo.WorkArea.Height;
 
                 TheMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
                 TheMainWindow.ResizeMode = ResizeMode.CanMinimize;
 
                 WindowLogic.CenterWindowOnScreen();
 
-                GetPicGallery.HorizontalAlignment = HorizontalAlignment.Right;
-                GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
-                GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
-                GetPicGallery.x2.Visibility = Visibility.Collapsed;
-                GetPicGallery.Container.Margin = new Thickness(0, 0, 0, 0);
+                UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Right;
+                UC.GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+                UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
+                UC.GetPicGallery.x2.Visibility = Visibility.Collapsed;
+                UC.GetPicGallery.Container.Margin = new Thickness(0, 0, 0, 0);
 
                 ShowNavigation(false);
                 ShowTopandBottom(false);
@@ -111,9 +110,9 @@ namespace PicView.UILogic.PicGallery
             }
 
 
-            GetPicGallery.Visibility = Visibility.Visible;
-            GetPicGallery.Opacity = 1;
-            GetPicGallery.Container.Orientation = Orientation.Vertical;
+            UC.GetPicGallery.Visibility = Visibility.Visible;
+            UC.GetPicGallery.Opacity = 1;
+            UC.GetPicGallery.Container.Orientation = Orientation.Vertical;
 
             IsOpen = true;
         }

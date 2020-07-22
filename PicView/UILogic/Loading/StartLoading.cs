@@ -11,13 +11,12 @@ using System.Windows.Interop;
 using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
-using static PicView.Library.Resources.Timers;
 using static PicView.UILogic.Loading.LoadContextMenus;
 using static PicView.UILogic.Loading.LoadControls;
 using static PicView.UILogic.Sizing.WindowLogic;
 using static PicView.UILogic.TransformImage.Scroll;
 using static PicView.UILogic.TransformImage.ZoomLogic;
-using static PicView.UILogic.UserControls.UC;
+using static PicView.UILogic.UC;
 
 namespace PicView.UILogic.Loading
 {
@@ -227,7 +226,7 @@ namespace PicView.UILogic.Loading
             InitializeZoom();
 
             // Add things!
-            AddTimers();
+            Timers.AddTimers();
             AddContextMenus();
 
             // Updates settings from older version to newer version

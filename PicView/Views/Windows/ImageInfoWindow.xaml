@@ -174,294 +174,295 @@
         </Rectangle>
 
         <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
-            <Canvas x:Name="Scroller" Background="{StaticResource NoisyBg}">
-                <StackPanel Orientation="Horizontal">
-                    <StackPanel Margin="0,0,15,15" Orientation="Vertical">
+            <StackPanel
+                x:Name="MainBackground"
+                Background="{StaticResource NoisyBg}"
+                Orientation="Horizontal">
+                <StackPanel Margin="0,0,15,15" Orientation="Vertical">
 
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                            <Label
-                                Width="130"
-                                Margin="0,0,10,0"
-                                VerticalAlignment="Center"
-                                Content="{StaticResource FileName}" />
-                            <TextBox
-                                Width="180"
-                                Padding="10,8,0,8"
-                                VerticalAlignment="Center"
-                                d:Text="404.jpg"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                IsReadOnly="True" />
-                            <Border
-                                Width="37"
-                                Height="35"
-                                Margin="10,0,0,0"
-                                BorderBrush="{StaticResource BorderBrush}"
-                                BorderThickness="1">
-                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
-                            </Border>
-                        </StackPanel>
-
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                            <Label
-                                Width="130"
-                                Margin="0,0,10,0"
-                                VerticalAlignment="Center"
-                                Content="{StaticResource Folder}" />
-                            <TextBox
-                                Width="180"
-                                Padding="10,8,0,8"
-                                VerticalAlignment="Center"
-                                d:Text="D:\Pictures"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                IsReadOnly="True" />
-                            <Border
-                                Width="37"
-                                Height="35"
-                                Margin="10,0,0,0"
-                                BorderBrush="{StaticResource BorderBrush}"
-                                BorderThickness="1">
-                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
-                            </Border>
-                        </StackPanel>
-
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                            <Label
-                                Width="130"
-                                Margin="0,0,10,0"
-                                VerticalAlignment="Center"
-                                Content="{StaticResource FullPath}" />
-                            <TextBox
-                                Width="180"
-                                Padding="10,8,0,8"
-                                VerticalAlignment="Center"
-                                d:Text="D:\Pictures\404.jpg"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                IsReadOnly="True" />
-                            <Border
-                                Width="37"
-                                Height="35"
-                                Margin="10,0,0,0"
-                                BorderBrush="{StaticResource BorderBrush}"
-                                BorderThickness="1">
-                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
-                            </Border>
-                        </StackPanel>
-
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                            <Label
-                                Width="130"
-                                Margin="0,0,10,0"
-                                VerticalAlignment="Center"
-                                Content="{StaticResource Created}" />
-                            <TextBox
-                                Width="180"
-                                Padding="10,8,0,8"
-                                VerticalAlignment="Center"
-                                d:Text="8/9/2019 - 10:37:42 PM"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                IsReadOnly="True" />
-                            <Border
-                                Width="37"
-                                Height="35"
-                                Margin="10,0,0,0"
-                                BorderBrush="{StaticResource BorderBrush}"
-                                BorderThickness="1">
-                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
-                            </Border>
-                        </StackPanel>
-
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                            <Label
-                                Width="130"
-                                Margin="0,0,10,0"
-                                VerticalAlignment="Center"
-                                Content="{StaticResource Modified}" />
-                            <TextBox
-                                Width="180"
-                                Padding="10,8,0,8"
-                                VerticalAlignment="Center"
-                                d:Text="12/10/2018 - 7:41:14 PM"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                IsReadOnly="True" />
-                            <Border
-                                Width="37"
-                                Height="35"
-                                Margin="10,0,0,0"
-                                BorderBrush="{StaticResource BorderBrush}"
-                                BorderThickness="1">
-                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
-                            </Border>
-                        </StackPanel>
-
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                            <Label
-                                Width="130"
-                                Margin="0,0,10,0"
-                                VerticalAlignment="Center"
-                                Content="{StaticResource BitDepth}" />
-                            <TextBox
-                                Width="180"
-                                Padding="10,8,0,8"
-                                VerticalAlignment="Center"
-                                d:Text="24"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                IsReadOnly="True" />
-                            <Border
-                                Width="37"
-                                Height="35"
-                                Margin="10,0,0,0"
-                                BorderBrush="{StaticResource BorderBrush}"
-                                BorderThickness="1">
-                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
-                            </Border>
-                        </StackPanel>
-
+                    <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <Label
+                            Width="130"
+                            Margin="0,0,10,0"
+                            VerticalAlignment="Center"
+                            Content="{StaticResource FileName}" />
+                        <TextBox
+                            Width="180"
+                            Padding="10,8,0,8"
+                            VerticalAlignment="Center"
+                            d:Text="404.jpg"
+                            Foreground="{StaticResource MainColorFadedBrush}"
+                            IsReadOnly="True" />
+                        <Border
+                            Width="37"
+                            Height="35"
+                            Margin="10,0,0,0"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1">
+                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                        </Border>
                     </StackPanel>
 
-                    <StackPanel Margin="0,0,15,15" Orientation="Vertical">
+                    <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <Label
+                            Width="130"
+                            Margin="0,0,10,0"
+                            VerticalAlignment="Center"
+                            Content="{StaticResource Folder}" />
+                        <TextBox
+                            Width="180"
+                            Padding="10,8,0,8"
+                            VerticalAlignment="Center"
+                            d:Text="D:\Pictures"
+                            Foreground="{StaticResource MainColorFadedBrush}"
+                            IsReadOnly="True" />
+                        <Border
+                            Width="37"
+                            Height="35"
+                            Margin="10,0,0,0"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1">
+                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                        </Border>
+                    </StackPanel>
 
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                            <Label
-                                Width="130"
-                                Margin="0,0,10,0"
-                                VerticalAlignment="Center"
-                                Content="{StaticResource SizePx}" />
-                            <TextBox
-                                Width="180"
-                                Padding="10,8,0,8"
-                                VerticalAlignment="Center"
-                                d:Text="1920 x 1080 pixels"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                IsReadOnly="True" />
-                            <Border
-                                Width="37"
-                                Height="35"
-                                Margin="10,0,0,0"
-                                BorderBrush="{StaticResource BorderBrush}"
-                                BorderThickness="1">
-                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
-                            </Border>
-                        </StackPanel>
+                    <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <Label
+                            Width="130"
+                            Margin="0,0,10,0"
+                            VerticalAlignment="Center"
+                            Content="{StaticResource FullPath}" />
+                        <TextBox
+                            Width="180"
+                            Padding="10,8,0,8"
+                            VerticalAlignment="Center"
+                            d:Text="D:\Pictures\404.jpg"
+                            Foreground="{StaticResource MainColorFadedBrush}"
+                            IsReadOnly="True" />
+                        <Border
+                            Width="37"
+                            Height="35"
+                            Margin="10,0,0,0"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1">
+                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                        </Border>
+                    </StackPanel>
 
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                            <Label
-                                Width="130"
-                                Margin="0,0,10,0"
-                                VerticalAlignment="Center"
-                                Content="{StaticResource SizeMp}" />
-                            <TextBox
-                                Width="180"
-                                Padding="10,8,0,8"
-                                VerticalAlignment="Center"
-                                d:Text="2.1 Megapixels"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                IsReadOnly="True" />
-                            <Border
-                                Width="37"
-                                Height="35"
-                                Margin="10,0,0,0"
-                                BorderBrush="{StaticResource BorderBrush}"
-                                BorderThickness="1">
-                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
-                            </Border>
-                        </StackPanel>
+                    <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <Label
+                            Width="130"
+                            Margin="0,0,10,0"
+                            VerticalAlignment="Center"
+                            Content="{StaticResource Created}" />
+                        <TextBox
+                            Width="180"
+                            Padding="10,8,0,8"
+                            VerticalAlignment="Center"
+                            d:Text="8/9/2019 - 10:37:42 PM"
+                            Foreground="{StaticResource MainColorFadedBrush}"
+                            IsReadOnly="True" />
+                        <Border
+                            Width="37"
+                            Height="35"
+                            Margin="10,0,0,0"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1">
+                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                        </Border>
+                    </StackPanel>
 
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                            <Label
-                                Width="130"
-                                Margin="0,0,10,0"
-                                VerticalAlignment="Center"
-                                Content="{StaticResource Resolution}" />
-                            <TextBox
-                                Width="180"
-                                Padding="10,8,0,8"
-                                VerticalAlignment="Center"
-                                d:Text="96 x 96 DPI"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                IsReadOnly="True" />
-                            <Border
-                                Width="37"
-                                Height="35"
-                                Margin="10,0,0,0"
-                                BorderBrush="{StaticResource BorderBrush}"
-                                BorderThickness="1">
-                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
-                            </Border>
-                        </StackPanel>
+                    <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <Label
+                            Width="130"
+                            Margin="0,0,10,0"
+                            VerticalAlignment="Center"
+                            Content="{StaticResource Modified}" />
+                        <TextBox
+                            Width="180"
+                            Padding="10,8,0,8"
+                            VerticalAlignment="Center"
+                            d:Text="12/10/2018 - 7:41:14 PM"
+                            Foreground="{StaticResource MainColorFadedBrush}"
+                            IsReadOnly="True" />
+                        <Border
+                            Width="37"
+                            Height="35"
+                            Margin="10,0,0,0"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1">
+                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                        </Border>
+                    </StackPanel>
 
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                            <Label
-                                Width="130"
-                                Margin="0,0,10,0"
-                                VerticalAlignment="Center"
-                                Content="{StaticResource PrintSizeCm}" />
-                            <TextBox
-                                Width="180"
-                                Padding="10,8,0,8"
-                                VerticalAlignment="Center"
-                                d:Text="50.8 x 28.58 centimeters"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                IsReadOnly="True" />
-                            <Border
-                                Width="37"
-                                Height="35"
-                                Margin="10,0,0,0"
-                                BorderBrush="{StaticResource BorderBrush}"
-                                BorderThickness="1">
-                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
-                            </Border>
-                        </StackPanel>
-
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                            <Label
-                                Width="130"
-                                Margin="0,0,10,0"
-                                VerticalAlignment="Center"
-                                Content="{StaticResource PrintSizeIn}" />
-                            <TextBox
-                                Width="180"
-                                Padding="10,8,0,8"
-                                VerticalAlignment="Center"
-                                d:Text="20 x 11.25 inches"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                IsReadOnly="True" />
-                            <Border
-                                Width="37"
-                                Height="35"
-                                Margin="10,0,0,0"
-                                BorderBrush="{StaticResource BorderBrush}"
-                                BorderThickness="1">
-                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
-                            </Border>
-                        </StackPanel>
-
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                            <Label
-                                Width="130"
-                                Margin="0,0,10,0"
-                                VerticalAlignment="Center"
-                                Content="{StaticResource AspectRatio}" />
-                            <TextBox
-                                Width="180"
-                                Padding="10,8,0,8"
-                                VerticalAlignment="Center"
-                                d:Text="16:9 (Landscape)"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                IsReadOnly="True" />
-                            <Border
-                                Width="37"
-                                Height="35"
-                                Margin="10,0,0,0"
-                                BorderBrush="{StaticResource BorderBrush}"
-                                BorderThickness="1">
-                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
-                            </Border>
-                        </StackPanel>
-
+                    <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <Label
+                            Width="130"
+                            Margin="0,0,10,0"
+                            VerticalAlignment="Center"
+                            Content="{StaticResource BitDepth}" />
+                        <TextBox
+                            Width="180"
+                            Padding="10,8,0,8"
+                            VerticalAlignment="Center"
+                            d:Text="24"
+                            Foreground="{StaticResource MainColorFadedBrush}"
+                            IsReadOnly="True" />
+                        <Border
+                            Width="37"
+                            Height="35"
+                            Margin="10,0,0,0"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1">
+                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                        </Border>
                     </StackPanel>
 
                 </StackPanel>
-            </Canvas>
+
+                <StackPanel Margin="0,0,15,15" Orientation="Vertical">
+
+                    <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <Label
+                            Width="130"
+                            Margin="0,0,10,0"
+                            VerticalAlignment="Center"
+                            Content="{StaticResource SizePx}" />
+                        <TextBox
+                            Width="180"
+                            Padding="10,8,0,8"
+                            VerticalAlignment="Center"
+                            d:Text="1920 x 1080 pixels"
+                            Foreground="{StaticResource MainColorFadedBrush}"
+                            IsReadOnly="True" />
+                        <Border
+                            Width="37"
+                            Height="35"
+                            Margin="10,0,0,0"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1">
+                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <Label
+                            Width="130"
+                            Margin="0,0,10,0"
+                            VerticalAlignment="Center"
+                            Content="{StaticResource SizeMp}" />
+                        <TextBox
+                            Width="180"
+                            Padding="10,8,0,8"
+                            VerticalAlignment="Center"
+                            d:Text="2.1 Megapixels"
+                            Foreground="{StaticResource MainColorFadedBrush}"
+                            IsReadOnly="True" />
+                        <Border
+                            Width="37"
+                            Height="35"
+                            Margin="10,0,0,0"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1">
+                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <Label
+                            Width="130"
+                            Margin="0,0,10,0"
+                            VerticalAlignment="Center"
+                            Content="{StaticResource Resolution}" />
+                        <TextBox
+                            Width="180"
+                            Padding="10,8,0,8"
+                            VerticalAlignment="Center"
+                            d:Text="96 x 96 DPI"
+                            Foreground="{StaticResource MainColorFadedBrush}"
+                            IsReadOnly="True" />
+                        <Border
+                            Width="37"
+                            Height="35"
+                            Margin="10,0,0,0"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1">
+                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <Label
+                            Width="130"
+                            Margin="0,0,10,0"
+                            VerticalAlignment="Center"
+                            Content="{StaticResource PrintSizeCm}" />
+                        <TextBox
+                            Width="180"
+                            Padding="10,8,0,8"
+                            VerticalAlignment="Center"
+                            d:Text="50.8 x 28.58 centimeters"
+                            Foreground="{StaticResource MainColorFadedBrush}"
+                            IsReadOnly="True" />
+                        <Border
+                            Width="37"
+                            Height="35"
+                            Margin="10,0,0,0"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1">
+                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <Label
+                            Width="130"
+                            Margin="0,0,10,0"
+                            VerticalAlignment="Center"
+                            Content="{StaticResource PrintSizeIn}" />
+                        <TextBox
+                            Width="180"
+                            Padding="10,8,0,8"
+                            VerticalAlignment="Center"
+                            d:Text="20 x 11.25 inches"
+                            Foreground="{StaticResource MainColorFadedBrush}"
+                            IsReadOnly="True" />
+                        <Border
+                            Width="37"
+                            Height="35"
+                            Margin="10,0,0,0"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1">
+                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <Label
+                            Width="130"
+                            Margin="0,0,10,0"
+                            VerticalAlignment="Center"
+                            Content="{StaticResource AspectRatio}" />
+                        <TextBox
+                            Width="180"
+                            Padding="10,8,0,8"
+                            VerticalAlignment="Center"
+                            d:Text="16:9 (Landscape)"
+                            Foreground="{StaticResource MainColorFadedBrush}"
+                            IsReadOnly="True" />
+                        <Border
+                            Width="37"
+                            Height="35"
+                            Margin="10,0,0,0"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1">
+                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                        </Border>
+                    </StackPanel>
+
+                </StackPanel>
+
+            </StackPanel>
         </Border>
     </DockPanel>
 </Window>

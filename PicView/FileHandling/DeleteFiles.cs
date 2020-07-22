@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualBasic.FileIO;
+using PicView.UILogic;
 using PicView.UILogic.UserControls;
 using System;
 using System.Diagnostics;

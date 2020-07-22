@@ -10,7 +10,7 @@ using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.TransformImage.Rotation;
-using static PicView.UILogic.UserControls.UC;
+using static PicView.UILogic.UC;
 
 namespace PicView.FileHandling
 {

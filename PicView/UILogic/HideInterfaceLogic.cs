@@ -5,7 +5,6 @@ using System.Windows.Input;
 using static PicView.Library.Fields;
 using static PicView.UILogic.Animations.FadeControls;
 using static PicView.UILogic.Sizing.ScaleImage;
-using static PicView.UILogic.UserControls.UC;
 
 namespace PicView.UILogic
 {
@@ -34,7 +33,7 @@ namespace PicView.UILogic
 
             TryFitImage();
 
-            Close_UserControls();
+            UC.Close_UserControls();
         }
 
         internal static void ShowStandardInterface()
@@ -89,44 +88,44 @@ namespace PicView.UILogic
         /// <param name="show"></param>
         internal static void ShowNavigation(bool show)
         {
-            if (GetClickArrowLeft == null || GetClickArrowRight == null 
-                || Getx2 == null || GetMinus == null || GetRestorebutton == null)
+            if (UC.GetClickArrowLeft == null || UC.GetClickArrowRight == null 
+                || UC.Getx2 == null || UC.GetMinus == null || UC.GetRestorebutton == null)
             {
                 return;
             }
 
             if (show)
             {
-                GetClickArrowLeft.Visibility =
-                GetClickArrowRight.Visibility =
-                Getx2.Visibility =
-                GetRestorebutton.Visibility =
-                GetMinus.Visibility = Visibility.Visible;
+                UC.GetClickArrowLeft.Visibility =
+                UC.GetClickArrowRight.Visibility =
+                UC.Getx2.Visibility =
+                UC.GetRestorebutton.Visibility =
+                UC.GetMinus.Visibility = Visibility.Visible;
             }
             else
             {
-                GetClickArrowLeft.Visibility =
-                GetClickArrowRight.Visibility =
-                Getx2.Visibility =
-                GetRestorebutton.Visibility =
-                GetMinus.Visibility = Visibility.Collapsed;
+                UC.GetClickArrowLeft.Visibility =
+                UC.GetClickArrowRight.Visibility =
+                UC.Getx2.Visibility =
+                UC.GetRestorebutton.Visibility =
+                UC.GetMinus.Visibility = Visibility.Collapsed;
             }
         }
 
         internal static void ShowShortcuts(bool show)
         {
-            if (GetGalleryShortcut == null)
+            if (UC.GetGalleryShortcut == null)
             {
                 return;
             }
 
             if (show)
             {
-                GetGalleryShortcut.Visibility = Visibility.Visible;
+                UC.GetGalleryShortcut.Visibility = Visibility.Visible;
             }
             else
             {
-                GetGalleryShortcut.Visibility = Visibility.Collapsed;
+                UC.GetGalleryShortcut.Visibility = Visibility.Collapsed;
             }
         }
 

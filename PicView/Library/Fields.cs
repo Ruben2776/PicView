@@ -75,16 +75,6 @@ namespace PicView.Library
         internal static bool IsDialogOpen { get; set; }
 
         /// <summary>
-        /// Backup of Width data
-        /// </summary>
-        internal static double xWidth;
-
-        /// <summary>
-        /// Backup of Height data
-        /// </summary>
-        internal static double xHeight;
-
-        /// <summary>
         /// Used to get and set Aspect Ratio
         /// </summary>
         internal static double AspectRatio { get; set; }

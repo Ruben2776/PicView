@@ -18,7 +18,7 @@ using static PicView.UILogic.SetTitle;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.TransformImage.Scroll;
-using static PicView.UILogic.UserControls.UC;
+using static PicView.UILogic.UC;
 
 namespace PicView.ChangeImage
 {

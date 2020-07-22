@@ -4,7 +4,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
-using static PicView.UILogic.UserControls.UC;
+using static PicView.UILogic.UC;
 
 namespace PicView.UILogic.UserControls
 {

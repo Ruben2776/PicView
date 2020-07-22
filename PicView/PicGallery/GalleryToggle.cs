@@ -10,7 +10,7 @@ using static PicView.UILogic.PicGallery.GalleryFunctions;
 using static PicView.UILogic.PicGallery.GalleryLoad;
 using static PicView.UILogic.PicGallery.GalleryScroll;
 using static PicView.UILogic.Sizing.WindowLogic;
-using static PicView.UILogic.UserControls.UC;
+using static PicView.UILogic.UC;
 
 namespace PicView.UILogic.PicGallery
 {

@@ -17,7 +17,7 @@ using static PicView.UILogic.DragAndDrop.Image_DragAndDrop;
 using static PicView.UILogic.HideInterfaceLogic;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.Sizing.WindowLogic;
-using static PicView.UILogic.UserControls.UC;
+using static PicView.UILogic.UC;
 
 namespace PicView.UILogic.Loading
 {

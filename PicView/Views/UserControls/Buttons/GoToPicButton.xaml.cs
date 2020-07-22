@@ -7,7 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Animations.MouseOverAnimations;
-using static PicView.UILogic.UserControls.UC;
+using static PicView.UILogic.UC;
 
 namespace PicView.UILogic.UserControls
 {

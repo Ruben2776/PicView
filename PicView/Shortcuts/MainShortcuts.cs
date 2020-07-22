@@ -18,7 +18,7 @@ using static PicView.UILogic.Sizing.WindowLogic;
 using static PicView.UILogic.TransformImage.Rotation;
 using static PicView.UILogic.TransformImage.Scroll;
 using static PicView.UILogic.TransformImage.ZoomLogic;
-using static PicView.UILogic.UserControls.UC;
+using static PicView.UILogic.UC;
 
 namespace PicView.Shortcuts
 {

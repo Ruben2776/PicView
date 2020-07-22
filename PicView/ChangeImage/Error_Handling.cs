@@ -1,5 +1,6 @@
 ﻿using PicView.ImageHandling;
 using PicView.UILogic.PicGallery;
+using PicView.UILogic.Sizing;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -240,7 +241,7 @@ namespace PicView.ChangeImage
             FolderIndex = 0;
             TheMainWindow.MainImage.Width = TheMainWindow.Scroller.Width = TheMainWindow.Scroller.Height =
             TheMainWindow.MainImage.Height = double.NaN;
-            xWidth = xHeight = 0;
+            ScaleImage.xWidth = ScaleImage.xHeight = 0;
             prevPicResource = null;
 
             if (!string.IsNullOrWhiteSpace(TempZipPath))

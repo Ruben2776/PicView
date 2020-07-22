@@ -2,7 +2,7 @@
 using static PicView.UILogic.Animations.FadeControls;
 using static PicView.UILogic.TransformImage.Scroll;
 
-namespace PicView.Library.Resources
+namespace PicView.UILogic
 {
     internal static class Timers
     {
