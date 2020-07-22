@@ -1,7 +1,13 @@
-﻿using PicView.UILogic.Animations;
+﻿using PicView.ChangeImage;
+using PicView.ImageHandling;
+using PicView.Library;
+using PicView.UILogic.Animations;
 using System;
+using System.Globalization;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using static PicView.ChangeImage.Navigation;
 using static PicView.Library.Fields;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
@@ -37,8 +43,7 @@ namespace PicView.Views.Windows
             FileProperties.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(FilePropertiesBrush); };
             FileProperties.Click += delegate 
             {
-                SystemIntegration.NativeMethods.ShowFileProperties(
-                    ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
+                SystemIntegration.NativeMethods.ShowFileProperties(Pics[FolderIndex]);
             };
 
             // Print
@@ -49,8 +54,7 @@ namespace PicView.Views.Windows
             Print.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(PrintBrush); };
             Print.Click += delegate
             {
-                FileHandling.Open_Save.Print(
-                    ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
+                FileHandling.Open_Save.Print(Pics[FolderIndex]);
             };
 
             // OpenWith
@@ -61,8 +65,7 @@ namespace PicView.Views.Windows
             OpenWith.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(OpenWithBrush); };
             OpenWith.Click += delegate
             {
-                FileHandling.Open_Save.OpenWith(
-                    ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
+                FileHandling.Open_Save.OpenWith(Pics[FolderIndex]);
             };
 
             // ShowInFoler
@@ -75,6 +78,32 @@ namespace PicView.Views.Windows
             {
                 FileHandling.Open_Save.Open_In_Explorer();
             };
+
+            if (Pics.Count > 0)
+            {
+                UpdateValues();
+            }
+        }
+
+        internal void UpdateValues()
+        {
+            var data = GetImageData.RetrieveData(Pics[FolderIndex]);
+
+            FilenameBox.Text = data[0];
+
+            FolderBox.Text = data[1];
+
+            FullPathBox.Text = data[2];
+
+            CreatedBox.Text = data[3];
+
+            ModifiedBox.Text = data[4];
+
+            SizePxBox.Text = data[5];
+
+            ResolutionBox.Text = data[6];
+
+            BitDepthBox.Text = data[7];
 
         }
 

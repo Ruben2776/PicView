@@ -2,6 +2,7 @@
 using PicView.ImageHandling;
 using PicView.SystemIntegration;
 using PicView.UILogic;
+using PicView.UILogic.Loading;
 using PicView.UILogic.PicGallery;
 using System;
 using System.Diagnostics;
@@ -268,6 +269,14 @@ namespace PicView.ChangeImage
             CanNavigate = true;
             FolderIndex = index;
 
+            if (LoadWindows.GetImageInfoWindow != null)
+            {
+                if (LoadWindows.GetImageInfoWindow.IsVisible)
+                {
+                    LoadWindows.GetImageInfoWindow.UpdateValues();
+                }
+            }
+
             if (Pics.Count > 1)
             {
                 Taskbar.Progress(index, Pics.Count);
@@ -320,6 +329,14 @@ namespace PicView.ChangeImage
             Taskbar.NoProgress();
 
             CanNavigate = false;
+
+            if (LoadWindows.GetImageInfoWindow != null)
+            {
+                if (LoadWindows.GetImageInfoWindow.IsVisible)
+                {
+                    LoadWindows.GetImageInfoWindow.UpdateValues();
+                }
+            }
         }
 
         /// <summary>
@@ -348,6 +365,14 @@ namespace PicView.ChangeImage
             Taskbar.NoProgress();
 
             CanNavigate = false;
+
+            if (LoadWindows.GetImageInfoWindow != null)
+            {
+                if (LoadWindows.GetImageInfoWindow.IsVisible)
+                {
+                    LoadWindows.GetImageInfoWindow.UpdateValues();
+                }
+            }
         }
 
         /// <summary>

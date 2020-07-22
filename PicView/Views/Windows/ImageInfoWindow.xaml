@@ -178,7 +178,7 @@
                 x:Name="MainBackground"
                 Background="{StaticResource NoisyBg}"
                 Orientation="Horizontal">
-                <StackPanel Margin="0,0,15,15" Orientation="Vertical">
+                <StackPanel Margin="0,0,10,0" Orientation="Vertical">
 
                     <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
                         <Label
@@ -187,6 +187,7 @@
                             VerticalAlignment="Center"
                             Content="{StaticResource FileName}" />
                         <TextBox
+                            x:Name="FilenameBox"
                             Width="180"
                             Padding="10,8,0,8"
                             VerticalAlignment="Center"
@@ -210,6 +211,7 @@
                             VerticalAlignment="Center"
                             Content="{StaticResource Folder}" />
                         <TextBox
+                            x:Name="FolderBox"
                             Width="180"
                             Padding="10,8,0,8"
                             VerticalAlignment="Center"
@@ -233,6 +235,7 @@
                             VerticalAlignment="Center"
                             Content="{StaticResource FullPath}" />
                         <TextBox
+                            x:Name="FullPathBox"
                             Width="180"
                             Padding="10,8,0,8"
                             VerticalAlignment="Center"
@@ -256,6 +259,7 @@
                             VerticalAlignment="Center"
                             Content="{StaticResource Created}" />
                         <TextBox
+                            x:Name="CreatedBox"
                             Width="180"
                             Padding="10,8,0,8"
                             VerticalAlignment="Center"
@@ -279,6 +283,7 @@
                             VerticalAlignment="Center"
                             Content="{StaticResource Modified}" />
                         <TextBox
+                            x:Name="ModifiedBox"
                             Width="180"
                             Padding="10,8,0,8"
                             VerticalAlignment="Center"
@@ -302,6 +307,7 @@
                             VerticalAlignment="Center"
                             Content="{StaticResource BitDepth}" />
                         <TextBox
+                            x:Name="BitDepthBox"
                             Width="180"
                             Padding="10,8,0,8"
                             VerticalAlignment="Center"
@@ -320,7 +326,7 @@
 
                 </StackPanel>
 
-                <StackPanel Margin="0,0,15,15" Orientation="Vertical">
+                <StackPanel Orientation="Vertical">
 
                     <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
                         <Label
@@ -329,6 +335,7 @@
                             VerticalAlignment="Center"
                             Content="{StaticResource SizePx}" />
                         <TextBox
+                            x:Name="SizePxBox"
                             Width="180"
                             Padding="10,8,0,8"
                             VerticalAlignment="Center"
@@ -352,6 +359,7 @@
                             VerticalAlignment="Center"
                             Content="{StaticResource SizeMp}" />
                         <TextBox
+                            x:Name="SizeMpBox"
                             Width="180"
                             Padding="10,8,0,8"
                             VerticalAlignment="Center"
@@ -375,6 +383,7 @@
                             VerticalAlignment="Center"
                             Content="{StaticResource Resolution}" />
                         <TextBox
+                            x:Name="ResolutionBox"
                             Width="180"
                             Padding="10,8,0,8"
                             VerticalAlignment="Center"
@@ -398,6 +407,7 @@
                             VerticalAlignment="Center"
                             Content="{StaticResource PrintSizeCm}" />
                         <TextBox
+                            x:Name="PrintSizeCmBox"
                             Width="180"
                             Padding="10,8,0,8"
                             VerticalAlignment="Center"
@@ -421,6 +431,7 @@
                             VerticalAlignment="Center"
                             Content="{StaticResource PrintSizeIn}" />
                         <TextBox
+                            x:Name="PrintSizeInBox"
                             Width="180"
                             Padding="10,8,0,8"
                             VerticalAlignment="Center"
@@ -444,6 +455,7 @@
                             VerticalAlignment="Center"
                             Content="{StaticResource AspectRatio}" />
                         <TextBox
+                            x:Name="AspectRatioBox"
                             Width="180"
                             Padding="10,8,0,8"
                             VerticalAlignment="Center"
