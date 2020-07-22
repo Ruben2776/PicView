@@ -256,8 +256,8 @@
     <Resource Include="Themes\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Magick.NET-Q16-x64" Version="7.20.0.1" />
-    <PackageReference Include="Magick.NET.SystemDrawing" Version="2.0.1" />
+    <PackageReference Include="Magick.NET-Q16-x64" Version="7.21.0" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="2.0.2" />
     <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="1.0.2" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
@@ -267,8 +267,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="SharpVectors.Reloaded" Version="1.6.0" />
-    <PackageReference Include="SkiaSharp" Version="2.80.0" />
-    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.80.0" />
+    <PackageReference Include="SkiaSharp" Version="2.80.1" />
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.80.1" />
     <PackageReference Include="System.Buffers" Version="4.5.1" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.0-preview.6.20305.6" />
     <PackageReference Include="System.Memory" Version="4.5.4" />
