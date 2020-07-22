@@ -72,7 +72,8 @@
                     x:Name="CopyButton"
                     Canvas.Left="102"
                     Width="51"
-                    Height="51" />
+                    Height="51"
+                    ToolTip="{StaticResource CopyFile}" />
 
                 <uc:PasteButton x:Name="PasteButton" Canvas.Left="154" />
 

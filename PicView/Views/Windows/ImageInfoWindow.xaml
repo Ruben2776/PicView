@@ -10,7 +10,9 @@
     Height="370"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
+    ResizeMode="CanMinimize"
     Style="{DynamicResource MyWindowStyle}"
+    WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
 
     <DockPanel LastChildFill="True">
@@ -33,7 +35,14 @@
                 Height="34"
                 Padding="15,1,15,1"
                 Content="{StaticResource FileProperties}"
-                Style="{StaticResource MetroFlatButton}" />
+                Style="{StaticResource MetroFlatButton}">
+                <Button.Foreground>
+                    <SolidColorBrush x:Name="FilePropertiesFill" Color="{StaticResource MainColor}" />
+                </Button.Foreground>
+                <Button.Background>
+                    <SolidColorBrush x:Name="FilePropertiesBrush" Color="Transparent" />
+                </Button.Background>
+            </Button>
 
             <Rectangle
                 Width="1"
@@ -45,7 +54,14 @@
                 Height="34"
                 Padding="15,1,15,1"
                 Content="{StaticResource Print}"
-                Style="{StaticResource MetroFlatButton}" />
+                Style="{StaticResource MetroFlatButton}">
+                <Button.Foreground>
+                    <SolidColorBrush x:Name="PrintFill" Color="{StaticResource MainColor}" />
+                </Button.Foreground>
+                <Button.Background>
+                    <SolidColorBrush x:Name="PrintBrush" Color="Transparent" />
+                </Button.Background>
+            </Button>
 
             <Rectangle
                 Width="1"
@@ -57,7 +73,14 @@
                 Height="34"
                 Padding="15,1,15,1"
                 Content="{StaticResource OpenWith}"
-                Style="{StaticResource MetroFlatButton}" />
+                Style="{StaticResource MetroFlatButton}">
+                <Button.Foreground>
+                    <SolidColorBrush x:Name="OpenWithFill" Color="{StaticResource MainColor}" />
+                </Button.Foreground>
+                <Button.Background>
+                    <SolidColorBrush x:Name="OpenWithBrush" Color="Transparent" />
+                </Button.Background>
+            </Button>
 
             <Rectangle
                 Width="1"
@@ -69,7 +92,14 @@
                 Height="34"
                 Padding="15,1,15,1"
                 Content="{StaticResource ShowInFolder}"
-                Style="{StaticResource MetroFlatButton}" />
+                Style="{StaticResource MetroFlatButton}">
+                <Button.Foreground>
+                    <SolidColorBrush x:Name="ShowInFolerFill" Color="{StaticResource MainColor}" />
+                </Button.Foreground>
+                <Button.Background>
+                    <SolidColorBrush x:Name="ShowInFolerBrush" Color="Transparent" />
+                </Button.Background>
+            </Button>
 
             <Rectangle
                 Width="1"
@@ -167,7 +197,7 @@
                                 Margin="10,0,0,0"
                                 BorderBrush="{StaticResource BorderBrush}"
                                 BorderThickness="1">
-                                <uc:CopyButton />
+                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
                             </Border>
                         </StackPanel>
 
@@ -190,7 +220,7 @@
                                 Margin="10,0,0,0"
                                 BorderBrush="{StaticResource BorderBrush}"
                                 BorderThickness="1">
-                                <uc:CopyButton />
+                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
                             </Border>
                         </StackPanel>
 
@@ -213,7 +243,7 @@
                                 Margin="10,0,0,0"
                                 BorderBrush="{StaticResource BorderBrush}"
                                 BorderThickness="1">
-                                <uc:CopyButton />
+                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
                             </Border>
                         </StackPanel>
 
@@ -236,7 +266,7 @@
                                 Margin="10,0,0,0"
                                 BorderBrush="{StaticResource BorderBrush}"
                                 BorderThickness="1">
-                                <uc:CopyButton />
+                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
                             </Border>
                         </StackPanel>
 
@@ -259,7 +289,7 @@
                                 Margin="10,0,0,0"
                                 BorderBrush="{StaticResource BorderBrush}"
                                 BorderThickness="1">
-                                <uc:CopyButton />
+                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
                             </Border>
                         </StackPanel>
 
@@ -282,7 +312,7 @@
                                 Margin="10,0,0,0"
                                 BorderBrush="{StaticResource BorderBrush}"
                                 BorderThickness="1">
-                                <uc:CopyButton />
+                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
                             </Border>
                         </StackPanel>
 
@@ -309,7 +339,7 @@
                                 Margin="10,0,0,0"
                                 BorderBrush="{StaticResource BorderBrush}"
                                 BorderThickness="1">
-                                <uc:CopyButton />
+                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
                             </Border>
                         </StackPanel>
 
@@ -332,7 +362,7 @@
                                 Margin="10,0,0,0"
                                 BorderBrush="{StaticResource BorderBrush}"
                                 BorderThickness="1">
-                                <uc:CopyButton />
+                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
                             </Border>
                         </StackPanel>
 
@@ -355,7 +385,7 @@
                                 Margin="10,0,0,0"
                                 BorderBrush="{StaticResource BorderBrush}"
                                 BorderThickness="1">
-                                <uc:CopyButton />
+                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
                             </Border>
                         </StackPanel>
 
@@ -378,7 +408,7 @@
                                 Margin="10,0,0,0"
                                 BorderBrush="{StaticResource BorderBrush}"
                                 BorderThickness="1">
-                                <uc:CopyButton />
+                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
                             </Border>
                         </StackPanel>
 
@@ -401,7 +431,7 @@
                                 Margin="10,0,0,0"
                                 BorderBrush="{StaticResource BorderBrush}"
                                 BorderThickness="1">
-                                <uc:CopyButton />
+                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
                             </Border>
                         </StackPanel>
 
@@ -424,7 +454,7 @@
                                 Margin="10,0,0,0"
                                 BorderBrush="{StaticResource BorderBrush}"
                                 BorderThickness="1">
-                                <uc:CopyButton />
+                                <uc:CopyButton ToolTip="{StaticResource Copy}" />
                             </Border>
                         </StackPanel>
 

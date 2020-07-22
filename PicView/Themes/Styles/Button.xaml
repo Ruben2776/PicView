@@ -37,7 +37,7 @@
     </Style>
 
     <Style x:Key="MetroFlatButton" TargetType="{x:Type Button}">
-        <Setter Property="Background" Value="#F21E1E1E" />
+        <Setter Property="Background" Value="{StaticResource BackgroundColorBrush}" />
         <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="FontFamily" Value="/PicView;component/Themes/Resources/fonts/#Roboto Medium" />

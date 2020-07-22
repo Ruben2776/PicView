@@ -17,8 +17,6 @@ namespace PicView.UILogic.UserControls
                 TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(CopyButtonBrush, true);
                 TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(CopyButtonBrush, false);
                 TheButton.Click += delegate { Copy_Paste.Copyfile(); };
-
-                ToolTip = Application.Current.Resources["CopyFile"];
             };
         }
     }
