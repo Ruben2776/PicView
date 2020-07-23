@@ -72,10 +72,11 @@
                 <uc:MenuCloseButton x:Name="CloseButton" Canvas.Left="204" />
 
                 <Border
-                    x:Name="Fullscreen_Gallery_Border"
+                    x:Name="FullscreenGalleryBorder"
                     Canvas.Left="7.5"
                     Canvas.Top="59"
                     Width="240"
+                    Background="{StaticResource BackgroundColorBrushAlt}"
                     Style="{StaticResource ButtonBorder}">
                     <Button
                         x:Name="Fullscreen_Gallery"
@@ -85,32 +86,44 @@
                             <TextBlock
                                 Margin="0,0,7,0"
                                 FontSize="14"
-                                Text="{StaticResource ShowFullscreenGallery}" />
+                                Text="{StaticResource ShowFullscreenGallery}">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="FullscreenTextBrush" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <Image Width="17" Height="17">
                                 <Image.Source>
                                     <DrawingImage>
                                         <DrawingImage.Drawing>
                                             <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                                <GeometryDrawing Brush="{StaticResource MainColorBrush}" Geometry="F1 M512,512z M0,0z M80,132L80,460A20,20,0,0,0,100,480L492,480A20,20,0,0,0,512,460L512,132A20,20,0,0,0,492,112L100,112A20,20,0,0,0,80,132z M373.14,173.33A46,46,0,1,1,326.86,219.33A46.19,46.19,0,0,1,373.14,173.33z M111.73,449.33L111.73,353.85 234.49,243.65 328.27,337 215.27,449.33z M480,449.33L259,449.33 403.58,305.33 480,370.59z" />
-                                                <GeometryDrawing Brush="{StaticResource MainColorBrush}" Geometry="F1 M512,512z M0,0z M20,32A20,20,0,0,0,0,52L0,396A20,20,0,0,0,20,416L48,416 48,100A20,20,0,0,1,68,80L448,80 448,52A20,20,0,0,0,428,32z" />
+                                                <GeometryDrawing Geometry="F1 M512,512z M0,0z M80,132L80,460A20,20,0,0,0,100,480L492,480A20,20,0,0,0,512,460L512,132A20,20,0,0,0,492,112L100,112A20,20,0,0,0,80,132z M373.14,173.33A46,46,0,1,1,326.86,219.33A46.19,46.19,0,0,1,373.14,173.33z M111.73,449.33L111.73,353.85 234.49,243.65 328.27,337 215.27,449.33z M480,449.33L259,449.33 403.58,305.33 480,370.59z">
+                                                    <GeometryDrawing.Brush>
+                                                        <SolidColorBrush x:Name="FullscreenFill1" Color="{StaticResource MainColor}" />
+                                                    </GeometryDrawing.Brush>
+                                                </GeometryDrawing>
+                                                <GeometryDrawing Geometry="F1 M512,512z M0,0z M20,32A20,20,0,0,0,0,52L0,396A20,20,0,0,0,20,416L48,416 48,100A20,20,0,0,1,68,80L448,80 448,52A20,20,0,0,0,428,32z">
+                                                    <GeometryDrawing.Brush>
+                                                        <SolidColorBrush x:Name="FullscreenFill2" Color="{StaticResource MainColor}" />
+                                                    </GeometryDrawing.Brush>
+                                                </GeometryDrawing>
                                             </DrawingGroup>
                                         </DrawingImage.Drawing>
                                     </DrawingImage>
                                 </Image.Source>
                             </Image>
-
                         </StackPanel>
+                        <Button.Background>
+                            <SolidColorBrush x:Name="FullscreenBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Button.Background>
                     </Button>
-                    <Border.Background>
-                        <SolidColorBrush x:Name="FullscreenBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
-                    </Border.Background>
                 </Border>
 
                 <Border
-                    x:Name="Contained_Gallery_Border"
+                    x:Name="ContainedGalleryBorder"
                     Canvas.Left="7.5"
                     Canvas.Top="116"
                     Width="240"
+                    Background="{StaticResource BackgroundColorBrushAlt}"
                     Style="{StaticResource ButtonBorder}">
                     <Button
                         x:Name="Contained_Gallery"
@@ -120,24 +133,32 @@
                             <TextBlock
                                 Margin="0,0,7,0"
                                 FontSize="14"
-                                Text="{StaticResource ShowContainedGallery}" />
+                                Text="{StaticResource ShowContainedGallery}">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="ContainedTextBrush" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <Image Width="17" Height="17">
                                 <Image.Source>
                                     <DrawingImage>
                                         <DrawingImage.Drawing>
                                             <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                                <GeometryDrawing Brush="{StaticResource MainColorBrush}" Geometry="F1 M512,512z M0,0z M456,64L56,64A24,24,0,0,0,32,88L32,424A24,24,0,0,0,56,448L456,448A24,24,0,0,0,480,424L480,88A24,24,0,0,0,456,64z M331.62,128.2A48,48,0,1,1,288.2,171.62A48,48,0,0,1,331.62,128.2z M76,416A12,12,0,0,1,64,404L64,316.37 192.64,202 289.59,298.75 172.37,416z M448,404A12,12,0,0,1,436,416L217.63,416 367.16,266.47 448,333.84z" />
+                                                <GeometryDrawing Geometry="F1 M512,512z M0,0z M456,64L56,64A24,24,0,0,0,32,88L32,424A24,24,0,0,0,56,448L456,448A24,24,0,0,0,480,424L480,88A24,24,0,0,0,456,64z M331.62,128.2A48,48,0,1,1,288.2,171.62A48,48,0,0,1,331.62,128.2z M76,416A12,12,0,0,1,64,404L64,316.37 192.64,202 289.59,298.75 172.37,416z M448,404A12,12,0,0,1,436,416L217.63,416 367.16,266.47 448,333.84z">
+                                                    <GeometryDrawing.Brush>
+                                                        <SolidColorBrush x:Name="ContainedFill" Color="{StaticResource MainColor}" />
+                                                    </GeometryDrawing.Brush>
+                                                </GeometryDrawing>
                                             </DrawingGroup>
                                         </DrawingImage.Drawing>
                                     </DrawingImage>
                                 </Image.Source>
                             </Image>
-
                         </StackPanel>
+                        <Button.Background>
+                            <SolidColorBrush x:Name="ContainedButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Button.Background>
                     </Button>
-                    <Border.Background>
-                        <SolidColorBrush x:Name="ContainedBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
-                    </Border.Background>
+
                 </Border>
             </Canvas>
         </Border>

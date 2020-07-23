@@ -85,6 +85,7 @@
                     Canvas.Top="59"
                     Width="120"
                     Height="50"
+                    Background="{StaticResource BackgroundColorBrushAlt}"
                     BorderThickness="1"
                     CornerRadius="2"
                     Style="{StaticResource ButtonBorder}">
@@ -93,16 +94,21 @@
                         Content="{StaticResource ResourceKey=Open}"
                         FocusVisualStyle="{x:Null}"
                         FontSize="14"
-                        ToolTip="{StaticResource ResourceKey=OpenFileDialog}" />
-                    <Border.Background>
-                        <SolidColorBrush x:Name="OpenBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
-                    </Border.Background>
+                        ToolTip="{StaticResource ResourceKey=OpenFileDialog}">
+                        <Button.Foreground>
+                            <SolidColorBrush x:Name="OpenBorderFill" Color="{StaticResource MainColor}" />
+                        </Button.Foreground>
+                        <Button.Background>
+                            <SolidColorBrush x:Name="OpenBorderBrush" Color="Transparent" />
+                        </Button.Background>
+                    </Button>
                 </Border>
 
                 <Border
                     x:Name="FileLocationBorder"
                     Canvas.Left="132"
                     Canvas.Top="59"
+                    Background="{StaticResource BackgroundColorBrushAlt}"
                     Style="{StaticResource ButtonBorder}">
                     <Button
                         x:Name="FileLocation"
@@ -114,44 +120,59 @@
                                 Text="{StaticResource ResourceKey=ShowInFolder}"
                                 TextWrapping="Wrap" />
                         </Button.Content>
+                        <Button.Foreground>
+                            <SolidColorBrush x:Name="FileLocationFill" Color="{StaticResource MainColor}" />
+                        </Button.Foreground>
+                        <Button.Background>
+                            <SolidColorBrush x:Name="FileLocationBrush" Color="Transparent" />
+                        </Button.Background>
                     </Button>
-
-                    <Border.Background>
-                        <SolidColorBrush x:Name="FileLocationBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
-                    </Border.Background>
                 </Border>
 
                 <Border
                     x:Name="PrintBorder"
                     Canvas.Left="5"
                     Canvas.Top="116"
+                    Background="{StaticResource BackgroundColorBrushAlt}"
                     Style="{StaticResource ButtonBorder}">
                     <Button
                         x:Name="Print"
                         Content="{StaticResource ResourceKey=Print}"
                         FocusVisualStyle="{x:Null}"
-                        FontSize="14" />
-                    <Border.Background>
-                        <SolidColorBrush x:Name="PrintBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
-                    </Border.Background>
+                        FontSize="14">
+                        <Button.Foreground>
+                            <SolidColorBrush x:Name="PrintFill" Color="{StaticResource MainColor}" />
+                        </Button.Foreground>
+                        <Button.Background>
+                            <SolidColorBrush x:Name="PrintBrush" Color="Transparent" />
+                        </Button.Background>
+                    </Button>
                 </Border>
 
                 <Border
-                    x:Name="Save_File_Location_Border"
+                    x:Name="SaveBorder"
                     Canvas.Left="132"
                     Canvas.Top="116"
+                    Background="{StaticResource BackgroundColorBrushAlt}"
                     Style="{StaticResource ButtonBorder}">
                     <Button
-                        x:Name="SaveBorder"
+                        x:Name="SaveButton"
                         Content="{StaticResource ResourceKey=Save}"
                         FocusVisualStyle="{x:Null}"
-                        FontSize="14" />
-                    <Border.Background>
-                        <SolidColorBrush x:Name="SaveBorderBrush" Color="{StaticResource BackgroundColorAlt}" />
-                    </Border.Background>
+                        FontSize="14">
+                        <Button.Foreground>
+                            <SolidColorBrush x:Name="SaveFill" Color="{StaticResource MainColor}" />
+                        </Button.Foreground>
+                        <Button.Background>
+                            <SolidColorBrush x:Name="SaveBrush" Color="Transparent" />
+                        </Button.Background>
+                    </Button>
                 </Border>
+
+
             </Canvas>
         </Border>
+
         <Rectangle
             Width="22"
             Height="2"

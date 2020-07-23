@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using PicView.UILogic.Animations;
+using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
 namespace PicView.UILogic.UserControls
@@ -14,21 +15,33 @@ namespace PicView.UILogic.UserControls
 
             PasteButton.PreviewMouseLeftButtonDown += delegate { UC.Close_UserControls(); };
 
-            OpenBorder.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(OpenBorderBrush);
-            OpenBorder.MouseEnter += (s, x) => ButtonMouseOverAnim(OpenBorderBrush, true);
-            OpenBorder.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(OpenBorderBrush);
+            // OpenBorder
+            OpenBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(OpenBorderFill); };
+            OpenBorder.MouseEnter += delegate { ButtonMouseOverAnim(OpenBorderFill); };
+            OpenBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(OpenBorderBrush); };
+            OpenBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(OpenBorderFill); };
+            OpenBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(OpenBorderBrush); };
 
-            PrintBorder.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(PrintBorderBrush);
-            PrintBorder.MouseEnter += (s, x) => ButtonMouseOverAnim(PrintBorderBrush, true);
-            PrintBorder.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(PrintBorderBrush);
+            // PrintBorder
+            PrintBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(PrintFill); };
+            PrintBorder.MouseEnter += delegate { ButtonMouseOverAnim(PrintFill); };
+            PrintBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(PrintBrush); };
+            PrintBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(PrintFill); };
+            PrintBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(PrintBrush); };
 
-            SaveBorder.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(SaveBorderBrush);
-            SaveBorder.MouseEnter += (s, x) => ButtonMouseOverAnim(SaveBorderBrush, true);
-            SaveBorder.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(SaveBorderBrush);
+            // SaveBorder
+            SaveBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(SaveFill); };
+            SaveBorder.MouseEnter += delegate { ButtonMouseOverAnim(SaveFill); };
+            SaveBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SaveBrush); };
+            SaveBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(SaveFill); };
+            SaveBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SaveBrush); };
 
-            FileLocationBorder.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(FileLocationBorderBrush);
-            FileLocationBorder.MouseEnter += (s, x) => ButtonMouseOverAnim(FileLocationBorderBrush, true);
-            FileLocationBorder.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(FileLocationBorderBrush);
+            // FileLocationBorder
+            FileLocationBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(FileLocationFill); };
+            FileLocationBorder.MouseEnter += delegate { ButtonMouseOverAnim(FileLocationFill); };
+            FileLocationBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(FileLocationBrush); };
+            FileLocationBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(FileLocationFill); };
+            FileLocationBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(FileLocationBrush); };
         }
     }
 }
