@@ -1,10 +1,6 @@
-﻿using PicView.ChangeImage;
-using PicView.ImageHandling;
-using PicView.Library;
+﻿using PicView.ImageHandling;
 using PicView.UILogic.Animations;
 using System;
-using System.Globalization;
-using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.ChangeImage.Navigation;
