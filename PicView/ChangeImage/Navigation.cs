@@ -58,7 +58,7 @@ namespace PicView.ChangeImage
                 else if (Directory.Exists(path))
                 {
                     ChangeFolder(true);
-                    GetValues(path);
+                    await GetValues(path).ConfigureAwait(true);
                 }
                 else
                 {
@@ -70,14 +70,14 @@ namespace PicView.ChangeImage
             // If count not correct or just started, get values
             if (Pics.Count <= FolderIndex || FolderIndex < 0 || FreshStartup)
             {
-                GetValues(path);
+                await GetValues(path).ConfigureAwait(true);
             }
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
             else if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]) && Path.GetDirectoryName(path) != Path.GetDirectoryName(Pics[FolderIndex]))
             {
                 // Reset old values and get new
                 ChangeFolder(true);
-                GetValues(path);
+                await GetValues(path).ConfigureAwait(true);
             }
 
             // If no need to reset values, get index
@@ -379,12 +379,23 @@ namespace PicView.ChangeImage
         /// Handle logic if user wants to load from a folder
         /// </summary>
         /// <param name="folder"></param>
-        internal static void PicFolder(string folder)
+        internal static async void PicFolder(string folder)
         {
-            ChangeFolder(true);
-            Pics = FileList(folder);
+            // If searching subdirectories, it might freeze UI, so wrap it in task
+            await System.Threading.Tasks.Task.Run(() =>
+            {
+                ChangeFolder(true);
+                Pics = FileList(folder);
+            }).ConfigureAwait(true);
 
-            Pic(Pics[0]);
+            if (Pics.Count > 0)
+            {
+                Pic(0);
+            }
+            else
+            {
+                Reload(true);
+            }
 
             GetQuickSettingsMenu.GoToPic.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
 

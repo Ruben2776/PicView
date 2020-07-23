@@ -37,7 +37,7 @@ namespace PicView.ChangeImage
 
             if (x == -1)
             {
-                GetValues(Pics[0]);
+                await GetValues(Pics[0]).ConfigureAwait(true);
             }
 
             if (Pics.Count < 0)

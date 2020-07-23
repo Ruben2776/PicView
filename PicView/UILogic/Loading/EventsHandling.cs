@@ -53,12 +53,12 @@ namespace PicView.UILogic.Loading
             GetFileMenu.Open.Click += (s, x) => Open();
             GetFileMenu.FileLocation.Click += (s, x) => Open_In_Explorer();
             GetFileMenu.Print.Click += (s, x) => Print(Pics[FolderIndex]);
-            GetFileMenu.SaveBorder.Click += (s, x) => SaveFiles();
+            GetFileMenu.SaveButton.Click += (s, x) => SaveFiles();
 
             GetFileMenu.OpenBorder.MouseLeftButtonUp += (s, x) => Open();
             GetFileMenu.FileLocationBorder.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
             GetFileMenu.PrintBorder.MouseLeftButtonUp += (s, x) => Print(Pics[FolderIndex]);
-            GetFileMenu.Save_File_Location_Border.MouseLeftButtonUp += (s, x) => SaveFiles();
+            GetFileMenu.SaveBorder.MouseLeftButtonUp += (s, x) => SaveFiles();
 
             // image_button
             TheMainWindow.image_button.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.ImagePath1Fill, TheMainWindow.ImagePath2Fill, TheMainWindow.ImagePath3Fill);

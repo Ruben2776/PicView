@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using static PicView.FileHandling.ArchiveExtraction;
 
 namespace PicView.FileHandling
@@ -167,49 +168,50 @@ namespace PicView.FileHandling
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        internal static void GetValues(string path)
+        internal static Task GetValues(string path)
         {
-            var extension = Path.GetExtension(path);
-            extension = extension.ToLower(CultureInfo.CurrentCulture);
-            switch (extension)
+            return Task.Run(() =>
             {
-                // Archives
-                case ".zip":
-                case ".7zip":
-                case ".7z":
-                case ".rar":
-                case ".cbr":
-                case ".cb7":
-                case ".cbt":
-                case ".cbz":
-                case ".xz":
-                case ".bzip2":
-                case ".gzip":
-                case ".tar":
-                case ".wim":
-                case ".iso":
-                case ".cab":
-                    if (!Extract(path))
-                    {
-                        Error_Handling.Reload(true);
-                    }
+                var extension = Path.GetExtension(path);
+                extension = extension.ToLower(CultureInfo.CurrentCulture);
+                switch (extension)
+                {
+                    // Archives
+                    case ".zip":
+                    case ".7zip":
+                    case ".7z":
+                    case ".rar":
+                    case ".cbr":
+                    case ".cb7":
+                    case ".cbt":
+                    case ".cbz":
+                    case ".xz":
+                    case ".bzip2":
+                    case ".gzip":
+                    case ".tar":
+                    case ".wim":
+                    case ".iso":
+                    case ".cab":
+                        if (!Extract(path))
+                        {
+                            Error_Handling.Reload(true);
+                        }
+                        return;
+                }
+
+                // Set files to Pics and get index
+                Navigation.Pics = FileList(Path.GetDirectoryName(path));
+                if (Navigation.Pics == null)
+                {
                     return;
-            }
+                }
 
-            // Set files to Pics and get index
-            Navigation.Pics = FileList(Path.GetDirectoryName(path));
-            if (Navigation.Pics == null)
-            {
-                return;
-            }
-
-            Navigation.FolderIndex = Navigation.Pics.IndexOf(path);
+                Navigation.FolderIndex = Navigation.Pics.IndexOf(path);
 
 #if DEBUG
-            Trace.WriteLine("Getvalues completed ");
+                Trace.WriteLine("Getvalues completed ");
 #endif
+            });
         }
-
-
     }
 }
