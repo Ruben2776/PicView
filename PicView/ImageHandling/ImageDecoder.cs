@@ -1,7 +1,5 @@
 ﻿using ImageMagick;
 using PicView.ChangeImage;
-using SharpVectors.Converters;
-using SharpVectors.Renderers.Wpf;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
 using System;
@@ -62,54 +60,6 @@ namespace PicView.ImageHandling
 #endif
                         return null;
                     }
-
-                case ".svg":
-
-                    // 1. Create conversion options
-                    var settings = new WpfDrawingSettings
-                    {
-                        IncludeRuntime = false,
-                        TextAsGeometry = true
-                    };
-
-                    using (var converter = new StreamSvgConverter(settings))
-                    {
-                        using var memStream = new MemoryStream();
-                        if (converter.Convert(file, memStream))
-                        {
-                            using MagickImage magick = new MagickImage();
-                            var mrs = new MagickReadSettings()
-                            {
-                                Density = new Density(300, 300),
-                                BackgroundColor = MagickColors.Transparent,
-                            };
-
-                            try
-                            {
-                                memStream.Seek(0, SeekOrigin.Begin);
-                                magick.Read(memStream, mrs);
-                            }
-                            catch (MagickException e)
-                            {
-#if DEBUG
-                                Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
-#endif
-                                return null;
-                            }
-
-                            // Set values for maximum quality
-                            magick.Quality = 100;
-                            magick.ColorSpace = ColorSpace.Transparent;
-
-                            var pic = magick.ToBitmapSource();
-                            pic.Freeze();
-                            magick.Dispose();
-
-                            return pic;
-                        }
-                    }
-
-                    return null;
 
                 default:
 
