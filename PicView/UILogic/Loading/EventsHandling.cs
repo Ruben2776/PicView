@@ -1,21 +1,15 @@
-﻿using PicView.FileHandling;
-using PicView.SystemIntegration;
-using PicView.UILogic.Animations;
+﻿using PicView.UILogic.Animations;
 using PicView.UILogic.PicGallery;
-using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using static PicView.ChangeImage.Navigation;
-using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.Open_Save;
 using static PicView.Library.Fields;
 using static PicView.Shortcuts.MainShortcuts;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 using static PicView.UILogic.DragAndDrop.Image_DragAndDrop;
 using static PicView.UILogic.HideInterfaceLogic;
-using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.Sizing.WindowLogic;
 using static PicView.UILogic.UC;
 
@@ -35,9 +29,6 @@ namespace PicView.UILogic.Loading
 
             // MinButton
             TheMainWindow.MinButton.TheButton.Click += (s, x) => SystemCommands.MinimizeWindow(TheMainWindow);
-
-            // MaxButton
-            TheMainWindow.FullscreenButton.TheButton.Click += (s, x) => Fullscreen_Restore();
 
             // CloseButton
             TheMainWindow.CloseButton.TheButton.Click += (s, x) => SystemCommands.CloseWindow(TheMainWindow);
@@ -154,69 +145,6 @@ namespace PicView.UILogic.Loading
             Trace.WriteLine("Events loaded");
 #endif
         }
-
-        #region Changed Events
-
-        private static void MainWindow_StateChanged(object sender, EventArgs e)
-        {
-            switch (TheMainWindow.WindowState)
-            {
-                case WindowState.Maximized:
-                    AutoFitWindow = false;
-                    break;
-
-                case WindowState.Normal:
-                    break;
-
-                case WindowState.Minimized:
-                    break;
-            }
-        }
-
-        private static void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
-        {
-            // Update size when screen resulution changes
-
-            MonitorInfo = MonitorSize.GetMonitorSize();
-            TryFitImage();
-        }
-
-        #endregion Changed Events
-
-        /// <summary>
-        /// Save settings when closing
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private static void Window_Closing(object sender, CancelEventArgs e)
-        {
-            // Close Extra windows when closing
-            if (fakeWindow != null)
-            {
-                fakeWindow.Close();
-            }
-
-            TheMainWindow.Hide(); // Make it feel faster
-
-            if (!Properties.Settings.Default.AutoFitWindow && !Properties.Settings.Default.Fullscreen)
-            {
-                Properties.Settings.Default.Top = TheMainWindow.Top;
-                Properties.Settings.Default.Left = TheMainWindow.Left;
-                Properties.Settings.Default.Height = TheMainWindow.Height;
-                Properties.Settings.Default.Width = TheMainWindow.Width;
-                Properties.Settings.Default.Maximized = TheMainWindow.WindowState == WindowState.Maximized;
-            }
-
-            Properties.Settings.Default.Save();
-            DeleteTempFiles();
-            RecentFiles.WriteToFile();
-
-#if DEBUG
-            Trace.Unindent();
-            Trace.WriteLine("Goodbye cruel world!");
-            Trace.Flush();
-#endif
-            Environment.Exit(0);
-        }
+       
     }
 }

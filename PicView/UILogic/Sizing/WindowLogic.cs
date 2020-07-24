@@ -2,6 +2,8 @@
 using PicView.UILogic.PicGallery;
 using PicView.Views.Windows;
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.Library.Fields;
@@ -326,5 +328,70 @@ namespace PicView.UILogic.Sizing
         }
 
         #endregion Window Functions
+
+        #region Changed Events
+
+        internal static void MainWindow_StateChanged(object sender, EventArgs e)
+        {
+            switch (TheMainWindow.WindowState)
+            {
+                case WindowState.Maximized:
+                    Maximize();
+                    break;
+
+                case WindowState.Normal:
+                    Restore();
+                    break;
+
+                case WindowState.Minimized:
+                    break;
+            }
+        }
+
+        internal static void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
+        {
+            // Update size when screen resulution changes
+
+            MonitorInfo = MonitorSize.GetMonitorSize();
+            TryFitImage();
+        }
+
+        #endregion Changed Events
+
+        /// <summary>
+        /// Save settings when closing
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        internal static void Window_Closing(object sender, CancelEventArgs e)
+        {
+            // Close Extra windows when closing
+            if (fakeWindow != null)
+            {
+                fakeWindow.Close();
+            }
+
+            TheMainWindow.Hide(); // Make it feel faster
+
+            if (!Properties.Settings.Default.AutoFitWindow && !Properties.Settings.Default.Fullscreen)
+            {
+                Properties.Settings.Default.Top = TheMainWindow.Top;
+                Properties.Settings.Default.Left = TheMainWindow.Left;
+                Properties.Settings.Default.Height = TheMainWindow.Height;
+                Properties.Settings.Default.Width = TheMainWindow.Width;
+                Properties.Settings.Default.Maximized = TheMainWindow.WindowState == WindowState.Maximized;
+            }
+
+            Properties.Settings.Default.Save();
+            FileHandling.DeleteFiles.DeleteTempFiles();
+            FileHandling.RecentFiles.WriteToFile();
+
+#if DEBUG
+            Trace.Unindent();
+            Trace.WriteLine("Goodbye cruel world!");
+            Trace.Flush();
+#endif
+            Environment.Exit(0);
+        }
     }
 }

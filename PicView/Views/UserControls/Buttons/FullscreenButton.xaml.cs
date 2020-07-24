@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using PicView.UILogic.Sizing;
+using System.Windows;
+using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
 namespace PicView.UILogic.UserControls
@@ -9,12 +11,34 @@ namespace PicView.UILogic.UserControls
         {
             InitializeComponent();
 
-            Loaded += delegate
+            PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(FullscreenButtonBrush); };
+            MouseEnter += delegate 
             {
-                PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(FullscreenButtonBrush);
-                MouseEnter += (s, x) => ButtonMouseOverAnim(FullscreenButtonBrush, true);
-                MouseLeave += (s, x) => ButtonMouseLeaveAnim(FullscreenButtonBrush, true);
+                if (Properties.Settings.Default.Maximized || !Properties.Settings.Default.Fullscreen)
+                {
+                    ToolTip = Application.Current.Resources["RestoreDown"];
+                }
+                else
+                {
+                    ToolTip = Application.Current.Resources["Fullscreen"];
+                }
+
+                ButtonMouseOverAnim(FullscreenButtonBrush, true);
             };
+            MouseLeave += delegate { ButtonMouseLeaveAnim(FullscreenButtonBrush, true); };;
+
+            TheButton.Click += delegate 
+            {
+                if (Properties.Settings.Default.Maximized)
+                {
+                    WindowLogic.Restore();
+                }
+                else
+                {
+                    WindowLogic.Fullscreen_Restore();
+                }
+            }; 
+
         }
     }
 }
