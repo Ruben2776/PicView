@@ -119,10 +119,6 @@ namespace PicView.UILogic.Loading
                 {
                     Fullscreen_Restore(true);
                 }
-                else if (Properties.Settings.Default.Maximized)
-                {
-                    Maximize();
-                }
                 else if (Properties.Settings.Default.PicGallery == 2)
                 {
                     GalleryToggle.OpenFullscreenGallery(true);

@@ -76,15 +76,14 @@ namespace PicView.UILogic.Sizing
             {
                 if (e.ClickCount == 2)
                 {
-                    Maximize_Restore();
+                    Fullscreen_Restore(true);
                 }
                 return;
             }
 
             if (e.ClickCount == 2)
             {
-                Maximize_Restore();
-                e.Handled = true;
+                Fullscreen_Restore(true);
             }
             else
             {
@@ -133,71 +132,6 @@ namespace PicView.UILogic.Sizing
                     //Supress "Can only call DragMove when primary mouse button is down"
                 }
             }
-        }
-
-        /// <summary>
-        /// Maximizes/restore window
-        /// </summary>
-        internal static void Maximize_Restore()
-        {
-            // Maximize
-            if (TheMainWindow.WindowState == WindowState.Normal)
-            {
-                Maximize();
-            }
-
-            // Restore
-            else if (TheMainWindow.WindowState == WindowState.Maximized)
-            {
-                Restore();
-            }
-        }
-
-        internal static void Maximize()
-        {
-            // Save size to get back to it when restoring
-            if (!Properties.Settings.Default.AutoFitWindow)
-            {
-                Properties.Settings.Default.Top = TheMainWindow.Top;
-                Properties.Settings.Default.Left = TheMainWindow.Left;
-                Properties.Settings.Default.Height = TheMainWindow.Height;
-                Properties.Settings.Default.Width = TheMainWindow.Width;
-            }
-
-            // Update new setting and sizing
-            Properties.Settings.Default.Maximized = true;
-
-            // Tell Windows that it's maximized
-            TheMainWindow.WindowState = WindowState.Maximized;
-            SystemCommands.MaximizeWindow(TheMainWindow);
-            TheMainWindow.LowerBar.Height = 44; // Seems to fix UI going below Windows taskbar
-
-            TryFitImage();
-        }
-
-        internal static void Restore()
-        {
-            // Update new setting and sizing
-            AutoFitWindow = Properties.Settings.Default.AutoFitWindow;
-            Properties.Settings.Default.Maximized = false;
-
-            // Tell Windows that it's normal
-            TheMainWindow.WindowState = WindowState.Normal;
-            SystemCommands.RestoreWindow(TheMainWindow);
-            TheMainWindow.LowerBar.Height = 35; // Set it back
-
-            if (!Properties.Settings.Default.AutoFitWindow)
-            {
-                if (Properties.Settings.Default.Width != 0)
-                {
-                    TheMainWindow.Top = Properties.Settings.Default.Top;
-                    TheMainWindow.Left = Properties.Settings.Default.Left;
-                    TheMainWindow.Height = Properties.Settings.Default.Height;
-                    TheMainWindow.Width = Properties.Settings.Default.Width;
-                }
-            }
-
-            TryFitImage();
         }
 
         /// <summary>
@@ -333,25 +267,20 @@ namespace PicView.UILogic.Sizing
 
         internal static void MainWindow_StateChanged(object sender, EventArgs e)
         {
-            switch (TheMainWindow.WindowState)
+            if (TheMainWindow.WindowState == WindowState.Maximized)
             {
-                case WindowState.Maximized:
-                    Maximize();
-                    break;
-
-                case WindowState.Normal:
-                    Restore();
-                    break;
-
-                case WindowState.Minimized:
-                    break;
+                TheMainWindow.WindowState = WindowState.Normal;
+                Fullscreen_Restore();
+            }
+            else if (TheMainWindow.WindowState == WindowState.Normal)
+            {
+                Fullscreen_Restore();
             }
         }
 
         internal static void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
         {
             // Update size when screen resulution changes
-
             MonitorInfo = MonitorSize.GetMonitorSize();
             TryFitImage();
         }
@@ -379,7 +308,6 @@ namespace PicView.UILogic.Sizing
                 Properties.Settings.Default.Left = TheMainWindow.Left;
                 Properties.Settings.Default.Height = TheMainWindow.Height;
                 Properties.Settings.Default.Width = TheMainWindow.Width;
-                Properties.Settings.Default.Maximized = TheMainWindow.WindowState == WindowState.Maximized;
             }
 
             Properties.Settings.Default.Save();

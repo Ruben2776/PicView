@@ -15,7 +15,6 @@
 
     <!--  Generic Window  -->
     <system:String x:Key="Close">Luk</system:String>
-    <system:String x:Key="Maximize">Maksimer</system:String>
     <system:String x:Key="RestoreDown">Gendan</system:String>
     <system:String x:Key="Minimize">Minimize</system:String>
     <system:String x:Key="Fullscreen">Fuldskærm</system:String>
