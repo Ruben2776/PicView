@@ -1,5 +1,6 @@
 ﻿using PicView.Editing;
 using PicView.Editing.Crop;
+using PicView.UILogic.Animations;
 using PicView.UILogic.Loading;
 using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
@@ -16,9 +17,22 @@ namespace PicView.UILogic.UserControls
             InitializeComponent();
 
             // ResizeButton
-            ResizeButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ResizeButtonBrush);
-            ResizeButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ResizeButtonBrush, true);
-            ResizeButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ResizeButtonBrush, false);
+            ResizeButton.PreviewMouseLeftButtonDown += delegate 
+            {
+                PreviewMouseButtonDownAnim(ResizeButtonBrush);
+            };
+            ResizeButton.MouseEnter += delegate 
+            { 
+                ButtonMouseOverAnim(ResizeText);
+                ButtonMouseOverAnim(ResizeFill);
+                AnimationHelper.MouseEnterBgTexColor(ResizeButtonBrush);
+            };
+            ResizeButton.MouseLeave += delegate 
+            { 
+                ButtonMouseLeaveAnim(ResizeText);
+                ButtonMouseLeaveAnim(ResizeFill);
+                AnimationHelper.MouseLeaveBgTexColor(ResizeButtonBrush);
+            };
             ResizeButton.Click += delegate
             {
                 UC.Close_UserControls();
@@ -27,9 +41,22 @@ namespace PicView.UILogic.UserControls
             };
 
             // EffectsButton
-            EffectsButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(EffectsButtonBrush);
-            EffectsButton.MouseEnter += (s, x) => ButtonMouseOverAnim(EffectsButtonBrush, true);
-            EffectsButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(EffectsButtonBrush, false);
+            EffectsButton.PreviewMouseLeftButtonDown += delegate
+            {
+                PreviewMouseButtonDownAnim(EffectsButtonBrush);
+            };
+            EffectsButton.MouseEnter += delegate
+            {
+                ButtonMouseOverAnim(EffectsText);
+                ButtonMouseOverAnim(EffectsFill);
+                AnimationHelper.MouseEnterBgTexColor(EffectsButtonBrush);
+            };
+            EffectsButton.MouseLeave += delegate
+            {
+                ButtonMouseLeaveAnim(EffectsText);
+                ButtonMouseLeaveAnim(EffectsFill);
+                AnimationHelper.MouseLeaveBgTexColor(EffectsButtonBrush);
+            };
             EffectsButton.Click += delegate
             {
                 UC.Close_UserControls();
@@ -37,9 +64,22 @@ namespace PicView.UILogic.UserControls
             };
 
             // CropButton
-            CropButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(CropButtonBrush);
-            CropButton.MouseEnter += (s, x) => ButtonMouseOverAnim(CropButtonBrush, true);
-            CropButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(CropButtonBrush, false);
+            CropButton.PreviewMouseLeftButtonDown += delegate
+            {
+                PreviewMouseButtonDownAnim(CropButtonBrush);
+            };
+            CropButton.MouseEnter += delegate
+            {
+                ButtonMouseOverAnim(CropText);
+                ButtonMouseOverAnim(CropFill);
+                AnimationHelper.MouseEnterBgTexColor(CropButtonBrush);
+            };
+            CropButton.MouseLeave += delegate
+            {
+                ButtonMouseLeaveAnim(CropText);
+                ButtonMouseLeaveAnim(CropFill);
+                AnimationHelper.MouseLeaveBgTexColor(CropButtonBrush);
+            };
             CropButton.Click += delegate
             {
                 UC.Close_UserControls();
@@ -47,9 +87,22 @@ namespace PicView.UILogic.UserControls
             };
 
             // ColorPickerButton
-            ColorPickerButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ColorPickerButtonBrush);
-            ColorPickerButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ColorPickerButtonBrush, true);
-            ColorPickerButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ColorPickerButtonBrush, false);
+            ColorPickerButton.PreviewMouseLeftButtonDown += delegate
+            {
+                PreviewMouseButtonDownAnim(ColorPickerBrush);
+            };
+            ColorPickerButton.MouseEnter += delegate
+            {
+                ButtonMouseOverAnim(ColorPickerText);
+                ButtonMouseOverAnim(ColorPickerFill);
+                AnimationHelper.MouseEnterBgTexColor(ColorPickerBrush);
+            };
+            ColorPickerButton.MouseLeave += delegate
+            {
+                ButtonMouseLeaveAnim(ColorPickerText);
+                ButtonMouseLeaveAnim(ColorPickerFill);
+                AnimationHelper.MouseLeaveBgTexColor(ColorPickerBrush);
+            };
             ColorPickerButton.Click += delegate
             {
                 UC.Close_UserControls();
@@ -58,9 +111,22 @@ namespace PicView.UILogic.UserControls
             };
 
             // ImageInfoButton
-            ImageInfoButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ImageInfoButtonBrush);
-            ImageInfoButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ImageInfoButtonBrush, true);
-            ImageInfoButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ImageInfoButtonBrush, false);
+            ImageInfoButton.PreviewMouseLeftButtonDown += delegate
+            {
+                PreviewMouseButtonDownAnim(ImageInfoBrush);
+            };
+            ImageInfoButton.MouseEnter += delegate
+            {
+                ButtonMouseOverAnim(ImageInfoText);
+                ButtonMouseOverAnim(ImageInfoFill);
+                AnimationHelper.MouseEnterBgTexColor(ImageInfoBrush);
+            };
+            ImageInfoButton.MouseLeave += delegate
+            {
+                ButtonMouseLeaveAnim(ImageInfoText);
+                ButtonMouseLeaveAnim(ImageInfoFill);
+                AnimationHelper.MouseLeaveBgTexColor(ImageInfoBrush);
+            };
             ImageInfoButton.Click += delegate
             {
                 UC.Close_UserControls();

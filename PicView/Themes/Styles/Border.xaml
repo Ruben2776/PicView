@@ -7,5 +7,6 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
         <Setter Property="Effect" Value="{StaticResource MenuShadowButtonBorder}" />
+        <Setter Property="Background" Value="{StaticResource BackgroundColorBrushAlt}" />
     </Style>
 </ResourceDictionary>

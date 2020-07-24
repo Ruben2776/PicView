@@ -14,7 +14,6 @@
             Background="{StaticResource NoisyBg}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="2"
-            CornerRadius="2"
             Effect="{StaticResource MenuShadow}">
 
             <Canvas>

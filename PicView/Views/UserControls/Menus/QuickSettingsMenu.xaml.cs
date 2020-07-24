@@ -72,24 +72,32 @@ namespace PicView.UILogic.UserControls
             InfoButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(InfoButtonBrush, false);
 
             // Toggle Scroll
-            ToggleScroll.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ToggleScrollBrush);
-            ToggleScroll.MouseEnter += (s, x) => ButtonMouseOverAnim(ToggleScrollBrush, true);
-            ToggleScroll.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ToggleScrollBrush, false);
+            ToggleScroll.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ToggleScrollFill); };
+            ToggleScroll.MouseEnter += delegate { ButtonMouseOverAnim(ToggleScrollFill); };
+            ToggleScroll.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ToggleScrollBrush); };
+            ToggleScroll.MouseLeave += delegate { ButtonMouseLeaveAnim(ToggleScrollFill); };
+            ToggleScroll.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ToggleScrollBrush); };
 
             // Toggle Loop
-            ToggleLooping.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ToggleLoopBrush);
-            ToggleLooping.MouseEnter += (s, x) => ButtonMouseOverAnim(ToggleLoopBrush, true);
-            ToggleLooping.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ToggleLoopBrush, false);
+            ToggleLooping.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ToggleLoopFill); };
+            ToggleLooping.MouseEnter += delegate { ButtonMouseOverAnim(ToggleLoopFill); };
+            ToggleLooping.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ToggleLoopBrush); };
+            ToggleLooping.MouseLeave += delegate { ButtonMouseLeaveAnim(ToggleLoopFill); };
+            ToggleLooping.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ToggleLoopBrush); };
 
             // Set Fit
-            SetFit.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(SetFitBrush);
-            SetFit.MouseEnter += (s, x) => ButtonMouseOverAnim(SetFitBrush, true);
-            SetFit.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(SetFitBrush, false);
+            SetFit.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(SetFitFill); };
+            SetFit.MouseEnter += delegate { ButtonMouseOverAnim(SetFitFill); };
+            SetFit.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SetFitBrush); };
+            SetFit.MouseLeave += delegate { ButtonMouseLeaveAnim(SetFitFill); };
+            SetFit.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SetFitBrush); };
 
             // ToggleFill
-            ToggleFill.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ToggleFillBrush);
-            ToggleFill.MouseEnter += (s, x) => ButtonMouseOverAnim(ToggleFillBrush, true);
-            ToggleFill.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ToggleFillBrush, false);
+            ToggleFill.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ToggleFillFill); };
+            ToggleFill.MouseEnter += delegate { ButtonMouseOverAnim(ToggleFillFill); };
+            ToggleFill.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ToggleFillBrush); };
+            ToggleFill.MouseLeave += delegate { ButtonMouseLeaveAnim(ToggleFillFill); };
+            ToggleFill.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ToggleFillBrush); };
 
             // ZoomButton
             ZoomButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ZoomButtonBrush);
