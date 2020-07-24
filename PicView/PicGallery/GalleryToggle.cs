@@ -108,9 +108,9 @@ namespace PicView.UILogic.PicGallery
             }
         }
 
-        internal static async void OpenFullscreenGallery()
+        internal static async void OpenFullscreenGallery(bool startup = false)
         {
-            if (Pics.Count < 1)
+            if (Pics.Count < 1 && !startup)
             {
                 return;
             }

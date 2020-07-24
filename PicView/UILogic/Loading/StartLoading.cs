@@ -67,7 +67,7 @@ namespace PicView.UILogic.Loading
 #if DEBUG
             Trace.WriteLine("ContentRendered started");
 #endif
-            PicView.ConfigureSettings.ConfigColors.UpdateColor();
+            ConfigureSettings.ConfigColors.UpdateColor();
 
             #region Add dictionaries
 
@@ -104,16 +104,39 @@ namespace PicView.UILogic.Loading
             if (arg == null)
             {
                 Unload();
+
+                // Reset PicGallery and don't allow it to run,
+                // if only 1 image
+                Properties.Settings.Default.PicGallery = 1;
+
+                // Don't start it in fullscreen with no image
+                Properties.Settings.Default.Fullscreen = false;
             }
             else
             {
-                if (!AutoFitWindow)
+                // Determine prefered UI for startup
+                if (Properties.Settings.Default.Fullscreen)
                 {
-                    SetDefaultSize();
+                    Fullscreen_Restore(true);
                 }
-                else if (!ScaleImage.TryFitImage(arg.ToString()))
+                else if (Properties.Settings.Default.Maximized)
                 {
-                    SetDefaultSize();
+                    Maximize();
+                }
+                else if (Properties.Settings.Default.PicGallery == 2)
+                {
+                    GalleryToggle.OpenFullscreenGallery(true);
+                }
+                else if (AutoFitWindow)
+                {
+                    ScaleImage.TryFitImage(arg.ToString());
+                }
+                else if(Properties.Settings.Default.Width != 0)
+                {
+                    TheMainWindow.Top = Properties.Settings.Default.Top;
+                    TheMainWindow.Left = Properties.Settings.Default.Left;
+                    TheMainWindow.Width = Properties.Settings.Default.Width;
+                    TheMainWindow.Height = Properties.Settings.Default.Height;
                 }
 
                 Pic(arg.ToString());
@@ -122,56 +145,9 @@ namespace PicView.UILogic.Loading
             // Load UI and events
             AddUIElementsAndUpdateValues();
 
-            // Change into prefered UI, if needed.
-            if (Properties.Settings.Default.Fullscreen)
-            {
-                if (arg == null)
-                {
-                    // Don't start it in fullscreen with no image
-                    Properties.Settings.Default.Fullscreen = false;
-                }
-                else
-                {
-                    Fullscreen_Restore(true);
-                }
-            }
-            else if (Properties.Settings.Default.Maximized)
-            {
-                Maximize();
-            }
-            // Load PicGallery, if needed
-            else if (Properties.Settings.Default.PicGallery == 2)
-            {
-                if (arg == null)
-                {
-                    // Reset PicGallery and don't allow it to run,
-                    // if only 1 image
-                    Properties.Settings.Default.PicGallery = 1;
-                }
-                else
-                {
-                    GalleryToggle.OpenFullscreenGallery();
-                }
-            }
-
 #if DEBUG
             Trace.WriteLine("Start Completed ");
 #endif
-        }
-
-        private static void SetDefaultSize()
-        {
-            // If normal window style
-            if (!AutoFitWindow)
-            {
-                if (Properties.Settings.Default.Width != 0)
-                {
-                    TheMainWindow.Top = Properties.Settings.Default.Top;
-                    TheMainWindow.Left = Properties.Settings.Default.Left;
-                    TheMainWindow.Width = Properties.Settings.Default.Width;
-                    TheMainWindow.Height = Properties.Settings.Default.Height;
-                }
-            }
         }
 
         private static void AddUIElementsAndUpdateValues()
@@ -198,6 +174,24 @@ namespace PicView.UILogic.Loading
                 GetRestorebutton.Opacity =
                 GetGalleryShortcut.Opacity =
                 0;
+
+                GetClickArrowLeft.Visibility =
+                GetClickArrowRight.Visibility =
+                Getx2.Visibility =
+                GetMinus.Visibility =
+                GetGalleryShortcut.Visibility =
+                GetRestorebutton.Visibility =
+                Visibility.Visible;
+            }
+            else if (Properties.Settings.Default.Fullscreen)
+            {
+                GetClickArrowLeft.Opacity =
+                GetClickArrowRight.Opacity =
+                Getx2.Opacity =
+                GetMinus.Opacity =
+                GetRestorebutton.Opacity =
+                GetGalleryShortcut.Opacity =
+                1;
 
                 GetClickArrowLeft.Visibility =
                 GetClickArrowRight.Visibility =

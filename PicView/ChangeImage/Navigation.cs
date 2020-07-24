@@ -4,6 +4,7 @@ using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Loading;
 using PicView.UILogic.PicGallery;
+using PicView.UILogic.Sizing;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -174,6 +175,8 @@ namespace PicView.ChangeImage
                 return;
             }
 
+            var hasCalculatedSize = false;
+
             // Initate loading behavior, if needed
             if (bitmapSource == null)
             {
@@ -187,8 +190,17 @@ namespace PicView.ChangeImage
                     // Don't allow image size to stretch the whole screen
                     if (xWidth == 0)
                     {
-                        TheMainWindow.MainImage.Width = TheMainWindow.Scroller.ActualWidth;
-                        TheMainWindow.MainImage.Height = TheMainWindow.Scroller.ActualHeight;
+                        var size = ImageDecoder.ImageSize(Pics[index]);
+                        if (size.HasValue)
+                        {
+                            FitImage(size.Value.Width, size.Value.Height);
+                            hasCalculatedSize = true;
+                        }
+                        else
+                        {
+                            TheMainWindow.MainImage.Width = TheMainWindow.MinWidth;
+                            TheMainWindow.MainImage.Height = TheMainWindow.MinHeight;
+                        }
                     }
                     else
                     {
@@ -250,13 +262,17 @@ namespace PicView.ChangeImage
             {
                 UILogic.TransformImage.Rotation.Flipped = false;
                 UILogic.TransformImage.Rotation.Rotateint = 0;
+                GetImageSettingsMenu.FlipButton.TheButton.IsChecked = false;
 
                 TheMainWindow.MainImage.LayoutTransform = null;
             }
 
             // Show the image! :)
             TheMainWindow.MainImage.Source = bitmapSource;
-            FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+            if (!hasCalculatedSize)
+            {
+                FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+            }
             SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index);
 
             // Scroll to top if scroll enabled

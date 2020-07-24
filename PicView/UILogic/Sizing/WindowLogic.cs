@@ -241,14 +241,16 @@ namespace PicView.UILogic.Sizing
                     ShowNavigation(true);
                     ShowShortcuts(true);
 
-                    GetGalleryShortcut.Opacity =
-                    GetClickArrowLeft.Opacity =
-                    GetClickArrowRight.Opacity =
-                    Getx2.Opacity =
-                    GetRestorebutton.Opacity =
-                    GetMinus.Opacity = 1;
+                    if (GetGalleryShortcut != null)
+                    {
+                        GetGalleryShortcut.Opacity =
+                        GetClickArrowLeft.Opacity =
+                        GetClickArrowRight.Opacity =
+                        Getx2.Opacity =
+                        GetRestorebutton.Opacity =
+                        GetMinus.Opacity = 1;
+                    }
                 }
-
 
                 ConfigureSettings.ConfigColors.UpdateColor(true);
                 Properties.Settings.Default.Save();

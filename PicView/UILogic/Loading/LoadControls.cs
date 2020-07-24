@@ -57,7 +57,8 @@ namespace PicView.UILogic.Loading
                 Focusable = false,
                 VerticalAlignment = VerticalAlignment.Top,
                 Visibility = Visibility.Collapsed,
-                HorizontalAlignment = HorizontalAlignment.Right
+                HorizontalAlignment = HorizontalAlignment.Right,
+                ToolTip = Application.Current.Resources["Close"]
             };
 
             TheMainWindow.ParentContainer.Children.Add(Getx2);
