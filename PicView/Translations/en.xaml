@@ -256,8 +256,11 @@
     <system:String x:Key="AspectRatio">Aspect ratio</system:String>
     <system:String x:Key="Portrait">Portrait</system:String>
     <system:String x:Key="Landscape">Landscape</system:String>
+    <system:String x:Key="Square">Square</system:String>
     <system:String x:Key="PrintSizeIn">Print size (in)</system:String>
     <system:String x:Key="PrintSizeCm">Print size (cm)</system:String>
+    <system:String x:Key="Centimeters">centimeters</system:String>
+    <system:String x:Key="Inches">inches</system:String>
     <system:String x:Key="BitDepth">Bit depth</system:String>
 
 
