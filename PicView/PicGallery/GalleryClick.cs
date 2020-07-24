@@ -105,18 +105,12 @@ namespace PicView.UILogic.PicGallery
             }
             else
             {
-                Preloader.PreloaderFix(Pics[id]);
                 ItemClick(id);
             }
         }
 
         internal static void PreviewItemClick(ImageSource source, int id)
         {
-            if (!Preloader.Contains(Pics[id]))
-            {
-                Preloader.PreloaderFix(Pics[id]);
-            }
-
             TheMainWindow.MainImage.Source = source;
             var size = ImageSize(Pics[id]);
             if (size.HasValue)

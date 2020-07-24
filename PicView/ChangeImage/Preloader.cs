@@ -136,7 +136,7 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static void Clear()
         {
-            if (Sources.Count <= 0)
+            if (Sources.IsEmpty)
             {
                 return;
             }
@@ -185,20 +185,12 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static bool Contains(string key)
         {
-            if (string.IsNullOrWhiteSpace(key) || Sources.Count <= 0)
+            if (string.IsNullOrWhiteSpace(key) || Sources.IsEmpty)
             {
                 return false;
             }
 
             return Sources.ContainsKey(key);
-        }
-
-        internal static void PreloaderFix(string file)
-        {
-            if (!Contains(file))
-            {
-                Add(file);
-            }
         }
 
         /// <summary>

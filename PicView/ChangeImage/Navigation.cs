@@ -4,7 +4,6 @@ using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Loading;
 using PicView.UILogic.PicGallery;
-using PicView.UILogic.Sizing;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -175,8 +174,6 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            var hasCalculatedSize = false;
-
             // Initate loading behavior, if needed
             if (bitmapSource == null)
             {
@@ -185,7 +182,7 @@ namespace PicView.ChangeImage
 
                 // Show a thumbnail while loading
                 var thumb = GetThumb(index, true);
-                if (thumb != null)
+                if (thumb != null && Properties.Settings.Default.PicGallery != 2)
                 {
                     // Don't allow image size to stretch the whole screen
                     if (xWidth == 0)
@@ -194,7 +191,6 @@ namespace PicView.ChangeImage
                         if (size.HasValue)
                         {
                             FitImage(size.Value.Width, size.Value.Height);
-                            hasCalculatedSize = true;
                         }
                         else
                         {
@@ -269,10 +265,7 @@ namespace PicView.ChangeImage
 
             // Show the image! :)
             TheMainWindow.MainImage.Source = bitmapSource;
-            if (!hasCalculatedSize)
-            {
-                FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
-            }
+            FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
             SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index);
 
             // Scroll to top if scroll enabled
