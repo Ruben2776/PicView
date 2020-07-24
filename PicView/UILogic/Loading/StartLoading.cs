@@ -5,7 +5,6 @@ using PicView.UILogic.Sizing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Windows;
 using System.Windows.Interop;
 using static PicView.ChangeImage.Error_Handling;
@@ -48,7 +47,6 @@ namespace PicView.UILogic.Loading
             {
                 try
                 {
-                    CultureInfo.CurrentCulture = new CultureInfo(Properties.Settings.Default.UserCulture, false);
                     Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
                     {
                         Source = new Uri(@"/PicView;component/Translations/" + Properties.Settings.Default.UserCulture + ".xaml", UriKind.Relative)
@@ -56,7 +54,6 @@ namespace PicView.UILogic.Loading
                 }
                 catch (Exception)
                 {
-                    CultureInfo.CurrentCulture = new CultureInfo("en", false);
                     Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
                     {
                         Source = new Uri(@"/PicView;component/Translations/en.xaml", UriKind.Relative)
