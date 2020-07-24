@@ -45,6 +45,17 @@ namespace PicView.UILogic.Animations
                     ScrollbarFade(show);
                 }
 
+                // Don't run, if already being animated || prevent lag
+                if (Getx2.Opacity > 0 && Getx2.Opacity < 1)
+                {
+                    return;
+                }
+
+                if (GetClickArrowRight.IsMouseOver || GetClickArrowLeft.IsMouseOver)
+                {
+                    return;
+                }
+
                 TimeSpan timespan = TimeSpan.FromSeconds(time);
 
                 if (!show)

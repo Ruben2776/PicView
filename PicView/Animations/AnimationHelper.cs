@@ -425,7 +425,18 @@ namespace PicView.UILogic.Animations
                 return;
             }
 
-            var da = new DoubleAnimation();
+            var da = new DoubleAnimation
+            {
+                FillBehavior = FillBehavior.Stop,
+                AccelerationRatio = 0.4,
+                DecelerationRatio = 0.6
+            };
+            da.Completed += delegate
+            {
+                item.innerborder.Width = to;
+                item.innerborder.Height = to;
+            };
+
             if (unHover)
             {
                 da.From = from;
@@ -438,8 +449,6 @@ namespace PicView.UILogic.Animations
                 da.To = to;
                 da.Duration = TimeSpan.FromSeconds(.25);
             }
-            da.AccelerationRatio = 0.4;
-            da.DecelerationRatio = 0.6;
 
             item.innerborder.BeginAnimation(FrameworkElement.WidthProperty, da);
             item.innerborder.BeginAnimation(FrameworkElement.HeightProperty, da);
