@@ -51,7 +51,8 @@ namespace PicView.UILogic.Animations
                     return;
                 }
 
-                if (GetClickArrowRight.IsMouseOver || GetClickArrowLeft.IsMouseOver)
+                if (GetClickArrowRight.IsMouseOver || GetClickArrowLeft.IsMouseOver || GetMinus.IsMouseOver
+                    || GetRestorebutton.IsMouseOver || Getx2.IsMouseOver)
                 {
                     return;
                 }

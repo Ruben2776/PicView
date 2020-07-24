@@ -2,7 +2,7 @@
     x:Class="PicView.UILogic.UserControls.GalleryShortcut"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    ToolTip="">
+    ToolTip="{StaticResource ShowImageGallery}">
     <Border
         Width="48"
         Height="47"

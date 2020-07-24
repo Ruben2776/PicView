@@ -1,10 +1,7 @@
 ﻿using PicView.UILogic.Animations;
 using PicView.UILogic.Sizing;
-using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
 
 namespace PicView.UILogic.UserControls
 {
@@ -13,95 +10,37 @@ namespace PicView.UILogic.UserControls
     /// </summary>
     public partial class Restorebutton : UserControl
     {
-        private ColorAnimation ccAnim;
-        private ColorAnimation ccAnim2;
-        private readonly Color bb;
-        private readonly Color bg;
-        private readonly Color bg2;
-        private readonly Color fg;
 
         public Restorebutton()
         {
             InitializeComponent();
 
-            bb = (Color)Application.Current.Resources["BorderColor"];
-            bg = (Color)Application.Current.Resources["AltInterface"];
-            bg2 = (Color)Application.Current.Resources["AltInterfaceW"];
-            fg = (Color)Application.Current.Resources["MainColor"];
-
-            PreviewMouseLeftButtonDown += (sender, e) =>
+            PreviewMouseLeftButtonDown += delegate
             {
-                if (ccAnim == null)
+                MouseOverAnimations.AltInterfacePreviewMouseOver(PolyFill, BorderBrushKey);
+            };
+
+            MouseLeftButtonUp += delegate { WindowLogic.Fullscreen_Restore(); };
+
+            MouseEnter += delegate
+            {
+                if (!Properties.Settings.Default.Fullscreen)
                 {
-                    ccAnim = new ColorAnimation
-                    {
-                        Duration = TimeSpan.FromSeconds(.32)
-                    };
+                    ToolTip = Application.Current.Resources["Fullscreen"];
+                }
+                else
+                {
+                    ToolTip = Application.Current.Resources["RestoreDown"];
                 }
 
-                var alpha = AnimationHelper.GetPrefferedColorOver();
-                ccAnim.From = alpha;
-                ccAnim.To = AnimationHelper.GetPrefferedColorDown();
-                PolyFill.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
-                AnimationHelper.MouseOverColorEvent(alpha.A, alpha.R, alpha.G, alpha.B, BorderBrushKey, true);
+                MouseOverAnimations.AltInterfaceMouseOver(PolyFill, CanvasBGcolor, BorderBrushKey);
             };
 
-            MouseLeftButtonDown += delegate 
-            { 
-                WindowLogic.Fullscreen_Restore();
-            };
-
-            MouseEnter += (sender, e) =>
+            MouseLeave += delegate
             {
-
-                ToolTip = Properties.Settings.Default.Maximized ?
-                    Application.Current.Resources["RestoreDown"] :
-                    Application.Current.Resources["Maximize"];
-
-                if (ccAnim == null)
-                {
-                    ccAnim = new ColorAnimation
-                    {
-                        Duration = TimeSpan.FromSeconds(.32)
-                    };
-                    ccAnim2 = new ColorAnimation
-                    {
-                        Duration = TimeSpan.FromSeconds(.2)
-                    };
-                }
-
-                ccAnim.From = fg;
-                ccAnim.To = AnimationHelper.GetPrefferedColorOver();
-                PolyFill.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
-
-                ccAnim2.From = bg;
-                ccAnim2.To = bg2;
-                CanvasBGcolor.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim2);
-                AnimationHelper.MouseOverColorEvent(bb.A, bb.R, bb.G, bb.B, BorderBrushKey, true);
+                MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
             };
-            MouseLeave += (sender, e) =>
-            {
-                if (ccAnim == null)
-                {
-                    ccAnim = new ColorAnimation
-                    {
-                        Duration = TimeSpan.FromSeconds(.32)
-                    };
-                    ccAnim2 = new ColorAnimation
-                    {
-                        Duration = TimeSpan.FromSeconds(.2)
-                    };
-                }
 
-                ccAnim.From = AnimationHelper.GetPrefferedColorOver();
-                ccAnim.To = fg;
-                PolyFill.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
-
-                ccAnim2.From = bg2;
-                ccAnim2.To = bg;
-                CanvasBGcolor.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim2);
-                AnimationHelper.MouseLeaveColorEvent(bb.A, bb.R, bb.G, bb.B, BorderBrushKey, true);
-            };
         }
     }
 }
