@@ -1,4 +1,6 @@
-﻿using PicView.ChangeImage;
+﻿using Microsoft.WindowsAPICodePack.Shell;
+using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
+using PicView.ChangeImage;
 using PicView.Library;
 using System;
 using System.Globalization;
@@ -35,6 +37,11 @@ namespace PicView.ImageHandling
                 ratioText = $"{firstRatio}:{secondRatio} ({Application.Current.Resources["Portrait"]})";
             }
 
+            var so = ShellObject.FromParsingName(file);
+            var bitdepth = so.Properties.GetProperty(SystemProperties.System.Image.BitDepth).ValueAsObject;
+            var dpiX = so.Properties.GetProperty(SystemProperties.System.Image.HorizontalResolution).ValueAsObject;
+            var dpiY = so.Properties.GetProperty(SystemProperties.System.Image.VerticalResolution).ValueAsObject;
+
             return new string[]
             {
                 // Fileinfo
@@ -46,19 +53,25 @@ namespace PicView.ImageHandling
 
                 // Resolution
                 image.PixelWidth + " x " + image.PixelHeight + " " + Application.Current.Resources["Pixels"],
+
                 // DPI
-                Math.Round(image.DpiX) + " x " + Math.Round(image.DpiY) + Application.Current.Resources["Dpi"],
+                Math.Round((double)dpiX) + " x " + Math.Round((double)dpiY) + " " + Application.Current.Resources["Dpi"],
+
                 // Bit dpeth
-                image.Format.BitsPerPixel.ToString(CultureInfo.CurrentCulture),
+                bitdepth.ToString(),
+
                 // Megapixels
                 ((float)image.PixelHeight * image.PixelWidth / 1000000)
                     .ToString("0.##", CultureInfo.CurrentCulture) + " " + Application.Current.Resources["MegaPixels"],
+
                 // Print size cm
                 cmWidth.ToString("0.##", CultureInfo.CurrentCulture) + " x " + cmHeight.ToString("0.##", CultureInfo.CurrentCulture)
                     + " " + Application.Current.Resources["Centimeters"],
+
                 // Print size inch
                 inchesWidth.ToString("0.##", CultureInfo.CurrentCulture) + " x " + inchesHeight.ToString("0.##", CultureInfo.CurrentCulture)
                     + " " + Application.Current.Resources["Inches"],
+
                 // Aspect ratio
                 ratioText
             };
