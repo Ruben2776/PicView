@@ -121,6 +121,10 @@ namespace PicView.UILogic.PicGallery
             if (fakeWindow == null)
             {
                 fakeWindow = new FakeWindow();
+                fakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtons 
+                {
+                    Margin = new Thickness(1,12,0,0),
+                }); 
             }
 
             // Switch gallery container to the correct window

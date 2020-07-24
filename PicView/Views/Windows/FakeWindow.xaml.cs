@@ -1,5 +1,4 @@
-﻿using PicView.SystemIntegration;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -9,9 +8,6 @@ using static PicView.UILogic.PicGallery.GalleryScroll;
 
 namespace PicView.Views.Windows
 {
-    /// <summary>
-    /// Interaction logic for FakeWindow.xaml
-    /// </summary>
     public partial class FakeWindow : Window
     {
         public FakeWindow()
@@ -26,8 +22,8 @@ namespace PicView.Views.Windows
 
         private void FakeWindow_ContentRendered(object sender, EventArgs e)
         {
-            MouseLeftButtonDown += FakeWindow_MouseLeftButtonDown;
-            MouseRightButtonDown += FakeWindow_MouseLeftButtonDown;
+            PreviewMouseLeftButtonDown += FakeWindow_MouseLeftButtonDown;
+            PreviewMouseRightButtonDown += FakeWindow_MouseLeftButtonDown;
             Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
             StateChanged += FakeWindow_StateChanged;
             MouseWheel += FakeWindow_MouseWheel;
@@ -84,7 +80,7 @@ namespace PicView.Views.Windows
             {
                 case WindowState.Normal:
                     Show();
-                    TheMainWindow.Focus();
+                    TheMainWindow.BringIntoView();
                     break;
 
                 case WindowState.Minimized:
@@ -95,8 +91,8 @@ namespace PicView.Views.Windows
 
         private void FakeWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            //fake.Close();
             TheMainWindow.Focus();
         }
+
     }
 }
