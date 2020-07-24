@@ -101,6 +101,14 @@ namespace PicView.Views.Windows
 
             BitDepthBox.Text = data[7];
 
+            SizeMpBox.Text = data[8];
+
+            PrintSizeCmBox.Text = data[9];
+
+            PrintSizeInBox.Text = data[10];
+
+            AspectRatioBox.Text = data[11];
+
         }
 
         #region Keyboard Shortcuts
