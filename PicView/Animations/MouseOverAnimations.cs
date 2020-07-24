@@ -1,4 +1,7 @@
-﻿using System.Windows.Media;
+﻿using System;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using static PicView.ConfigureSettings.ConfigColors;
 
 namespace PicView.UILogic.Animations
@@ -11,6 +14,63 @@ namespace PicView.UILogic.Animations
             Changes color depending on the users settings.
 
         */
+
+        #region ALtInterface hover anims
+
+        private static ColorAnimation ccAnim = new ColorAnimation { Duration = TimeSpan.FromSeconds(.32) };
+        private static ColorAnimation ccAnim2 = new ColorAnimation { Duration = TimeSpan.FromSeconds(.2) };
+        private static readonly SolidColorBrush borderBrush = (SolidColorBrush)Application.Current.Resources["BorderBrush"];
+
+        internal static void AltInterfacePreviewMouseOver(Brush foreground, Brush border)
+        {
+            var alpha = AnimationHelper.GetPrefferedColorOver();
+            ccAnim.From = alpha;
+            ccAnim.To = AnimationHelper.GetPrefferedColorDown();
+            foreground.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+            AnimationHelper.MouseOverColorEvent(alpha.A, alpha.R, alpha.G, alpha.B, border, true);
+        }
+
+        internal static void AltInterfaceMouseOver(Brush foreground, Brush background, Brush border)
+        {
+            ccAnim.From = (Color)Application.Current.Resources["IconColor"];
+            ccAnim.To = AnimationHelper.GetPrefferedColorOver();
+
+            foreground.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+
+            ccAnim2.From = (Color)Application.Current.Resources["AltInterface"];
+            ccAnim2.To = (Color)Application.Current.Resources["AltInterfaceW"];
+
+            background.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim2);
+            AnimationHelper.MouseOverColorEvent(
+                borderBrush.Color.A,
+                borderBrush.Color.R,
+                borderBrush.Color.G,
+                borderBrush.Color.B,
+                border,
+                true);
+        }
+
+        internal static void AltInterfaceMouseLeave(Brush foreground, Brush background, Brush border)
+        {
+            ccAnim.From = AnimationHelper.GetPrefferedColorOver();
+            ccAnim.To = (Color)Application.Current.Resources["IconColor"];
+
+            foreground.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
+
+            ccAnim2.From = (Color)Application.Current.Resources["AltInterfaceW"];
+            ccAnim2.To = (Color)Application.Current.Resources["AltInterface"];
+
+            background.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim2);
+            AnimationHelper.MouseLeaveColorEvent(
+                borderBrush.Color.A,
+                borderBrush.Color.R,
+                borderBrush.Color.G,
+                borderBrush.Color.B,
+                border,
+                true);
+        }
+
+        #endregion
 
         #region 1x
 
