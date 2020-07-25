@@ -75,6 +75,62 @@ namespace PicView.Views.Windows
                 FileHandling.Open_Save.Open_In_Explorer();
             };
 
+            FilenameCopy.TheButton.Click += delegate 
+            {
+                Clipboard.SetText(FilenameBox.Text);
+            };
+
+            FolderCopy.TheButton.Click += delegate
+            {
+                Clipboard.SetText(FolderBox.Text);
+            };
+
+            FullpathCopy.TheButton.Click += delegate
+            {
+                Clipboard.SetText(FullPathBox.Text);
+            };
+
+            CreatedCopy.TheButton.Click += delegate
+            {
+                Clipboard.SetText(CreatedBox.Text);
+            };
+
+            ModifiedCopy.TheButton.Click += delegate
+            {
+                Clipboard.SetText(ModifiedBox.Text);
+            };
+
+            SizePxCopy.TheButton.Click += delegate
+            {
+                Clipboard.SetText(SizePxBox.Text);
+            };
+
+            SizeMpCopy.TheButton.Click += delegate
+            {
+                Clipboard.SetText(SizeMpBox.Text);
+            };
+
+            DpiCopy.TheButton.Click += delegate
+            {
+                Clipboard.SetText(ResolutionBox.Text);
+            };
+
+            PrintSizeCmCopy.TheButton.Click += delegate
+            {
+                Clipboard.SetText(PrintSizeCmBox.Text);
+            };
+
+            PrintSizeInCopy.TheButton.Click += delegate
+            {
+                Clipboard.SetText(PrintSizeInBox.Text);
+            };
+
+            AspectRatioCopy.TheButton.Click += delegate
+            {
+                Clipboard.SetText(AspectRatioBox.Text);
+            };
+
+
             if (Pics.Count > 0)
             {
                 UpdateValues();

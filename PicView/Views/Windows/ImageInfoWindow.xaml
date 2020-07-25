@@ -200,7 +200,7 @@
                             Margin="10,0,0,0"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1">
-                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                            <uc:CopyButton x:Name="FilenameCopy" ToolTip="{StaticResource Copy}" />
                         </Border>
                     </StackPanel>
 
@@ -224,7 +224,7 @@
                             Margin="10,0,0,0"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1">
-                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                            <uc:CopyButton x:Name="FolderCopy" ToolTip="{StaticResource Copy}" />
                         </Border>
                     </StackPanel>
 
@@ -248,7 +248,7 @@
                             Margin="10,0,0,0"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1">
-                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                            <uc:CopyButton x:Name="FullpathCopy" ToolTip="{StaticResource Copy}" />
                         </Border>
                     </StackPanel>
 
@@ -272,7 +272,7 @@
                             Margin="10,0,0,0"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1">
-                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                            <uc:CopyButton x:Name="CreatedCopy" ToolTip="{StaticResource Copy}" />
                         </Border>
                     </StackPanel>
 
@@ -296,7 +296,7 @@
                             Margin="10,0,0,0"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1">
-                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                            <uc:CopyButton x:Name="ModifiedCopy" ToolTip="{StaticResource Copy}" />
                         </Border>
                     </StackPanel>
 
@@ -320,7 +320,7 @@
                             Margin="10,0,0,0"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1">
-                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                            <uc:CopyButton x:Name="BitDepthCopy" ToolTip="{StaticResource Copy}" />
                         </Border>
                     </StackPanel>
 
@@ -348,7 +348,7 @@
                             Margin="10,0,0,0"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1">
-                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                            <uc:CopyButton x:Name="SizePxCopy" ToolTip="{StaticResource Copy}" />
                         </Border>
                     </StackPanel>
 
@@ -372,7 +372,7 @@
                             Margin="10,0,0,0"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1">
-                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                            <uc:CopyButton x:Name="SizeMpCopy" ToolTip="{StaticResource Copy}" />
                         </Border>
                     </StackPanel>
 
@@ -396,7 +396,7 @@
                             Margin="10,0,0,0"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1">
-                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                            <uc:CopyButton x:Name="DpiCopy" ToolTip="{StaticResource Copy}" />
                         </Border>
                     </StackPanel>
 
@@ -420,7 +420,7 @@
                             Margin="10,0,0,0"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1">
-                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                            <uc:CopyButton x:Name="PrintSizeCmCopy" ToolTip="{StaticResource Copy}" />
                         </Border>
                     </StackPanel>
 
@@ -444,7 +444,7 @@
                             Margin="10,0,0,0"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1">
-                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                            <uc:CopyButton x:Name="PrintSizeInCopy" ToolTip="{StaticResource Copy}" />
                         </Border>
                     </StackPanel>
 
@@ -468,7 +468,7 @@
                             Margin="10,0,0,0"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1">
-                            <uc:CopyButton ToolTip="{StaticResource Copy}" />
+                            <uc:CopyButton x:Name="AspectRatioCopy" ToolTip="{StaticResource Copy}" />
                         </Border>
                     </StackPanel>
 
