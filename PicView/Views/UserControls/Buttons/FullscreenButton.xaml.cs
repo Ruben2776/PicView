@@ -29,7 +29,7 @@ namespace PicView.UILogic.UserControls
             MouseLeave += delegate 
             {
                 ButtonMouseLeaveAnim(FullscreenButtonBrush, true);
-            };;
+            };
 
             TheButton.Click += delegate 
             {
