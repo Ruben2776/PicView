@@ -272,10 +272,6 @@ namespace PicView.UILogic.Sizing
                 TheMainWindow.WindowState = WindowState.Normal;
                 Fullscreen_Restore();
             }
-            else if (TheMainWindow.WindowState == WindowState.Normal)
-            {
-                Fullscreen_Restore();
-            }
         }
 
         internal static void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
