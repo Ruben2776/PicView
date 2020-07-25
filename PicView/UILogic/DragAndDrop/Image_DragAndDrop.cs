@@ -149,7 +149,10 @@ namespace PicView.UILogic.DragAndDrop
             }
 
             // Get files as strings
-            var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+            if (!(e.Data.GetData(DataFormats.FileDrop, true) is string[] files))
+            {
+                return;
+            }
 
             // check if valid
             if (!Drag_Drop_Check(files).HasValue)
