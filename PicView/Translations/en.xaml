@@ -295,6 +295,7 @@
     <system:String x:Key="DragOverString">Drop to load image</system:String>
 
     <!--  Wallpaper  -->
+    <system:String x:Key="SetAs">Set as...</system:String>
     <system:String x:Key="SetAsWallpaper">Set as wallpaper</system:String>
     <system:String x:Key="SetAsLockScreenImage">Set as lock screen image</system:String>
 

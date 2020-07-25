@@ -294,6 +294,7 @@
     <system:String x:Key="DragOverString">Slip for at indlæs</system:String>
 
     <!--  Wallpaper  -->
+    <system:String x:Key="SetAs">Sæt som...</system:String>
     <system:String x:Key="SetAsWallpaper">Sæt som baggrund</system:String>
     <system:String x:Key="SetAsLockScreenImage">Indstil som låseskærmbillede</system:String>
 
