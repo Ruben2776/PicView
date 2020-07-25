@@ -96,7 +96,7 @@ namespace PicView.UILogic.Loading
 
             MonitorInfo = MonitorSize.GetMonitorSize();
             AutoFitWindow = Properties.Settings.Default.AutoFitWindow;
-
+            IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
             Pics = new List<string>();
 
             // Load image if possible
@@ -151,7 +151,6 @@ namespace PicView.UILogic.Loading
             // Update values
             ConfigureSettings.ConfigColors.SetColors();
             TheMainWindow.AllowDrop = true;
-            IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
 
             LoadClickArrow(true);
             LoadClickArrow(false);

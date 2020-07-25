@@ -1,7 +1,6 @@
 ﻿using PicView.ImageHandling;
 using PicView.SystemIntegration;
 using PicView.UILogic.PicGallery;
-using PicView.UILogic.Sizing;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -381,6 +380,21 @@ namespace PicView.UILogic.Loading
             ///  Set as            \\\\
             ///////////////////////////
             ///////////////////////////
+
+            var setAsCm = new MenuItem
+            {
+                Header = Application.Current.Resources["SetAs"] as string,
+            };
+
+            var setAsCmIcon = new System.Windows.Shapes.Path
+            {
+                Data = Geometry.Parse(SVGiconCamera),
+                Stretch = Stretch.Fill
+            };
+            setAsCmIcon.Width = setAsCmIcon.Height = 12;
+            setAsCmIcon.Fill = scbf;
+            setAsCm.Icon = setAsCmIcon;
+
             var wallcm = new MenuItem
             {
                 Header = Application.Current.Resources["SetAsWallpaper"] as string,
@@ -394,7 +408,24 @@ namespace PicView.UILogic.Loading
             wallcmIcon.Width = wallcmIcon.Height = 12;
             wallcmIcon.Fill = scbf;
             wallcm.Icon = wallcmIcon;
-            cm.Items.Add(wallcm);
+            setAsCm.Items.Add(wallcm);
+
+            var lockCm = new MenuItem
+            {
+                Header = Application.Current.Resources["SetAsLockScreenImage"] as string,
+            };
+            lockCm.Click += (s, x) => Lockscreen.ChangeLockScreenBackground(Pics[FolderIndex]);
+            var lockCmIcon = new System.Windows.Shapes.Path
+            {
+                Data = Geometry.Parse(SVGiconCamera),
+                Stretch = Stretch.Fill
+            };
+            lockCmIcon.Width = lockCmIcon.Height = 12;
+            lockCmIcon.Fill = scbf;
+            lockCm.Icon = lockCmIcon;
+            setAsCm.Items.Add(lockCm);
+
+            cm.Items.Add(setAsCm);
 
             ///////////////////////////
             ///////////////////////////
@@ -598,43 +629,7 @@ namespace PicView.UILogic.Loading
             cm.Items.Add(clcm);
 
             // Add to elements
-            TheMainWindow.MainImage.ContextMenu = TheMainWindow.ParentContainer.ContextMenu = TheMainWindow.LowerBar.ContextMenu = cm;
-
-            switch (Properties.Settings.Default.SortPreference)
-            {
-                case 0:
-                    sortcmChild0.IsChecked = true;
-                    break;
-
-                case 1:
-                    sortcmChild1.IsChecked = true;
-                    break;
-
-                case 2:
-                    sortcmChild2.IsChecked = true;
-                    break;
-
-                case 3:
-                    sortcmChild3.IsChecked = true;
-                    break;
-
-                case 4:
-                    sortcmChild4.IsChecked = true;
-                    break;
-
-                case 5:
-                    sortcmChild5.IsChecked = true;
-                    break;
-
-                case 6:
-                    sortcmChild6.IsChecked = true;
-                    break;
-
-                default:
-                    sortcmChild0.IsChecked = true;
-                    break;
-            }
-
+            TheMainWindow.MainImage.ContextMenu = TheMainWindow.ParentContainer.ContextMenu = cm;
             cm.Opened += (tt, yy) => Recentcm_Opened(recentcm);
 
 #if DEBUG
