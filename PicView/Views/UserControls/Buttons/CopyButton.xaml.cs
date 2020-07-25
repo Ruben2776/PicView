@@ -1,6 +1,4 @@
-﻿using PicView.FileHandling;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
 namespace PicView.UILogic.UserControls
@@ -16,7 +14,6 @@ namespace PicView.UILogic.UserControls
                 TheButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(CopyButtonBrush);
                 TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(CopyButtonBrush, true);
                 TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(CopyButtonBrush, false);
-                TheButton.Click += delegate { Copy_Paste.Copyfile(); };
             };
         }
     }
