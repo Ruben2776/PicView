@@ -172,6 +172,11 @@ namespace PicView.Editing
 
         internal static void UpdateValues()
         {
+            if (FolderIndex >= Pics.Count)
+            {
+                return;
+            }
+
             GetResizeAndOptimize.RenameBoxText.Text = Path.GetFileName(Pics[FolderIndex]);
             GetResizeAndOptimize.RenameBoxText.Text += " [Not implemented]";
             GetResizeAndOptimize.DestinationBoxText.Text = GetResizeAndOptimize.SourceBoxText.Text = Path.GetDirectoryName(Pics[FolderIndex]);
@@ -197,7 +202,7 @@ namespace PicView.Editing
                     progress.Report(x);
                     //cancellationToken.ThrowIfCancellationRequested();
                 }
-            }).ConfigureAwait(false);
+            }, cancellationToken).ConfigureAwait(false);
 
             //await Task.Run(() =>
             //Parallel.For(0, files.Count, (i, state) =>
