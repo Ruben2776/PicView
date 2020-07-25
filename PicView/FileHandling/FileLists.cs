@@ -205,9 +205,6 @@ namespace PicView.FileHandling
                 {
                     return;
                 }
-
-                Navigation.FolderIndex = Navigation.Pics.IndexOf(path);
-
 #if DEBUG
                 Trace.WriteLine("Getvalues completed ");
 #endif

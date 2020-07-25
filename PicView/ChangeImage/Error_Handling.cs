@@ -67,15 +67,15 @@ namespace PicView.ChangeImage
             }
             else if (x < 0)
             {
-                pic = RenderToBitmapSource(Pics[FolderIndex]);
+                pic = RenderToBitmapSource(Pics[x]);
                 if (pic != null)
                 {
                     return pic;
                 }
                 else
                 {
-                    Pics = FileList(Path.GetDirectoryName(Pics[FolderIndex]));
-                    Pics.Remove(Pics[FolderIndex]);
+                    Pics = FileList(Path.GetDirectoryName(Pics[x]));
+                    Pics.Remove(Pics[x]);
                     x--;
 
                     if (x < 0)
@@ -122,17 +122,17 @@ namespace PicView.ChangeImage
             // Go to next image
             if (Properties.Settings.Default.Looping)
             {
-                FolderIndex = FolderIndex == Pics.Count - 1 ? 0 : FolderIndex;
+                x = x == Pics.Count - 1 ? 0 : FolderIndex;
             }
             else
             {
-                FolderIndex = FolderIndex == Pics.Count - 1 ? Pics.Count - 2 : FolderIndex;
+                x = x == Pics.Count - 1 ? Pics.Count - 2 : FolderIndex;
             }
 
             // Repeat process if the next image was not found
-            if (FolderIndex > 0 && FolderIndex < Pics.Count)
+            if (x > 0 && x < Pics.Count)
             {
-                await PicErrorFix(FolderIndex).ConfigureAwait(false);
+                await PicErrorFix(x).ConfigureAwait(false);
             }
 
             return null;
@@ -238,7 +238,6 @@ namespace PicView.ChangeImage
 
             Preloader.Clear();
             GalleryFunctions.Clear();
-            FolderIndex = 0;
             TheMainWindow.MainImage.Width = TheMainWindow.Scroller.Width = TheMainWindow.Scroller.Height =
             TheMainWindow.MainImage.Height = double.NaN;
             ScaleImage.xWidth = ScaleImage.xHeight = 0;

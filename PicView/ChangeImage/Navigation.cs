@@ -31,9 +31,9 @@ namespace PicView.ChangeImage
         internal static System.Collections.Generic.List<string> Pics { get; set; }
 
         /// <summary>
-        /// Counter used to get/set current index
+        /// Counter used to get current index
         /// </summary>
-        internal static int FolderIndex { get; set; }
+        internal static int FolderIndex { get; private set; }
 
 
         #region Update Image values
@@ -80,35 +80,24 @@ namespace PicView.ChangeImage
                 await GetValues(path).ConfigureAwait(true);
             }
 
-            // If no need to reset values, get index
-            else if (Pics != null)
-            {
-                FolderIndex = Pics.IndexOf(path);
-            }
+            FolderIndex = Pics.IndexOf(path);
 
-            if (Pics != null)
+            // Fix large archive extraction error
+            if (FolderIndex == -1)
             {
-                // Fix large archive extraction error
-                if (Pics.Count == 0)
+                var recovery = await RecoverFailedArchiveAsync().ConfigureAwait(true);
+                if (!recovery)
                 {
-                    var recovery = await RecoverFailedArchiveAsync().ConfigureAwait(true);
-                    if (!recovery)
-                    {
-                        Reload(true);
-                        return;
-                    }
-                    else
-                    {
-                        TheMainWindow.TitleText.Text = Application.Current.Resources["Unzipping"] as string;
-                        TheMainWindow.TitleText.ToolTip = TheMainWindow.TitleText.Text;
-                    }
-                    TheMainWindow.Focus();
+                    Reload(true);
+                    return;
                 }
-            }
-            else
-            {
-                Reload(true);
-                return;
+                else
+                {
+                    TheMainWindow.TitleText.Text = Application.Current.Resources["Unzipping"] as string;
+                    TheMainWindow.TitleText.ToolTip = TheMainWindow.TitleText.Text;
+                    FolderIndex = 0;
+                }
+                TheMainWindow.Focus();
             }
 
             if (!FreshStartup)

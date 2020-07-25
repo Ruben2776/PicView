@@ -68,7 +68,7 @@ namespace PicView.ImageHandling
             if (!string.IsNullOrWhiteSpace(base64))
             {
                 Clipboard.SetText(base64);
-                Tooltip.ShowTooltipMessage(Application.Current.Resources["ConvertedToBase64"]); // TODO add to translation
+                Tooltip.ShowTooltipMessage(Application.Current.Resources["ConvertedToBase64"]);
             }
         }
 

@@ -151,9 +151,6 @@ namespace PicView.FileHandling
                     return false;
                 }
 
-                // Start at first file
-                FolderIndex = 0;
-
                 // Add zipped files as recent file
                 RecentFiles.SetZipped(TempZipFile);
 
