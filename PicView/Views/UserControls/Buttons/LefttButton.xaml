@@ -4,12 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Button
         x:Name="TheButton"
-        Width="100"
+        Width="90"
         Height="35"
         FocusVisualStyle="{x:Null}"
-        Focusable="False"
-        KeyboardNavigation.DirectionalNavigation="None"
-        KeyboardNavigation.TabNavigation="None">
+        Focusable="False">
         <Button.Background>
             <SolidColorBrush x:Name="LeftButtonBrush" Color="Transparent" />
         </Button.Background>

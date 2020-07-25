@@ -20,7 +20,21 @@ namespace PicView.Views.Windows
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            KeyUp += KeysUp;
+            KeyUp += (_,e) =>
+            {
+                if (e.Key == Key.Escape)
+                {
+                    Hide();
+                    TheMainWindow.Focus();
+                }
+                else if (e.Key == Key.Q)
+                {
+                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                    {
+                        Environment.Exit(0);
+                    }
+                }
+            };
 
             // CloseButton
             CloseButton.TheButton.Click += delegate { Hide(); TheMainWindow.Focus(); };
@@ -166,28 +180,6 @@ namespace PicView.Views.Windows
             AspectRatioBox.Text = data[11];
 
         }
-
-        #region Keyboard Shortcuts
-
-        private void KeysUp(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Escape:
-                    Hide();
-                    TheMainWindow.Focus();
-                    break;
-
-                case Key.Q:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        Environment.Exit(0);
-                    }
-                    break;
-            }
-        }
-
-        #endregion Keyboard Shortcuts
 
     }
 }

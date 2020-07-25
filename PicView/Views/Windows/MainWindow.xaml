@@ -74,7 +74,7 @@
             DockPanel.Dock="Bottom">
 
             <Canvas
-                Width="425"
+                Width="404"
                 Height="35"
                 HorizontalAlignment="Center"
                 Background="{StaticResource BackgroundSubtleHighlightBrush}">
@@ -170,11 +170,11 @@
 
                 <Canvas
                     Canvas.Left="112"
-                    Width="200"
+                    Width="182"
                     Height="35"
                     Background="{StaticResource BackgroundColorBrushFadeSubtle}">
                     <Rectangle
-                        Canvas.Left="100"
+                        Canvas.Left="90"
                         Canvas.Top="0"
                         Width="1"
                         Height="35"
@@ -187,7 +187,7 @@
                         Fill="{StaticResource BorderBrush}" />
 
                     <Rectangle
-                        Canvas.Left="200"
+                        Canvas.Left="182"
                         Canvas.Top="0"
                         Width="1"
                         Height="35"
@@ -195,12 +195,12 @@
 
                     <uc:LeftButton x:Name="LeftButton" />
 
-                    <uc:RightButton x:Name="RightButton" Canvas.Left="100" />
+                    <uc:RightButton x:Name="RightButton" Canvas.Left="91" />
 
                 </Canvas>
 
                 <Rectangle
-                    Canvas.Left="368"
+                    Canvas.Left="349"
                     Canvas.Top="0"
                     Width="1"
                     Height="35"
@@ -208,7 +208,7 @@
 
                 <Button
                     x:Name="SettingsButton"
-                    Canvas.Left="313"
+                    Canvas.Left="294"
                     Width="55"
                     Height="35"
                     Margin="0"
@@ -231,7 +231,7 @@
 
                 <Button
                     x:Name="FunctionMenuButton"
-                    Canvas.Left="369"
+                    Canvas.Left="349"
                     Canvas.Top="0"
                     Width="55"
                     Height="35"
@@ -346,7 +346,7 @@
                 </Button>
 
                 <Rectangle
-                    Canvas.Left="424"
+                    Canvas.Left="404"
                     Canvas.Top="0"
                     Width="1"
                     Height="35"

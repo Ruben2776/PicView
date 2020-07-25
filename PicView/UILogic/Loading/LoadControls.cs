@@ -142,7 +142,7 @@ namespace PicView.UILogic.Loading
                 Visibility = Visibility.Hidden,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 0, 188, 0)
+                Margin = new Thickness(0, 0, 168, 0)
             };
 
             TheMainWindow.ParentContainer.Children.Add(GetFileMenu);
@@ -164,7 +164,7 @@ namespace PicView.UILogic.Loading
                 Visibility = Visibility.Hidden,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 0, 95, 0)
+                Margin = new Thickness(0, 0, 73, 0)
             };
 
             TheMainWindow.ParentContainer.Children.Add(GetImageSettingsMenu);
@@ -186,7 +186,7 @@ namespace PicView.UILogic.Loading
                 Visibility = Visibility.Hidden,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(96, 0, 0, 0)
+                Margin = new Thickness(81, 0, 0, 0)
             };
 
             GetQuickSettingsMenu.SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
@@ -210,7 +210,7 @@ namespace PicView.UILogic.Loading
                 Visibility = Visibility.Hidden,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(87, 0, 0, 0)
+                Margin = new Thickness(67, 0, 0, 0)
             };
 
             TheMainWindow.ParentContainer.Children.Add(GetToolsAndEffectsMenu);
