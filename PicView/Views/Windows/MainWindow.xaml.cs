@@ -44,8 +44,8 @@ namespace PicView.Views.Windows
             }
 
             //Keep position when size has changed
-            Top += (size.PreviousSize.Height - size.NewSize.Height) / 2;
-            Left += (size.PreviousSize.Width - size.NewSize.Width) / 2;
+            Top += ((size.PreviousSize.Height / MonitorInfo.DpiScaling) - (size.NewSize.Height / MonitorInfo.DpiScaling)) / 2;
+            Left += ((size.PreviousSize.Width / MonitorInfo.DpiScaling) - (size.NewSize.Width / MonitorInfo.DpiScaling)) / 2;
 
             // Move cursor after resize when the button has been pressed
             if (RightbuttonClicked)

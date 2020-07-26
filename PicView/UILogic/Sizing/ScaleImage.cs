@@ -99,17 +99,24 @@ namespace PicView.UILogic.Sizing
         /// <param name="height">The pixel height of the image</param>
         internal static void FitImage(double width, double height)
         {
+            // TODO improve sizing for high DPI cases
+
             if (width <= 0 || height <= 0) { return; }
 
             var showInterface = Properties.Settings.Default.ShowInterface;
 
             double maxWidth, maxHeight;
-            var padding = 75; // Padding to make it feel more comfortable
+            var padding = 75 * MonitorInfo.DpiScaling; // Padding to make it feel more comfortable
             var borderSpaceHeight = showInterface ? TheMainWindow.LowerBar.Height + TheMainWindow.TitleBar.Height + 6 : 6;
             var borderSpaceWidth = 20; // Based on UI borders
 
-            var monitorWidth = MonitorInfo.WorkArea.Width - borderSpaceWidth;
-            var monitorHeight = MonitorInfo.WorkArea.Height - borderSpaceHeight;
+            var monitorWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
+            var monitorHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
+
+            if (monitorHeight - padding < height)
+            {
+                padding = 0;
+            }
 
             if (Properties.Settings.Default.PicGallery == 2)
             {

@@ -256,6 +256,12 @@ namespace PicView.UILogic.Sizing
         /// </summary>
         internal static void CenterWindowOnScreen()
         {
+            if (MonitorInfo.DpiScaling != 1)
+            {
+                // TODO proper 200% scaling support...
+                return;
+            }
+
             //move to the centre
             TheMainWindow.Left = (MonitorInfo.WorkArea.Width - TheMainWindow.ActualWidth) / 2 + MonitorInfo.WorkArea.Left;
             TheMainWindow.Top = (MonitorInfo.WorkArea.Height - TheMainWindow.ActualHeight) / 2 + MonitorInfo.WorkArea.Top;

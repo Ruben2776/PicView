@@ -67,8 +67,8 @@ namespace PicView.SystemIntegration
 
             //get the available area of the monitor
             var workArea = currentMonitor.WorkingArea;
-            var MonitorWidth = currentMonitor.Bounds.Width;
-            var MonitorHeight = currentMonitor.Bounds.Height;
+            var MonitorWidth = currentMonitor.Bounds.Width * dpiScaling;
+            var MonitorHeight = currentMonitor.Bounds.Height * dpiScaling;
 
             return new MonitorSize(MonitorWidth, MonitorHeight, dpiScaling, workArea);
         }
