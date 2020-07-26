@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.System.UserProfile;
 
@@ -7,7 +8,7 @@ namespace PicView.SystemIntegration
 {
     internal class Lockscreen
     {
-        internal static async void ChangeLockScreenBackground(string path)
+        internal static async Task ChangeLockScreenBackground(string path)
         {
             if (!UserProfilePersonalizationSettings.IsSupported())
             {

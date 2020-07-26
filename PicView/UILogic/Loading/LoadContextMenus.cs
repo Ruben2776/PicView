@@ -414,7 +414,7 @@ namespace PicView.UILogic.Loading
             {
                 Header = Application.Current.Resources["SetAsLockScreenImage"] as string,
             };
-            lockCm.Click += (s, x) => Lockscreen.ChangeLockScreenBackground(Pics[FolderIndex]);
+            lockCm.Click += async delegate { await Lockscreen.ChangeLockScreenBackground(Pics[FolderIndex]).ConfigureAwait(false); };
             var lockCmIcon = new System.Windows.Shapes.Path
             {
                 Data = Geometry.Parse(SVGiconCamera),
@@ -450,13 +450,12 @@ namespace PicView.UILogic.Loading
 
             ///////////////////////////
             ///////////////////////////
-            ///   File Details     \\\\
+            ///   Image Info       \\\\
             ///////////////////////////
             ///////////////////////////
             var fildecm = new MenuItem
             {
-                Header = Application.Current.Resources["FileProperties"] as string,
-                InputGestureText = $"{Application.Current.Resources["Ctrl"] as string} + I"
+                Header = Application.Current.Resources["ImageInfo"] as string,
             };
             var fildecmIcon = new System.Windows.Shapes.Path
             {
@@ -466,7 +465,7 @@ namespace PicView.UILogic.Loading
             fildecmIcon.Width = fildecmIcon.Height = 12;
             fildecmIcon.Fill = scbf;
             fildecm.Icon = fildecmIcon;
-            fildecm.Click += (s, x) => NativeMethods.ShowFileProperties(Pics[FolderIndex]);
+            fildecm.Click += (_, _) => LoadWindows.ImageInfoWindow();
             cm.Items.Add(fildecm);
             cm.Items.Add(new Separator());
 
