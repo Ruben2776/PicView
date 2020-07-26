@@ -180,8 +180,8 @@ namespace PicView.FileHandling
                 {
                     Text = (i + 1).ToString(CultureInfo.CurrentCulture),
                     FontFamily = new FontFamily("/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros"),
-                    FontSize = 12,
-                    Width = 13,
+                    FontSize = 11,
+                    Width = 12,
                     Height = 12,
                     Foreground = (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"]
                 };
