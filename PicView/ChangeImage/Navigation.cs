@@ -266,6 +266,7 @@ namespace PicView.ChangeImage
             // Update values
             CanNavigate = true;
             FolderIndex = index;
+            FreshStartup = false;
 
             if (LoadWindows.GetImageInfoWindow != null)
             {
@@ -283,17 +284,8 @@ namespace PicView.ChangeImage
                 await Preloader.PreLoad(index).ConfigureAwait(false);
             }
 
-            if (!FreshStartup)
-            {
-                RecentFiles.Add(Pics[index]);
+            RecentFiles.Add(Pics[index]);
 
-                if (prevPicResource != null)
-                {
-                    prevPicResource = null;
-                }
-            }
-
-            FreshStartup = false;
 #if DEBUG
             stopWatch.Stop();
             var s = $"Pic(); executed in {stopWatch.Elapsed.TotalMilliseconds} milliseconds";

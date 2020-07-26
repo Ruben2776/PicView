@@ -70,7 +70,7 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>favicon.ico</ApplicationIcon>
+    <ApplicationIcon>Themes\Resources\img\favicon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -501,7 +501,7 @@
     <PackageLicenseExpression></PackageLicenseExpression>
     <AssemblyOriginatorKeyFile>PicViewKeyFile.pfx</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>preview</LangVersion>
     <Authors>Ruben2776</Authors>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
