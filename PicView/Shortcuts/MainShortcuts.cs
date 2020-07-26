@@ -367,7 +367,7 @@ namespace PicView.Shortcuts
 
                             if (shiftDown)
                             {
-                                Base64.SendToClipboard();
+                                System.Threading.Tasks.Task task = Base64.SendToClipboard();
                             }
                             else if (altDown)
                             {

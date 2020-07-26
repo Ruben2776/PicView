@@ -510,7 +510,7 @@ namespace PicView.UILogic.Loading
                 + $" [{Application.Current.Resources["Ctrl"] as string} + " +
                 $"{Application.Current.Resources["Shift"] as string}  + C]",
             };
-            cpxcm.Click += (s, x) => Base64.SendToClipboard();
+            cpxcm.Click += async delegate { await Base64.SendToClipboard().ConfigureAwait(false); };
             cpm.Items.Add(cpxcm);
 
             ///////////////////////////

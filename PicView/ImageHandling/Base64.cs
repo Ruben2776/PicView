@@ -79,6 +79,7 @@ namespace PicView.ImageHandling
                 }
                 else
                 {
+                    // TODO add method to convert images from clipholder to base64
                     return;
                 }
             }
