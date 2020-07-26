@@ -1,12 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 using Windows.Storage;
 using Windows.System.UserProfile;
 
 namespace PicView.SystemIntegration
 {
-    internal class Lockscreen
+    internal static class Lockscreen
     {
         internal static async Task ChangeLockScreenBackground(string path)
         {
@@ -20,15 +21,15 @@ namespace PicView.SystemIntegration
 
             try
             {
-                StorageFolder sf = await StorageFolder.GetFolderFromPathAsync(folder);
-                StorageFile imgFile = await sf.GetFileAsync(file);
+                var storageFolder = await StorageFolder.GetFolderFromPathAsync(folder);
+                var storageFile = await storageFolder.GetFileAsync(file);
 
-                using var stream = await imgFile.OpenAsync(FileAccessMode.Read);
+                using var stream = await storageFile.OpenAsync(FileAccessMode.Read);
                 await LockScreen.SetImageStreamAsync(stream);
             }
-            catch
+            catch(Exception e)
             {
-
+                MessageBox.Show(e.Message);
             }
         }
     }

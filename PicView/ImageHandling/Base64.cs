@@ -1,9 +1,12 @@
 ﻿using ImageMagick;
 using PicView.ChangeImage;
+using PicView.Library;
 using PicView.UILogic;
+using PicView.UILogic.Loading;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -56,18 +59,37 @@ namespace PicView.ImageHandling
             return Convert.TryFromBase64String(base64, buffer, out _);
         }
 
-        internal static string ConvertToBase64(string path)
+        internal static async Task<string> ConvertToBase64(string path)
         {
-            byte[] imageArray = File.ReadAllBytes(path);
+            var imageArray = await File.ReadAllBytesAsync(path).ConfigureAwait(true);
             return Convert.ToBase64String(imageArray);
         }
 
-        internal static void SendToClipboard()
+        internal static async Task SendToClipboard()
         {
-            var base64 = ConvertToBase64(Navigation.Pics[Navigation.FolderIndex]);
-            if (!string.IsNullOrWhiteSpace(base64))
+            string path;
+            if (Navigation.FolderIndex == 0)
             {
-                Clipboard.SetText(base64);
+                string url = Utilities.GetURL(Fields.TheMainWindow.TitleText.Text);
+                if (Uri.IsWellFormedUriString(url, UriKind.Absolute)) // Check if from web
+                {
+                    using var webclient = new WebClient();
+                    var data = await webclient.DownloadDataTaskAsync(new Uri(url)).ConfigureAwait(true);
+                    path = Convert.ToBase64String(data);
+                }
+                else
+                {
+                    return;
+                }
+            }
+            else
+            {
+                path = await ConvertToBase64(Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(true);
+            }
+            
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                Clipboard.SetText(path);
                 Tooltip.ShowTooltipMessage(Application.Current.Resources["ConvertedToBase64"]);
             }
         }

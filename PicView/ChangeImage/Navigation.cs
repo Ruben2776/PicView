@@ -319,6 +319,7 @@ namespace PicView.ChangeImage
             Taskbar.NoProgress();
 
             CanNavigate = false;
+            FolderIndex = 0;
 
             if (LoadWindows.GetImageInfoWindow != null)
             {
