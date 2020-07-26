@@ -10,6 +10,7 @@ using System.Windows.Input;
 using static PicView.ConfigureSettings.ConfigColors;
 using static PicView.Library.Fields;
 using static PicView.SystemIntegration.Wallpaper;
+using static PicView.UILogic.Animations.MouseOverAnimations;
 
 namespace PicView.Views.Windows
 {
@@ -21,7 +22,6 @@ namespace PicView.Views.Windows
 
             ContentRendered += (s, x) =>
             {
-                KeyUp += KeysUp;
                 KeyDown += KeysDown;
                 AddGenericEvents();
 
@@ -36,7 +36,7 @@ namespace PicView.Views.Windows
                 };
 
                 // BorderColorRadio
-                BorderRadio.Click += ConfigureSettings.UpdateUIValues.SetBorderColorEnabled;
+                BorderRadio.Click += UpdateUIValues.SetBorderColorEnabled;
                 if (Properties.Settings.Default.WindowBorderColorEnabled)
                 {
                     BorderRadio.IsChecked = true;
@@ -109,6 +109,80 @@ namespace PicView.Views.Windows
                 {
                     GeneralSettings.RestartApp();
                 };
+
+
+                // DarkThemeRadio
+                DarkThemeRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(DarkThemeText); };
+                DarkThemeRadio.MouseEnter += delegate { ButtonMouseOverAnim(DarkThemeText); };
+                DarkThemeRadio.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(DarkThemeBrush); };
+                DarkThemeRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(DarkThemeText); };
+                DarkThemeRadio.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(DarkThemeBrush); };
+
+                // LightThemeRadio
+                LightThemeRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(LightThemeText); };
+                LightThemeRadio.MouseEnter += delegate { ButtonMouseOverAnim(LightThemeText); };
+                LightThemeRadio.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(LightThemeBrush); };
+                LightThemeRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(LightThemeText); };
+                LightThemeRadio.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(LightThemeBrush); };
+
+                // SubDirRadio
+                SubDirRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(SubDirText); };
+                SubDirRadio.MouseEnter += delegate { ButtonMouseOverAnim(SubDirText); };
+                SubDirRadio.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SubDirBrush); };
+                SubDirRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(SubDirText); };
+                SubDirRadio.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SubDirBrush); };
+
+                // BorderRadio
+                BorderRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(BorderBrushText); };
+                BorderRadio.MouseEnter += delegate { ButtonMouseOverAnim(BorderBrushText); };
+                BorderRadio.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(BorderBrushColor); };
+                BorderRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(BorderBrushText); };
+                BorderRadio.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(BorderBrushColor); };
+
+                // Fill
+                Fill.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(FillText); };
+                Fill.MouseEnter += delegate { ButtonMouseOverAnim(FillText); };
+                Fill.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(FillBrush); };
+                Fill.MouseLeave += delegate { ButtonMouseLeaveAnim(FillText); };
+                Fill.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(FillBrush); };
+
+                // Center
+                Center.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(CenterText); };
+                Center.MouseEnter += delegate { ButtonMouseOverAnim(CenterText); };
+                Center.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(CenterBrush); };
+                Center.MouseLeave += delegate { ButtonMouseLeaveAnim(CenterText); };
+                Center.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(CenterBrush); };
+
+                // Fit
+                Fit.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(FitText); };
+                Fit.MouseEnter += delegate { ButtonMouseOverAnim(FitText); };
+                Fit.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(FitBrush); };
+                Fit.MouseLeave += delegate { ButtonMouseLeaveAnim(FitText); };
+                Fit.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(FitBrush); };
+
+                // Tile
+                Tile.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(TileText); };
+                Tile.MouseEnter += delegate { ButtonMouseOverAnim(TileText); };
+                Tile.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(TileBrush); };
+                Tile.MouseLeave += delegate { ButtonMouseLeaveAnim(TileText); };
+                Tile.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(TileBrush); };
+
+                // Stretch
+                Stretch.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(StretchText); };
+                Stretch.MouseEnter += delegate { ButtonMouseOverAnim(StretchText); };
+                Stretch.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(StretchBrush); };
+                Stretch.MouseLeave += delegate { ButtonMouseLeaveAnim(StretchText); };
+                Stretch.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(StretchBrush); };
+
+                // Restart
+                RestartButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(RestartText); };
+                RestartButton.MouseEnter += delegate { ButtonMouseOverAnim(RestartText); };
+                RestartButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(RestartBrush); };
+                RestartButton.MouseLeave += delegate { ButtonMouseLeaveAnim(RestartText); };
+                RestartButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(RestartBrush); };
+
+
+
             };
         }
 
@@ -175,6 +249,11 @@ namespace PicView.Views.Windows
         {
             switch (e.Key)
             {
+                case Key.Escape:
+                    Hide();
+                    TheMainWindow.Focus();
+                    break;
+
                 case Key.S:
                 case Key.Down:
                     Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 10);
@@ -183,24 +262,6 @@ namespace PicView.Views.Windows
                 case Key.W:
                 case Key.U:
                     Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 10);
-                    break;
-
-                case Key.Q:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        Environment.Exit(0);
-                    }
-                    break;
-            }
-        }
-
-        private void KeysUp(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Escape:
-                    Hide();
-                    TheMainWindow.Focus();
                     break;
 
                 case Key.Q:
@@ -223,16 +284,6 @@ namespace PicView.Views.Windows
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
 
             TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
-
-            // DarkThemeRadio
-            DarkThemeRadio.PreviewMouseLeftButtonDown += DarkTheme_PreviewMouseLeftButtonDown;
-            DarkThemeRadio.MouseEnter += DarkTheme_MouseEnter;
-            DarkThemeRadio.MouseLeave += DarkTheme_MouseLeave;
-
-            // LightThemeRadio
-            LightThemeRadio.PreviewMouseLeftButtonDown += LightTheme_PreviewMouseLeftButtonDown;
-            LightThemeRadio.MouseEnter += LightTheme_MouseEnter;
-            LightThemeRadio.MouseLeave += LightTheme_MouseLeave;
 
             // BlueRadio
             BlueRadio.PreviewMouseLeftButtonDown += BlueRadio_PreviewMouseLeftButtonDown;
@@ -305,40 +356,6 @@ namespace PicView.Views.Windows
             LimeRadio.PreviewMouseLeftButtonDown += GreyRadio_PreviewMouseLeftButtonDown;
             LimeRadio.MouseEnter += GreyRadio_MouseEnter;
             LimeRadio.MouseLeave += GreyRadio_MouseLeave;
-
-            SubDirRadio.PreviewMouseLeftButtonDown += SubDirRadio_PreviewMouseLeftButtonDown;
-            SubDirRadio.MouseEnter += SubDirRadio_MouseEnter;
-            SubDirRadio.MouseLeave += SubDirRadio_MouseLeave;
-
-            BorderRadio.PreviewMouseLeftButtonDown += BorderRadio_PreviewMouseLeftButtonDown;
-            BorderRadio.MouseEnter += BorderRadio_MouseEnter;
-            BorderRadio.MouseLeave += BorderRadio_MouseLeave;
-
-            Fill.PreviewMouseLeftButtonDown += Fill_PreviewMouseLeftButtonDown;
-            Fill.MouseEnter += Fill_MouseEnter;
-            Fill.MouseLeave += Fill_MouseLeave;
-
-            Fit.PreviewMouseLeftButtonDown += Fit_PreviewMouseLeftButtonDown;
-            Fit.MouseEnter += Fit_MouseEnter;
-            Fit.MouseLeave += Fit_MouseLeave;
-
-            Center.PreviewMouseLeftButtonDown += Center_PreviewMouseLeftButtonDown;
-            Center.MouseEnter += Center_MouseEnter;
-            Center.MouseLeave += Center_MouseLeave;
-
-            Tile.PreviewMouseLeftButtonDown += Tile_PreviewMouseLeftButtonDown;
-            Tile.MouseEnter += Tile_MouseEnter;
-            Tile.MouseLeave += Tile_MouseLeave;
-
-            Stretch.PreviewMouseLeftButtonDown += Stretch_PreviewMouseLeftButtonDown;
-            Stretch.MouseEnter += Stretch_MouseEnter;
-            Stretch.MouseLeave += Stretch_MouseLeave;
-
-            RestartButton.PreviewMouseLeftButtonDown += Restart_PreviewMouseLeftButtonDown;
-            RestartButton.MouseEnter += Restart_MouseEnter;
-            RestartButton.MouseLeave += Restart_MouseLeave;
-
-
         }
 
         // Blue
@@ -701,310 +718,6 @@ namespace PicView.Views.Windows
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(GreyBrush, 12);
         }
 
-        // SubDirRadio
-        private void SubDirRadio_MouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                SubDirBrush,
-                false
-            );
-        }
-
-        private void SubDirRadio_MouseEnter(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseOverColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                SubDirBrush,
-                false
-            );
-        }
-
-        private void SubDirRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, SubDirBrush, false);
-        }
-
-        // BorderColor
-        private void BorderRadio_MouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                BorderBrushColor,
-                false
-            );
-        }
-
-        private void BorderRadio_MouseEnter(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseOverColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                BorderBrushColor,
-                false
-            );
-        }
-
-        private void BorderRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, BorderBrushColor, false);
-        }
-
         #endregion EventHandlers 
-
-        #region Mouseover Events
-
-        // DarkTheme
-        private void DarkTheme_MouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                DarkThemeBrush,
-                false
-            );
-        }
-
-        private void DarkTheme_MouseEnter(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseOverColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                DarkThemeBrush,
-                false
-            );
-        }
-
-        private void DarkTheme_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(DarkThemeBrush, false);
-        }
-
-        // LightTheme
-        private void LightTheme_MouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                LightThemeBrush,
-                false
-            );
-        }
-
-        private void LightTheme_MouseEnter(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseOverColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                LightThemeBrush,
-                false
-            );
-        }
-
-        private void LightTheme_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(LightThemeBrush, false);
-        }
-
-        // Restart Button
-        private void Restart_MouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                RestartBrush,
-                false
-            );
-        }
-
-        private void Restart_MouseEnter(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseOverColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                RestartBrush,
-                false
-            );
-        }
-
-        private void Restart_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(RestartBrush, false);
-        }
-
-        // Fill Button
-        private void Fill_MouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                FillBrush,
-                false
-            );
-        }
-
-        private void Fill_MouseEnter(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseOverColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                FillBrush,
-                false
-            );
-        }
-
-        private void Fill_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(FillBrush, false);
-        }
-
-        // Tile Button
-        private void Tile_MouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                TileBrush,
-                false
-            );
-        }
-
-        private void Tile_MouseEnter(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseOverColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                TileBrush,
-                false
-            );
-        }
-
-        private void Tile_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(TileBrush, false);
-        }
-
-        // Center Button
-        private void Center_MouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                CenterBrush,
-                false
-            );
-        }
-
-        private void Center_MouseEnter(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseOverColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                CenterBrush,
-                false
-            );
-        }
-
-        private void Center_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(CenterBrush, false);
-        }
-
-        // Fitbutton Mouse Event
-        private void Fit_MouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                FitBrush,
-                false
-            );
-        }
-
-        private void Fit_MouseEnter(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseOverColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                FitBrush,
-                false
-            );
-        }
-
-        private void Fit_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(FitBrush, false);
-        }
-
-        // Stretch Button
-        private void Stretch_MouseLeave(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseLeaveColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                StretchBrush,
-                false
-            );
-        }
-
-        private void Stretch_MouseEnter(object sender, MouseEventArgs e)
-        {
-            AnimationHelper.MouseOverColorEvent(
-                backgroundBorderColor.A,
-                backgroundBorderColor.R,
-                backgroundBorderColor.G,
-                backgroundBorderColor.B,
-                StretchBrush,
-                false
-            );
-        }
-
-        private void Stretch_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(StretchBrush, false);
-        }
-
-        #endregion Mouseover Events
     }
 }

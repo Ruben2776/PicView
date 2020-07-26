@@ -242,11 +242,15 @@
                             <CheckBox
                                 x:Name="DarkThemeRadio"
                                 HorizontalContentAlignment="Center"
+                                d:IsChecked="True"
                                 Content="{StaticResource DarkTheme}"
                                 Style="{StaticResource Checkstyle}">
                                 <CheckBox.Background>
                                     <SolidColorBrush x:Name="DarkThemeBrush" Color="{StaticResource BackgroundColorAlt}" />
                                 </CheckBox.Background>
+                                <CheckBox.Foreground>
+                                    <SolidColorBrush x:Name="DarkThemeText" Color="{StaticResource MainColor}" />
+                                </CheckBox.Foreground>
                             </CheckBox>
                         </Border>
 
@@ -265,6 +269,9 @@
                                 <CheckBox.Background>
                                     <SolidColorBrush x:Name="LightThemeBrush" Color="Transparent" />
                                 </CheckBox.Background>
+                                <CheckBox.Foreground>
+                                    <SolidColorBrush x:Name="LightThemeText" Color="{StaticResource MainColor}" />
+                                </CheckBox.Foreground>
                             </CheckBox>
                         </Border>
                     </WrapPanel>
@@ -304,6 +311,9 @@
                                 <CheckBox.Background>
                                     <SolidColorBrush x:Name="SubDirBrush" Color="{StaticResource BackgroundColorAlt}" />
                                 </CheckBox.Background>
+                                <CheckBox.Foreground>
+                                    <SolidColorBrush x:Name="SubDirText" Color="{StaticResource MainColor}" />
+                                </CheckBox.Foreground>
                             </CheckBox>
                         </Border>
 
@@ -322,6 +332,9 @@
                                 <CheckBox.Background>
                                     <SolidColorBrush x:Name="BorderBrushColor" Color="{StaticResource BackgroundColorAlt}" />
                                 </CheckBox.Background>
+                                <CheckBox.Foreground>
+                                    <SolidColorBrush x:Name="BorderBrushText" Color="{StaticResource MainColor}" />
+                                </CheckBox.Foreground>
                             </CheckBox>
                         </Border>
 
@@ -340,55 +353,97 @@
                         VerticalAlignment="Top"
                         Orientation="Horizontal">
 
-                        <Button
-                            x:Name="Fill"
+                        <Border
+                            Width="105"
+                            Height="40"
                             Margin="0,0,5,5"
-                            Content="{StaticResource Fill}"
-                            Style="{StaticResource MetroAlphaFlatButton}">
-                            <Button.Background>
-                                <SolidColorBrush x:Name="FillBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </Button.Background>
-                        </Button>
+                            Style="{StaticResource ButtonBorder}">
+                            <Button
+                                x:Name="Fill"
+                                Content="{StaticResource Fill}"
+                                FontSize="14">
+                                <Button.Background>
+                                    <SolidColorBrush x:Name="FillBrush" Color="Transparent" />
+                                </Button.Background>
+                                <Button.Foreground>
+                                    <SolidColorBrush x:Name="FillText" Color="{StaticResource MainColor}" />
+                                </Button.Foreground>
+                            </Button>
+                        </Border>
 
-                        <Button
-                            x:Name="Center"
+                        <Border
+                            Width="105"
+                            Height="40"
                             Margin="0,0,5,5"
-                            Content="{StaticResource Center}"
-                            Style="{StaticResource MetroAlphaFlatButton}">
-                            <Button.Background>
-                                <SolidColorBrush x:Name="CenterBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </Button.Background>
-                        </Button>
+                            Style="{StaticResource ButtonBorder}">
+                            <Button
+                                x:Name="Center"
+                                Content="{StaticResource Center}"
+                                FontSize="14">
+                                <Button.Background>
+                                    <SolidColorBrush x:Name="CenterBrush" Color="Transparent" />
+                                </Button.Background>
+                                <Button.Foreground>
+                                    <SolidColorBrush x:Name="CenterText" Color="{StaticResource MainColor}" />
+                                </Button.Foreground>
+                            </Button>
+                        </Border>
 
-                        <Button
-                            x:Name="Fit"
+                        <Border
+                            Width="105"
+                            Height="40"
                             Margin="0,0,5,5"
-                            Content="{StaticResource Fit}"
-                            Style="{StaticResource MetroAlphaFlatButton}">
-                            <Button.Background>
-                                <SolidColorBrush x:Name="FitBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </Button.Background>
-                        </Button>
+                            Style="{StaticResource ButtonBorder}">
+                            <Button
+                                x:Name="Fit"
+                                Content="{StaticResource Fit}"
+                                FontSize="14">
+                                <Button.Background>
+                                    <SolidColorBrush x:Name="FitBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                </Button.Background>
+                                <Button.Foreground>
+                                    <SolidColorBrush x:Name="FitText" Color="{StaticResource MainColor}" />
+                                </Button.Foreground>
+                            </Button>
+                        </Border>
 
-                        <Button
-                            x:Name="Tile"
+                        <Border
+                            Width="105"
+                            Height="40"
                             Margin="0,0,5,5"
-                            Content="{StaticResource Tile}"
-                            Style="{StaticResource MetroAlphaFlatButton}">
-                            <Button.Background>
-                                <SolidColorBrush x:Name="TileBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </Button.Background>
-                        </Button>
+                            Style="{StaticResource ButtonBorder}">
+                            <Button
+                                x:Name="Tile"
+                                Content="{StaticResource Tile}"
+                                FontSize="14">
+                                <Button.Background>
+                                    <SolidColorBrush x:Name="TileBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                </Button.Background>
+                                <Button.Foreground>
+                                    <SolidColorBrush x:Name="TileText" Color="{StaticResource MainColor}" />
+                                </Button.Foreground>
+                            </Button>
+                        </Border>
 
-                        <Button
-                            x:Name="Stretch"
+                        <Border
+                            Width="105"
+                            Height="40"
                             Margin="0,0,5,5"
-                            Content="{StaticResource Stretch}"
-                            Style="{StaticResource MetroAlphaFlatButton}">
-                            <Button.Background>
-                                <SolidColorBrush x:Name="StretchBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </Button.Background>
-                        </Button>
+                            Style="{StaticResource ButtonBorder}">
+                            <Button
+                                x:Name="Stretch"
+                                Content="{StaticResource Stretch}"
+                                FontSize="14">
+                                <Button.Background>
+                                    <SolidColorBrush x:Name="StretchBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                </Button.Background>
+                                <Button.Foreground>
+                                    <SolidColorBrush x:Name="StretchText" Color="{StaticResource MainColor}" />
+                                </Button.Foreground>
+                            </Button>
+                        </Border>
+
+
                     </WrapPanel>
 
 
@@ -403,9 +458,7 @@
                     <ComboBox
                         x:Name="LanguageBox"
                         Margin="0,9,0,7"
-                        HorizontalAlignment="Center">
-                        <!--<ComboBoxItem d:Content="LongLanguageName" d:IsSelected="True" />-->
-                    </ComboBox>
+                        HorizontalAlignment="Center" />
 
                     <Label
                         Margin="0,0,0,25"
@@ -442,24 +495,31 @@
                             Width="35"
                             Margin="5,3"
                             HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
                             IsReadOnly="True"
                             Text="{Binding ElementName=SlideshowSlider, Path=Value}"
                             TextAlignment="Center"
                             ToolTip="Enter the slideshow amount in seconds." />
 
-                        <Label Content="Sec." />
+                        <Label VerticalAlignment="Center" Content="Sec." />
                     </StackPanel>
-                    <Button
-                        x:Name="RestartButton"
+
+                    <Border
                         Width="183"
                         Margin="0,7,0,12"
-                        Padding="10"
-                        Content="{StaticResource RestartApp}"
-                        Style="{StaticResource MetroAlphaFlatButton}">
-                        <Button.Background>
-                            <SolidColorBrush x:Name="RestartBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </Button.Background>
-                    </Button>
+                        Style="{StaticResource ButtonBorder}">
+                        <Button
+                            x:Name="RestartButton"
+                            Content="{StaticResource RestartApp}"
+                            FontSize="14">
+                            <Button.Background>
+                                <SolidColorBrush x:Name="RestartBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </Button.Background>
+                            <Button.Foreground>
+                                <SolidColorBrush x:Name="RestartText" Color="{StaticResource MainColor}" />
+                            </Button.Foreground>
+                        </Button>
+                    </Border>
 
                 </StackPanel>
             </ScrollViewer>

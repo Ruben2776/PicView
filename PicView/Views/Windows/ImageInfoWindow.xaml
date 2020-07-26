@@ -12,7 +12,6 @@
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="CanMinimize"
     Style="{DynamicResource MyWindowStyle}"
-    WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
 
     <DockPanel LastChildFill="True">
