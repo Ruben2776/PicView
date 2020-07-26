@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using static PicView.Library.Fields;
 
@@ -27,6 +28,13 @@ namespace PicView.Views.Windows
             if (Properties.Settings.Default.LightTheme)
             {
                 Scroller.Background = Application.Current.Resources["NoisyBg"] as ImageBrush;
+
+                var Source = new BitmapImage();
+                Source.BeginInit();
+                Source.UriSource = new Uri("pack://application:,,,/PicView;component/Themes/Resources/img/icon-raster.128b.png");
+                Source.EndInit();
+
+                Logo.Source = Source;
             }
         }
 

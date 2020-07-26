@@ -11,7 +11,7 @@ namespace PicView.ConfigureSettings
     /// <summary>
     /// Used for color and theming related coding
     /// </summary>
-    public static class ConfigColors
+    internal static class ConfigColors
     {
         #region Update and set colors
         /// <summary>
@@ -28,7 +28,7 @@ namespace PicView.ConfigureSettings
         /// Update color values for brushes and window border
         /// </summary>
         /// <param name="remove">Remove border?</param>
-        public static void UpdateColor(bool remove = false)
+        internal static void UpdateColor(bool remove = false)
         {
             if (remove)
             {
@@ -57,7 +57,7 @@ namespace PicView.ConfigureSettings
             }
         }
 
-        public static void SetColors()
+        internal static void SetColors()
         {
             mainColor = (Color)Application.Current.Resources["IconColor"];
 
@@ -84,7 +84,7 @@ namespace PicView.ConfigureSettings
 
         #region Change background
 
-        public static void ChangeBackground(object sender, RoutedEventArgs e)
+        internal static void ChangeBackground(object sender, RoutedEventArgs e)
         {
             if (TheMainWindow.ParentContainer == null)
             {
@@ -115,10 +115,10 @@ namespace PicView.ConfigureSettings
                     break;
 
                 case 2:
-                    var _ = DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
-                    if (_ != null)
+                    var checkerboardBg = DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
+                    if (checkerboardBg != null)
                     {
-                        TheMainWindow.ParentContainer.Background = _;
+                        TheMainWindow.ParentContainer.Background = checkerboardBg;
                     }
                     break;
 
@@ -128,7 +128,7 @@ namespace PicView.ConfigureSettings
             }
         }
 
-        public static Brush GetBackgroundColorBrush()
+        internal static Brush GetBackgroundColorBrush()
         {
             return Properties.Settings.Default.BgColorChoice switch
             {
