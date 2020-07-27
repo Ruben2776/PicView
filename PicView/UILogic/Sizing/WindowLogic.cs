@@ -256,15 +256,9 @@ namespace PicView.UILogic.Sizing
         /// </summary>
         internal static void CenterWindowOnScreen()
         {
-            if (MonitorInfo.DpiScaling != 1)
-            {
-                // TODO proper 200% scaling support...
-                return;
-            }
-
             //move to the centre
-            TheMainWindow.Left = (MonitorInfo.WorkArea.Width - TheMainWindow.ActualWidth) / 2 + MonitorInfo.WorkArea.Left;
-            TheMainWindow.Top = (MonitorInfo.WorkArea.Height - TheMainWindow.ActualHeight) / 2 + MonitorInfo.WorkArea.Top;
+            TheMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - TheMainWindow.ActualWidth) / 2 + MonitorInfo.WorkArea.Left;
+            TheMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - TheMainWindow.ActualHeight) / 2 + MonitorInfo.WorkArea.Top;
         }
 
         #endregion Window Functions
@@ -318,7 +312,7 @@ namespace PicView.UILogic.Sizing
 
 #if DEBUG
             Trace.Unindent();
-            Trace.WriteLine("Goodbye cruel world!");
+            Trace.WriteLine("Debugging closed at " + DateTime.Now);
             Trace.Flush();
 #endif
             Environment.Exit(0);

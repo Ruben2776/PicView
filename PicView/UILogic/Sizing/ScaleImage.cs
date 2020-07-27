@@ -106,17 +106,14 @@ namespace PicView.UILogic.Sizing
             var showInterface = Properties.Settings.Default.ShowInterface;
 
             double maxWidth, maxHeight;
-            var padding = 75 * MonitorInfo.DpiScaling; // Padding to make it feel more comfortable
             var borderSpaceHeight = showInterface ? TheMainWindow.LowerBar.Height + TheMainWindow.TitleBar.Height + 6 : 6;
-            var borderSpaceWidth = 20; // Based on UI borders
+            var borderSpaceWidth = 20 * MonitorInfo.DpiScaling; // Based on UI borders
 
             var monitorWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
             var monitorHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
 
-            if (monitorHeight - padding < height)
-            {
-                padding = 0;
-            }
+            var padding = MonitorInfo.Height - monitorHeight; // Padding to make it feel more comfortable
+            padding = padding < 0 ? 0 : padding;
 
             if (Properties.Settings.Default.PicGallery == 2)
             {
@@ -198,7 +195,7 @@ namespace PicView.UILogic.Sizing
             if (!Properties.Settings.Default.Fullscreen)
             {
                 /// Update TitleBar
-                var interfaceSize = 190; // logo and buttons width
+                var interfaceSize = 190 * MonitorInfo.DpiScaling; // logo and buttons width
 
                 if (Properties.Settings.Default.PicGallery == 2)
                 {

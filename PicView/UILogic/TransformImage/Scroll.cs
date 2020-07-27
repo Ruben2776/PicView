@@ -41,6 +41,8 @@ namespace PicView.UILogic.TransformImage
                 TheMainWindow.Scroller.VerticalScrollBarVisibility =
                     value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
 
+                // TODO fix error when image is from web
+
                 if (ChangeImage.Navigation.Pics != null)
                 {
                     TryFitImage();

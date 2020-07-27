@@ -18,10 +18,15 @@ namespace PicView.Views.Windows
     {
         public SettingsWindow()
         {
+            Width = 500 * MonitorInfo.DpiScaling;
+            MaxHeight = MonitorInfo.Height - (70 * MonitorInfo.DpiScaling);
+
             InitializeComponent();
 
             ContentRendered += (s, x) =>
             {
+                Top = 5;
+
                 KeyDown += KeysDown;
                 AddGenericEvents();
 
