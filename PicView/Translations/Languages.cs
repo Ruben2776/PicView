@@ -3,6 +3,7 @@
     internal enum Languages
     {
         en,
-        da
+        da,
+        de
     }
 }
