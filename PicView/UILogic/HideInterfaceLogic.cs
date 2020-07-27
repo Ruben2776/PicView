@@ -1,8 +1,8 @@
-﻿using PicView.UILogic.PicGallery;
+﻿using PicView.UILogic.Loading;
+using PicView.UILogic.PicGallery;
 using PicView.UILogic.TransformImage;
 using System.Windows;
 using System.Windows.Input;
-using static PicView.Library.Fields;
 using static PicView.UILogic.Animations.FadeControls;
 using static PicView.UILogic.Sizing.ScaleImage;
 
@@ -68,17 +68,17 @@ namespace PicView.UILogic
         {
             if (show)
             {
-                TheMainWindow.TitleBar.Visibility =
-                TheMainWindow.LowerBar.Visibility =
-                TheMainWindow.LeftBorderRectangle.Visibility =
-                TheMainWindow.RightBorderRectangle.Visibility = Visibility.Visible;
+                LoadWindows.GetMainWindow.TitleBar.Visibility =
+                LoadWindows.GetMainWindow.LowerBar.Visibility =
+                LoadWindows.GetMainWindow.LeftBorderRectangle.Visibility =
+                LoadWindows.GetMainWindow.RightBorderRectangle.Visibility = Visibility.Visible;
             }
             else
             {
-                TheMainWindow.TitleBar.Visibility =
-                TheMainWindow.LowerBar.Visibility =
-                TheMainWindow.LeftBorderRectangle.Visibility =
-                TheMainWindow.RightBorderRectangle.Visibility = Visibility.Collapsed;
+                LoadWindows.GetMainWindow.TitleBar.Visibility =
+                LoadWindows.GetMainWindow.LowerBar.Visibility =
+                LoadWindows.GetMainWindow.LeftBorderRectangle.Visibility =
+                LoadWindows.GetMainWindow.RightBorderRectangle.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -88,7 +88,7 @@ namespace PicView.UILogic
         /// <param name="show"></param>
         internal static void ShowNavigation(bool show)
         {
-            if (UC.GetClickArrowLeft == null || UC.GetClickArrowRight == null 
+            if (UC.GetClickArrowLeft == null || UC.GetClickArrowRight == null
                 || UC.Getx2 == null || UC.GetMinus == null || UC.GetRestorebutton == null)
             {
                 return;

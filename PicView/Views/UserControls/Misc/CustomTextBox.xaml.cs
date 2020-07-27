@@ -12,14 +12,17 @@ namespace PicView.UILogic.UserControls
             InitializeComponent();
         }
 
-        public string Text {
+        public string Text
+        {
             get => InnerTextBox.Text;
             set => InnerTextBox.Text = value;
         }
 
-        public new bool IsFocused {
-            get {
-                return InnerTextBox.IsFocused; 
+        public new bool IsFocused
+        {
+            get
+            {
+                return InnerTextBox.IsFocused;
             }
         }
     }

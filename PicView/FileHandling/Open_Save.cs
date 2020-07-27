@@ -1,5 +1,7 @@
 ﻿using Microsoft.Win32;
 using PicView.ImageHandling;
+using PicView.UILogic;
+using PicView.UILogic.Loading;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -7,7 +9,6 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
-using static PicView.Library.Fields;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.TransformImage.Rotation;
 using static PicView.UILogic.UC;
@@ -16,12 +17,36 @@ namespace PicView.FileHandling
 {
     internal static class Open_Save
     {
+        internal static bool IsDialogOpen { get; set; }
+
+        /// <summary>
+        ///  Files filterering string used for file/save dialog
+        ///  TODO update for and check file support
+        /// </summary>
+        internal const string FilterFiles =
+            "All Supported files|*.bmp;*.jpg;*.png;*.tif;*.gif;*.ico;*.jpeg;*.wdp;*.psd;*.psb;*.cbr;*.cb7;*.cbt;"
+            + "*.cbz;*.xz;*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;*.webp;"
+            + "*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"
+            ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+            + "|Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg*.wdp*"                                   // Common pics
+            + "|jpg| *.jpg;*.jpeg*"                                                                         // JPG
+            + "|bmp|*.bmp;"                                                                                 // BMP
+            + "|PNG|*.png;"                                                                                 // PNG
+            + "|gif|*.gif;"                                                                                 // GIF
+            + "|ico|*.ico;"                                                                                 // ICO
+            + "|wdp|*.wdp;"                                                                                 // WDP
+            + "|svg|*.svg;"                                                                                 // SVG
+            + "|tif|*.tif;"                                                                                 // Tif
+            + "|Photoshop|*.psd;*.psb"                                                                      // PSD
+            + "|Archives|*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"                           // Archives
+            + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz"                                                        // Comics
+            + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw";      // Camera files
+
         /// <summary>
         /// Opens image in File Explorer
         /// </summary>
         internal static void Open_In_Explorer()
         {
-
             if (Pics.Count > 0)
             {
                 if (Pics.Count < FolderIndex)
@@ -31,7 +56,7 @@ namespace PicView.FileHandling
             }
             else return;
 
-            if (!File.Exists(Pics[FolderIndex]) || TheMainWindow.MainImage.Source == null)
+            if (!File.Exists(Pics[FolderIndex]) || LoadWindows.GetMainWindow.MainImage.Source == null)
             {
                 return;
             }
@@ -60,7 +85,7 @@ namespace PicView.FileHandling
             var dlg = new OpenFileDialog()
             {
                 Filter = FilterFiles,
-                Title = $"{Application.Current.Resources["OpenFileDialog"]} - {AppName}" 
+                Title = $"{Application.Current.Resources["OpenFileDialog"]} - {SetTitle.AppName}"
             };
             if (dlg.ShowDialog().Value)
             {
@@ -120,9 +145,9 @@ namespace PicView.FileHandling
             var Savedlg = new SaveFileDialog()
             {
                 Filter = FilterFiles,
-                Title = Application.Current.Resources["Save"] as string + $" - {AppName}",
+                Title = Application.Current.Resources["Save"] as string + $" - {SetTitle.AppName}",
                 FileName = fileName
-        };
+            };
 
             if (!Savedlg.ShowDialog().Value)
             {
@@ -140,7 +165,7 @@ namespace PicView.FileHandling
             }
             else
             {
-                if (!SaveImages.TrySaveImage(Rotateint, Flipped, TheMainWindow.MainImage.Source as BitmapSource, Savedlg.FileName))
+                if (!SaveImages.TrySaveImage(Rotateint, Flipped, LoadWindows.GetMainWindow.MainImage.Source as BitmapSource, Savedlg.FileName))
                 {
                     ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
                 }

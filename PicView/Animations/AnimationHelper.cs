@@ -281,7 +281,7 @@ namespace PicView.UILogic.Animations
                     Properties.Settings.Default.RedAlpha.R,
                     Properties.Settings.Default.RedAlpha.G,
                     Properties.Settings.Default.RedAlpha.B),
-                
+
                 6 => Color.FromArgb(
                     160,
                     Properties.Settings.Default.TealAlpha.R,

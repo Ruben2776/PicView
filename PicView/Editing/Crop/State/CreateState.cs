@@ -35,7 +35,6 @@ namespace PicView.Editing.Crop.State
             return new Position(left, top, width, height);
         }
 
-
         public void OnMouseUp(Point point)
         {
             // Blank override

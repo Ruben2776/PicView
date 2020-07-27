@@ -1,7 +1,7 @@
-﻿using PicView.UILogic.PicGallery;
+﻿using PicView.UILogic.Loading;
+using PicView.UILogic.PicGallery;
 using PicView.UILogic.Sizing;
 using System.Windows.Media;
-using static PicView.Library.Fields;
 
 namespace PicView.UILogic.TransformImage
 {
@@ -20,7 +20,7 @@ namespace PicView.UILogic.TransformImage
         /// <param name="r"></param>
         internal static void Rotate(int r)
         {
-            if (TheMainWindow.MainImage.Source == null)
+            if (LoadWindows.GetMainWindow.MainImage.Source == null)
             {
                 return;
             }
@@ -36,11 +36,11 @@ namespace PicView.UILogic.TransformImage
                 var flip = new ScaleTransform { ScaleX = -1 };
                 tg.Children.Add(flip);
                 tg.Children.Add(rt);
-                TheMainWindow.MainImage.LayoutTransform = tg;
+                LoadWindows.GetMainWindow.MainImage.LayoutTransform = tg;
             }
             else
             {
-                TheMainWindow.MainImage.LayoutTransform = rt;
+                LoadWindows.GetMainWindow.MainImage.LayoutTransform = rt;
             }
         }
 
@@ -50,7 +50,7 @@ namespace PicView.UILogic.TransformImage
         /// <param name="right"></param>
         internal static void Rotate(bool right)
         {
-            if (TheMainWindow.MainImage.Source == null ||
+            if (LoadWindows.GetMainWindow.MainImage.Source == null ||
                 Properties.Settings.Default.PicGallery == 1 && GalleryFunctions.IsOpen)
             { return; }
 
@@ -73,7 +73,7 @@ namespace PicView.UILogic.TransformImage
         /// </summary>
         internal static void Flip()
         {
-            if (TheMainWindow.MainImage.Source == null)
+            if (LoadWindows.GetMainWindow.MainImage.Source == null)
             {
                 return;
             }
@@ -96,7 +96,7 @@ namespace PicView.UILogic.TransformImage
             rt.Angle = Rotateint;
             tg.Children.Add(flip);
             tg.Children.Add(rt);
-            TheMainWindow.MainImage.LayoutTransform = tg;
+            LoadWindows.GetMainWindow.MainImage.LayoutTransform = tg;
         }
     }
 }

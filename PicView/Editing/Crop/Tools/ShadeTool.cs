@@ -25,14 +25,14 @@ namespace PicView.Editing.Crop.Tools
             var geometryGroup = new GeometryGroup();
             RectangleGeometry geometry1 =
                 new RectangleGeometry(new Rect(new Size(canvas.Width, canvas.Height)));
-                    _rectangleGeo = new RectangleGeometry(
-                        new Rect(
-                            _cropTool.TopLeftX,
-                            _cropTool.TopLeftY,
-                            _cropTool.Width,
-                            _cropTool.Height
-                        )
-            );
+            _rectangleGeo = new RectangleGeometry(
+                new Rect(
+                    _cropTool.TopLeftX,
+                    _cropTool.TopLeftY,
+                    _cropTool.Width,
+                    _cropTool.Height
+                )
+    );
 
             geometryGroup.Children.Add(geometry1);
             geometryGroup.Children.Add(_rectangleGeo);

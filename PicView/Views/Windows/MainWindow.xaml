@@ -63,7 +63,6 @@
                 Fill="{StaticResource BorderBrush}" />
 
             <uc:CustomTextBox x:Name="TitleText" Background="{StaticResource BackgroundSubtleHighlightBrush}" />
-
         </DockPanel>
 
         <DockPanel
@@ -167,7 +166,6 @@
                     </Canvas>
                 </Button>
 
-
                 <Canvas
                     Canvas.Left="112"
                     Width="182"
@@ -196,7 +194,6 @@
                     <uc:LeftButton x:Name="LeftButton" />
 
                     <uc:RightButton x:Name="RightButton" Canvas.Left="91" />
-
                 </Canvas>
 
                 <Rectangle
@@ -352,9 +349,7 @@
                     Height="35"
                     Fill="{StaticResource BorderBrush}" />
             </Canvas>
-
         </DockPanel>
-
 
         <DockPanel LastChildFill="True">
 

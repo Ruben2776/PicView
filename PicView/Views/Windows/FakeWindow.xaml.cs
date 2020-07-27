@@ -1,8 +1,9 @@
-﻿using System;
+﻿using PicView.UILogic.Loading;
+using PicView.UILogic.Sizing;
+using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
-using static PicView.Library.Fields;
 using static PicView.SystemIntegration.NativeMethods;
 using static PicView.UILogic.PicGallery.GalleryScroll;
 
@@ -13,10 +14,10 @@ namespace PicView.Views.Windows
         public FakeWindow()
         {
             InitializeComponent();
-            Width = MonitorInfo.Width;
-            Height = MonitorInfo.Height;
-            Width = MonitorInfo.Width;
-            Height = MonitorInfo.Height;
+            Width = WindowLogic.MonitorInfo.Width;
+            Height = WindowLogic.MonitorInfo.Height;
+            Width = WindowLogic.MonitorInfo.Width;
+            Height = WindowLogic.MonitorInfo.Height;
             ContentRendered += FakeWindow_ContentRendered;
         }
 
@@ -40,7 +41,7 @@ namespace PicView.Views.Windows
 
         private void FakeWindow_LostFocus(object sender, RoutedEventArgs e)
         {
-            TheMainWindow.Focus();
+            LoadWindows.GetMainWindow.Focus();
         }
 
         private void FakeWindow_StateChanged(object sender, EventArgs e)
@@ -48,7 +49,7 @@ namespace PicView.Views.Windows
             switch (WindowState)
             {
                 case WindowState.Normal:
-                    TheMainWindow.Focus();
+                    LoadWindows.GetMainWindow.Focus();
                     break;
 
                 case WindowState.Minimized:
@@ -76,11 +77,11 @@ namespace PicView.Views.Windows
 
         private void MainWindow_StateChanged(object sender, EventArgs e)
         {
-            switch (TheMainWindow.WindowState)
+            switch (LoadWindows.GetMainWindow.WindowState)
             {
                 case WindowState.Normal:
                     Show();
-                    TheMainWindow.BringIntoView();
+                    LoadWindows.GetMainWindow.BringIntoView();
                     break;
 
                 case WindowState.Minimized:
@@ -91,8 +92,7 @@ namespace PicView.Views.Windows
 
         private void FakeWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            TheMainWindow.Focus();
+            LoadWindows.GetMainWindow.Focus();
         }
-
     }
 }

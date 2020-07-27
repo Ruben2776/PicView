@@ -1,5 +1,4 @@
 ﻿using PicView.UILogic.Animations;
-using System.Windows.Media;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
 namespace PicView.UILogic.UserControls

@@ -10,9 +10,9 @@ using static PicView.FileHandling.Copy_Paste;
 using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.Open_Save;
 using static PicView.FileHandling.RecentFiles;
-using static PicView.Library.Fields;
 using static PicView.Library.Resources.SvgIcons;
 using static PicView.SystemIntegration.Wallpaper;
+using static PicView.UILogic.Loading.LoadWindows;
 
 namespace PicView.UILogic.Loading
 {
@@ -624,11 +624,11 @@ namespace PicView.UILogic.Loading
                 Fill = scbf
             };
             clcm.Icon = mclcmIcon;
-            clcm.Click += (s, x) => { cm.Visibility = Visibility.Collapsed; SystemCommands.CloseWindow(TheMainWindow); };
+            clcm.Click += (s, x) => { cm.Visibility = Visibility.Collapsed; SystemCommands.CloseWindow(LoadWindows.GetMainWindow); };
             cm.Items.Add(clcm);
 
             // Add to elements
-            TheMainWindow.MainImage.ContextMenu = TheMainWindow.ParentContainer.ContextMenu = cm;
+            LoadWindows.GetMainWindow.MainImage.ContextMenu = LoadWindows.GetMainWindow.ParentContainer.ContextMenu = cm;
             cm.Opened += (tt, yy) => Recentcm_Opened(recentcm);
 
 #if DEBUG

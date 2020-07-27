@@ -1,4 +1,5 @@
-﻿using PicView.UILogic.PicGallery;
+﻿using PicView.UILogic.Loading;
+using PicView.UILogic.PicGallery;
 using PicView.UILogic.Sizing;
 using System;
 using System.Runtime.InteropServices;
@@ -104,7 +105,6 @@ namespace PicView.SystemIntegration
         private const int WM_EXITSIZEMOVE = 0x232;
         private static bool WindowWasResized;
 
-
         /// Supress warnings about unused parameters, because they are required by OS.
         /// Executes when user manually resized window
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA1801:Review unused parameters", Justification = "<Pending>")]
@@ -133,8 +133,8 @@ namespace PicView.SystemIntegration
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            UILogic.UC.GetPicGallery.Width = Library.Fields.TheMainWindow.ParentContainer.Width;
-                            UILogic.UC.GetPicGallery.Height = Library.Fields.TheMainWindow.ParentContainer.Height;
+                            UILogic.UC.GetPicGallery.Width = LoadWindows.GetMainWindow.ParentContainer.Width;
+                            UILogic.UC.GetPicGallery.Height = LoadWindows.GetMainWindow.ParentContainer.Height;
                         }
                     }
 
@@ -157,7 +157,7 @@ namespace PicView.SystemIntegration
             public int Y;
         };
 
-        enum AccentState
+        private enum AccentState
         {
             ACCENT_DISABLED = 0,
             ACCENT_ENABLE_GRADIENT = 1,
@@ -166,7 +166,7 @@ namespace PicView.SystemIntegration
             ACCENT_INVALID_STATE = 4
         }
 
-        struct AccentPolicy : IEquatable<AccentPolicy>
+        private struct AccentPolicy : IEquatable<AccentPolicy>
         {
             public AccentState AccentState;
             public int AccentFlags;
@@ -199,7 +199,7 @@ namespace PicView.SystemIntegration
             }
         }
 
-        struct WindowCompositionAttributeData : IEquatable<WindowCompositionAttributeData>
+        private struct WindowCompositionAttributeData : IEquatable<WindowCompositionAttributeData>
         {
             public WindowCompositionAttribute Attribute;
             public IntPtr Data;
@@ -223,13 +223,13 @@ namespace PicView.SystemIntegration
             }
         }
 
-        enum WindowCompositionAttribute
+        private enum WindowCompositionAttribute
         {
             WCA_ACCENT_POLICY = 19
         }
 
         [DllImport("user32.dll")]
-        static extern int SetWindowCompositionAttribute(IntPtr hwnd, ref WindowCompositionAttributeData data);
+        private static extern int SetWindowCompositionAttribute(IntPtr hwnd, ref WindowCompositionAttributeData data);
 
         internal static void EnableBlur(Window window)
         {
@@ -255,14 +255,18 @@ namespace PicView.SystemIntegration
         }
 
         #region GetPixelColor
+
         // https://stackoverflow.com/a/24759418/13646636
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr GetDesktopWindow();
+
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr GetWindowDC(IntPtr window);
+
         [DllImport("gdi32.dll", SetLastError = true)]
         public static extern uint GetPixel(IntPtr dc, int x, int y);
+
         [DllImport("user32.dll", SetLastError = true)]
         public static extern int ReleaseDC(IntPtr window, IntPtr dc);
 
@@ -275,6 +279,6 @@ namespace PicView.SystemIntegration
             return System.Drawing.Color.FromArgb(255, (a >> 0) & 0xff, (a >> 8) & 0xff, (a >> 16) & 0xff);
         }
 
-        #endregion
+        #endregion GetPixelColor
     }
 }

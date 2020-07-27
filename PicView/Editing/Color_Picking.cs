@@ -2,7 +2,6 @@
 using PicView.UILogic;
 using PicView.UILogic.Loading;
 using PicView.UILogic.TransformImage;
-using PicView.UILogic.UserControls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -19,13 +18,13 @@ namespace PicView.Editing
         {
             IsRunning = true;
 
-            if (UC.GetColorPicker == null || !Fields.TheMainWindow.topLayer.Children.Contains(UC.GetColorPicker))
+            if (UC.GetColorPicker == null || !LoadWindows.GetMainWindow.topLayer.Children.Contains(UC.GetColorPicker))
             {
                 LoadControls.LoadColorPicker();
             }
 
             // Set cursor for coloc picking
-            Fields.TheMainWindow.Cursor = Cursors.Pen;
+            LoadWindows.GetMainWindow.Cursor = Cursors.Pen;
         }
 
         internal static void StartRunning()
@@ -38,14 +37,15 @@ namespace PicView.Editing
             // Set color values to usercontrol
             UC.GetColorPicker.HexCodePresenter.Content = Utilities.HexConverter(c);
             UC.GetColorPicker.RectangleColorPresenter.Fill =
-            UC.GetColorPicker.MainColorPresenter.Fill = new SolidColorBrush {
-                    Color = Color.FromRgb(
+            UC.GetColorPicker.MainColorPresenter.Fill = new SolidColorBrush
+            {
+                Color = Color.FromRgb(
                         c.R, c.G, c.B
                     )
             };
 
             // Set to follow cursor
-            Scroll.AutoScrollOrigin = Mouse.GetPosition(Fields.TheMainWindow);
+            Scroll.AutoScrollOrigin = Mouse.GetPosition(LoadWindows.GetMainWindow);
             Canvas.SetTop(UC.GetColorPicker, Scroll.AutoScrollOrigin.Value.Y);
             Canvas.SetLeft(UC.GetColorPicker, Scroll.AutoScrollOrigin.Value.X);
         }
@@ -53,7 +53,7 @@ namespace PicView.Editing
         internal static void StopRunning(bool addValue)
         {
             // Reset cursor from coloc picking
-            Fields.TheMainWindow.Cursor = Cursors.Arrow;
+            LoadWindows.GetMainWindow.Cursor = Cursors.Arrow;
 
             if (UC.GetColorPicker != null)
             {
@@ -61,15 +61,15 @@ namespace PicView.Editing
                 {
                     var x = UC.GetColorPicker.HexCodePresenter.Content.ToString();
                     Clipboard.SetText(x);
-                    Tooltip.ShowTooltipMessage(x + " " + Application.Current.Resources["AddedToClipboard"]); 
+                    Tooltip.ShowTooltipMessage(x + " " + Application.Current.Resources["AddedToClipboard"]);
                 }
 
-                Fields.TheMainWindow.topLayer.Children.Remove(UC.GetColorPicker);
+                LoadWindows.GetMainWindow.topLayer.Children.Remove(UC.GetColorPicker);
             }
 
             IsRunning = false;
 
-            Fields.TheMainWindow.Focus();
+            LoadWindows.GetMainWindow.Focus();
         }
     }
 }

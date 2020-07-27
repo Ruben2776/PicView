@@ -1,4 +1,5 @@
 ﻿using PicView.Library;
+using PicView.UILogic.Loading;
 using PicView.UILogic.TransformImage;
 using System;
 using System.Collections.Specialized;
@@ -6,7 +7,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.ChangeImage.Navigation;
-using static PicView.Library.Fields;
 
 namespace PicView.UILogic.DragAndDrop
 {
@@ -14,7 +14,7 @@ namespace PicView.UILogic.DragAndDrop
     {
         internal static void DragFile(object sender, MouseButtonEventArgs e)
         {
-            if (TheMainWindow.MainImage.Source == null
+            if (LoadWindows.GetMainWindow.MainImage.Source == null
                 || Keyboard.Modifiers != ModifierKeys.Control
                 || Keyboard.Modifiers == ModifierKeys.Shift
                 || Keyboard.Modifiers == ModifierKeys.Alt
@@ -25,7 +25,7 @@ namespace PicView.UILogic.DragAndDrop
                 return;
             }
 
-            if (TheMainWindow.TitleText.IsFocused)
+            if (LoadWindows.GetMainWindow.TitleText.IsFocused)
             {
                 EditTitleBar.Refocus();
                 return;
@@ -35,7 +35,7 @@ namespace PicView.UILogic.DragAndDrop
 
             if (Pics.Count == 0)
             {
-                string url = Utilities.GetURL(TheMainWindow.TitleText.Text);
+                string url = Utilities.GetURL(LoadWindows.GetMainWindow.TitleText.Text);
                 if (Uri.IsWellFormedUriString(url, UriKind.Absolute)) // Check if from web
                 {
                     // Create temp directory
@@ -53,7 +53,6 @@ namespace PicView.UILogic.DragAndDrop
                 {
                     return;
                 }
-
             }
             else if (Pics.Count > FolderIndex)
             {

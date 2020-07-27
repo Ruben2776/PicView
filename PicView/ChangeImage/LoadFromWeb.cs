@@ -1,4 +1,5 @@
 ﻿using PicView.FileHandling;
+using PicView.UILogic.Loading;
 using System;
 using System.Diagnostics;
 using System.Net;
@@ -9,7 +10,6 @@ using System.Windows.Threading;
 using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.ImageDecoder;
-using static PicView.Library.Fields;
 using static PicView.UILogic.SetTitle;
 using static PicView.UILogic.Tooltip;
 
@@ -23,7 +23,7 @@ namespace PicView.ChangeImage
         /// <param name="path"></param>
         internal static async void PicWeb(string path)
         {
-            TheMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
+            LoadWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
 
             BitmapSource pic;
             if (Pics != null && Pics.Count > 0)
@@ -55,9 +55,9 @@ namespace PicView.ChangeImage
             CanNavigate = false;
 
             // Fix not having focus after drag and drop
-            if (!TheMainWindow.IsFocused)
+            if (!LoadWindows.GetMainWindow.IsFocused)
             {
-                TheMainWindow.Focus();
+                LoadWindows.GetMainWindow.Focus();
             }
         }
 
@@ -74,14 +74,14 @@ namespace PicView.ChangeImage
             {
                 var client = new WebClient();
                 client.DownloadProgressChanged += (sender, e) =>
-                TheMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                LoadWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                 {
-                    TheMainWindow.Title = TheMainWindow.TitleText.Text =
+                    LoadWindows.GetMainWindow.Title = LoadWindows.GetMainWindow.TitleText.Text =
                         $"{e.BytesReceived} / {e.TotalBytesToReceive} {e.ProgressPercentage} {Application.Current.Resources["PercentComplete"]}";
-                    TheMainWindow.TitleText.ToolTip = TheMainWindow.Title;
+                    LoadWindows.GetMainWindow.TitleText.ToolTip = LoadWindows.GetMainWindow.Title;
                 }));
                 client.DownloadDataCompleted += (sender, e) =>
-                TheMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                LoadWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                 {
                     if (pic != null)
                     {

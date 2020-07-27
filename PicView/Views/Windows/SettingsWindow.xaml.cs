@@ -2,13 +2,13 @@
 using PicView.ConfigureSettings;
 using PicView.Translations;
 using PicView.UILogic.Animations;
+using PicView.UILogic.Sizing;
 using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static PicView.ConfigureSettings.ConfigColors;
-using static PicView.Library.Fields;
 using static PicView.SystemIntegration.Wallpaper;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
@@ -18,8 +18,8 @@ namespace PicView.Views.Windows
     {
         public SettingsWindow()
         {
-            Width = 500 * MonitorInfo.DpiScaling;
-            MaxHeight = MonitorInfo.Height - (70 * MonitorInfo.DpiScaling);
+            Width = 500 * WindowLogic.MonitorInfo.DpiScaling;
+            MaxHeight = WindowLogic.MonitorInfo.Height - (70 * WindowLogic.MonitorInfo.DpiScaling);
 
             InitializeComponent();
 
@@ -115,7 +115,6 @@ namespace PicView.Views.Windows
                     GeneralSettings.RestartApp();
                 };
 
-
                 // DarkThemeRadio
                 DarkThemeRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(DarkThemeText); };
                 DarkThemeRadio.MouseEnter += delegate { ButtonMouseOverAnim(DarkThemeText); };
@@ -185,9 +184,6 @@ namespace PicView.Views.Windows
                 RestartButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(RestartBrush); };
                 RestartButton.MouseLeave += delegate { ButtonMouseLeaveAnim(RestartText); };
                 RestartButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(RestartBrush); };
-
-
-
             };
         }
 
@@ -256,7 +252,7 @@ namespace PicView.Views.Windows
             {
                 case Key.Escape:
                     Hide();
-                    TheMainWindow.Focus();
+                    UILogic.Loading.LoadWindows.GetMainWindow.Focus();
                     break;
 
                 case Key.S:
@@ -723,6 +719,6 @@ namespace PicView.Views.Windows
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(GreyBrush, 12);
         }
 
-        #endregion EventHandlers 
+        #endregion EventHandlers
     }
 }

@@ -37,7 +37,6 @@
     <system:String x:Key="ViewLicenseFile">View license file</system:String>
     <system:String x:Key="Version">Version:</system:String>
 
-
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Window scaling</system:String>
     <system:String x:Key="NormalWindow">Normal window</system:String>
@@ -161,7 +160,6 @@
     <system:String x:Key="Start">Start</system:String>
     <system:String x:Key="Stop">Stop</system:String>
 
-
     <!--  Navigation related  -->
     <system:String x:Key="Navigation">Navigation</system:String>
     <system:String x:Key="NextImage">Next image</system:String>
@@ -262,7 +260,6 @@
     <system:String x:Key="Inches">inches</system:String>
     <system:String x:Key="BitDepth">Bit depth</system:String>
 
-
     <!--  Keyboard key names  -->
     <system:String x:Key="Delete">Delete</system:String>
     <system:String x:Key="Ctrl">Ctrl</system:String>
@@ -284,7 +281,6 @@
     <system:String x:Key="Up">Up</system:String>
     <system:String x:Key="Down">Down</system:String>
 
-
     <!--  Error messages  -->
     <system:String x:Key="SavingFileFailed">Saving file failed</system:String>
     <system:String x:Key="UnexpectedError">An unknown error occured</system:String>
@@ -305,7 +301,6 @@
     <system:String x:Key="RotateLeft">Rotate left</system:String>
     <system:String x:Key="Flip">Flip horizontally</system:String>
     <system:String x:Key="Unflip">Unflip</system:String>
-
 
     <!--  Archives  -->
     <system:String x:Key="Unzipping">Unzipping...</system:String>
@@ -363,5 +358,4 @@
 
     <system:String x:Key="ColorPickerTool">Color Picker Tool</system:String>
     <system:String x:Key="ColorPickerToolTooltip">Pick color from image</system:String>
-
 </ResourceDictionary>

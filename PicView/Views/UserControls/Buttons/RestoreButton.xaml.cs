@@ -10,7 +10,6 @@ namespace PicView.UILogic.UserControls
     /// </summary>
     public partial class Restorebutton : UserControl
     {
-
         public Restorebutton()
         {
             InitializeComponent();
@@ -40,7 +39,6 @@ namespace PicView.UILogic.UserControls
             {
                 MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
             };
-
         }
     }
 }

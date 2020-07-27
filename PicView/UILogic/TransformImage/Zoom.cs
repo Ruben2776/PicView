@@ -1,4 +1,5 @@
-﻿using PicView.UILogic.PicGallery;
+﻿using PicView.UILogic.Loading;
+using PicView.UILogic.PicGallery;
 using System;
 using System.Linq;
 using System.Windows;
@@ -6,7 +7,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using static PicView.ChangeImage.Navigation;
-using static PicView.Library.Fields;
 using static PicView.Library.Utilities;
 
 namespace PicView.UILogic.TransformImage
@@ -22,6 +22,8 @@ namespace PicView.UILogic.TransformImage
         /// since DoubleAnimation changes value of
         /// TranslateTransform continuesly.
         internal static double ZoomValue { get; set; }
+
+        internal const int zoomSpeed = 45;
 
         /// <summary>
         /// Returns zoom percentage. if 100%, return empty string
@@ -68,7 +70,7 @@ namespace PicView.UILogic.TransformImage
         internal static void InitializeZoom()
         {
             // Initialize transforms
-            TheMainWindow.MainImage.RenderTransform = new TransformGroup
+            LoadWindows.GetMainWindow.MainImage.RenderTransform = new TransformGroup
             {
                 Children = new TransformCollection {
                             new ScaleTransform(),
@@ -76,18 +78,18 @@ namespace PicView.UILogic.TransformImage
                         }
             };
 
-            TheMainWindow.Scroller.ClipToBounds = TheMainWindow.MainImage.ClipToBounds = true;
+            LoadWindows.GetMainWindow.Scroller.ClipToBounds = LoadWindows.GetMainWindow.MainImage.ClipToBounds = true;
 
             // Set transforms to UI elements
-            scaleTransform = (ScaleTransform)((TransformGroup)TheMainWindow.MainImage.RenderTransform).Children.First(tr => tr is ScaleTransform);
-            translateTransform = (TranslateTransform)((TransformGroup)TheMainWindow.MainImage.RenderTransform).Children.First(tr => tr is TranslateTransform);
+            scaleTransform = (ScaleTransform)((TransformGroup)LoadWindows.GetMainWindow.MainImage.RenderTransform).Children.First(tr => tr is ScaleTransform);
+            translateTransform = (TranslateTransform)((TransformGroup)LoadWindows.GetMainWindow.MainImage.RenderTransform).Children.First(tr => tr is TranslateTransform);
         }
 
         internal static void PreparePanImage(object sender, MouseButtonEventArgs e)
         {
             // Report position for image drag
-            TheMainWindow.MainImage.CaptureMouse();
-            start = e.GetPosition(TheMainWindow.MainImageBorder);
+            LoadWindows.GetMainWindow.MainImage.CaptureMouse();
+            start = e.GetPosition(LoadWindows.GetMainWindow.MainImageBorder);
             origin = new Point(translateTransform.X, translateTransform.Y);
         }
 
@@ -95,19 +97,19 @@ namespace PicView.UILogic.TransformImage
         {
             // Don't drag when full scale
             // and don't drag it if mouse not held down on image
-            if (!TheMainWindow.MainImage.IsMouseCaptured || scaleTransform.ScaleX == 1)
+            if (!LoadWindows.GetMainWindow.MainImage.IsMouseCaptured || scaleTransform.ScaleX == 1)
             {
                 return;
             }
 
             // Drag image by modifying X,Y coordinates
-            var dragMousePosition = start - e.GetPosition(TheMainWindow);
+            var dragMousePosition = start - e.GetPosition(LoadWindows.GetMainWindow);
 
             var newXproperty = origin.X - dragMousePosition.X;
             var newYproperty = origin.Y - dragMousePosition.Y;
 
-            var isXOutOfBorder = TheMainWindow.MainImageBorder.ActualWidth < (TheMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
-            var isYOutOfBorder = TheMainWindow.MainImageBorder.ActualHeight < (TheMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
+            var isXOutOfBorder = LoadWindows.GetMainWindow.MainImageBorder.ActualWidth < (LoadWindows.GetMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
+            var isYOutOfBorder = LoadWindows.GetMainWindow.MainImageBorder.ActualHeight < (LoadWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
             if ((isXOutOfBorder && newXproperty > 0) || (!isXOutOfBorder && newXproperty < 0))
             {
                 newXproperty = 0;
@@ -116,12 +118,12 @@ namespace PicView.UILogic.TransformImage
             {
                 newYproperty = 0;
             }
-            var maxX = TheMainWindow.MainImageBorder.ActualWidth - (TheMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
+            var maxX = LoadWindows.GetMainWindow.MainImageBorder.ActualWidth - (LoadWindows.GetMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
             if ((isXOutOfBorder && newXproperty < maxX) || (!isXOutOfBorder && newXproperty > maxX))
             {
                 newXproperty = maxX;
             }
-            var maxY = TheMainWindow.MainImageBorder.ActualHeight - (TheMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
+            var maxY = LoadWindows.GetMainWindow.MainImageBorder.ActualHeight - (LoadWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
             if ((isXOutOfBorder && newYproperty < maxY) || (!isXOutOfBorder && newYproperty > maxY))
             {
                 newYproperty = maxY;
@@ -138,7 +140,7 @@ namespace PicView.UILogic.TransformImage
         /// </summary>
         internal static void ResetZoom(bool animate = true)
         {
-            if (TheMainWindow.MainImage.Source == null) { return; }
+            if (LoadWindows.GetMainWindow.MainImage.Source == null) { return; }
 
             if (animate)
             {
@@ -157,11 +159,11 @@ namespace PicView.UILogic.TransformImage
             if (Pics.Count == 0)
             {
                 /// Display values from web
-                SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height);
+                SetTitle.SetTitleString((int)LoadWindows.GetMainWindow.MainImage.Source.Width, (int)LoadWindows.GetMainWindow.MainImage.Source.Height);
             }
             else
             {
-                SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height, FolderIndex);
+                SetTitle.SetTitleString((int)LoadWindows.GetMainWindow.MainImage.Source.Width, (int)LoadWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
             }
 
             UC.GetQuickSettingsMenu.ZoomSlider.Value = 1.0;
@@ -259,23 +261,22 @@ namespace PicView.UILogic.TransformImage
             if (Pics.Count == 0)
             {
                 /// Display values from web
-                SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height);
+                SetTitle.SetTitleString((int)LoadWindows.GetMainWindow.MainImage.Source.Width, (int)LoadWindows.GetMainWindow.MainImage.Source.Height);
             }
             else
             {
-                SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height, FolderIndex);
+                SetTitle.SetTitleString((int)LoadWindows.GetMainWindow.MainImage.Source.Width, (int)LoadWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
             }
 
             if (UC.GetQuickSettingsMenu.ZoomSlider.Value != value)
             {
                 UC.GetQuickSettingsMenu.ZoomSlider.Value = value;
             }
-
         }
 
         private static void BeginZoomAnimation(double zoomValue)
         {
-            Point relative = Mouse.GetPosition(TheMainWindow.MainImage);
+            Point relative = Mouse.GetPosition(LoadWindows.GetMainWindow.MainImage);
 
             // Calculate new position
             double absoluteX = relative.X * scaleTransform.ScaleX + translateTransform.X;
@@ -284,7 +285,6 @@ namespace PicView.UILogic.TransformImage
             // Reset to zero if value is one, which is reset
             double newTranslateValueX = zoomValue > 1 ? absoluteX - relative.X * zoomValue : 0;
             double newTranslateValueY = zoomValue > 1 ? absoluteY - relative.Y * zoomValue : 0;
-
 
             var duration = new Duration(TimeSpan.FromSeconds(.3));
 
@@ -334,7 +334,6 @@ namespace PicView.UILogic.TransformImage
 
             scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnim);
             scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnim);
-
         }
     }
 }

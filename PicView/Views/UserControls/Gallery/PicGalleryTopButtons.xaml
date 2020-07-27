@@ -62,6 +62,5 @@
                 </TransformGroup>
             </UserControls:Minus.RenderTransform>
         </UserControls:Minus>
-
     </StackPanel>
 </UserControl>

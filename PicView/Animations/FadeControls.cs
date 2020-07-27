@@ -1,7 +1,7 @@
-﻿using PicView.UILogic.TransformImage;
+﻿using PicView.UILogic.Loading;
+using PicView.UILogic.TransformImage;
 using System;
 using System.Timers;
-using static PicView.Library.Fields;
 using static PicView.UILogic.UC;
 
 namespace PicView.UILogic.Animations
@@ -26,7 +26,7 @@ namespace PicView.UILogic.Animations
                 || Getx2 == null
                 || GetGalleryShortcut == null
                 || Scroll.IsAutoScrolling)
-            { 
+            {
                 return;
             }
 
@@ -38,9 +38,9 @@ namespace PicView.UILogic.Animations
                 }
             }
 
-            await TheMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input, (Action)(() =>
+            await LoadWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input, (Action)(() =>
             {
-                if (Properties.Settings.Default.ScrollEnabled && TheMainWindow.Scroller.ScrollableHeight > 0)
+                if (Properties.Settings.Default.ScrollEnabled && LoadWindows.GetMainWindow.Scroller.ScrollableHeight > 0)
                 {
                     ScrollbarFade(show);
                 }
@@ -85,7 +85,6 @@ namespace PicView.UILogic.Animations
                 AnimationHelper.Fade(Getx2, 1, timespan);
                 AnimationHelper.Fade(GetMinus, 1, timespan);
                 AnimationHelper.Fade(GetRestorebutton, 1, timespan);
-
             }));
         }
 
@@ -95,7 +94,7 @@ namespace PicView.UILogic.Animations
         /// <param name="show"></param>
         internal static void ScrollbarFade(bool show)
         {
-            var s = TheMainWindow.Scroller.Template.FindName("PART_VerticalScrollBar", TheMainWindow.Scroller) as System.Windows.Controls.Primitives.ScrollBar;
+            var s = LoadWindows.GetMainWindow.Scroller.Template.FindName("PART_VerticalScrollBar", LoadWindows.GetMainWindow.Scroller) as System.Windows.Controls.Primitives.ScrollBar;
 
             if (show)
             {

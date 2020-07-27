@@ -1,6 +1,6 @@
 ﻿namespace PicView.Translations
 {
-    enum Languages
+    internal enum Languages
     {
         en,
         da

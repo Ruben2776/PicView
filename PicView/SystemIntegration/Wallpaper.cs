@@ -7,7 +7,6 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
 using static PicView.ChangeImage.Navigation;
-using static PicView.Library.Fields;
 using static PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.SystemIntegration
@@ -29,39 +28,40 @@ namespace PicView.SystemIntegration
         /// <param name="style"></param>
         internal static void SetWallpaper(WallpaperStyle style)
         {
-            string wallpaper = Library.Utilities.GetURL(TheMainWindow.TitleText.Text);
+            string wallpaper = Library.Utilities.GetURL(UILogic.Loading.LoadWindows.GetMainWindow.TitleText.Text);
 
             if (Uri.IsWellFormedUriString(wallpaper, UriKind.Absolute)) // Check if from web
+            {
+                Task.Run(() =>
                 {
-                    Task.Run(() => {
-                        // Create temp directory
-                        var tempPath = Path.GetTempPath();
-                        var randomName = Path.GetRandomFileName();
+                    // Create temp directory
+                    var tempPath = Path.GetTempPath();
+                    var randomName = Path.GetRandomFileName();
 
-                        // Download to it
-                        using var webClient = new System.Net.WebClient();
-                        Directory.CreateDirectory(tempPath);
-                        webClient.DownloadFile(wallpaper, tempPath + randomName);
+                    // Download to it
+                    using var webClient = new System.Net.WebClient();
+                    Directory.CreateDirectory(tempPath);
+                    webClient.DownloadFile(wallpaper, tempPath + randomName);
 
-                        // Use it
-                        SetDesktopWallpaper(tempPath + randomName, style);
+                    // Use it
+                    SetDesktopWallpaper(tempPath + randomName, style);
 
-                        // Clean up
-                        File.Delete(tempPath + randomName);
-                        using var timer = new Timer(2000);
-                        timer.Elapsed += (s, x) => Directory.Delete(tempPath);
-                    });
+                    // Clean up
+                    File.Delete(tempPath + randomName);
+                    using var timer = new Timer(2000);
+                    timer.Elapsed += (s, x) => Directory.Delete(tempPath);
+                });
 
-                    return;
-                }
-                // TODO add Base64 support
-
+                return;
+            }
+            // TODO add Base64 support
 
             if (Pics.Count > 0)
             {
                 if (FolderIndex < Pics.Count)
                 {
-                    Task.Run(() => {
+                    Task.Run(() =>
+                    {
                         SetDesktopWallpaper(Pics[FolderIndex], style);
                     });
                 }

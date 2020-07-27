@@ -216,7 +216,6 @@
                                 <SolidColorBrush x:Name="PurpleBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
                         </RadioButton>
-
                     </WrapPanel>
 
                     <Label
@@ -282,7 +281,6 @@
                         Content="{StaticResource ChangingThemeRequiresRestart}"
                         FontSize="12" />
 
-
                     <Label
                         Margin="0,3,0,0"
                         HorizontalAlignment="Center"
@@ -337,8 +335,6 @@
                                 </CheckBox.Foreground>
                             </CheckBox>
                         </Border>
-
-
                     </WrapPanel>
 
                     <Label
@@ -442,11 +438,7 @@
                                 </Button.Foreground>
                             </Button>
                         </Border>
-
-
                     </WrapPanel>
-
-
 
                     <Label
                         x:Name="LanguageLabel"
@@ -465,7 +457,6 @@
                         HorizontalAlignment="Center"
                         Content="{StaticResource ChangingLanguageRequiresRestart}"
                         FontSize="12" />
-
 
                     <Label
                         Margin="0,3,0,0"
@@ -520,7 +511,6 @@
                             </Button.Foreground>
                         </Button>
                     </Border>
-
                 </StackPanel>
             </ScrollViewer>
         </Border>

@@ -103,9 +103,11 @@ namespace PicView.UILogic
                 if (!value)
                 {
                     da.To = 0;
-                    da.Completed += delegate { 
+                    da.Completed += delegate
+                    {
                         GetQuickSettingsMenu.Visibility = Visibility.Hidden;
-                        GetQuickSettingsMenu.ZoomSliderParent.Visibility = Visibility.Collapsed; };
+                        GetQuickSettingsMenu.ZoomSliderParent.Visibility = Visibility.Collapsed;
+                    };
                 }
                 else
                 {
@@ -114,7 +116,7 @@ namespace PicView.UILogic
 
                 if (GetQuickSettingsMenu != null)
                 {
-                    if (Library.Fields.TheMainWindow.MainImage.Source != null)
+                    if (Loading.LoadWindows.GetMainWindow.MainImage.Source != null)
                     {
                         GetQuickSettingsMenu.GoToPic.GoToPicBox.Text =
                             (Navigation.FolderIndex + 1)
@@ -153,8 +155,6 @@ namespace PicView.UILogic
                 }
             }
         }
-
-        
 
         /// <summary>
         /// Check if any UserControls are open

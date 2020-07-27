@@ -1,10 +1,9 @@
 ﻿using PicView.SystemIntegration;
 using PicView.UILogic.Animations;
-using PicView.UILogic.UserControls;
+using PicView.UILogic.Loading;
 using System;
 using System.Timers;
 using static PicView.ChangeImage.Navigation;
-using static PicView.Library.Fields;
 using static PicView.UILogic.Sizing.WindowLogic;
 
 namespace PicView.UILogic
@@ -70,9 +69,9 @@ namespace PicView.UILogic
         /// <param name="e"></param>
         private static void SlideTimer_Elapsed(object server, ElapsedEventArgs e)
         {
-            AnimationHelper.Fade(TheMainWindow.MainImage, TimeSpan.FromSeconds(0.8), TimeSpan.FromSeconds(0), 0, .5);
+            AnimationHelper.Fade(LoadWindows.GetMainWindow.MainImage, TimeSpan.FromSeconds(0.8), TimeSpan.FromSeconds(0), 0, .5);
             Pic();
-            AnimationHelper.Fade(TheMainWindow.MainImage, TimeSpan.FromSeconds(0.7), TimeSpan.FromSeconds(0), .5, 1);
+            AnimationHelper.Fade(LoadWindows.GetMainWindow.MainImage, TimeSpan.FromSeconds(0.7), TimeSpan.FromSeconds(0), .5, 1);
         }
     }
 }

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using PicView.UILogic.Loading;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using static PicView.Library.Fields;
 using static PicView.UILogic.UC;
 
 namespace PicView.UILogic.PicGallery
@@ -32,7 +32,7 @@ namespace PicView.UILogic.PicGallery
 
         internal static async Task Add(BitmapSource pic, int id)
         {
-            await TheMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+            await LoadWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
             {
                 var selected = id == ChangeImage.Navigation.FolderIndex;
                 var item = new UserControls.PicGalleryItem(pic, id, selected);

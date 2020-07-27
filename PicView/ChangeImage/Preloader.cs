@@ -5,7 +5,6 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
-using static PicView.Library.Fields;
 
 namespace PicView.ChangeImage
 {
@@ -14,7 +13,6 @@ namespace PicView.ChangeImage
     /// </summary>
     internal static class Preloader
     {
-
         /// <summary>
         /// Preloader list of BitmapSources
         /// </summary>
@@ -30,7 +28,7 @@ namespace PicView.ChangeImage
         {
             return Task.Run(() =>
             {
-                var pic = ImageDecoder.RenderToBitmapSource(file);               
+                var pic = ImageDecoder.RenderToBitmapSource(file);
 
 #if DEBUG
                 Trace.WriteLine($"Added {file} to Preloader, index {Pics.IndexOf(file)}");

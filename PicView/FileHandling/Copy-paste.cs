@@ -1,5 +1,6 @@
 ﻿using PicView.ChangeImage;
 using PicView.ImageHandling;
+using PicView.UILogic.Loading;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -11,7 +12,6 @@ using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileFunctions;
 using static PicView.FileHandling.FileLists;
-using static PicView.Library.Fields;
 using static PicView.UILogic.Tooltip;
 
 namespace PicView.FileHandling
@@ -66,17 +66,17 @@ namespace PicView.FileHandling
 
         internal static void CopyBitmap()
         {
-            if (Pics.Count == 0 && TheMainWindow.MainImage.Source != null)
+            if (Pics.Count == 0 && LoadWindows.GetMainWindow.MainImage.Source != null)
             {
-                Clipboard.SetImage((BitmapSource)TheMainWindow.MainImage.Source);
+                Clipboard.SetImage((BitmapSource)LoadWindows.GetMainWindow.MainImage.Source);
             }
             else if (Preloader.Contains(Pics[FolderIndex]))
             {
                 Clipboard.SetImage(Preloader.Load(Pics[FolderIndex]));
             }
-            else if (TheMainWindow.MainImage.Source != null)
+            else if (LoadWindows.GetMainWindow.MainImage.Source != null)
             {
-                Clipboard.SetImage((BitmapSource)TheMainWindow.MainImage.Source);
+                Clipboard.SetImage((BitmapSource)LoadWindows.GetMainWindow.MainImage.Source);
             }
             else
             {

@@ -27,7 +27,7 @@ namespace PicView.SystemIntegration
                 using var stream = await storageFile.OpenAsync(FileAccessMode.Read);
                 await LockScreen.SetImageStreamAsync(stream);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 MessageBox.Show(e.Message);
             }

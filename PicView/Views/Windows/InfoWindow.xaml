@@ -127,7 +127,6 @@
                                 Text="A" />
                         </Border>
 
-
                         <Border
                             Grid.Row="0"
                             Grid.Column="2"
@@ -141,8 +140,6 @@
                                 FontSize="14"
                                 Text="{StaticResource ResourceKey=Left}" />
                         </Border>
-
-
 
                         <Border
                             Grid.Row="1"
@@ -172,7 +169,6 @@
                                 Text="D" />
                         </Border>
 
-
                         <Border
                             Grid.Row="1"
                             Grid.Column="2"
@@ -187,7 +183,6 @@
                                 FontSize="14"
                                 Text="{StaticResource ResourceKey=Right}" />
                         </Border>
-
 
                         <Border
                             Grid.Row="2"
@@ -225,7 +220,6 @@
                             </StackPanel>
                         </Border>
 
-
                         <Border
                             Grid.Row="2"
                             Grid.Column="2"
@@ -251,7 +245,6 @@
                                     Text="{StaticResource ResourceKey=Left}" />
                             </StackPanel>
                         </Border>
-
 
                         <Border
                             Grid.Row="4"
@@ -289,7 +282,6 @@
                                 <TextBlock FontSize="14" Text="D" />
                             </StackPanel>
                         </Border>
-
 
                         <Border
                             Grid.Row="4"
@@ -345,7 +337,6 @@
                                 Text="L" />
                         </Border>
 
-
                         <Border
                             Grid.Row="5"
                             Grid.Column="2"
@@ -358,9 +349,7 @@
                                 Style="{StaticResource txtItalic}"
                                 Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
                         </Border>
-
                     </Grid>
-
 
                     <Label
                         Width="480"
@@ -408,7 +397,6 @@
                                 Text="W" />
                         </Border>
 
-
                         <Border
                             Grid.Row="0"
                             Grid.Column="2"
@@ -423,8 +411,6 @@
                                 FontSize="15"
                                 Text="{StaticResource ResourceKey=Up}" />
                         </Border>
-
-
 
                         <Border
                             Grid.Row="1"
@@ -454,7 +440,6 @@
                                 Text="S" />
                         </Border>
 
-
                         <Border
                             Grid.Row="1"
                             Grid.Column="2"
@@ -469,7 +454,6 @@
                                 FontSize="15"
                                 Text="{StaticResource ResourceKey=Down}" />
                         </Border>
-
 
                         <Border
                             Grid.Row="2"
@@ -499,7 +483,6 @@
                                 Text="F" />
                         </Border>
 
-
                         <Border
                             Grid.Row="2"
                             Grid.Column="2"
@@ -507,7 +490,6 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1" />
-
                     </Grid>
 
                     <Label
@@ -559,7 +541,6 @@
                                 Text="{StaticResource ResourceKey=MouseWheel}" />
                         </Border>
 
-
                         <Border
                             Grid.Row="0"
                             Grid.Column="2"
@@ -574,8 +555,6 @@
                                 FontSize="14"
                                 Text="{StaticResource ResourceKey=NumpadPlus}" />
                         </Border>
-
-
 
                         <Border
                             Grid.Row="1"
@@ -605,7 +584,6 @@
                                 FontSize="14"
                                 Text="{StaticResource ResourceKey=MouseWheel}" />
                         </Border>
-
 
                         <Border
                             Grid.Row="1"
@@ -651,7 +629,6 @@
                                 Text="{StaticResource ResourceKey=MouseDrag}" />
                         </Border>
 
-
                         <Border
                             Grid.Row="2"
                             Grid.Column="2"
@@ -659,7 +636,6 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0" />
-
 
                         <Border
                             Grid.Row="3"
@@ -689,7 +665,6 @@
                                 FontSize="14"
                                 Text="{StaticResource ResourceKey=DoubleClick}" />
                         </Border>
-
 
                         <Border
                             Grid.Row="3"
@@ -727,7 +702,6 @@
                                 Text="X" />
                         </Border>
 
-
                         <Border
                             Grid.Row="4"
                             Grid.Column="2"
@@ -740,10 +714,7 @@
                                 Style="{StaticResource txtItalic}"
                                 Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
                         </Border>
-
-
                     </Grid>
-
 
                     <Label
                         Width="480"
@@ -792,7 +763,6 @@
                                 Text="1" />
                         </Border>
 
-
                         <Border
                             Grid.Row="0"
                             Grid.Column="2"
@@ -805,8 +775,6 @@
                                 Style="{StaticResource txtItalic}"
                                 Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
                         </Border>
-
-
 
                         <Border
                             Grid.Row="1"
@@ -836,7 +804,6 @@
                                 Text="2" />
                         </Border>
 
-
                         <Border
                             Grid.Row="1"
                             Grid.Column="2"
@@ -849,7 +816,6 @@
                                 Style="{StaticResource txtItalic}"
                                 Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
                         </Border>
-
 
                         <Border
                             Grid.Row="2"
@@ -879,7 +845,6 @@
                                 Text="3" />
                         </Border>
 
-
                         <Border
                             Grid.Row="2"
                             Grid.Column="2"
@@ -892,7 +857,6 @@
                                 Style="{StaticResource txtItalic}"
                                 Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
                         </Border>
-
 
                         <Border
                             Grid.Row="4"
@@ -922,7 +886,6 @@
                                 Text="4" />
                         </Border>
 
-
                         <Border
                             Grid.Row="4"
                             Grid.Column="2"
@@ -935,11 +898,7 @@
                                 Style="{StaticResource txtItalic}"
                                 Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
                         </Border>
-
                     </Grid>
-
-
-
 
                     <Label
                         Width="480"
@@ -997,7 +956,6 @@
                             </StackPanel>
                         </Border>
 
-
                         <Border
                             Grid.Row="0"
                             Grid.Column="2"
@@ -1010,8 +968,6 @@
                                 Style="{StaticResource txtItalic}"
                                 Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
                         </Border>
-
-
 
                         <Border
                             Grid.Row="1"
@@ -1041,7 +997,6 @@
                                 Text="T" />
                         </Border>
 
-
                         <Border
                             Grid.Row="1"
                             Grid.Column="2"
@@ -1054,7 +1009,6 @@
                                 Style="{StaticResource txtItalic}"
                                 Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
                         </Border>
-
 
                         <Border
                             Grid.Row="2"
@@ -1084,7 +1038,6 @@
                                 Text="F11" />
                         </Border>
 
-
                         <Border
                             Grid.Row="2"
                             Grid.Column="2"
@@ -1110,7 +1063,6 @@
                                     Text="{StaticResource ResourceKey=Enter}" />
                             </StackPanel>
                         </Border>
-
 
                         <Border
                             Grid.Row="4"
@@ -1140,7 +1092,6 @@
                                 Text="F5" />
                         </Border>
 
-
                         <Border
                             Grid.Row="4"
                             Grid.Column="2"
@@ -1148,16 +1099,13 @@
                             Background="{StaticResource BackgroundColorBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1" />
-
                     </Grid>
-
 
                     <Label
                         Width="480"
                         Margin="-4,0,0,10"
                         d:Content="File management"
                         Content="{StaticResource ResourceKey=FileManagement}" />
-
 
                     <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
@@ -1215,7 +1163,6 @@
                             </StackPanel>
                         </Border>
 
-
                         <Border
                             Grid.Row="0"
                             Grid.Column="2"
@@ -1229,8 +1176,6 @@
                                 FontSize="14"
                                 Text="O" />
                         </Border>
-
-
 
                         <Border
                             Grid.Row="1"
@@ -1269,7 +1214,6 @@
                             </StackPanel>
                         </Border>
 
-
                         <Border
                             Grid.Row="1"
                             Grid.Column="2"
@@ -1277,7 +1221,6 @@
                             Background="{StaticResource BackgroundColorBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0" />
-
 
                         <Border
                             Grid.Row="2"
@@ -1312,7 +1255,6 @@
                                 <TextBlock FontSize="14" Text="P" />
                             </StackPanel>
                         </Border>
-
 
                         <Border
                             Grid.Row="2"
@@ -1359,7 +1301,6 @@
                             </StackPanel>
                         </Border>
 
-
                         <Border
                             Grid.Row="3"
                             Grid.Column="2"
@@ -1386,7 +1327,6 @@
                                     Text="{StaticResource ResourceKey=DragImage}" />
                             </StackPanel>
                         </Border>
-
 
                         <Border
                             Grid.Row="4"
@@ -1425,7 +1365,6 @@
                             </StackPanel>
                         </Border>
 
-
                         <Border
                             Grid.Row="4"
                             Grid.Column="2"
@@ -1433,7 +1372,6 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1" />
-
 
                         <Border
                             Grid.Row="5"
@@ -1463,7 +1401,6 @@
                                 FontSize="14"
                                 Text="{StaticResource ResourceKey=Delete}" />
                         </Border>
-
 
                         <Border
                             Grid.Row="5"
@@ -1519,7 +1456,6 @@
                                 Text="F2" />
                         </Border>
 
-
                         <Border
                             Grid.Row="6"
                             Grid.Column="2"
@@ -1555,7 +1491,6 @@
                                 FontSize="14"
                                 Text="F3" />
                         </Border>
-
 
                         <Border
                             Grid.Row="7"
@@ -1602,7 +1537,6 @@
                             </StackPanel>
                         </Border>
 
-
                         <Border
                             Grid.Row="8"
                             Grid.Column="2"
@@ -1610,9 +1544,7 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1" />
-
                     </Grid>
-
 
                     <Label
                         Width="480"
@@ -1663,7 +1595,6 @@
                                 Text="F1" />
                         </Border>
 
-
                         <Border
                             Grid.Row="0"
                             Grid.Column="2"
@@ -1671,8 +1602,6 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0" />
-
-
 
                         <Border
                             Grid.Row="1"
@@ -1702,7 +1631,6 @@
                                 Text="F4" />
                         </Border>
 
-
                         <Border
                             Grid.Row="1"
                             Grid.Column="2"
@@ -1710,7 +1638,6 @@
                             Background="{StaticResource BackgroundColorBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0" />
-
 
                         <Border
                             Grid.Row="2"
@@ -1742,7 +1669,6 @@
                                 ToolTip="{StaticResource ResourceKey=EscCloseTooltip}" />
                         </Border>
 
-
                         <Border
                             Grid.Row="2"
                             Grid.Column="2"
@@ -1766,7 +1692,6 @@
                                 <TextBlock FontSize="14" Text="Q" />
                             </StackPanel>
                         </Border>
-
 
                         <Border
                             Grid.Row="3"
@@ -1808,7 +1733,6 @@
                             </StackPanel>
                         </Border>
 
-
                         <Border
                             Grid.Row="3"
                             Grid.Column="2"
@@ -1845,7 +1769,6 @@
                                 FontSize="14"
                                 Text="{StaticResource ResourceKey=Space}" />
                         </Border>
-
 
                         <Border
                             Grid.Row="4"
@@ -1895,7 +1818,6 @@
                             </StackPanel>
                         </Border>
 
-
                         <Border
                             Grid.Row="5"
                             Grid.Column="2"
@@ -1903,10 +1825,7 @@
                             Background="{StaticResource BackgroundColorBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0" />
-
-
                     </Grid>
-
 
                     <Label
                         Width="480"
@@ -1954,7 +1873,6 @@
                                 Text="E" />
                         </Border>
 
-
                         <Border
                             Grid.Row="0"
                             Grid.Column="2"
@@ -1962,8 +1880,6 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0" />
-
-
 
                         <Border
                             Grid.Row="1"
@@ -2002,7 +1918,6 @@
                             </StackPanel>
                         </Border>
 
-
                         <Border
                             Grid.Row="1"
                             Grid.Column="2"
@@ -2010,7 +1925,6 @@
                             Background="{StaticResource BackgroundColorBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0" />
-
 
                         <Border
                             Grid.Row="2"
@@ -2040,7 +1954,6 @@
                                 Text="C" />
                         </Border>
 
-
                         <Border
                             Grid.Row="2"
                             Grid.Column="2"
@@ -2048,7 +1961,6 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1" />
-
                     </Grid>
 
                     <Label
@@ -2108,7 +2020,6 @@
                             </StackPanel>
                         </Border>
 
-
                         <Border
                             Grid.Row="0"
                             Grid.Column="2"
@@ -2123,8 +2034,6 @@
                                 FontSize="14"
                                 Text="{StaticResource ResourceKey=MouseKeyForward}" />
                         </Border>
-
-
 
                         <Border
                             Grid.Row="1"
@@ -2166,7 +2075,6 @@
                             </StackPanel>
                         </Border>
 
-
                         <Border
                             Grid.Row="1"
                             Grid.Column="2"
@@ -2181,9 +2089,7 @@
                                 FontSize="14"
                                 Text="{StaticResource ResourceKey=MouseKeyBack}" />
                         </Border>
-
                     </Grid>
-
 
                     <StackPanel Margin="0,28,0,7">
 

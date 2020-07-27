@@ -1,10 +1,10 @@
 ﻿using PicView.Library.Resources;
 using PicView.UILogic.Animations;
+using PicView.UILogic.Loading;
 using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
-using static PicView.Library.Fields;
 
 namespace PicView.ConfigureSettings
 {
@@ -14,6 +14,7 @@ namespace PicView.ConfigureSettings
     internal static class ConfigColors
     {
         #region Update and set colors
+
         /// <summary>
         /// Helper for user color settings
         /// </summary>
@@ -64,29 +65,29 @@ namespace PicView.ConfigureSettings
             switch (Properties.Settings.Default.BgColorChoice)
             {
                 case 0:
-                    TheMainWindow.ParentContainer.Background = Brushes.Transparent;
+                    LoadWindows.GetMainWindow.ParentContainer.Background = Brushes.Transparent;
                     break;
 
                 case 1:
                     var brush = Properties.Settings.Default.LightTheme ? Brushes.Black : Brushes.White;
-                    TheMainWindow.ParentContainer.Background = brush;
+                    LoadWindows.GetMainWindow.ParentContainer.Background = brush;
                     break;
 
                 case 2:
-                    TheMainWindow.ParentContainer.Background = DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
+                    LoadWindows.GetMainWindow.ParentContainer.Background = DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
                     break;
             }
 
             backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
         }
 
-        #endregion
+        #endregion Update and set colors
 
         #region Change background
 
         internal static void ChangeBackground(object sender, RoutedEventArgs e)
         {
-            if (TheMainWindow.ParentContainer == null)
+            if (LoadWindows.GetMainWindow.ParentContainer == null)
             {
                 return;
             }
@@ -102,28 +103,28 @@ namespace PicView.ConfigureSettings
             {
                 case 0:
                     var x = new SolidColorBrush(Colors.Transparent);
-                    if (TheMainWindow.ParentContainer.Background == x)
+                    if (LoadWindows.GetMainWindow.ParentContainer.Background == x)
                     {
                         goto case 1;
                     }
-                    TheMainWindow.ParentContainer.Background = x;
+                    LoadWindows.GetMainWindow.ParentContainer.Background = x;
                     break;
 
                 case 1:
                     var brush = Properties.Settings.Default.LightTheme ? Brushes.Black : Brushes.White;
-                    TheMainWindow.ParentContainer.Background = brush;
+                    LoadWindows.GetMainWindow.ParentContainer.Background = brush;
                     break;
 
                 case 2:
                     var checkerboardBg = DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
                     if (checkerboardBg != null)
                     {
-                        TheMainWindow.ParentContainer.Background = checkerboardBg;
+                        LoadWindows.GetMainWindow.ParentContainer.Background = checkerboardBg;
                     }
                     break;
 
                 default:
-                    TheMainWindow.ParentContainer.Background = Brushes.Transparent;
+                    LoadWindows.GetMainWindow.ParentContainer.Background = Brushes.Transparent;
                     break;
             }
         }
@@ -139,7 +140,7 @@ namespace PicView.ConfigureSettings
             };
         }
 
-        #endregion
+        #endregion Change background
 
         #region Change Theme
 
@@ -153,10 +154,9 @@ namespace PicView.ConfigureSettings
             Properties.Settings.Default.LightTheme = true;
         }
 
-
         internal static void ChangeToDarkTheme()
         {
-            Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary 
+            Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
             {
                 Source = new Uri(@"/PicView;component/Themes/Styles/ColorThemes/Dark.xaml", UriKind.Relative)
             };
@@ -164,7 +164,7 @@ namespace PicView.ConfigureSettings
             Properties.Settings.Default.LightTheme = false;
         }
 
-        #endregion
+        #endregion Change Theme
 
         #region Set ColorTheme
 

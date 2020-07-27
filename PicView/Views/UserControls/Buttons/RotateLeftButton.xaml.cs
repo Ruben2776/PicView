@@ -23,11 +23,11 @@ namespace PicView.UILogic.UserControls
                 {
                     ButtonMouseLeaveAnimBgColor(RotateButtonBrush, false);
                 };
-                TheButton.Click += delegate 
+                TheButton.Click += delegate
                 {
                     TransformImage.Rotation.Rotate(false);
                     // TODO move cursor if necessary
-                }; 
+                };
             };
         }
     }

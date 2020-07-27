@@ -1,5 +1,6 @@
 ﻿using PicView.ChangeImage;
 using PicView.UILogic.Animations;
+using PicView.UILogic.Loading;
 using PicView.UILogic.Sizing;
 using System;
 using System.Windows;
@@ -9,7 +10,6 @@ using System.Windows.Media.Animation;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.ImageDecoder;
 using static PicView.ImageHandling.Thumbnails;
-using static PicView.Library.Fields;
 using static PicView.UILogic.PicGallery.GalleryFunctions;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.UC;
@@ -24,7 +24,7 @@ namespace PicView.UILogic.PicGallery
     {
         internal static void Click(int id)
         {
-            TheMainWindow.Focus();
+            LoadWindows.GetMainWindow.Focus();
 
             if (Properties.Settings.Default.PicGallery == 1)
             {
@@ -43,10 +43,10 @@ namespace PicView.UILogic.PicGallery
                     GetPicGallery.Width = xWidth;
                     GetPicGallery.Height = xHeight;
                 }
-                
+
                 GetPicGallery.x2.Visibility = Visibility.Hidden;
 
-                TheMainWindow.MainImage.Source = null;
+                LoadWindows.GetMainWindow.MainImage.Source = null;
 
                 var img = new Image()
                 {
@@ -111,7 +111,7 @@ namespace PicView.UILogic.PicGallery
 
         internal static void PreviewItemClick(ImageSource source, int id)
         {
-            TheMainWindow.MainImage.Source = source;
+            LoadWindows.GetMainWindow.MainImage.Source = source;
             var size = ImageSize(Pics[id]);
             if (size.HasValue)
             {

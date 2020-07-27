@@ -16,7 +16,6 @@ namespace PicView.UILogic.UserControls
                 MouseEnter += (s, x) => ButtonMouseOverAnim(CloseButtonBrush, true);
                 MouseLeave += (s, x) => ButtonMouseLeaveAnim(CloseButtonBrush, true);
 
-
                 ToolTip = Application.Current.Resources["Close"];
             };
         }

@@ -9,7 +9,6 @@ using System.Windows;
 using System.Windows.Interop;
 using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
-using static PicView.Library.Fields;
 using static PicView.UILogic.Loading.LoadContextMenus;
 using static PicView.UILogic.Loading.LoadControls;
 using static PicView.UILogic.Sizing.WindowLogic;
@@ -26,20 +25,20 @@ namespace PicView.UILogic.Loading
 #if DEBUG
             Trace.Listeners.Add(new TextWriterTraceListener("Debug.log"));
             Trace.Unindent();
-            Trace.WriteLine(AppName + " started at " + DateTime.Now);
+            Trace.WriteLine(SetTitle.AppName + " started at " + DateTime.Now);
 #endif
             // theese two line have to be exactly onload
-            HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(TheMainWindow).Handle);
+            HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(LoadWindows.GetMainWindow).Handle);
             source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
 
             FreshStartup = true;
 
             if (!Properties.Settings.Default.ShowInterface)
             {
-                TheMainWindow.TitleBar.Visibility =
-                TheMainWindow.LowerBar.Visibility =
-                TheMainWindow.LeftBorderRectangle.Visibility =
-                TheMainWindow.RightBorderRectangle.Visibility
+                LoadWindows.GetMainWindow.TitleBar.Visibility =
+                LoadWindows.GetMainWindow.LowerBar.Visibility =
+                LoadWindows.GetMainWindow.LeftBorderRectangle.Visibility =
+                LoadWindows.GetMainWindow.RightBorderRectangle.Visibility
                 = Visibility.Collapsed;
             }
 
@@ -127,12 +126,12 @@ namespace PicView.UILogic.Loading
                 {
                     ScaleImage.TryFitImage(arg.ToString());
                 }
-                else if(Properties.Settings.Default.Width != 0)
+                else if (Properties.Settings.Default.Width != 0)
                 {
-                    TheMainWindow.Top = Properties.Settings.Default.Top;
-                    TheMainWindow.Left = Properties.Settings.Default.Left;
-                    TheMainWindow.Width = Properties.Settings.Default.Width;
-                    TheMainWindow.Height = Properties.Settings.Default.Height;
+                    LoadWindows.GetMainWindow.Top = Properties.Settings.Default.Top;
+                    LoadWindows.GetMainWindow.Left = Properties.Settings.Default.Left;
+                    LoadWindows.GetMainWindow.Width = Properties.Settings.Default.Width;
+                    LoadWindows.GetMainWindow.Height = Properties.Settings.Default.Height;
                 }
 
                 Pic(arg.ToString());
@@ -150,7 +149,7 @@ namespace PicView.UILogic.Loading
         {
             // Update values
             ConfigureSettings.ConfigColors.SetColors();
-            TheMainWindow.AllowDrop = true;
+            LoadWindows.GetMainWindow.AllowDrop = true;
 
             LoadClickArrow(true);
             LoadClickArrow(false);

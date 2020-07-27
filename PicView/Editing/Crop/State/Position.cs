@@ -6,7 +6,7 @@ namespace PicView.Editing.Crop.State
     internal readonly struct Position : IEquatable<Position>
     {
         public double Left { get; }
-        public double Top { get;  }
+        public double Top { get; }
         public double Width { get; }
         public double Height { get; }
 

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using PicView.UILogic.Loading;
+using System;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using static PicView.Library.Fields;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.UC;
@@ -38,7 +38,7 @@ namespace PicView.UILogic.TransformImage
             set
             {
                 Properties.Settings.Default.ScrollEnabled = value;
-                TheMainWindow.Scroller.VerticalScrollBarVisibility =
+                LoadWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility =
                     value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
 
                 // TODO fix error when image is from web
@@ -76,13 +76,13 @@ namespace PicView.UILogic.TransformImage
         internal static void StartAutoScroll(MouseButtonEventArgs e)
         {
             // Don't scroll if not scrollable
-            if (TheMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed)
+            if (LoadWindows.GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed)
             {
                 return;
             }
 
             IsAutoScrolling = true;
-            AutoScrollOrigin = e.GetPosition(TheMainWindow.Scroller);
+            AutoScrollOrigin = e.GetPosition(LoadWindows.GetMainWindow.Scroller);
 
             ShowAutoScrollSign();
         }
@@ -114,7 +114,7 @@ namespace PicView.UILogic.TransformImage
             }
 
             // Start in dispatcher because timer is threaded
-            await TheMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            await LoadWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
             {
                 if (AutoScrollOrigin.HasValue)
                 {
@@ -124,8 +124,8 @@ namespace PicView.UILogic.TransformImage
                     if (IsAutoScrolling)
                     {
                         // Tell the scrollviewer to scroll to calculated offset
-                        TheMainWindow.Scroller.ScrollToVerticalOffset(
-                            TheMainWindow.Scroller.VerticalOffset + offset);
+                        LoadWindows.GetMainWindow.Scroller.ScrollToVerticalOffset(
+                            LoadWindows.GetMainWindow.Scroller.VerticalOffset + offset);
                     }
                 }
             }));

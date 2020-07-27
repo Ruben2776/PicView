@@ -1,9 +1,8 @@
-﻿using PicView.FileHandling;
+﻿using PicView.UILogic.Loading;
 using PicView.UILogic.Sizing;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using static PicView.Library.Fields;
 using static PicView.UILogic.HideInterfaceLogic;
 using static PicView.UILogic.PicGallery.GalleryFunctions;
 using static PicView.UILogic.PicGallery.GalleryScroll;
@@ -16,8 +15,8 @@ namespace PicView.UILogic.PicGallery
         {
             // Add events and set fields, when it's loaded.
             UC.GetPicGallery.Scroller.PreviewMouseWheel += ScrollTo;
-            UC.GetPicGallery.Scroller.ScrollChanged += (s, x) => TheMainWindow.Focus(); // Maintain window focus when scrolling manually
-            UC.GetPicGallery.grid.MouseLeftButtonDown += (s, x) => TheMainWindow.Focus();
+            UC.GetPicGallery.Scroller.ScrollChanged += (s, x) => LoadWindows.GetMainWindow.Focus(); // Maintain window focus when scrolling manually
+            UC.GetPicGallery.grid.MouseLeftButtonDown += (s, x) => LoadWindows.GetMainWindow.Focus();
             UC.GetPicGallery.x2.MouseLeftButtonDown += delegate { GalleryToggle.CloseContainedGallery(); };
 
             SetSize();
@@ -25,15 +24,15 @@ namespace PicView.UILogic.PicGallery
 
         internal static void SetSize()
         {
-            if (MonitorInfo.Width > 2100)
+            if (WindowLogic.MonitorInfo.Width > 2100)
             {
                 picGalleryItem_Size = 260;
             }
-            else if (MonitorInfo.Width > 1700)
+            else if (WindowLogic.MonitorInfo.Width > 1700)
             {
                 picGalleryItem_Size = 210;
             }
-            else if (MonitorInfo.Width > 1200)
+            else if (WindowLogic.MonitorInfo.Width > 1200)
             {
                 picGalleryItem_Size = 150;
             }
@@ -55,7 +54,7 @@ namespace PicView.UILogic.PicGallery
                     Visibility = Visibility.Collapsed
                 };
 
-                TheMainWindow.ParentContainer.Children.Add(UC.GetPicGallery);
+                LoadWindows.GetMainWindow.ParentContainer.Children.Add(UC.GetPicGallery);
                 Panel.SetZIndex(UC.GetPicGallery, 999);
             }
 
@@ -68,18 +67,18 @@ namespace PicView.UILogic.PicGallery
             {
                 if (Properties.Settings.Default.Fullscreen)
                 {
-                    UC.GetPicGallery.Width = MonitorInfo.Width;
-                    UC.GetPicGallery.Height = MonitorInfo.Height;
+                    UC.GetPicGallery.Width = WindowLogic.MonitorInfo.Width;
+                    UC.GetPicGallery.Height = WindowLogic.MonitorInfo.Height;
                 }
                 else if (Properties.Settings.Default.ShowInterface)
                 {
-                    UC.GetPicGallery.Width = TheMainWindow.Width - 15;
-                    UC.GetPicGallery.Height = TheMainWindow.ActualHeight - 70;
+                    UC.GetPicGallery.Width = LoadWindows.GetMainWindow.Width - 15;
+                    UC.GetPicGallery.Height = LoadWindows.GetMainWindow.ActualHeight - 70;
                 }
                 else
                 {
-                    UC.GetPicGallery.Width = TheMainWindow.ActualWidth - 2;
-                    UC.GetPicGallery.Height = TheMainWindow.ActualHeight - 2; // 2px for borders
+                    UC.GetPicGallery.Width = LoadWindows.GetMainWindow.ActualWidth - 2;
+                    UC.GetPicGallery.Height = LoadWindows.GetMainWindow.ActualHeight - 2; // 2px for borders
                 }
 
                 UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -91,10 +90,10 @@ namespace PicView.UILogic.PicGallery
             else
             {
                 UC.GetPicGallery.Width = picGalleryItem_Size + 14; // 17 for scrollbar width + 2 for borders
-                UC.GetPicGallery.Height = MonitorInfo.WorkArea.Height;
+                UC.GetPicGallery.Height = WindowLogic.MonitorInfo.WorkArea.Height;
 
-                TheMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
-                TheMainWindow.ResizeMode = ResizeMode.CanMinimize;
+                LoadWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
+                LoadWindows.GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
 
                 WindowLogic.CenterWindowOnScreen();
 
@@ -108,7 +107,6 @@ namespace PicView.UILogic.PicGallery
                 ShowTopandBottom(false);
                 ConfigureSettings.ConfigColors.UpdateColor(true);
             }
-
 
             UC.GetPicGallery.Visibility = Visibility.Visible;
             UC.GetPicGallery.Opacity = 1;

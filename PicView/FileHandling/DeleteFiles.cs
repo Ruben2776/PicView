@@ -1,14 +1,11 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 using PicView.UILogic;
-using PicView.UILogic.UserControls;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
-using static PicView.FileHandling.FileFunctions;
-using static PicView.Library.Fields;
 using static PicView.UILogic.Tooltip;
 
 namespace PicView.FileHandling
@@ -20,14 +17,14 @@ namespace PicView.FileHandling
         /// </summary>
         internal static void DeleteTempFiles()
         {
-            if (!Directory.Exists(TempZipPath))
+            if (!Directory.Exists(ArchiveExtraction.TempZipPath))
             {
                 return;
             }
 
             try
             {
-                Array.ForEach(Directory.GetFiles(TempZipPath), File.Delete);
+                Array.ForEach(Directory.GetFiles(ArchiveExtraction.TempZipPath), File.Delete);
 #if DEBUG
                 Trace.WriteLine("Temp zip files deleted");
 #endif
@@ -39,9 +36,9 @@ namespace PicView.FileHandling
 
             try
             {
-                Directory.Delete(TempZipPath);
+                Directory.Delete(ArchiveExtraction.TempZipPath);
 #if DEBUG
-                Trace.WriteLine("Temp zip folder " + TempZipPath + " deleted");
+                Trace.WriteLine("Temp zip folder " + ArchiveExtraction.TempZipPath + " deleted");
 #endif
             }
             catch (Exception)

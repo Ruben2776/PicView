@@ -1,8 +1,8 @@
 ﻿using PicView.Editing;
+using PicView.UILogic.Loading;
 using System;
 using System.Windows;
 using System.Windows.Input;
-using static PicView.Library.Fields;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
 namespace PicView.Views.Windows
@@ -56,7 +56,7 @@ namespace PicView.Views.Windows
             StartButton.Click += delegate { _ = Batch_Resize.StartProcessing(); };
 
             // CloseButton
-            CloseButton.TheButton.Click += delegate { Hide(); TheMainWindow.Focus(); };
+            CloseButton.TheButton.Click += delegate { Hide(); LoadWindows.GetMainWindow.Focus(); };
 
             // MinButton
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
@@ -74,7 +74,7 @@ namespace PicView.Views.Windows
             {
                 case Key.Escape:
                     Hide();
-                    TheMainWindow.Focus();
+                    LoadWindows.GetMainWindow.Focus();
                     break;
 
                 case Key.Q:

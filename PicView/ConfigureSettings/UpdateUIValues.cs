@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileLists;
-using static PicView.Library.Fields;
+using static PicView.UILogic.Loading.LoadWindows;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.TransformImage.Scroll;
 

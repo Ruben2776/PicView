@@ -1,5 +1,4 @@
-﻿using PicView.FileHandling;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 

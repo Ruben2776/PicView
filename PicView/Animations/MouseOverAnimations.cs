@@ -70,7 +70,7 @@ namespace PicView.UILogic.Animations
                 true);
         }
 
-        #endregion
+        #endregion ALtInterface hover anims
 
         #region 1x
 

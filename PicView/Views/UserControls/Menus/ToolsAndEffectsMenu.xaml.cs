@@ -17,18 +17,18 @@ namespace PicView.UILogic.UserControls
             InitializeComponent();
 
             // ResizeButton
-            ResizeButton.PreviewMouseLeftButtonDown += delegate 
+            ResizeButton.PreviewMouseLeftButtonDown += delegate
             {
                 PreviewMouseButtonDownAnim(ResizeButtonBrush);
             };
-            ResizeButton.MouseEnter += delegate 
-            { 
+            ResizeButton.MouseEnter += delegate
+            {
                 ButtonMouseOverAnim(ResizeText);
                 ButtonMouseOverAnim(ResizeFill);
                 AnimationHelper.MouseEnterBgTexColor(ResizeButtonBrush);
             };
-            ResizeButton.MouseLeave += delegate 
-            { 
+            ResizeButton.MouseLeave += delegate
+            {
                 ButtonMouseLeaveAnim(ResizeText);
                 ButtonMouseLeaveAnim(ResizeFill);
                 AnimationHelper.MouseLeaveBgTexColor(ResizeButtonBrush);
@@ -132,7 +132,6 @@ namespace PicView.UILogic.UserControls
                 UC.Close_UserControls();
                 LoadWindows.ImageInfoWindow();
             };
-
         }
     }
 }

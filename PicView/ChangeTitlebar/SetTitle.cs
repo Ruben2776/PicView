@@ -1,15 +1,17 @@
-﻿using System.IO;
+﻿using PicView.UILogic.Loading;
+using System.IO;
 using System.Text;
 using System.Windows;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileFunctions;
-using static PicView.Library.Fields;
 using static PicView.UILogic.TransformImage.ZoomLogic;
 
 namespace PicView.UILogic
 {
     internal static class SetTitle
     {
+        internal const string AppName = "PicView";
+
         /// <summary>
         /// Returns string with file name, folder position,
         /// zoom, aspect ratio, resolution and file size
@@ -35,7 +37,7 @@ namespace PicView.UILogic
 
             var s1 = new StringBuilder(90);
             s1.Append(fileInfo.Name).Append(" ").Append(index + 1).Append("/").Append(Pics.Count).Append(" ")
-                .Append(files) .Append(" (").Append(width).Append(" x ").Append(height)
+                .Append(files).Append(" (").Append(width).Append(" x ").Append(height)
                 .Append(StringAspect(width, height))
                 .Append(GetSizeReadable(fileInfo.Length));
 
@@ -71,9 +73,9 @@ namespace PicView.UILogic
                 return;
             }
 
-            TheMainWindow.Title = titleString[0];
-            TheMainWindow.TitleText.Text = titleString[1];
-            TheMainWindow.TitleText.ToolTip = titleString[2];
+            LoadWindows.GetMainWindow.Title = titleString[0];
+            LoadWindows.GetMainWindow.TitleText.Text = titleString[1];
+            LoadWindows.GetMainWindow.TitleText.ToolTip = titleString[2];
         }
 
         /// <summary>
@@ -114,9 +116,9 @@ namespace PicView.UILogic
         internal static void SetTitleString(int width, int height, string path)
         {
             var titleString = TitleString(width, height, path);
-            TheMainWindow.Title = titleString[0];
-            TheMainWindow.TitleText.Text = titleString[1];
-            TheMainWindow.TitleText.ToolTip = titleString[1];
+            LoadWindows.GetMainWindow.Title = titleString[0];
+            LoadWindows.GetMainWindow.TitleText.Text = titleString[1];
+            LoadWindows.GetMainWindow.TitleText.ToolTip = titleString[1];
         }
 
         /// <summary>
@@ -127,25 +129,21 @@ namespace PicView.UILogic
         /// <param name="height"></param>
         internal static void SetTitleString(int width, int height)
         {
-            string path = Library.Utilities.GetURL(TheMainWindow.TitleText.Text);
+            string path = Library.Utilities.GetURL(LoadWindows.GetMainWindow.TitleText.Text);
 
             path = string.IsNullOrWhiteSpace(path) ? "Custom image" : path;
 
             var titleString = TitleString(width, height, path);
-            TheMainWindow.Title = titleString[0];
-            TheMainWindow.TitleText.Text = titleString[1];
-            TheMainWindow.TitleText.ToolTip = titleString[1];
+            LoadWindows.GetMainWindow.Title = titleString[0];
+            LoadWindows.GetMainWindow.TitleText.Text = titleString[1];
+            LoadWindows.GetMainWindow.TitleText.ToolTip = titleString[1];
         }
 
         internal static void SetLoadingString()
         {
-            TheMainWindow.Title = Application.Current.Resources["Loading"] as string;
-            TheMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
-            TheMainWindow.TitleText.ToolTip = Application.Current.Resources["Loading"] as string;
+            LoadWindows.GetMainWindow.Title = Application.Current.Resources["Loading"] as string;
+            LoadWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
+            LoadWindows.GetMainWindow.TitleText.ToolTip = Application.Current.Resources["Loading"] as string;
         }
-
-
-
-
     }
 }

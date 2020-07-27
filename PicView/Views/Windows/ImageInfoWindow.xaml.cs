@@ -1,10 +1,10 @@
 ﻿using PicView.ImageHandling;
 using PicView.UILogic.Animations;
+using PicView.UILogic.Loading;
 using System;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.ChangeImage.Navigation;
-using static PicView.Library.Fields;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
 namespace PicView.Views.Windows
@@ -20,12 +20,12 @@ namespace PicView.Views.Windows
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            KeyUp += (_,e) =>
+            KeyUp += (_, e) =>
             {
                 if (e.Key == Key.Escape)
                 {
                     Hide();
-                    TheMainWindow.Focus();
+                    LoadWindows.GetMainWindow.Focus();
                 }
                 else if (e.Key == Key.Q)
                 {
@@ -37,7 +37,7 @@ namespace PicView.Views.Windows
             };
 
             // CloseButton
-            CloseButton.TheButton.Click += delegate { Hide(); TheMainWindow.Focus(); };
+            CloseButton.TheButton.Click += delegate { Hide(); LoadWindows.GetMainWindow.Focus(); };
 
             // MinButton
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
@@ -51,7 +51,7 @@ namespace PicView.Views.Windows
             FileProperties.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(FilePropertiesBrush); };
             FileProperties.MouseLeave += delegate { ButtonMouseLeaveAnim(FilePropertiesFill); };
             FileProperties.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(FilePropertiesBrush); };
-            FileProperties.Click += delegate 
+            FileProperties.Click += delegate
             {
                 SystemIntegration.NativeMethods.ShowFileProperties(Pics[FolderIndex]);
             };
@@ -89,7 +89,7 @@ namespace PicView.Views.Windows
                 FileHandling.Open_Save.Open_In_Explorer();
             };
 
-            FilenameCopy.TheButton.Click += delegate 
+            FilenameCopy.TheButton.Click += delegate
             {
                 Clipboard.SetText(FilenameBox.Text);
             };
@@ -144,7 +144,6 @@ namespace PicView.Views.Windows
                 Clipboard.SetText(AspectRatioBox.Text);
             };
 
-
             if (Pics.Count > 0)
             {
                 UpdateValues();
@@ -178,8 +177,6 @@ namespace PicView.Views.Windows
             PrintSizeInBox.Text = data[10];
 
             AspectRatioBox.Text = data[11];
-
         }
-
     }
 }

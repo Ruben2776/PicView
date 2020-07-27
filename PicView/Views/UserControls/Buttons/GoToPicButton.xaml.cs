@@ -1,4 +1,4 @@
-﻿using PicView.Library;
+﻿using PicView.UILogic.Loading;
 using System;
 using System.Globalization;
 using System.Windows;
@@ -40,7 +40,7 @@ namespace PicView.UILogic.UserControls
                 x = x <= 0 ? 0 : x;
                 x = x >= Pics.Count ? Pics.Count - 1 : x;
                 Pic(x);
-                await Fields.TheMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+                await LoadWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
                 {
                     GetQuickSettingsMenu.GoToPic.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture);
                 }));
@@ -57,7 +57,7 @@ namespace PicView.UILogic.UserControls
             FocusManager.SetFocusedElement(FocusManager.GetFocusScope(GetQuickSettingsMenu.GoToPic.GoToPicBox), null);
             Close_UserControls();
             Keyboard.ClearFocus();
-            Fields.TheMainWindow.Focus();
+            LoadWindows.GetMainWindow.Focus();
         }
 
         private void GoToPicPreviewKeys(object sender, KeyEventArgs e)

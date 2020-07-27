@@ -35,7 +35,6 @@ namespace PicView.Editing.Crop.State
             left += offsetX;
             top += offsetY;
 
-
             SetBorderLimit(ref left, ref top, ref offsetX, ref offsetY);
             _lastPoint = point;
             return new Position(left, top, _cropTool.Width, _cropTool.Height);

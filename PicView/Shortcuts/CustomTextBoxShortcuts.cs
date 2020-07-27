@@ -1,6 +1,5 @@
 ﻿using PicView.UILogic;
 using System.Windows.Input;
-using static PicView.Library.Fields;
 
 namespace PicView
 {
@@ -16,7 +15,7 @@ namespace PicView
 
                 case Key.Escape:
                     EditTitleBar.Refocus();
-                    IsDialogOpen = true; // Hack to make escape not fall through
+                    FileHandling.Open_Save.IsDialogOpen = true; // Hack to make escape not fall through
                     break;
             }
         }

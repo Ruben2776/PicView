@@ -11,7 +11,6 @@ namespace PicView.Library
 {
     internal static class Utilities
     {
-
         /// <summary>
         /// Greatest Common Divisor
         /// </summary>

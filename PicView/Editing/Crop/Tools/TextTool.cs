@@ -6,8 +6,8 @@ namespace PicView.Editing.Crop.Tools
 {
     internal class TextTool
     {
-        const int OffsetTop = 3;
-        const int OffsetLeft = 10;
+        private const int OffsetTop = 3;
+        private const int OffsetLeft = 10;
 
         private TextBlock TextBlock { get; }
         public Border Border { get; }
@@ -35,7 +35,6 @@ namespace PicView.Editing.Crop.Tools
             };
             Border.Child = TextBlock;
         }
-
 
         /// <summary>
         /// Manage visibility of text

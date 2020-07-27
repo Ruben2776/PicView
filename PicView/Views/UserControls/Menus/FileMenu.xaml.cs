@@ -44,7 +44,7 @@ namespace PicView.UILogic.UserControls
             FileLocationBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(FileLocationBrush); };
 
             // CopyButton
-            CopyButton.TheButton.Click += delegate 
+            CopyButton.TheButton.Click += delegate
             {
                 UC.Close_UserControls();
                 FileHandling.Copy_Paste.Copyfile();

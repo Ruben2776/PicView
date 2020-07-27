@@ -12,7 +12,7 @@ namespace PicView.UILogic.UserControls
             InitializeComponent();
 
             PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(FullscreenButtonBrush); };
-            MouseEnter += delegate 
+            MouseEnter += delegate
             {
                 if (Properties.Settings.Default.Fullscreen)
                 {
@@ -26,16 +26,15 @@ namespace PicView.UILogic.UserControls
                 ButtonMouseOverAnim(FullscreenButtonBrush, true);
             };
 
-            MouseLeave += delegate 
+            MouseLeave += delegate
             {
                 ButtonMouseLeaveAnim(FullscreenButtonBrush, true);
             };
 
-            TheButton.Click += delegate 
+            TheButton.Click += delegate
             {
                 WindowLogic.Fullscreen_Restore();
-            }; 
-
+            };
         }
     }
 }

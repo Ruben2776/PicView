@@ -1,4 +1,6 @@
-﻿using PicView.ImageHandling;
+﻿using PicView.FileHandling;
+using PicView.ImageHandling;
+using PicView.UILogic.Loading;
 using PicView.UILogic.PicGallery;
 using PicView.UILogic.Sizing;
 using System;
@@ -11,7 +13,6 @@ using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.FileLists;
 using static PicView.ImageHandling.ImageDecoder;
-using static PicView.Library.Fields;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.TransformImage.Rotation;
 
@@ -178,7 +179,7 @@ namespace PicView.ChangeImage
             else
             {
                 // TODO extract url from path or get alternative method
-                s = Path.GetFileName(TheMainWindow.TitleText.Text);
+                s = Path.GetFileName(LoadWindows.GetMainWindow.TitleText.Text);
             }
 
             if (File.Exists(s))
@@ -226,10 +227,10 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static void Unload()
         {
-            TheMainWindow.TitleText.ToolTip = TheMainWindow.TitleText.Text = Application.Current.Resources["NoImage"] as string;
-            TheMainWindow.Title = Application.Current.Resources["NoImage"] as string + " - " + AppName;
+            LoadWindows.GetMainWindow.TitleText.ToolTip = LoadWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["NoImage"] as string;
+            LoadWindows.GetMainWindow.Title = Application.Current.Resources["NoImage"] as string + " - " + UILogic.SetTitle.AppName;
             CanNavigate = false;
-            TheMainWindow.MainImage.Source = null;
+            LoadWindows.GetMainWindow.MainImage.Source = null;
             FreshStartup = true;
             if (Pics != null)
             {
@@ -238,15 +239,14 @@ namespace PicView.ChangeImage
 
             Preloader.Clear();
             GalleryFunctions.Clear();
-            TheMainWindow.MainImage.Width = TheMainWindow.Scroller.Width = TheMainWindow.Scroller.Height =
-            TheMainWindow.MainImage.Height = double.NaN;
+            LoadWindows.GetMainWindow.MainImage.Width = LoadWindows.GetMainWindow.Scroller.Width = LoadWindows.GetMainWindow.Scroller.Height =
+            LoadWindows.GetMainWindow.MainImage.Height = double.NaN;
             ScaleImage.xWidth = ScaleImage.xHeight = 0;
-            prevPicResource = null;
 
-            if (!string.IsNullOrWhiteSpace(TempZipPath))
+            if (!string.IsNullOrWhiteSpace(ArchiveExtraction.TempZipPath))
             {
                 DeleteTempFiles();
-                TempZipPath = string.Empty;
+                ArchiveExtraction.TempZipPath = string.Empty;
             }
 
             SystemIntegration.Taskbar.NoProgress();

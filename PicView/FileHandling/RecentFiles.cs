@@ -8,7 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileFunctions;
-using static PicView.Library.Resources.SvgIcons;
 
 namespace PicView.FileHandling
 {

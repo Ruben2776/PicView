@@ -43,7 +43,6 @@ namespace PicView.UILogic.UserControls
             SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
             SetFit.Click += ConfigureSettings.UpdateUIValues.SetAutoFit;
 
-
             ZoomButton.Click += delegate
             {
                 if (ZoomSliderParent.Visibility == Visibility.Collapsed || ZoomSliderParent.Opacity == 0)

@@ -1,7 +1,7 @@
-﻿using PicView.SystemIntegration;
+﻿using PicView.ChangeImage;
+using PicView.SystemIntegration;
 using PicView.UILogic.Loading;
 using System.Windows;
-using static PicView.Library.Fields;
 using static PicView.UILogic.Sizing.WindowLogic;
 using static PicView.UILogic.UC;
 
@@ -11,7 +11,6 @@ namespace PicView.Views.Windows
     {
         public MainWindow()
         {
-
             if (Properties.Settings.Default.LightTheme)
             {
                 ConfigureSettings.ConfigColors.ChangeToLightTheme();
@@ -48,29 +47,29 @@ namespace PicView.Views.Windows
             Left += ((size.PreviousSize.Width / MonitorInfo.DpiScaling) - (size.NewSize.Width / MonitorInfo.DpiScaling)) / 2;
 
             // Move cursor after resize when the button has been pressed
-            if (RightbuttonClicked)
+            if (Navigation.RightbuttonClicked)
             {
                 Point p = RightButton.PointToScreen(new Point(50, 10)); //Points cursor to center of RighButton
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
-                RightbuttonClicked = false;
+                Navigation.RightbuttonClicked = false;
             }
-            else if (LeftbuttonClicked)
+            else if (Navigation.LeftbuttonClicked)
             {
                 Point p = LeftButton.PointToScreen(new Point(50, 10));
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
-                LeftbuttonClicked = false;
+                Navigation.LeftbuttonClicked = false;
             }
-            else if (ClickArrowRightClicked)
+            else if (Navigation.ClickArrowRightClicked)
             {
                 Point p = GetClickArrowRight.PointToScreen(new Point(25, 30));
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
-                ClickArrowRightClicked = false;
+                Navigation.ClickArrowRightClicked = false;
             }
-            else if (ClickArrowLeftClicked)
+            else if (Navigation.ClickArrowLeftClicked)
             {
                 Point p = GetClickArrowLeft.PointToScreen(new Point(25, 30));
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
-                ClickArrowLeftClicked = false;
+                Navigation.ClickArrowLeftClicked = false;
             }
 
             base.OnRenderSizeChanged(size);

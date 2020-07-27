@@ -1,4 +1,6 @@
 ﻿using PicView.UILogic.Animations;
+using PicView.UILogic.Loading;
+using PicView.UILogic.TransformImage;
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -8,7 +10,6 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using static PicView.Library.Fields;
 
 namespace PicView.Views.Windows
 {
@@ -88,16 +89,17 @@ namespace PicView.Views.Windows
                         Environment.Exit(0);
                     }
                     break;
+
                 case Key.Down:
                 case Key.PageDown:
                 case Key.S:
-                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + zoomSpeed);
+                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + ZoomLogic.zoomSpeed);
                     break;
 
                 case Key.Up:
                 case Key.PageUp:
                 case Key.W:
-                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - zoomSpeed);
+                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - ZoomLogic.zoomSpeed);
                     break;
             }
         }
@@ -106,11 +108,11 @@ namespace PicView.Views.Windows
         {
             if (e.Delta > 0)
             {
-                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - zoomSpeed);
+                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - ZoomLogic.zoomSpeed);
             }
             else if (e.Delta < 0)
             {
-                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + zoomSpeed);
+                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + ZoomLogic.zoomSpeed);
             }
         }
 
@@ -130,9 +132,9 @@ namespace PicView.Views.Windows
                 Hide();
             };
 
-            TheMainWindow.Effect = null;
+            LoadWindows.GetMainWindow.Effect = null;
             BeginAnimation(OpacityProperty, da);
-            TheMainWindow.Focus();
+            LoadWindows.GetMainWindow.Focus();
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)

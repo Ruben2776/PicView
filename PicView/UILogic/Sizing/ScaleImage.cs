@@ -1,8 +1,8 @@
 ﻿using PicView.ImageHandling;
+using PicView.UILogic.Loading;
 using PicView.UILogic.TransformImage;
 using System;
 using static PicView.ChangeImage.Navigation;
-using static PicView.Library.Fields;
 using static PicView.UILogic.PicGallery.GalleryFunctions;
 using static PicView.UILogic.Sizing.WindowLogic;
 using static PicView.UILogic.TransformImage.Rotation;
@@ -21,6 +21,11 @@ namespace PicView.UILogic.Sizing
         /// Backup of Height data
         /// </summary>
         internal static double xHeight;
+
+        /// <summary>
+        /// Used to get and set Aspect Ratio
+        /// </summary>
+        internal static double AspectRatio { get; set; }
 
         /// <summary>
         /// Tries to call Zoomfit with additional error checking
@@ -47,9 +52,9 @@ namespace PicView.UILogic.Sizing
                             FitImage(size.Value.Width, size.Value.Height);
                             return true;
                         }
-                        else if (TheMainWindow.MainImage.Source != null)
+                        else if (LoadWindows.GetMainWindow.MainImage.Source != null)
                         {
-                            FitImage(TheMainWindow.MainImage.Source.Width, TheMainWindow.MainImage.Source.Height);
+                            FitImage(LoadWindows.GetMainWindow.MainImage.Source.Width, LoadWindows.GetMainWindow.MainImage.Source.Height);
                             return true;
                         }
                         else if (xWidth != 0 && xHeight != 0)
@@ -60,9 +65,9 @@ namespace PicView.UILogic.Sizing
                     }
                 }
             }
-            else if (TheMainWindow.MainImage.Source != null)
+            else if (LoadWindows.GetMainWindow.MainImage.Source != null)
             {
-                FitImage(TheMainWindow.MainImage.Source.Width, TheMainWindow.MainImage.Source.Height);
+                FitImage(LoadWindows.GetMainWindow.MainImage.Source.Width, LoadWindows.GetMainWindow.MainImage.Source.Height);
                 return true;
             }
             else if (xWidth != 0 && xHeight != 0)
@@ -106,7 +111,7 @@ namespace PicView.UILogic.Sizing
             var showInterface = Properties.Settings.Default.ShowInterface;
 
             double maxWidth, maxHeight;
-            var borderSpaceHeight = showInterface ? TheMainWindow.LowerBar.Height + TheMainWindow.TitleBar.Height + 6 : 6;
+            var borderSpaceHeight = showInterface ? LoadWindows.GetMainWindow.LowerBar.Height + LoadWindows.GetMainWindow.TitleBar.Height + 6 : 6;
             var borderSpaceWidth = 20 * MonitorInfo.DpiScaling; // Based on UI borders
 
             var monitorWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
@@ -140,21 +145,21 @@ namespace PicView.UILogic.Sizing
             {
                 if (Properties.Settings.Default.FillImage)
                 {
-                    maxWidth = TheMainWindow.ParentContainer.ActualWidth;
-                    maxHeight = TheMainWindow.ParentContainer.ActualHeight;
+                    maxWidth = LoadWindows.GetMainWindow.ParentContainer.ActualWidth;
+                    maxHeight = LoadWindows.GetMainWindow.ParentContainer.ActualHeight;
                 }
                 else
                 {
-                    maxWidth = Math.Min(TheMainWindow.Width, width);
+                    maxWidth = Math.Min(LoadWindows.GetMainWindow.Width, width);
 
                     if (showInterface)
                     {
                         /// Use padding for shown interface
-                        maxHeight = Math.Min(TheMainWindow.Height - padding, height);
+                        maxHeight = Math.Min(LoadWindows.GetMainWindow.Height - padding, height);
                     }
                     else
                     {
-                        maxHeight = Math.Min(TheMainWindow.Height, height);
+                        maxHeight = Math.Min(LoadWindows.GetMainWindow.Height, height);
                     }
                 }
             }
@@ -171,25 +176,25 @@ namespace PicView.UILogic.Sizing
             if (IsScrollEnabled)
             {
                 /// Calculate height based on width
-                TheMainWindow.MainImage.Width = maxWidth;
-                TheMainWindow.MainImage.Height = maxWidth * height / width;
+                LoadWindows.GetMainWindow.MainImage.Width = maxWidth;
+                LoadWindows.GetMainWindow.MainImage.Height = maxWidth * height / width;
 
                 /// Set mainWindow.Scroller height to aspect ratio calculation
-                TheMainWindow.Scroller.Height = height * AspectRatio;
+                LoadWindows.GetMainWindow.Scroller.Height = height * AspectRatio;
 
                 /// Update values
-                xWidth = TheMainWindow.MainImage.Width;
-                xHeight = TheMainWindow.Scroller.Height;
+                xWidth = LoadWindows.GetMainWindow.MainImage.Width;
+                xHeight = LoadWindows.GetMainWindow.Scroller.Height;
             }
             else
             {
                 /// Reset mainWindow.Scroller's height to auto
-                TheMainWindow.Scroller.Height = double.NaN;
+                LoadWindows.GetMainWindow.Scroller.Height = double.NaN;
 
                 /// Fit image by aspect ratio calculation
                 /// and update values
-                TheMainWindow.MainImage.Width = xWidth = width * AspectRatio;
-                TheMainWindow.MainImage.Height = xHeight = height * AspectRatio;
+                LoadWindows.GetMainWindow.MainImage.Width = xWidth = width * AspectRatio;
+                LoadWindows.GetMainWindow.MainImage.Height = xHeight = height * AspectRatio;
             }
 
             if (!Properties.Settings.Default.Fullscreen)
@@ -202,10 +207,10 @@ namespace PicView.UILogic.Sizing
                     if (xWidth >= monitorWidth - (picGalleryItem_Size + 200))
                     {
                         // Offset window to not overlap gallery
-                        TheMainWindow.Left = ((MonitorInfo.WorkArea.Width - picGalleryItem_Size - (TheMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
+                        LoadWindows.GetMainWindow.Left = ((MonitorInfo.WorkArea.Width - picGalleryItem_Size - (LoadWindows.GetMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
                                           + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
-                        TheMainWindow.Top = ((MonitorInfo.WorkArea.Height
-                                           - (TheMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
+                        LoadWindows.GetMainWindow.Top = ((MonitorInfo.WorkArea.Height
+                                           - (LoadWindows.GetMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
                     }
                     else
                     {
@@ -215,18 +220,17 @@ namespace PicView.UILogic.Sizing
                 else if (Properties.Settings.Default.AutoFitWindow)
                 {
                     /// Update mainWindow.TitleBar width to dynamically fit new size
-                    var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(xWidth, TheMainWindow.MinWidth) : Math.Max(xHeight, TheMainWindow.MinHeight);
-                    TheMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
+                    var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(xWidth, LoadWindows.GetMainWindow.MinWidth) : Math.Max(xHeight, LoadWindows.GetMainWindow.MinHeight);
+                    LoadWindows.GetMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
 
                     CenterWindowOnScreen();
                 }
                 else
                 {
                     /// Fix title width to window size
-                    TheMainWindow.TitleText.MaxWidth = TheMainWindow.ActualWidth - interfaceSize;
+                    LoadWindows.GetMainWindow.TitleText.MaxWidth = LoadWindows.GetMainWindow.ActualWidth - interfaceSize;
                 }
             }
-
 
             if (ZoomLogic.ZoomValue == 1.0)
             {

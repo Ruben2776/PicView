@@ -1,5 +1,5 @@
-﻿using PicView.Library;
-using PicView.UILogic.Animations;
+﻿using PicView.UILogic.Animations;
+using PicView.UILogic.Loading;
 using PicView.UILogic.PicGallery;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,7 +15,7 @@ namespace PicView.Views.UserControls.Gallery
         {
             InitializeComponent();
 
-            RestoreButton.MouseEnter += delegate 
+            RestoreButton.MouseEnter += delegate
             {
                 MouseOverAnimations.AltInterfaceMouseOver(PolyFill, RestoreBg, BorderBrushKey);
             };
@@ -29,11 +29,11 @@ namespace PicView.Views.UserControls.Gallery
 
             RestoreButton.ToolTip = Application.Current.Resources["RestoreDown"];
 
-            CloseButton.MouseLeftButtonDown += delegate { SystemCommands.CloseWindow(Fields.TheMainWindow); };
+            CloseButton.MouseLeftButtonDown += delegate { SystemCommands.CloseWindow(LoadWindows.GetMainWindow); };
 
             CloseButton.ToolTip = Application.Current.Resources["Close"];
 
-            MinButton.MouseLeftButtonDown += delegate { SystemCommands.MinimizeWindow(Fields.TheMainWindow); };
+            MinButton.MouseLeftButtonDown += delegate { SystemCommands.MinimizeWindow(LoadWindows.GetMainWindow); };
         }
     }
 }

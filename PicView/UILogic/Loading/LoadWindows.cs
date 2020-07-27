@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
-using static PicView.Library.Fields;
 
 namespace PicView.UILogic.Loading
 {
@@ -15,6 +14,16 @@ namespace PicView.UILogic.Loading
         internal static EffectsWindow GetEffectsWindow { get; set; }
         internal static BatchWindow GetResizeAndOptimize { get; set; }
         internal static ImageInfoWindow GetImageInfoWindow { get; set; }
+
+        /// <summary>
+        /// The Main Window?
+        /// </summary>
+        internal static readonly MainWindow GetMainWindow = (MainWindow)Application.Current.MainWindow;
+
+        /// <summary>
+        /// Primary ContextMenu
+        /// </summary>
+        internal static System.Windows.Controls.ContextMenu cm;
 
         #region Windows
 
@@ -27,7 +36,7 @@ namespace PicView.UILogic.Loading
             {
                 InfoWindow = new InfoWindow
                 {
-                    Owner = TheMainWindow,
+                    Owner = GetMainWindow,
                     Opacity = 0
                 };
             }
@@ -39,13 +48,13 @@ namespace PicView.UILogic.Loading
                 }
             }
 
-            InfoWindow.Width = TheMainWindow.ActualWidth;
-            InfoWindow.Height = TheMainWindow.ActualHeight;
+            InfoWindow.Width = GetMainWindow.ActualWidth;
+            InfoWindow.Height = GetMainWindow.ActualHeight;
 
-            InfoWindow.Left = TheMainWindow.Left + (TheMainWindow.Width - InfoWindow.Width) / 2;
-            InfoWindow.Top = TheMainWindow.Top + (TheMainWindow.Height - InfoWindow.Height) / 2;
+            InfoWindow.Left = GetMainWindow.Left + (GetMainWindow.Width - InfoWindow.Width) / 2;
+            InfoWindow.Top = GetMainWindow.Top + (GetMainWindow.Height - InfoWindow.Height) / 2;
 
-            TheMainWindow.Effect = new BlurEffect
+            GetMainWindow.Effect = new BlurEffect
             {
                 RenderingBias = RenderingBias.Quality,
                 KernelType = KernelType.Gaussian,
@@ -60,7 +69,7 @@ namespace PicView.UILogic.Loading
             });
 
             InfoWindow.ShowDialog();
-            
+
 #if DEBUG
             Trace.WriteLine("HelpWindow loaded ");
 #endif
@@ -75,7 +84,7 @@ namespace PicView.UILogic.Loading
             {
                 GetSettingsWindow = new SettingsWindow
                 {
-                    Owner = TheMainWindow
+                    Owner = GetMainWindow
                 };
 
                 GetSettingsWindow.Show();
@@ -106,7 +115,7 @@ namespace PicView.UILogic.Loading
             {
                 GetEffectsWindow = new EffectsWindow
                 {
-                    Owner = TheMainWindow
+                    Owner = GetMainWindow
                 };
 
                 GetEffectsWindow.Show();
@@ -137,7 +146,7 @@ namespace PicView.UILogic.Loading
             {
                 GetResizeAndOptimize = new BatchWindow
                 {
-                    Owner = TheMainWindow
+                    Owner = GetMainWindow
                 };
 
                 GetResizeAndOptimize.Show();
@@ -168,7 +177,7 @@ namespace PicView.UILogic.Loading
             {
                 GetImageInfoWindow = new ImageInfoWindow
                 {
-                    Owner = TheMainWindow
+                    Owner = GetMainWindow
                 };
 
                 GetImageInfoWindow.Show();

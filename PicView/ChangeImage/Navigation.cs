@@ -14,7 +14,6 @@ using static PicView.ChangeImage.Error_Handling;
 using static PicView.FileHandling.ArchiveExtraction;
 using static PicView.FileHandling.FileLists;
 using static PicView.ImageHandling.Thumbnails;
-using static PicView.Library.Fields;
 using static PicView.UILogic.SetTitle;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.Tooltip;
@@ -35,6 +34,20 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static int FolderIndex { get; private set; }
 
+        /// <summary>
+        /// Backup of Previous file, if changed folder etc.
+        /// </summary>
+        internal static string BackupPath { get; set; }
+
+        internal static bool LeftbuttonClicked { get; set; }
+        internal static bool RightbuttonClicked { get; set; }
+
+        internal static bool CanNavigate { get; set; }
+        internal static bool FreshStartup { get; set; }
+
+        internal static bool ClickArrowRightClicked { get; set; }
+        internal static bool ClickArrowLeftClicked { get; set; }
+        internal static bool Reverse { get; set; }
 
         #region Update Image values
 
@@ -93,11 +106,11 @@ namespace PicView.ChangeImage
                 }
                 else
                 {
-                    TheMainWindow.TitleText.Text = Application.Current.Resources["Unzipping"] as string;
-                    TheMainWindow.TitleText.ToolTip = TheMainWindow.TitleText.Text;
+                    LoadWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Unzipping"] as string;
+                    LoadWindows.GetMainWindow.TitleText.ToolTip = LoadWindows.GetMainWindow.TitleText.Text;
                     FolderIndex = 0;
                 }
-                TheMainWindow.Focus();
+                LoadWindows.GetMainWindow.Focus();
             }
 
             if (!FreshStartup)
@@ -120,8 +133,6 @@ namespace PicView.ChangeImage
             {
                 await GalleryLoad.Load().ConfigureAwait(false);
             }
-
-            prevPicResource = null; // Make sure to not waste memory
         }
 
         /// <summary>
@@ -183,17 +194,17 @@ namespace PicView.ChangeImage
                         }
                         else
                         {
-                            TheMainWindow.MainImage.Width = TheMainWindow.MinWidth;
-                            TheMainWindow.MainImage.Height = TheMainWindow.MinHeight;
+                            LoadWindows.GetMainWindow.MainImage.Width = LoadWindows.GetMainWindow.MinWidth;
+                            LoadWindows.GetMainWindow.MainImage.Height = LoadWindows.GetMainWindow.MinHeight;
                         }
                     }
                     else
                     {
-                        TheMainWindow.MainImage.Width = xWidth;
-                        TheMainWindow.MainImage.Height = xHeight;
+                        LoadWindows.GetMainWindow.MainImage.Width = xWidth;
+                        LoadWindows.GetMainWindow.MainImage.Height = xHeight;
                     }
 
-                    TheMainWindow.MainImage.Source = thumb;
+                    LoadWindows.GetMainWindow.MainImage.Source = thumb;
                 }
 
                 // Dissallow changing image while loading
@@ -249,18 +260,18 @@ namespace PicView.ChangeImage
                 UILogic.TransformImage.Rotation.Rotateint = 0;
                 GetImageSettingsMenu.FlipButton.TheButton.IsChecked = false;
 
-                TheMainWindow.MainImage.LayoutTransform = null;
+                LoadWindows.GetMainWindow.MainImage.LayoutTransform = null;
             }
 
             // Show the image! :)
-            TheMainWindow.MainImage.Source = bitmapSource;
+            LoadWindows.GetMainWindow.MainImage.Source = bitmapSource;
             FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
             SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index);
 
             // Scroll to top if scroll enabled
             if (IsScrollEnabled)
             {
-                TheMainWindow.Scroller.ScrollToTop();
+                LoadWindows.GetMainWindow.Scroller.ScrollToTop();
             }
 
             // Update values
@@ -306,10 +317,10 @@ namespace PicView.ChangeImage
 
             if (IsScrollEnabled)
             {
-                TheMainWindow.Scroller.ScrollToTop();
+                LoadWindows.GetMainWindow.Scroller.ScrollToTop();
             }
 
-            TheMainWindow.MainImage.Source = bitmap;
+            LoadWindows.GetMainWindow.MainImage.Source = bitmap;
 
             FitImage(bitmap.PixelWidth, bitmap.PixelHeight);
             CloseToolTipMessage();
@@ -343,10 +354,10 @@ namespace PicView.ChangeImage
 
             if (IsScrollEnabled)
             {
-                TheMainWindow.Scroller.ScrollToTop();
+                LoadWindows.GetMainWindow.Scroller.ScrollToTop();
             }
 
-            TheMainWindow.MainImage.Source = pic;
+            LoadWindows.GetMainWindow.MainImage.Source = pic;
 
             FitImage(pic.PixelWidth, pic.PixelHeight);
             CloseToolTipMessage();
@@ -389,8 +400,6 @@ namespace PicView.ChangeImage
             }
 
             GetQuickSettingsMenu.GoToPic.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
-
-            prevPicResource = null; // Make sure to not waste memory
         }
 
         #endregion Update Image values
@@ -568,8 +577,6 @@ namespace PicView.ChangeImage
             /// Timers doesn't deliver a proper result in my experience
             ///
 
-            FastPicRunning = true;
-
             if (forwards)
             {
                 if (FolderIndex == Pics.Count - 1)
@@ -595,19 +602,16 @@ namespace PicView.ChangeImage
 
             var image = Application.Current.Resources["Image"] as string;
 
-            TheMainWindow.MainImage.Width = xWidth;
-            TheMainWindow.MainImage.Height = xHeight;
-
-            TheMainWindow.TitleText.ToolTip =
-            TheMainWindow.Title =
-            TheMainWindow.TitleText.Text
+            LoadWindows.GetMainWindow.TitleText.ToolTip =
+            LoadWindows.GetMainWindow.Title =
+            LoadWindows.GetMainWindow.TitleText.Text
             = $"{image} {(FolderIndex + 1)} / {Pics.Count}";
 
             var thumb = GetThumb(FolderIndex);
 
             if (thumb != null)
             {
-                TheMainWindow.MainImage.Source = thumb;
+                LoadWindows.GetMainWindow.MainImage.Source = thumb;
             }
 
             Taskbar.Progress(FolderIndex, Pics.Count);
@@ -618,13 +622,6 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static void FastPicUpdate()
         {
-            if (!FastPicRunning)
-            {
-                return;
-            }
-
-            FastPicRunning = false;
-
             if (!Preloader.Contains(Pics[FolderIndex]))
             {
                 Preloader.Clear();

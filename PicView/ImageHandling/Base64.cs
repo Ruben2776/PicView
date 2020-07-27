@@ -70,7 +70,7 @@ namespace PicView.ImageHandling
             string path;
             if (Navigation.FolderIndex == 0)
             {
-                string url = Utilities.GetURL(Fields.TheMainWindow.TitleText.Text);
+                string url = Utilities.GetURL(LoadWindows.GetMainWindow.TitleText.Text);
                 if (Uri.IsWellFormedUriString(url, UriKind.Absolute)) // Check if from web
                 {
                     using var webclient = new WebClient();
@@ -87,13 +87,12 @@ namespace PicView.ImageHandling
             {
                 path = await ConvertToBase64(Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(true);
             }
-            
+
             if (!string.IsNullOrWhiteSpace(path))
             {
                 Clipboard.SetText(path);
                 Tooltip.ShowTooltipMessage(Application.Current.Resources["ConvertedToBase64"]);
             }
         }
-
     }
 }

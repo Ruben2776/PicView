@@ -1,4 +1,5 @@
 ﻿using PicView.SystemIntegration;
+using PicView.UILogic.Loading;
 using PicView.UILogic.PicGallery;
 using PicView.Views.Windows;
 using System;
@@ -6,7 +7,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
-using static PicView.Library.Fields;
 using static PicView.UILogic.HideInterfaceLogic;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.UC;
@@ -16,6 +16,11 @@ namespace PicView.UILogic.Sizing
     internal static class WindowLogic
     {
         internal static FakeWindow fakeWindow;
+
+        /// <summary>
+        /// Used to get and set monitor size
+        /// </summary>
+        internal static MonitorSize MonitorInfo { get; set; }
 
         /// <summary>
         /// Set whether to fit window to image or image to window
@@ -32,20 +37,20 @@ namespace PicView.UILogic.Sizing
 
                 if (value)
                 {
-                    TheMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
-                    TheMainWindow.ResizeMode = ResizeMode.CanMinimize;
+                    LoadWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
+                    LoadWindows.GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
 
                     if (GetQuickSettingsMenu != null)
                     {
                         GetQuickSettingsMenu.SetFit.IsChecked = value;
                     }
 
-                    TheMainWindow.WindowState = WindowState.Normal;
+                    LoadWindows.GetMainWindow.WindowState = WindowState.Normal;
                 }
                 else
                 {
-                    TheMainWindow.SizeToContent = SizeToContent.Manual;
-                    TheMainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
+                    LoadWindows.GetMainWindow.SizeToContent = SizeToContent.Manual;
+                    LoadWindows.GetMainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
 
                     if (GetQuickSettingsMenu != null)
                     {
@@ -72,7 +77,7 @@ namespace PicView.UILogic.Sizing
                 return;
             }
 
-            if (TheMainWindow.TitleText.InnerTextBox.IsFocused)
+            if (LoadWindows.GetMainWindow.TitleText.InnerTextBox.IsFocused)
             {
                 if (e.ClickCount == 2)
                 {
@@ -89,7 +94,7 @@ namespace PicView.UILogic.Sizing
             {
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
-                    TheMainWindow.DragMove();
+                    LoadWindows.GetMainWindow.DragMove();
                 }
 
                 // Update info for possible new screen, needs more engineering
@@ -110,7 +115,7 @@ namespace PicView.UILogic.Sizing
 
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                TheMainWindow.DragMove();
+                LoadWindows.GetMainWindow.DragMove();
             }
         }
 
@@ -121,11 +126,11 @@ namespace PicView.UILogic.Sizing
         /// <param name="e"></param>
         internal static void Restore_From_Move(object sender, MouseEventArgs e)
         {
-            if (TheMainWindow.WindowState == WindowState.Maximized && e.LeftButton == MouseButtonState.Pressed)
+            if (LoadWindows.GetMainWindow.WindowState == WindowState.Maximized && e.LeftButton == MouseButtonState.Pressed)
             {
                 try
                 {
-                    TheMainWindow.DragMove();
+                    LoadWindows.GetMainWindow.DragMove();
                 }
                 catch (InvalidOperationException)
                 {
@@ -146,25 +151,25 @@ namespace PicView.UILogic.Sizing
                 // Save size to get back to it when restoring
                 if (!Properties.Settings.Default.AutoFitWindow)
                 {
-                    Properties.Settings.Default.Top = TheMainWindow.Top;
-                    Properties.Settings.Default.Left = TheMainWindow.Left;
-                    Properties.Settings.Default.Height = TheMainWindow.Height;
-                    Properties.Settings.Default.Width = TheMainWindow.Width;
+                    Properties.Settings.Default.Top = LoadWindows.GetMainWindow.Top;
+                    Properties.Settings.Default.Left = LoadWindows.GetMainWindow.Left;
+                    Properties.Settings.Default.Height = LoadWindows.GetMainWindow.Height;
+                    Properties.Settings.Default.Width = LoadWindows.GetMainWindow.Width;
                 }
 
                 Properties.Settings.Default.Fullscreen = true;
 
                 ShowTopandBottom(false);
 
-                TheMainWindow.Topmost = true;
+                LoadWindows.GetMainWindow.Topmost = true;
 
-                TheMainWindow.ResizeMode = ResizeMode.CanMinimize;
-                TheMainWindow.SizeToContent = SizeToContent.Manual;
-                TheMainWindow.Width = MonitorInfo.Width;
-                TheMainWindow.Height = MonitorInfo.Height;
+                LoadWindows.GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
+                LoadWindows.GetMainWindow.SizeToContent = SizeToContent.Manual;
+                LoadWindows.GetMainWindow.Width = MonitorInfo.Width;
+                LoadWindows.GetMainWindow.Height = MonitorInfo.Height;
 
-                TheMainWindow.Top = MonitorInfo.WorkArea.Top;
-                TheMainWindow.Left = MonitorInfo.WorkArea.Left;
+                LoadWindows.GetMainWindow.Top = MonitorInfo.WorkArea.Top;
+                LoadWindows.GetMainWindow.Left = MonitorInfo.WorkArea.Left;
 
                 // Handle if browsing gallery
                 if (GalleryFunctions.IsOpen)
@@ -193,7 +198,7 @@ namespace PicView.UILogic.Sizing
             }
             else
             {
-                TheMainWindow.Topmost = false;
+                LoadWindows.GetMainWindow.Topmost = false;
 
                 if (Properties.Settings.Default.ShowInterface)
                 {
@@ -210,38 +215,38 @@ namespace PicView.UILogic.Sizing
 
                 if (AutoFitWindow)
                 {
-                    TheMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
-                    TheMainWindow.ResizeMode = ResizeMode.NoResize;
+                    LoadWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
+                    LoadWindows.GetMainWindow.ResizeMode = ResizeMode.NoResize;
 
                     if (GetQuickSettingsMenu != null)
                     {
                         GetQuickSettingsMenu.SetFit.IsChecked = true;
                     }
 
-                    TheMainWindow.WindowState = WindowState.Normal;
+                    LoadWindows.GetMainWindow.WindowState = WindowState.Normal;
 
-                    TheMainWindow.Width = double.NaN;
-                    TheMainWindow.Height = double.NaN;
+                    LoadWindows.GetMainWindow.Width = double.NaN;
+                    LoadWindows.GetMainWindow.Height = double.NaN;
 
-                    TheMainWindow.Top -= TheMainWindow.LowerBar.ActualHeight / 2; // It works...
+                    LoadWindows.GetMainWindow.Top -= LoadWindows.GetMainWindow.LowerBar.ActualHeight / 2; // It works...
                 }
                 else
                 {
-                    TheMainWindow.SizeToContent = SizeToContent.Manual;
-                    TheMainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
+                    LoadWindows.GetMainWindow.SizeToContent = SizeToContent.Manual;
+                    LoadWindows.GetMainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
 
                     if (GetQuickSettingsMenu != null)
                     {
                         GetQuickSettingsMenu.SetFit.IsChecked = false;
                     }
 
-                    TheMainWindow.Top = Properties.Settings.Default.Top;
-                    TheMainWindow.Left = Properties.Settings.Default.Left;
-                    TheMainWindow.Height = Properties.Settings.Default.Height;
-                    TheMainWindow.Width = Properties.Settings.Default.Width;
+                    LoadWindows.GetMainWindow.Top = Properties.Settings.Default.Top;
+                    LoadWindows.GetMainWindow.Left = Properties.Settings.Default.Left;
+                    LoadWindows.GetMainWindow.Height = Properties.Settings.Default.Height;
+                    LoadWindows.GetMainWindow.Width = Properties.Settings.Default.Width;
 
-                    TheMainWindow.ParentContainer.Width = double.NaN;
-                    TheMainWindow.ParentContainer.Height = double.NaN;
+                    LoadWindows.GetMainWindow.ParentContainer.Width = double.NaN;
+                    LoadWindows.GetMainWindow.ParentContainer.Height = double.NaN;
                 }
 
                 TryFitImage();
@@ -257,8 +262,8 @@ namespace PicView.UILogic.Sizing
         internal static void CenterWindowOnScreen()
         {
             //move to the centre
-            TheMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - TheMainWindow.ActualWidth) / 2 + MonitorInfo.WorkArea.Left;
-            TheMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - TheMainWindow.ActualHeight) / 2 + MonitorInfo.WorkArea.Top;
+            LoadWindows.GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - LoadWindows.GetMainWindow.ActualWidth) / 2 + MonitorInfo.WorkArea.Left;
+            LoadWindows.GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - LoadWindows.GetMainWindow.ActualHeight) / 2 + MonitorInfo.WorkArea.Top;
         }
 
         #endregion Window Functions
@@ -267,9 +272,9 @@ namespace PicView.UILogic.Sizing
 
         internal static void MainWindow_StateChanged(object sender, EventArgs e)
         {
-            if (TheMainWindow.WindowState == WindowState.Maximized)
+            if (LoadWindows.GetMainWindow.WindowState == WindowState.Maximized)
             {
-                TheMainWindow.WindowState = WindowState.Normal;
+                LoadWindows.GetMainWindow.WindowState = WindowState.Normal;
                 Fullscreen_Restore();
             }
         }
@@ -296,14 +301,14 @@ namespace PicView.UILogic.Sizing
                 fakeWindow.Close();
             }
 
-            TheMainWindow.Hide(); // Make it feel faster
+            LoadWindows.GetMainWindow.Hide(); // Make it feel faster
 
             if (!Properties.Settings.Default.AutoFitWindow && !Properties.Settings.Default.Fullscreen)
             {
-                Properties.Settings.Default.Top = TheMainWindow.Top;
-                Properties.Settings.Default.Left = TheMainWindow.Left;
-                Properties.Settings.Default.Height = TheMainWindow.Height;
-                Properties.Settings.Default.Width = TheMainWindow.Width;
+                Properties.Settings.Default.Top = LoadWindows.GetMainWindow.Top;
+                Properties.Settings.Default.Left = LoadWindows.GetMainWindow.Left;
+                Properties.Settings.Default.Height = LoadWindows.GetMainWindow.Height;
+                Properties.Settings.Default.Width = LoadWindows.GetMainWindow.Width;
             }
 
             Properties.Settings.Default.Save();

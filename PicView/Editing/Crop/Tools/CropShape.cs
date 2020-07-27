@@ -45,7 +45,7 @@ namespace PicView.Editing.Crop.Tools
         public void UpdateRectangle(double newX, double newY, double newWidth, double newHeight)
         {
             //dont use negative value
-            if (newHeight < 0 || newWidth < 0)  { return; }
+            if (newHeight < 0 || newWidth < 0) { return; }
 
             Canvas.SetLeft(Shape, newX);
             Canvas.SetTop(Shape, newY);
@@ -64,6 +64,5 @@ namespace PicView.Editing.Crop.Tools
                 Canvas.SetLeft(Shape, originalCanvas.ActualWidth - Shape.ActualWidth);
             }
         }
-
     }
 }

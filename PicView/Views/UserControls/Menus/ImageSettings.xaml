@@ -157,7 +157,6 @@
                             <SolidColorBrush x:Name="ContainedButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Button.Background>
                     </Button>
-
                 </Border>
             </Canvas>
         </Border>

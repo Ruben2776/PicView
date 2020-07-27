@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Media;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.Open_Save;
-using static PicView.Library.Fields;
 using static PicView.Shortcuts.MainShortcuts;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 using static PicView.UILogic.DragAndDrop.Image_DragAndDrop;
@@ -23,23 +22,23 @@ namespace PicView.UILogic.Loading
         internal static void Go()
         {
             // keyboard and Mouse_Keys Keys
-            TheMainWindow.KeyDown += MainWindow_KeysDown;
-            TheMainWindow.KeyUp += MainWindow_KeysUp;
-            TheMainWindow.MouseDown += MainWindow_MouseDown;
+            LoadWindows.GetMainWindow.KeyDown += MainWindow_KeysDown;
+            LoadWindows.GetMainWindow.KeyUp += MainWindow_KeysUp;
+            LoadWindows.GetMainWindow.MouseDown += MainWindow_MouseDown;
 
             // MinButton
-            TheMainWindow.MinButton.TheButton.Click += (s, x) => SystemCommands.MinimizeWindow(TheMainWindow);
+            LoadWindows.GetMainWindow.MinButton.TheButton.Click += (s, x) => SystemCommands.MinimizeWindow(LoadWindows.GetMainWindow);
 
             // CloseButton
-            TheMainWindow.CloseButton.TheButton.Click += (s, x) => SystemCommands.CloseWindow(TheMainWindow);
+            LoadWindows.GetMainWindow.CloseButton.TheButton.Click += (s, x) => SystemCommands.CloseWindow(LoadWindows.GetMainWindow);
 
             // FileMenuButton
-            TheMainWindow.FileMenuButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.FolderFill);
-            TheMainWindow.FileMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(TheMainWindow.FolderFill);
-            TheMainWindow.FileMenuButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(TheMainWindow.FileMenuBg);
-            TheMainWindow.FileMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(TheMainWindow.FolderFill);
-            TheMainWindow.FileMenuButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(TheMainWindow.FileMenuBg);
-            TheMainWindow.FileMenuButton.Click += Toggle_open_menu;
+            LoadWindows.GetMainWindow.FileMenuButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(LoadWindows.GetMainWindow.FolderFill);
+            LoadWindows.GetMainWindow.FileMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(LoadWindows.GetMainWindow.FolderFill);
+            LoadWindows.GetMainWindow.FileMenuButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(LoadWindows.GetMainWindow.FileMenuBg);
+            LoadWindows.GetMainWindow.FileMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(LoadWindows.GetMainWindow.FolderFill);
+            LoadWindows.GetMainWindow.FileMenuButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(LoadWindows.GetMainWindow.FileMenuBg);
+            LoadWindows.GetMainWindow.FileMenuButton.Click += Toggle_open_menu;
 
             GetFileMenu.Open.Click += (s, x) => Open();
             GetFileMenu.FileLocation.Click += (s, x) => Open_In_Explorer();
@@ -52,40 +51,42 @@ namespace PicView.UILogic.Loading
             GetFileMenu.SaveBorder.MouseLeftButtonUp += (s, x) => SaveFiles();
 
             // image_button
-            TheMainWindow.image_button.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.ImagePath1Fill, TheMainWindow.ImagePath2Fill, TheMainWindow.ImagePath3Fill);
-            TheMainWindow.image_button.MouseEnter += (s, x) => ButtonMouseOverAnim(TheMainWindow.ImagePath1Fill, TheMainWindow.ImagePath2Fill, TheMainWindow.ImagePath3Fill);
-            TheMainWindow.image_button.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(TheMainWindow.ImageMenuBg);
-            TheMainWindow.image_button.MouseLeave += (s, x) => ButtonMouseLeaveAnim(TheMainWindow.ImagePath1Fill, TheMainWindow.ImagePath2Fill, TheMainWindow.ImagePath3Fill);
-            TheMainWindow.image_button.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(TheMainWindow.ImageMenuBg);
-            TheMainWindow.image_button.Click += Toggle_image_menu;
+            LoadWindows.GetMainWindow.image_button.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(LoadWindows.GetMainWindow.ImagePath1Fill, LoadWindows.GetMainWindow.ImagePath2Fill, LoadWindows.GetMainWindow.ImagePath3Fill);
+            LoadWindows.GetMainWindow.image_button.MouseEnter += (s, x) => ButtonMouseOverAnim(LoadWindows.GetMainWindow.ImagePath1Fill, LoadWindows.GetMainWindow.ImagePath2Fill, LoadWindows.GetMainWindow.ImagePath3Fill);
+            LoadWindows.GetMainWindow.image_button.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(LoadWindows.GetMainWindow.ImageMenuBg);
+            LoadWindows.GetMainWindow.image_button.MouseLeave += (s, x) => ButtonMouseLeaveAnim(LoadWindows.GetMainWindow.ImagePath1Fill, LoadWindows.GetMainWindow.ImagePath2Fill, LoadWindows.GetMainWindow.ImagePath3Fill);
+            LoadWindows.GetMainWindow.image_button.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(LoadWindows.GetMainWindow.ImageMenuBg);
+            LoadWindows.GetMainWindow.image_button.Click += Toggle_image_menu;
 
             // imageSettingsMenu Buttons
 
-            GetImageSettingsMenu.Contained_Gallery.Click += delegate {
+            GetImageSettingsMenu.Contained_Gallery.Click += delegate
+            {
                 Close_UserControls();
                 GalleryToggle.OpenContainedGallery();
             };
-            GetImageSettingsMenu.Fullscreen_Gallery.Click += delegate {
+            GetImageSettingsMenu.Fullscreen_Gallery.Click += delegate
+            {
                 Close_UserControls();
                 GalleryToggle.OpenFullscreenGallery();
             };
 
             // SettingsButton
-            TheMainWindow.SettingsButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(TheMainWindow.SettingsButtonFill);
-            TheMainWindow.SettingsButton.MouseEnter += (s, x) => ButtonMouseOverAnim(TheMainWindow.SettingsButtonFill);
-            TheMainWindow.SettingsButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(TheMainWindow.SettingsMenuBg);
-            TheMainWindow.SettingsButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(TheMainWindow.SettingsButtonFill);
-            TheMainWindow.SettingsButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(TheMainWindow.SettingsMenuBg);
-            TheMainWindow.SettingsButton.Click += Toggle_quick_settings_menu;
+            LoadWindows.GetMainWindow.SettingsButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(LoadWindows.GetMainWindow.SettingsButtonFill);
+            LoadWindows.GetMainWindow.SettingsButton.MouseEnter += (s, x) => ButtonMouseOverAnim(LoadWindows.GetMainWindow.SettingsButtonFill);
+            LoadWindows.GetMainWindow.SettingsButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(LoadWindows.GetMainWindow.SettingsMenuBg);
+            LoadWindows.GetMainWindow.SettingsButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(LoadWindows.GetMainWindow.SettingsButtonFill);
+            LoadWindows.GetMainWindow.SettingsButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(LoadWindows.GetMainWindow.SettingsMenuBg);
+            LoadWindows.GetMainWindow.SettingsButton.Click += Toggle_quick_settings_menu;
 
             //FunctionButton
-            var MagicBrush = TheMainWindow.TryFindResource("MagicBrush") as SolidColorBrush;
-            TheMainWindow.FunctionMenuButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(MagicBrush);
-            TheMainWindow.FunctionMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(MagicBrush);
-            TheMainWindow.FunctionMenuButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(TheMainWindow.EffectsMenuBg);
-            TheMainWindow.FunctionMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(MagicBrush);
-            TheMainWindow.FunctionMenuButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(TheMainWindow.EffectsMenuBg);
-            TheMainWindow.FunctionMenuButton.Click += Toggle_Functions_menu;
+            var MagicBrush = LoadWindows.GetMainWindow.TryFindResource("MagicBrush") as SolidColorBrush;
+            LoadWindows.GetMainWindow.FunctionMenuButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(MagicBrush);
+            LoadWindows.GetMainWindow.FunctionMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(MagicBrush);
+            LoadWindows.GetMainWindow.FunctionMenuButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(LoadWindows.GetMainWindow.EffectsMenuBg);
+            LoadWindows.GetMainWindow.FunctionMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(MagicBrush);
+            LoadWindows.GetMainWindow.FunctionMenuButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(LoadWindows.GetMainWindow.EffectsMenuBg);
+            LoadWindows.GetMainWindow.FunctionMenuButton.Click += Toggle_Functions_menu;
 
             // ClickArrows
             GetClickArrowLeft.MouseLeftButtonDown += (s, x) => PicButton(true, false);
@@ -93,50 +94,50 @@ namespace PicView.UILogic.Loading
             GetClickArrowRight.MouseLeftButtonDown += (s, x) => PicButton(true, true);
 
             // x2
-            Getx2.MouseLeftButtonDown += (x, xx) => SystemCommands.CloseWindow(TheMainWindow);
+            Getx2.MouseLeftButtonDown += (x, xx) => SystemCommands.CloseWindow(LoadWindows.GetMainWindow);
 
             // Minus
-            GetMinus.MouseLeftButtonDown += (s, x) => SystemCommands.MinimizeWindow(TheMainWindow);
+            GetMinus.MouseLeftButtonDown += (s, x) => SystemCommands.MinimizeWindow(LoadWindows.GetMainWindow);
 
             // GalleryShortcut
             GetGalleryShortcut.MouseLeftButtonDown += (s, x) => GalleryToggle.Toggle();
 
             // Bar
-            TheMainWindow.TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
-            TheMainWindow.TitleText.InnerTextBox.PreviewKeyDown += CustomTextBoxShortcuts.CustomTextBox_KeyDown;
-            TheMainWindow.TitleText.PreviewMouseLeftButtonDown += EditTitleBar.Bar_PreviewMouseLeftButtonDown;
-            TheMainWindow.TitleText.PreviewMouseRightButtonDown += EditTitleBar.Bar_PreviewMouseRightButtonDown;
+            LoadWindows.GetMainWindow.TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
+            LoadWindows.GetMainWindow.TitleText.InnerTextBox.PreviewKeyDown += CustomTextBoxShortcuts.CustomTextBox_KeyDown;
+            LoadWindows.GetMainWindow.TitleText.PreviewMouseLeftButtonDown += EditTitleBar.Bar_PreviewMouseLeftButtonDown;
+            LoadWindows.GetMainWindow.TitleText.PreviewMouseRightButtonDown += EditTitleBar.Bar_PreviewMouseRightButtonDown;
 
             // img
-            TheMainWindow.MainImage.PreviewMouseLeftButtonDown += DragAndDrop.DragToExplorer.DragFile;
-            TheMainWindow.MainImage.MouseLeftButtonDown += MainImage_MouseLeftButtonDown;
-            TheMainWindow.MainImage.MouseLeftButtonUp += MainImage_MouseLeftButtonUp;
-            TheMainWindow.MainImage.MouseMove += MainImage_MouseMove;
-            TheMainWindow.MainImage.MouseWheel += MainImage_MouseWheel;
+            LoadWindows.GetMainWindow.MainImage.PreviewMouseLeftButtonDown += DragAndDrop.DragToExplorer.DragFile;
+            LoadWindows.GetMainWindow.MainImage.MouseLeftButtonDown += MainImage_MouseLeftButtonDown;
+            LoadWindows.GetMainWindow.MainImage.MouseLeftButtonUp += MainImage_MouseLeftButtonUp;
+            LoadWindows.GetMainWindow.MainImage.MouseMove += MainImage_MouseMove;
+            LoadWindows.GetMainWindow.MainImage.MouseWheel += MainImage_MouseWheel;
 
             // bg
-            TheMainWindow.ParentContainer.MouseLeftButtonDown += Bg_MouseLeftButtonDown;
-            TheMainWindow.ParentContainer.Drop += Image_Drop;
-            TheMainWindow.ParentContainer.DragEnter += Image_DragEnter;
-            TheMainWindow.ParentContainer.DragLeave += Image_DragLeave;
-            TheMainWindow.ParentContainer.MouseEnter += Interface_MouseEnter;
-            TheMainWindow.ParentContainer.MouseMove += Interface_MouseMove;
-            TheMainWindow.ParentContainer.MouseLeave += Interface_MouseLeave;
+            LoadWindows.GetMainWindow.ParentContainer.MouseLeftButtonDown += Bg_MouseLeftButtonDown;
+            LoadWindows.GetMainWindow.ParentContainer.Drop += Image_Drop;
+            LoadWindows.GetMainWindow.ParentContainer.DragEnter += Image_DragEnter;
+            LoadWindows.GetMainWindow.ParentContainer.DragLeave += Image_DragLeave;
+            LoadWindows.GetMainWindow.ParentContainer.MouseEnter += Interface_MouseEnter;
+            LoadWindows.GetMainWindow.ParentContainer.MouseMove += Interface_MouseMove;
+            LoadWindows.GetMainWindow.ParentContainer.MouseLeave += Interface_MouseLeave;
 
             // TooltipStyle
             GetToolTipMessage.MouseWheel += MainImage_MouseWheel;
 
             // TitleBar
-            TheMainWindow.TitleBar.MouseLeftButtonDown += Move;
-            TheMainWindow.TitleBar.MouseLeave += Restore_From_Move;
+            LoadWindows.GetMainWindow.TitleBar.MouseLeftButtonDown += Move;
+            LoadWindows.GetMainWindow.TitleBar.MouseLeave += Restore_From_Move;
 
             // Lower Bar
-            TheMainWindow.LowerBar.Drop += Image_Drop;
-            TheMainWindow.LowerBar.MouseLeftButtonDown += MoveAlt;
+            LoadWindows.GetMainWindow.LowerBar.Drop += Image_Drop;
+            LoadWindows.GetMainWindow.LowerBar.MouseLeftButtonDown += MoveAlt;
 
             // This
-            TheMainWindow.Closing += Window_Closing;
-            TheMainWindow.StateChanged += MainWindow_StateChanged;
+            LoadWindows.GetMainWindow.Closing += Window_Closing;
+            LoadWindows.GetMainWindow.StateChanged += MainWindow_StateChanged;
 
             //LocationChanged += MainWindow_LocationChanged;
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
@@ -145,6 +146,5 @@ namespace PicView.UILogic.Loading
             Trace.WriteLine("Events loaded");
 #endif
         }
-       
     }
 }

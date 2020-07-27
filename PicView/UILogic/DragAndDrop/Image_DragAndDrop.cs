@@ -1,20 +1,26 @@
 ﻿using PicView.ChangeImage;
 using PicView.FileHandling;
+using PicView.UILogic.Loading;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.Thumbnails;
-using static PicView.Library.Fields;
 using static PicView.UILogic.Tooltip;
 
 namespace PicView.UILogic.DragAndDrop
 {
     internal static class Image_DragAndDrop
     {
+        /// <summary>
+        /// Backup of image
+        /// </summary>
+        private static ImageSource prevPicResource;
+
         /// <summary>
         /// Check if dragged file is valid,
         /// returns false for valid file with no thumbnail,
@@ -75,7 +81,6 @@ namespace PicView.UILogic.DragAndDrop
                     return;
                 }
             }
-            
 
             // Tell that it's succeeded
             e.Effects = DragDropEffects.Copy;
@@ -83,15 +88,15 @@ namespace PicView.UILogic.DragAndDrop
             ShowTooltipMessage(Application.Current.Resources["DragOverString"] as string, true);
 
             // If no image, fix it to container
-            if (TheMainWindow.MainImage.Source == null)
+            if (LoadWindows.GetMainWindow.MainImage.Source == null)
             {
-                TheMainWindow.MainImage.Width = TheMainWindow.Scroller.ActualWidth;
-                TheMainWindow.MainImage.Height = TheMainWindow.Scroller.ActualHeight;
+                LoadWindows.GetMainWindow.MainImage.Width = LoadWindows.GetMainWindow.Scroller.ActualWidth;
+                LoadWindows.GetMainWindow.MainImage.Height = LoadWindows.GetMainWindow.Scroller.ActualHeight;
             }
             else
             {
                 // Save our image so we can swap back to it later if neccesary
-                prevPicResource = TheMainWindow.MainImage.Source;
+                prevPicResource = LoadWindows.GetMainWindow.MainImage.Source;
             }
 
             // Load from preloader or thumbnails
@@ -99,7 +104,7 @@ namespace PicView.UILogic.DragAndDrop
 
             if (thumb != null)
             {
-                TheMainWindow.MainImage.Source = thumb;
+                LoadWindows.GetMainWindow.MainImage.Source = thumb;
             }
         }
 
@@ -116,11 +121,12 @@ namespace PicView.UILogic.DragAndDrop
 
             if (prevPicResource != null)
             {
-                TheMainWindow.MainImage.Source = prevPicResource;
+                LoadWindows.GetMainWindow.MainImage.Source = prevPicResource;
+                prevPicResource = null;
             }
-            else if (TheMainWindow.TitleText.Text == Application.Current.Resources["NoImage"] as string)
+            else if (LoadWindows.GetMainWindow.TitleText.Text == Application.Current.Resources["NoImage"] as string)
             {
-                TheMainWindow.MainImage.Source = null;
+                LoadWindows.GetMainWindow.MainImage.Source = null;
             }
 
             CloseToolTipMessage();
@@ -143,7 +149,7 @@ namespace PicView.UILogic.DragAndDrop
                     string[] parts = dataStr.Split((char)10);
 
                     Pic(parts[0]);
-                    TheMainWindow.Activate();
+                    LoadWindows.GetMainWindow.Activate();
                     return;
                 }
             }
@@ -166,7 +172,7 @@ namespace PicView.UILogic.DragAndDrop
                     if (Directory.GetFiles(files[0]).Length > 0)
                     {
                         PicFolder(files[0]);
-                        TheMainWindow.Activate();
+                        LoadWindows.GetMainWindow.Activate();
                     }
                     return;
                 }
@@ -191,7 +197,7 @@ namespace PicView.UILogic.DragAndDrop
             // Don't show drop message any longer
             CloseToolTipMessage();
 
-            TheMainWindow.Activate();
+            LoadWindows.GetMainWindow.Activate();
 
             // Start multiple clients if user drags multiple files
             // TODO no longer working after converting to .NET Core...
@@ -216,7 +222,5 @@ namespace PicView.UILogic.DragAndDrop
                 prevPicResource = null;
             }
         }
-
-
     }
 }

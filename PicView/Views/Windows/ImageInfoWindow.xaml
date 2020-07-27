@@ -322,7 +322,6 @@
                             <uc:CopyButton x:Name="BitDepthCopy" ToolTip="{StaticResource Copy}" />
                         </Border>
                     </StackPanel>
-
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical">
@@ -470,9 +469,7 @@
                             <uc:CopyButton x:Name="AspectRatioCopy" ToolTip="{StaticResource Copy}" />
                         </Border>
                     </StackPanel>
-
                 </StackPanel>
-
             </StackPanel>
         </Border>
     </DockPanel>

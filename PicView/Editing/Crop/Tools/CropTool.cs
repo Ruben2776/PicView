@@ -12,8 +12,6 @@ namespace PicView.Editing.Crop.Tools
         private readonly ShadeTool shadeService;
         private readonly ThumbTool thumbService;
         private readonly TextTool textService;
-        
-        
 
         public double TopLeftX => Canvas.GetLeft(cropShape.Shape);
         public double TopLeftY => Canvas.GetTop(cropShape.Shape);
@@ -24,22 +22,20 @@ namespace PicView.Editing.Crop.Tools
 
         public CropTool(Canvas canvas)
         {
-            
             this.canvas = canvas;
             cropShape = new CropShape(new Rectangle
             {
-                    Height = 4,
-                    Width = 4,
-                    Stroke = (SolidColorBrush)Application.Current.Resources["MainColorBrush"],
-                    StrokeThickness = 2
-                }, canvas);
+                Height = 4,
+                Width = 4,
+                Stroke = (SolidColorBrush)Application.Current.Resources["MainColorBrush"],
+                StrokeThickness = 2
+            }, canvas);
 
             shadeService = new ShadeTool(canvas, this);
             thumbService = new ThumbTool(canvas, this);
             textService = new TextTool(this);
 
             this.canvas.Children.Add(cropShape.Shape);
-
 
             this.canvas.Children.Add(shadeService.ShadeOverlay);
 

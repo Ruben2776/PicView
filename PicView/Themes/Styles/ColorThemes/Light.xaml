@@ -93,5 +93,4 @@
         TileMode="FlipXY"
         Viewport="0,0,100,100"
         ViewportUnits="Absolute" />
-
 </ResourceDictionary>

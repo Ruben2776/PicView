@@ -1,5 +1,4 @@
-﻿using PicView.UILogic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -61,6 +60,7 @@ namespace PicView.Editing.Crop.Tools
                 new Rect(2, 2, 6, 6));
         }
     }
+
     internal class ThumbTool
     {
         private readonly CropTool cropTool;
@@ -161,8 +161,6 @@ namespace PicView.Editing.Crop.Tools
             double resultHeight = cropTool.Height + offset;
             double resultTop = newTop + _thumbSize / 2;
 
-
-
             if (newLeft > canvas.ActualWidth)
             {
                 newLeft = canvas.ActualWidth;
@@ -257,7 +255,6 @@ namespace PicView.Editing.Crop.Tools
 
             cropTool.Redraw(cropTool.TopLeftX, cropTool.TopLeftY, cropTool.Width, thumbResultTop - cropTool.TopLeftY);
         }
-
 
         public void Redraw()
         {

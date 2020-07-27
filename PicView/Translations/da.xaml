@@ -37,7 +37,6 @@
     <system:String x:Key="ViewLicenseFile">Se licensfilen</system:String>
     <system:String x:Key="Version">Version:</system:String>
 
-
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Skalering af vindue</system:String>
     <system:String x:Key="NormalWindow">Normalt vindue</system:String>
@@ -161,7 +160,6 @@
     <system:String x:Key="Start">Start</system:String>
     <system:String x:Key="Stop">Stop</system:String>
 
-
     <!--  Navigation related  -->
     <system:String x:Key="Navigation">Navigering</system:String>
     <system:String x:Key="NextImage">Næste billede</system:String>
@@ -283,7 +281,6 @@
     <system:String x:Key="Up">Op</system:String>
     <system:String x:Key="Down">Ned</system:String>
 
-
     <!--  Error messages  -->
     <system:String x:Key="SavingFileFailed">Gemning af fil mislykkedes</system:String>
     <system:String x:Key="UnexpectedError">Der skete en ukendt fejl</system:String>
@@ -304,7 +301,6 @@
     <system:String x:Key="RotateLeft">Roter til venstre</system:String>
     <system:String x:Key="Flip">Spejlvend</system:String>
     <system:String x:Key="Unflip">Spejlvend tilbage</system:String>
-
 
     <!--  Archives  -->
     <system:String x:Key="Unzipping">Udpakker...</system:String>
@@ -362,5 +358,4 @@
 
     <system:String x:Key="ColorPickerTool">Farvelægningsværktøj</system:String>
     <system:String x:Key="ColorPickerToolTooltip">Vælg en farve fra billedet</system:String>
-
 </ResourceDictionary>

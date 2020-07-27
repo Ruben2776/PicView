@@ -1,11 +1,11 @@
 ﻿using PicView.ChangeImage;
 using PicView.FileHandling;
+using PicView.UILogic.Loading;
 using PicView.UILogic.Sizing;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.ChangeImage.Navigation;
-using static PicView.Library.Fields;
 
 namespace PicView.UILogic
 {
@@ -15,7 +15,7 @@ namespace PicView.UILogic
 
         internal static void Bar_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (TheMainWindow.TitleText.IsFocused)
+            if (LoadWindows.GetMainWindow.TitleText.IsFocused)
             {
                 return;
             }
@@ -39,9 +39,9 @@ namespace PicView.UILogic
             {
                 return;
             }
-            if (!TheMainWindow.TitleText.IsFocused)
+            if (!LoadWindows.GetMainWindow.TitleText.IsFocused)
             {
-                TheMainWindow.TitleText.InnerTextBox.Focus();
+                LoadWindows.GetMainWindow.TitleText.InnerTextBox.Focus();
                 SelectFileName();
             }
             else
@@ -64,8 +64,8 @@ namespace PicView.UILogic
 
             e.Handled = true;
 
-            backupTitle = TheMainWindow.TitleText.Text;
-            TheMainWindow.TitleText.Text = Pics[FolderIndex];
+            backupTitle = LoadWindows.GetMainWindow.TitleText.Text;
+            LoadWindows.GetMainWindow.TitleText.Text = Pics[FolderIndex];
         }
 
         internal static void SelectFileName()
@@ -73,20 +73,20 @@ namespace PicView.UILogic
             var filename = Path.GetFileName(Pics[FolderIndex]);
             var start = Pics[FolderIndex].Length - filename.Length;
             var end = Path.GetFileNameWithoutExtension(filename).Length;
-            TheMainWindow.TitleText.InnerTextBox.Select(start, end);
+            LoadWindows.GetMainWindow.TitleText.InnerTextBox.Select(start, end);
         }
 
         internal static void HandleRename()
         {
-            if (FileFunctions.RenameFile(Pics[FolderIndex], TheMainWindow.TitleText.Text))
+            if (FileFunctions.RenameFile(Pics[FolderIndex], LoadWindows.GetMainWindow.TitleText.Text))
             {
-                Pics[FolderIndex] = TheMainWindow.TitleText.Text;
+                Pics[FolderIndex] = LoadWindows.GetMainWindow.TitleText.Text;
                 Refocus();
                 Error_Handling.Reload(); // TODO proper renaming of window title, tooltip, etc.
             }
             else
             {
-                Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]); 
+                Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
                 Refocus();
             }
         }
@@ -96,16 +96,16 @@ namespace PicView.UILogic
         /// </summary>
         internal static void Refocus()
         {
-            if (!TheMainWindow.TitleText.IsFocused)
+            if (!LoadWindows.GetMainWindow.TitleText.IsFocused)
             {
                 return;
             }
 
-            FocusManager.SetFocusedElement(FocusManager.GetFocusScope(TheMainWindow.TitleText), null);
+            FocusManager.SetFocusedElement(FocusManager.GetFocusScope(LoadWindows.GetMainWindow.TitleText), null);
             Keyboard.ClearFocus();
-            TheMainWindow.Focus();
+            LoadWindows.GetMainWindow.Focus();
 
-            TheMainWindow.TitleText.Text = backupTitle;
+            LoadWindows.GetMainWindow.TitleText.Text = backupTitle;
             backupTitle = string.Empty;
         }
     }

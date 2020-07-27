@@ -1,4 +1,5 @@
 ﻿using PicView.ChangeImage;
+using PicView.UILogic.Loading;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -7,13 +8,31 @@ using System.Windows;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.FileLists;
-using static PicView.Library.Fields;
 using static PicView.UILogic.Tooltip;
 
 namespace PicView.FileHandling
 {
     internal static class ArchiveExtraction
     {
+        // TODO update files or find a way to loop through supported files
+        private const string SupportedFilesFilter =
+            " *.jpg *.jpeg *.jpe *.png *.bmp *.tif *.tiff *.gif *.ico *.wdp *.svg *.psd *.psb *.orf *.cr2 *.crw *.dng *.raf *.raw *.mrw *.nef *.x3f *.arw *.webp *"
+            + ".aai *.ai *.art *.bgra *.bgro *.canvas *.cin *.cmyk *.cmyka *.cur *.cut *.dcm *.dcr *.dcx *.dds *.dfont *.dlib *.dpx *.dxt1 *.dxt5 *.emf *.epi *.eps *.ept"
+            + " *.ept2 *.ept3 *.exr *.fax *.fits *.flif *.g3 *.g4 *.gif87 *.gradient *.gray *.group4 *.hald *.hdr *.hrz *.icb *.icon *.ipl *.jc2 *.j2k *.jng *.jnx"
+            + " *.jpm *.jps *.jpt *.kdc *.label *.map *.nrw *.otb *.otf *.pbm *.pcd *.pcds *.pcl *.pct *.pcx *.pfa *.pfb *.pfm *.picon *.pict *.pix *.pjpeg *.png00"
+            + " *.png24 *.png32 *.png48 *.png64 *.png8 *.pnm *.ppm *.ps *.radialgradient *.ras *.rgb *.rgba *.rgbo *.rla *.rle *.scr *.screenshot *.sgi *.srf *.sun"
+            + " *.svgz *.tiff64 *.ttf *.vda *.vicar *.vid *.viff *.vst *.vmf *.wpg *.xbm *.xcf *.yuv";
+
+        /// <summary>
+        /// File path for the extracted folder
+        /// </summary>
+        internal static string TempZipPath { get; set; }
+
+        /// <summary>
+        /// File path for the extracted zip file
+        /// </summary>
+        internal static string TempZipFile { get; set; }
+
         /// <summary>
         /// Attemps to extract folder
         /// </summary>
@@ -173,8 +192,8 @@ namespace PicView.FileHandling
                 return true;
             }
 
-            TheMainWindow.TitleText.Text = Application.Current.Resources["Unzipping"] as string;
-            TheMainWindow.TitleText.ToolTip = TheMainWindow.TitleText.Text;
+            LoadWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Unzipping"] as string;
+            LoadWindows.GetMainWindow.TitleText.ToolTip = LoadWindows.GetMainWindow.TitleText.Text;
             await Task.Delay(100).ConfigureAwait(true);
 
             // TempZipPath is not null = images being extracted

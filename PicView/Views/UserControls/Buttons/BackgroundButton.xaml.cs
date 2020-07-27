@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
 namespace PicView.UILogic.UserControls

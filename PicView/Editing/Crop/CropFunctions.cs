@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.UILogic;
 using PicView.UILogic.Loading;
@@ -9,7 +10,6 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
-using static PicView.Library.Fields;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.TransformImage.Rotation;
 using static PicView.UILogic.UC;
@@ -22,7 +22,7 @@ namespace PicView.Editing.Crop
 
         internal static void StartCrop()
         {
-            if (TheMainWindow.MainImage.Source == null) { return; }
+            if (LoadWindows.GetMainWindow.MainImage.Source == null) { return; }
 
             if (GetCropppingTool == null)
             {
@@ -32,11 +32,11 @@ namespace PicView.Editing.Crop
             GetCropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? xWidth : xHeight;
             GetCropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? xHeight : xWidth;
 
-            TheMainWindow.TitleText.Text = Application.Current.Resources["CropMessage"] as string;
+            LoadWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["CropMessage"] as string;
 
-            if (!TheMainWindow.ParentContainer.Children.Contains(GetCropppingTool))
+            if (!LoadWindows.GetMainWindow.ParentContainer.Children.Contains(GetCropppingTool))
             {
-                TheMainWindow.ParentContainer.Children.Add(GetCropppingTool);
+                LoadWindows.GetMainWindow.ParentContainer.Children.Add(GetCropppingTool);
             }
 
             CanNavigate = false;
@@ -46,11 +46,11 @@ namespace PicView.Editing.Crop
         {
             if (Pics.Count == 0)
             {
-                SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height);
+                SetTitle.SetTitleString((int)LoadWindows.GetMainWindow.MainImage.Source.Width, (int)LoadWindows.GetMainWindow.MainImage.Source.Height);
             }
             else
             {
-                SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height, FolderIndex);
+                SetTitle.SetTitleString((int)LoadWindows.GetMainWindow.MainImage.Source.Width, (int)LoadWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
             }
 
             await SaveCrop().ConfigureAwait(false);
@@ -61,13 +61,13 @@ namespace PicView.Editing.Crop
         {
             if (Pics.Count == 0)
             {
-                SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height);
+                SetTitle.SetTitleString((int)LoadWindows.GetMainWindow.MainImage.Source.Width, (int)LoadWindows.GetMainWindow.MainImage.Source.Height);
             }
             else
             {
-                SetTitle.SetTitleString((int)TheMainWindow.MainImage.Source.Width, (int)TheMainWindow.MainImage.Source.Height, FolderIndex);
+                SetTitle.SetTitleString((int)LoadWindows.GetMainWindow.MainImage.Source.Width, (int)LoadWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
             }
-            TheMainWindow.ParentContainer.Children.Remove(GetCropppingTool);
+            LoadWindows.GetMainWindow.ParentContainer.Children.Remove(GetCropppingTool);
             CanNavigate = true;
         }
 
@@ -98,8 +98,8 @@ namespace PicView.Editing.Crop
 
             var Savedlg = new SaveFileDialog
             {
-                Filter = FilterFiles,
-                Title = $"{Application.Current.Resources["SaveImage"]} - {AppName}",
+                Filter = Open_Save.FilterFiles,
+                Title = $"{Application.Current.Resources["SaveImage"]} - {SetTitle.AppName}",
                 FileName = fileName
             };
 
@@ -108,7 +108,7 @@ namespace PicView.Editing.Crop
                 return;
             }
 
-            IsDialogOpen = true;
+            Open_Save.IsDialogOpen = true;
 
             var crop = GetCrop();
             var success = false;
@@ -125,21 +125,21 @@ namespace PicView.Editing.Crop
             {
                 // Fixes saving if from web
                 // TODO add working method for copied images
-                var source = TheMainWindow.MainImage.Source as BitmapSource;
+                var source = LoadWindows.GetMainWindow.MainImage.Source as BitmapSource;
                 await Task.Run(() =>
                     success = SaveImages.TrySaveImage(
                         crop,
                         source,
                         Savedlg.FileName)).ConfigureAwait(false);
             }
-            await TheMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            await LoadWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
             {
                 if (!success)
                 {
                     Tooltip.ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
                 }
 
-                TheMainWindow.ParentContainer.Children.Remove(GetCropppingTool);
+                LoadWindows.GetMainWindow.ParentContainer.Children.Remove(GetCropppingTool);
             }));
         }
 
