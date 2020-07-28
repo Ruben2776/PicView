@@ -157,45 +157,52 @@ namespace PicView.Shortcuts
                     return;
 
                 case Key.Up:
+                    if (Properties.Settings.Default.ScrollEnabled)
+                    {
+                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
+                    }
+                    else if (ctrlDown)
+                    {
+                        Rotate(false);
+                    }
+                    return;
+
                 case Key.W:
                     if (Properties.Settings.Default.ScrollEnabled)
                     {
-                        if (ctrlDown)
-                        {
-                            return;
-                        }
-                        else
-                        {
-                            GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
-                        }
+                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
                     }
-                    else if (GetPicGallery != null)
+                    return;
+
+                case Key.Down:
+                    if (GetPicGallery != null)
                     {
                         if (GalleryFunctions.IsOpen)
                         {
                             if (Properties.Settings.Default.PicGallery == 1)
                             {
-                                ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
-                                return;
+                                ScrollTo(true, ctrlDown);
+                            }
+                            else if (ctrlDown)
+                            {
+                                Rotate(true);
                             }
                             else
                             {
-                                Pic(false);
+                                Pic();
                             }
                         }
-                        else
+                        else if (ctrlDown)
                         {
-                            Rotate(false);
+                            Rotate(true);
                         }
                     }
-                    else
+                    else if (ctrlDown)
                     {
-                        Rotate(false);
+                        Rotate(true);
                     }
-
                     return;
 
-                case Key.Down:
                 case Key.S:
                     if (ctrlDown)
                     {
@@ -204,30 +211,7 @@ namespace PicView.Shortcuts
                     else if (Properties.Settings.Default.ScrollEnabled)
                     {
                         GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + 30);
-                    }
-                    else if (GetPicGallery != null)
-                    {
-                        if (GalleryFunctions.IsOpen)
-                        {
-                            if (Properties.Settings.Default.PicGallery == 1)
-                            {
-                                ScrollTo(true, ctrlDown);
-                            }
-                            else
-                            {
-                                Pic();
-                            }
-                        }
-                        else
-                        {
-                            Rotate(true);
-                        }
-                    }
-                    else
-                    {
-                        Rotate(true);
-                    }
-
+                    }               
                     return;
 
                 // Zoom

@@ -391,11 +391,20 @@
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="W" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    d:Text="Ctrl"
+                                    FontSize="14"
+                                    Text="{StaticResource ResourceKey=Ctrl}" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock FontSize="14" Text="{StaticResource Up}" />
+                            </StackPanel>
                         </Border>
 
                         <Border
@@ -404,14 +413,7 @@
                             Padding="0,3,0,3"
                             Background="{StaticResource AltInterfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="0,1,1,0">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                d:Text="Up"
-                                FontSize="15"
-                                Text="{StaticResource ResourceKey=Up}" />
-                        </Border>
+                            BorderThickness="0,1,1,0" />
 
                         <Border
                             Grid.Row="1"
@@ -434,11 +436,20 @@
                             Background="{StaticResource BackgroundColorBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0">
-                            <TextBlock
+                            <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="S" />
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    d:Text="Ctrl"
+                                    FontSize="14"
+                                    Text="{StaticResource ResourceKey=Ctrl}" />
+                                <TextBlock
+                                    FontSize="14"
+                                    Foreground="{StaticResource MainColorFadedBrush}"
+                                    Text=" + " />
+                                <TextBlock FontSize="14" Text="{StaticResource Down}" />
+                            </StackPanel>
                         </Border>
 
                         <Border
@@ -447,14 +458,7 @@
                             Padding="0,3,0,3"
                             Background="{StaticResource BackgroundColorBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="0,1,1,0">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                d:Text="Down"
-                                FontSize="15"
-                                Text="{StaticResource ResourceKey=Down}" />
-                        </Border>
+                            BorderThickness="0,1,1,0" />
 
                         <Border
                             Grid.Row="2"
