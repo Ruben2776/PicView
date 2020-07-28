@@ -65,16 +65,16 @@ namespace PicView.ConfigureSettings
             switch (Properties.Settings.Default.BgColorChoice)
             {
                 case 0:
-                    LoadWindows.GetMainWindow.ParentContainer.Background = Brushes.Transparent;
+                    LoadWindows.GetMainWindow.MainImageBorder.Background = Brushes.Transparent;
                     break;
 
                 case 1:
                     var brush = Properties.Settings.Default.LightTheme ? Brushes.Black : Brushes.White;
-                    LoadWindows.GetMainWindow.ParentContainer.Background = brush;
+                    LoadWindows.GetMainWindow.MainImageBorder.Background = brush;
                     break;
 
                 case 2:
-                    LoadWindows.GetMainWindow.ParentContainer.Background = DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
+                    LoadWindows.GetMainWindow.MainImageBorder.Background = DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
                     break;
             }
 
@@ -87,14 +87,14 @@ namespace PicView.ConfigureSettings
 
         internal static void ChangeBackground(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.ParentContainer == null)
+            if (LoadWindows.GetMainWindow.MainImageBorder == null)
             {
                 return;
             }
 
             Properties.Settings.Default.BgColorChoice++;
 
-            if (Properties.Settings.Default.BgColorChoice > 2)
+            if (Properties.Settings.Default.BgColorChoice > 3)
             {
                 Properties.Settings.Default.BgColorChoice = 0;
             }
@@ -103,28 +103,36 @@ namespace PicView.ConfigureSettings
             {
                 case 0:
                     var x = new SolidColorBrush(Colors.Transparent);
-                    if (LoadWindows.GetMainWindow.ParentContainer.Background == x)
+                    if (LoadWindows.GetMainWindow.MainImageBorder.Background == x)
                     {
                         goto case 1;
                     }
-                    LoadWindows.GetMainWindow.ParentContainer.Background = x;
+                    LoadWindows.GetMainWindow.MainImageBorder.Background = x;
                     break;
 
                 case 1:
                     var brush = Properties.Settings.Default.LightTheme ? Brushes.Black : Brushes.White;
-                    LoadWindows.GetMainWindow.ParentContainer.Background = brush;
+                    LoadWindows.GetMainWindow.MainImageBorder.Background = brush;
                     break;
 
                 case 2:
                     var checkerboardBg = DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
                     if (checkerboardBg != null)
                     {
-                        LoadWindows.GetMainWindow.ParentContainer.Background = checkerboardBg;
+                        LoadWindows.GetMainWindow.MainImageBorder.Background = checkerboardBg;
+                    }
+                    break;
+
+                case 3:
+                    var checkerboardBg2 = DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(76, 76, 76));
+                    if (checkerboardBg2 != null)
+                    {
+                        LoadWindows.GetMainWindow.MainImageBorder.Background = checkerboardBg2;
                     }
                     break;
 
                 default:
-                    LoadWindows.GetMainWindow.ParentContainer.Background = Brushes.Transparent;
+                    LoadWindows.GetMainWindow.MainImageBorder.Background = Brushes.Transparent;
                     break;
             }
         }
@@ -136,6 +144,7 @@ namespace PicView.ConfigureSettings
                 0 => Brushes.Transparent,
                 1 => Properties.Settings.Default.LightTheme ? Brushes.Black : Brushes.White,
                 2 => DrawingBrushes.CheckerboardDrawingBrush(Colors.White),
+                3 => DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(76, 76, 76), Color.FromRgb(32, 32, 32), 55),
                 _ => Brushes.Transparent,
             };
         }
