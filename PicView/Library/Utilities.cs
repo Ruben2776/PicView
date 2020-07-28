@@ -22,15 +22,6 @@ namespace PicView.Library
             return y == 0 ? x : GCD(y, x % y);
         }
 
-        /// <summary>
-        /// Gets the absolute mouse position, relative to screen
-        /// </summary>
-        /// <returns></returns>
-        internal static Point GetMousePos(UIElement element)
-        {
-            return element.PointToScreen(Mouse.GetPosition(element));
-        }
-
         public static string GetDefaultExeConfigPath(ConfigurationUserLevel userLevel)
         {
             try

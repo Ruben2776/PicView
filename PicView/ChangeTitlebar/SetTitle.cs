@@ -36,7 +36,7 @@ namespace PicView.UILogic
                 Application.Current.Resources["File"] : Application.Current.Resources["Files"];
 
             var s1 = new StringBuilder(90);
-            s1.Append(fileInfo.Name).Append(" ").Append(index + 1).Append("/").Append(Pics.Count).Append(" ")
+            s1.Append(fileInfo.Name).Append(' ').Append(index + 1).Append('/').Append(Pics.Count).Append(' ')
                 .Append(files).Append(" (").Append(width).Append(" x ").Append(height)
                 .Append(StringAspect(width, height))
                 .Append(GetSizeReadable(fileInfo.Length));
@@ -131,7 +131,7 @@ namespace PicView.UILogic
         {
             string path = Library.Utilities.GetURL(LoadWindows.GetMainWindow.TitleText.Text);
 
-            path = string.IsNullOrWhiteSpace(path) ? "Custom image" : path;
+            path = string.IsNullOrWhiteSpace(path) ? Application.Current.Resources["Image"] as string : path;
 
             var titleString = TitleString(width, height, path);
             LoadWindows.GetMainWindow.Title = titleString[0];
