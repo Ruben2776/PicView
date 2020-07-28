@@ -63,7 +63,7 @@
 
     <system:String x:Key="Blue">Blau</system:String>
     <system:String x:Key="Cyan">Zyan</system:String>
-    <system:String x:Key="Aqua">Aquamarin</system:String>
+    <system:String x:Key="Aqua">Aqua</system:String>
     <system:String x:Key="Teal">Blaugrün</system:String>
 
     <system:String x:Key="Lime">Hellgrün</system:String>
@@ -84,7 +84,7 @@
 
     <!--  Settings window, misc  -->
     <system:String x:Key="MiscSettings">Einstellungen</system:String>
-    <system:String x:Key="SearchSubdirectory">Unterverzeichnisse durchsuchen</system:String>
+    <system:String x:Key="SearchSubdirectory">Unterordner einbinden</system:String>
     <system:String x:Key="ColoredWindowBorder">Farbiger Fensterrand</system:String>
 
     <system:String x:Key="RestartApp">Anwendung neustarten</system:String>

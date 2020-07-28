@@ -261,7 +261,7 @@
     <system:String x:Key="BitDepth">Bit depth</system:String>
 
     <!--  Keyboard key names  -->
-    <system:String x:Key="Delete">Slet</system:String>
+    <system:String x:Key="Delete">Del</system:String>
     <system:String x:Key="Ctrl">Ctrl</system:String>
     <system:String x:Key="Shift">Skift</system:String>
     <system:String x:Key="Alt">Alt</system:String>
