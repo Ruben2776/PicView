@@ -232,12 +232,13 @@
                         Orientation="Horizontal">
 
                         <Border
-                            Width="200"
-                            Height="40"
-                            Margin="5,3"
+                            Width="167"
+                            Height="45"
                             Background="{StaticResource BackgroundColorBrushAlt}"
                             BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1">
+                            BorderThickness="1"
+                            CornerRadius="2"
+                            Effect="{StaticResource MenuShadowButtonBorder}" Margin="0,0,10,0">
                             <CheckBox
                                 x:Name="DarkThemeRadio"
                                 HorizontalContentAlignment="Center"
@@ -254,12 +255,13 @@
                         </Border>
 
                         <Border
-                            Width="200"
-                            Height="40"
-                            Margin="5,3"
+                            Width="167"
+                            Height="45"
                             Background="{StaticResource BackgroundColorBrushAlt}"
                             BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1">
+                            BorderThickness="1"
+                            CornerRadius="2"
+                            Effect="{StaticResource MenuShadowButtonBorder}">
                             <CheckBox
                                 x:Name="LightThemeRadio"
                                 HorizontalContentAlignment="Center"

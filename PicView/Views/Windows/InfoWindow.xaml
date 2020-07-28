@@ -87,9 +87,9 @@
 
                     <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="145" />
+                            <ColumnDefinition Width="170" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -345,9 +345,10 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,1">
                             <TextBlock
-                                d:Text="(Saved on next startup)"
+                                MaxWidth="155"
                                 Style="{StaticResource txtItalic}"
-                                Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
+                                Text="{StaticResource ResourceKey=SavedOnNextStartUp}"
+                                TextWrapping="Wrap" />
                         </Border>
                     </Grid>
 
@@ -359,9 +360,9 @@
 
                     <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="145" />
+                            <ColumnDefinition Width="170" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -500,9 +501,9 @@
 
                     <Grid Width="480" Margin="0,0,0,16">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="145" />
+                            <ColumnDefinition Width="170" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -710,9 +711,10 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
                             <TextBlock
-                                d:Text="(Saved on next startup)"
+                                MaxWidth="155"
                                 Style="{StaticResource txtItalic}"
-                                Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
+                                Text="{StaticResource ResourceKey=SavedOnNextStartUp}"
+                                TextWrapping="Wrap" />
                         </Border>
                     </Grid>
 
@@ -724,9 +726,9 @@
 
                     <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="145" />
+                            <ColumnDefinition Width="170" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -771,9 +773,10 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0">
                             <TextBlock
-                                d:Text="(Saved on next startup)"
+                                MaxWidth="155"
                                 Style="{StaticResource txtItalic}"
-                                Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
+                                Text="{StaticResource ResourceKey=SavedOnNextStartUp}"
+                                TextWrapping="Wrap" />
                         </Border>
 
                         <Border
@@ -812,9 +815,10 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0">
                             <TextBlock
-                                d:Text="(Saved on next startup)"
+                                MaxWidth="155"
                                 Style="{StaticResource txtItalic}"
-                                Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
+                                Text="{StaticResource ResourceKey=SavedOnNextStartUp}"
+                                TextWrapping="Wrap" />
                         </Border>
 
                         <Border
@@ -853,9 +857,10 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0">
                             <TextBlock
-                                d:Text="(Saved on next startup)"
+                                MaxWidth="155"
                                 Style="{StaticResource txtItalic}"
-                                Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
+                                Text="{StaticResource ResourceKey=SavedOnNextStartUp}"
+                                TextWrapping="Wrap" />
                         </Border>
 
                         <Border
@@ -894,9 +899,10 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,0,1,1">
                             <TextBlock
-                                d:Text="(Saved on next startup)"
+                                MaxWidth="155"
                                 Style="{StaticResource txtItalic}"
-                                Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
+                                Text="{StaticResource ResourceKey=SavedOnNextStartUp}"
+                                TextWrapping="Wrap" />
                         </Border>
                     </Grid>
 
@@ -908,9 +914,9 @@
 
                     <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="145" />
+                            <ColumnDefinition Width="170" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -964,9 +970,10 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0">
                             <TextBlock
-                                d:Text="(Saved on next startup)"
+                                MaxWidth="155"
                                 Style="{StaticResource txtItalic}"
-                                Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
+                                Text="{StaticResource ResourceKey=SavedOnNextStartUp}"
+                                TextWrapping="Wrap" />
                         </Border>
 
                         <Border
@@ -1005,9 +1012,10 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,1,0">
                             <TextBlock
-                                d:Text="(Saved on next startup)"
+                                MaxWidth="155"
                                 Style="{StaticResource txtItalic}"
-                                Text="{StaticResource ResourceKey=SavedOnNextStartUp}" />
+                                Text="{StaticResource ResourceKey=SavedOnNextStartUp}"
+                                TextWrapping="Wrap" />
                         </Border>
 
                         <Border
@@ -1018,10 +1026,12 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1,1,1,0">
                             <TextBlock
+                                MaxWidth="155"
                                 Margin="10,3,0,3"
                                 d:Text="Toggle fullscreen"
                                 FontSize="15"
-                                Text="{StaticResource ResourceKey=ToggleFullscreen}" />
+                                Text="{StaticResource ResourceKey=ToggleFullscreen}"
+                                TextWrapping="Wrap" />
                         </Border>
 
                         <Border
@@ -1109,9 +1119,9 @@
 
                     <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="145" />
+                            <ColumnDefinition Width="170" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -1554,9 +1564,9 @@
 
                     <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="145" />
+                            <ColumnDefinition Width="170" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -1835,9 +1845,9 @@
 
                     <Grid Width="480" Margin="0,0,0,16">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="145" />
+                            <ColumnDefinition Width="170" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -1971,9 +1981,9 @@
 
                     <Grid Width="480" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="145" />
+                            <ColumnDefinition Width="170" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition />

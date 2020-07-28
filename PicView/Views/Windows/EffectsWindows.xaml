@@ -6,8 +6,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.UILogic.UserControls"
     Title="{StaticResource HLSLPictureFX}"
-    Width="556"
-    Height="605"
+    Width="686"
+    Height="593"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros"
     Foreground="{StaticResource MainColorBrush}"
     Style="{DynamicResource MyWindowStyle}"
@@ -107,7 +107,7 @@
 
                         <RadioButton
                             x:Name="NegativeButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource NegativeColors}">
@@ -118,7 +118,7 @@
 
                         <RadioButton
                             x:Name="GrayscaleButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource BlackAndWhite}">
@@ -129,7 +129,7 @@
 
                         <RadioButton
                             x:Name="ColorToneButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource ColorTone}">
@@ -140,7 +140,7 @@
 
                         <RadioButton
                             x:Name="OldMovieButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource OldMovie}">
@@ -151,7 +151,7 @@
 
                         <RadioButton
                             x:Name="BloomButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource Bloom}">
@@ -162,7 +162,7 @@
 
                         <RadioButton
                             x:Name="GloomButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource Gloom}">
@@ -173,7 +173,7 @@
 
                         <RadioButton
                             x:Name="MonochromeButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource Monochrome}">
@@ -184,7 +184,7 @@
 
                         <RadioButton
                             x:Name="WavewarperButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource WaveWarper}">
@@ -195,7 +195,7 @@
 
                         <RadioButton
                             x:Name="UnderwaterButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource Underwater}">
@@ -206,7 +206,7 @@
 
                         <RadioButton
                             x:Name="BandedSwirlButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource BandedSwirl}">
@@ -217,7 +217,7 @@
 
                         <RadioButton
                             x:Name="RippleButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource Ripple}">
@@ -228,7 +228,7 @@
 
                         <RadioButton
                             x:Name="RippleAltButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource RippleAlt}">
@@ -239,7 +239,7 @@
 
                         <RadioButton
                             x:Name="BlurButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource Blur}">
@@ -250,7 +250,7 @@
 
                         <RadioButton
                             x:Name="DirectionalBlurButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource DirectionalBlur}">
@@ -261,7 +261,7 @@
 
                         <RadioButton
                             x:Name="TelescopicBlurButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource TelescopicBlur}">
@@ -272,7 +272,7 @@
 
                         <RadioButton
                             x:Name="PixelateButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource Pixelate}">
@@ -283,7 +283,7 @@
 
                         <RadioButton
                             x:Name="EmbossedButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource Embossed}">
@@ -294,7 +294,7 @@
 
                         <RadioButton
                             x:Name="SmoothMagnifyButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource SmoothMagnify}">
@@ -305,7 +305,7 @@
 
                         <RadioButton
                             x:Name="PivotButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource Pivot}">
@@ -316,7 +316,7 @@
 
                         <RadioButton
                             x:Name="PaperfoldButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource PaperFold}">
@@ -327,7 +327,7 @@
 
                         <RadioButton
                             x:Name="PencilSketchButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource PencilSketch}">
@@ -338,7 +338,7 @@
 
                         <RadioButton
                             x:Name="SketchButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource Sketch}">
@@ -349,7 +349,7 @@
 
                         <RadioButton
                             x:Name="TonemappingButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource ToneMapping}">
@@ -360,7 +360,7 @@
 
                         <RadioButton
                             x:Name="FrostyOutlineButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource FrostyOutline}">
@@ -371,7 +371,7 @@
 
                         <RadioButton
                             x:Name="BandsButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource Bands}">
@@ -382,7 +382,7 @@
 
                         <RadioButton
                             x:Name="GlasTileButton"
-                            MinWidth="125"
+                            MinWidth="155"
                             Margin="5"
                             Padding="10"
                             Content="{StaticResource GlassTile}">

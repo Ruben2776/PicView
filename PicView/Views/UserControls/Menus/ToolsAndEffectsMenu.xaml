@@ -104,9 +104,11 @@
                         </Button.Background>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
-                                Margin="0,0,6,0"
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
                                 FontSize="14"
-                                Text="{StaticResource OptimizeResize}">
+                                Text="{StaticResource OptimizeResize}"
+                                TextWrapping="Wrap">
                                 <TextBlock.Foreground>
                                     <SolidColorBrush x:Name="ResizeText" Color="{StaticResource MainColor}" />
                                 </TextBlock.Foreground>

@@ -78,8 +78,8 @@
 
     <Style x:Key="MetroFlatRadioButton" TargetType="{x:Type RadioButton}">
         <Setter Property="Margin" Value="5" />
-        <Setter Property="MinWidth" Value="65" />
-        <Setter Property="Padding" Value="20,8,0,8" />
+        <Setter Property="MinWidth" Value="70" />
+        <Setter Property="Padding" Value="20,8,5,8" />
         <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="FontFamily" Value="/PicView;component/Themes/Resources/fonts/#Roboto Medium" />
