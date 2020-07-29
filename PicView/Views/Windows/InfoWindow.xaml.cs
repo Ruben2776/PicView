@@ -33,7 +33,7 @@ namespace PicView.Views.Windows
 
                 Logo.Source = Source;
             }
-            MaxHeight = WindowLogic.MonitorInfo.WorkArea.Height;
+            MaxWidth = MinWidth = 565 * WindowLogic.MonitorInfo.DpiScaling;
             Top = 10 * WindowLogic.MonitorInfo.DpiScaling;
         }
 
@@ -48,8 +48,8 @@ namespace PicView.Views.Windows
                 e.Cancel = true;
             };
 
-            // CloseButton
             CloseButton.TheButton.Click += delegate { Close(); };
+            MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
 
             Iconic.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(IconicBrush); };
             Iconic.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(IconicBrush); };
@@ -73,11 +73,7 @@ namespace PicView.Views.Windows
 
             zondicons.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(zondiconsBrush); };
             zondicons.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(zondiconsBrush); };
-            zondicons.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(zondiconsBrush); };
-
-            Scroller.Width = 530 * WindowLogic.MonitorInfo.DpiScaling;
-            Scroller.Height = ActualHeight - 75 * WindowLogic.MonitorInfo.DpiScaling;
-            
+            zondicons.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(zondiconsBrush); };            
         }
 
         #region Keyboard Shortcuts

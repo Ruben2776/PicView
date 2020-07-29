@@ -13,11 +13,13 @@
                     <Rectangle
                         Name="ellipse"
                         Width="12"
-                        Margin="2"
                         Fill="{StaticResource MainColorFadedBrush}" />
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="ellipse" Property="Fill" Value="{StaticResource MainColorBrush}" />
+                            <Setter TargetName="ellipse" Property="Fill" Value="{StaticResource ChosenColorBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsDragging" Value="True">
+                            <Setter TargetName="ellipse" Property="Fill" Value="{StaticResource ChosenColorBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -162,8 +164,9 @@
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Style.Triggers>
             <Trigger Property="Orientation" Value="Vertical">
-                <Setter Property="Width" Value="12" />
+                <Setter Property="Width" Value="Auto" />
                 <Setter Property="Height" Value="Auto" />
+                <Setter Property="Margin" Value="0,1,7,1" />
                 <Setter Property="Template" Value="{StaticResource VerticalScrollBar}" />
             </Trigger>
             <Trigger Property="Orientation" Value="Horizontal">

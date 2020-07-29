@@ -21,7 +21,7 @@
     <system:String x:Key="NewWindow">Nyt vindue</system:String>
 
     <!--  Info window  -->
-    <system:String x:Key="InfoWindowTitle">Information, help &amp; shortcuts</system:String>
+    <system:String x:Key="InfoWindowTitle">Information, hjælp &amp; genveje</system:String>
     <system:String x:Key="ApplicationShortcuts">Genveje til programmet</system:String>
     <system:String x:Key="SavedOnNextStartUp">(Gemt ved næste startup)</system:String>
     <system:String x:Key="ImageControl">Billede kontrol</system:String>
