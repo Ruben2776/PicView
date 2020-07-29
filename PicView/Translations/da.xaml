@@ -190,7 +190,7 @@
     <system:String x:Key="FileProperties">Filegenskaber</system:String>
     <system:String x:Key="DeleteFile">Slet fil</system:String>
     <system:String x:Key="Folder">Mappe</system:String>
-    <system:String x:Key="FullPath">Absolutte sti</system:String>
+    <system:String x:Key="FullPath">Filsti</system:String>
     <system:String x:Key="RenameFile">Omdøb fil</system:String>
 
     <!--  Sort files  -->
@@ -253,12 +253,12 @@
     <system:String x:Key="AspectRatio">Aspektforhold</system:String>
     <system:String x:Key="Portrait">Portræt</system:String>
     <system:String x:Key="Landscape">Landskab</system:String>
-    <system:String x:Key="Square">Square</system:String>
-    <system:String x:Key="PrintSizeIn">Print size (in)</system:String>
-    <system:String x:Key="PrintSizeCm">Print size (cm)</system:String>
-    <system:String x:Key="Centimeters">centimeters</system:String>
-    <system:String x:Key="Inches">inches</system:String>
-    <system:String x:Key="BitDepth">Bit depth</system:String>
+    <system:String x:Key="Square">Firkant</system:String>
+    <system:String x:Key="PrintSizeIn">Print str. (inch)</system:String>
+    <system:String x:Key="PrintSizeCm">Print str. (cm)</system:String>
+    <system:String x:Key="Centimeters">centimeter</system:String>
+    <system:String x:Key="Inches">tommer</system:String>
+    <system:String x:Key="BitDepth">Bit dybde</system:String>
 
     <!--  Keyboard key names  -->
     <system:String x:Key="Delete">Del</system:String>
