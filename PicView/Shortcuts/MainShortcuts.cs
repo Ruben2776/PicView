@@ -553,15 +553,15 @@ namespace PicView.Shortcuts
 
             switch (e.Key)
             {
-                #region FastPicUpdate()
-
                 case Key.A:
                 case Key.Right:
                 case Key.D:
+                    if (FolderIndex <= 0 || Pics.Count < FolderIndex)
+                    {
+                        return;
+                    }
                     FastPicUpdate();
                     break;
-
-                #endregion FastPicUpdate()
 
                 default: break;
             }

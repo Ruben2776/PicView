@@ -24,6 +24,8 @@ namespace PicView.ChangeImage
 {
     internal static class Navigation
     {
+        #region Static fields
+
         /// <summary>
         /// List of file paths to supported files
         /// </summary>
@@ -39,15 +41,40 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static string BackupPath { get; set; }
 
-        internal static bool LeftbuttonClicked { get; set; }
-        internal static bool RightbuttonClicked { get; set; }
-
+        /// <summary>
+        /// Used for error handling to prevent navigating 
+        /// when not possibe
+        /// </summary>
         internal static bool CanNavigate { get; set; }
+
+        /// <summary>
+        /// Used to determine if values need to get retrieved (again)
+        /// </summary>
         internal static bool FreshStartup { get; set; }
 
+        /// <summary>
+        /// Determine direction user is going
+        /// </summary>
+        internal static bool Reverse { get; private set; }
+
+        /// <summary>
+        /// Used to move cursor when clicked
+        /// </summary>
+        internal static bool LeftbuttonClicked { get; set; }
+        /// <summary>
+        /// Used to move cursor when clicked
+        /// </summary>
+        internal static bool RightbuttonClicked { get; set; }
+        /// <summary>
+        /// Used to move cursor when clicked
+        /// </summary>
         internal static bool ClickArrowRightClicked { get; set; }
+        /// <summary>
+        /// Used to move cursor when clicked
+        /// </summary>
         internal static bool ClickArrowLeftClicked { get; set; }
-        internal static bool Reverse { get; set; }
+
+        #endregion Static fields
 
         #region Update Image values
 
