@@ -92,6 +92,7 @@
                         x:Name="Open"
                         Content="{StaticResource ResourceKey=Open}"
                         FocusVisualStyle="{x:Null}"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                         FontSize="14"
                         ToolTip="{StaticResource ResourceKey=OpenFileDialog}">
                         <Button.Foreground>
@@ -112,6 +113,7 @@
                     <Button
                         x:Name="FileLocation"
                         FocusVisualStyle="{x:Null}"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                         FontSize="14">
                         <Button.Content>
                             <TextBlock
@@ -138,6 +140,7 @@
                         x:Name="Print"
                         Content="{StaticResource ResourceKey=Print}"
                         FocusVisualStyle="{x:Null}"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                         FontSize="14">
                         <Button.Foreground>
                             <SolidColorBrush x:Name="PrintFill" Color="{StaticResource MainColor}" />
@@ -158,6 +161,7 @@
                         x:Name="SaveButton"
                         Content="{StaticResource ResourceKey=Save}"
                         FocusVisualStyle="{x:Null}"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                         FontSize="14">
                         <Button.Foreground>
                             <SolidColorBrush x:Name="SaveFill" Color="{StaticResource MainColor}" />

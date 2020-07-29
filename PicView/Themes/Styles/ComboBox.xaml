@@ -16,7 +16,7 @@
             <Border
                 Grid.Column="0"
                 Margin="17"
-                Background="{StaticResource BackgroundColorBrush}"
+                Background="{StaticResource BackgroundColorBrushAlt}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="0,0,1,0"
                 CornerRadius="0" />
@@ -30,10 +30,10 @@
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="ToggleButton.IsMouseOver" Value="true">
-                <Setter TargetName="Border" Property="Background" Value="{StaticResource ResourceKey=BackgroundColorBrushFadeSubtle}" />
+                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
             </Trigger>
             <Trigger Property="ToggleButton.IsChecked" Value="true">
-                <Setter TargetName="Border" Property="Background" Value="{StaticResource ResourceKey=BackgroundColorBrushFadeSubtle}" />
+                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>

@@ -25,13 +25,16 @@
                             VerticalScrollBarVisibility="Hidden" />
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled" Value="false">
+                        <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="border" Property="Opacity" Value="0.56" />
                         </Trigger>
-                        <Trigger Property="IsMouseOver" Value="true">
+                        <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
                         </Trigger>
-                        <Trigger Property="IsFocused" Value="true">
+                        <Trigger Property="IsMouseOver" Value="False">
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ResourceKey=BorderBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="True">
                             <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>

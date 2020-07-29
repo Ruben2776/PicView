@@ -36,6 +36,14 @@ namespace PicView.Views.Windows
                 }
             };
 
+            // Hack to deselect border on mouse click
+            MouseLeftButtonDown += delegate
+            {
+                FocusManager.SetFocusedElement(FocusManager.GetFocusScope(this), null);
+                Keyboard.ClearFocus();
+                Focus();
+            };
+
             // CloseButton
             CloseButton.TheButton.Click += delegate { Hide(); LoadWindows.GetMainWindow.Focus(); };
 

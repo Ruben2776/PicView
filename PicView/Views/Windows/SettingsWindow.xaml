@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.UILogic.UserControls"
     Title="PicView settings"
-    Width="500"
+    Width="431"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
     SizeToContent="Height"
@@ -104,7 +104,7 @@
                         Content="{StaticResource HighlightColor}" />
 
                     <WrapPanel
-                        Margin="0,3,0,8"
+                        Margin="23,3,23,8"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
                         Orientation="Horizontal">
@@ -226,7 +226,7 @@
                         Foreground="{StaticResource MainColorBrush}" />
 
                     <WrapPanel
-                        Margin="0,3,0,8"
+                        Margin="15,3,15,8"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
                         Orientation="Horizontal">
@@ -292,15 +292,15 @@
                         Foreground="{StaticResource MainColorBrush}" />
 
                     <WrapPanel
-                        Margin="0,3,0,8"
+                        Margin="23,3,23,8"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
-                        Orientation="Horizontal">
+                        Orientation="Vertical">
 
                         <Border
                             Width="200"
                             Height="40"
-                            Margin="5,3"
+                            Margin="0,3,10,3"
                             Background="{StaticResource BackgroundColorBrushAlt}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1">
@@ -321,7 +321,7 @@
                         <Border
                             Width="200"
                             Height="40"
-                            Margin="5,3"
+                            Margin="0,3,10,3"
                             Background="{StaticResource BackgroundColorBrushAlt}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1">
@@ -347,7 +347,7 @@
                         Content="{StaticResource SetAsWallpaper}" />
 
                     <WrapPanel
-                        Margin="0,3,0,8"
+                        Margin="23,3,23,8"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
                         Orientation="Horizontal">
