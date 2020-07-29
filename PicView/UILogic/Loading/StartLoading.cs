@@ -42,13 +42,13 @@ namespace PicView.UILogic.Loading
                 = Visibility.Collapsed;
             }
 
-            if (Properties.Settings.Default.UserCulture != "en")
+            if (Properties.Settings.Default.UserLanguage != "en")
             {
                 try
                 {
                     Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
                     {
-                        Source = new Uri(@"/PicView;component/Translations/" + Properties.Settings.Default.UserCulture + ".xaml", UriKind.Relative)
+                        Source = new Uri(@"/PicView;component/Translations/" + Properties.Settings.Default.UserLanguage + ".xaml", UriKind.Relative)
                     };
                 }
                 catch (Exception)

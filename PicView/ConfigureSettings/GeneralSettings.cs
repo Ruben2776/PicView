@@ -11,7 +11,7 @@ namespace PicView.ConfigureSettings
         internal static void ChangeLanguage(int language)
         {
             var choice = (Languages)language;
-            Properties.Settings.Default.UserCulture = choice.ToString();
+            Properties.Settings.Default.UserLanguage = choice.ToString();
         }
 
         internal static void RestartApp()

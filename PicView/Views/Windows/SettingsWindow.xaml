@@ -234,11 +234,12 @@
                         <Border
                             Width="167"
                             Height="45"
+                            Margin="0,0,10,0"
                             Background="{StaticResource BackgroundColorBrushAlt}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1"
                             CornerRadius="2"
-                            Effect="{StaticResource MenuShadowButtonBorder}" Margin="0,0,10,0">
+                            Effect="{StaticResource MenuShadowButtonBorder}">
                             <CheckBox
                                 x:Name="DarkThemeRadio"
                                 HorizontalContentAlignment="Center"

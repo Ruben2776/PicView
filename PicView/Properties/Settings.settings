@@ -131,7 +131,7 @@
     <Setting Name="LightTheme" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="UserCulture" Type="System.String" Scope="User">
+    <Setting Name="UserLanguage" Type="System.String" Scope="User">
       <Value Profile="(Default)">en</Value>
     </Setting>
   </Settings>

@@ -23,7 +23,7 @@ namespace PicView.Views.Windows
 
             InitializeComponent();
 
-            ContentRendered += (s, x) =>
+            ContentRendered += delegate
             {
                 Top = 5;
 
@@ -67,7 +67,6 @@ namespace PicView.Views.Windows
                 };
 
                 // Tile
-
                 Tile.Click += delegate
                 {
                     SetWallpaper(WallpaperStyle.Tile);
@@ -100,11 +99,11 @@ namespace PicView.Views.Windows
                 {
                     LanguageBox.Items.Add(new ComboBoxItem
                     {
-                        Content = new CultureInfo(language.ToString()).DisplayName
+                        Content = new CultureInfo(language.ToString()).DisplayName,
+                        IsSelected = language.ToString() == Properties.Settings.Default.UserLanguage,
                     });
                 }
 
-                LanguageBox.SelectedIndex = 0;
                 LanguageBox.SelectionChanged += delegate
                 {
                     GeneralSettings.ChangeLanguage((LanguageBox.SelectedIndex));

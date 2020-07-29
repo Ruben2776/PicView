@@ -542,12 +542,12 @@ namespace PicView.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("en")]
-        public string UserCulture {
+        public string UserLanguage {
             get {
-                return ((string)(this["UserCulture"]));
+                return ((string)(this["UserLanguage"]));
             }
             set {
-                this["UserCulture"] = value;
+                this["UserLanguage"] = value;
             }
         }
     }
