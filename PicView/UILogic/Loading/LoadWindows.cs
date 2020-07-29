@@ -36,8 +36,7 @@ namespace PicView.UILogic.Loading
             {
                 InfoWindow = new InfoWindow
                 {
-                    Owner = GetMainWindow,
-                    Opacity = 0
+                    Owner = GetMainWindow
                 };
             }
             else
@@ -46,29 +45,15 @@ namespace PicView.UILogic.Loading
                 {
                     InfoWindow.Focus();
                 }
+                else
+                {
+                    InfoWindow.Visibility = Visibility.Visible;
+                    InfoWindow.ShowDialog();
+                }
             }
 
-            InfoWindow.Width = GetMainWindow.ActualWidth;
-            InfoWindow.Height = GetMainWindow.ActualHeight;
 
-            InfoWindow.Left = GetMainWindow.Left + (GetMainWindow.Width - InfoWindow.Width) / 2;
-            InfoWindow.Top = GetMainWindow.Top + (GetMainWindow.Height - InfoWindow.Height) / 2;
-
-            GetMainWindow.Effect = new BlurEffect
-            {
-                RenderingBias = RenderingBias.Quality,
-                KernelType = KernelType.Gaussian,
-                Radius = 9
-            };
-
-            InfoWindow.BeginAnimation(Window.OpacityProperty, new DoubleAnimation
-            {
-                From = 0,
-                To = 1,
-                Duration = TimeSpan.FromSeconds(.3)
-            });
-
-            InfoWindow.ShowDialog();
+            InfoWindow.Show();
 
 #if DEBUG
             Trace.WriteLine("HelpWindow loaded ");

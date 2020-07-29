@@ -1,13 +1,11 @@
 ﻿using PicView.UILogic.Animations;
-using PicView.UILogic.Loading;
+using PicView.UILogic.Sizing;
 using PicView.UILogic.TransformImage;
 using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 
@@ -28,8 +26,6 @@ namespace PicView.Views.Windows
 
             if (Properties.Settings.Default.LightTheme)
             {
-                Scroller.Background = Application.Current.Resources["NoisyBg"] as ImageBrush;
-
                 var Source = new BitmapImage();
                 Source.BeginInit();
                 Source.UriSource = new Uri("pack://application:,,,/PicView;component/Themes/Resources/img/icon-raster.128b.png");
@@ -37,15 +33,23 @@ namespace PicView.Views.Windows
 
                 Logo.Source = Source;
             }
+            MaxHeight = WindowLogic.MonitorInfo.WorkArea.Height;
+            Top = 10 * WindowLogic.MonitorInfo.DpiScaling;
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             KeyDown += KeysDown;
             Scroller.MouseWheel += Info_MouseWheel;
+            Bar.MouseLeftButtonDown += (_, _) => DragMove();
+            Closing += (_, e) =>
+            {
+                Hide();
+                e.Cancel = true;
+            };
 
             // CloseButton
-            CloseButton.TheButton.Click += delegate { HideLogic(); };
+            CloseButton.TheButton.Click += delegate { Close(); };
 
             Iconic.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(IconicBrush); };
             Iconic.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(IconicBrush); };
@@ -70,6 +74,10 @@ namespace PicView.Views.Windows
             zondicons.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(zondiconsBrush); };
             zondicons.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(zondiconsBrush); };
             zondicons.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(zondiconsBrush); };
+
+            Scroller.Width = 530 * WindowLogic.MonitorInfo.DpiScaling;
+            Scroller.Height = ActualHeight - 75 * WindowLogic.MonitorInfo.DpiScaling;
+            
         }
 
         #region Keyboard Shortcuts
@@ -80,7 +88,7 @@ namespace PicView.Views.Windows
             {
                 case Key.Escape:
                 case Key.F1:
-                    HideLogic();
+                    Close();
                     break;
 
                 case Key.Q:
@@ -117,25 +125,6 @@ namespace PicView.Views.Windows
         }
 
         #endregion Keyboard Shortcuts
-
-        private void HideLogic()
-        {
-            var da = new DoubleAnimation
-            {
-                From = 1,
-                To = 0,
-                Duration = TimeSpan.FromSeconds(.3)
-            };
-
-            da.Completed += delegate
-            {
-                Hide();
-            };
-
-            LoadWindows.GetMainWindow.Effect = null;
-            BeginAnimation(OpacityProperty, da);
-            LoadWindows.GetMainWindow.Focus();
-        }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
