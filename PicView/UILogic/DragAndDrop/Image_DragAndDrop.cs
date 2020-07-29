@@ -169,7 +169,7 @@ namespace PicView.UILogic.DragAndDrop
                 }
                 else if (Directory.Exists(files[0]))
                 {
-                    if (Directory.GetFiles(files[0]).Length > 0)
+                    if (Properties.Settings.Default.IncludeSubDirectories || Directory.GetFiles(files[0]).Length > 0)
                     {
                         PicFolder(files[0]);
                         LoadWindows.GetMainWindow.Activate();
