@@ -12,14 +12,17 @@
                 <ControlTemplate TargetType="{x:Type Thumb}">
                     <Rectangle
                         Name="ellipse"
-                        Width="12"
-                        Fill="{StaticResource MainColorFadedBrush}" />
+                        Width="13"
+                        Fill="{StaticResource BackgroundColorBrush}"
+                        Stroke="{StaticResource BorderBrush}" />
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter TargetName="ellipse" Property="Fill" Value="{StaticResource ChosenColorBrush}" />
+                            <Setter TargetName="ellipse" Property="Opacity" Value=".6" />
                         </Trigger>
                         <Trigger Property="IsDragging" Value="True">
                             <Setter TargetName="ellipse" Property="Fill" Value="{StaticResource ChosenColorBrush}" />
+                            <Setter TargetName="ellipse" Property="Opacity" Value=".6" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -37,15 +40,17 @@
                     <Rectangle
                         Name="ellipse"
                         Height="15"
-                        Fill="{DynamicResource BackgroundColorBrush}"
+                        Fill="{StaticResource BackgroundColorBrush}"
                         RadiusX="3.5"
                         RadiusY="3.5" />
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter TargetName="ellipse" Property="Fill" Value="{StaticResource ChosenColorBrush}" />
+                            <Setter TargetName="ellipse" Property="Opacity" Value=".6" />
                         </Trigger>
                         <Trigger Property="IsDragging" Value="True">
                             <Setter TargetName="ellipse" Property="Fill" Value="{StaticResource ChosenColorBrush}" />
+                            <Setter TargetName="ellipse" Property="Opacity" Value=".6" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

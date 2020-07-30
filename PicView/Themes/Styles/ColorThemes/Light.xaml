@@ -66,8 +66,8 @@
     <SolidColorBrush x:Key="BorderBrushAlt" Color="{StaticResource BorderColorAlt}" />
 
     <!--  Alt Interface  -->
-    <Color x:Key="AltInterface">#f5f3f0</Color>
-    <Color x:Key="AltInterfaceW">#A7f2ece4</Color>
+    <Color x:Key="AltInterface">#F2FFFFFF</Color>
+    <Color x:Key="AltInterfaceW">#F2EEEEEE</Color>
     <SolidColorBrush x:Key="AltInterfaceBrush" Color="{StaticResource AltInterface}" />
     <SolidColorBrush x:Key="AltInterfaceWBrush" Color="{StaticResource AltInterfaceW}" />
 

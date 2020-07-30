@@ -1,5 +1,6 @@
 ﻿using PicView.ChangeImage;
 using PicView.SystemIntegration;
+using PicView.UILogic.Animations;
 using PicView.UILogic.Loading;
 using System.Windows;
 using static PicView.UILogic.Sizing.WindowLogic;
@@ -64,12 +65,16 @@ namespace PicView.Views.Windows
                 Point p = GetClickArrowRight.PointToScreen(new Point(25, 30));
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 Navigation.ClickArrowRightClicked = false;
+
+                FadeControls.FadeControlsAsync(true);
             }
             else if (Navigation.ClickArrowLeftClicked)
             {
                 Point p = GetClickArrowLeft.PointToScreen(new Point(25, 30));
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 Navigation.ClickArrowLeftClicked = false;
+
+                FadeControls.FadeControlsAsync(true);
             }
 
             base.OnRenderSizeChanged(size);
