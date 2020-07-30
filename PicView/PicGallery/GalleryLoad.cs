@@ -89,7 +89,7 @@ namespace PicView.UILogic.PicGallery
             }
             else
             {
-                UC.GetPicGallery.Width = picGalleryItem_Size + 14; // 17 for scrollbar width + 2 for borders
+                UC.GetPicGallery.Width = (picGalleryItem_Size + 25) * WindowLogic.MonitorInfo.DpiScaling;
                 UC.GetPicGallery.Height = WindowLogic.MonitorInfo.WorkArea.Height;
 
                 LoadWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;

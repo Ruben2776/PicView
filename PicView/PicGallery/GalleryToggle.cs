@@ -133,6 +133,10 @@ namespace PicView.UILogic.PicGallery
                 LoadWindows.GetMainWindow.ParentContainer.Children.Remove(GetPicGallery);
                 fakeWindow.grid.Children.Add(GetPicGallery);
             }
+            else if (!fakeWindow.grid.Children.Contains(GetPicGallery))
+            {
+                fakeWindow.grid.Children.Add(GetPicGallery);
+            }
 
             fakeWindow.Show();
             ScrollTo();
@@ -145,6 +149,8 @@ namespace PicView.UILogic.PicGallery
 
             // Fix not showing up opacity bug..
             VisualStateManager.GoToElementState(GetPicGallery, "Opacity", false);
+            VisualStateManager.GoToElementState(GetPicGallery.Container, "Opacity", false);
+            GetPicGallery.Opacity = GetPicGallery.Container.Opacity = 1;
 
             if (!IsLoading)
             {

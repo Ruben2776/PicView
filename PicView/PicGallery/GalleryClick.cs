@@ -70,8 +70,6 @@ namespace PicView.UILogic.PicGallery
                 var deceleration = 0.4;
                 var duration = TimeSpan.FromSeconds(.3);
 
-                AnimationHelper.Fade(GetPicGallery.Container, duration, TimeSpan.Zero, 1, 0);
-
                 var da = new DoubleAnimation
                 {
                     From = 0,
@@ -92,6 +90,14 @@ namespace PicView.UILogic.PicGallery
                     FillBehavior = FillBehavior.Stop
                 };
 
+                var da1 = new DoubleAnimation
+                {
+                    From = 1,
+                    To = 0,
+                    Duration = duration,
+                    FillBehavior = FillBehavior.Stop
+                };
+
                 da.Completed += delegate
                 {
                     ItemClick(id);
@@ -102,6 +108,7 @@ namespace PicView.UILogic.PicGallery
 
                 border.BeginAnimation(FrameworkElement.WidthProperty, da);
                 border.BeginAnimation(FrameworkElement.HeightProperty, da0);
+                GetPicGallery.Container.BeginAnimation(UIElement.OpacityProperty, da1);
             }
             else
             {
