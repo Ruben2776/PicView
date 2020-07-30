@@ -117,8 +117,16 @@ namespace PicView.UILogic.Sizing
             var monitorWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
             var monitorHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
 
-            var padding = MonitorInfo.Height - monitorHeight; // Padding to make it feel more comfortable
-            padding = padding < 0 ? 0 : padding;
+            double padding;// Padding to make it feel more comfortable
+            if (MonitorInfo.DpiScaling < 1)
+            {
+                padding = MonitorInfo.Height - monitorHeight;
+                padding = padding < 0 ? 0 : padding;
+            }
+            else
+            {
+                padding = 0;
+            }
 
             if (Properties.Settings.Default.PicGallery == 2)
             {

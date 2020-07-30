@@ -1,5 +1,6 @@
 ﻿using PicView.Editing.HlslEffects;
 using PicView.UILogic.Loading;
+using PicView.UILogic.Sizing;
 using PicView.UILogic.TransformImage;
 using System;
 using System.Windows;
@@ -19,6 +20,9 @@ namespace PicView.Views.Windows
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
+            // Center vertically
+            Top = ((WindowLogic.MonitorInfo.WorkArea.Height * WindowLogic.MonitorInfo.DpiScaling) - ActualHeight) / 2 + WindowLogic.MonitorInfo.WorkArea.Top;
+
             KeyDown += KeysDown;
             KeyUp += KeysUp;
             Scroller.MouseWheel += Info_MouseWheel;

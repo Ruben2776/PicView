@@ -19,13 +19,13 @@ namespace PicView.Views.Windows
         public SettingsWindow()
         {
             Width = 500 * WindowLogic.MonitorInfo.DpiScaling;
-            MaxHeight = WindowLogic.MonitorInfo.Height - (70 * WindowLogic.MonitorInfo.DpiScaling);
 
             InitializeComponent();
 
             ContentRendered += delegate
             {
-                Top = 5;
+                // Center vertically
+                Top = ((WindowLogic.MonitorInfo.WorkArea.Height * WindowLogic.MonitorInfo.DpiScaling) - ActualHeight) / 2 + WindowLogic.MonitorInfo.WorkArea.Top;
 
                 KeyDown += KeysDown;
                 AddGenericEvents();

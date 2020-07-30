@@ -1,0 +1,17 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!--  Buttons  -->
+    <system:Double x:Key="XLButtonWidth">200</system:Double>
+
+    <system:Double x:Key="LargeButtonHeight">40</system:Double>
+    <system:Double x:Key="LargeButtonWidth">167</system:Double>
+
+    <system:Double x:Key="ButtonHeight">32</system:Double>
+    <Thickness x:Key="StandardPadding">20,8,5,8</Thickness>
+
+
+
+</ResourceDictionary>

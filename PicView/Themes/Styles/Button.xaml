@@ -42,7 +42,7 @@
         <Setter Property="FontSize" Value="12" />
         <Setter Property="FontFamily" Value="/PicView;component/Themes/Resources/fonts/#Roboto Medium" />
         <Setter Property="Padding" Value="15,5" />
-        <Setter Property="Height" Value="32" />
+        <Setter Property="Height" Value="{DynamicResource ButtonHeight}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Focusable" Value="False" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -72,7 +72,7 @@
         <Setter Property="FontSize" Value="14" />
         <Setter Property="FontFamily" Value="/PicView;component/Themes/Resources/fonts/#Roboto Medium" />
         <Setter Property="Width" Value="101" />
-        <Setter Property="Height" Value="40" />
+        <Setter Property="Height" Value="{DynamicResource LargeButtonHeight}" />
         <Setter Property="Focusable" Value="False" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="BorderThickness" Value="1" />

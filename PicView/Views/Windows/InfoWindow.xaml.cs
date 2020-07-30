@@ -33,12 +33,15 @@ namespace PicView.Views.Windows
 
                 Logo.Source = Source;
             }
+
             MaxWidth = MinWidth = 565 * WindowLogic.MonitorInfo.DpiScaling;
-            Top = 10 * WindowLogic.MonitorInfo.DpiScaling;
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
+            // Center vertically
+            Top = ((WindowLogic.MonitorInfo.WorkArea.Height * WindowLogic.MonitorInfo.DpiScaling) - ActualHeight) / 2 + WindowLogic.MonitorInfo.WorkArea.Top;
+
             KeyDown += KeysDown;
             Scroller.MouseWheel += Info_MouseWheel;
             Bar.MouseLeftButtonDown += (_, _) => DragMove();

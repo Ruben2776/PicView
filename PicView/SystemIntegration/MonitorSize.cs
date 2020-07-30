@@ -70,6 +70,14 @@ namespace PicView.SystemIntegration
             var MonitorWidth = currentMonitor.Bounds.Width * dpiScaling;
             var MonitorHeight = currentMonitor.Bounds.Height * dpiScaling;
 
+            // Update values for lower resolutions
+            if (MonitorWidth < 2000 * dpiScaling)
+            {
+                Application.Current.Resources["LargeButtonHeight"] = 30 * dpiScaling;
+                Application.Current.Resources["ButtonHeight"] = 22 * dpiScaling;
+                Application.Current.Resources["StandardPadding"] = new Thickness(15, 8, 5, 8);
+            }
+
             return new MonitorSize(MonitorWidth, MonitorHeight, dpiScaling, workArea);
         }
     }
