@@ -16,6 +16,7 @@
     <!--  Generic Window  -->
     <system:String x:Key="Close">Close</system:String>
     <system:String x:Key="RestoreDown">Restore Down</system:String>
+    <system:String x:Key="Maximize">Maximize</system:String>
     <system:String x:Key="Minimize">Minimize</system:String>
     <system:String x:Key="Fullscreen">Fullscreen</system:String>
     <system:String x:Key="NewWindow">New window</system:String>

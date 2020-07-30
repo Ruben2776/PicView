@@ -16,7 +16,8 @@
     <!--  Generic Window  -->
     <system:String x:Key="Close">Schließen</system:String>
     <system:String x:Key="RestoreDown">Minimieren/Maximieren</system:String>
-    <system:String x:Key="Minimize">Minimieren/Maximieren</system:String>
+    <system:String x:Key="Maximize">Maximieren</system:String>
+    <system:String x:Key="Minimize">Minimieren</system:String>
     <system:String x:Key="Fullscreen">Vollbild</system:String>
     <system:String x:Key="NewWindow">Neues Fenster</system:String>
 
