@@ -465,7 +465,7 @@
                         Margin="0,3,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Content="Adjust timing for slideshow" />
+                        Content="{StaticResource AdjustTimingForSlideshow}" />
 
                     <StackPanel
                         Margin="0,3,0,10"

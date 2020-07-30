@@ -396,7 +396,7 @@
                         Margin="0,9,0,4"
                         HorizontalAlignment="Center"
                         Text="{StaticResource ClickToAddShaderEffectToImage}" />
-                    <TextBlock HorizontalAlignment="Center" Text="Uncheck to remove effect" />
+                    <TextBlock HorizontalAlignment="Center" Text="{StaticResource UncheckToRemoveEffect}" />
                 </StackPanel>
             </ScrollViewer>
         </Border>
