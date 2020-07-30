@@ -120,7 +120,6 @@ namespace PicView.UILogic.Loading
             LoadWindows.GetMainWindow.ParentContainer.Drop += Image_Drop;
             LoadWindows.GetMainWindow.ParentContainer.DragEnter += Image_DragEnter;
             LoadWindows.GetMainWindow.ParentContainer.DragLeave += Image_DragLeave;
-            LoadWindows.GetMainWindow.ParentContainer.MouseEnter += Interface_MouseEnter;
             LoadWindows.GetMainWindow.ParentContainer.MouseMove += Interface_MouseMove;
             LoadWindows.GetMainWindow.ParentContainer.MouseLeave += Interface_MouseLeave;
 

@@ -6,8 +6,6 @@ namespace PicView.UILogic
 {
     internal static class Timers
     {
-        #region Add Timers
-
         // Add timers
         internal static void AddTimers()
         {
@@ -25,9 +23,10 @@ namespace PicView.UILogic
                 AutoReset = true,
                 Enabled = false
             };
-            ActivityTimer.Elapsed += delegate { FadeControlsAsync(false); };
+            ActivityTimer.Elapsed += delegate 
+            {
+                FadeControlsAsync(false);
+            };
         }
-
-        #endregion Add Timers
     }
 }

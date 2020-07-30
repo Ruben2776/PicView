@@ -1,6 +1,5 @@
 ﻿using PicView.UILogic.Loading;
 using PicView.UILogic.PicGallery;
-using PicView.UILogic.TransformImage;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.UILogic.Animations.FadeControls;
@@ -126,19 +125,6 @@ namespace PicView.UILogic
             else
             {
                 UC.GetGalleryShortcut.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        /// <summary>
-        /// Logic for mouse enter mainwindow event
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        internal static void Interface_MouseEnter(object sender, MouseEventArgs e)
-        {
-            if (!ActivityTimer.Enabled || Scroll.IsAutoScrolling)
-            {
-                ActivityTimer.Start();
             }
         }
 
