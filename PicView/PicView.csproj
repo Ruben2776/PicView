@@ -341,6 +341,10 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+    <None Include="Themes\Resources\img\icon-raster.128b.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Themes\Resources\Units.xaml">
@@ -497,7 +501,7 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <PropertyGroup>
-    <FileVersion>0.9.9.4</FileVersion>
+    <FileVersion>0.9.9.5</FileVersion>
     <SignAssembly>false</SignAssembly>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
@@ -509,6 +513,7 @@
     <LangVersion>preview</LangVersion>
     <Authors>Ruben2776</Authors>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageIcon>icon-raster.128b.png</PackageIcon>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
