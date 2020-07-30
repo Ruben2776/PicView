@@ -33,7 +33,7 @@ namespace PicView.ConfigureSettings
         {
             if (remove)
             {
-                Application.Current.Resources["WindowBorderColorBrush"] = Brushes.Black;
+                Application.Current.Resources["WindowBorderColorBrush"] = Application.Current.Resources["WindowBackgroundColorBrush"];
                 return;
             }
 

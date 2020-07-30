@@ -5,6 +5,7 @@
         <Setter Property="Width" Value="120" />
         <Setter Property="CornerRadius" Value="2" />
         <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Focusable" Value="False" />
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
         <Setter Property="Effect" Value="{StaticResource MenuShadowButtonBorder}" />
         <Setter Property="Background" Value="{StaticResource BackgroundColorBrushAlt}" />

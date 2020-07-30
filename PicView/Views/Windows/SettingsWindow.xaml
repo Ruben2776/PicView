@@ -239,7 +239,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1"
                             CornerRadius="2"
-                            Effect="{StaticResource MenuShadowButtonBorder}">
+                            Effect="{StaticResource MenuShadowButtonBorder}"
+                            Focusable="False">
                             <CheckBox
                                 x:Name="DarkThemeRadio"
                                 HorizontalContentAlignment="Center"
@@ -262,7 +263,8 @@
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1"
                             CornerRadius="2"
-                            Effect="{StaticResource MenuShadowButtonBorder}">
+                            Effect="{StaticResource MenuShadowButtonBorder}"
+                            Focusable="False">
                             <CheckBox
                                 x:Name="LightThemeRadio"
                                 HorizontalContentAlignment="Center"
@@ -303,7 +305,8 @@
                             Margin="0,3,10,3"
                             Background="{StaticResource BackgroundColorBrushAlt}"
                             BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1">
+                            BorderThickness="1"
+                            Focusable="False">
                             <CheckBox
                                 x:Name="SubDirRadio"
                                 HorizontalContentAlignment="Center"
@@ -324,7 +327,8 @@
                             Margin="0,3,10,3"
                             Background="{StaticResource BackgroundColorBrushAlt}"
                             BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1">
+                            BorderThickness="1"
+                            Focusable="False">
                             <CheckBox
                                 x:Name="BorderRadio"
                                 HorizontalContentAlignment="Center"

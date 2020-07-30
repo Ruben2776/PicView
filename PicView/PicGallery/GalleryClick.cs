@@ -1,5 +1,4 @@
 ﻿using PicView.ChangeImage;
-using PicView.UILogic.Animations;
 using PicView.UILogic.Loading;
 using PicView.UILogic.Sizing;
 using System;

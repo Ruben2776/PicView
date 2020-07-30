@@ -85,6 +85,7 @@
         <Setter Property="FontFamily" Value="/PicView;component/Themes/Resources/fonts/#Roboto Medium" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Focusable" Value="False" />
         <Setter Property="Effect" Value="{StaticResource MenuShadowButtonBorder}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -249,6 +250,7 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="FontFamily" Value="/PicView;component/Themes/Resources/fonts/#TeX Gyre Heros" />
         <Setter Property="FontSize" Value="14" />
+        <Setter Property="Focusable" Value="False" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
