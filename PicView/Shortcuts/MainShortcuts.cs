@@ -157,17 +157,51 @@ namespace PicView.Shortcuts
                     return;
 
                 case Key.Up:
-                    if (Properties.Settings.Default.ScrollEnabled)
+                    if (GetPicGallery != null)
                     {
-                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
+                        if (GalleryFunctions.IsOpen)
+                        {
+                            if (Properties.Settings.Default.PicGallery == 1)
+                            {
+                                ScrollTo(true, ctrlDown);
+                                return;
+                            }
+                            else if (ctrlDown)
+                            {
+                                Rotate(true);
+                            }
+                            else
+                            {
+                                Pic(false);
+                            }
+                        }
+                        else if (ctrlDown)
+                        {
+                            Rotate(true);
+                        }
                     }
                     else if (ctrlDown)
                     {
                         Rotate(false);
                     }
+                    if (Properties.Settings.Default.ScrollEnabled)
+                    {
+                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
+                    }
                     return;
 
                 case Key.W:
+                    if (GetPicGallery != null)
+                    {
+                        if (GalleryFunctions.IsOpen)
+                        {
+                            if (Properties.Settings.Default.PicGallery == 1)
+                            {
+                                ScrollTo(true, ctrlDown);
+                                return;
+                            }
+                        }
+                    }
                     if (Properties.Settings.Default.ScrollEnabled)
                     {
                         GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
