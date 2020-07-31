@@ -9,10 +9,9 @@ It is built to quickly and efficiently browses through images supporting all com
 
 [![Total Downloads](https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=downloads&style=for-the-badge)](https://github.com/Ruben2776/PicView/releases)
  [![GPL Licence](https://img.shields.io/badge/license-GPLv3-green.svg?maxAge=3600&style=for-the-badge)](https://github.com/Ruben2776/PicView/blob/master/LICENSE.txt)
-![Windows OS](https://img.shields.io/badge/OS-Windows%207+-00adef.svg?maxAge=3600&style=for-the-badge)
+![Windows OS](https://img.shields.io/badge/OS-Windows%2064%20bit-00adef.svg?maxAge=3600&style=for-the-badge)
 
 
----
 
 <img src="https://i.imgur.com/cTgkhA1.png" align="left" height="670"/>
 
@@ -36,6 +35,9 @@ Slideshow `F11` with adjustable timer in the Settings window `F4`.
 Integrated color tool to quickly pick a color from the shown image.
 
 Quickly crop images by pressing `C`.
+
+
+Drag and drop from files Windows explorer or your browser. You can also hold `Ctrl` to drag currently viewed image to your file system.
 
 
 <h2>Display Image Info</h2>
