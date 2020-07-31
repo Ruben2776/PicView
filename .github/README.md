@@ -56,7 +56,7 @@ View all files in current folder as a thumbnail gallery, with custom animations.
 <h2>Customizable Themes</h2>
 <img src="https://i.imgur.com/bBzLcI9.png"/>
 
- > A choice between dark theme and light theme can be found in the settings menu `F4`, along with 16 highlight colors to choose from. 
+ > A choice between dark theme and light theme can be found in the settings menu `F4`, along with 12 highlight colors to choose from. 
 
 <h2>Settings and shader effects:</h2>
 <img src="https://i.imgur.com/3sUlj1S.png"/>
@@ -66,7 +66,7 @@ View all files in current folder as a thumbnail gallery, with custom animations.
 ![Visual Studio 2019](https://img.shields.io/badge/IDE-Visual%20Studio%202019-964ad4.svg?maxAge=3600)
 ![.NET Core 3.1](https://img.shields.io/badge/.NET-Core%203.1-lightgrey.svg?maxAge=3600)
 
-_Coming soon!_
+Looking for translators!
 
 I am just a single developer working on this in my spare time. So if you like what I have created please star it to show your support, as it would motive me to keep working on it! <br>
 Feedback and questions are always appreciated. Create an issue or take a look at an existing one if you want to report a bug or request a feature, or have something on your mind! 😊
