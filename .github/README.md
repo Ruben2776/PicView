@@ -79,15 +79,25 @@ Rename/move files `F2`, for easy file management of photos/images.
 <img src="https://i.imgur.com/1I6GwDP.png" width="918"/>
 
  > The file name can be renamed or moved right in the title bar!
-
-
+ 
 <h2>Fullscreen Image Gallery:</h2>
-<img src="/.github/Screenshot%20(30)-min.png"/>
+<img src="https://i.imgur.com/gtbdzcP.jpg"/>
 View all files in current folder as a fullscreen thumbnail gallery, where you can quickly scroll to desired image.
 
 <h2>Contained Image Gallery:</h2>
-<img src="/.github/Annotation%202020-06-06%20070001-min.png"/>
+<img src="https://i.imgur.com/NcIxfPk.png"/>
 View all files in current folder as a thumbnail gallery, with custom animations.
+ 
+<h2>Customizable Themes</h2>
+<img src="https://i.imgur.com/bBzLcI9.png"/>
+
+ > A choice between dark theme and light theme can be found in the settings menu `F4`, along with 16 highlight colors to choose from. 
+
+<br>
+<br>
+
+<h2>Settings and shader effects:</h2>
+<img src="https://i.imgur.com/3sUlj1S.png"/>
 
 
 ## Contributions
