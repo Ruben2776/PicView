@@ -85,7 +85,7 @@ Rename/move files `F2`, for easy file management of photos/images.
 View all files in current folder as a fullscreen thumbnail gallery, where you can quickly scroll to desired image.
 
 <h2>Contained Image Gallery:</h2>
-<img src="https://i.imgur.com/NcIxfPk.png"/>
+<img src="https://i.imgur.com/Wdzk4oI.png"/>
 View all files in current folder as a thumbnail gallery, with custom animations.
  
 <h2>Customizable Themes</h2>
