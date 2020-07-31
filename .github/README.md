@@ -17,19 +17,7 @@ It is built to quickly and efficiently browses through images supporting all com
 <img src="https://i.imgur.com/cTgkhA1.png" align="left" height="670"/>
 
 
-### Features:
-
-[View file support](https://github.com/Ruben2776/PicView/wiki/File-support)
-
-
-[HLSL Image Effects](https://github.com/Ruben2776/PicView/wiki/HLSL-Image-Effects)
-
-
-[Batch Resizing Tool](https://github.com/Ruben2776/PicView/wiki/Batch-Resizing-Tool) _Beta_
-
-
-[View shortcuts](https://github.com/Ruben2776/PicView/wiki/Keyboard-and-mouse-shortcuts)
-
+## Features:
 
 Portable, free to use. No pop-ups, no installtation required, no registry edits or system files changed.
 
@@ -47,34 +35,8 @@ Slideshow `F11` with adjustable timer in the Settings window `F4`.
 
 Integrated color tool to quickly pick a color from the shown image.
 
- > The interface can be toggled to just show the image by pressing `Alt + Z`. <br> For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
-
-Drag and drop from files Windows explorer or your browser. You can also hold `Ctrl` to drag currently viewed image to your file system.
-
-
-You can Change how the application sorts through the files from the context menu.
-
-
-Copy `Ctrl + C`, Move `Ctrl + X`, Paste `Ctrl + V` images, file paths, web addresses or base64 images.
-
-
-Image rotation by pressing `Up`, `Down` || `W`, `S`.
-
-
-Flip image back and forth (horizontally) by pressing `F`.
-
-
-View and access most recent files in the contextmenu, including ones from web addresses.
-
-
 Quickly crop images by pressing `C`.
 
-
-Toggleable scroll function by pressing `X` <br>
-Scroll function supports auto scroll, by `middle mouse` clicking.
-
-
-Rename/move files `F2`, for easy file management of photos/images.
 
 <h2>Display Image Info</h2>
 
