@@ -14,7 +14,7 @@ It is built to quickly and efficiently browses through images supporting all com
 
 ---
 
-<img src="https://picview.app/wp-content/uploads/2020/06/Annotation-2020-06-18-104748.png" align="left" height="670"/>
+<img src="https://i.imgur.com/cTgkhA1.png" align="left" height="670"/>
 
 
 ### Features:
