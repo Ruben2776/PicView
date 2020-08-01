@@ -9,27 +9,14 @@ It is built to quickly and efficiently browses through images supporting all com
 
 [![Total Downloads](https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=downloads&style=for-the-badge)](https://github.com/Ruben2776/PicView/releases)
  [![GPL Licence](https://img.shields.io/badge/license-GPLv3-green.svg?maxAge=3600&style=for-the-badge)](https://github.com/Ruben2776/PicView/blob/master/LICENSE.txt)
-![Windows OS](https://img.shields.io/badge/OS-Windows%207+-00adef.svg?maxAge=3600&style=for-the-badge)
+![Windows OS](https://img.shields.io/badge/OS-Windows%2064%20bit-00adef.svg?maxAge=3600&style=for-the-badge)
 
 
----
 
-<img src="https://picview.app/wp-content/uploads/2020/06/Annotation-2020-06-18-104748.png" align="left" height="670"/>
-
-
-### Features:
-
-[View file support](https://github.com/Ruben2776/PicView/wiki/File-support)
+<img src="https://i.imgur.com/cTgkhA1.png" align="left" height="670"/>
 
 
-[HLSL Image Effects](https://github.com/Ruben2776/PicView/wiki/HLSL-Image-Effects)
-
-
-[Batch Resizing Tool](https://github.com/Ruben2776/PicView/wiki/Batch-Resizing-Tool) _Beta_
-
-
-[View shortcuts](https://github.com/Ruben2776/PicView/wiki/Keyboard-and-mouse-shortcuts)
-
+## Features:
 
 Portable, free to use. No pop-ups, no installtation required, no registry edits or system files changed.
 
@@ -47,54 +34,39 @@ Slideshow `F11` with adjustable timer in the Settings window `F4`.
 
 Integrated color tool to quickly pick a color from the shown image.
 
- > The interface can be toggled to just show the image by pressing `Alt + Z`. <br> For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
+Quickly crop images by pressing `C`.
+
 
 Drag and drop from files Windows explorer or your browser. You can also hold `Ctrl` to drag currently viewed image to your file system.
 
 
-You can Change how the application sorts through the files from the context menu.
+<h2>Display Image Info</h2>
 
-
-Copy `Ctrl + C`, Move `Ctrl + X`, Paste `Ctrl + V` images, file paths, web addresses or base64 images.
-
-
-Image rotation by pressing `Up`, `Down` || `W`, `S`.
-
-
-Flip image back and forth (horizontally) by pressing `F`.
-
-
-View and access most recent files in the contextmenu, including ones from web addresses.
-
-
-Quickly crop images by pressing `C`.
-
-
-Toggleable scroll function by pressing `X` <br>
-Scroll function supports auto scroll, by `middle mouse` clicking.
-
-
-Rename/move files `F2`, for easy file management of photos/images.
-
-<img src="https://i.imgur.com/1I6GwDP.png" width="918"/>
-
- > The file name can be renamed or moved right in the title bar!
-
-
+<img src="https://i.imgur.com/IK3qgB4.png" width="918"/>
+The image info window will update values as you browse through images.
+ 
 <h2>Fullscreen Image Gallery:</h2>
-<img src="/.github/Screenshot%20(30)-min.png"/>
+<img src="https://i.imgur.com/gtbdzcP.jpg"/>
 View all files in current folder as a fullscreen thumbnail gallery, where you can quickly scroll to desired image.
 
 <h2>Contained Image Gallery:</h2>
-<img src="/.github/Annotation%202020-06-06%20070001-min.png"/>
+<img src="https://i.imgur.com/Wdzk4oI.png"/>
 View all files in current folder as a thumbnail gallery, with custom animations.
+ 
+<h2>Customizable Themes</h2>
+<img src="https://i.imgur.com/bBzLcI9.png"/>
+
+ > A choice between dark theme and light theme can be found in the settings menu `F4`, along with 12 highlight colors to choose from. 
+
+<h2>Settings and shader effects:</h2>
+<img src="https://i.imgur.com/3sUlj1S.png"/>
 
 
 ## Contributions
 ![Visual Studio 2019](https://img.shields.io/badge/IDE-Visual%20Studio%202019-964ad4.svg?maxAge=3600)
 ![.NET Core 3.1](https://img.shields.io/badge/.NET-Core%203.1-lightgrey.svg?maxAge=3600)
 
-_Coming soon!_
+Looking for translators!
 
 I am just a single developer working on this in my spare time. So if you like what I have created please star it to show your support, as it would motive me to keep working on it! <br>
 Feedback and questions are always appreciated. Create an issue or take a look at an existing one if you want to report a bug or request a feature, or have something on your mind! 😊
