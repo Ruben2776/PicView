@@ -3,13 +3,48 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using static PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.ImageHandling
 {
     internal static class SaveImages
     {
+        internal static bool TrySaveImageWithEffect(string destination)
+        {
+            var sauce = UILogic.Loading.LoadWindows.GetMainWindow.MainImage.Source as BitmapSource;
+            var effect = UILogic.Loading.LoadWindows.GetMainWindow.MainImage.Effect;
+
+            var rectangle = new Rectangle
+            {
+                Fill = new ImageBrush(sauce),
+                Effect = effect
+            };
+
+            var sz = new Size(sauce.PixelWidth, sauce.PixelHeight);
+            rectangle.Measure(sz);
+            rectangle.Arrange(new Rect(sz));
+
+            var rtb = new RenderTargetBitmap(sauce.PixelWidth, sauce.PixelHeight, sauce.DpiX, sauce.DpiY, PixelFormats.Default);
+            rtb.Render(rectangle);
+
+            try
+            {
+                var frame = BitmapFrame.Create(rtb);
+                var encoder = new PngBitmapEncoder();
+
+                encoder.Frames.Add(frame);
+
+                using var stream = File.Create(destination);
+                encoder.Save(stream);
+            }
+            catch (Exception) { return false; }
+            return true;
+        }
+
+
         /// <summary>
         /// Tries to save image to the specified destination,
         /// returns false if unsuccesful

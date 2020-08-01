@@ -35,7 +35,6 @@ namespace PicView.FileHandling
         internal static string GetSizeReadable(long i)
         {
             string sign = i < 0 ? "-" : string.Empty;
-            _ = i < 0 ? -i : i;
             char prefix;
             double value;
 
