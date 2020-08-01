@@ -1,7 +1,7 @@
-﻿using PicView.Library;
-using PicView.UILogic;
+﻿using PicView.UILogic;
 using PicView.UILogic.Loading;
 using PicView.UILogic.TransformImage;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -35,7 +35,7 @@ namespace PicView.Editing
             var c = GetColorAt(w32Mouse.X, w32Mouse.Y);
 
             // Set color values to usercontrol
-            UC.GetColorPicker.HexCodePresenter.Content = Utilities.HexConverter(c);
+            UC.GetColorPicker.HexCodePresenter.Content = HexConverter(c);
             UC.GetColorPicker.RectangleColorPresenter.Fill =
             UC.GetColorPicker.MainColorPresenter.Fill = new SolidColorBrush
             {
@@ -70,6 +70,22 @@ namespace PicView.Editing
             IsRunning = false;
 
             LoadWindows.GetMainWindow.Focus();
+        }
+
+        internal static string HexConverter(System.Drawing.Color c)
+        {
+            return "#" +
+                c.R.ToString("X2", CultureInfo.InvariantCulture) +
+                c.G.ToString("X2", CultureInfo.InvariantCulture) +
+                c.B.ToString("X2", CultureInfo.InvariantCulture);
+        }
+
+        internal static string RGBConverter(System.Drawing.Color c)
+        {
+            return "RGB(" +
+                c.R.ToString("X2", CultureInfo.InvariantCulture) +
+                c.G.ToString("X2", CultureInfo.InvariantCulture) +
+                c.B.ToString("X2", CultureInfo.InvariantCulture) + ")";
         }
     }
 }

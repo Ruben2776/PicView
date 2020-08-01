@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -83,6 +84,40 @@ namespace PicView.FileHandling
                 name += "...";
             }
             return name;
+        }
+
+        internal static string GetDefaultExeConfigPath(ConfigurationUserLevel userLevel)
+        {
+            try
+            {
+                var UserConfig = ConfigurationManager.OpenExeConfiguration(userLevel);
+                return UserConfig.FilePath;
+            }
+            catch (ConfigurationException e)
+            {
+                return e.Filename;
+            }
+        }
+
+        internal static string GetWritingPath()
+        {
+            return Path.GetDirectoryName(GetDefaultExeConfigPath(ConfigurationUserLevel.PerUserRoamingAndLocal));
+        }
+
+        internal static string GetURL(string value)
+        {
+            try
+            {
+                var linkParser = new Regex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                return linkParser.Match(value).ToString();
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine(e.Message);
+#endif
+                return string.Empty;
+            }
         }
     }
 }

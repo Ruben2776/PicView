@@ -129,7 +129,7 @@ namespace PicView.UILogic
         /// <param name="height"></param>
         internal static void SetTitleString(int width, int height)
         {
-            string path = Library.Utilities.GetURL(LoadWindows.GetMainWindow.TitleText.Text);
+            string path = GetURL(LoadWindows.GetMainWindow.TitleText.Text);
 
             path = string.IsNullOrWhiteSpace(path) ? Application.Current.Resources["Image"] as string : path;
 

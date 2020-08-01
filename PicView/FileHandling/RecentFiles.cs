@@ -42,7 +42,7 @@ namespace PicView.FileHandling
             try
             {
                 // Read file stream
-                var listToRead = new StreamReader(Utilities.GetWritingPath() + "\\Recent.txt");
+                var listToRead = new StreamReader(GetWritingPath() + "\\Recent.txt");
                 string line;
 
                 // Read each line until end of file
@@ -100,7 +100,7 @@ namespace PicView.FileHandling
         internal static void WriteToFile()
         {
             // Create file called "Recent.txt" located on app folder
-            var streamWriter = new StreamWriter(Utilities.GetWritingPath() + "\\Recent.txt");
+            var streamWriter = new StreamWriter(GetWritingPath() + "\\Recent.txt");
             foreach (string item in MRUlist)
             {
                 // Write list to stream

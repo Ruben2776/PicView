@@ -1,4 +1,4 @@
-﻿using PicView.Library;
+﻿using PicView.FileHandling;
 using PicView.UILogic.Loading;
 using PicView.UILogic.TransformImage;
 using System;
@@ -35,7 +35,7 @@ namespace PicView.UILogic.DragAndDrop
 
             if (Pics.Count == 0)
             {
-                string url = Utilities.GetURL(LoadWindows.GetMainWindow.TitleText.Text);
+                string url = FileFunctions.GetURL(LoadWindows.GetMainWindow.TitleText.Text);
                 if (Uri.IsWellFormedUriString(url, UriKind.Absolute)) // Check if from web
                 {
                     // Create temp directory

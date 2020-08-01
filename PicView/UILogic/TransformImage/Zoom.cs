@@ -7,7 +7,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using static PicView.ChangeImage.Navigation;
-using static PicView.Library.Utilities;
 
 namespace PicView.UILogic.TransformImage
 {
@@ -61,6 +60,17 @@ namespace PicView.UILogic.TransformImage
             }
 
             return ", " + x + ":" + y + ") ";
+        }
+
+        /// <summary>
+        /// Greatest Common Divisor
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        internal static int GCD(int x, int y)
+        {
+            return y == 0 ? x : GCD(y, x % y);
         }
 
         /// <summary>

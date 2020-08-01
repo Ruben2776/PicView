@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using PicView.FileHandling;
 using PicView.ImageHandling;
 using System;
 using System.ComponentModel;
@@ -28,7 +29,7 @@ namespace PicView.SystemIntegration
         /// <param name="style"></param>
         internal static void SetWallpaper(WallpaperStyle style)
         {
-            string wallpaper = Library.Utilities.GetURL(UILogic.Loading.LoadWindows.GetMainWindow.TitleText.Text);
+            string wallpaper = FileFunctions.GetURL(UILogic.Loading.LoadWindows.GetMainWindow.TitleText.Text);
 
             if (Uri.IsWellFormedUriString(wallpaper, UriKind.Absolute)) // Check if from web
             {

@@ -1,5 +1,6 @@
 ﻿using ImageMagick;
 using PicView.ChangeImage;
+using PicView.FileHandling;
 using PicView.Library;
 using PicView.UILogic;
 using PicView.UILogic.Loading;
@@ -70,7 +71,7 @@ namespace PicView.ImageHandling
             string path;
             if (Navigation.FolderIndex == 0)
             {
-                string url = Utilities.GetURL(LoadWindows.GetMainWindow.TitleText.Text);
+                string url = FileFunctions.GetURL(LoadWindows.GetMainWindow.TitleText.Text);
                 if (Uri.IsWellFormedUriString(url, UriKind.Absolute)) // Check if from web
                 {
                     using var webclient = new WebClient();
