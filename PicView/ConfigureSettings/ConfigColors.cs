@@ -69,7 +69,7 @@ namespace PicView.ConfigureSettings
                     break;
 
                 case 1:
-                    var brush = Properties.Settings.Default.LightTheme ? Brushes.Black : Brushes.White;
+                    var brush = Properties.Settings.Default.DarkTheme ? Brushes.Black : Brushes.White;
                     LoadWindows.GetMainWindow.MainImageBorder.Background = brush;
                     break;
 
@@ -111,7 +111,7 @@ namespace PicView.ConfigureSettings
                     break;
 
                 case 1:
-                    var brush = Properties.Settings.Default.LightTheme ? Brushes.Black : Brushes.White;
+                    var brush = Properties.Settings.Default.DarkTheme ? Brushes.Black : Brushes.White;
                     LoadWindows.GetMainWindow.MainImageBorder.Background = brush;
                     break;
 
@@ -142,7 +142,7 @@ namespace PicView.ConfigureSettings
             return Properties.Settings.Default.BgColorChoice switch
             {
                 0 => Brushes.Transparent,
-                1 => Properties.Settings.Default.LightTheme ? Brushes.Black : Brushes.White,
+                1 => Properties.Settings.Default.DarkTheme ? Brushes.Black : Brushes.White,
                 2 => DrawingBrushes.CheckerboardDrawingBrush(Colors.White),
                 3 => DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(76, 76, 76), Color.FromRgb(32, 32, 32), 55),
                 _ => Brushes.Transparent,
@@ -160,17 +160,17 @@ namespace PicView.ConfigureSettings
                 Source = new Uri(@"/PicView;component/Themes/Styles/ColorThemes/Light.xaml", UriKind.Relative)
             };
 
-            Properties.Settings.Default.LightTheme = true;
+            Properties.Settings.Default.DarkTheme = true;
         }
 
         internal static void ChangeToDarkTheme()
         {
-            Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
+            Application.Current.Resources.MergedDictionaries[1] = new ResourceDictionary
             {
                 Source = new Uri(@"/PicView;component/Themes/Styles/ColorThemes/Dark.xaml", UriKind.Relative)
             };
 
-            Properties.Settings.Default.LightTheme = false;
+            Properties.Settings.Default.DarkTheme = false;
         }
 
         #endregion Change Theme

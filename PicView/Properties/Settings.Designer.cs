@@ -530,12 +530,12 @@ namespace PicView.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool LightTheme {
+        public bool DarkTheme {
             get {
-                return ((bool)(this["LightTheme"]));
+                return ((bool)(this["DarkTheme"]));
             }
             set {
-                this["LightTheme"] = value;
+                this["DarkTheme"] = value;
             }
         }
         

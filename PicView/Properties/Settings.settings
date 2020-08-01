@@ -128,7 +128,7 @@
     <Setting Name="IncludeSubDirectories" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="LightTheme" Type="System.Boolean" Scope="User">
+    <Setting Name="DarkTheme" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="UserLanguage" Type="System.String" Scope="User">
