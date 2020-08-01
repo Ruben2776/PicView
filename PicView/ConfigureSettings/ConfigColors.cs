@@ -160,7 +160,7 @@ namespace PicView.ConfigureSettings
                 Source = new Uri(@"/PicView;component/Themes/Styles/ColorThemes/Light.xaml", UriKind.Relative)
             };
 
-            Properties.Settings.Default.DarkTheme = true;
+            Properties.Settings.Default.DarkTheme = false;
         }
 
         internal static void ChangeToDarkTheme()
@@ -170,7 +170,7 @@ namespace PicView.ConfigureSettings
                 Source = new Uri(@"/PicView;component/Themes/Styles/ColorThemes/Dark.xaml", UriKind.Relative)
             };
 
-            Properties.Settings.Default.DarkTheme = false;
+            Properties.Settings.Default.DarkTheme = true;
         }
 
         #endregion Change Theme
