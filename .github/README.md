@@ -2,6 +2,7 @@
 <img src="https://picview.app/wp-content/uploads/2020/07/Rectangle-Image-Copy.png" height="215" />
   <br>
 </h1>
+<br>
 
 PicView is a fast and Open Source Image Viewer for Windows, with configureable interface and image galleries. 
 
@@ -10,11 +11,13 @@ PicView is a fast and Open Source Image Viewer for Windows, with configureable i
 ![Windows OS](https://img.shields.io/badge/OS-Windows%2064%20bit-00adef.svg?maxAge=3600&style=for-the-badge)
 
 
+---
 
+<br>
 <img src="https://i.imgur.com/cTgkhA1.png" align="left" height="670"/>
 
 
-## Features:
+### Features:
 
 Portable, free to use. No pop-ups, no installtation required, no registry edits or system files changed.
 
@@ -37,25 +40,29 @@ Quickly crop images by pressing `C`.
 
 Drag and drop from files Windows explorer or your browser. You can also hold `Ctrl` to drag currently viewed image to your file system.
 
-
+<br>
 <h2>Display Image Info</h2>
 
 <img src="https://i.imgur.com/IK3qgB4.png" width="918"/>
 The image info window will update values as you browse through images.
- 
+
+<br>
 <h2>Fullscreen Image Gallery:</h2>
 <img src="https://i.imgur.com/gtbdzcP.jpg"/>
 View all files in current folder as a fullscreen thumbnail gallery, where you can quickly scroll to desired image.
 
+<br>
 <h2>Contained Image Gallery:</h2>
 <img src="https://i.imgur.com/Wdzk4oI.png"/>
 View all files in current folder as a thumbnail gallery, with custom animations.
- 
+
+<br>
 <h2>Customizable Themes</h2>
 <img src="https://i.imgur.com/bBzLcI9.png"/>
 
  > A choice between dark theme and light theme can be found in the settings menu `F4`, along with 12 highlight colors to choose from. 
 
+<br>
 <h2>Settings and shader effects:</h2>
 <img src="https://i.imgur.com/3sUlj1S.png"/>
 
