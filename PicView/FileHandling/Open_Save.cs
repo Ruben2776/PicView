@@ -159,7 +159,7 @@ namespace PicView.FileHandling
 
             if (LoadWindows.GetMainWindow.MainImage.Effect != null)
             {
-                if (!SaveImages.TrySaveImageWithEffect(Savedlg.FileName))
+                if (!SaveImages.TrySaveImageWithEffect(Rotateint, Flipped, Savedlg.FileName))
                 {
                     ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
                 }

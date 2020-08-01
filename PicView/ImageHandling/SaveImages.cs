@@ -12,7 +12,7 @@ namespace PicView.ImageHandling
 {
     internal static class SaveImages
     {
-        internal static bool TrySaveImageWithEffect(string destination)
+        internal static bool TrySaveImageWithEffect(int rotate, bool flipped, string destination)
         {
             var sauce = UILogic.Loading.LoadWindows.GetMainWindow.MainImage.Source as BitmapSource;
             var effect = UILogic.Loading.LoadWindows.GetMainWindow.MainImage.Effect;
@@ -37,8 +37,24 @@ namespace PicView.ImageHandling
 
                 encoder.Frames.Add(frame);
 
-                using var stream = File.Create(destination);
-                encoder.Save(stream);
+                using var SaveImage = new MagickImage();
+                using (var stream = new MemoryStream())
+                {
+                    encoder.Save(stream);
+                    SaveImage.Read(stream.ToArray());
+                }
+
+                SaveImage.Quality = 100;
+
+                // Apply transformation values
+                if (flipped)
+                {
+                    SaveImage.Flop();
+                }
+
+                SaveImage.Rotate(rotate);
+
+                SaveImage.Write(destination);
             }
             catch (Exception) { return false; }
             return true;
