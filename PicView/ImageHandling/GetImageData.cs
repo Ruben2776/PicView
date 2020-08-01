@@ -1,7 +1,6 @@
 ﻿using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using PicView.ChangeImage;
-using PicView.Library;
 using System;
 using System.Globalization;
 using System.IO;
@@ -13,7 +12,27 @@ namespace PicView.ImageHandling
     {
         internal static string[] RetrieveData(string file)
         {
-            var fileInfo = new FileInfo(file);
+            string name, directoryname, fullname, creationtime, lastwritetime;
+
+            FileInfo fileInfo;
+            try
+            {
+                fileInfo = new FileInfo(file);
+                name = fileInfo.Name;
+                directoryname = fileInfo.DirectoryName;
+                fullname = fileInfo.FullName;
+                creationtime = fileInfo.CreationTime.ToString(CultureInfo.CurrentCulture);
+                lastwritetime = fileInfo.LastWriteTime.ToString(CultureInfo.CurrentCulture);
+            }
+            catch (Exception)
+            {
+                name = string.Empty;
+                directoryname = string.Empty;
+                fullname = string.Empty;
+                creationtime = string.Empty;
+                lastwritetime = string.Empty;
+            }
+
             var image = Preloader.Load(Navigation.Pics[Navigation.FolderIndex]);
 
             var inchesWidth = image.PixelWidth / image.DpiX;
@@ -21,8 +40,8 @@ namespace PicView.ImageHandling
             var cmWidth = inchesWidth * 2.54;
             var cmHeight = inchesHeight * 2.54;
 
-            var firstRatio = image.PixelWidth / Utilities.GCD(image.PixelWidth, image.PixelHeight);
-            var secondRatio = image.PixelHeight / Utilities.GCD(image.PixelWidth, image.PixelHeight);
+            var firstRatio = image.PixelWidth / UILogic.TransformImage.ZoomLogic.GCD(image.PixelWidth, image.PixelHeight);
+            var secondRatio = image.PixelHeight / UILogic.TransformImage.ZoomLogic.GCD(image.PixelWidth, image.PixelHeight);
             string ratioText;
             if (firstRatio == secondRatio)
             {
@@ -37,26 +56,52 @@ namespace PicView.ImageHandling
                 ratioText = $"{firstRatio}:{secondRatio} ({Application.Current.Resources["Portrait"]})";
             }
 
-            var so = ShellObject.FromParsingName(file);
-            var bitdepth = so.Properties.GetProperty(SystemProperties.System.Image.BitDepth).ValueAsObject;
-            var dpiX = so.Properties.GetProperty(SystemProperties.System.Image.HorizontalResolution).ValueAsObject;
-            var dpiY = so.Properties.GetProperty(SystemProperties.System.Image.VerticalResolution).ValueAsObject;
-            so.Dispose();
+            object bitdepth, dpiX, dpiY;
+            string dpi;
+
+            try
+            {
+                var so = ShellObject.FromParsingName(file);
+                bitdepth = so.Properties.GetProperty(SystemProperties.System.Image.BitDepth).ValueAsObject;
+                dpiX = so.Properties.GetProperty(SystemProperties.System.Image.HorizontalResolution).ValueAsObject;
+                dpiY = so.Properties.GetProperty(SystemProperties.System.Image.VerticalResolution).ValueAsObject;
+                so.Dispose();
+            }
+            catch (Exception)
+            {
+                bitdepth = string.Empty;
+                dpiX = string.Empty;
+                dpiY = string.Empty;
+            }
+
+            if (bitdepth == null)
+            {
+                bitdepth = string.Empty;
+            }
+
+            if (dpiX == null)
+            {
+                dpi = string.Empty;
+            }
+            else
+            {
+                dpi = Math.Round((double)dpiX) + " x " + Math.Round((double)dpiY) + " " + Application.Current.Resources["Dpi"];
+            }
 
             return new string[]
             {
                 // Fileinfo
-                fileInfo.Name,
-                fileInfo.DirectoryName,
-                fileInfo.FullName,
-                fileInfo.CreationTime.ToString(CultureInfo.CurrentCulture),
-                fileInfo.LastWriteTime.ToString(CultureInfo.CurrentCulture),
+                name,
+                directoryname,
+                fullname,
+                creationtime,
+                lastwritetime,
 
                 // Resolution
                 image.PixelWidth + " x " + image.PixelHeight + " " + Application.Current.Resources["Pixels"],
 
                 // DPI
-                Math.Round((double)dpiX) + " x " + Math.Round((double)dpiY) + " " + Application.Current.Resources["Dpi"],
+                dpi,
 
                 // Bit dpeth
                 bitdepth.ToString(),
