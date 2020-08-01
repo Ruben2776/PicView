@@ -2217,10 +2217,10 @@
 
                         <Image
                             x:Name="Logo"
-                            Width="128"
-                            Height="123"
+                            Width="180"
+                            Height="133"
                             Margin="0,0,0,12"
-                            Source="/PicView;component/Themes/Resources/img/icon-raster.128.png" />
+                            Source="/PicView;component/Themes/Resources/img/icon-raster.180b.png" />
 
                         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                             <TextBlock>

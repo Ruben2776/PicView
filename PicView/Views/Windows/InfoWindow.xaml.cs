@@ -28,10 +28,12 @@ namespace PicView.Views.Windows
             {
                 var Source = new BitmapImage();
                 Source.BeginInit();
-                Source.UriSource = new Uri("pack://application:,,,/PicView;component/Themes/Resources/img/icon-raster.128b.png");
+                Source.UriSource = new Uri("pack://application:,,,/PicView;component/Themes/Resources/img/icon-raster.180l.png");
                 Source.EndInit();
 
                 Logo.Source = Source;
+                Logo.Width = 180;
+                Logo.Height = 133;
             }
 
             MaxWidth = MinWidth = 565 * WindowLogic.MonitorInfo.DpiScaling;
