@@ -24,7 +24,7 @@ namespace PicView.Views.Windows
 
             ContentRendered += Window_ContentRendered;
 
-            if (Properties.Settings.Default.LightTheme)
+            if (Properties.Settings.Default.DarkTheme)
             {
                 var Source = new BitmapImage();
                 Source.BeginInit();

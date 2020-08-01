@@ -81,8 +81,8 @@ namespace PicView.Views.Windows
                 SlideshowSlider.Value = Properties.Settings.Default.SlideTimer / 1000;
                 SlideshowSlider.ValueChanged += SlideshowSlider_ValueChanged;
 
-                LightThemeRadio.IsChecked = Properties.Settings.Default.LightTheme;
-                DarkThemeRadio.IsChecked = !Properties.Settings.Default.LightTheme;
+                LightThemeRadio.IsChecked = Properties.Settings.Default.DarkTheme;
+                DarkThemeRadio.IsChecked = !Properties.Settings.Default.DarkTheme;
 
                 DarkThemeRadio.Click += delegate
                 {
