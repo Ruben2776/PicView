@@ -7,7 +7,7 @@
     xmlns:uc="clr-namespace:PicView.UILogic.UserControls"
     Title="{StaticResource HLSLPictureFX}"
     Width="686"
-    Height="593"
+    Height="675"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros"
     Foreground="{StaticResource MainColorBrush}"
     Style="{DynamicResource MyWindowStyle}"
@@ -393,10 +393,29 @@
                     </WrapPanel>
 
                     <TextBlock
-                        Margin="0,9,0,4"
+                        Margin="0,20,0,4"
                         HorizontalAlignment="Center"
                         Text="{StaticResource ClickToAddShaderEffectToImage}" />
                     <TextBlock HorizontalAlignment="Center" Text="{StaticResource UncheckToRemoveEffect}" />
+
+                    <Border
+                        Width="105"
+                        Height="{DynamicResource LargeButtonHeight}"
+                        Margin="0,25,5,5"
+                        Style="{StaticResource ButtonBorder}">
+                        <Button
+                            x:Name="SaveButton"
+                            Content="{StaticResource Save}"
+                            FontSize="14">
+                            <Button.Background>
+                                <SolidColorBrush x:Name="SaveBrush" Color="Transparent" />
+                            </Button.Background>
+                            <Button.Foreground>
+                                <SolidColorBrush x:Name="SaveText" Color="{StaticResource MainColor}" />
+                            </Button.Foreground>
+                        </Button>
+                    </Border>
+
                 </StackPanel>
             </ScrollViewer>
         </Border>

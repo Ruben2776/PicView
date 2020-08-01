@@ -1,4 +1,7 @@
 ﻿using PicView.Editing.HlslEffects;
+using PicView.FileHandling;
+using PicView.ImageHandling;
+using PicView.UILogic.Animations;
 using PicView.UILogic.Loading;
 using PicView.UILogic.Sizing;
 using PicView.UILogic.TransformImage;
@@ -216,6 +219,14 @@ namespace PicView.Views.Windows
             FrostyOutlineButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(FrostyOutlineBrush);
             FrostyOutlineButton.MouseEnter += (s, x) => ButtonMouseOverAnim(FrostyOutlineBrush, true);
             FrostyOutlineButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(FrostyOutlineBrush, false);
+
+            // SaveButton
+            SaveButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(SaveText); };
+            SaveButton.MouseEnter += delegate { ButtonMouseOverAnim(SaveText); };
+            SaveButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SaveBrush); };
+            SaveButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SaveText); };
+            SaveButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SaveBrush); };
+            SaveButton.Click += (_, _) => Open_Save.SaveFiles();
         }
 
         #region Keyboard Shortcuts
