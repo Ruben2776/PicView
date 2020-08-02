@@ -9,12 +9,6 @@ namespace PicView.UILogic
         // Add timers
         internal static void AddTimers()
         {
-            AutoScrollTimer = new Timer()
-            {
-                Interval = 7,
-                AutoReset = true,
-                Enabled = false
-            };
             AutoScrollTimer.Elapsed += AutoScrollTimerEvent;
 
             ActivityTimer = new Timer()

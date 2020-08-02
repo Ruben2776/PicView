@@ -21,11 +21,12 @@ namespace PicView.UILogic.TransformImage
         /// Current point of AutoScroll
         /// </summary>
         internal static Point AutoScrollPos;
-
-        /// <summary>
-        /// Timer used to continously scroll with AutoScroll
-        /// </summary>
-        internal static Timer AutoScrollTimer;
+        internal static readonly Timer AutoScrollTimer = new Timer()
+        {
+            Interval = 7,
+            AutoReset = true,
+            Enabled = false
+        };
 
         internal static bool IsAutoScrolling { get; set; }
 
@@ -93,7 +94,6 @@ namespace PicView.UILogic.TransformImage
         internal static void StopAutoScroll()
         {
             AutoScrollTimer.Stop();
-            //window.ReleaseMouseCapture();
             AutoScrollTimer.Enabled = false;
             IsAutoScrolling = false;
             AutoScrollOrigin = null;

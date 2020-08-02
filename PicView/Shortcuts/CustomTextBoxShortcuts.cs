@@ -7,16 +7,14 @@ namespace PicView
     {
         internal static void CustomTextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            switch (e.Key)
+            if (e.Key == Key.Enter)
             {
-                case Key.Enter:
-                    EditTitleBar.HandleRename();
-                    break;
-
-                case Key.Escape:
-                    EditTitleBar.Refocus();
-                    FileHandling.Open_Save.IsDialogOpen = true; // Hack to make escape not fall through
-                    break;
+                EditTitleBar.HandleRename();
+            }
+            else if (e.Key == Key.Escape)
+            {
+                EditTitleBar.Refocus();
+                FileHandling.Open_Save.IsDialogOpen = true; // Hack to make escape not fall through
             }
         }
     }
