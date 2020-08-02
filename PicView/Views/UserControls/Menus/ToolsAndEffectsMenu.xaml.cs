@@ -33,7 +33,6 @@ namespace PicView.UILogic.UserControls
             {
                 UC.Close_UserControls();
                 LoadWindows.ResizeAndOptimizeWindow();
-                Batch_Resize.UpdateValues();
             };
 
             // EffectsButton

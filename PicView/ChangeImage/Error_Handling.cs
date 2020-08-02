@@ -158,8 +158,6 @@ namespace PicView.ChangeImage
             Preloader.Clear();
             FreshStartup = true;
             DeleteTempFiles();
-
-            GC.Collect();
         }
 
         /// <summary>
@@ -252,8 +250,6 @@ namespace PicView.ChangeImage
             }
 
             SystemIntegration.Taskbar.NoProgress();
-
-            GC.Collect();
         }
     }
 }

@@ -1,9 +1,7 @@
-﻿using PicView.Editing;
-using PicView.UILogic.Loading;
+﻿using PicView.UILogic.Loading;
 using System;
 using System.Windows;
 using System.Windows.Input;
-using static PicView.UILogic.Animations.MouseOverAnimations;
 
 namespace PicView.Views.Windows
 {
@@ -18,43 +16,6 @@ namespace PicView.Views.Windows
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            // Switch radioes
-            SelectedRadioBorder.MouseLeftButtonDown += delegate { SelectedRadio.IsChecked = true; };
-            AllRadioBorder.MouseLeftButtonDown += delegate { AllRadio.IsChecked = true; };
-            AllRadio.Checked += delegate { SelectedRadio.IsChecked = false; };
-            SelectedRadio.Checked += delegate { AllRadio.IsChecked = false; };
-
-            // SelectedRadio
-            SelectedRadioBorder.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(SelectedBrush);
-            SelectedRadioBorder.MouseEnter += (s, x) => ButtonMouseOverAnim(SelectedBrush, true);
-            SelectedRadioBorder.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(SelectedBrush, false);
-
-            // AllRadio
-            AllRadioBorder.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(AllBrush);
-            AllRadioBorder.MouseEnter += (s, x) => ButtonMouseOverAnim(AllBrush, true);
-            AllRadioBorder.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(AllBrush, false);
-
-            // FlipBox
-            FlipBox.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(FlipBoxBrush);
-            FlipBox.MouseEnter += (s, x) => ButtonMouseOverAnim(FlipBoxBrush, true);
-            FlipBox.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(FlipBoxBrush, false);
-
-            // OptimizeBox
-            OptimizeBox.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(OptimizeBoxBrush);
-            OptimizeBox.MouseEnter += (s, x) => ButtonMouseOverAnim(OptimizeBoxBrush, true);
-            OptimizeBox.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(OptimizeBoxBrush, false);
-
-            // AspectRatioBox
-            AspectRatioBox.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(AspectRatioBoxBrush);
-            AspectRatioBox.MouseEnter += (s, x) => ButtonMouseOverAnim(AspectRatioBoxBrush, true);
-            AspectRatioBox.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(AspectRatioBoxBrush, false);
-
-            // StartButton
-            StartButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(StartBrush);
-            StartButton.MouseEnter += (s, x) => ButtonMouseOverAnim(StartBrush, true);
-            StartButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(StartBrush, false);
-            StartButton.Click += delegate { _ = Batch_Resize.StartProcessing(); };
-
             // CloseButton
             CloseButton.TheButton.Click += delegate { Hide(); LoadWindows.GetMainWindow.Focus(); };
 
@@ -63,29 +24,18 @@ namespace PicView.Views.Windows
 
             TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
 
-            KeyUp += KeysUp;
-        }
-
-        #region Keyboard Shortcuts
-
-        private void KeysUp(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
+            KeyUp += (_,e) =>
             {
-                case Key.Escape:
+                if (e.Key == Key.Escape)
+                {
                     Hide();
                     LoadWindows.GetMainWindow.Focus();
-                    break;
-
-                case Key.Q:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        Environment.Exit(0);
-                    }
-                    break;
-            }
+                }
+                else if (e.Key == Key.Q && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                {
+                    Environment.Exit(0);
+                }
+            };
         }
-
-        #endregion Keyboard Shortcuts
     }
 }
