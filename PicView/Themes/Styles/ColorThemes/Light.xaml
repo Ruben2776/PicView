@@ -15,7 +15,7 @@
     <SolidColorBrush x:Key="MainColorBrush" Color="{StaticResource MainColor}" />
 
     <!--  Icon Color  -->
-    <Color x:Key="IconColor">#434a49</Color>
+    <Color x:Key="IconColor">#343b39</Color>
     <SolidColorBrush x:Key="IconColorBrush" Color="{StaticResource IconColor}" />
 
     <!--  Main Color faded  -->
