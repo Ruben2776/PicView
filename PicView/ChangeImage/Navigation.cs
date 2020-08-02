@@ -191,7 +191,7 @@ namespace PicView.ChangeImage
             {
                 /// Use the Load() function load image from memory if available
                 /// if not, it will be null
-                bitmapSource = Preloader.Get(Pics[index]);
+                bitmapSource = Preloader.Get(index);
             }
             else
             {
@@ -238,10 +238,10 @@ namespace PicView.ChangeImage
                 CanNavigate = false;
 
                 // Get it!
-                await Preloader.Add(Pics[index]).ConfigureAwait(true);
+                await Preloader.Add(index).ConfigureAwait(true);
 
                 // Retry
-                bitmapSource = Preloader.Get(Pics[index]);
+                bitmapSource = Preloader.Get(index);
 
                 if (bitmapSource == null)
                 {
@@ -649,7 +649,7 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static void FastPicUpdate()
         {
-            if (!Preloader.Contains(Pics[FolderIndex]))
+            if (!Preloader.Contains(FolderIndex))
             {
                 Preloader.Clear();
             }

@@ -17,43 +17,34 @@ namespace PicView.ChangeImage
         /// Preloader list of BitmapSources
         /// </summary>
         private static readonly ConcurrentDictionary<
-            string,
-            BitmapSource> Sources = new ConcurrentDictionary<string, BitmapSource>();
-
-        /// <summary>
-        /// Add file to prelader
-        /// </summary>
-        /// <param name="file">file path</param>
-        internal static Task Add(string file)
-        {
-            return Task.Run(() =>
-            {
-                var pic = ImageDecoder.RenderToBitmapSource(file);
-
-#if DEBUG
-                Trace.WriteLine($"Added {file} to Preloader, index {Pics.IndexOf(file)}");
-#endif
-
-                Sources.TryAdd(file, pic);
-            });
-        }
+            int,
+            BitmapSource> Sources = new ConcurrentDictionary<int, BitmapSource>();
 
         /// <summary>
         /// Add file to preloader from index
         /// </summary>
         /// <param name="i">Index of Pics</param>
-        internal static void Add(int i)
+        internal static Task Add(int i)
         {
             if (i >= Pics.Count || i < 0)
             {
-                return;
+                return null;
             }
 
             if (File.Exists(Pics[i]))
             {
-                if (!Contains(Pics[i]))
+                if (!Contains(i))
                 {
-                    Add(Pics[i]);
+                    return Task.Run(() =>
+                    {
+                        var pic = ImageDecoder.RenderToBitmapSource(Pics[i]);
+
+#if DEBUG
+                        Trace.WriteLine($"Added {Pics[i]} to Preloader, index {i}");
+#endif
+
+                        Sources.TryAdd(i, pic);
+                    });
                 }
 #if DEBUG
                 else
@@ -70,19 +61,18 @@ namespace PicView.ChangeImage
                 Trace.WriteLine($"Preloader removed: {Pics[i]} from Pics, index {i}");
 #endif
             }
+
+            return null;
         }
 
         /// <summary>
         /// Removes the key, after checking if it exists
         /// </summary>
         /// <param name="key"></param>
-        internal static void Remove(string key)
+        internal static void Remove(int key)
         {
-            if (key == null)
+            if (key >= Pics.Count || key < 0)
             {
-#if DEBUG
-                Trace.WriteLine("Preloader.Remove key null, " + key);
-#endif
                 return;
             }
 
@@ -98,35 +88,15 @@ namespace PicView.ChangeImage
 #if DEBUG
             if (Sources.TryRemove(key, out _))
             {
-                Trace.WriteLine($"Removed {key} from Preloader, index {Pics.IndexOf(key)}");
+                Trace.WriteLine($"Removed {key} from Preloader, index {key}");
             }
             else
             {
-                Trace.WriteLine($"Failed to Remove {key} from Preloader, index {Pics.IndexOf(key)}");
+                Trace.WriteLine($"Failed to Remove {key} from Preloader, index {key}");
             }
 #else
             Sources.TryRemove(key, out _);
 #endif
-        }
-
-        /// <summary>
-        /// Removes the key, after checking if it exists
-        /// </summary>
-        /// <param name="key"></param>
-        internal static void Remove(int i)
-        {
-            if (i >= Pics.Count || i < 0)
-            {
-                return;
-            }
-
-            if (File.Exists(Pics[i]))
-            {
-                if (Contains(Pics[i]))
-                {
-                    Remove(Pics[i]);
-                }
-            }
         }
 
         /// <summary>
@@ -153,7 +123,7 @@ namespace PicView.ChangeImage
         {
             for (int i = 0; i < array.Length; i++)
             {
-                Remove(array[i]);
+                Remove(i);
 #if DEBUG
                 Trace.WriteLine($"Removed = {array[i]} from Preloader");
 #endif
@@ -166,9 +136,9 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        internal static BitmapSource Get(string key)
+        internal static BitmapSource Get(int key)
         {
-            if (string.IsNullOrWhiteSpace(key) || !Contains(key))
+            if (!Contains(key))
             {
                 return null;
             }
@@ -181,9 +151,9 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        internal static bool Contains(string key)
+        internal static bool Contains(int key)
         {
-            if (string.IsNullOrWhiteSpace(key) || Sources.IsEmpty)
+            if (Sources.IsEmpty)
             {
                 return false;
             }
@@ -207,7 +177,7 @@ namespace PicView.ChangeImage
 
             return Task.Run(() =>
             {
-                var toLoad = 3;
+                var toLoad = 2;
                 var extraToLoad = 2;
                 var cleanUp = toLoad + extraToLoad;
 

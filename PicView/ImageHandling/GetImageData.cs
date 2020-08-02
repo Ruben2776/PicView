@@ -33,7 +33,7 @@ namespace PicView.ImageHandling
                 lastwritetime = string.Empty;
             }
 
-            var image = Preloader.Get(Navigation.Pics[Navigation.FolderIndex]);
+            var image = Preloader.Get(Navigation.FolderIndex);
 
             var inchesWidth = image.PixelWidth / image.DpiX;
             var inchesHeight = image.PixelHeight / image.DpiY;
