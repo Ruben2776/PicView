@@ -111,7 +111,7 @@ namespace PicView.ConfigureSettings
                     break;
 
                 case 1:
-                    var brush = Properties.Settings.Default.DarkTheme ? Brushes.Black : Brushes.White;
+                    var brush = Properties.Settings.Default.DarkTheme ? Brushes.White : Brushes.Black;
                     LoadWindows.GetMainWindow.MainImageBorder.Background = brush;
                     break;
 
@@ -142,7 +142,7 @@ namespace PicView.ConfigureSettings
             return Properties.Settings.Default.BgColorChoice switch
             {
                 0 => Brushes.Transparent,
-                1 => Properties.Settings.Default.DarkTheme ? Brushes.Black : Brushes.White,
+                1 => Properties.Settings.Default.DarkTheme ? Brushes.White : Brushes.Black,
                 2 => DrawingBrushes.CheckerboardDrawingBrush(Colors.White),
                 3 => DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(76, 76, 76), Color.FromRgb(32, 32, 32), 55),
                 _ => Brushes.Transparent,

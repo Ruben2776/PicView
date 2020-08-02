@@ -17,8 +17,8 @@ namespace PicView.UILogic.Animations
 
         #region ALtInterface hover anims
 
-        private static ColorAnimation ccAnim = new ColorAnimation { Duration = TimeSpan.FromSeconds(.32) };
-        private static ColorAnimation ccAnim2 = new ColorAnimation { Duration = TimeSpan.FromSeconds(.2) };
+        private static readonly ColorAnimation ccAnim = new ColorAnimation { Duration = TimeSpan.FromSeconds(.32) };
+        private static readonly ColorAnimation ccAnim2 = new ColorAnimation { Duration = TimeSpan.FromSeconds(.2) };
         private static readonly SolidColorBrush borderBrush = (SolidColorBrush)Application.Current.Resources["BorderBrush"];
 
         internal static void AltInterfacePreviewMouseOver(Brush foreground, Brush border)

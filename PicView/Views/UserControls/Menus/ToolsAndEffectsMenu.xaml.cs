@@ -17,10 +17,6 @@ namespace PicView.UILogic.UserControls
             InitializeComponent();
 
             // ResizeButton
-            ResizeButton.PreviewMouseLeftButtonDown += delegate
-            {
-                PreviewMouseButtonDownAnim(ResizeButtonBrush);
-            };
             ResizeButton.MouseEnter += delegate
             {
                 ButtonMouseOverAnim(ResizeText);
@@ -41,10 +37,6 @@ namespace PicView.UILogic.UserControls
             };
 
             // EffectsButton
-            EffectsButton.PreviewMouseLeftButtonDown += delegate
-            {
-                PreviewMouseButtonDownAnim(EffectsButtonBrush);
-            };
             EffectsButton.MouseEnter += delegate
             {
                 ButtonMouseOverAnim(EffectsText);
