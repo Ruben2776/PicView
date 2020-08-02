@@ -39,7 +39,12 @@ Quickly crop images by pressing `C`.
 
 
 Drag and drop from files Windows explorer or your browser. You can also hold `Ctrl` to drag currently viewed image to your file system.
+<br>
+<h2>Customizable Themes</h2>
+<img src="https://i.imgur.com/bBzLcI9.png"/>
 
+ A choice between dark theme and light theme can be found in the settings menu `F4`, along with 12 highlight colors to choose from. 
+ 
 <br>
 <h2>Display Image Info</h2>
 
@@ -56,11 +61,7 @@ View all files in current folder as a fullscreen thumbnail gallery, where you ca
 <img src="https://i.imgur.com/Wdzk4oI.png"/>
 View all files in current folder as a thumbnail gallery, with custom animations.
 
-<br>
-<h2>Customizable Themes</h2>
-<img src="https://i.imgur.com/bBzLcI9.png"/>
 
- > A choice between dark theme and light theme can be found in the settings menu `F4`, along with 12 highlight colors to choose from. 
 
 <br>
 <h2>Settings and shader effects:</h2>
