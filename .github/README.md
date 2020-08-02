@@ -41,7 +41,7 @@ Quickly crop images by pressing `C`.
 Drag and drop from files Windows explorer or your browser. You can also hold `Ctrl` to drag currently viewed image to your file system.
 <br>
 <h2>Customizable Themes</h2>
-<img src="https://i.imgur.com/bBzLcI9.png"/>
+<img src="https://i.imgur.com/Or9vf39.png"/>
 
  A choice between dark theme and light theme can be found in the settings menu `F4`, along with 12 highlight colors to choose from. 
  
