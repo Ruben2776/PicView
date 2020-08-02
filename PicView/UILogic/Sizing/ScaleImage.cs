@@ -212,10 +212,10 @@ namespace PicView.UILogic.Sizing
 
                 if (Properties.Settings.Default.PicGallery == 2)
                 {
-                    if (xWidth >= monitorWidth - (picGalleryItem_Size + 200))
+                    if (xWidth >= monitorWidth - (UC.GetPicGallery.ActualWidth + 5) * 2.2)
                     {
                         // Offset window to not overlap gallery
-                        LoadWindows.GetMainWindow.Left = ((MonitorInfo.WorkArea.Width - picGalleryItem_Size - (LoadWindows.GetMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
+                        LoadWindows.GetMainWindow.Left = ((MonitorInfo.WorkArea.Width - (UC.GetPicGallery.ActualWidth + 5) - (LoadWindows.GetMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
                                           + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
                         LoadWindows.GetMainWindow.Top = ((MonitorInfo.WorkArea.Height
                                            - (LoadWindows.GetMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
