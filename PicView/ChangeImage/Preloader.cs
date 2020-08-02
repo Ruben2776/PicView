@@ -166,7 +166,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        internal static BitmapSource Load(string key)
+        internal static BitmapSource Get(string key)
         {
             if (string.IsNullOrWhiteSpace(key) || !Contains(key))
             {

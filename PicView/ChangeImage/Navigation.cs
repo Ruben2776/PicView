@@ -191,7 +191,7 @@ namespace PicView.ChangeImage
             {
                 /// Use the Load() function load image from memory if available
                 /// if not, it will be null
-                bitmapSource = Preloader.Load(Pics[index]);
+                bitmapSource = Preloader.Get(Pics[index]);
             }
             else
             {
@@ -241,7 +241,7 @@ namespace PicView.ChangeImage
                 await Preloader.Add(Pics[index]).ConfigureAwait(true);
 
                 // Retry
-                bitmapSource = Preloader.Load(Pics[index]);
+                bitmapSource = Preloader.Get(Pics[index]);
 
                 if (bitmapSource == null)
                 {

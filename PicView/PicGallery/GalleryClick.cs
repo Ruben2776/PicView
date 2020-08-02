@@ -29,7 +29,7 @@ namespace PicView.UILogic.PicGallery
             {
                 if (Preloader.Contains(Pics[id]))
                 {
-                    PreviewItemClick(Preloader.Load(Pics[id]), id);
+                    PreviewItemClick(Preloader.Get(Pics[id]), id);
                 }
                 else
                 {

@@ -100,7 +100,7 @@ namespace PicView.UILogic.DragAndDrop
             }
 
             // Load from preloader or thumbnails
-            var thumb = Preloader.Contains(files[0]) ? Preloader.Load(files[0]) : GetBitmapSourceThumb(files[0]);
+            var thumb = Preloader.Contains(files[0]) ? Preloader.Get(files[0]) : GetBitmapSourceThumb(files[0]);
 
             if (thumb != null)
             {

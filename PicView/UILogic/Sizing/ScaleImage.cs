@@ -38,7 +38,7 @@ namespace PicView.UILogic.Sizing
             {
                 if (Pics.Count > FolderIndex)
                 {
-                    var pic = ChangeImage.Preloader.Load(Pics[FolderIndex]);
+                    var pic = ChangeImage.Preloader.Get(Pics[FolderIndex]);
                     if (pic != null)
                     {
                         FitImage(pic.PixelWidth, pic.PixelHeight);
