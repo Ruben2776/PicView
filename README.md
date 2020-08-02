@@ -1,0 +1,2 @@
+# PicView
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/259392dc8e434f70a3eda99784a0ed2c)](https://app.codacy.com/manual/ruben_8/PicView?utm_source=github.com&utm_medium=referral&utm_content=Ruben2776/PicView&utm_campaign=Badge_Grade_Settings)
