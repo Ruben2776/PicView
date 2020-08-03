@@ -6,8 +6,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.UILogic.UserControls"
     Title="{StaticResource HLSLPictureFX}"
-    Width="686"
-    Height="675"
+    Width="574"
+    Height="691"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros"
     Foreground="{StaticResource MainColorBrush}"
     Style="{DynamicResource MyWindowStyle}"
@@ -107,10 +107,20 @@
 
                         <RadioButton
                             x:Name="NegativeButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource NegativeColors}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource NegativeColors}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="NegativeColorsText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="NegativeBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -118,10 +128,20 @@
 
                         <RadioButton
                             x:Name="GrayscaleButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource BlackAndWhite}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource BlackAndWhite}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="BlackAndWhiteText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="GrayscaleBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -129,10 +149,20 @@
 
                         <RadioButton
                             x:Name="ColorToneButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource ColorTone}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource ColorTone}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="ColorToneText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="ColortoneBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -140,10 +170,20 @@
 
                         <RadioButton
                             x:Name="OldMovieButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource OldMovie}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource OldMovie}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="OldMovieText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="OldMovieBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -151,10 +191,20 @@
 
                         <RadioButton
                             x:Name="BloomButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource Bloom}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource Bloom}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="BloomText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="BloomBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -162,10 +212,20 @@
 
                         <RadioButton
                             x:Name="GloomButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource Gloom}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource Gloom}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="GloomText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="GloomBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -173,10 +233,20 @@
 
                         <RadioButton
                             x:Name="MonochromeButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource Monochrome}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource Monochrome}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="MonochromeText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="MonocromeBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -184,10 +254,20 @@
 
                         <RadioButton
                             x:Name="WavewarperButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource WaveWarper}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource WaveWarper}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="WaveWarperText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="WavewarperBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -195,10 +275,20 @@
 
                         <RadioButton
                             x:Name="UnderwaterButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource Underwater}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource Underwater}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="UnderwaterText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="UnderwaterBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -206,10 +296,20 @@
 
                         <RadioButton
                             x:Name="BandedSwirlButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource BandedSwirl}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource BandedSwirl}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="BandedSwirlText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="BandedSwirlBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -217,10 +317,20 @@
 
                         <RadioButton
                             x:Name="RippleButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource Ripple}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource Ripple}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="RippleText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="RippleBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -228,10 +338,20 @@
 
                         <RadioButton
                             x:Name="RippleAltButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource RippleAlt}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource RippleAlt}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="RippleAltText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="RippleAltBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -239,10 +359,20 @@
 
                         <RadioButton
                             x:Name="BlurButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource Blur}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource Blur}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="BlurText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="BlurBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -250,10 +380,20 @@
 
                         <RadioButton
                             x:Name="DirectionalBlurButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource DirectionalBlur}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource DirectionalBlur}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="DirectionalBlurText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="DirectionalBlurBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -261,10 +401,20 @@
 
                         <RadioButton
                             x:Name="TelescopicBlurButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource TelescopicBlur}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource TelescopicBlur}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="TelescopicBlurText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="TelescopicBlurBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -272,10 +422,20 @@
 
                         <RadioButton
                             x:Name="PixelateButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource Pixelate}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource Pixelate}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="PixelateText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="PixelateBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -283,10 +443,20 @@
 
                         <RadioButton
                             x:Name="EmbossedButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource Embossed}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource Embossed}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="EmbossedText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="EmbossedBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -294,10 +464,20 @@
 
                         <RadioButton
                             x:Name="SmoothMagnifyButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource SmoothMagnify}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource SmoothMagnify}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="SmoothMagnifyText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="SmoothMagnifyBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -305,10 +485,20 @@
 
                         <RadioButton
                             x:Name="PivotButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource Pivot}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource Pivot}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="PivotText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="PivotBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -316,10 +506,20 @@
 
                         <RadioButton
                             x:Name="PaperfoldButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource PaperFold}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource PaperFold}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="PaperFoldText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="PaperfoldBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -327,10 +527,20 @@
 
                         <RadioButton
                             x:Name="PencilSketchButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource PencilSketch}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource PencilSketch}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="PencilSketchText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="PencilSketchBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -338,10 +548,20 @@
 
                         <RadioButton
                             x:Name="SketchButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource Sketch}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource Sketch}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="SketchText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="SketchBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -349,10 +569,20 @@
 
                         <RadioButton
                             x:Name="TonemappingButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource ToneMapping}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource ToneMapping}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="ToneMappingText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="TonemappingBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -360,10 +590,20 @@
 
                         <RadioButton
                             x:Name="FrostyOutlineButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource FrostyOutline}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource FrostyOutline}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="FrostyOutlineText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="FrostyOutlineBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -371,10 +611,20 @@
 
                         <RadioButton
                             x:Name="BandsButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource Bands}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource Bands}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="BandsText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="BandsBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
@@ -382,10 +632,20 @@
 
                         <RadioButton
                             x:Name="GlasTileButton"
-                            MinWidth="155"
+                            MinWidth="125"
                             Margin="5"
                             Padding="10"
-                            Content="{StaticResource GlassTile}">
+                            Style="{StaticResource MetroFlatRadioButton}">
+                            <TextBlock
+                                MaxWidth="121"
+                                Margin="6,2,8,2"
+                                FontSize="14"
+                                Text="{StaticResource GlassTile}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="GlassTileText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="GlasTileBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
