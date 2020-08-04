@@ -600,7 +600,7 @@ namespace PicView.UILogic.Loading
                 Fill = scbf
             };
             MovetoRecycleBin.Icon = MovetoRecycleBinIcon;
-            MovetoRecycleBin.Click += delegate { DeleteFile(Pics[FolderIndex], true); };
+            MovetoRecycleBin.Click += delegate { DeleteFile(true); };
             cm.Items.Add(MovetoRecycleBin);
 
             ///////////////////////////

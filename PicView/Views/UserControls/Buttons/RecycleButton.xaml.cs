@@ -16,7 +16,7 @@ namespace PicView.UILogic.UserControls
                 TheButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(RecycleButtonBrush);
                 TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(RecycleButtonBrush, true);
                 TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(RecycleButtonBrush, false);
-                TheButton.Click += delegate { DeleteFiles.DeleteFile(Navigation.Pics[Navigation.FolderIndex], false); };
+                TheButton.Click += delegate { DeleteFiles.DeleteFile(false); };
             };
         }
     }

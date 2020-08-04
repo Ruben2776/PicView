@@ -113,7 +113,7 @@ namespace PicView.ImageHandling
         /// <param name="quality"></param>
         /// <param name="size"></param>
         /// <returns></returns>
-        internal static BitmapSource GetMagickImageThumb(string file, byte quality = 100, short size = 256)
+        internal static BitmapSource GetMagickImageThumb(string file, byte quality = 100, short size = 500)
         {
             BitmapSource pic;
 

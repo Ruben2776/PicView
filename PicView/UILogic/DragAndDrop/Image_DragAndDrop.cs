@@ -94,8 +94,8 @@ namespace PicView.UILogic.DragAndDrop
                 prevPicResource = LoadWindows.GetMainWindow.MainImage.Source;
             }
 
-            // Load from preloader or thumbnails
-            var thumb = Preloader.Contains(0) ? Preloader.Get(0) : GetBitmapSourceThumb(files[0]);
+            // Load from thumbnail
+            var thumb = GetBitmapSourceThumb(files[0]);
 
             if (thumb != null)
             {

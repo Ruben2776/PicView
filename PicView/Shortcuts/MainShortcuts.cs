@@ -368,7 +368,7 @@ namespace PicView.Shortcuts
 
                     // Delete, Shift + Delete
                     case Key.Delete:
-                        DeleteFile(Pics[FolderIndex], !shiftDown);
+                        DeleteFile(!shiftDown);
                         break;
 
                     // Ctrl + C, Ctrl + Shift + C, Ctrl + Alt + C

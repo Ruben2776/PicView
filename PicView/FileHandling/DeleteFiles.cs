@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualBasic.FileIO;
+using PicView.ChangeImage;
 using PicView.UILogic;
 using System;
 using System.Diagnostics;
@@ -83,21 +84,24 @@ namespace PicView.FileHandling
         /// and display information
         /// </summary>
         /// <param name="Recyclebin"></param>
-        internal static void DeleteFile(string file, bool Recyclebin)
+        internal static void DeleteFile(bool Recyclebin)
         {
-            if (!TryDeleteFile(file, Recyclebin))
+            if (!TryDeleteFile(Pics[FolderIndex], Recyclebin))
             {
-                ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredWhenDeleting"] + Environment.NewLine + file);
+                ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredWhenDeleting"] + Environment.NewLine + Pics[FolderIndex]);
                 return;
             }
 
-            Pics.Remove(file);
+            Pics.Remove(Pics[FolderIndex]);
 
             // Sync with gallery
             if (UC.GetPicGallery != null)
             {
                 UC.GetPicGallery.Container.Children.RemoveAt(Pics.IndexOf(Pics[FolderIndex]));
             }
+
+            // Sync with preloader
+            Preloader.Remove(Pics.IndexOf(Pics[FolderIndex]));
 
             if (Pics.Count <= 0)
             {
