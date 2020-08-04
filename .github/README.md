@@ -68,6 +68,37 @@ View all files in current folder as a thumbnail gallery, with custom animations.
 <img src="https://i.imgur.com/3sUlj1S.png"/>
 
 
+## Other features
+**File support** 
+ > .jpg .jpeg .jpe .png .bmp .tif .tiff .gif .ico .wdp .jfif .ktx .webp .wbmp .psd .psb .svg .3fr .arw .cr2 .crw .dcr .dng .erf .kdc .mdc .mef .mos .mrw .nef .nrw .orf .pef .pgm .ppm .raf .raw .rw2 .srf .x3f .bpg .cur .cut .dib .emf .exif .exr .pcx .tga .wmf .wpg .xbm .xpm .hdr .heic
+ 
+ **File management** 
+<br>
+Copy `Ctrl + C`, Move `Ctrl + X`, Paste `Ctrl + V` images, file paths, web addresses or base64 images.
+
+Open file in another application `E`.
+
+<img src="https://i.imgur.com/MzMCVSG.png"/><br>
+Rename or move files in the titlebar by pressing `F2`
+
+Save and convert files `Ctrl + S`. <br>
+
+Send file to the recycle bin `Del` or permanently delete it `Shift + Delete`.
+
+View file details `Ctrl + I`.
+
+Show file in folder `F3`.
+
+ **Misc** 
+<br>
+Toggleable scroll function by pressing `X` <br>
+Scroll function supports auto scroll, by middle mouse clicking
+
+Rotate image left or right `Ctrl + Up`, `Ctrl + Down`<br>
+Flip image back and forth (horizontally) `F`
+
+View and access most recent files in the contextmenu, including ones from web addresses.
+
 ## Contributions
 ![Visual Studio 2019](https://img.shields.io/badge/IDE-Visual%20Studio%202019-964ad4.svg?maxAge=3600)
 ![.NET Core 3.1](https://img.shields.io/badge/.NET-Core%203.1-lightgrey.svg?maxAge=3600)
