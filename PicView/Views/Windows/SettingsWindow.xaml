@@ -116,6 +116,9 @@
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="BlueBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
+                            <RadioButton.Foreground>
+                                <SolidColorBrush x:Name="BlueText" Color="{StaticResource MainColor}" />
+                            </RadioButton.Foreground>
                         </RadioButton>
 
                         <RadioButton
@@ -125,6 +128,9 @@
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="CyanBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
+                            <RadioButton.Foreground>
+                                <SolidColorBrush x:Name="CyanText" Color="{StaticResource MainColor}" />
+                            </RadioButton.Foreground>
                         </RadioButton>
 
                         <RadioButton
@@ -134,6 +140,9 @@
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="AquaBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
+                            <RadioButton.Foreground>
+                                <SolidColorBrush x:Name="AquaText" Color="{StaticResource MainColor}" />
+                            </RadioButton.Foreground>
                         </RadioButton>
 
                         <RadioButton
@@ -143,6 +152,9 @@
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="TealBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
+                            <RadioButton.Foreground>
+                                <SolidColorBrush x:Name="TealText" Color="{StaticResource MainColor}" />
+                            </RadioButton.Foreground>
                         </RadioButton>
 
                         <RadioButton
@@ -150,8 +162,11 @@
                             Content="{StaticResource Lime}"
                             Style="{StaticResource MetroFlatRadioButton}">
                             <RadioButton.Background>
-                                <SolidColorBrush x:Name="GreyBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                <SolidColorBrush x:Name="LimeBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
+                            <RadioButton.Foreground>
+                                <SolidColorBrush x:Name="LimeText" Color="{StaticResource MainColor}" />
+                            </RadioButton.Foreground>
                         </RadioButton>
 
                         <RadioButton
@@ -161,6 +176,9 @@
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="GreenBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
+                            <RadioButton.Foreground>
+                                <SolidColorBrush x:Name="GreenText" Color="{StaticResource MainColor}" />
+                            </RadioButton.Foreground>
                         </RadioButton>
 
                         <RadioButton
@@ -168,8 +186,11 @@
                             Content="{StaticResource Golden}"
                             Style="{StaticResource MetroFlatRadioButton}">
                             <RadioButton.Background>
-                                <SolidColorBrush x:Name="BeigeBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                <SolidColorBrush x:Name="GoldenBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
+                            <RadioButton.Foreground>
+                                <SolidColorBrush x:Name="GoldenText" Color="{StaticResource MainColor}" />
+                            </RadioButton.Foreground>
                         </RadioButton>
 
                         <RadioButton
@@ -179,6 +200,9 @@
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="OrangeBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
+                            <RadioButton.Foreground>
+                                <SolidColorBrush x:Name="OrangeText" Color="{StaticResource MainColor}" />
+                            </RadioButton.Foreground>
                         </RadioButton>
 
                         <RadioButton
@@ -188,6 +212,9 @@
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="RedBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
+                            <RadioButton.Foreground>
+                                <SolidColorBrush x:Name="RedText" Color="{StaticResource MainColor}" />
+                            </RadioButton.Foreground>
                         </RadioButton>
 
                         <RadioButton
@@ -197,6 +224,9 @@
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="PinkBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
+                            <RadioButton.Foreground>
+                                <SolidColorBrush x:Name="PinkText" Color="{StaticResource MainColor}" />
+                            </RadioButton.Foreground>
                         </RadioButton>
 
                         <RadioButton
@@ -206,6 +236,9 @@
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="MagentaBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
+                            <RadioButton.Foreground>
+                                <SolidColorBrush x:Name="MagentaText" Color="{StaticResource MainColor}" />
+                            </RadioButton.Foreground>
                         </RadioButton>
 
                         <RadioButton
@@ -215,6 +248,9 @@
                             <RadioButton.Background>
                                 <SolidColorBrush x:Name="PurpleBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </RadioButton.Background>
+                            <RadioButton.Foreground>
+                                <SolidColorBrush x:Name="PurpleText" Color="{StaticResource MainColor}" />
+                            </RadioButton.Foreground>
                         </RadioButton>
                     </WrapPanel>
 

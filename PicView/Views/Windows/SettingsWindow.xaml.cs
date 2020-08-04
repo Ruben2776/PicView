@@ -8,6 +8,8 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using static PicView.ConfigureSettings.ConfigColors;
 using static PicView.SystemIntegration.Wallpaper;
 using static PicView.UILogic.Animations.MouseOverAnimations;
@@ -119,6 +121,143 @@ namespace PicView.Views.Windows
                 {
                     GeneralSettings.RestartApp();
                 };
+
+                if (!Properties.Settings.Default.DarkTheme)
+                {
+                    var colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.1) };
+
+                    BlueRadio.MouseEnter += delegate {
+                        colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        colorAnimation.To = Colors.White;
+                        BlueText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+                    BlueRadio.MouseLeave += delegate {
+                        colorAnimation.From = Colors.White;
+                        colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        BlueText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+
+                    CyanRadio.MouseEnter += delegate {
+                        colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        colorAnimation.To = Colors.White;
+                        CyanText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+                    CyanRadio.MouseLeave += delegate {
+                        colorAnimation.From = Colors.White;
+                        colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        CyanText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+
+                    AquaRadio.MouseEnter += delegate {
+                        colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        colorAnimation.To = Colors.White;
+                        AquaText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+                    AquaRadio.MouseLeave += delegate {
+                        colorAnimation.From = Colors.White;
+                        colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        AquaText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+
+                    TealRadio.MouseEnter += delegate {
+                        colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        colorAnimation.To = Colors.White;
+                        TealText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+                    TealRadio.MouseLeave += delegate {
+                        colorAnimation.From = Colors.White;
+                        colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        TealText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+
+                    LimeRadio.MouseEnter += delegate {
+                        colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        colorAnimation.To = Colors.White;
+                        LimeText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+                    LimeRadio.MouseLeave += delegate {
+                        colorAnimation.From = Colors.White;
+                        colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        LimeText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+
+                    GreenRadio.MouseEnter += delegate {
+                        colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        colorAnimation.To = Colors.White;
+                        GreenText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+                    GreenRadio.MouseLeave += delegate {
+                        colorAnimation.From = Colors.White;
+                        colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        GreenText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+
+                    GoldenRadio.MouseEnter += delegate {
+                        colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        colorAnimation.To = Colors.White;
+                        GoldenText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+                    GoldenRadio.MouseLeave += delegate {
+                        colorAnimation.From = Colors.White;
+                        colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        GoldenText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+
+                    OrangeRadio.MouseEnter += delegate {
+                        colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        colorAnimation.To = Colors.White;
+                        OrangeText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+                    OrangeRadio.MouseLeave += delegate {
+                        colorAnimation.From = Colors.White;
+                        colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        OrangeText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+
+                    RedRadio.MouseEnter += delegate {
+                        colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        colorAnimation.To = Colors.White;
+                        RedText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+                    RedRadio.MouseLeave += delegate {
+                        colorAnimation.From = Colors.White;
+                        colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        RedText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+
+                    PinkRadio.MouseEnter += delegate {
+                        colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        colorAnimation.To = Colors.White;
+                        PinkText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+                    PinkRadio.MouseLeave += delegate {
+                        colorAnimation.From = Colors.White;
+                        colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        PinkText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+
+                    MagentaRadio.MouseEnter += delegate {
+                        colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        colorAnimation.To = Colors.White;
+                        MagentaText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+                    MagentaRadio.MouseLeave += delegate {
+                        colorAnimation.From = Colors.White;
+                        colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        MagentaText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+
+                    PurpleRadio.MouseEnter += delegate {
+                        colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        colorAnimation.To = Colors.White;
+                        PurpleText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+                    PurpleRadio.MouseLeave += delegate {
+                        colorAnimation.From = Colors.White;
+                        colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
+                        PurpleText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    };
+                }
 
                 // DarkThemeRadio
                 DarkThemeRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(DarkThemeText); };
@@ -366,9 +505,9 @@ namespace PicView.Views.Windows
 
             // LimeRadio
             LimeRadio.Click += Lime;
-            LimeRadio.PreviewMouseLeftButtonDown += GreyRadio_PreviewMouseLeftButtonDown;
-            LimeRadio.MouseEnter += GreyRadio_MouseEnter;
-            LimeRadio.MouseLeave += GreyRadio_MouseLeave;
+            LimeRadio.PreviewMouseLeftButtonDown += LimeRadio_PreviewMouseLeftButtonDown;
+            LimeRadio.MouseEnter += LimeRadio_MouseEnter;
+            LimeRadio.MouseLeave += Lime_MouseLeave;
         }
 
         // Blue
@@ -581,7 +720,7 @@ namespace PicView.Views.Windows
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(AquaBrush, 7);
         }
 
-        // Beige
+        // Golden
         private void GoldenRadio_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
@@ -589,7 +728,7 @@ namespace PicView.Views.Windows
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
-                BeigeBrush,
+                GoldenBrush,
                 8
             );
         }
@@ -601,14 +740,14 @@ namespace PicView.Views.Windows
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
-                BeigeBrush,
+                GoldenBrush,
                 8
             );
         }
 
         private void GoldenRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(BeigeBrush, 8);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(GoldenBrush, 8);
         }
 
         // Purple
@@ -701,34 +840,34 @@ namespace PicView.Views.Windows
             AnimationHelper.PreviewMouseLeftButtonDownColorEvent(MagentaBrush, 11);
         }
 
-        // Grey
-        private void GreyRadio_MouseLeave(object sender, MouseEventArgs e)
+        // Lime
+        private void Lime_MouseLeave(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseLeaveColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
-                GreyBrush,
+                LimeBrush,
                 12
             );
         }
 
-        private void GreyRadio_MouseEnter(object sender, MouseEventArgs e)
+        private void LimeRadio_MouseEnter(object sender, MouseEventArgs e)
         {
             AnimationHelper.MouseEnterColorEvent(
                 backgroundBorderColor.A,
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
-                GreyBrush,
+                LimeBrush,
                 12
             );
         }
 
-        private void GreyRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void LimeRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(GreyBrush, 12);
+            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(LimeBrush, 12);
         }
 
         #endregion EventHandlers
