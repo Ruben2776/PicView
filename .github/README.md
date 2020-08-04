@@ -89,7 +89,7 @@ View file details `Ctrl + I`.
 
 Show file in folder `F3`.
 
- **Misc** 
+ **Basic image controls** 
 <br>
 Toggleable scroll function by pressing `X` <br>
 Scroll function supports auto scroll, by middle mouse clicking
@@ -97,6 +97,9 @@ Scroll function supports auto scroll, by middle mouse clicking
 Rotate image left or right `Ctrl + Up`, `Ctrl + Down`<br>
 Flip image back and forth (horizontally) `F`
 
+ **Misc** 
+Set image as wallpaper or lock screen image. 
+ 
 View and access most recent files in the contextmenu, including ones from web addresses.
 
 ## Contributions
