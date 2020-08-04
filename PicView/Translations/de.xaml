@@ -87,6 +87,7 @@
     <system:String x:Key="MiscSettings">Einstellungen</system:String>
     <system:String x:Key="SearchSubdirectory">Unterordner einbinden</system:String>
     <system:String x:Key="ColoredWindowBorder">Farbiger Fensterrand</system:String>
+    <system:String x:Key="ShowButtonsInHiddenUI">Show buttons in hidden UI</system:String>
 
     <system:String x:Key="AdjustTimingForSlideshow">Passen Sie das Timing für die Diashow an</system:String>
     <system:String x:Key="RestartApp">Anwendung neustarten</system:String>

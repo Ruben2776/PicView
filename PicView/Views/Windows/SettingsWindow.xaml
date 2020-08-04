@@ -98,7 +98,7 @@
                 <StackPanel>
 
                     <Label
-                        Margin="0,3,0,0"
+                        Margin="0,10,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Content="{StaticResource HighlightColor}" />
@@ -219,7 +219,7 @@
                     </WrapPanel>
 
                     <Label
-                        Margin="0,3,0,0"
+                        Margin="0,10,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Content="{StaticResource Theme}"
@@ -281,71 +281,85 @@
                     </WrapPanel>
 
                     <Label
-                        Margin="0,1,0,19"
+                        Margin="0,1,0,20"
                         HorizontalAlignment="Center"
                         Content="{StaticResource ChangingThemeRequiresRestart}"
                         FontSize="12" />
 
                     <Label
-                        Margin="0,3,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Content="{StaticResource MiscSettings}"
                         Foreground="{StaticResource MainColorBrush}" />
 
-                    <WrapPanel
-                        Margin="23,3,23,8"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
-                        Orientation="Vertical">
+                    <Border
+                        Width="220"
+                        Height="{DynamicResource LargeButtonHeight}"
+                        Margin="0,3,10,3"
+                        Background="{StaticResource BackgroundColorBrushAlt}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1"
+                        Focusable="False">
+                        <CheckBox
+                            x:Name="SubDirRadio"
+                            HorizontalContentAlignment="Center"
+                            Content="{StaticResource SearchSubdirectory}"
+                            Style="{StaticResource Checkstyle}">
+                            <CheckBox.Background>
+                                <SolidColorBrush x:Name="SubDirBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </CheckBox.Background>
+                            <CheckBox.Foreground>
+                                <SolidColorBrush x:Name="SubDirText" Color="{StaticResource MainColor}" />
+                            </CheckBox.Foreground>
+                        </CheckBox>
+                    </Border>
 
-                        <Border
-                            Width="200"
-                            Height="{DynamicResource LargeButtonHeight}"
-                            Margin="0,3,10,3"
-                            Background="{StaticResource BackgroundColorBrushAlt}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1"
-                            Focusable="False">
-                            <CheckBox
-                                x:Name="SubDirRadio"
-                                HorizontalContentAlignment="Center"
-                                Content="{StaticResource SearchSubdirectory}"
-                                Style="{StaticResource Checkstyle}">
-                                <CheckBox.Background>
-                                    <SolidColorBrush x:Name="SubDirBrush" Color="{StaticResource BackgroundColorAlt}" />
-                                </CheckBox.Background>
-                                <CheckBox.Foreground>
-                                    <SolidColorBrush x:Name="SubDirText" Color="{StaticResource MainColor}" />
-                                </CheckBox.Foreground>
-                            </CheckBox>
-                        </Border>
+                    <Border
+                        Width="220"
+                        Height="{DynamicResource LargeButtonHeight}"
+                        Margin="0,3,10,3"
+                        Background="{StaticResource BackgroundColorBrushAlt}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1"
+                        Focusable="False">
+                        <CheckBox
+                            x:Name="BorderRadio"
+                            HorizontalContentAlignment="Center"
+                            Content="{StaticResource ColoredWindowBorder}"
+                            Style="{StaticResource Checkstyle}">
+                            <CheckBox.Background>
+                                <SolidColorBrush x:Name="BorderBrushColor" Color="{StaticResource BackgroundColorAlt}" />
+                            </CheckBox.Background>
+                            <CheckBox.Foreground>
+                                <SolidColorBrush x:Name="BorderBrushText" Color="{StaticResource MainColor}" />
+                            </CheckBox.Foreground>
+                        </CheckBox>
+                    </Border>
 
-                        <Border
-                            Width="200"
-                            Height="{DynamicResource LargeButtonHeight}"
-                            Margin="0,3,10,3"
-                            Background="{StaticResource BackgroundColorBrushAlt}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1"
-                            Focusable="False">
-                            <CheckBox
-                                x:Name="BorderRadio"
-                                HorizontalContentAlignment="Center"
-                                Content="{StaticResource ColoredWindowBorder}"
-                                Style="{StaticResource Checkstyle}">
-                                <CheckBox.Background>
-                                    <SolidColorBrush x:Name="BorderBrushColor" Color="{StaticResource BackgroundColorAlt}" />
-                                </CheckBox.Background>
-                                <CheckBox.Foreground>
-                                    <SolidColorBrush x:Name="BorderBrushText" Color="{StaticResource MainColor}" />
-                                </CheckBox.Foreground>
-                            </CheckBox>
-                        </Border>
-                    </WrapPanel>
+                    <Border
+                        Width="220"
+                        Height="{DynamicResource LargeButtonHeight}"
+                        Margin="0,3,10,3"
+                        Background="{StaticResource BackgroundColorBrushAlt}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1"
+                        Focusable="False">
+                        <CheckBox
+                            x:Name="AltUIRadio"
+                            HorizontalContentAlignment="Center"
+                            Content="{StaticResource ShowButtonsInHiddenUI}"
+                            Style="{StaticResource Checkstyle}">
+                            <CheckBox.Background>
+                                <SolidColorBrush x:Name="AltUIColor" Color="{StaticResource BackgroundColorAlt}" />
+                            </CheckBox.Background>
+                            <CheckBox.Foreground>
+                                <SolidColorBrush x:Name="AltUIText" Color="{StaticResource MainColor}" />
+                            </CheckBox.Foreground>
+                        </CheckBox>
+                    </Border>
 
                     <Label
-                        Margin="0,3,0,0"
+                        Margin="0,15,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Content="{StaticResource SetAsWallpaper}" />
@@ -449,7 +463,7 @@
 
                     <Label
                         x:Name="LanguageLabel"
-                        Margin="0,3,0,0"
+                        Margin="0,15,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Content="{StaticResource Language}" />
@@ -466,7 +480,7 @@
                         FontSize="12" />
 
                     <Label
-                        Margin="0,3,0,0"
+                        Margin="0,15,0,4"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Content="{StaticResource AdjustTimingForSlideshow}" />
@@ -504,7 +518,7 @@
 
                     <Border
                         Width="183"
-                        Margin="0,7,0,12"
+                        Margin="0,10,0,12"
                         Style="{StaticResource ButtonBorder}">
                         <Button
                             x:Name="RestartButton"

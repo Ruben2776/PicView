@@ -550,5 +550,17 @@ namespace PicView.Properties {
                 this["UserLanguage"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowAltInterfaceButtons {
+            get {
+                return ((bool)(this["ShowAltInterfaceButtons"]));
+            }
+            set {
+                this["ShowAltInterfaceButtons"] = value;
+            }
+        }
     }
 }

@@ -109,6 +109,12 @@ namespace PicView.Views.Windows
                     GeneralSettings.ChangeLanguage((LanguageBox.SelectedIndex));
                 };
 
+                AltUIRadio.IsChecked = Properties.Settings.Default.ShowAltInterfaceButtons;
+                AltUIRadio.Click += delegate 
+                {
+                    Properties.Settings.Default.ShowAltInterfaceButtons = !Properties.Settings.Default.ShowAltInterfaceButtons;
+                };
+
                 RestartButton.Click += delegate
                 {
                     GeneralSettings.RestartApp();
@@ -141,6 +147,13 @@ namespace PicView.Views.Windows
                 BorderRadio.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(BorderBrushColor); };
                 BorderRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(BorderBrushText); };
                 BorderRadio.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(BorderBrushColor); };
+
+                // AltUIRadio
+                AltUIRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(AltUIText); };
+                AltUIRadio.MouseEnter += delegate { ButtonMouseOverAnim(AltUIText); };
+                AltUIRadio.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(AltUIColor); };
+                AltUIRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(AltUIText); };
+                AltUIRadio.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(AltUIColor); };
 
                 // Fill
                 Fill.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(FillText); };

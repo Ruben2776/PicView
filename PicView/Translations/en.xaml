@@ -87,6 +87,7 @@
     <system:String x:Key="MiscSettings">Misc settings</system:String>
     <system:String x:Key="SearchSubdirectory">Search subdirectories</system:String>
     <system:String x:Key="ColoredWindowBorder">Colored window border</system:String>
+    <system:String x:Key="ShowButtonsInHiddenUI">Show buttons in hidden UI</system:String>
 
     <system:String x:Key="AdjustTimingForSlideshow">Adjust timing for slideshow</system:String>
     <system:String x:Key="RestartApp">Restart the application</system:String>

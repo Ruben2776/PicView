@@ -2,6 +2,7 @@
 using PicView.UILogic.TransformImage;
 using System;
 using System.Timers;
+using System.Windows;
 using static PicView.UILogic.UC;
 
 namespace PicView.UILogic.Animations
@@ -28,6 +29,24 @@ namespace PicView.UILogic.Animations
                 || Scroll.IsAutoScrolling)
             {
                 return;
+            }
+
+            if (!Properties.Settings.Default.ShowAltInterfaceButtons)
+            {
+                GetClickArrowLeft.Visibility =
+                GetClickArrowRight.Visibility =
+                GetGalleryShortcut.Visibility =
+                Getx2.Visibility =
+                GetMinus.Visibility = Visibility.Collapsed;
+                return;
+            }
+            else if (!GetClickArrowLeft.IsVisible)
+            {
+                GetClickArrowLeft.Visibility =
+                GetClickArrowRight.Visibility =
+                GetGalleryShortcut.Visibility =
+                Getx2.Visibility =
+                GetMinus.Visibility = Visibility.Visible;
             }
 
             if (GetCropppingTool != null)
