@@ -24,7 +24,6 @@ namespace PicView.ImageHandling
             var ext = Path.GetExtension(file).ToLower(CultureInfo.CurrentCulture);
             switch (ext)
             {
-                // Skia supports? https://docs.microsoft.com/en-us/dotnet/api/skiasharp.skimageencodeformat?view=skiasharp-1.59.3
                 case ".jpg":
                 case ".jpeg":
                 case ".jpe":
@@ -42,7 +41,7 @@ namespace PicView.ImageHandling
 
                     try
                     {
-                        using var filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);
+                        using var filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
 
                         var sKBitmap = SKBitmap.Decode(filestream);
                         if (sKBitmap == null) { return null; }

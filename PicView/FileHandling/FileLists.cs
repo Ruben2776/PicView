@@ -168,47 +168,30 @@ namespace PicView.FileHandling
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        internal static Task GetValues(string path)
+        internal static Task GetValues(string path) => Task.Run(() =>
         {
-            return Task.Run(() =>
-            {
-                var extension = Path.GetExtension(path);
-                extension = extension.ToLower(CultureInfo.CurrentCulture);
-                switch (extension)
-                {
-                    // Archives
-                    case ".zip":
-                    case ".7zip":
-                    case ".7z":
-                    case ".rar":
-                    case ".cbr":
-                    case ".cb7":
-                    case ".cbt":
-                    case ".cbz":
-                    case ".xz":
-                    case ".bzip2":
-                    case ".gzip":
-                    case ".tar":
-                    case ".wim":
-                    case ".iso":
-                    case ".cab":
-                        if (!Extract(path))
-                        {
-                            Error_Handling.Reload(true);
-                        }
-                        return;
-                }
+            var extension = Path.GetExtension(path);
+            extension = extension.ToLower(CultureInfo.CurrentCulture);
 
-                // Set files to Pics and get index
-                Navigation.Pics = FileList(Path.GetDirectoryName(path));
-                if (Navigation.Pics == null)
+            // Check if to load from archive
+            if (SupportedFiles.IsSupportedArchives(extension))
+            {
+                if (!Extract(path))
                 {
+                    Error_Handling.Reload(true);
                     return;
                 }
+            }
+
+            // Set files to Pics and get index
+            Navigation.Pics = FileList(Path.GetDirectoryName(path));
+            if (Navigation.Pics == null)
+            {
+                return;
+            }
 #if DEBUG
-                Trace.WriteLine("Getvalues completed ");
+            Trace.WriteLine("Getvalues completed ");
 #endif
-            });
-        }
+        });
     }
 }
