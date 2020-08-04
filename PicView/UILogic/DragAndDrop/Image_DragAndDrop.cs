@@ -43,7 +43,7 @@ namespace PicView.UILogic.DragAndDrop
             }
 
             // Return status of useable file
-            return SupportedFiles.IsSupportedFileWithArchives(Path.GetExtension(files[0]));
+            return SupportedFiles.IsSupportedFile(Path.GetExtension(files[0]));
         }
 
         /// <summary>
@@ -64,11 +64,6 @@ namespace PicView.UILogic.DragAndDrop
 
             // Do nothing for invalid files
             if (!check.HasValue)
-            {
-                return;
-            }
-
-            if (!check.Value)
             {
                 return;
             }
@@ -176,7 +171,7 @@ namespace PicView.UILogic.DragAndDrop
                     }
                     return;
                 }
-                else
+                else if (!SupportedFiles.IsSupportedArchives(Path.GetExtension(files[0])))
                 {
                     return;
                 }
