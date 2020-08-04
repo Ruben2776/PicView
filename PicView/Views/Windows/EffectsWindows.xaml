@@ -56,7 +56,7 @@
                 Padding="0,8.4,0,0"
                 VerticalAlignment="Center"
                 d:Text="HLSL Picture FX"
-                Background="{StaticResource AltInterfaceWBrush}"
+                Background="{StaticResource BackgroundSubtleHighlightBrush}"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                 FontSize="15"
                 FontWeight="Bold"
