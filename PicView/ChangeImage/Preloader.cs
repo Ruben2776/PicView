@@ -24,18 +24,13 @@ namespace PicView.ChangeImage
         /// Add file to preloader from index
         /// </summary>
         /// <param name="i">Index of Pics</param>
-        internal static Task Add(int i)
+        internal static Task Add(int i) => Task.Run(() =>
         {
-            if (i >= Pics.Count || i < 0)
+            if (i < Pics.Count && i >= 0)
             {
-                return null;
-            }
-
-            if (File.Exists(Pics[i]))
-            {
-                if (!Contains(i))
+                if (File.Exists(Pics[i]))
                 {
-                    return Task.Run(() =>
+                    if (!Contains(i))
                     {
                         var pic = ImageDecoder.RenderToBitmapSource(Pics[i]);
 
@@ -44,26 +39,24 @@ namespace PicView.ChangeImage
 #endif
 
                         Sources.TryAdd(i, pic);
-                    });
-                }
+                    }
 #if DEBUG
+                    else
+                    {
+                        Trace.WriteLine("Skipped at index " + i);
+                    }
+#endif
+                }
                 else
                 {
-                    Trace.WriteLine("Skipped at index " + i);
-                }
-#endif
-            }
-            else
-            {
-                Pics.Remove(Pics[i]);
+                    Pics.Remove(Pics[i]);
 
 #if DEBUG
-                Trace.WriteLine($"Preloader removed: {Pics[i]} from Pics, index {i}");
+                    Trace.WriteLine($"Preloader removed: {Pics[i]} from Pics, index {i}");
 #endif
+                }
             }
-
-            return null;
-        }
+        });
 
         /// <summary>
         /// Removes the key, after checking if it exists
@@ -116,21 +109,6 @@ namespace PicView.ChangeImage
         }
 
         /// <summary>
-        /// Removes specific keys
-        /// </summary>
-        /// <param name="array"></param>
-        internal static void Clear(string[] array)
-        {
-            for (int i = 0; i < array.Length; i++)
-            {
-                Remove(i);
-#if DEBUG
-                Trace.WriteLine($"Removed = {array[i]} from Preloader");
-#endif
-            }
-        }
-
-        /// <summary>
         /// Returns the specified BitmapSource.
         /// Returns null if key not found.
         /// </summary>
@@ -167,7 +145,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="index"></param>
         /// <param name="reverse"></param>
-        internal static Task PreLoad(int index)
+        internal static Task PreLoad(int index) => Task.Run(() =>
         {
 #if DEBUG
             Trace.WriteLine("Preolader started, "
@@ -175,177 +153,174 @@ namespace PicView.ChangeImage
                 + string.Concat(Reverse ? "backwards" : "forwards"));
 #endif
 
-            return Task.Run(() =>
+            var toLoad = 2;
+            var extraToLoad = 2;
+            var cleanUp = toLoad + extraToLoad;
+
+            // Not looping
+            if (!Properties.Settings.Default.Looping)
             {
-                var toLoad = 2;
-                var extraToLoad = 2;
-                var cleanUp = toLoad + extraToLoad;
-
-                // Not looping
-                if (!Properties.Settings.Default.Looping)
+                // Forwards
+                if (!Reverse)
                 {
-                    // Forwards
-                    if (!Reverse)
+                    // Add first elements
+                    for (int i = index + 1; i < index + 1 + toLoad; i++)
                     {
-                        // Add first elements
-                        for (int i = index + 1; i < index + 1 + toLoad; i++)
+                        if (i > Pics.Count)
                         {
-                            if (i > Pics.Count)
-                            {
-                                break;
-                            }
-
-                            Add(i);
-                        }
-                        // Add second elements behind
-                        for (int i = index - 1; i > index - 1 - extraToLoad; i--)
-                        {
-                            if (i < 0)
-                            {
-                                break;
-                            }
-
-                            Add(i);
+                            break;
                         }
 
-                        //Clean up behind
-                        if (Pics.Count > cleanUp * 2 && !FreshStartup)
-                        {
-                            for (int i = index - 1 - cleanUp; i < (index - 1 - extraToLoad); i++)
-                            {
-                                if (i < 0)
-                                {
-                                    continue;
-                                }
-
-                                if (i > Pics.Count)
-                                {
-                                    break;
-                                }
-
-                                Remove(i);
-                            }
-                        }
+                        Add(i);
                     }
-                    // Backwards
-                    else
+                    // Add second elements behind
+                    for (int i = index - 1; i > index - 1 - extraToLoad; i--)
                     {
-                        // Add first elements behind
-                        for (int i = index - 1; i > index - 1 - toLoad; i--)
+                        if (i < 0)
+                        {
+                            break;
+                        }
+
+                        Add(i);
+                    }
+
+                    //Clean up behind
+                    if (Pics.Count > cleanUp * 2 && !FreshStartup)
+                    {
+                        for (int i = index - 1 - cleanUp; i < (index - 1 - extraToLoad); i++)
                         {
                             if (i < 0)
                             {
-                                break;
+                                continue;
                             }
 
-                            Add(i);
-                        }
-                        // Add second elements
-                        for (int i = index + 1; i <= index + 1 + toLoad; i++)
-                        {
                             if (i > Pics.Count)
                             {
                                 break;
                             }
 
-                            Add(i);
-                        }
-
-                        //Clean up infront
-                        if (Pics.Count > cleanUp * 2 && !FreshStartup)
-                        {
-                            for (int i = index + 1 + cleanUp; i > index + 1 + cleanUp - extraToLoad; i--)
-                            {
-                                if (i < 0)
-                                {
-                                    continue;
-                                }
-
-                                if (i > Pics.Count)
-                                {
-                                    break;
-                                }
-
-                                Remove(i);
-                            }
+                            Remove(i);
                         }
                     }
                 }
-
-                // Looping!
+                // Backwards
                 else
                 {
-                    // Forwards
-                    if (!Reverse)
+                    // Add first elements behind
+                    for (int i = index - 1; i > index - 1 - toLoad; i--)
                     {
-                        // Add first elements
-                        for (int i = index + 1; i < index + 1 + toLoad; i++)
+                        if (i < 0)
                         {
-                            if (i != 0 || Pics.Count != 0)
-                            {
-                                Add(i % Pics.Count);
-                            }
-                        }
-                        // Add second elements behind
-                        for (int i = index - 1; i > index - 1 - extraToLoad; i--)
-                        {
-                            if (i != 0 || Pics.Count != 0)
-                            {
-                                Add(i % Pics.Count);
-                            }
+                            break;
                         }
 
-                        //Clean up behind
-                        if (Pics.Count > cleanUp * 2 && !FreshStartup)
+                        Add(i);
+                    }
+                    // Add second elements
+                    for (int i = index + 1; i <= index + 1 + toLoad; i++)
+                    {
+                        if (i > Pics.Count)
                         {
-                            for (int i = index - 1 - cleanUp; i < (index - 1 - extraToLoad); i++)
+                            break;
+                        }
+
+                        Add(i);
+                    }
+
+                    //Clean up infront
+                    if (Pics.Count > cleanUp * 2 && !FreshStartup)
+                    {
+                        for (int i = index + 1 + cleanUp; i > index + 1 + cleanUp - extraToLoad; i--)
+                        {
+                            if (i < 0)
+                            {
+                                continue;
+                            }
+
+                            if (i > Pics.Count)
+                            {
+                                break;
+                            }
+
+                            Remove(i);
+                        }
+                    }
+                }
+            }
+
+            // Looping!
+            else
+            {
+                // Forwards
+                if (!Reverse)
+                {
+                    // Add first elements
+                    for (int i = index + 1; i < index + 1 + toLoad; i++)
+                    {
+                        if (i != 0 || Pics.Count != 0)
+                        {
+                            Add(i % Pics.Count);
+                        }
+                    }
+                    // Add second elements behind
+                    for (int i = index - 1; i > index - 1 - extraToLoad; i--)
+                    {
+                        if (i != 0 || Pics.Count != 0)
+                        {
+                            Add(i % Pics.Count);
+                        }
+                    }
+
+                    //Clean up behind
+                    if (Pics.Count > cleanUp * 2 && !FreshStartup)
+                    {
+                        for (int i = index - 1 - cleanUp; i < (index - 1 - extraToLoad); i++)
+                        {
+                            Remove(i % Pics.Count);
+                        }
+                    }
+                }
+                // Backwards
+                else
+                {
+                    // Add first elements behind
+                    int y = 0;
+                    for (int i = index - 1; i > index - 1 - toLoad; i--)
+                    {
+                        y++;
+                        if (i < 0)
+                        {
+                            for (int x = Pics.Count - 1; x >= Pics.Count - y; x--)
+                            {
+                                Add(x);
+                            }
+                            break;
+                        }
+                        Add(i);
+                    }
+
+                    // Add second elements
+                    for (int i = index + 1; i <= index + 1 + toLoad; i++)
+                    {
+                        if (i != 0 || Pics.Count != 0)
+                        {
+                            Add(i % Pics.Count);
+                        }
+                    }
+
+                    //Clean up infront
+                    if (Pics.Count > cleanUp + toLoad && !FreshStartup)
+                    {
+                        for (int i = index + 1 + cleanUp; i > index + 1 + cleanUp - extraToLoad; i--)
+                        {
+                            if (i != 0 || Pics.Count != 0)
                             {
                                 Remove(i % Pics.Count);
                             }
                         }
                     }
-                    // Backwards
-                    else
-                    {
-                        // Add first elements behind
-                        int y = 0;
-                        for (int i = index - 1; i > index - 1 - toLoad; i--)
-                        {
-                            y++;
-                            if (i < 0)
-                            {
-                                for (int x = Pics.Count - 1; x >= Pics.Count - y; x--)
-                                {
-                                    Add(x);
-                                }
-                                break;
-                            }
-                            Add(i);
-                        }
-
-                        // Add second elements
-                        for (int i = index + 1; i <= index + 1 + toLoad; i++)
-                        {
-                            if (i != 0 || Pics.Count != 0)
-                            {
-                                Add(i % Pics.Count);
-                            }
-                        }
-
-                        //Clean up infront
-                        if (Pics.Count > cleanUp + toLoad && !FreshStartup)
-                        {
-                            for (int i = index + 1 + cleanUp; i > index + 1 + cleanUp - extraToLoad; i--)
-                            {
-                                if (i != 0 || Pics.Count != 0)
-                                {
-                                    Remove(i % Pics.Count);
-                                }
-                            }
-                        }
-                    }
                 }
-            });
-        }
+            }
+        });
     }
 }
