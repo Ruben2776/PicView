@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
 
@@ -44,11 +45,13 @@ namespace PicView.ImageHandling
                         using var filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
 
                         var sKBitmap = SKBitmap.Decode(filestream);
+
                         if (sKBitmap == null) { return null; }
 
                         var pic = sKBitmap.ToWriteableBitmap();
                         pic.Freeze();
                         sKBitmap.Dispose();
+                        
 
                         return pic;
                     }
@@ -74,6 +77,7 @@ namespace PicView.ImageHandling
                         {
                             using var filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);
                             magick.Read(filestream, mrs);
+                            filestream.Close();
                         }
                         catch (MagickException e)
                         {
@@ -116,11 +120,59 @@ namespace PicView.ImageHandling
             return pic;
         }
 
+        internal static MagickImage GetRenderedMagickImage()
+        {
+            try
+            {
+                var sauce = UILogic.Loading.LoadWindows.GetMainWindow.MainImage.Source as BitmapSource;
+                var effect = UILogic.Loading.LoadWindows.GetMainWindow.MainImage.Effect;
+
+                var rectangle = new System.Windows.Shapes.Rectangle
+                {
+                    Fill = new ImageBrush(sauce),
+                    Effect = effect
+                };
+
+                var sz = new Size(sauce.PixelWidth, sauce.PixelHeight);
+                rectangle.Measure(sz);
+                rectangle.Arrange(new Rect(sz));
+
+                var rtb = new RenderTargetBitmap(sauce.PixelWidth, sauce.PixelHeight, sauce.DpiX, sauce.DpiY, PixelFormats.Default);
+                rtb.Render(rectangle);
+
+
+                var frame = BitmapFrame.Create(rtb);
+                var encoder = new PngBitmapEncoder();
+
+                encoder.Frames.Add(frame);
+
+                var SaveImage = new MagickImage();
+                using (var stream = new MemoryStream())
+                {
+                    encoder.Save(stream);
+                    SaveImage.Read(stream.ToArray());
+                }
+
+                SaveImage.Quality = 100;
+
+                // Apply transformation values
+                if (UILogic.TransformImage.Rotation.Flipped)
+                {
+                    SaveImage.Flop();
+                }
+
+                SaveImage.Rotate(UILogic.TransformImage.Rotation.Rotateint);
+
+                return SaveImage;
+            }
+            catch (Exception) { return null; }
+        }
+
         internal static Size? ImageSize(string file, bool usePreloader = false, bool advancedFormats = false)
         {
             if (usePreloader)
             {
-                var pic = Preloader.Get(FolderIndex);
+                var pic = Preloader.Get(Pics.IndexOf(file));
                 if (pic != null)
                 {
                     return new Size(pic.PixelWidth, pic.PixelHeight);
@@ -187,107 +239,5 @@ namespace PicView.ImageHandling
             return new Size(magick.Width, magick.Height);
         }
 
-        internal static string TransformImage(string path,
-                                            bool resize,
-                                            int width,
-                                            int height,
-                                            bool aspectRatio,
-                                            int rotation,
-                                            int quality,
-                                            bool optimize,
-                                            bool flip,
-                                            string name,
-                                            string destination)
-        {
-            using MagickImage magick = new MagickImage
-            {
-                Quality = quality,
-            };
-
-            try
-            {
-                magick.Read(path);
-            }
-            catch (Exception e)
-            {
-                var errorMessage = "TransformImage caught exception " + Environment.NewLine + e.Message;
-#if DEBUG
-                Trace.WriteLine(errorMessage);
-#endif
-                return errorMessage;
-            }
-
-            if (rotation != 0)
-            {
-                try
-                {
-                    magick.Rotate(rotation);
-                }
-                catch (Exception e)
-                {
-                    var errorMessage = "TransformImage caught exception " + Environment.NewLine + e.Message;
-#if DEBUG
-                    Trace.WriteLine(errorMessage);
-#endif
-                    return errorMessage;
-                }
-            }
-
-            if (resize)
-            {
-                var size = new MagickGeometry(width, height)
-                {
-                    IgnoreAspectRatio = !aspectRatio
-                };
-                magick.Resize(size);
-            }
-
-            if (optimize)
-            {
-                try
-                {
-                    magick.Strip();
-                }
-                catch (Exception e)
-                {
-                    var errorMessage = "TransformImage caught exception " + Environment.NewLine + e.Message;
-#if DEBUG
-                    Trace.WriteLine(errorMessage);
-#endif
-                    return errorMessage;
-                }
-            }
-
-            if (flip)
-            {
-                try
-                {
-                    magick.Flop();
-                }
-                catch (Exception e)
-                {
-                    var errorMessage = "TransformImage caught exception " + Environment.NewLine + e.Message;
-#if DEBUG
-                    Trace.WriteLine(errorMessage);
-#endif
-                    return errorMessage;
-                }
-            }
-
-            try
-            {
-                var result = destination + "\\" + Path.GetFileName(path);
-                magick.Write(result);
-                return "Written " + result;
-            }
-            catch (Exception e)
-            {
-                var errorMessage = "TransformImage caught exception " + Environment.NewLine + e.Message;
-#if DEBUG
-                Trace.WriteLine(errorMessage);
-#endif
-                return errorMessage;
-            }
-        }
-    }
+    }      
 }

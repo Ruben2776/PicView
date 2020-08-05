@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.TransformImage.Rotation;
 
@@ -27,47 +28,80 @@ namespace PicView.SystemIntegration
         /// NOT thread safe!
         /// </summary>
         /// <param name="style"></param>
-        internal static void SetWallpaper(WallpaperStyle style)
+        internal static async void SetWallpaper(WallpaperStyle style)
         {
-            string wallpaper = FileFunctions.GetURL(UILogic.Loading.LoadWindows.GetMainWindow.TitleText.Text);
-
-            if (Uri.IsWellFormedUriString(wallpaper, UriKind.Absolute)) // Check if from web
+            if (UILogic.Loading.LoadWindows.GetMainWindow.MainImage.Effect != null || Clipboard.ContainsImage())
             {
-                Task.Run(() =>
+                try
                 {
-                    // Create temp directory
-                    var tempPath = Path.GetTempPath();
-                    var randomName = Path.GetRandomFileName();
+                    var SaveImage = ImageDecoder.GetRenderedMagickImage();
+                    if (SaveImage == null) { return; }
 
-                    // Download to it
-                    using var webClient = new System.Net.WebClient();
-                    Directory.CreateDirectory(tempPath);
-                    webClient.DownloadFile(wallpaper, tempPath + randomName);
+                    await Task.Run(() =>
+                    {
+                        // Create temp directory
+                        var tempPath = Path.GetTempPath();
+                        var randomName = Path.GetRandomFileName();
 
-                    // Use it
-                    SetDesktopWallpaper(tempPath + randomName, style);
+                        // Write temp file to it
+                        using var filestream = new FileStream(tempPath + randomName, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.SequentialScan);
+                        SaveImage.Write(filestream);
+                        SaveImage.Dispose();
+                        filestream.Close();
 
-                    // Clean up
-                    File.Delete(tempPath + randomName);
-                    using var timer = new Timer(2000);
-                    timer.Elapsed += (s, x) => Directory.Delete(tempPath);
-                });
+                        // Use it
+                        SetDesktopWallpaper(tempPath + randomName, style);
 
-                return;
+                        // Clean up
+                        File.Delete(tempPath + randomName);
+                        using var timer = new Timer(2000);
+                        timer.Elapsed += (s, x) => Directory.Delete(tempPath);
+                    }).ConfigureAwait(true);
+
+                    SaveImage.Dispose();
+                }
+                catch { }
             }
-            // TODO add Base64 support
-
-            if (Pics.Count > 0)
+            else if (Pics.Count > 0)
             {
                 if (FolderIndex < Pics.Count)
                 {
-                    Task.Run(() =>
-                    {
-                        SetDesktopWallpaper(Pics[FolderIndex], style);
-                    });
+                    await Task.Run(() =>
+                     {
+                         SetDesktopWallpaper(Pics[FolderIndex], style);
+                     }).ConfigureAwait(false);
                 }
             }
-            // TODO add clipboard image support
+            else
+            {
+                string wallpaper = FileFunctions.GetURL(UILogic.Loading.LoadWindows.GetMainWindow.TitleText.Text);
+
+                if (Uri.IsWellFormedUriString(wallpaper, UriKind.Absolute)) // Check if from web
+                {
+                    await Task.Run(() =>
+                     {
+                        // Create temp directory
+                        var tempPath = Path.GetTempPath();
+                         var randomName = Path.GetRandomFileName();
+
+                        // Download to it
+                        using var webClient = new System.Net.WebClient();
+                         Directory.CreateDirectory(tempPath);
+                         webClient.DownloadFile(wallpaper, tempPath + randomName);
+
+                        // Use it
+                        SetDesktopWallpaper(tempPath + randomName, style);
+
+                        // Clean up
+                        File.Delete(tempPath + randomName);
+                         using var timer = new Timer(2000);
+                         timer.Elapsed += (s, x) => Directory.Delete(tempPath);
+                     }).ConfigureAwait(false);
+
+                    return;
+                }
+                // TODO add Base64 support
+            }
         }
 
         /// <summary>

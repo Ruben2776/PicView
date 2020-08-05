@@ -3,63 +3,26 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using static PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.ImageHandling
 {
     internal static class SaveImages
     {
-        internal static bool TrySaveImageWithEffect(int rotate, bool flipped, string destination)
+        internal static bool TrySaveImageWithEffect(string destination)
         {
-            var sauce = UILogic.Loading.LoadWindows.GetMainWindow.MainImage.Source as BitmapSource;
-            var effect = UILogic.Loading.LoadWindows.GetMainWindow.MainImage.Effect;
-
-            var rectangle = new Rectangle
-            {
-                Fill = new ImageBrush(sauce),
-                Effect = effect
-            };
-
-            var sz = new Size(sauce.PixelWidth, sauce.PixelHeight);
-            rectangle.Measure(sz);
-            rectangle.Arrange(new Rect(sz));
-
-            var rtb = new RenderTargetBitmap(sauce.PixelWidth, sauce.PixelHeight, sauce.DpiX, sauce.DpiY, PixelFormats.Default);
-            rtb.Render(rectangle);
-
             try
             {
-                var frame = BitmapFrame.Create(rtb);
-                var encoder = new PngBitmapEncoder();
+                var SaveImage = ImageDecoder.GetRenderedMagickImage();
+                using var filestream = new FileStream(destination, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.SequentialScan);
 
-                encoder.Frames.Add(frame);
-
-                using var SaveImage = new MagickImage();
-                using (var stream = new MemoryStream())
-                {
-                    encoder.Save(stream);
-                    SaveImage.Read(stream.ToArray());
-                }
-
-                SaveImage.Quality = 100;
-
-                // Apply transformation values
-                if (flipped)
-                {
-                    SaveImage.Flop();
-                }
-
-                SaveImage.Rotate(rotate);
-
-                SaveImage.Write(destination);
+                SaveImage.Write(filestream);
+                SaveImage.Dispose();
             }
             catch (Exception) { return false; }
             return true;
         }
-
 
         /// <summary>
         /// Tries to save image to the specified destination,
