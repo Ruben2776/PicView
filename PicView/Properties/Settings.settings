@@ -129,7 +129,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="DarkTheme" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="UserLanguage" Type="System.String" Scope="User">
       <Value Profile="(Default)">en</Value>
