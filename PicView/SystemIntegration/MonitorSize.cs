@@ -71,7 +71,7 @@ namespace PicView.SystemIntegration
             var MonitorHeight = currentMonitor.Bounds.Height * dpiScaling;
 
             // Update values for lower resolutions
-            if (MonitorWidth < 2000 * dpiScaling)
+            if (MonitorWidth < 1850 * dpiScaling)
             {
                 Application.Current.Resources["LargeButtonHeight"] = 30 * dpiScaling;
                 Application.Current.Resources["ButtonHeight"] = 22 * dpiScaling;

@@ -39,6 +39,7 @@ namespace PicView.UILogic.Sizing
                 {
                     LoadWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
                     LoadWindows.GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
+                    LoadWindows.GetMainWindow.GripButton.Visibility = Visibility.Collapsed;
 
                     if (GetQuickSettingsMenu != null)
                     {
@@ -51,6 +52,7 @@ namespace PicView.UILogic.Sizing
                 {
                     LoadWindows.GetMainWindow.SizeToContent = SizeToContent.Manual;
                     LoadWindows.GetMainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
+                    LoadWindows.GetMainWindow.GripButton.Visibility = Visibility.Visible;
 
                     if (GetQuickSettingsMenu != null)
                     {

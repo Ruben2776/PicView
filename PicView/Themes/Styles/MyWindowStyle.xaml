@@ -5,25 +5,20 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Window">
-                    <Border
-                        x:Name="WindowBorder"
-                        Margin="0"
-                        Background="{StaticResource WindowBackgroundColorBrush}">
-                        <Grid>
-                            <Border BorderThickness="1">
-                                <AdornerDecorator>
-                                    <Grid x:Name="LayoutRoot">
-                                        <ContentPresenter />
-                                    </Grid>
-                                </AdornerDecorator>
-                            </Border>
-                            <Border
-                                BorderBrush="{DynamicResource WindowBorderColorBrush}"
-                                BorderThickness="1"
-                                Opacity=".9"
-                                Visibility="{Binding IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource bool2VisibilityConverter}}" />
-                        </Grid>
-                    </Border>
+                    <Grid>
+                        <Border BorderThickness="1">
+                            <AdornerDecorator>
+                                <Grid x:Name="LayoutRoot">
+                                    <ContentPresenter />
+                                </Grid>
+                            </AdornerDecorator>
+                        </Border>
+                        <Border
+                            BorderBrush="{DynamicResource WindowBorderColorBrush}"
+                            BorderThickness="1"
+                            Opacity=".9"
+                            Visibility="{Binding IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource bool2VisibilityConverter}}" />
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

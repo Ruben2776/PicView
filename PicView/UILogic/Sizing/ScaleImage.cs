@@ -158,17 +158,8 @@ namespace PicView.UILogic.Sizing
                 }
                 else
                 {
-                    maxWidth = Math.Min(LoadWindows.GetMainWindow.Width, width);
-
-                    if (showInterface)
-                    {
-                        /// Use padding for shown interface
-                        maxHeight = Math.Min(LoadWindows.GetMainWindow.Height - padding, height);
-                    }
-                    else
-                    {
-                        maxHeight = Math.Min(LoadWindows.GetMainWindow.Height, height);
-                    }
+                    maxWidth = Math.Min(LoadWindows.GetMainWindow.ParentContainer.ActualWidth, width);
+                    maxHeight = Math.Min(LoadWindows.GetMainWindow.ParentContainer.ActualHeight, height);
                 }
             }
 
