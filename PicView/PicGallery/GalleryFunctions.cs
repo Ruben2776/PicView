@@ -32,7 +32,7 @@ namespace PicView.UILogic.PicGallery
 
         internal static async Task Add(BitmapSource pic, int id)
         {
-            await LoadWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+            await LoadWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
                 var selected = id == ChangeImage.Navigation.FolderIndex;
                 var item = new UserControls.PicGalleryItem(pic, id, selected);

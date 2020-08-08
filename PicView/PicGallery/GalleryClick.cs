@@ -27,9 +27,9 @@ namespace PicView.UILogic.PicGallery
 
             if (Properties.Settings.Default.PicGallery == 1)
             {
-                if (Preloader.Contains(id))
+                if (Preloader.Contains(Pics[id]))
                 {
-                    PreviewItemClick(Preloader.Get(id), id);
+                    PreviewItemClick(Preloader.Get(Pics[id]), id);
                 }
                 else
                 {

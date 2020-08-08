@@ -70,9 +70,9 @@ namespace PicView.FileHandling
             {
                 Clipboard.SetImage((BitmapSource)LoadWindows.GetMainWindow.MainImage.Source);
             }
-            else if (Preloader.Contains(FolderIndex))
+            else if (Preloader.Contains(Pics[FolderIndex]))
             {
-                Clipboard.SetImage(Preloader.Get(FolderIndex));
+                Clipboard.SetImage(Preloader.Get(Pics[FolderIndex]));
             }
             else if (LoadWindows.GetMainWindow.MainImage.Source != null)
             {

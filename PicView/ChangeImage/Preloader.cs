@@ -17,55 +17,46 @@ namespace PicView.ChangeImage
         /// Preloader list of BitmapSources
         /// </summary>
         private static readonly ConcurrentDictionary<
-            int,
-            BitmapSource> Sources = new ConcurrentDictionary<int, BitmapSource>();
+            string,
+            BitmapSource> Sources = new ConcurrentDictionary<string, BitmapSource>();
+
+        /// <summary>
+        /// Add file to prelader
+        /// </summary>
+        /// <param name="file">file path</param>
+        internal static Task Add(string file) => Task.Run(() =>
+        {
+            Sources.TryAdd(file, ImageDecoder.RenderToBitmapSource(file));
+        });
 
         /// <summary>
         /// Add file to preloader from index
         /// </summary>
         /// <param name="i">Index of Pics</param>
-        internal static Task Add(int i) => Task.Run(() =>
+        internal static void Add(int i)
         {
-            if (i < Pics.Count && i >= 0)
+            if (i >= Pics.Count || i < 0)
             {
-                if (File.Exists(Pics[i]))
-                {
-                    if (!Contains(i))
-                    {
-                        var pic = ImageDecoder.RenderToBitmapSource(Pics[i]);
-
-#if DEBUG
-                        Trace.WriteLine($"Added {Pics[i]} to Preloader, index {i}");
-#endif
-
-                        Sources.TryAdd(i, pic);
-                    }
-#if DEBUG
-                    else
-                    {
-                        Trace.WriteLine("Skipped at index " + i);
-                    }
-#endif
-                }
-                else
-                {
-                    Pics.Remove(Pics[i]);
-
-#if DEBUG
-                    Trace.WriteLine($"Preloader removed: {Pics[i]} from Pics, index {i}");
-#endif
-                }
+                return;
             }
-        });
+
+            if (!Contains(Pics[i]))
+            {
+                Add(Pics[i]);
+            }
+        }
 
         /// <summary>
         /// Removes the key, after checking if it exists
         /// </summary>
         /// <param name="key"></param>
-        internal static void Remove(int key)
+        internal static void Remove(string key)
         {
-            if (key >= Pics.Count || key < 0)
+            if (key == null)
             {
+#if DEBUG
+                Trace.WriteLine("Preloader.Remove key null, " + key);
+#endif
                 return;
             }
 
@@ -79,17 +70,33 @@ namespace PicView.ChangeImage
 
             _ = Sources[key];
 #if DEBUG
-            if (Sources.TryRemove(key, out _))
+            if (!Sources.TryRemove(key, out _))
             {
-                Trace.WriteLine($"Removed {key} from Preloader, index {key}");
-            }
-            else
-            {
-                Trace.WriteLine($"Failed to Remove {key} from Preloader, index {key}");
+                Trace.WriteLine($"Failed to Remove {key} from Preloader, index {Pics.IndexOf(key)}");
             }
 #else
             Sources.TryRemove(key, out _);
 #endif
+        }
+
+        /// <summary>
+        /// Removes the key, after checking if it exists
+        /// </summary>
+        /// <param name="key"></param>
+        internal static void Remove(int i)
+        {
+            if (i >= Pics.Count || i < 0)
+            {
+                return;
+            }
+
+            if (File.Exists(Pics[i]))
+            {
+                if (Contains(Pics[i]))
+                {
+                    Remove(Pics[i]);
+                }
+            }
         }
 
         /// <summary>
@@ -114,9 +121,9 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        internal static BitmapSource Get(int key)
+        internal static BitmapSource Get(string key)
         {
-            if (!Contains(key))
+            if (string.IsNullOrWhiteSpace(key) || !Contains(key))
             {
                 return null;
             }
@@ -129,9 +136,9 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        internal static bool Contains(int key)
+        internal static bool Contains(string key)
         {
-            if (Sources.IsEmpty)
+            if (string.IsNullOrWhiteSpace(key) || Sources.IsEmpty)
             {
                 return false;
             }
@@ -153,9 +160,8 @@ namespace PicView.ChangeImage
                 + string.Concat(Reverse ? "backwards" : "forwards"));
 #endif
 
-            var toLoad = 2;
-            var extraToLoad = 2;
-            var cleanUp = toLoad + extraToLoad;
+            var loadInfront = 2;
+            var loadBehind = 1;
 
             // Not looping
             if (!Properties.Settings.Default.Looping)
@@ -164,7 +170,7 @@ namespace PicView.ChangeImage
                 if (!Reverse)
                 {
                     // Add first elements
-                    for (int i = index + 1; i < index + 1 + toLoad; i++)
+                    for (int i = index + 1; i < index + 1 + loadInfront; i++)
                     {
                         if (i > Pics.Count)
                         {
@@ -174,7 +180,7 @@ namespace PicView.ChangeImage
                         Add(i);
                     }
                     // Add second elements behind
-                    for (int i = index - 1; i > index - 1 - extraToLoad; i--)
+                    for (int i = index - 1; i > index - 1 - loadBehind; i--)
                     {
                         if (i < 0)
                         {
@@ -185,9 +191,9 @@ namespace PicView.ChangeImage
                     }
 
                     //Clean up behind
-                    if (Pics.Count > cleanUp * 2 && !FreshStartup)
+                    if (Pics.Count > loadInfront * 2 && !FreshStartup)
                     {
-                        for (int i = index - 1 - cleanUp; i < (index - 1 - extraToLoad); i++)
+                        for (int i = index - 1 - loadInfront; i < (index - 1 - loadBehind); i++)
                         {
                             if (i < 0)
                             {
@@ -207,7 +213,7 @@ namespace PicView.ChangeImage
                 else
                 {
                     // Add first elements behind
-                    for (int i = index - 1; i > index - 1 - toLoad; i--)
+                    for (int i = index - 1; i > index - 1 - loadInfront; i--)
                     {
                         if (i < 0)
                         {
@@ -217,7 +223,7 @@ namespace PicView.ChangeImage
                         Add(i);
                     }
                     // Add second elements
-                    for (int i = index + 1; i <= index + 1 + toLoad; i++)
+                    for (int i = index + 1; i <= index + 1 + loadInfront; i++)
                     {
                         if (i > Pics.Count)
                         {
@@ -228,9 +234,9 @@ namespace PicView.ChangeImage
                     }
 
                     //Clean up infront
-                    if (Pics.Count > cleanUp * 2 && !FreshStartup)
+                    if (Pics.Count > loadInfront * 2 && !FreshStartup)
                     {
-                        for (int i = index + 1 + cleanUp; i > index + 1 + cleanUp - extraToLoad; i--)
+                        for (int i = index + 1 + loadInfront; i > index + 1 + loadInfront - loadBehind; i--)
                         {
                             if (i < 0)
                             {
@@ -255,7 +261,7 @@ namespace PicView.ChangeImage
                 if (!Reverse)
                 {
                     // Add first elements
-                    for (int i = index + 1; i < index + 1 + toLoad; i++)
+                    for (int i = index + 1; i < index + 1 + loadInfront; i++)
                     {
                         if (i != 0 || Pics.Count != 0)
                         {
@@ -263,7 +269,7 @@ namespace PicView.ChangeImage
                         }
                     }
                     // Add second elements behind
-                    for (int i = index - 1; i > index - 1 - extraToLoad; i--)
+                    for (int i = index - 1; i > index - 1 - loadBehind; i--)
                     {
                         if (i != 0 || Pics.Count != 0)
                         {
@@ -272,9 +278,9 @@ namespace PicView.ChangeImage
                     }
 
                     //Clean up behind
-                    if (Pics.Count > cleanUp * 2 && !FreshStartup)
+                    if (Pics.Count > loadInfront * 2 && !FreshStartup)
                     {
-                        for (int i = index - 1 - cleanUp; i < (index - 1 - extraToLoad); i++)
+                        for (int i = index - 1 - loadInfront; i < (index - 1 - loadBehind); i++)
                         {
                             Remove(i % Pics.Count);
                         }
@@ -285,7 +291,7 @@ namespace PicView.ChangeImage
                 {
                     // Add first elements behind
                     int y = 0;
-                    for (int i = index - 1; i > index - 1 - toLoad; i--)
+                    for (int i = index - 1; i > index - 1 - loadInfront; i--)
                     {
                         y++;
                         if (i < 0)
@@ -300,7 +306,7 @@ namespace PicView.ChangeImage
                     }
 
                     // Add second elements
-                    for (int i = index + 1; i <= index + 1 + toLoad; i++)
+                    for (int i = index + 1; i <= index + 1 + loadInfront; i++)
                     {
                         if (i != 0 || Pics.Count != 0)
                         {
@@ -309,9 +315,9 @@ namespace PicView.ChangeImage
                     }
 
                     //Clean up infront
-                    if (Pics.Count > cleanUp + toLoad && !FreshStartup)
+                    if (Pics.Count > loadInfront + loadInfront && !FreshStartup)
                     {
-                        for (int i = index + 1 + cleanUp; i > index + 1 + cleanUp - extraToLoad; i--)
+                        for (int i = index + 1 + loadInfront; i > index + 1 + loadInfront - loadBehind; i--)
                         {
                             if (i != 0 || Pics.Count != 0)
                             {

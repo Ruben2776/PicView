@@ -191,7 +191,7 @@ namespace PicView.ChangeImage
             {
                 /// Use the Load() function load image from memory if available
                 /// if not, it will be null
-                bitmapSource = Preloader.Get(index);
+                bitmapSource = Preloader.Get(Pics[index]);
             }
             else
             {
@@ -238,10 +238,10 @@ namespace PicView.ChangeImage
                 CanNavigate = false;
 
                 // Get it!
-                await Preloader.Add(index).ConfigureAwait(true);
+                await Preloader.Add(Pics[index]).ConfigureAwait(true);
 
                 // Retry
-                bitmapSource = Preloader.Get(index);
+                bitmapSource = Preloader.Get(Pics[index]);
 
                 if (bitmapSource == null)
                 {
@@ -410,10 +410,11 @@ namespace PicView.ChangeImage
         /// <param name="folder"></param>
         internal static async void PicFolder(string folder)
         {
+            ChangeFolder(true);
+
             // If searching subdirectories, it might freeze UI, so wrap it in task
             await System.Threading.Tasks.Task.Run(() =>
             {
-                ChangeFolder(true);
                 Pics = FileList(folder);
             }).ConfigureAwait(true);
 
@@ -427,6 +428,12 @@ namespace PicView.ChangeImage
             }
 
             GetQuickSettingsMenu.GoToPic.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
+
+            // Load new gallery values, if changing folder
+            if (GetPicGallery != null && Properties.Settings.Default.PicGallery == 2 && !GalleryFunctions.IsLoading)
+            {
+                await GalleryLoad.Load().ConfigureAwait(false);
+            }
         }
 
         #endregion Update Image values
@@ -649,7 +656,7 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static void FastPicUpdate()
         {
-            if (!Preloader.Contains(FolderIndex))
+            if (!Preloader.Contains(Pics[FolderIndex]))
             {
                 Preloader.Clear();
             }

@@ -172,7 +172,7 @@ namespace PicView.ImageHandling
         {
             if (usePreloader)
             {
-                var pic = Preloader.Get(Pics.IndexOf(file));
+                var pic = Preloader.Get(Pics[FolderIndex]);
                 if (pic != null)
                 {
                     return new Size(pic.PixelWidth, pic.PixelHeight);

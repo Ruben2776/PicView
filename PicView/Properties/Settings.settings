@@ -60,7 +60,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="WindowBorderColorEnabled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="BgColorChoice" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>

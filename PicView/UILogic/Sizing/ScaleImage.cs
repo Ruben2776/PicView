@@ -3,6 +3,7 @@ using PicView.UILogic.Loading;
 using PicView.UILogic.TransformImage;
 using System;
 using static PicView.ChangeImage.Navigation;
+using static PicView.UILogic.Loading.LoadWindows;
 using static PicView.UILogic.PicGallery.GalleryFunctions;
 using static PicView.UILogic.Sizing.WindowLogic;
 using static PicView.UILogic.TransformImage.Rotation;
@@ -38,7 +39,7 @@ namespace PicView.UILogic.Sizing
             {
                 if (Pics.Count > FolderIndex)
                 {
-                    var pic = ChangeImage.Preloader.Get(FolderIndex);
+                    var pic = ChangeImage.Preloader.Get(Pics[FolderIndex]);
                     if (pic != null)
                     {
                         FitImage(pic.PixelWidth, pic.PixelHeight);
@@ -52,9 +53,9 @@ namespace PicView.UILogic.Sizing
                             FitImage(size.Value.Width, size.Value.Height);
                             return true;
                         }
-                        else if (LoadWindows.GetMainWindow.MainImage.Source != null)
+                        else if (GetMainWindow.MainImage.Source != null)
                         {
-                            FitImage(LoadWindows.GetMainWindow.MainImage.Source.Width, LoadWindows.GetMainWindow.MainImage.Source.Height);
+                            FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
                             return true;
                         }
                         else if (xWidth != 0 && xHeight != 0)
@@ -65,9 +66,9 @@ namespace PicView.UILogic.Sizing
                     }
                 }
             }
-            else if (LoadWindows.GetMainWindow.MainImage.Source != null)
+            else if (GetMainWindow.MainImage.Source != null)
             {
-                FitImage(LoadWindows.GetMainWindow.MainImage.Source.Width, LoadWindows.GetMainWindow.MainImage.Source.Height);
+                FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
                 return true;
             }
             else if (xWidth != 0 && xHeight != 0)
@@ -111,7 +112,7 @@ namespace PicView.UILogic.Sizing
             var showInterface = Properties.Settings.Default.ShowInterface;
 
             double maxWidth, maxHeight;
-            var borderSpaceHeight = showInterface ? LoadWindows.GetMainWindow.LowerBar.Height + LoadWindows.GetMainWindow.TitleBar.Height + 6 : 6;
+            var borderSpaceHeight = showInterface ? GetMainWindow.LowerBar.Height + GetMainWindow.TitleBar.Height + 6 : 6;
             var borderSpaceWidth = 20 * MonitorInfo.DpiScaling; // Based on UI borders
 
             var monitorWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
@@ -153,13 +154,13 @@ namespace PicView.UILogic.Sizing
             {
                 if (Properties.Settings.Default.FillImage)
                 {
-                    maxWidth = LoadWindows.GetMainWindow.ParentContainer.ActualWidth;
-                    maxHeight = LoadWindows.GetMainWindow.ParentContainer.ActualHeight;
+                    maxWidth = GetMainWindow.ParentContainer.ActualWidth;
+                    maxHeight = GetMainWindow.ParentContainer.ActualHeight;
                 }
                 else
                 {
-                    maxWidth = Math.Min(LoadWindows.GetMainWindow.ParentContainer.ActualWidth, width);
-                    maxHeight = Math.Min(LoadWindows.GetMainWindow.ParentContainer.ActualHeight, height);
+                    maxWidth = Math.Min(GetMainWindow.ParentContainer.ActualWidth, width);
+                    maxHeight = Math.Min(GetMainWindow.ParentContainer.ActualHeight, height);
                 }
             }
 
@@ -175,25 +176,25 @@ namespace PicView.UILogic.Sizing
             if (IsScrollEnabled)
             {
                 /// Calculate height based on width
-                LoadWindows.GetMainWindow.MainImage.Width = maxWidth;
-                LoadWindows.GetMainWindow.MainImage.Height = maxWidth * height / width;
+                GetMainWindow.MainImage.Width = maxWidth;
+                GetMainWindow.MainImage.Height = maxWidth * height / width;
 
                 /// Set mainWindow.Scroller height to aspect ratio calculation
-                LoadWindows.GetMainWindow.Scroller.Height = height * AspectRatio;
+                GetMainWindow.Scroller.Height = height * AspectRatio;
 
                 /// Update values
-                xWidth = LoadWindows.GetMainWindow.MainImage.Width;
-                xHeight = LoadWindows.GetMainWindow.Scroller.Height;
+                xWidth = GetMainWindow.MainImage.Width;
+                xHeight = GetMainWindow.Scroller.Height;
             }
             else
             {
                 /// Reset mainWindow.Scroller's height to auto
-                LoadWindows.GetMainWindow.Scroller.Height = double.NaN;
+                GetMainWindow.Scroller.Height = double.NaN;
 
                 /// Fit image by aspect ratio calculation
                 /// and update values
-                LoadWindows.GetMainWindow.MainImage.Width = xWidth = width * AspectRatio;
-                LoadWindows.GetMainWindow.MainImage.Height = xHeight = height * AspectRatio;
+                GetMainWindow.MainImage.Width = xWidth = width * AspectRatio;
+                GetMainWindow.MainImage.Height = xHeight = height * AspectRatio;
             }
 
             if (!Properties.Settings.Default.Fullscreen)
@@ -203,13 +204,13 @@ namespace PicView.UILogic.Sizing
 
                 if (Properties.Settings.Default.PicGallery == 2)
                 {
-                    if (xWidth >= monitorWidth - (UC.GetPicGallery.ActualWidth + 5) * 2.2)
+                    if (xWidth >= monitorWidth - (UC.GetPicGallery.ActualWidth + 5) * 1.88)
                     {
                         // Offset window to not overlap gallery
-                        LoadWindows.GetMainWindow.Left = ((MonitorInfo.WorkArea.Width - (UC.GetPicGallery.ActualWidth + 5) - (LoadWindows.GetMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
+                        GetMainWindow.Left = ((MonitorInfo.WorkArea.Width - (UC.GetPicGallery.ActualWidth + 5) - (GetMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
                                           + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
-                        LoadWindows.GetMainWindow.Top = ((MonitorInfo.WorkArea.Height
-                                           - (LoadWindows.GetMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
+                        GetMainWindow.Top = ((MonitorInfo.WorkArea.Height
+                                           - (GetMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
                     }
                     else
                     {
@@ -219,15 +220,15 @@ namespace PicView.UILogic.Sizing
                 else if (Properties.Settings.Default.AutoFitWindow)
                 {
                     /// Update mainWindow.TitleBar width to dynamically fit new size
-                    var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(xWidth, LoadWindows.GetMainWindow.MinWidth) : Math.Max(xHeight, LoadWindows.GetMainWindow.MinHeight);
-                    LoadWindows.GetMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
+                    var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(xWidth, GetMainWindow.MinWidth) : Math.Max(xHeight, GetMainWindow.MinHeight);
+                    GetMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
 
                     CenterWindowOnScreen();
                 }
                 else
                 {
                     /// Fix title width to window size
-                    LoadWindows.GetMainWindow.TitleText.MaxWidth = LoadWindows.GetMainWindow.ActualWidth - interfaceSize;
+                    GetMainWindow.TitleText.MaxWidth = GetMainWindow.ActualWidth - interfaceSize;
                 }
             }
 
