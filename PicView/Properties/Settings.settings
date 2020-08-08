@@ -2,9 +2,6 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="PicView.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="ColorTheme" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">12</Value>
-    </Setting>
     <Setting Name="Blue" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#FF0461B1</Value>
     </Setting>
@@ -63,7 +60,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="WindowBorderColorEnabled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="BgColorChoice" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -136,6 +133,9 @@
     </Setting>
     <Setting Name="ShowAltInterfaceButtons" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ColorTheme" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">10</Value>
     </Setting>
   </Settings>
 </SettingsFile>

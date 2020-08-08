@@ -25,18 +25,6 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("12")]
-        public int ColorTheme {
-            get {
-                return ((int)(this["ColorTheme"]));
-            }
-            set {
-                this["ColorTheme"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("#FF0461B1")]
         public global::System.Windows.Media.Color Blue {
             get {
@@ -265,7 +253,7 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool WindowBorderColorEnabled {
             get {
                 return ((bool)(this["WindowBorderColorEnabled"]));
@@ -560,6 +548,18 @@ namespace PicView.Properties {
             }
             set {
                 this["ShowAltInterfaceButtons"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int ColorTheme {
+            get {
+                return ((int)(this["ColorTheme"]));
+            }
+            set {
+                this["ColorTheme"] = value;
             }
         }
     }
