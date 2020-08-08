@@ -2,6 +2,7 @@
 using PicView.FileHandling;
 using PicView.UILogic.UserControls;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
@@ -85,26 +86,12 @@ namespace PicView.ImageHandling
             return pic;
         }
 
-        internal static BitmapSource GetBitmapSourceThumb(string path)
+        internal static BitmapSource GetBitmapSourceThumb(string path) => (Path.GetExtension(path).ToLower(CultureInfo.CurrentCulture)) switch
         {
-            var supported = SupportedFiles.IsSupportedFile(path);
-
-            if (!supported.HasValue)
-            {
-                return null;
-            }
-
-            if (supported.Value)
-            {
-                return GetWindowsThumbnail(path);
-            }
-            else if (!supported.Value)
-            {
-                return GetMagickImageThumb(path);
-            }
-
-            return null;
-        }
+            // Return windows thumbnails if applicable, else use imagemagick
+            ".jpg" or ".jpeg" or ".jpe" or ".png" or ".bmp" or ".gif" or ".ico" => GetWindowsThumbnail(path),
+            _ => GetMagickImageThumb(path),
+        };
 
         /// <summary>
         /// Returns BitmapSource at specified quality and pixel size
@@ -113,32 +100,32 @@ namespace PicView.ImageHandling
         /// <param name="quality"></param>
         /// <param name="size"></param>
         /// <returns></returns>
-        internal static BitmapSource GetMagickImageThumb(string file, byte quality = 100, short size = 500)
+        private static BitmapSource GetMagickImageThumb(string file, byte quality = 100, short size = 500)
         {
             BitmapSource pic;
 
-            using (MagickImage magick = new MagickImage())
+            using MagickImage magick = new MagickImage
             {
-                magick.Quality = quality;
-                magick.ColorSpace = ColorSpace.Transparent;
-                try
-                {
-                    magick.Read(file);
-                    magick.AdaptiveResize(size, size);
-                }
+                Quality = quality,
+                ColorSpace = ColorSpace.Transparent
+            };
+            try
+            {
+                magick.Read(file);
+                magick.AdaptiveResize(size, size);
+            }
 #if DEBUG
-                catch (MagickException e)
-                {
-                    Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
-                    return null;
-                }
+            catch (MagickException e)
+            {
+                Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
+                return null;
+            }
 #else
                 catch (MagickException) { return null; }
 #endif
-                pic = magick.ToBitmapSource();
-                pic.Freeze();
-                return pic;
-            }
+            pic = magick.ToBitmapSource();
+            pic.Freeze();
+            return pic;
         }
 
         /// <summary>
@@ -146,7 +133,7 @@ namespace PicView.ImageHandling
         /// </summary>
         /// <param name="path">The path to the file</param>
         /// <returns></returns>
-        internal static BitmapSource GetWindowsThumbnail(string path, bool extralarge = false)
+        private static BitmapSource GetWindowsThumbnail(string path, bool extralarge = false)
         {
             if (!File.Exists(path))
             {
