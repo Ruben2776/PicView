@@ -92,8 +92,6 @@ namespace PicView.FileHandling
                 return;
             }
 
-            Pics.Remove(Pics[FolderIndex]);
-
             // Sync with gallery
             if (UC.GetPicGallery != null)
             {
@@ -102,6 +100,8 @@ namespace PicView.FileHandling
 
             // Sync with preloader
             Preloader.Remove(Pics.IndexOf(Pics[FolderIndex]));
+
+            Pics.Remove(Pics[FolderIndex]);
 
             if (Pics.Count <= 0)
             {
