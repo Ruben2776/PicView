@@ -8,13 +8,15 @@
     Title="{StaticResource ImageInfo}"
     Width="806"
     Height="370"
+    BorderBrush="{DynamicResource ChosenColorBrush}"
+    BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="CanMinimize"
     Style="{DynamicResource MyWindowStyle}"
     mc:Ignorable="d">
 
-    <DockPanel LastChildFill="True">
+    <DockPanel>
         <DockPanel
             x:Name="TitleBar"
             Height="33"
@@ -26,7 +28,7 @@
             <Rectangle
                 Width="1"
                 Height="35"
-                Margin="6,0,0,0"
+                Margin="8,0,0,0"
                 Fill="{StaticResource BorderBrush}" />
 
             <Button
@@ -143,41 +145,13 @@
                 TextTrimming="CharacterEllipsis" />
         </DockPanel>
 
-        <Rectangle
-            x:Name="LeftBorderRectangle"
-            Width="7"
-            DockPanel.Dock="Left">
-            <Rectangle.Fill>
-                <SolidColorBrush Color="{StaticResource WindowBackgroundColor}" />
-            </Rectangle.Fill>
-        </Rectangle>
-
-        <Rectangle
-            x:Name="RightBorderRectangle"
-            Width="7"
-            Margin="-1,0,0,0"
-            DockPanel.Dock="Right">
-            <Rectangle.Fill>
-                <SolidColorBrush Color="{StaticResource WindowBackgroundColor}" />
-            </Rectangle.Fill>
-        </Rectangle>
-
-        <Rectangle
-            x:Name="BottomBorderRectangle"
-            Height="7"
-            Margin="-1,0,0,0"
-            DockPanel.Dock="Bottom">
-            <Rectangle.Fill>
-                <SolidColorBrush Color="{StaticResource WindowBackgroundColor}" />
-            </Rectangle.Fill>
-        </Rectangle>
-
         <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
             <StackPanel
                 x:Name="MainBackground"
                 Background="{StaticResource NoisyBg}"
                 Orientation="Horizontal">
-                <StackPanel Margin="0,0,10,0" Orientation="Vertical">
+                
+                <StackPanel Margin="0,5,10,0" Orientation="Vertical">
 
                     <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
                         <Label
@@ -324,7 +298,7 @@
                     </StackPanel>
                 </StackPanel>
 
-                <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Vertical" Margin="0,5,0,0">
 
                     <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
                         <Label

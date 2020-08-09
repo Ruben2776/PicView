@@ -9,11 +9,11 @@
     mc:Ignorable="d">
     <StackPanel>
         <Border
-            Width="261"
+            Width="259"
             Height="180"
             Background="{StaticResource NoisyBg}"
             BorderBrush="{StaticResource BorderBrush}"
-            BorderThickness="2"
+            BorderThickness="1"
             Effect="{StaticResource MenuShadow}">
 
             <Canvas>
@@ -27,7 +27,7 @@
 
                 <Rectangle
                     Canvas.Top="50"
-                    Width="258"
+                    Width="257"
                     Panel.ZIndex="1"
                     Stroke="{StaticResource BorderBrush}"
                     StrokeThickness="1" />
@@ -85,8 +85,6 @@
                     Width="120"
                     Height="50"
                     Background="{StaticResource BackgroundColorBrushAlt}"
-                    BorderThickness="1"
-                    CornerRadius="2"
                     Style="{StaticResource ButtonBorder}">
                     <Button
                         x:Name="Open"
@@ -186,6 +184,6 @@
             Fill="{StaticResource BorderBrushAlt}"
             Points="0,0 15,30, 30,0"
             Stroke="{StaticResource BorderBrush}"
-            StrokeThickness="2" />
+            StrokeThickness="1" />
     </StackPanel>
 </UserControl>

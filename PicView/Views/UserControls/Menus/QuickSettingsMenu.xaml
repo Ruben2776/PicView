@@ -6,11 +6,11 @@
     Foreground="{StaticResource MainColorBrush}">
     <StackPanel>
         <Border
-            Width="360"
+            Width="358"
             Height="178"
             Background="{StaticResource NoisyBg}"
             BorderBrush="{StaticResource BorderBrush}"
-            BorderThickness="2"
+            BorderThickness="1"
             Effect="{StaticResource MenuShadow}">
 
             <Canvas VerticalAlignment="Top">
@@ -349,9 +349,9 @@
             </Canvas>
         </Border>
         <Rectangle
-            Width="23"
+            Width="24"
             Height="2"
-            Margin="0,-2,89,0"
+            Margin="0,-2,87,0"
             HorizontalAlignment="Right"
             Fill="{StaticResource BorderBrushAlt}" />
         <Polygon
@@ -360,6 +360,6 @@
             Fill="{StaticResource BorderBrushAlt}"
             Points="0,0 15,30, 30,0"
             Stroke="{StaticResource BorderBrush}"
-            StrokeThickness="2" />
+            StrokeThickness="1" />
     </StackPanel>
 </UserControl>
