@@ -290,16 +290,19 @@ namespace PicView.ChangeImage
                 LoadWindows.GetMainWindow.MainImage.LayoutTransform = null;
             }
 
-            // Show the image! :)
-            LoadWindows.GetMainWindow.MainImage.Source = bitmapSource;
-            FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
-            SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index);
-
-            // Scroll to top if scroll enabled
-            if (IsScrollEnabled)
+            // Need to put UI change in dispatcher to fix slideshow bug
+            await LoadWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
             {
-                LoadWindows.GetMainWindow.Scroller.ScrollToTop();
-            }
+                LoadWindows.GetMainWindow.MainImage.Source = bitmapSource;
+                FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+                SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index);
+
+                // Scroll to top if scroll enabled
+                if (IsScrollEnabled)
+                {
+                    LoadWindows.GetMainWindow.Scroller.ScrollToTop();
+                }
+            }));
 
             // Update values
             CanNavigate = true;
