@@ -61,7 +61,7 @@ The image info window will update values as you browse through images.
 
 <br>
 <h2>Fullscreen Image Gallery:</h2>
-<img src="https://i.imgur.com/gtbdzcP.jpg"/>
+<img src="https://i.imgur.com/aIEzJOa.png"/>
 View all files in current folder as a fullscreen thumbnail gallery, where you can quickly scroll to desired image.
 
 <br>
@@ -106,6 +106,7 @@ Rotate image left or right `Ctrl + Up`, `Ctrl + Down`<br>
 Flip image back and forth (horizontally) `F`
 
  **Misc** 
+ 
 Set image as wallpaper or lock screen image. 
  
 View and access most recent files in the contextmenu, including ones from web addresses.
