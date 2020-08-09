@@ -6,6 +6,8 @@
     Title="{StaticResource Loading}"
     MinWidth="565"
     MinHeight="695"
+    BorderBrush="{DynamicResource WindowBorderColorBrush}"
+    BorderThickness="1"
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="CanMinimize"
     SizeToContent="WidthAndHeight"
@@ -26,11 +28,13 @@
 
             <uc:Logo />
 
+
             <Rectangle
                 Width="1"
                 Height="35"
                 Margin="8,0,0,0"
                 Fill="{StaticResource BorderBrush}" />
+
 
             <uc:CloseButton
                 x:Name="CloseButton"
@@ -83,6 +87,12 @@
                     Height="35"
                     Fill="{StaticResource BorderBrush}" />
 
+                <Rectangle
+                    Canvas.Top="34"
+                    Width="56"
+                    Height="1"
+                    Fill="{StaticResource BorderBrush}" />
+
                 <Button
                     x:Name="FileMenuButton"
                     Canvas.Left="1"
@@ -110,6 +120,13 @@
                     Canvas.Top="0"
                     Width="1"
                     Height="35"
+                    Fill="{StaticResource BorderBrush}" />
+
+                <Rectangle
+                    Canvas.Left="57"
+                    Canvas.Top="34"
+                    Width="56"
+                    Height="1"
                     Fill="{StaticResource BorderBrush}" />
 
                 <Button
@@ -171,6 +188,13 @@
                     Width="182"
                     Height="35"
                     Background="{StaticResource BackgroundColorBrushFadeSubtle}">
+
+                    <Rectangle
+                        Canvas.Top="34"
+                        Width="182"
+                        Height="1"
+                        Fill="{StaticResource BorderBrush}" />
+
                     <Rectangle
                         Canvas.Left="90"
                         Canvas.Top="0"
@@ -195,6 +219,13 @@
 
                     <uc:RightButton x:Name="RightButton" Canvas.Left="91" />
                 </Canvas>
+
+                <Rectangle
+                    Canvas.Left="294"
+                    Canvas.Top="34"
+                    Width="56"
+                    Height="1"
+                    Fill="{StaticResource BorderBrush}" />
 
                 <Rectangle
                     Canvas.Left="349"
@@ -225,6 +256,13 @@
                         </Path.Fill>
                     </Path>
                 </Button>
+
+                <Rectangle
+                    Canvas.Left="349"
+                    Canvas.Top="34"
+                    Width="56"
+                    Height="1"
+                    Fill="{StaticResource BorderBrush}" />
 
                 <Button
                     x:Name="FunctionMenuButton"
@@ -365,80 +403,65 @@
             </Button>
         </Grid>
 
-        <DockPanel LastChildFill="True">
+        <Border
+            Background="{StaticResource NoisyBg}"
+            BorderBrush="{StaticResource BorderBrush}"
+            BorderThickness="0,1,0,1">
 
-            <Rectangle
-                x:Name="LeftBorderRectangle"
-                Width="7"
-                DockPanel.Dock="Left"
-                Fill="{StaticResource WindowBackgroundColorBrush}" />
+            <Grid x:Name="ParentContainer" AllowDrop="True">
 
-            <Rectangle
-                x:Name="RightBorderRectangle"
-                Width="7"
-                DockPanel.Dock="Right"
-                Fill="{StaticResource WindowBackgroundColorBrush}" />
-
-            <Border
-                Background="{StaticResource NoisyBg}"
-                BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="1">
-
-                <Grid x:Name="ParentContainer" AllowDrop="True">
-
-                    <ScrollViewer
-                        x:Name="Scroller"
-                        CanContentScroll="False"
-                        FocusVisualStyle="{x:Null}"
-                        Focusable="False"
-                        HorizontalScrollBarVisibility="Disabled"
-                        VerticalScrollBarVisibility="Disabled">
-                        <ScrollViewer.Style>
-                            <Style TargetType="{x:Type ScrollViewer}">
-                                <Setter Property="OverridesDefaultStyle" Value="True" />
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="{x:Type ScrollViewer}">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="*" />
-                                                    <RowDefinition Height="Auto" />
-                                                </Grid.RowDefinitions>
-                                                <ScrollContentPresenter Grid.RowSpan="2" Grid.ColumnSpan="2" />
-                                                <ScrollBar
-                                                    Name="PART_VerticalScrollBar"
-                                                    Grid.Column="1"
-                                                    Maximum="{TemplateBinding ScrollableHeight}"
-                                                    ViewportSize="{TemplateBinding ViewportHeight}"
-                                                    Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
-                                                    Value="{TemplateBinding VerticalOffset}" />
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ScrollViewer.Style>
-                        <Border
-                            x:Name="MainImageBorder"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Focusable="False">
-                            <Image
-                                x:Name="MainImage"
-                                AllowDrop="True"
-                                Focusable="False"
-                                RenderOptions.BitmapScalingMode="Fant"
-                                RenderOptions.EdgeMode="Aliased"
-                                Stretch="Fill" />
-                        </Border>
-                    </ScrollViewer>
-                    <Canvas x:Name="topLayer" IsHitTestVisible="False" />
-                </Grid>
-            </Border>
-        </DockPanel>
+                <ScrollViewer
+                    x:Name="Scroller"
+                    CanContentScroll="False"
+                    FocusVisualStyle="{x:Null}"
+                    Focusable="False"
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Disabled">
+                    <ScrollViewer.Style>
+                        <Style TargetType="{x:Type ScrollViewer}">
+                            <Setter Property="OverridesDefaultStyle" Value="True" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <ScrollContentPresenter Grid.RowSpan="2" Grid.ColumnSpan="2" />
+                                            <ScrollBar
+                                                Name="PART_VerticalScrollBar"
+                                                Grid.Column="1"
+                                                Maximum="{TemplateBinding ScrollableHeight}"
+                                                ViewportSize="{TemplateBinding ViewportHeight}"
+                                                Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                                                Value="{TemplateBinding VerticalOffset}" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ScrollViewer.Style>
+                    <Border
+                        x:Name="MainImageBorder"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Focusable="False">
+                        <Image
+                            x:Name="MainImage"
+                            AllowDrop="True"
+                            Focusable="False"
+                            RenderOptions.BitmapScalingMode="Fant"
+                            RenderOptions.EdgeMode="Aliased"
+                            Stretch="Fill" />
+                    </Border>
+                </ScrollViewer>
+                <Canvas x:Name="topLayer" IsHitTestVisible="False" />
+            </Grid>
+        </Border>
     </DockPanel>
 </Window>

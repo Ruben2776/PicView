@@ -15,6 +15,10 @@ namespace PicView.UILogic.Animations
 
         */
 
+        static readonly Color mainColor = (Color)Application.Current.Resources["IconColor"];
+
+        static readonly Color backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
+
         #region ALtInterface hover anims
 
         private static readonly ColorAnimation ccAnim = new ColorAnimation { Duration = TimeSpan.FromSeconds(.32) };

@@ -253,7 +253,7 @@ namespace PicView.ChangeImage
                     {
                         // Clean up
                         Pics.RemoveAt(index);
-                        Preloader.Remove(index);
+                        Preloader.Remove(Pics[index]);
 
                         // Sync with gallery, if needed
                         if (GetPicGallery != null)

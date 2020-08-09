@@ -68,16 +68,12 @@ namespace PicView.UILogic
             if (show)
             {
                 LoadWindows.GetMainWindow.TitleBar.Visibility =
-                LoadWindows.GetMainWindow.LowerBar.Visibility =
-                LoadWindows.GetMainWindow.LeftBorderRectangle.Visibility =
-                LoadWindows.GetMainWindow.RightBorderRectangle.Visibility = Visibility.Visible;
+                LoadWindows.GetMainWindow.LowerBar.Visibility = Visibility.Visible;
             }
             else
             {
                 LoadWindows.GetMainWindow.TitleBar.Visibility =
-                LoadWindows.GetMainWindow.LowerBar.Visibility =
-                LoadWindows.GetMainWindow.LeftBorderRectangle.Visibility =
-                LoadWindows.GetMainWindow.RightBorderRectangle.Visibility = Visibility.Collapsed;
+                LoadWindows.GetMainWindow.LowerBar.Visibility = Visibility.Collapsed;
             }
         }
 

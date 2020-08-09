@@ -6,16 +6,14 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Window">
                     <Grid>
-                        <Border BorderThickness="1">
-                            <AdornerDecorator>
-                                <Grid x:Name="LayoutRoot">
-                                    <ContentPresenter />
-                                </Grid>
-                            </AdornerDecorator>
-                        </Border>
+                        <AdornerDecorator>
+                            <Grid x:Name="LayoutRoot">
+                                <ContentPresenter />
+                            </Grid>
+                        </AdornerDecorator>
                         <Border
-                            BorderBrush="{DynamicResource WindowBorderColorBrush}"
-                            BorderThickness="1"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
                             Opacity=".9"
                             Visibility="{Binding IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource bool2VisibilityConverter}}" />
                     </Grid>

@@ -99,7 +99,7 @@ namespace PicView.FileHandling
             }
 
             // Sync with preloader
-            Preloader.Remove(Pics.IndexOf(Pics[FolderIndex]));
+            Preloader.Remove(Pics[FolderIndex]);
 
             Pics.Remove(Pics[FolderIndex]);
 

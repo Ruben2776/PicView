@@ -36,9 +36,7 @@ namespace PicView.UILogic.Loading
             if (!Properties.Settings.Default.ShowInterface)
             {
                 LoadWindows.GetMainWindow.TitleBar.Visibility =
-                LoadWindows.GetMainWindow.LowerBar.Visibility =
-                LoadWindows.GetMainWindow.LeftBorderRectangle.Visibility =
-                LoadWindows.GetMainWindow.RightBorderRectangle.Visibility
+                LoadWindows.GetMainWindow.LowerBar.Visibility 
                 = Visibility.Collapsed;
             }
 
