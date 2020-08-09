@@ -46,6 +46,14 @@ Drag and drop from files Windows explorer or your browser. You can also hold `Ct
  A choice between dark theme and light theme can be found in the settings menu `F4`, along with 12 highlight colors to choose from. 
  
 <br>
+<h2>Configure UI</h2>
+<img src="https://i.imgur.com/zcGEzL0.png"/>
+
+The interface can be toggled to just show the image by pressing `Alt + Z`. The hover buttons and the colored window border can be toggled on/off in the settings window.
+
+For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
+ 
+<br>
 <h2>Display Image Info</h2>
 
 <img src="https://i.imgur.com/IK3qgB4.png" width="918"/>
