@@ -70,15 +70,10 @@ namespace PicView.UILogic.PicGallery
                     UC.GetPicGallery.Width = WindowLogic.MonitorInfo.Width;
                     UC.GetPicGallery.Height = WindowLogic.MonitorInfo.Height;
                 }
-                else if (Properties.Settings.Default.ShowInterface)
-                {
-                    UC.GetPicGallery.Width = LoadWindows.GetMainWindow.Width - 15;
-                    UC.GetPicGallery.Height = LoadWindows.GetMainWindow.ActualHeight - 70;
-                }
                 else
                 {
-                    UC.GetPicGallery.Width = LoadWindows.GetMainWindow.ActualWidth - 2;
-                    UC.GetPicGallery.Height = LoadWindows.GetMainWindow.ActualHeight - 2; // 2px for borders
+                    UC.GetPicGallery.Width = LoadWindows.GetMainWindow.ParentContainer.ActualWidth;
+                    UC.GetPicGallery.Height = LoadWindows.GetMainWindow.ParentContainer.ActualHeight;
                 }
 
                 UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Stretch;

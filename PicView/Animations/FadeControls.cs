@@ -1,4 +1,5 @@
 ﻿using PicView.UILogic.Loading;
+using PicView.UILogic.PicGallery;
 using PicView.UILogic.TransformImage;
 using System;
 using System.Timers;
@@ -26,7 +27,8 @@ namespace PicView.UILogic.Animations
                 || GetClickArrowLeft == null
                 || Getx2 == null
                 || GetGalleryShortcut == null
-                || Scroll.IsAutoScrolling)
+                || Scroll.IsAutoScrolling
+                || Properties.Settings.Default.PicGallery == 1 && GalleryFunctions.IsOpen)
             {
                 return;
             }

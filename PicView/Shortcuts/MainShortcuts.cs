@@ -396,7 +396,7 @@ namespace PicView.Shortcuts
                                 Copyfile();
                             }
                         }
-                        else
+                        else if (!GalleryFunctions.IsOpen)
                         {
                             CropFunctions.StartCrop();
                         }
@@ -562,7 +562,7 @@ namespace PicView.Shortcuts
             if (altDown && !e.IsRepeat)
             {
                 // Alt + Z
-                if ((e.SystemKey == Key.Z))
+                if ((e.SystemKey == Key.Z) && !GalleryFunctions.IsOpen)
                 {
                     HideInterfaceLogic.ToggleInterface();
                 }
