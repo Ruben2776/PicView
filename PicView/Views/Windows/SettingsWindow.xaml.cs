@@ -21,7 +21,7 @@ namespace PicView.Views.Windows
         public SettingsWindow()
         {
             Width = 500 * WindowLogic.MonitorInfo.DpiScaling;
-
+            MaxHeight = WindowLogic.MonitorInfo.WorkArea.Height;
             InitializeComponent();
 
             ContentRendered += delegate

@@ -94,6 +94,9 @@ namespace PicView.UILogic.Loading
             MonitorInfo = MonitorSize.GetMonitorSize();
             AutoFitWindow = Properties.Settings.Default.AutoFitWindow;
             IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
+            LoadWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
+            LoadWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
+
             Pics = new List<string>();
 
             // Load image if possible
