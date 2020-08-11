@@ -62,6 +62,12 @@ namespace PicView.ConfigureSettings
         {
             mainColor = (Color)Application.Current.Resources["IconColor"];
             backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
+
+            if (LoadWindows.GetMainWindow.MainImageBorder == null)
+            {
+                return;
+            }
+
             LoadWindows.GetMainWindow.MainImageBorder.Background = BackgroundColorBrush;
         }
 

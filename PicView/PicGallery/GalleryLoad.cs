@@ -110,34 +110,29 @@ namespace PicView.UILogic.PicGallery
             IsOpen = true;
         }
 
-        internal static Task Load()
+        internal static Task Load() => Task.Run(async () =>
         {
-            IsLoading = true;
-            return Task.Run(async () =>
+            /// TODO Maybe make this start at at folder index
+            /// and get it work with a real sorting method?
+
+            for (int i = 0; i < ChangeImage.Navigation.Pics.Count; i++)
             {
-                /// TODO Maybe make this start at at folder index
-                /// and get it work with a real sorting method?
-
-                for (int i = 0; i < ChangeImage.Navigation.Pics.Count; i++)
+                var pic = ImageHandling.Thumbnails.GetBitmapSourceThumb(ChangeImage.Navigation.Pics[i]);
+                if (pic != null)
                 {
-                    var pic = ImageHandling.Thumbnails.GetBitmapSourceThumb(ChangeImage.Navigation.Pics[i]);
-                    if (pic != null)
+                    if (!pic.IsFrozen)
                     {
-                        if (!pic.IsFrozen)
-                        {
-                            pic.Freeze();
-                        }
+                        pic.Freeze();
+                    }
 
-                        await Add(pic, i).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        // Sync with list
-                        ChangeImage.Navigation.Pics.RemoveAt(i);
-                    }
+                    await Add(pic, i).ConfigureAwait(true);
                 }
-                IsLoading = false;
-            });
-        }
+                else
+                {
+                    // Sync with list
+                    ChangeImage.Navigation.Pics.RemoveAt(i);
+                }
+            }
+        });
     }
 }

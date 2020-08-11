@@ -102,7 +102,7 @@ namespace PicView.UILogic.PicGallery
 
             ScrollTo();
 
-            if (!IsLoading)
+            if (GetPicGallery.Container.Children.Count == 0)
             {
                 await Load().ConfigureAwait(false);
             }
@@ -152,7 +152,7 @@ namespace PicView.UILogic.PicGallery
             VisualStateManager.GoToElementState(GetPicGallery.Container, "Opacity", false);
             GetPicGallery.Opacity = GetPicGallery.Container.Opacity = 1;
 
-            if (!IsLoading)
+            if (GetPicGallery.Container.Children.Count == 0)
             {
                 await Load().ConfigureAwait(false);
             }

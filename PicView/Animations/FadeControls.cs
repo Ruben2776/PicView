@@ -33,24 +33,6 @@ namespace PicView.UILogic.Animations
                 return;
             }
 
-            if (!Properties.Settings.Default.ShowAltInterfaceButtons)
-            {
-                GetClickArrowLeft.Visibility =
-                GetClickArrowRight.Visibility =
-                GetGalleryShortcut.Visibility =
-                Getx2.Visibility =
-                GetMinus.Visibility = Visibility.Collapsed;
-                return;
-            }
-            else if (!GetClickArrowLeft.IsVisible)
-            {
-                GetClickArrowLeft.Visibility =
-                GetClickArrowRight.Visibility =
-                GetGalleryShortcut.Visibility =
-                Getx2.Visibility =
-                GetMinus.Visibility = Visibility.Visible;
-            }
-
             if (GetCropppingTool != null)
             {
                 if (GetCropppingTool.IsVisible)
@@ -59,8 +41,26 @@ namespace PicView.UILogic.Animations
                 }
             }
 
-            await LoadWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input, (Action)(() =>
+            await LoadWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
             {
+                if (!Properties.Settings.Default.ShowAltInterfaceButtons)
+                {
+                    GetClickArrowLeft.Visibility =
+                    GetClickArrowRight.Visibility =
+                    GetGalleryShortcut.Visibility =
+                    Getx2.Visibility =
+                    GetMinus.Visibility = Visibility.Collapsed;
+                    return;
+                }
+                else if (!GetClickArrowLeft.IsVisible)
+                {
+                    GetClickArrowLeft.Visibility =
+                    GetClickArrowRight.Visibility =
+                    GetGalleryShortcut.Visibility =
+                    Getx2.Visibility =
+                    GetMinus.Visibility = Visibility.Visible;
+                }
+
                 if (Properties.Settings.Default.ScrollEnabled && LoadWindows.GetMainWindow.Scroller.ScrollableHeight > 0)
                 {
                     ScrollbarFade(show);

@@ -14,7 +14,6 @@ namespace PicView.UILogic.PicGallery
     {
         internal static int picGalleryItem_Size;
         internal static int picGalleryItem_Size_s;
-        internal static bool IsLoading { get; set; }
 
         private static bool Open;
 
@@ -51,7 +50,6 @@ namespace PicView.UILogic.PicGallery
                 return;
             }
 
-            IsLoading = false;
             GetPicGallery.Container.Children.Clear();
 
 #if DEBUG

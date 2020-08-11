@@ -156,9 +156,12 @@ namespace PicView.ChangeImage
             Pic(FolderIndex);
 
             // Load new gallery values, if changing folder
-            if (GetPicGallery != null && Properties.Settings.Default.PicGallery == 2 && !GalleryFunctions.IsLoading)
+            if (GetPicGallery != null && Properties.Settings.Default.PicGallery == 2)
             {
-                await GalleryLoad.Load().ConfigureAwait(false);
+                if (GetPicGallery.Container.Children.Count == 0)
+                {
+                    await GalleryLoad.Load().ConfigureAwait(false);
+                }
             }
         }
 
@@ -433,9 +436,12 @@ namespace PicView.ChangeImage
             GetQuickSettingsMenu.GoToPic.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
 
             // Load new gallery values, if changing folder
-            if (GetPicGallery != null && Properties.Settings.Default.PicGallery == 2 && !GalleryFunctions.IsLoading)
+            if (GetPicGallery != null && Properties.Settings.Default.PicGallery == 2)
             {
-                await GalleryLoad.Load().ConfigureAwait(false);
+                if (GetPicGallery.Container.Children.Count == 0)
+                {
+                    await GalleryLoad.Load().ConfigureAwait(false);
+                }
             }
         }
 
