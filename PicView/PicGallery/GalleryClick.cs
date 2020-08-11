@@ -27,14 +27,14 @@ namespace PicView.UILogic.PicGallery
 
             if (Properties.Settings.Default.PicGallery == 1)
             {
-                if (Preloader.Contains(Pics[id]))
+                LoadWindows.GetMainWindow.MainImage.Visibility = Visibility.Hidden;
+
+                var z = GetPicGallery.Container.Children[id] as UserControls.PicGalleryItem;
+                LoadWindows.GetMainWindow.MainImage.Source = z.img.Source;
+                var size = ImageSize(Pics[id]);
+                if (size.HasValue)
                 {
-                    PreviewItemClick(Preloader.Get(Pics[id]), id);
-                }
-                else
-                {
-                    var z = GetPicGallery.Container.Children[id] as UserControls.PicGalleryItem;
-                    PreviewItemClick(z.img.Source, id);
+                    FitImage(size.Value.Width, size.Value.Height);
                 }
 
                 if (WindowLogic.AutoFitWindow)
@@ -43,9 +43,7 @@ namespace PicView.UILogic.PicGallery
                     GetPicGallery.Height = xHeight;
                 }
 
-                GetPicGallery.x2.Visibility = Visibility.Hidden;
-
-                LoadWindows.GetMainWindow.MainImage.Source = null;
+                GetPicGallery.x2.Visibility = Visibility.Hidden;                
 
                 var img = new Image()
                 {
@@ -89,17 +87,11 @@ namespace PicView.UILogic.PicGallery
                     FillBehavior = FillBehavior.Stop
                 };
 
-                var da1 = new DoubleAnimation
-                {
-                    From = 1,
-                    To = 0,
-                    Duration = duration,
-                    FillBehavior = FillBehavior.Stop
-                };
-
                 da.Completed += delegate
                 {
+                    LoadWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
                     ItemClick(id);
+                    border.Opacity = 0;
                     GetPicGallery.grid.Children.Remove(border);
                     img = null;
                     IsOpen = false;
@@ -107,21 +99,10 @@ namespace PicView.UILogic.PicGallery
 
                 border.BeginAnimation(FrameworkElement.WidthProperty, da);
                 border.BeginAnimation(FrameworkElement.HeightProperty, da0);
-                GetPicGallery.Container.BeginAnimation(UIElement.OpacityProperty, da1);
             }
             else
             {
                 ItemClick(id);
-            }
-        }
-
-        internal static void PreviewItemClick(ImageSource source, int id)
-        {
-            LoadWindows.GetMainWindow.MainImage.Source = source;
-            var size = ImageSize(Pics[id]);
-            if (size.HasValue)
-            {
-                FitImage(size.Value.Width, size.Value.Height);
             }
         }
 

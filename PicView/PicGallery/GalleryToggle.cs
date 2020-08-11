@@ -81,8 +81,7 @@ namespace PicView.UILogic.PicGallery
             Properties.Settings.Default.PicGallery = 1;
             LoadLayout();
 
-            GetPicGallery.Opacity = 1;
-            AnimationHelper.Fade(GetPicGallery.Container, TimeSpan.FromSeconds(.5), TimeSpan.Zero, 0, 1);
+            AnimationHelper.Fade(GetPicGallery, TimeSpan.FromSeconds(.3), TimeSpan.Zero, 0, 1);
 
             GetClickArrowLeft.Visibility =
             GetClickArrowRight.Visibility =
@@ -183,7 +182,6 @@ namespace PicView.UILogic.PicGallery
             da.Completed += delegate
             {
                 GetPicGallery.Visibility = Visibility.Collapsed;
-                GetPicGallery.Opacity = 1;
             };
 
             GetPicGallery.BeginAnimation(UIElement.OpacityProperty, da);

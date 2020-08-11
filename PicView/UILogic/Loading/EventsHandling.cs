@@ -100,7 +100,7 @@ namespace PicView.UILogic.Loading
             GetMinus.MouseLeftButtonDown += (s, x) => SystemCommands.MinimizeWindow(LoadWindows.GetMainWindow);
 
             // GalleryShortcut
-            GetGalleryShortcut.MouseLeftButtonDown += (s, x) => GalleryToggle.Toggle();
+            GetGalleryShortcut.MouseLeftButtonDown += (s, x) => GalleryToggle.OpenContainedGallery();
 
             // Bar
             LoadWindows.GetMainWindow.TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;

@@ -14,10 +14,7 @@ namespace PicView.UILogic.PicGallery
         {
             get
             {
-                if (GetPicGallery == null)
-                {
-                    return 0;
-                }
+                if (GetPicGallery == null) { return 0; }
 
                 return (int)Math.Floor(GetPicGallery.Width / picGalleryItem_Size);
             }
@@ -27,10 +24,7 @@ namespace PicView.UILogic.PicGallery
         {
             get
             {
-                if (GetPicGallery == null)
-                {
-                    return 0;
-                }
+                if (GetPicGallery == null) { return 0; }
 
                 return Properties.Settings.Default.PicGallery == 1 ?
                     (int)Math.Floor(GetPicGallery.Height / picGalleryItem_Size) : Navigation.Pics.Count;
@@ -41,10 +35,7 @@ namespace PicView.UILogic.PicGallery
         {
             get
             {
-                if (GetPicGallery == null)
-                {
-                    return 0;
-                }
+                if (GetPicGallery == null) { return 0; }
 
                 return Properties.Settings.Default.PicGallery == 1 ?
                     Horizontal_items * Vertical_items :
@@ -72,11 +63,11 @@ namespace PicView.UILogic.PicGallery
         {
             if (Properties.Settings.Default.PicGallery == 1)
             {
-                GetPicGallery.Scroller.ScrollToHorizontalOffset((picGalleryItem_Size * Horizontal_items) * Current_page);
+                GetPicGallery.Scroller.ScrollToHorizontalOffset(picGalleryItem_Size * Horizontal_items * Current_page);
             }
             else
             {
-                GetPicGallery.Scroller.ScrollToVerticalOffset((picGalleryItem_Size * Items_per_page) * Current_page);
+                GetPicGallery.Scroller.ScrollToVerticalOffset(picGalleryItem_Size * Items_per_page * Current_page);
             }
         }
 
