@@ -61,24 +61,8 @@ namespace PicView.ConfigureSettings
         internal static void SetColors()
         {
             mainColor = (Color)Application.Current.Resources["IconColor"];
-
-            switch (Properties.Settings.Default.BgColorChoice)
-            {
-                case 0:
-                    LoadWindows.GetMainWindow.MainImageBorder.Background = Brushes.Transparent;
-                    break;
-
-                case 1:
-                    var brush = Properties.Settings.Default.DarkTheme ? Brushes.Black : Brushes.White;
-                    LoadWindows.GetMainWindow.MainImageBorder.Background = brush;
-                    break;
-
-                case 2:
-                    LoadWindows.GetMainWindow.MainImageBorder.Background = DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
-                    break;
-            }
-
             backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
+            LoadWindows.GetMainWindow.MainImageBorder.Background = BackgroundColorBrush;
         }
 
         #endregion Update and set colors
@@ -99,55 +83,17 @@ namespace PicView.ConfigureSettings
                 Properties.Settings.Default.BgColorChoice = 0;
             }
 
-            switch (Properties.Settings.Default.BgColorChoice)
-            {
-                case 0:
-                    var x = new SolidColorBrush(Colors.Transparent);
-                    if (LoadWindows.GetMainWindow.MainImageBorder.Background == x)
-                    {
-                        goto case 1;
-                    }
-                    LoadWindows.GetMainWindow.MainImageBorder.Background = x;
-                    break;
-
-                case 1:
-                    var brush = Properties.Settings.Default.DarkTheme ? Brushes.White : Brushes.Black;
-                    LoadWindows.GetMainWindow.MainImageBorder.Background = brush;
-                    break;
-
-                case 2:
-                    var checkerboardBg = DrawingBrushes.CheckerboardDrawingBrush(Colors.White);
-                    if (checkerboardBg != null)
-                    {
-                        LoadWindows.GetMainWindow.MainImageBorder.Background = checkerboardBg;
-                    }
-                    break;
-
-                case 3:
-                    var checkerboardBg2 = DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(76, 76, 76));
-                    if (checkerboardBg2 != null)
-                    {
-                        LoadWindows.GetMainWindow.MainImageBorder.Background = checkerboardBg2;
-                    }
-                    break;
-
-                default:
-                    LoadWindows.GetMainWindow.MainImageBorder.Background = Brushes.Transparent;
-                    break;
-            }
+            LoadWindows.GetMainWindow.MainImageBorder.Background = BackgroundColorBrush;
         }
 
-        internal static Brush GetBackgroundColorBrush()
+        internal static Brush BackgroundColorBrush => Properties.Settings.Default.BgColorChoice switch
         {
-            return Properties.Settings.Default.BgColorChoice switch
-            {
-                0 => Brushes.Transparent,
-                1 => Properties.Settings.Default.DarkTheme ? Brushes.White : Brushes.Black,
-                2 => DrawingBrushes.CheckerboardDrawingBrush(Colors.White),
-                3 => DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(76, 76, 76), Color.FromRgb(32, 32, 32), 55),
-                _ => Brushes.Transparent,
-            };
-        }
+            0 => Brushes.Transparent,
+            1 => Properties.Settings.Default.DarkTheme ? Brushes.White : new SolidColorBrush(Color.FromRgb(25, 25, 25)),
+            2 => DrawingBrushes.CheckerboardDrawingBrush(Colors.White),
+            3 => DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(76, 76, 76), Color.FromRgb(32, 32, 32), 56),
+            _ => Brushes.Transparent,
+        };
 
         #endregion Change background
 
