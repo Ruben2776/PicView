@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="clr-namespace:PicView.UILogic.UserControls"
+    xmlns:uc="clr-namespace:PicView.Views.UserControls"
     Title="{StaticResource ResourceKey=InfoWindowTitle}"
     BorderBrush="{StaticResource BorderBrush}"
     BorderThickness="1"
@@ -2195,6 +2195,22 @@
                             </Hyperlink.Foreground>
                         </Hyperlink>
                     </TextBlock>
+
+
+                    <TextBlock TextAlignment="Center">
+                        <Hyperlink NavigateUri="https://www.flaticon.com/authors/freepik" RequestNavigate="Hyperlink_RequestNavigate">
+                            <TextBlock
+                                x:Name="freepik"
+                                Margin="0,0,0,2"
+                                FontSize="14"
+                                Text="Freepik"
+                                ToolTip="https://www.flaticon.com/authors/freepik" />
+                            <Hyperlink.Foreground>
+                                <SolidColorBrush x:Name="FreepikBrush" Color="{StaticResource MainColor}" />
+                            </Hyperlink.Foreground>
+                        </Hyperlink>
+                    </TextBlock>
+
                 </StackPanel>
 
                 <StackPanel Margin="0,36,0,0">

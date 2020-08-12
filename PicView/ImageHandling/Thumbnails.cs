@@ -1,6 +1,6 @@
 ﻿using ImageMagick;
 using PicView.FileHandling;
-using PicView.UILogic.UserControls;
+using PicView.Views.UserControls;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;

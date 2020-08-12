@@ -327,6 +327,21 @@
     <Compile Update="Views\UserControls\Buttons\CloseButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\UserControls\Misc\DragDropOverlayPic.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UserControls\Misc\LinkChain - Copy %282%29.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>LinkChain.xaml.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\UserControls\Misc\LinkChain - Copy - Copy.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>LinkChain - Copy.xaml.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\UserControls\Misc\LinkChain - Copy.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>LinkChain.xaml.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Update="Properties\Settings.settings">
@@ -394,6 +409,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\UserControls\Buttons\CloseButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserControls\Misc\DragDropOverlayPic.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
@@ -484,6 +502,7 @@
     <None Remove="Themes\Resources\fonts\texgyreheros-bolditalic.otf" />
     <None Remove="Themes\Resources\fonts\texgyreheros-italic.otf" />
     <None Remove="Themes\Resources\fonts\texgyreheros-regular.otf" />
+    <None Remove="Themes\Resources\img\hyperlink.png" />
     <None Remove="Themes\Resources\img\icon-raster.128.png" />
     <None Remove="Themes\Resources\img\icon-raster.180b.png" />
     <None Remove="Themes\Resources\img\icon-raster.180l.png" />

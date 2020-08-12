@@ -1,0 +1,130 @@
+﻿<UserControl
+    x:Class="PicView.Views.UserControls.Misc.ZipIcon"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:PicView.Views.UserControls.Misc"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Canvas
+        Canvas.Left="440"
+        Canvas.Top="807"
+        Width="265"
+        Height="265"
+        ClipToBounds="True">
+        <Canvas.Resources>
+            <PathGeometry
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                x:Key="Mask1"
+                Figures="M0 0L265 0L265 265L0 265L0 0Z">
+                <PathGeometry.Transform>
+                    <TranslateTransform X="-30.75894" Y="0" />
+                </PathGeometry.Transform>
+            </PathGeometry>
+        </Canvas.Resources>
+        <Rectangle Width="265" Height="265" />
+        <Canvas
+            Canvas.Left="30.76"
+            Width="203.48"
+            Height="265"
+            Clip="{StaticResource Mask1}"
+            ClipToBounds="True">
+            <Path
+                Width="203.48"
+                Height="265"
+                Data="M144.259 0L6.92312 0C3.09955 0 0 3.09955 0 9.11411L0 260.268C0 261.9 3.09955 265 6.92313 265L196.559 265C200.383 265 203.482 261.9 203.482 260.268L203.482 61.4138C203.482 58.1202 203.042 57.0602 202.266 56.2794L147.203 1.21616C146.422 0.440089 145.362 0 144.259 0L144.259 0Z"
+                Fill="#E9E9E0"
+                Stretch="Fill" />
+            <Path
+                Canvas.Left="146.7"
+                Canvas.Top="0.71"
+                Width="56.07"
+                Height="56.07"
+                Data="M0 0L0 56.0712L56.0711 56.0712L0 0Z"
+                Fill="#D9D7CA"
+                Stretch="Fill" />
+            <Path
+                Canvas.Top="184.55"
+                Width="203.48"
+                Height="80.45"
+                Data="M196.559 80.4464L6.92312 80.4464C3.09955 80.4464 0 77.3469 0 73.5233L0 0L203.482 0L203.482 73.5233C203.482 77.3469 200.383 80.4464 196.559 80.4464L196.559 80.4464Z"
+                Fill="{DynamicResource ChosenColorBrush}"
+                Stretch="Fill" />
+            <Canvas
+                Canvas.Left="57.1"
+                Canvas.Top="203.12"
+                Width="92.84"
+                Height="47.68"
+                ClipToBounds="True">
+                <Path
+                    Width="31.7"
+                    Height="47.68"
+                    Data="M31.7006 0L31.7006 6.27482L8.99107 40.3699L7.69919 41.4063L31.7006 41.4063L31.7006 47.6811L0 47.6811L0 41.4063L22.7096 7.31117L24.0677 6.27482L0 6.27482L0 0L31.7006 0L31.7006 0Z"
+                    Fill="#FFFFFF"
+                    Stretch="Fill" />
+                <Rectangle
+                    Canvas.Left="42.76"
+                    Width="7.89"
+                    Height="47.68"
+                    Fill="#FFFFFF" />
+                <Canvas
+                    Canvas.Left="62.49"
+                    Width="30.34"
+                    Height="47.68"
+                    ClipToBounds="True">
+                    <Path
+                        Width="30.34"
+                        Height="47.68"
+                        Data="M7.76545 47.6811L0 47.6811L0 0L13.7138 0C15.7391 0 17.7455 0.321789 19.7283 0.970098C21.7111 1.61841 23.4904 2.58849 25.0662 3.88037C26.642 5.17224 27.9149 6.73859 28.885 8.56993C29.8551 10.4013 30.3425 12.4597 30.3425 14.7501C30.3425 17.1682 29.9308 19.3545 29.1121 21.3183C28.2935 23.2822 27.1483 24.9337 25.6813 26.2682C24.2144 27.6026 22.4445 28.639 20.3766 29.3724C18.3087 30.1059 16.0183 30.4703 13.5197 30.4703L7.76072 30.4703L7.76072 47.6811L7.76545 47.6811Z"
+                        Fill="White"
+                        Stretch="Fill" />
+                    <Path
+                        Canvas.Left="7.77"
+                        Canvas.Top="5.89"
+                        Width="15.07"
+                        Height="18.89"
+                        Data="M0 0L0 18.8907L7.11715 18.8907C8.06358 18.8907 9.00054 18.7298 9.93278 18.4033C10.8603 18.0815 11.7121 17.5515 12.4881 16.818C13.2642 16.0846 13.8889 15.0624 14.3621 13.7469C14.8353 12.4314 15.0719 10.8035 15.0719 8.86331C15.0719 8.08723 14.9631 7.18813 14.7501 6.18018C14.5324 5.1675 14.0923 4.19742 13.4251 3.2699C12.7532 2.34241 11.8162 1.56633 10.6095 0.941685C9.40278 0.317042 7.80333 0.00471149 5.82055 0.00471149L0 0.00471149L0 0Z"
+                        Fill="{DynamicResource ChosenColorBrush}"
+                        Stretch="Fill" />
+                </Canvas>
+            </Canvas>
+            <Canvas
+                Canvas.Left="75.71"
+                Canvas.Top="28.39"
+                Width="47.32"
+                Height="132.5"
+                ClipToBounds="True">
+                <Canvas
+                    Width="47.32"
+                    Height="132.5"
+                    ClipToBounds="True">
+                    <Path
+                        Width="47.32"
+                        Height="132.5"
+                        Data="M28.3929 85.1786L28.3929 75.7143L37.8571 75.7143L37.8571 66.25L28.3929 66.25L28.3929 56.7857L37.8571 56.7857L37.8571 47.3214L28.3929 47.3214L28.3929 37.8571L37.8571 37.8571L37.8571 28.3929L28.3929 28.3929L28.3929 18.9286L37.8571 18.9286L37.8571 9.46429L28.3929 9.46429L28.3929 0L18.9286 0L18.9286 9.46429L9.46429 9.46429L9.46429 18.9286L18.9286 18.9286L18.9286 28.3929L9.46429 28.3929L9.46429 37.8571L18.9286 37.8571L18.9286 47.3214L9.46429 47.3214L9.46429 56.7857L18.9286 56.7857L18.9286 66.25L9.46429 66.25L9.46429 75.7143L18.9286 75.7143L18.9286 85.1786L0 85.1786L0 108.839C0 121.886 10.6142 132.5 23.6607 132.5C36.7072 132.5 47.3214 121.886 47.3214 108.839L47.3214 85.1786L28.3929 85.1786L28.3929 85.1786Z"
+                        Fill="#C8BDB8"
+                        Stretch="Fill" />
+                    <Path
+                        Canvas.Left="9.46"
+                        Canvas.Top="94.64"
+                        Width="28.39"
+                        Height="28.39"
+                        Data="M28.3929 14.1964C28.3929 22.0234 22.0234 28.3929 14.1964 28.3929C6.36947 28.3929 0 22.0234 0 14.1964L0 0L28.3929 0L28.3929 14.1964L28.3929 14.1964Z"
+                        Fill="#E9E9E0"
+                        Stretch="Fill" />
+                </Canvas>
+                <Path
+                    Canvas.Left="14.2"
+                    Canvas.Top="104.11"
+                    Width="18.93"
+                    Height="9.46"
+                    Data="M4.73214 9.46429L14.1964 9.46429C16.8086 9.46429 18.9286 7.34902 18.9286 4.73214C18.9286 2.11527 16.8086 0 14.1964 0L4.73214 0C2.12 0 0 2.11527 0 4.73214C0 7.34902 2.12 9.46429 4.73214 9.46429L4.73214 9.46429Z"
+                    Fill="#C8BDB8"
+                    Stretch="Fill" />
+            </Canvas>
+        </Canvas>
+    </Canvas>
+
+</UserControl>
