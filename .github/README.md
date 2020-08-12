@@ -4,7 +4,7 @@
 </h1>
 <br>
 
-PicView is a fast and Open Source Image Viewer for Windows, with configureable interface and image galleries. 
+PicView is a fast and Open Source Image Viewer for Windows, with configurable interface and image galleries.
 
 [![Total Downloads](https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=downloads&style=for-the-badge)](https://github.com/Ruben2776/PicView/releases)
  [![GPL Licence](https://img.shields.io/badge/license-GPLv3-green.svg?maxAge=3600&style=for-the-badge)](https://github.com/Ruben2776/PicView/blob/master/LICENSE.txt)
