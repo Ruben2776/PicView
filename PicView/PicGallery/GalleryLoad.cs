@@ -48,7 +48,7 @@ namespace PicView.UILogic.PicGallery
         {
             if (UC.GetPicGallery == null)
             {
-                UC.GetPicGallery = new UserControls.PicGallery
+                UC.GetPicGallery = new Views.UserControls.PicGallery
                 {
                     Opacity = 0,
                     Visibility = Visibility.Collapsed

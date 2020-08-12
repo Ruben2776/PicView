@@ -1,7 +1,7 @@
 ﻿using PicView.UILogic.Animations;
 using System.Windows.Controls;
 
-namespace PicView.UILogic.UserControls
+namespace PicView.Views.UserControls
 {
     /// <summary>
     /// Cool shady close button!

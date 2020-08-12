@@ -1,13 +1,13 @@
-﻿using PicView.ChangeImage;
-using PicView.FileHandling;
+﻿using PicView.FileHandling;
 using PicView.UILogic.Loading;
+using PicView.Views.UserControls;
+using PicView.Views.UserControls.Misc;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.Thumbnails;
 using static PicView.UILogic.Tooltip;
@@ -19,7 +19,7 @@ namespace PicView.UILogic.DragAndDrop
         /// <summary>
         /// Backup of image
         /// </summary>
-        private static ImageSource prevPicResource;
+        private static Views.UserControls.DragDropOverlay DropOverlay;
 
         /// <summary>
         /// Check if dragged file is valid,
@@ -53,53 +53,65 @@ namespace PicView.UILogic.DragAndDrop
         /// <param name="e"></param>
         internal static void Image_DragEnter(object sender, DragEventArgs e)
         {
-            // Error handling
-            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                return;
-            }
+            UIElement element = null;
 
-            var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-            var check = Drag_Drop_Check(files);
-
-            // Do nothing for invalid files
-            if (!check.HasValue)
+            if (!(e.Data.GetData(DataFormats.FileDrop, true) is string[] files))
             {
-                return;
-            }
+                var data = e.Data.GetData(DataFormats.Text);
 
-            // Check if same file
-            if (files.Length == 1 && Pics.Count > 0)
-            {
-                if (files[0] == Pics[FolderIndex])
+                if (data != null) // Check if from web)
+                {
+                    // Link
+                    element = new LinkChain();
+                }
+                else
                 {
                     return;
                 }
+            }
+            else if (Directory.Exists(files[0]))
+            {
+                if (Properties.Settings.Default.IncludeSubDirectories || Directory.GetFiles(files[0]).Length > 0)
+                {
+                    // Folder
+                    element = new FolderIcon();
+                }
+                else
+                {
+                    return;
+                }
+            }
+            else if (SupportedFiles.IsSupportedArchives(Path.GetExtension(files[0])))
+            {
+                // Archive
+                element = new ZipIcon();
+            }
+            else if (SupportedFiles.IsSupportedFile(Path.GetExtension(files[0])).HasValue)
+            {
+                // Check if same file
+                if (files.Length == 1 && Pics.Count > 0)
+                {
+                    if (files[0] == Pics[FolderIndex])
+                    {
+                        e.Effects = DragDropEffects.None;
+                        e.Handled = true;
+                        return;
+                    }
+                }
+                // File
+                element = new DragDropOverlayPic(GetBitmapSourceThumb(files[0]));
             }
 
             // Tell that it's succeeded
             e.Effects = DragDropEffects.Copy;
             e.Handled = true;
-            ShowTooltipMessage(Application.Current.Resources["DragOverString"] as string, true);
 
-            // If no image, fix it to container
-            if (LoadWindows.GetMainWindow.MainImage.Source == null)
+            if (element != null)
             {
-                LoadWindows.GetMainWindow.MainImage.Width = LoadWindows.GetMainWindow.Scroller.ActualWidth;
-                LoadWindows.GetMainWindow.MainImage.Height = LoadWindows.GetMainWindow.Scroller.ActualHeight;
-            }
-            else
-            {
-                // Save our image so we can swap back to it later if neccesary
-                prevPicResource = LoadWindows.GetMainWindow.MainImage.Source;
-            }
-
-            // Load from thumbnail
-            var thumb = GetBitmapSourceThumb(files[0]);
-
-            if (thumb != null)
-            {
-                LoadWindows.GetMainWindow.MainImage.Source = thumb;
+                if (DropOverlay == null)
+                {
+                    AddDragOverlay(element);
+                }
             }
         }
 
@@ -114,10 +126,9 @@ namespace PicView.UILogic.DragAndDrop
 
             // Switch to previous image if available
 
-            if (prevPicResource != null)
+            if (DropOverlay != null)
             {
-                LoadWindows.GetMainWindow.MainImage.Source = prevPicResource;
-                prevPicResource = null;
+                RemoveDragOverlay();
             }
             else if (LoadWindows.GetMainWindow.TitleText.Text == Application.Current.Resources["NoImage"] as string)
             {
@@ -134,6 +145,8 @@ namespace PicView.UILogic.DragAndDrop
         /// <param name="e"></param>
         internal static void Image_Drop(object sender, DragEventArgs e)
         {
+            RemoveDragOverlay();
+
             // Load dropped URL
             if (e.Data.GetData(DataFormats.Html) != null)
             {
@@ -210,12 +223,22 @@ namespace PicView.UILogic.DragAndDrop
                     myProcess.Start();
                 });
             }
+        }
 
-            // Save memory, make prevPicResource null
-            if (prevPicResource != null)
+        private static void AddDragOverlay(UIElement element)
+        {
+            DropOverlay = new Views.UserControls.DragDropOverlay(element)
             {
-                prevPicResource = null;
-            }
+                Width = LoadWindows.GetMainWindow.ParentContainer.ActualWidth,
+                Height = LoadWindows.GetMainWindow.ParentContainer.ActualHeight
+            };
+            LoadWindows.GetMainWindow.topLayer.Children.Add(DropOverlay);
+        }
+
+        private static void RemoveDragOverlay()
+        {
+            LoadWindows.GetMainWindow.topLayer.Children.Remove(DropOverlay);
+            DropOverlay = null;
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
-namespace PicView.UILogic.UserControls
+namespace PicView.Views.UserControls
 {
     public partial class FlipButton : UserControl
     {
@@ -34,7 +34,7 @@ namespace PicView.UILogic.UserControls
 
                 TheButton.Click += delegate
                 {
-                    TransformImage.Rotation.Flip();
+                    UILogic.TransformImage.Rotation.Flip();
                 };
 
                 // Change FlipButton's icon when (un)checked

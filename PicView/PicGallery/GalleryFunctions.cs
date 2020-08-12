@@ -34,7 +34,7 @@ namespace PicView.UILogic.PicGallery
             await LoadWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
                 var selected = id == ChangeImage.Navigation.FolderIndex;
-                var item = new UserControls.PicGalleryItem(pic, id, selected);
+                var item = new Views.UserControls.PicGalleryItem(pic, id, selected);
                 item.MouseLeftButtonDown += delegate
                 {
                     GalleryClick.Click(id);
@@ -62,7 +62,7 @@ namespace PicView.UILogic.PicGallery
             if (x > GetPicGallery.Container.Children.Count) { return; }
 
             // Select next item
-            var nextItem = GetPicGallery.Container.Children[x] as UserControls.PicGalleryItem;
+            var nextItem = GetPicGallery.Container.Children[x] as Views.UserControls.PicGalleryItem;
             nextItem.innerborder.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
             nextItem.innerborder.Width = nextItem.innerborder.Height = picGalleryItem_Size;
         }
@@ -72,7 +72,7 @@ namespace PicView.UILogic.PicGallery
             if (x > GetPicGallery.Container.Children.Count) { return; }
 
             // Deselect current item
-            var prevItem = GetPicGallery.Container.Children[x] as UserControls.PicGalleryItem;
+            var prevItem = GetPicGallery.Container.Children[x] as Views.UserControls.PicGalleryItem;
             prevItem.innerborder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
             prevItem.innerborder.Width = prevItem.innerborder.Height = picGalleryItem_Size_s;
         }

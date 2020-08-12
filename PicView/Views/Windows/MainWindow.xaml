@@ -2,7 +2,7 @@
     x:Class="PicView.Views.Windows.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:uc="clr-namespace:PicView.UILogic.UserControls"
+    xmlns:uc="clr-namespace:PicView.Views.UserControls"
     Title="{StaticResource Loading}"
     MinWidth="475"
     MinHeight="435"

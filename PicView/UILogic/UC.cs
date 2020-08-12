@@ -1,7 +1,7 @@
 ﻿using PicView.ChangeImage;
 using PicView.UILogic.PicGallery;
-using PicView.UILogic.UserControls;
-using PicView.UILogic.UserControls.Misc;
+using PicView.Views.UserControls;
+using PicView.Views.UserControls.Misc;
 using System;
 using System.Windows;
 using System.Windows.Media.Animation;
@@ -21,7 +21,7 @@ namespace PicView.UILogic
         internal static X2 Getx2 { get; set; }
         internal static Minus GetMinus { get; set; }
         internal static Restorebutton GetRestorebutton { get; set; }
-        internal static UserControls.PicGallery GetPicGallery { get; set; }
+        internal static Views.UserControls.PicGallery GetPicGallery { get; set; }
         internal static GalleryShortcut GetGalleryShortcut { get; set; }
         internal static CroppingTool GetCropppingTool { get; set; }
         internal static ColorPicker GetColorPicker { get; set; }

@@ -4,7 +4,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static PicView.UILogic.PicGallery.GalleryFunctions;
 
-namespace PicView.UILogic.UserControls
+namespace PicView.Views.UserControls
 {
     /// <summary>
     /// The usercontrol (UI element) of PicGallery

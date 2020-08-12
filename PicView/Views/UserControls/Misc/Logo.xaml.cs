@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace PicView.UILogic.UserControls
+namespace PicView.Views.UserControls
 {
     /// <summary>
     /// Interaction logic for Logo.xaml

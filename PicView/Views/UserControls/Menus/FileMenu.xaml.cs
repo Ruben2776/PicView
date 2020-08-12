@@ -1,8 +1,9 @@
-﻿using PicView.UILogic.Animations;
+﻿using PicView.UILogic;
+using PicView.UILogic.Animations;
 using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
-namespace PicView.UILogic.UserControls
+namespace PicView.Views.UserControls
 {
     /// <summary>
     /// Interaction logic for fileMenu.xaml

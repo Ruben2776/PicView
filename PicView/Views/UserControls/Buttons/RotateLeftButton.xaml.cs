@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
-namespace PicView.UILogic.UserControls
+namespace PicView.Views.UserControls
 {
     public partial class RotateLeftButton : UserControl
     {
@@ -25,7 +25,7 @@ namespace PicView.UILogic.UserControls
                 };
                 TheButton.Click += delegate
                 {
-                    TransformImage.Rotation.Rotate(false);
+                    UILogic.TransformImage.Rotation.Rotate(false);
                     // TODO move cursor if necessary
                 };
             };

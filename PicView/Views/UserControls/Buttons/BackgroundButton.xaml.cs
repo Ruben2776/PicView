@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
-namespace PicView.UILogic.UserControls
+namespace PicView.Views.UserControls
 {
     public partial class BackGroundButton : UserControl
     {

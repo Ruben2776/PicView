@@ -1,8 +1,9 @@
-﻿using System.Windows;
+﻿using PicView.UILogic;
+using System.Windows;
 using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
-namespace PicView.UILogic.UserControls
+namespace PicView.Views.UserControls
 {
     public partial class SlideshowButton : UserControl
     {

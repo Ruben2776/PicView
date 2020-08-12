@@ -29,7 +29,7 @@ namespace PicView.UILogic.PicGallery
             {
                 LoadWindows.GetMainWindow.MainImage.Visibility = Visibility.Hidden;
 
-                var z = GetPicGallery.Container.Children[id] as UserControls.PicGalleryItem;
+                var z = GetPicGallery.Container.Children[id] as Views.UserControls.PicGalleryItem;
                 LoadWindows.GetMainWindow.MainImage.Source = z.img.Source;
                 var size = ImageSize(Pics[id]);
                 if (size.HasValue)

@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 using static PicView.UILogic.UC;
 
-namespace PicView.UILogic.UserControls
+namespace PicView.Views.UserControls
 {
     /// <summary>
     /// Interaction logic for QuickSettingsMenu.xaml
@@ -56,7 +56,7 @@ namespace PicView.UILogic.UserControls
                 }
             };
 
-            ZoomSlider.ValueChanged += delegate { TransformImage.ZoomLogic.Zoom(ZoomSlider.Value); };
+            ZoomSlider.ValueChanged += delegate { UILogic.TransformImage.ZoomLogic.Zoom(ZoomSlider.Value); };
 
             #region Animation events
 

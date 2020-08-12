@@ -1,5 +1,5 @@
 ﻿using PicView.ChangeImage;
-using PicView.UILogic.UserControls;
+using PicView.Views.UserControls;
 using System;
 using System.Windows;
 using System.Windows.Media;

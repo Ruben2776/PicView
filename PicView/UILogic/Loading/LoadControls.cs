@@ -1,5 +1,5 @@
-﻿using PicView.UILogic.UserControls;
-using PicView.UILogic.UserControls.Misc;
+﻿using PicView.Views.UserControls;
+using PicView.Views.UserControls.Misc;
 using System.Diagnostics;
 using System.Windows;
 using static PicView.UILogic.UC;

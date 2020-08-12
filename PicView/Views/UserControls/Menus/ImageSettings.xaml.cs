@@ -1,7 +1,7 @@
 ﻿using PicView.UILogic.Animations;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
-namespace PicView.UILogic.UserControls
+namespace PicView.Views.UserControls
 {
     /// <summary>
     /// Interaction logic for ImageSettings.xaml
