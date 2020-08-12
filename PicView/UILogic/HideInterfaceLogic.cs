@@ -3,7 +3,6 @@ using PicView.UILogic.PicGallery;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.UILogic.Animations.FadeControls;
-using static PicView.UILogic.Sizing.ScaleImage;
 
 namespace PicView.UILogic
 {
@@ -29,8 +28,6 @@ namespace PicView.UILogic
             {
                 ShowStandardInterface();
             }
-
-            TryFitImage();
 
             UC.Close_UserControls();
         }

@@ -91,9 +91,12 @@ namespace PicView.UILogic.Loading
 
             #endregion Add dictionaries
 
+            // Load sizing properties
             MonitorInfo = MonitorSize.GetMonitorSize();
             AutoFitWindow = Properties.Settings.Default.AutoFitWindow;
             IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
+
+            // Set min size to DPI scaling
             LoadWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
             LoadWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
@@ -111,6 +114,18 @@ namespace PicView.UILogic.Loading
 
                 // Don't start it in fullscreen with no image
                 Properties.Settings.Default.Fullscreen = false;
+
+                // Determine proper startup size
+                if (Properties.Settings.Default.Width != 0)
+                {
+                    SetLastWindowSize();
+                }
+                else
+                {
+                    LoadWindows.GetMainWindow.Width = 750 * MonitorInfo.DpiScaling;
+                    LoadWindows.GetMainWindow.MinHeight = 700 * MonitorInfo.DpiScaling;
+                    CenterWindowOnScreen();
+                }
             }
             else
             {
@@ -129,10 +144,7 @@ namespace PicView.UILogic.Loading
                 }
                 else if (Properties.Settings.Default.Width != 0)
                 {
-                    LoadWindows.GetMainWindow.Top = Properties.Settings.Default.Top;
-                    LoadWindows.GetMainWindow.Left = Properties.Settings.Default.Left;
-                    LoadWindows.GetMainWindow.Width = Properties.Settings.Default.Width;
-                    LoadWindows.GetMainWindow.Height = Properties.Settings.Default.Height;
+                    SetLastWindowSize();
                 }
 
                 Pic(arg.ToString());
@@ -144,6 +156,14 @@ namespace PicView.UILogic.Loading
 #if DEBUG
             Trace.WriteLine("Start Completed ");
 #endif
+        }
+
+        private static void SetLastWindowSize()
+        {
+            LoadWindows.GetMainWindow.Top = Properties.Settings.Default.Top;
+            LoadWindows.GetMainWindow.Left = Properties.Settings.Default.Left;
+            LoadWindows.GetMainWindow.Width = Properties.Settings.Default.Width;
+            LoadWindows.GetMainWindow.Height = Properties.Settings.Default.Height;
         }
 
         private static void AddUIElementsAndUpdateValues()

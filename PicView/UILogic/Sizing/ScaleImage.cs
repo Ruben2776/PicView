@@ -105,14 +105,10 @@ namespace PicView.UILogic.Sizing
         /// <param name="height">The pixel height of the image</param>
         internal static void FitImage(double width, double height)
         {
-            // TODO improve sizing for high DPI cases
-
             if (width <= 0 || height <= 0) { return; }
 
-            var showInterface = Properties.Settings.Default.ShowInterface;
-
             double maxWidth, maxHeight;
-            var borderSpaceHeight = showInterface ? GetMainWindow.LowerBar.Height + GetMainWindow.TitleBar.Height + 6 : 6;
+            var borderSpaceHeight = GetMainWindow.LowerBar.Height + GetMainWindow.TitleBar.Height + 6;
             var borderSpaceWidth = 20 * MonitorInfo.DpiScaling; // Based on UI borders
 
             var monitorWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
