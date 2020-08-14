@@ -328,6 +328,7 @@
     <system:String x:Key="ConvertedToBase64">Converted to base64</system:String>
     <system:String x:Key="LoopingEnabled">Looping enabled</system:String>
     <system:String x:Key="LoopingDisabled">Looping disabled</system:String>
+    <system:String x:Key="Applying">Applying</system:String>
 
     <!--  Button hover tooltips  -->
     <system:String x:Key="ShowInfoWindow">Show info window</system:String>

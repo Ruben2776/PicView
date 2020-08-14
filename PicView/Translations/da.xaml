@@ -328,6 +328,7 @@
     <system:String x:Key="ConvertedToBase64">Konverteret til base64</system:String>
     <system:String x:Key="LoopingEnabled">Looping slået til</system:String>
     <system:String x:Key="LoopingDisabled">Looping slået fra</system:String>
+    <system:String x:Key="Applying">Udfører</system:String>
 
     <!--  Button hover tooltips  -->
     <system:String x:Key="ShowInfoWindow">Åbn vindue for info og genveje</system:String>
