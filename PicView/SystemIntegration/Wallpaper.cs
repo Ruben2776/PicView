@@ -37,6 +37,8 @@ namespace PicView.SystemIntegration
                     var SaveImage = ImageDecoder.GetRenderedMagickImage();
                     if (SaveImage == null) { return; }
 
+                    UILogic.Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"]);
+
                     await Task.Run(() =>
                     {
                         // Create temp directory
@@ -56,9 +58,9 @@ namespace PicView.SystemIntegration
                         File.Delete(tempPath + randomName);
                         using var timer = new Timer(2000);
                         timer.Elapsed += (s, x) => Directory.Delete(tempPath);
-                    }).ConfigureAwait(true);
+                    }).ConfigureAwait(false);
 
-                    SaveImage.Dispose();
+                    SaveImage.Dispose(); // Make visual studio happy
                 }
                 catch { }
             }
