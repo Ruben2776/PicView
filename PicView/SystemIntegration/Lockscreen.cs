@@ -40,7 +40,7 @@ namespace PicView.SystemIntegration
                         filestream.Close();
 
                         // Use it
-                        Apply(tempPath + randomName);
+                        _ = Apply(tempPath + randomName);
 
                         // Clean up
                         File.Delete(tempPath + randomName);
@@ -50,15 +50,18 @@ namespace PicView.SystemIntegration
 
                     SaveImage.Dispose(); // Make visual studio happy
                 }
-                catch { }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                }
             }
             else
             {
-                Apply(path);
+                await Apply(path).ConfigureAwait(false);
             }
         }
 
-        static async void Apply(string path)
+        static async Task Apply(string path)
         {
             try
             {
