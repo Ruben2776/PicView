@@ -562,5 +562,17 @@ namespace PicView.Properties {
                 this["ColorTheme"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.2")]
+        public double ZoomSpeed {
+            get {
+                return ((double)(this["ZoomSpeed"]));
+            }
+            set {
+                this["ZoomSpeed"] = value;
+            }
+        }
     }
 }

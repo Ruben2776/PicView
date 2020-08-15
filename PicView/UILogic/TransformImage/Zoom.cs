@@ -197,22 +197,30 @@ namespace PicView.UILogic.TransformImage
             ZoomValue = scaleTransform.ScaleX;
 
             /// Determine zoom speed
-            var zoomSpeed = .095;
+            var zoomSpeed = Properties.Settings.Default.ZoomSpeed;
 
             if (increment)
             {
                 // Increase speed determined by how much is zoomed in
-                if (ZoomValue > 1.2)
+                if (ZoomValue > 1.3 && ZoomValue < 1.5)
                 {
-                    zoomSpeed += .135;
+                    zoomSpeed += .1;
                 }
-                if (ZoomValue > 1.5)
+                else if (ZoomValue > 1.5 && ZoomValue < 1.7)
                 {
-                    zoomSpeed += .16;
+                    zoomSpeed += .2;
                 }
-                if (ZoomValue > 1.8)
+                else if (ZoomValue > 1.7 && ZoomValue < 2)
                 {
-                    zoomSpeed += .19;
+                    zoomSpeed += .25;
+                }
+                else if (ZoomValue > 2 && ZoomValue < 2.3)
+                {
+                    zoomSpeed += .55;
+                }
+                else if (ZoomValue > 2.3)
+                {
+                    zoomSpeed += .75;
                 }
             }
             else
