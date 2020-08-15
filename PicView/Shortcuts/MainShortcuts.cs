@@ -163,8 +163,6 @@ namespace PicView.Shortcuts
                         {
                             if (Properties.Settings.Default.PicGallery == 1) { return; }
 
-                            if (Properties.Settings.Default.PicGallery == 1) { return; }
-
                             ScrollTo(true, ctrlDown);
                         }
                         else if (ctrlDown)
@@ -218,6 +216,10 @@ namespace PicView.Shortcuts
                     else if (ctrlDown)
                     {
                         Rotate(true);
+                    }
+                    else if (Properties.Settings.Default.ScrollEnabled)
+                    {
+                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + 30);
                     }
                     return;
 
