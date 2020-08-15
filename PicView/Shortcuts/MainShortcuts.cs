@@ -161,19 +161,11 @@ namespace PicView.Shortcuts
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            if (Properties.Settings.Default.PicGallery == 1)
-                            {
-                                ScrollTo(true, ctrlDown);
-                                return;
-                            }
-                            else if (ctrlDown)
-                            {
-                                Rotate(true);
-                            }
-                            else
-                            {
-                                Pic(false);
-                            }
+                            if (Properties.Settings.Default.PicGallery == 1) { return; }
+
+                            if (Properties.Settings.Default.PicGallery == 1) { return; }
+
+                            ScrollTo(true, ctrlDown);
                         }
                         else if (ctrlDown)
                         {
@@ -195,11 +187,12 @@ namespace PicView.Shortcuts
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            if (Properties.Settings.Default.PicGallery == 1)
+                            if (Properties.Settings.Default.PicGallery == 2)
                             {
                                 ScrollTo(true, ctrlDown);
-                                return;
                             }
+
+                            return;
                         }
                     }
                     if (Properties.Settings.Default.ScrollEnabled)
@@ -213,18 +206,9 @@ namespace PicView.Shortcuts
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            if (Properties.Settings.Default.PicGallery == 1)
-                            {
-                                ScrollTo(true, ctrlDown);
-                            }
-                            else if (ctrlDown)
-                            {
-                                Rotate(true);
-                            }
-                            else
-                            {
-                                Pic();
-                            }
+                            if (Properties.Settings.Default.PicGallery == 1) { return; }
+
+                            ScrollTo(false, ctrlDown);
                         }
                         else if (ctrlDown)
                         {
@@ -241,6 +225,18 @@ namespace PicView.Shortcuts
                     if (ctrlDown)
                     {
                         SaveFiles();
+                    }
+                    else if (GetPicGallery != null)
+                    {
+                        if (GalleryFunctions.IsOpen)
+                        {
+                            if (Properties.Settings.Default.PicGallery == 2)
+                            {
+                                ScrollTo(false, ctrlDown);
+                            }
+
+                            return;
+                        }
                     }
                     else if (Properties.Settings.Default.ScrollEnabled)
                     {

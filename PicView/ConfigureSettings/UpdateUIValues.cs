@@ -128,6 +128,8 @@ namespace PicView.ConfigureSettings
 
         internal static void SetScrolling(object sender, RoutedEventArgs e)
         {
+            if (GalleryFunctions.IsOpen) { return; }
+
             var settingscm = cm.Items[7] as MenuItem;
             var scrollcm = settingscm.Items[1] as MenuItem;
             var scrollcmHeader = scrollcm.Header as CheckBox;
