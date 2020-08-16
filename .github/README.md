@@ -14,7 +14,7 @@ PicView is a fast and Open Source Image Viewer for Windows, with configurable in
 ---
 
 <br>
-<img src="https://i.imgur.com/cTgkhA1.png" align="left" height="670"/>
+<img src="https://picview.org/assets/images/Annotation%202020-08-13%20230141-min.png" align="left" height="670"/>
 
 
 ### Features:
