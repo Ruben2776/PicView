@@ -76,7 +76,7 @@ View all files in current folder as a thumbnail gallery, with custom animations.
  
  **File management** 
 <br>
-Copy `Ctrl + C`, Move `Ctrl + X`, Paste `Ctrl + V` images, file paths, web addresses or base64 images.
+Copy `Ctrl + Shift + C`, Move `Ctrl + X`, Paste `Ctrl + V` images, file paths, web addresses or base64 images.
 
 Open file in another application `E`.
 
