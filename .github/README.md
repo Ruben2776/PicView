@@ -14,7 +14,7 @@ PicView is a fast and Open Source Image Viewer for Windows, with configurable in
 ---
 
 <br>
-<img src="https://i.imgur.com/cTgkhA1.png" align="left" height="670"/>
+<img src="https://picview.org/assets/screenshots/dark-theme01.webp" align="left" height="670"/>
 
 
 ### Features:
@@ -41,13 +41,13 @@ Quickly crop images by pressing `C`.
 Drag and drop from files Windows explorer or your browser. You can also hold `Ctrl` to drag currently viewed image to your file system.
 <br>
 <h2>Customizable Themes</h2>
-<img src="https://i.imgur.com/Or9vf39.png"/>
+<img src="https://picview.org/assets/screenshots/themes-3.webp"/>
 
  A choice between dark theme and light theme can be found in the settings menu `F4`, along with 12 highlight colors to choose from. 
  
 <br>
 <h2>Configure UI</h2>
-<img src="https://i.imgur.com/zcGEzL0.png"/>
+<img src="https://picview.org/assets/screenshots/themes-white01.webp"/>
 
 The interface can be toggled to just show the image by pressing `Alt + Z`. The hover buttons and the colored window border can be toggled on/off in the settings window.
 
@@ -66,14 +66,8 @@ View all files in current folder as a fullscreen thumbnail gallery, where you ca
 
 <br>
 <h2>Contained Image Gallery:</h2>
-<img src="https://i.imgur.com/Wdzk4oI.png"/>
+<img src="https://picview.org/assets/screenshots/horizontal-gallery-white.webp"/>
 View all files in current folder as a thumbnail gallery, with custom animations.
-
-
-
-<br>
-<h2>Settings and shader effects:</h2>
-<img src="https://i.imgur.com/3sUlj1S.png"/>
 
 
 ## Other features
@@ -82,7 +76,7 @@ View all files in current folder as a thumbnail gallery, with custom animations.
  
  **File management** 
 <br>
-Copy `Ctrl + C`, Move `Ctrl + X`, Paste `Ctrl + V` images, file paths, web addresses or base64 images.
+Copy `Ctrl + Shift + C`, Move `Ctrl + X`, Paste `Ctrl + V` images, file paths, web addresses or base64 images.
 
 Open file in another application `E`.
 
