@@ -66,24 +66,22 @@ namespace PicView.FileHandling
 
         internal static void CopyBitmap()
         {
-            if (Pics.Count == 0 && LoadWindows.GetMainWindow.MainImage.Source != null)
+            BitmapSource pic;
+            if (LoadWindows.GetMainWindow.MainImage.Source != null)
             {
-                Clipboard.SetImage((BitmapSource)LoadWindows.GetMainWindow.MainImage.Source);
-            }
-            else if (Preloader.Contains(Pics[FolderIndex]))
-            {
-                Clipboard.SetImage(Preloader.Get(Pics[FolderIndex]));
-            }
-            else if (LoadWindows.GetMainWindow.MainImage.Source != null)
-            {
-                Clipboard.SetImage((BitmapSource)LoadWindows.GetMainWindow.MainImage.Source);
-            }
-            else
-            {
-                return;
+                if (LoadWindows.GetMainWindow.MainImage.Effect != null)
+                {
+                    pic = ImageDecoder.GetRenderedBitmapFrame();
+                }
+                else
+                {
+                    pic = (BitmapSource)LoadWindows.GetMainWindow.MainImage.Source;
+                }
+
+                Clipboard.SetImage(pic);
             }
 
-            ShowTooltipMessage(Application.Current.Resources["FileCutMessage"]);
+            ShowTooltipMessage(Application.Current.Resources["CopiedImage"]);
         }
 
         /// <summary>

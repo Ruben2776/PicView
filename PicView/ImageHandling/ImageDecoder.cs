@@ -124,24 +124,7 @@ namespace PicView.ImageHandling
         {
             try
             {
-                var sauce = UILogic.Loading.LoadWindows.GetMainWindow.MainImage.Source as BitmapSource;
-                var effect = UILogic.Loading.LoadWindows.GetMainWindow.MainImage.Effect;
-
-                var rectangle = new System.Windows.Shapes.Rectangle
-                {
-                    Fill = new ImageBrush(sauce),
-                    Effect = effect
-                };
-
-                var sz = new Size(sauce.PixelWidth, sauce.PixelHeight);
-                rectangle.Measure(sz);
-                rectangle.Arrange(new Rect(sz));
-
-                var rtb = new RenderTargetBitmap(sauce.PixelWidth, sauce.PixelHeight, sauce.DpiX, sauce.DpiY, PixelFormats.Default);
-                rtb.Render(rectangle);
-
-
-                var frame = BitmapFrame.Create(rtb);
+                var frame = BitmapFrame.Create(GetRenderedBitmapFrame());
                 var encoder = new PngBitmapEncoder();
 
                 encoder.Frames.Add(frame);
@@ -164,6 +147,32 @@ namespace PicView.ImageHandling
                 SaveImage.Rotate(UILogic.TransformImage.Rotation.Rotateint);
 
                 return SaveImage;
+            }
+            catch (Exception) { return null; }
+        }
+
+        internal static BitmapFrame GetRenderedBitmapFrame()
+        {
+            try
+            {
+                var sauce = UILogic.Loading.LoadWindows.GetMainWindow.MainImage.Source as BitmapSource;
+                var effect = UILogic.Loading.LoadWindows.GetMainWindow.MainImage.Effect;
+
+                var rectangle = new System.Windows.Shapes.Rectangle
+                {
+                    Fill = new ImageBrush(sauce),
+                    Effect = effect
+                };
+
+                var sz = new Size(sauce.PixelWidth, sauce.PixelHeight);
+                rectangle.Measure(sz);
+                rectangle.Arrange(new Rect(sz));
+
+                var rtb = new RenderTargetBitmap(sauce.PixelWidth, sauce.PixelHeight, sauce.DpiX, sauce.DpiY, PixelFormats.Default);
+                rtb.Render(rectangle);
+
+
+                return BitmapFrame.Create(rtb);
             }
             catch (Exception) { return null; }
         }
