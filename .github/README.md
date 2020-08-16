@@ -70,12 +70,6 @@ View all files in current folder as a fullscreen thumbnail gallery, where you ca
 View all files in current folder as a thumbnail gallery, with custom animations.
 
 
-
-<br>
-<h2>Settings and shader effects:</h2>
-<img src="https://i.imgur.com/3sUlj1S.png"/>
-
-
 ## Other features
 **File support** 
  > .jpg .jpeg .jpe .png .bmp .tif .tiff .gif .ico .wdp .jfif .ktx .webp .wbmp .psd .psb .svg .3fr .arw .cr2 .crw .dcr .dng .erf .kdc .mdc .mef .mos .mrw .nef .nrw .orf .pef .pgm .ppm .raf .raw .rw2 .srf .x3f .bpg .cur .cut .dib .emf .exif .exr .pcx .tga .wmf .wpg .xbm .xpm .hdr .heic
