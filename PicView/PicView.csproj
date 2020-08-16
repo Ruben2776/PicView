@@ -513,7 +513,7 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <PropertyGroup>
-    <FileVersion>0.9.9.6</FileVersion>
+    <FileVersion>0.9.9.7</FileVersion>
     <SignAssembly>false</SignAssembly>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
