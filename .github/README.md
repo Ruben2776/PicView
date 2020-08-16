@@ -47,7 +47,7 @@ Drag and drop from files Windows explorer or your browser. You can also hold `Ct
  
 <br>
 <h2>Configure UI</h2>
-<img src="https://i.imgur.com/zcGEzL0.png"/>
+<img src="https://picview.org/assets/screenshots/themes-white01.webp"/>
 
 The interface can be toggled to just show the image by pressing `Alt + Z`. The hover buttons and the colored window border can be toggled on/off in the settings window.
 
