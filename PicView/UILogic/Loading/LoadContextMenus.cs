@@ -495,7 +495,8 @@ namespace PicView.UILogic.Loading
             {
                 Header = Application.Current.Resources["CopyFile"] as string,
                 ToolTip = Application.Current.Resources["CopyFile"] as string
-                + $" [{Application.Current.Resources["Ctrl"] as string}] + C]",
+                + $" [{Application.Current.Resources["Ctrl"] as string} + " +
+                $"{Application.Current.Resources["Shift"] as string}  + C]",
             };
             cppcm.Click += (s, x) => Copyfile();
             cpm.Items.Add(cppcm);
@@ -508,7 +509,7 @@ namespace PicView.UILogic.Loading
                 Header = Application.Current.Resources["Copy"] as string + " base64",
                 ToolTip = Application.Current.Resources["Copy"] as string + " base64"
                 + $" [{Application.Current.Resources["Ctrl"] as string} + " +
-                $"{Application.Current.Resources["Shift"] as string}  + C]",
+                $"{Application.Current.Resources["Alt"] as string}  + C]",
             };
             cpxcm.Click += async delegate { await Base64.SendToClipboard().ConfigureAwait(false); };
             cpm.Items.Add(cpxcm);
@@ -520,8 +521,7 @@ namespace PicView.UILogic.Loading
             {
                 Header = Application.Current.Resources["CopyImage"] as string,
                 ToolTip = Application.Current.Resources["CopyImageTooltip"] as string
-                + $" [{Application.Current.Resources["Ctrl"] as string} + " +
-                $"{Application.Current.Resources["Alt"] as string}  + C]",
+                + $" [{Application.Current.Resources["Ctrl"] as string}  + C]",
             };
             cpxbm.Click += (s, x) => CopyBitmap();
             cpm.Items.Add(cpxbm);

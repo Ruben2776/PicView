@@ -383,15 +383,15 @@ namespace PicView.Shortcuts
 
                             if (shiftDown)
                             {
-                                System.Threading.Tasks.Task task = Base64.SendToClipboard();
+                                Copyfile(); 
                             }
                             else if (altDown)
                             {
-                                CopyBitmap();
+                                System.Threading.Tasks.Task task = Base64.SendToClipboard();
                             }
                             else
                             {
-                                Copyfile();
+                                CopyBitmap();
                             }
                         }
                         else if (!GalleryFunctions.IsOpen)

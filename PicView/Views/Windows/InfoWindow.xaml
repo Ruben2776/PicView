@@ -1321,10 +1321,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
+                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
-                                d:Text="Ctrl"
                                 FontSize="14"
-                                Text="{StaticResource ResourceKey=Ctrl}" />
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text=" + " />
+                            <TextBlock FontSize="14" Text="{StaticResource ResourceKey=Shift}" />
                             <TextBlock
                                 FontSize="14"
                                 Foreground="{StaticResource MainColorFadedBrush}"
