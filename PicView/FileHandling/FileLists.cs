@@ -26,35 +26,17 @@ namespace PicView.FileHandling
         /// <summary>
         /// Sort and return list of supported files
         /// </summary>
-        internal static List<string> FileList(string path)
+        internal static List<string> FileList(string path) => Properties.Settings.Default.SortPreference switch
         {
-            switch (Properties.Settings.Default.SortPreference)
-            {
-                case 0:
-                    return FileList(path, SortFilesBy.Name);
-
-                case 1:
-                    return FileList(path, SortFilesBy.FileSize);
-
-                case 2:
-                    return FileList(path, SortFilesBy.Creationtime);
-
-                case 3:
-                    return FileList(path, SortFilesBy.Extension);
-
-                case 4:
-                    return FileList(path, SortFilesBy.Lastaccesstime);
-
-                case 5:
-                    return FileList(path, SortFilesBy.Lastwritetime);
-
-                case 6:
-                    return FileList(path, SortFilesBy.Random);
-
-                default:
-                    return FileList(path, SortFilesBy.Name);
-            }
-        }
+            0 => FileList(path, SortFilesBy.Name),
+            1 => FileList(path, SortFilesBy.FileSize),
+            2 => FileList(path, SortFilesBy.Creationtime),
+            3 => FileList(path, SortFilesBy.Extension),
+            4 => FileList(path, SortFilesBy.Lastaccesstime),
+            5 => FileList(path, SortFilesBy.Lastwritetime),
+            6 => FileList(path, SortFilesBy.Random),
+            _ => FileList(path, SortFilesBy.Name),
+        };
 
         /// <summary>
         /// Sort and return list of supported files
