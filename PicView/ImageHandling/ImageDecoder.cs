@@ -1,5 +1,6 @@
 ﻿using ImageMagick;
-using PicView.ChangeImage;
+using PicView.FileHandling;
+using PicView.UILogic.Sizing;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
 using System;
@@ -9,7 +10,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using static PicView.ChangeImage.Navigation;
 
 namespace PicView.ImageHandling
 {
@@ -22,82 +22,67 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         internal static BitmapSource RenderToBitmapSource(string file)
         {
-            var ext = Path.GetExtension(file).ToLower(CultureInfo.CurrentCulture);
-            switch (ext)
+            var check = SupportedFiles.IsSupportedFile(file);
+            if (!check.HasValue) { return null; }
+
+            try
             {
-                case ".jpg":
-                case ".jpeg":
-                case ".jpe":
-                case ".png":
-                case ".bmp":
-                case ".tif":
-                case ".tiff":
-                case ".gif":
-                case ".ico":
-                case ".wdp":
-                case ".jfif":
-                case ".ktx":
-                case ".webp":
-                case ".wbmp":
+
+                using var filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
+
+                if (check.Value)
+                {
+                    var sKBitmap = SKBitmap.Decode(filestream);
+
+                    if (sKBitmap == null) { return null; }
+
+                    var pic = sKBitmap.ToWriteableBitmap();
+                    pic.Freeze();
+                    sKBitmap.Dispose();
+
+
+                    return pic;
+                }
+                else
+                {
+                    using MagickImage magick = new MagickImage();
+                    var mrs = new MagickReadSettings()
+                    {
+                        Density = new Density(300, 300),
+                        BackgroundColor = MagickColors.Transparent,
+                    };
 
                     try
                     {
-                        using var filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
-
-                        var sKBitmap = SKBitmap.Decode(filestream);
-
-                        if (sKBitmap == null) { return null; }
-
-                        var pic = sKBitmap.ToWriteableBitmap();
-                        pic.Freeze();
-                        sKBitmap.Dispose();
-                        
-
-                        return pic;
+                        magick.Read(filestream, mrs);
+                        filestream.Close();
                     }
-                    catch (Exception e)
+                    catch (MagickException e)
                     {
 #if DEBUG
-                        Trace.WriteLine("RenderToBitmapSource exception: " + e.Message);
+                        Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
 #endif
                         return null;
                     }
 
-                default:
+                    // Set values for maximum quality
+                    magick.Quality = 100;
+                    magick.ColorSpace = ColorSpace.Transparent;
 
-                    using (MagickImage magick = new MagickImage())
-                    {
-                        var mrs = new MagickReadSettings()
-                        {
-                            Density = new Density(300, 300),
-                            BackgroundColor = MagickColors.Transparent,
-                        };
+                    var pic = magick.ToBitmapSource();
+                    pic.Freeze();
+                    magick.Dispose();
 
-                        try
-                        {
-                            using var filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);
-                            magick.Read(filestream, mrs);
-                            filestream.Close();
-                        }
-                        catch (MagickException e)
-                        {
+                    return pic;
+                }
+            }
+            catch (Exception e)
+            {
 #if DEBUG
-                            Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
+                Trace.WriteLine("RenderToBitmapSource returned " + file + " null, \n" + e.Message);
 #endif
-                            return null;
-                        }
-
-                        // Set values for maximum quality
-                        magick.Quality = 100;
-                        magick.ColorSpace = ColorSpace.Transparent;
-
-                        var pic = magick.ToBitmapSource();
-                        pic.Freeze();
-                        magick.Dispose();
-
-                        return pic;
-                    }
-            };
+                return null;
+            }
         }
 
         /// <summary>Gets the magick image.</summary>
@@ -177,59 +162,13 @@ namespace PicView.ImageHandling
             catch (Exception) { return null; }
         }
 
-        internal static Size? ImageSize(string file, bool usePreloader = false, bool advancedFormats = false)
+        internal static Size? ImageSize(string file)
         {
-            if (usePreloader)
-            {
-                var pic = Preloader.Get(Pics[FolderIndex]);
-                if (pic != null)
-                {
-                    return new Size(pic.PixelWidth, pic.PixelHeight);
-                }
-            }
+            var check = SupportedFiles.IsSupportedFile(file);
+            if (!check.HasValue) { return null; }
+            if (!check.Value) { return null; }
 
             using var magick = new MagickImage();
-            var ext = Path.GetExtension(file).ToUpperInvariant();
-            switch (ext)
-            {
-                // Standards
-                case ".JPG":
-                case ".JPEG":
-                case ".JPE":
-                case ".JFIF":
-                    magick.Format = MagickFormat.Jpg;
-                    break;
-
-                case ".PNG":
-                    magick.Format = MagickFormat.Png;
-                    break;
-
-                case ".BMP":
-                    magick.Format = MagickFormat.Bmp;
-                    break;
-
-                case ".TIF":
-                case ".TIFF":
-                    magick.Format = MagickFormat.Tif;
-                    break;
-
-                case ".GIF":
-                    magick.Format = MagickFormat.Gif;
-                    break;
-
-                case ".ICO":
-                    magick.Format = MagickFormat.Ico;
-                    break;
-
-                default:
-                    if (!advancedFormats)
-                    {
-                        // don't read advanced formats
-                        return null;
-                    }
-
-                    break;
-            }
 
             try
             {
@@ -246,6 +185,29 @@ namespace PicView.ImageHandling
 #endif
 
             return new Size(magick.Width, magick.Height);
+        }
+
+        internal static RenderTargetBitmap ImageErrorMessage()
+        {
+            var w = ScaleImage.xWidth != 0 ? ScaleImage.xWidth : 300 * WindowLogic.MonitorInfo.DpiScaling;
+            var h = ScaleImage.xHeight != 0 ? ScaleImage.xHeight : 300 * WindowLogic.MonitorInfo.DpiScaling;
+            var rect = new Rect(new Size(w, h));
+            var visual = new DrawingVisual();
+            using (var ctx = visual.RenderOpen())
+            {
+                var typeface = new Typeface("/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros");
+                //text
+                var text = new FormattedText("Unable to render image", CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, 16, Brushes.White, WindowLogic.MonitorInfo.DpiScaling)
+                {
+                    TextAlignment = System.Windows.TextAlignment.Center
+                };
+
+                ctx.DrawText(text, new Point(rect.Left + rect.Width / 2, rect.Top + rect.Height / 2));
+            }
+            RenderTargetBitmap rtv = new RenderTargetBitmap((int)w, (int)h, 96.0, 96.0, PixelFormats.Default);
+            rtv.Render(visual);
+            rtv.Freeze();
+            return rtv;
         }
 
     }      

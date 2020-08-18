@@ -217,16 +217,8 @@ namespace PicView.ChangeImage
                     // Don't allow image size to stretch the whole screen
                     if (xWidth == 0)
                     {
-                        var size = ImageDecoder.ImageSize(Pics[index]);
-                        if (size.HasValue)
-                        {
-                            FitImage(size.Value.Width, size.Value.Height);
-                        }
-                        else
-                        {
-                            LoadWindows.GetMainWindow.MainImage.Width = LoadWindows.GetMainWindow.MinWidth;
-                            LoadWindows.GetMainWindow.MainImage.Height = LoadWindows.GetMainWindow.MinHeight;
-                        }
+                        LoadWindows.GetMainWindow.MainImage.Width = LoadWindows.GetMainWindow.MinWidth;
+                        LoadWindows.GetMainWindow.MainImage.Height = LoadWindows.GetMainWindow.MinHeight;
                     }
                     else
                     {
@@ -254,31 +246,7 @@ namespace PicView.ChangeImage
                     // If pic is still null, image can't be rendered
                     if (bitmapSource == null)
                     {
-                        // Clean up
-                        Pics.RemoveAt(index);
-                        Preloader.Remove(Pics[index]);
-
-                        // Sync with gallery, if needed
-                        if (GetPicGallery != null)
-                        {
-                            if (GetPicGallery.grid.Children.Count > index)
-                            {
-                                GetPicGallery.grid.Children.RemoveAt(index);
-                            }
-                        }
-
-                        // Check if images still exists
-                        if (Pics.Count == 0)
-                        {
-                            Unload();
-                            return;
-                        }
-
-                        /// Retry
-                        /// TODO needs testing
-                        CanNavigate = true;
-                        Pic();
-                        return;
+                        bitmapSource = ImageDecoder.ImageErrorMessage();
                     }
                 }
             }
