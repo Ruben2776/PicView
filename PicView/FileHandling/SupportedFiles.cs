@@ -16,83 +16,26 @@ namespace PicView.FileHandling
         internal static bool? IsSupportedFile(string ext)
         {
             ext = Path.GetExtension(ext).ToLower(CultureInfo.CurrentCulture);
-            switch (ext)
+            return ext switch
             {
                 // Standards
-                case ".jpg":
-                case ".jpeg":
-                case ".jpe":
-                case ".png":
-                case ".bmp":
-                case ".tif":
-                case ".tiff":
-                case ".gif":
-                case ".ico":
-                case ".wdp":
-                case ".jfif":
-                case ".ktx":
-                case ".webp":
-                case ".wbmp":
-                    return true;
+                ".jpg" or ".jpeg" or ".jpe" or ".png" or ".bmp" or ".tif" or ".tiff" or ".gif" or ".ico" or ".wdp" or ".jfif" or ".ktx" or ".webp" or ".wbmp" => true,
 
                 // Non-standards
 
                 // Photoshop
-                case ".psd":
-                case ".psb":
+                ".psd" or ".psb" or 
 
-                // Web
-                case ".svg":
-
-                // Raw Camera
-                case ".3fr":
-                case ".arw":
-                case ".cr2":
-                case ".crw":
-                case ".dcr":
-                case ".dng":
-                case ".erf":
-                case ".kdc":
-                case ".mdc":
-                case ".mef":
-                case ".mos":
-                case ".mrw":
-                case ".nef":
-                case ".nrw":
-                case ".orf":
-                case ".pef":
-                case ".pgm":
-                case ".ppm":
-                case ".raf":
-                case ".raw":
-                case ".rw2":
-                case ".srf":
-                case ".x3f":
-
-                // Obscure
-
-                case ".bpg": // untested
-                case ".cur":
-                case ".cut": // untested
-                case ".dib": // untested
-                case ".emf": // untested
-                case ".exif": // untested
-                case ".exr":
-                case ".hdr":
-                case ".heic":
-                case ".pcx":
-                case ".tga":
-                case ".wmf": // untested
-                case ".wpg":
-                case ".xbm":
-                case ".xpm":
-
-                    return false;
-
+                // Vector
+                ".svg" or
+                
+                // Camera
+                ".3fr" or ".arw" or ".cr2" or ".crw" or ".dcr" or ".dng" or ".erf" or ".kdc" or ".mdc" or ".mef" or ".mos" or ".mrw" or ".nef" or ".nrw" or ".orf" or ".pef"
+                or ".pgm" or ".ppm" or ".raf" or ".raw" or ".rw2" or ".srf" or ".x3f" or ".bpg" or ".cur" or ".cut" or ".dib" or ".emf" or ".exif" or ".exr" or ".hdr"
+                or ".heic" or ".pcx" or ".tga" or ".wmf" or ".wpg" or ".xbm" or ".xpm" => false,
                 // Non supported
-                default:
-                    return null;
-            }
+                _ => null,
+            };
         }
 
         /// <summary>
