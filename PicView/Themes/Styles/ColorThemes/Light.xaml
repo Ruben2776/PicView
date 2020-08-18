@@ -53,10 +53,10 @@
     <!--  Background Hover Highlight  -->
     <Color
         x:Key="BackgroundHoverHighlight"
-        A="45"
-        B="220"
-        G="220"
-        R="220" />
+        A="100"
+        B="210"
+        G="210"
+        R="210" />
     <SolidColorBrush x:Key="BackgroundHoverHighlightBrush" Color="{StaticResource BackgroundHoverHighlight}" />
 
     <!--  Border Brush  -->

@@ -22,7 +22,7 @@
     <system:String x:Key="NewWindow">New window</system:String>
 
     <!--  Info window  -->
-    <system:String x:Key="InfoWindowTitle">Information, help &amp; shortcuts</system:String>
+    <system:String x:Key="InfoWindowTitle">Info and shortcuts</system:String>
     <system:String x:Key="ApplicationShortcuts">Application Shortcuts</system:String>
     <system:String x:Key="SavedOnNextStartUp">(Saved on next startup)</system:String>
     <system:String x:Key="ImageControl">Image control</system:String>
@@ -32,7 +32,7 @@
     <system:String x:Key="AdditionalFunctions">Additional functions</system:String>
     <system:String x:Key="Reload">Reload</system:String>
     <system:String x:Key="ExtraMouseKeyFunctions">Extra mouse key functions</system:String>
-    <system:String x:Key="AttributionAndCredits">Attributions and credits</system:String>
+    <system:String x:Key="AttributionAndCredits">Credits</system:String>
     <system:String x:Key="IconsUsed">Icons used:</system:String>
     <system:String x:Key="GithubRepo">Github repository</system:String>
     <system:String x:Key="ViewLicenseFile">View license file</system:String>
