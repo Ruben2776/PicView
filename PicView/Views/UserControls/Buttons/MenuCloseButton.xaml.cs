@@ -1,4 +1,5 @@
 ﻿using PicView.UILogic;
+using PicView.UILogic.Animations;
 using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
@@ -15,6 +16,12 @@ namespace PicView.Views.UserControls
                 PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(CloseButtonBrush);
                 MouseEnter += (s, x) => ButtonMouseOverAnim(CloseButtonBrush, true);
                 MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(CloseButtonBrush, false);
+
+                if (!Properties.Settings.Default.DarkTheme)
+                {
+                    AnimationHelper.LightThemeMouseEvent(this, IconBrush);
+                }
+
                 TheButton.Click += delegate { UC.Close_UserControls(); };
             };
         }

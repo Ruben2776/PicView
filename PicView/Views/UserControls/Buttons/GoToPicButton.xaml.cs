@@ -1,4 +1,5 @@
-﻿using PicView.UILogic.Loading;
+﻿using PicView.UILogic.Animations;
+using PicView.UILogic.Loading;
 using System;
 using System.Globalization;
 using System.Windows;
@@ -23,6 +24,12 @@ namespace PicView.Views.UserControls
                 TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(GoToPicBrush, true);
                 TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(GoToPicBrush, false);
                 TheButton.Click += GoToPicEvent;
+
+                if (!Properties.Settings.Default.DarkTheme)
+                {
+                    AnimationHelper.LightThemeMouseEvent(this, IconBrush1);
+                    AnimationHelper.LightThemeMouseEvent(this, IconBrush2);
+                }
 
                 GoToPicBox.PreviewMouseLeftButtonDown += delegate
                 {

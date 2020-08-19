@@ -12,9 +12,10 @@
         <Button.Background>
             <SolidColorBrush x:Name="MinButtonBrush" />
         </Button.Background>
-        <Path
-            Data="F1M0,6L0,9 9,9 9,6 0,6z"
-            Fill="{StaticResource MainColorBrush}"
-            SnapsToDevicePixels="True" />
+        <Path Data="F1M0,6L0,9 9,9 9,6 0,6z" SnapsToDevicePixels="True">
+            <Path.Fill>
+                <SolidColorBrush x:Name="IconBrush" Color="{StaticResource IconColor}" />
+            </Path.Fill>
+        </Path>
     </Button>
 </UserControl>

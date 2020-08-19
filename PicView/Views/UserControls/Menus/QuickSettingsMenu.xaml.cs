@@ -20,15 +20,14 @@ namespace PicView.Views.UserControls
             ToggleScroll.IsChecked = Properties.Settings.Default.ScrollEnabled;
             ToggleScroll.Click += (s, x) => ConfigureSettings.UpdateUIValues.SetScrolling(Properties.Settings.Default.ScrollEnabled);
 
-            SettingsButton.Click += (s, x) => LoadWindows.AllSettingsWindow();
-
-            SettingsButton.Click += delegate
+            SettingsButton.TheButton.Click += delegate
             {
+                LoadWindows.AllSettingsWindow();
                 Close_UserControls();
                 LoadWindows.AllSettingsWindow();
             };
 
-            InfoButton.Click += delegate
+            InfoButton.TheButton.Click += delegate
             {
                 Close_UserControls();
                 LoadWindows.InfoDialogWindow();
@@ -43,7 +42,7 @@ namespace PicView.Views.UserControls
             SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
             SetFit.Click += ConfigureSettings.UpdateUIValues.SetAutoFit;
 
-            ZoomButton.Click += delegate
+            ZoomButton.TheButton.Click += delegate
             {
                 if (ZoomSliderParent.Visibility == Visibility.Collapsed || ZoomSliderParent.Opacity == 0)
                 {
@@ -59,16 +58,6 @@ namespace PicView.Views.UserControls
             ZoomSlider.ValueChanged += delegate { UILogic.TransformImage.ZoomLogic.Zoom(ZoomSlider.Value); };
 
             #region Animation events
-
-            // SettingsButton
-            SettingsButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(SettingsButtonBrush);
-            SettingsButton.MouseEnter += (s, x) => ButtonMouseOverAnim(SettingsButtonBrush, true);
-            SettingsButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(SettingsButtonBrush, false);
-
-            // InfoButton
-            InfoButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(InfoButtonBrush);
-            InfoButton.MouseEnter += (s, x) => ButtonMouseOverAnim(InfoButtonBrush, true);
-            InfoButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(InfoButtonBrush, false);
 
             // Toggle Scroll
             ToggleScroll.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ToggleScrollFill); };
@@ -97,11 +86,6 @@ namespace PicView.Views.UserControls
             ToggleFill.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ToggleFillBrush); };
             ToggleFill.MouseLeave += delegate { ButtonMouseLeaveAnim(ToggleFillFill); };
             ToggleFill.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ToggleFillBrush); };
-
-            // ZoomButton
-            ZoomButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ZoomButtonBrush);
-            ZoomButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ZoomButtonBrush, true);
-            ZoomButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ZoomButtonBrush, false);
 
             #endregion Animation events
         }

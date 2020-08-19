@@ -1,4 +1,5 @@
-﻿using PicView.UILogic.Sizing;
+﻿using PicView.UILogic.Animations;
+using PicView.UILogic.Sizing;
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
@@ -35,6 +36,13 @@ namespace PicView.Views.UserControls
             {
                 WindowLogic.Fullscreen_Restore();
             };
+
+
+            if (!Properties.Settings.Default.DarkTheme)
+            {
+                AnimationHelper.LightThemeMouseEvent(this, IconBrush);
+            }
+
         }
     }
 }

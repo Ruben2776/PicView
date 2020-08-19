@@ -5,9 +5,9 @@ using static PicView.UILogic.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
 {
-    public partial class ReloadButton : UserControl
+    public partial class SettingsButton : UserControl
     {
-        public ReloadButton()
+        public SettingsButton()
         {
             InitializeComponent();
 
@@ -19,7 +19,8 @@ namespace PicView.Views.UserControls
 
                 if (!Properties.Settings.Default.DarkTheme)
                 {
-                    AnimationHelper.LightThemeMouseEvent(this, IconBrush);
+                    AnimationHelper.LightThemeMouseEvent(this, IconBrush1);
+                    AnimationHelper.LightThemeMouseEvent(this, IconBrush2);
                 }
 
                 TheButton.Click += delegate { Error_Handling.Reload(); };

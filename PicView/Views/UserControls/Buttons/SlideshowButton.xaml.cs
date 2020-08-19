@@ -1,4 +1,5 @@
 ﻿using PicView.UILogic;
+using PicView.UILogic.Animations;
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
@@ -21,6 +22,13 @@ namespace PicView.Views.UserControls
                 var s = Application.Current.Resources["StartSlideshow"] as string;
                 s += " [F5]";
                 ToolTip = s;
+
+
+                if (!Properties.Settings.Default.DarkTheme)
+                {
+                    AnimationHelper.LightThemeMouseEvent(this, SlideshowBrush);
+                }
+
             };
         }
     }

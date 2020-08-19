@@ -98,6 +98,25 @@ namespace PicView.UILogic.Animations
             brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
         }
 
+        internal static void LightThemeMouseEvent(UIElement uIElement, Brush brush)
+        {
+            var c = (Color)Application.Current.Resources["IconColor"];
+
+            uIElement.MouseEnter += delegate
+            {
+                colorAnimation.From = Color.FromRgb(c.R, c.G, c.B);
+                colorAnimation.To = Colors.White;
+                brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            };
+
+            uIElement.MouseLeave += delegate
+            {
+                colorAnimation.From = Colors.White;
+                colorAnimation.To = Color.FromRgb(c.R, c.G, c.B);
+                brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            };
+        }
+
         internal static void MouseLeaveColorEvent(byte a, byte r, byte g, byte b, Brush brush, int colortheme)
         {
             colorAnimation.From = colortheme switch

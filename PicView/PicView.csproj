@@ -284,7 +284,16 @@
     <Compile Update="Views\UserControls\Buttons\BackgroundButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\UserControls\Buttons\SearchButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\UserControls\Buttons\LefttButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UserControls\Buttons\InfoButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UserControls\Buttons\SettingsButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\UserControls\Buttons\RotateLeftButton.xaml.cs">
@@ -368,7 +377,16 @@
     <Page Update="Views\UserControls\Buttons\BackgroundButton.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\UserControls\Buttons\SearchButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\UserControls\Buttons\LefttButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserControls\Buttons\InfoButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserControls\Buttons\SettingsButton.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\UserControls\Buttons\RotateLeftButton.xaml">

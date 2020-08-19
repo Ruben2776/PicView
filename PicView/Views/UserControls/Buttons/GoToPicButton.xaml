@@ -24,21 +24,27 @@
                                     <GeometryDrawing Geometry="F1 M512,512z M0,0z M112,111L112,401C112,418.44,129,429.52,143,421.16L390.9,272.79C403.02,265.54,403.02,246.46,390.9,239.21L143,90.84C129,82.48,112,93.56,112,111z">
                                         <GeometryDrawing.Pen>
                                             <Pen
-                                                Brush="{StaticResource IconColorBrush}"
                                                 EndLineCap="Flat"
                                                 LineJoin="Miter"
                                                 StartLineCap="Flat"
-                                                Thickness="32" />
+                                                Thickness="32">
+                                                <Pen.Brush>
+                                                    <SolidColorBrush x:Name="IconBrush1" Color="{StaticResource IconColor}" />
+                                                </Pen.Brush>
+                                            </Pen>
                                         </GeometryDrawing.Pen>
                                     </GeometryDrawing>
                                     <GeometryDrawing>
                                         <GeometryDrawing.Pen>
                                             <Pen
-                                                Brush="{StaticResource IconColorBrush}"
                                                 EndLineCap="Round"
                                                 LineJoin="Miter"
                                                 StartLineCap="Round"
-                                                Thickness="32" />
+                                                Thickness="32">
+                                                <Pen.Brush>
+                                                    <SolidColorBrush x:Name="IconBrush2" Color="{StaticResource IconColor}" />
+                                                </Pen.Brush>
+                                            </Pen>
                                         </GeometryDrawing.Pen>
                                         <GeometryDrawing.Geometry>
                                             <LineGeometry StartPoint="400,80" EndPoint="400,432" />

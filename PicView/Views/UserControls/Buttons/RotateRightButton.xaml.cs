@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using PicView.UILogic.Animations;
+using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
@@ -30,6 +31,13 @@ namespace PicView.Views.UserControls
                 {
                     UILogic.TransformImage.Rotation.Rotate(true);
                 };
+
+
+                if (!Properties.Settings.Default.DarkTheme)
+                {
+                    AnimationHelper.LightThemeMouseEvent(this, IconBrush);
+                }
+
             };
         }
     }
