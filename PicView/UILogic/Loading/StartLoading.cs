@@ -124,7 +124,6 @@ namespace PicView.UILogic.Loading
                 {
                     LoadWindows.GetMainWindow.Width = 750 * MonitorInfo.DpiScaling;
                     LoadWindows.GetMainWindow.MinHeight = 700 * MonitorInfo.DpiScaling;
-                    CenterWindowOnScreen();
                 }
             }
             else
@@ -156,6 +155,11 @@ namespace PicView.UILogic.Loading
 #if DEBUG
             Trace.WriteLine("Start Completed ");
 #endif
+
+            if (Properties.Settings.Default.AutoFitWindow)
+            {
+                CenterWindowOnScreen();
+            }
         }
 
         private static void SetLastWindowSize()
