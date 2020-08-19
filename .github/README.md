@@ -70,6 +70,10 @@ View all files in current folder as a fullscreen thumbnail gallery, where you ca
 View all files in current folder as a thumbnail gallery, with custom animations.
 
 
+## Shader effects
+Choose between 26 different shader effects, including negative colors, old movie effect, pencil sketch etc. The effects can be applied to the currently viewed image, allowing you to quickly see how each image would look with a certain effect applied to them. <br>
+The effect can be copied to clipholder `Ctrl + C` or you can save it on your file system. The effect will also be applied when setting image as a wallpaper or lock screen image.
+
 ## Other features
 **File support** 
  > .jpg .jpeg .jpe .png .bmp .tif .tiff .gif .ico .wdp .jfif .ktx .webp .wbmp .psd .psb .svg .3fr .arw .cr2 .crw .dcr .dng .erf .kdc .mdc .mef .mos .mrw .nef .nrw .orf .pef .pgm .ppm .raf .raw .rw2 .srf .x3f .bpg .cur .cut .dib .emf .exif .exr .pcx .tga .wmf .wpg .xbm .xpm .hdr .heic
