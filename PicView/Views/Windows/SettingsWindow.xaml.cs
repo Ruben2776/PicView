@@ -26,6 +26,8 @@ namespace PicView.Views.Windows
 
             ContentRendered += delegate
             {
+                var colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.1) };
+
                 // Center vertically
                 Top = ((WindowLogic.MonitorInfo.WorkArea.Height * WindowLogic.MonitorInfo.DpiScaling) - ActualHeight) / 2 + WindowLogic.MonitorInfo.WorkArea.Top;
 
@@ -104,8 +106,6 @@ namespace PicView.Views.Windows
 
                 if (!Properties.Settings.Default.DarkTheme)
                 {
-                    var colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.1) };
-
                     BlueRadio.MouseEnter += delegate {
                         colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                         colorAnimation.To = Colors.White;
@@ -239,6 +239,18 @@ namespace PicView.Views.Windows
                     };
                 }
 
+                // WallpaperApply
+                WallpaperApply.MouseEnter += delegate {
+                    colorAnimation.From = AnimationHelper.GetPrefferedColorOver();
+                    colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
+                    WallpaperApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                };
+                WallpaperApply.MouseLeave += delegate {
+                    colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
+                    colorAnimation.To = AnimationHelper.GetPrefferedColorOver();
+                    WallpaperApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                };
+
                 // DarkThemeRadio
                 DarkThemeRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(DarkThemeText); };
                 DarkThemeRadio.MouseEnter += delegate { ButtonMouseOverAnim(DarkThemeText); };
@@ -261,16 +273,12 @@ namespace PicView.Views.Windows
                 // BorderRadio
                 BorderRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(BorderBrushText); };
                 BorderRadio.MouseEnter += delegate { ButtonMouseOverAnim(BorderBrushText); };
-                BorderRadio.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(BorderBrushColor); };
                 BorderRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(BorderBrushText); };
-                BorderRadio.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(BorderBrushColor); };
 
                 // AltUIRadio
                 AltUIRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(AltUIText); };
                 AltUIRadio.MouseEnter += delegate { ButtonMouseOverAnim(AltUIText); };
-                AltUIRadio.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(AltUIColor); };
                 AltUIRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(AltUIText); };
-                AltUIRadio.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(AltUIColor); };
 
                 // Restart
                 RestartButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(RestartText); };
