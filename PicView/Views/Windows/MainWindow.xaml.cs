@@ -12,9 +12,9 @@ namespace PicView.Views.Windows
     {
         public MainWindow()
         {
-            if (Properties.Settings.Default.DarkTheme == false)
+            if (Properties.Settings.Default.DarkTheme)
             {
-                ConfigureSettings.ConfigColors.ChangeToLightTheme();
+                ConfigureSettings.ConfigColors.ChangeToDarkTheme();
             }
 
             InitializeComponent();

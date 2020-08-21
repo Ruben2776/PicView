@@ -49,35 +49,15 @@ namespace PicView.Views.Windows
                     BorderRadio.IsChecked = true;
                 }
 
-                // Fill
-                Fill.Click += delegate
+                WallpaperApply.MouseLeftButtonDown += delegate 
                 {
-                    SetWallpaper(WallpaperStyle.Fill);
-                };
+                    var x = WallpaperStyle.Fill;
+                    if (Fit.IsSelected) { x = WallpaperStyle.Fit; }
+                    if (Center.IsSelected) { x = WallpaperStyle.Center; }
+                    if (Tile.IsSelected) { x = WallpaperStyle.Tile; }
+                    if (Fit.IsSelected) { x = WallpaperStyle.Fit; }
 
-                // Fit
-                Fit.Click += delegate
-                {
-                    SetWallpaper(WallpaperStyle.Fit);
-                };
-
-                // Center
-
-                Center.Click += delegate
-                {
-                    SetWallpaper(WallpaperStyle.Center);
-                };
-
-                // Tile
-                Tile.Click += delegate
-                {
-                    SetWallpaper(WallpaperStyle.Tile);
-                };
-
-                // Stretch
-                Stretch.Click += delegate
-                {
-                    SetWallpaper(WallpaperStyle.Stretch);
+                    SetWallpaper(x);
                 };
 
                 SlideshowSlider.Value = Properties.Settings.Default.SlideTimer / 1000;
@@ -276,9 +256,7 @@ namespace PicView.Views.Windows
                 // SubDirRadio
                 SubDirRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(SubDirText); };
                 SubDirRadio.MouseEnter += delegate { ButtonMouseOverAnim(SubDirText); };
-                SubDirRadio.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SubDirBrush); };
                 SubDirRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(SubDirText); };
-                SubDirRadio.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SubDirBrush); };
 
                 // BorderRadio
                 BorderRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(BorderBrushText); };
@@ -293,41 +271,6 @@ namespace PicView.Views.Windows
                 AltUIRadio.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(AltUIColor); };
                 AltUIRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(AltUIText); };
                 AltUIRadio.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(AltUIColor); };
-
-                // Fill
-                Fill.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(FillText); };
-                Fill.MouseEnter += delegate { ButtonMouseOverAnim(FillText); };
-                Fill.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(FillBrush); };
-                Fill.MouseLeave += delegate { ButtonMouseLeaveAnim(FillText); };
-                Fill.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(FillBrush); };
-
-                // Center
-                Center.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(CenterText); };
-                Center.MouseEnter += delegate { ButtonMouseOverAnim(CenterText); };
-                Center.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(CenterBrush); };
-                Center.MouseLeave += delegate { ButtonMouseLeaveAnim(CenterText); };
-                Center.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(CenterBrush); };
-
-                // Fit
-                Fit.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(FitText); };
-                Fit.MouseEnter += delegate { ButtonMouseOverAnim(FitText); };
-                Fit.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(FitBrush); };
-                Fit.MouseLeave += delegate { ButtonMouseLeaveAnim(FitText); };
-                Fit.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(FitBrush); };
-
-                // Tile
-                Tile.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(TileText); };
-                Tile.MouseEnter += delegate { ButtonMouseOverAnim(TileText); };
-                Tile.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(TileBrush); };
-                Tile.MouseLeave += delegate { ButtonMouseLeaveAnim(TileText); };
-                Tile.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(TileBrush); };
-
-                // Stretch
-                Stretch.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(StretchText); };
-                Stretch.MouseEnter += delegate { ButtonMouseOverAnim(StretchText); };
-                Stretch.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(StretchBrush); };
-                Stretch.MouseLeave += delegate { ButtonMouseLeaveAnim(StretchText); };
-                Stretch.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(StretchBrush); };
 
                 // Restart
                 RestartButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(RestartText); };
@@ -408,12 +351,12 @@ namespace PicView.Views.Windows
 
                 case Key.S:
                 case Key.Down:
-                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 10);
+                    //Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 10);
                     break;
 
                 case Key.W:
                 case Key.U:
-                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 10);
+                    //Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 10);
                     break;
 
                 case Key.Q:
