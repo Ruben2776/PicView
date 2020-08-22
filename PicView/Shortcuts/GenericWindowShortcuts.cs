@@ -19,11 +19,13 @@ namespace PicView.Shortcuts
 
                 case Key.S:
                 case Key.Down:
+                    if (scrollViewer == null) { return; }
                     scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + 10);
                     break;
 
                 case Key.W:
                 case Key.U:
+                    if (scrollViewer == null) { return; }
                     scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - 10);
                     break;
 
@@ -40,11 +42,11 @@ namespace PicView.Shortcuts
         {
             if (e.Delta > 0)
             {
-                scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - ZoomLogic.zoomSpeed);
+                scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - 10);
             }
-            else if (e.Delta < 0)
+            else
             {
-                scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + ZoomLogic.zoomSpeed);
+                scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + 10);
             }
         }
     }

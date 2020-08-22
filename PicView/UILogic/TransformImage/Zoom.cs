@@ -22,8 +22,6 @@ namespace PicView.UILogic.TransformImage
         /// TranslateTransform continuesly.
         internal static double ZoomValue { get; set; }
 
-        internal const int zoomSpeed = 45;
-
         /// <summary>
         /// Returns zoom percentage. if 100%, return empty string
         /// </summary>

@@ -192,7 +192,7 @@ namespace PicView.ChangeImage
             }
             else if (File.Exists(Pics[index])) // Checking if file exists fixes rare crashes
             {
-                /// Use the Load() function load image from memory if available
+                /// Retrieve from preloader if available
                 /// if not, it will be null
                 bitmapSource = Preloader.Get(Pics[index]);
             }
@@ -241,38 +241,35 @@ namespace PicView.ChangeImage
                 if (bitmapSource == null)
                 {
                     // Attempt to fix it
-                    bitmapSource = await PicErrorFix(index).ConfigureAwait(true);
+                    //bitmapSource = await PicErrorFix(index).ConfigureAwait(true);
 
                     // If pic is still null, image can't be rendered
-                    if (bitmapSource == null)
-                    {
-                        bitmapSource = ImageDecoder.ImageErrorMessage();
-                    }
+                    bitmapSource = ImageDecoder.ImageErrorMessage();
                 }
-            }
-
-            // Reset transforms if needed
-            if (UILogic.TransformImage.Rotation.Flipped || UILogic.TransformImage.Rotation.Rotateint != 0)
-            {
-                UILogic.TransformImage.Rotation.Flipped = false;
-                UILogic.TransformImage.Rotation.Rotateint = 0;
-                GetImageSettingsMenu.FlipButton.TheButton.IsChecked = false;
-
-                LoadWindows.GetMainWindow.MainImage.LayoutTransform = null;
             }
 
             // Need to put UI change in dispatcher to fix slideshow bug
             await LoadWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
             {
-                LoadWindows.GetMainWindow.MainImage.Source = bitmapSource;
-                FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
-                SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index);
-
                 // Scroll to top if scroll enabled
                 if (IsScrollEnabled)
                 {
                     LoadWindows.GetMainWindow.Scroller.ScrollToTop();
                 }
+
+                // Reset transforms if needed
+                if (UILogic.TransformImage.Rotation.Flipped || UILogic.TransformImage.Rotation.Rotateint != 0)
+                {
+                    UILogic.TransformImage.Rotation.Flipped = false;
+                    UILogic.TransformImage.Rotation.Rotateint = 0;
+                    GetImageSettingsMenu.FlipButton.TheButton.IsChecked = false;
+
+                    LoadWindows.GetMainWindow.MainImage.LayoutTransform = null;
+                }
+
+                LoadWindows.GetMainWindow.MainImage.Source = bitmapSource;
+                FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+                SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index);
             }));
 
             // Update values
@@ -633,10 +630,10 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static void FastPicUpdate()
         {
-            if (!Preloader.Contains(Pics[FolderIndex]))
-            {
-                Preloader.Clear();
-            }
+            /// TODO optimize preloader usage here, to not cause delays
+            /// when very quickly browsing images
+            /// Need a solution that will make sure no unused values
+            /// are in the preloader collection
 
             Pic(FolderIndex);
         }

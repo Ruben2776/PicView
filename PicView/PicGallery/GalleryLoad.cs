@@ -1,4 +1,5 @@
-﻿using PicView.UILogic.Loading;
+﻿using PicView.ImageHandling;
+using PicView.UILogic.Loading;
 using PicView.UILogic.Sizing;
 using System.Threading.Tasks;
 using System.Windows;
@@ -117,21 +118,19 @@ namespace PicView.UILogic.PicGallery
 
             for (int i = 0; i < ChangeImage.Navigation.Pics.Count; i++)
             {
-                var pic = ImageHandling.Thumbnails.GetBitmapSourceThumb(ChangeImage.Navigation.Pics[i]);
-                if (pic != null)
-                {
-                    if (!pic.IsFrozen)
-                    {
-                        pic.Freeze();
-                    }
+                var pic = Thumbnails.GetBitmapSourceThumb(ChangeImage.Navigation.Pics[i]);
 
-                    await Add(pic, i).ConfigureAwait(true);
-                }
-                else
+                if (pic == null)
                 {
-                    // Sync with list
-                    ChangeImage.Navigation.Pics.RemoveAt(i);
+                    pic = ImageDecoder.ImageErrorMessage();
+                    
                 }
+                else if (!pic.IsFrozen)
+                {
+                    pic.Freeze();
+                }
+
+                await Add(pic, i).ConfigureAwait(false);
             }
         });
     }

@@ -238,13 +238,13 @@ namespace PicView.Views.Windows
                 case Key.Down:
                 case Key.PageDown:
                 case Key.S:
-                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + ZoomLogic.zoomSpeed);
+                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 10);
                     break;
 
                 case Key.Up:
                 case Key.PageUp:
                 case Key.W:
-                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - ZoomLogic.zoomSpeed);
+                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 10);
                     break;
 
                 case Key.Q:
@@ -278,11 +278,11 @@ namespace PicView.Views.Windows
         {
             if (e.Delta > 0)
             {
-                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - ZoomLogic.zoomSpeed);
+                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 10);
             }
             else if (e.Delta < 0)
             {
-                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + ZoomLogic.zoomSpeed);
+                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 10);
             }
         }
 
