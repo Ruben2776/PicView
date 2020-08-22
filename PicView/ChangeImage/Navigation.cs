@@ -497,7 +497,7 @@ namespace PicView.ChangeImage
             Pic(FolderIndex);
 
             // Update PicGallery selected item, if needed
-            if (GetPicGallery != null)
+            if (GalleryFunctions.IsOpen)
             {
                 if (GetPicGallery.Container.Children.Count > FolderIndex && GetPicGallery.Container.Children.Count > indexBackup)
                 {

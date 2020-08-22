@@ -45,16 +45,20 @@ namespace PicView.UILogic
             if (!Properties.Settings.Default.Fullscreen)
             {
                 Fullscreen_Restore(true);
+                Properties.Settings.Default.Fullscreen = false; // set value back
             }
 
             _ = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED); // Stop screensaver when running
+
+            HideInterfaceLogic.ShowNavigation(false);
+            HideInterfaceLogic.ShowShortcuts(false);
         }
 
         internal static void StopSlideshow()
         {
             SlideTimer.Stop();
 
-            if (Properties.Settings.Default.Fullscreen)
+            if (!Properties.Settings.Default.Fullscreen)
             {
                 Fullscreen_Restore();
             }

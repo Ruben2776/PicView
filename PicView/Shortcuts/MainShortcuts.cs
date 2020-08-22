@@ -273,62 +273,35 @@ namespace PicView.Shortcuts
                         if (UserControls_Open())
                         {
                             Close_UserControls();
-                            return;
                         }
-                        if (Properties.Settings.Default.Fullscreen)
+                        else if (Properties.Settings.Default.Fullscreen)
                         {
-                            if (Slideshow.SlideTimer != null)
+                            if (GalleryFunctions.IsOpen)
                             {
-                                if (Slideshow.SlideTimer.Enabled)
-                                {
-                                    Slideshow.StopSlideshow();
-                                }
+                                Toggle();
                             }
                             else
                             {
-                                if (GalleryFunctions.IsOpen)
-                                {
-                                    Toggle();
-                                }
-                                else
-                                {
-                                    Fullscreen_Restore();
-                                }
+                                Fullscreen_Restore();
                             }
-                            return;
                         }
-                        if (GalleryFunctions.IsOpen)
+                        else if (Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
+                        {
+                            Slideshow.StopSlideshow();
+                        }
+                        else if (GalleryFunctions.IsOpen)
                         {
                             Toggle();
-                            return;
                         }
-                        if (IsDialogOpen)
+                        else if (IsDialogOpen)
                         {
                             IsDialogOpen = false;
-                            return;
                         }
-                        if (GetInfoWindow != null)
-                        {
-                            if (GetInfoWindow.IsVisible)
-                            {
-                                GetInfoWindow.Hide();
-                                return;
-                            }
-                        }
-                        if (GetSettingsWindow != null)
-                        {
-                            if (GetSettingsWindow.IsVisible)
-                            {
-                                GetSettingsWindow.Hide();
-                                return;
-                            }
-                        }
-                        if (Color_Picking.IsRunning)
+                        else if (Color_Picking.IsRunning)
                         {
                             Color_Picking.StopRunning(false);
-                            return;
                         }
-                        if (!cm.IsVisible)
+                        else if (!cm.IsVisible)
                         {
                             SystemCommands.CloseWindow(GetMainWindow);
                         }
@@ -340,7 +313,6 @@ namespace PicView.Shortcuts
                         {
                             SystemCommands.CloseWindow(GetMainWindow);
                         }
-
                         break;
 
                     // O, Ctrl + O

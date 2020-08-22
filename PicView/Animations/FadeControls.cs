@@ -22,7 +22,6 @@ namespace PicView.UILogic.Animations
         internal static async void FadeControlsAsync(bool show, double time = .5)
         {
             if (Properties.Settings.Default.ShowInterface
-                || Properties.Settings.Default.Fullscreen
                 || GetClickArrowRight == null
                 || GetClickArrowLeft == null
                 || Getx2 == null
@@ -45,20 +44,14 @@ namespace PicView.UILogic.Animations
             {
                 if (!Properties.Settings.Default.ShowAltInterfaceButtons)
                 {
-                    GetClickArrowLeft.Visibility =
-                    GetClickArrowRight.Visibility =
-                    GetGalleryShortcut.Visibility =
-                    Getx2.Visibility =
-                    GetMinus.Visibility = Visibility.Collapsed;
+                    HideInterfaceLogic.ShowNavigation(false);
+                    HideInterfaceLogic.ShowShortcuts(false);
                     return;
                 }
                 else if (!GetClickArrowLeft.IsVisible)
                 {
-                    GetClickArrowLeft.Visibility =
-                    GetClickArrowRight.Visibility =
-                    GetGalleryShortcut.Visibility =
-                    Getx2.Visibility =
-                    GetMinus.Visibility = Visibility.Visible;
+                    HideInterfaceLogic.ShowNavigation(true);
+                    HideInterfaceLogic.ShowShortcuts(true);
                 }
 
                 if (Properties.Settings.Default.ScrollEnabled && LoadWindows.GetMainWindow.Scroller.ScrollableHeight > 0)

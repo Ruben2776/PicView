@@ -108,8 +108,8 @@ namespace PicView.UILogic.Sizing
             if (width <= 0 || height <= 0) { return; }
 
             double maxWidth, maxHeight;
-            var borderSpaceHeight = GetMainWindow.LowerBar.Height + GetMainWindow.TitleBar.Height + 6;
-            var borderSpaceWidth = 20 * MonitorInfo.DpiScaling; // Based on UI borders
+            var borderSpaceHeight = Properties.Settings.Default.Fullscreen ? 0 : GetMainWindow.LowerBar.Height + GetMainWindow.TitleBar.Height + 6;
+            var borderSpaceWidth = Properties.Settings.Default.Fullscreen && Properties.Settings.Default.ShowAltInterfaceButtons ? 0 : 20 * MonitorInfo.DpiScaling;
 
             var monitorWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
             var monitorHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
