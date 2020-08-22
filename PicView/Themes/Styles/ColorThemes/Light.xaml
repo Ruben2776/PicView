@@ -53,7 +53,7 @@
     <!--  Background Hover Highlight  -->
     <Color
         x:Key="BackgroundHoverHighlight"
-        A="100"
+        A="50"
         B="210"
         G="210"
         R="210" />
