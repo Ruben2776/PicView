@@ -206,8 +206,9 @@
 
                         <Slider
                             x:Name="SlideshowSlider"
-                            Width="200"
+                            Width="229"
                             Height="30"
+                            IsMoveToPointEnabled="True"
                             IsSnapToTickEnabled="True"
                             Maximum="15"
                             Minimum="1"
@@ -223,14 +224,48 @@
                             VerticalAlignment="Center"
                             IsReadOnly="True"
                             Text="{Binding ElementName=SlideshowSlider, Path=Value}"
-                            TextAlignment="Center"
-                            ToolTip="Enter the slideshow amount in seconds." />
+                            TextAlignment="Center" />
 
                         <TextBlock
                             VerticalAlignment="Center"
                             Foreground="{StaticResource MainColorFadedBrush}"
                             Text="Sec." />
                     </StackPanel>
+
+                    <Label
+                        Margin="0,10,0,4"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Content="Adjust zooming speed" />
+
+                    <StackPanel
+                        Margin="5,3,0,10"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Orientation="Horizontal">
+
+                        <Slider
+                            x:Name="ZoomSlider"
+                            Width="229"
+                            Height="30"
+                            d:Value=".2"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            Maximum="1.5"
+                            Minimum=".1"
+                            TickFrequency=".1"
+                            TickPlacement="BottomRight" />
+
+                        <TextBox
+                            x:Name="txtZoomSlide"
+                            Width="50"
+                            Margin="5,3"
+                            VerticalAlignment="Center"
+                            IsReadOnly="True"
+                            Text="{Binding ElementName=ZoomSlider, Path=Value}"
+                            TextAlignment="Center" />
+                    </StackPanel>
+
                 </StackPanel>
 
             </TabItem>

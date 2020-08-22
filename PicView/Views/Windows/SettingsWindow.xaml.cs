@@ -63,7 +63,10 @@ namespace PicView.Views.Windows
                 };
 
                 SlideshowSlider.Value = Properties.Settings.Default.SlideTimer / 1000;
-                SlideshowSlider.ValueChanged += SlideshowSlider_ValueChanged;
+                SlideshowSlider.ValueChanged += (_, e) => Properties.Settings.Default.SlideTimer = e.NewValue * 1000;
+
+                ZoomSlider.Value = Properties.Settings.Default.ZoomSpeed;
+                ZoomSlider.ValueChanged += (_,e) => Properties.Settings.Default.ZoomSpeed = e.NewValue;
 
                 LightThemeRadio.IsChecked = !Properties.Settings.Default.DarkTheme;
                 DarkThemeRadio.IsChecked = Properties.Settings.Default.DarkTheme;
@@ -341,12 +344,7 @@ namespace PicView.Views.Windows
                     LimeRadio.IsChecked = true;
                     break;
             }
-        }
-
-        private void SlideshowSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            Properties.Settings.Default.SlideTimer = e.NewValue * 1000;
-        }
+        }        
 
         #region EventHandlers
 
