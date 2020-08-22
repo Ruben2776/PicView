@@ -465,7 +465,7 @@ namespace PicView.UILogic.Loading
             fildecmIcon.Width = fildecmIcon.Height = 12;
             fildecmIcon.Fill = scbf;
             fildecm.Icon = fildecmIcon;
-            fildecm.Click += (_, _) => LoadWindows.ImageInfoWindow();
+            fildecm.Click += (_, _) => ImageInfoWindow();
             cm.Items.Add(fildecm);
             cm.Items.Add(new Separator());
 

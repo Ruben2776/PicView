@@ -307,11 +307,11 @@ namespace PicView.Shortcuts
                             IsDialogOpen = false;
                             return;
                         }
-                        if (InfoWindow != null)
+                        if (GetInfoWindow != null)
                         {
-                            if (InfoWindow.IsVisible)
+                            if (GetInfoWindow.IsVisible)
                             {
-                                InfoWindow.Hide();
+                                GetInfoWindow.Hide();
                                 return;
                             }
                         }
@@ -498,7 +498,7 @@ namespace PicView.Shortcuts
 
                     // F1
                     case Key.F1:
-                        InfoDialogWindow();
+                        InfoWindow();
                         break;
 
                     // F2

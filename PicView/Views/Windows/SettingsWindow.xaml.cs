@@ -20,9 +20,9 @@ namespace PicView.Views.Windows
     {
         public SettingsWindow()
         {
-            Width = 500 * WindowLogic.MonitorInfo.DpiScaling;
             MaxHeight = WindowLogic.MonitorInfo.WorkArea.Height;
             InitializeComponent();
+            Width *= WindowLogic.MonitorInfo.DpiScaling;
 
             ContentRendered += delegate
             {
@@ -31,7 +31,7 @@ namespace PicView.Views.Windows
                 // Center vertically
                 Top = ((WindowLogic.MonitorInfo.WorkArea.Height * WindowLogic.MonitorInfo.DpiScaling) - ActualHeight) / 2 + WindowLogic.MonitorInfo.WorkArea.Top;
 
-                KeyDown += KeysDown;
+                KeyDown += (_,e) => Shortcuts.GenericWindowShortcuts.KeysDown(null, e, this);
                 AddGenericEvents();
 
                 SetCheckedColorEvent();
@@ -346,34 +346,6 @@ namespace PicView.Views.Windows
         private void SlideshowSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Properties.Settings.Default.SlideTimer = e.NewValue * 1000;
-        }
-
-        private void KeysDown(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Escape:
-                    Hide();
-                    UILogic.Loading.LoadWindows.GetMainWindow.Focus();
-                    break;
-
-                case Key.S:
-                case Key.Down:
-                    //Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 10);
-                    break;
-
-                case Key.W:
-                case Key.U:
-                    //Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 10);
-                    break;
-
-                case Key.Q:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        Environment.Exit(0);
-                    }
-                    break;
-            }
         }
 
         #region EventHandlers

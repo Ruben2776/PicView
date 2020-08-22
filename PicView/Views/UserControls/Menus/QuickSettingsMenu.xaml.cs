@@ -24,13 +24,12 @@ namespace PicView.Views.UserControls
             {
                 LoadWindows.AllSettingsWindow();
                 Close_UserControls();
-                LoadWindows.AllSettingsWindow();
             };
 
             InfoButton.TheButton.Click += delegate
             {
                 Close_UserControls();
-                LoadWindows.InfoDialogWindow();
+                LoadWindows.InfoWindow();
             };
 
             ToggleFill.IsChecked = Properties.Settings.Default.FillImage;

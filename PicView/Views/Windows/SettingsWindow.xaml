@@ -189,7 +189,7 @@
                         HorizontalAlignment="Left"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Light Italic"
                         FontSize="12"
-                        Foreground="{StaticResource MainColorFadedBrush}"
+                        Foreground="{StaticResource MainColorBrush}"
                         Text="{StaticResource ChangingLanguageRequiresRestart}" />
 
                     <Label
@@ -454,7 +454,7 @@
                         HorizontalAlignment="Center"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Light Italic"
                         FontSize="12"
-                        Foreground="{StaticResource MainColorFadedBrush}"
+                        Foreground="{StaticResource MainColorBrush}"
                         Text="{StaticResource ChangingThemeRequiresRestart}" />
 
 

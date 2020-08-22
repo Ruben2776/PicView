@@ -1,11 +1,9 @@
 ﻿using PicView.UILogic.Animations;
 using PicView.UILogic.Sizing;
-using PicView.UILogic.TransformImage;
 using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 
@@ -44,16 +42,11 @@ namespace PicView.Views.Windows
             // Center vertically
             Top = ((WindowLogic.MonitorInfo.WorkArea.Height * WindowLogic.MonitorInfo.DpiScaling) - ActualHeight) / 2 + WindowLogic.MonitorInfo.WorkArea.Top;
 
-            KeyDown += KeysDown;
-            Scroller.MouseWheel += Info_MouseWheel;
+            KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(Scroller, e, this);
+            Scroller.MouseWheel += (_, e) => Shortcuts.GenericWindowShortcuts.Window_MouseWheel(Scroller, e);
             Bar.MouseLeftButtonDown += (_, _) => DragMove();
-            Closing += (_, e) =>
-            {
-                Hide();
-                e.Cancel = true;
-            };
 
-            CloseButton.TheButton.Click += delegate { Close(); };
+            CloseButton.TheButton.Click += delegate { Hide(); };
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
 
             Iconic.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(IconicBrush); };
@@ -84,52 +77,6 @@ namespace PicView.Views.Windows
             freepik.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(FreepikBrush); };
             freepik.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(FreepikBrush); };
         }
-
-        #region Keyboard Shortcuts
-
-        private void KeysDown(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Escape:
-                case Key.F1:
-                    Close();
-                    break;
-
-                case Key.Q:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        Environment.Exit(0);
-                    }
-                    break;
-
-                case Key.Down:
-                case Key.PageDown:
-                case Key.S:
-                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + ZoomLogic.zoomSpeed);
-                    break;
-
-                case Key.Up:
-                case Key.PageUp:
-                case Key.W:
-                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - ZoomLogic.zoomSpeed);
-                    break;
-            }
-        }
-
-        private void Info_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            if (e.Delta > 0)
-            {
-                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - ZoomLogic.zoomSpeed);
-            }
-            else if (e.Delta < 0)
-            {
-                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + ZoomLogic.zoomSpeed);
-            }
-        }
-
-        #endregion Keyboard Shortcuts
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {

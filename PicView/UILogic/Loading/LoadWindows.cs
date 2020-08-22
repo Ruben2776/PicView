@@ -10,7 +10,7 @@ namespace PicView.UILogic.Loading
     internal static class LoadWindows
     {
         internal static SettingsWindow GetSettingsWindow { get; set; }
-        internal static InfoWindow InfoWindow { get; set; }
+        internal static InfoWindow GetInfoWindow { get; set; }
         internal static EffectsWindow GetEffectsWindow { get; set; }
         internal static BatchWindow GetResizeAndOptimize { get; set; }
         internal static ImageInfoWindow GetImageInfoWindow { get; set; }
@@ -30,34 +30,24 @@ namespace PicView.UILogic.Loading
         /// <summary>
         /// Show Help window in a dialog
         /// </summary>
-        internal static void InfoDialogWindow()
+        internal static void InfoWindow()
         {
-            if (InfoWindow == null)
+            if (GetInfoWindow == null)
             {
-                InfoWindow = new InfoWindow
-                {
-                    Owner = GetMainWindow
-                };
+                GetInfoWindow = new InfoWindow();
+                GetInfoWindow.Show();
             }
             else
             {
-                if (InfoWindow.Visibility == Visibility.Visible)
+                if (GetInfoWindow.Visibility == Visibility.Visible)
                 {
-                    InfoWindow.Focus();
+                    GetInfoWindow.Focus();
                 }
                 else
                 {
-                    InfoWindow.Visibility = Visibility.Visible;
-                    InfoWindow.ShowDialog();
+                    GetInfoWindow.Show();
                 }
             }
-
-
-            InfoWindow.Show();
-
-#if DEBUG
-            Trace.WriteLine("HelpWindow loaded ");
-#endif
         }
 
         /// <summary>
@@ -67,10 +57,7 @@ namespace PicView.UILogic.Loading
         {
             if (GetSettingsWindow == null)
             {
-                GetSettingsWindow = new SettingsWindow
-                {
-                    Owner = GetMainWindow
-                };
+                GetSettingsWindow = new SettingsWindow();
 
                 GetSettingsWindow.Show();
             }
@@ -85,10 +72,6 @@ namespace PicView.UILogic.Loading
                     GetSettingsWindow.Show();
                 }
             }
-
-#if DEBUG
-            Trace.WriteLine("HelpWindow loaded ");
-#endif
         }
 
         /// <summary>
@@ -98,10 +81,7 @@ namespace PicView.UILogic.Loading
         {
             if (GetEffectsWindow == null)
             {
-                GetEffectsWindow = new EffectsWindow
-                {
-                    Owner = GetMainWindow
-                };
+                GetEffectsWindow = new EffectsWindow();
 
                 GetEffectsWindow.Show();
             }
@@ -116,10 +96,6 @@ namespace PicView.UILogic.Loading
                     GetEffectsWindow.Show();
                 }
             }
-
-#if DEBUG
-            Trace.WriteLine("EffectsWindow loaded ");
-#endif
         }
 
         /// <summary>
@@ -129,10 +105,7 @@ namespace PicView.UILogic.Loading
         {
             if (GetResizeAndOptimize == null)
             {
-                GetResizeAndOptimize = new BatchWindow
-                {
-                    Owner = GetMainWindow
-                };
+                GetResizeAndOptimize = new BatchWindow();
 
                 GetResizeAndOptimize.Show();
             }
@@ -147,10 +120,6 @@ namespace PicView.UILogic.Loading
                     GetResizeAndOptimize.Show();
                 }
             }
-
-#if DEBUG
-            Trace.WriteLine("EffectsWindow loaded ");
-#endif
         }
 
         /// <summary>
@@ -160,10 +129,7 @@ namespace PicView.UILogic.Loading
         {
             if (GetImageInfoWindow == null)
             {
-                GetImageInfoWindow = new ImageInfoWindow
-                {
-                    Owner = GetMainWindow
-                };
+                GetImageInfoWindow = new ImageInfoWindow();
 
                 GetImageInfoWindow.Show();
             }
@@ -178,10 +144,6 @@ namespace PicView.UILogic.Loading
                     GetImageInfoWindow.Show();
                 }
             }
-
-#if DEBUG
-            Trace.WriteLine("GetImageInfoWindow loaded ");
-#endif
         }
 
         #endregion Windows
