@@ -362,9 +362,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Themes\Resources\Units.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Translations\da.xaml">
       <SubType>Designer</SubType>
     </Page>
