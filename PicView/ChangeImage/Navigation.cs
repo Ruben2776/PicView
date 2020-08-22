@@ -240,9 +240,6 @@ namespace PicView.ChangeImage
 
                 if (bitmapSource == null)
                 {
-                    // Attempt to fix it
-                    //bitmapSource = await PicErrorFix(index).ConfigureAwait(true);
-
                     // If pic is still null, image can't be rendered
                     bitmapSource = ImageDecoder.ImageErrorMessage();
                 }
