@@ -7,7 +7,7 @@
         Width="51"
         Height="51"
         BorderThickness="0"
-        ToolTip="{StaticResource Reload}">
+        ToolTip="{StaticResource ShowAllSettingsWindow}">
         <Button.Background>
             <SolidColorBrush x:Name="ReloadButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
         </Button.Background>
