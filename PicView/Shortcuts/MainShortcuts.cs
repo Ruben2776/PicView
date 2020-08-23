@@ -495,6 +495,11 @@ namespace PicView.Shortcuts
 
                     // F6
                     case Key.F6:
+                        EffectsWindow();
+                        break;
+
+                    // F7
+                    case Key.F7:
                         ResetZoom();
                         break;
 
