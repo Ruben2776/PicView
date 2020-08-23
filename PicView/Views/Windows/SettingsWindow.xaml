@@ -23,7 +23,7 @@
         <Grid
             x:Name="TitleBar"
             Height="35"
-            Background="Transparent"
+            Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
             <uc:Logo HorizontalAlignment="Left" />
@@ -91,7 +91,7 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type TabItem}">
-                                <Grid Background="Transparent">
+                                <Grid Background="{StaticResource BackgroundSubtleHighlightBrush}">
                                     <Rectangle
                                         Name="Border"
                                         Height="2"
@@ -267,8 +267,8 @@
                     </StackPanel>
 
                 </StackPanel>
-
             </TabItem>
+
             <TabItem Header="Ui Settings">
                 <StackPanel>
                     <Label

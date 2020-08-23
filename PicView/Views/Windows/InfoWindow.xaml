@@ -2248,6 +2248,20 @@
                             Stretch="Fill" />
                     </StackPanel>
 
+                    <TextBlock HorizontalAlignment="Center">
+                        <Hyperlink NavigateUri="https://picView.org/" RequestNavigate="Hyperlink_RequestNavigate">
+                            <Hyperlink.Foreground>
+                                <SolidColorBrush x:Name="PicViewBrush" Color="{StaticResource MainColor}" />
+                            </Hyperlink.Foreground>
+                            <TextBlock
+                                x:Name="PicViewSite"
+                                FontSize="16"
+                                Text="PicView.org"
+                                TextAlignment="Center"
+                                ToolTip="https://picView.org/" />
+                        </Hyperlink>
+                    </TextBlock>
+
                     <TextBlock
                         Margin="0,7,0,2"
                         HorizontalAlignment="Center"
