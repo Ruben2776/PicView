@@ -193,7 +193,7 @@ namespace PicView.UILogic.Sizing
                 GetMainWindow.MainImage.Height = xHeight = height * AspectRatio;
             }
 
-            if (!Properties.Settings.Default.Fullscreen)
+            if (GetMainWindow.WindowState == System.Windows.WindowState.Normal)
             {
                 /// Update TitleBar
                 var interfaceSize = 190 * MonitorInfo.DpiScaling; // logo and buttons width

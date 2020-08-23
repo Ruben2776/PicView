@@ -149,29 +149,7 @@ namespace PicView.UILogic.Sizing
             if (forceFullscreen || !Properties.Settings.Default.Fullscreen)
             {
                 // Show fullscreen logic
-
-                // Save size to get back to it when restoring
-                if (!Properties.Settings.Default.AutoFitWindow)
-                {
-                    Properties.Settings.Default.Top = LoadWindows.GetMainWindow.Top;
-                    Properties.Settings.Default.Left = LoadWindows.GetMainWindow.Left;
-                    Properties.Settings.Default.Height = LoadWindows.GetMainWindow.Height;
-                    Properties.Settings.Default.Width = LoadWindows.GetMainWindow.Width;
-                }
-
-                Properties.Settings.Default.Fullscreen = true;
-
-                ShowTopandBottom(false);
-
-                LoadWindows.GetMainWindow.Topmost = true;
-
-                LoadWindows.GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
-                LoadWindows.GetMainWindow.SizeToContent = SizeToContent.Manual;
-                LoadWindows.GetMainWindow.Width = MonitorInfo.Width;
-                LoadWindows.GetMainWindow.Height = MonitorInfo.Height;
-
-                LoadWindows.GetMainWindow.Top = MonitorInfo.WorkArea.Top;
-                LoadWindows.GetMainWindow.Left = MonitorInfo.WorkArea.Left;
+                RenderFullscreen();
 
                 // Handle if browsing gallery
                 if (GalleryFunctions.IsOpen)
@@ -179,24 +157,11 @@ namespace PicView.UILogic.Sizing
                     GalleryLoad.LoadLayout();
                     GalleryScroll.ScrollTo();
                 }
-                else
-                {
-                    ShowNavigation(true);
-                    ShowShortcuts(true);
 
-                    if (GetGalleryShortcut != null)
-                    {
-                        GetGalleryShortcut.Opacity =
-                        GetClickArrowLeft.Opacity =
-                        GetClickArrowRight.Opacity =
-                        Getx2.Opacity =
-                        GetRestorebutton.Opacity =
-                        GetMinus.Opacity = 1;
-                    }
-                }
+                ShowNavigation(Properties.Settings.Default.ShowAltInterfaceButtons);
+                ShowShortcuts(Properties.Settings.Default.ShowAltInterfaceButtons);
 
-                ConfigureSettings.ConfigColors.UpdateColor(true);
-                Properties.Settings.Default.Save();
+                Properties.Settings.Default.Fullscreen = true;
             }
             else
             {
@@ -225,8 +190,6 @@ namespace PicView.UILogic.Sizing
                         GetQuickSettingsMenu.SetFit.IsChecked = true;
                     }
 
-                    LoadWindows.GetMainWindow.WindowState = WindowState.Normal;
-
                     LoadWindows.GetMainWindow.Width = double.NaN;
                     LoadWindows.GetMainWindow.Height = double.NaN;
 
@@ -251,11 +214,50 @@ namespace PicView.UILogic.Sizing
                     LoadWindows.GetMainWindow.ParentContainer.Height = double.NaN;
                 }
 
-                TryFitImage();
-                ConfigureSettings.ConfigColors.UpdateColor(); // Regain border
+                if (LoadWindows.GetMainWindow.WindowState == WindowState.Maximized)
+                {
+                    LoadWindows.GetMainWindow.WindowState = WindowState.Normal;
+                    LoadWindows.GetMainWindow.BorderThickness = new Thickness(0);
+                }
+
+                if (Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
+                {
+                    Slideshow.SlideTimer.Enabled = false;
+                }
 
                 Properties.Settings.Default.Fullscreen = false;
+                TryFitImage();
+                ConfigureSettings.ConfigColors.UpdateColor(); // Regain border
             }
+        }
+
+        internal static void RenderFullscreen()
+        {
+
+            // Save size to get back to it when restoring
+            if (!Properties.Settings.Default.AutoFitWindow)
+            {
+                Properties.Settings.Default.Top = LoadWindows.GetMainWindow.Top;
+                Properties.Settings.Default.Left = LoadWindows.GetMainWindow.Left;
+                Properties.Settings.Default.Height = LoadWindows.GetMainWindow.Height;
+                Properties.Settings.Default.Width = LoadWindows.GetMainWindow.Width;
+            }
+
+            ShowTopandBottom(false);
+
+            LoadWindows.GetMainWindow.Topmost = true;
+
+            LoadWindows.GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
+            LoadWindows.GetMainWindow.SizeToContent = SizeToContent.Manual;
+            LoadWindows.GetMainWindow.WindowState = WindowState.Maximized;
+            LoadWindows.GetMainWindow.BorderThickness = new Thickness(8);
+            LoadWindows.GetMainWindow.Width = MonitorInfo.Width;
+            LoadWindows.GetMainWindow.Height = MonitorInfo.Height;
+
+            LoadWindows.GetMainWindow.Top = MonitorInfo.WorkArea.Top;
+            LoadWindows.GetMainWindow.Left = MonitorInfo.WorkArea.Left;
+
+            ConfigureSettings.ConfigColors.UpdateColor(true);
         }
 
         /// <summary>
@@ -276,8 +278,7 @@ namespace PicView.UILogic.Sizing
         {
             if (LoadWindows.GetMainWindow.WindowState == WindowState.Maximized)
             {
-                LoadWindows.GetMainWindow.WindowState = WindowState.Normal;
-                Fullscreen_Restore();
+                RenderFullscreen();
             }
         }
 

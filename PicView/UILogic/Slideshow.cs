@@ -1,8 +1,10 @@
 ﻿using PicView.SystemIntegration;
 using PicView.UILogic.Animations;
 using PicView.UILogic.Loading;
+using PicView.UILogic.Sizing;
 using System;
 using System.Timers;
+using System.Windows;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Sizing.WindowLogic;
 
@@ -42,10 +44,9 @@ namespace PicView.UILogic
                 SlideTimer.Start();
             }
 
-            if (!Properties.Settings.Default.Fullscreen)
+            if (LoadWindows.GetMainWindow.WindowState == WindowState.Normal)
             {
-                Fullscreen_Restore(true);
-                Properties.Settings.Default.Fullscreen = false; // set value back
+                RenderFullscreen();
             }
 
             _ = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED); // Stop screensaver when running
