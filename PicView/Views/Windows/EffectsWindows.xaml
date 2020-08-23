@@ -6,67 +6,44 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
     Title="{StaticResource HLSLPictureFX}"
-    Width="574"
-    Height="691"
+    Width="530"
+    Height="392"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros"
     Foreground="{StaticResource MainColorBrush}"
+    ResizeMode="CanMinimize"
     Style="{DynamicResource MyWindowStyle}"
     mc:Ignorable="d">
 
     <DockPanel LastChildFill="True">
-        <DockPanel
+        <Grid
             x:Name="TitleBar"
-            Height="33"
+            Height="35"
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Logo />
-
-            <Rectangle
-                Width="1"
-                Height="35"
-                Margin="6,0,0,0"
-                Fill="{StaticResource BorderBrush}" />
-
-            <uc:CloseButton
-                x:Name="CloseButton"
-                VerticalAlignment="Center"
-                DockPanel.Dock="Right" />
-
-            <Rectangle
-                Width="1"
-                Height="35"
-                DockPanel.Dock="Right"
-                Fill="{StaticResource BorderBrush}" />
+            <uc:Logo HorizontalAlignment="Left" />
 
             <uc:MinButton
                 x:Name="MinButton"
-                VerticalAlignment="Center"
-                DockPanel.Dock="Right" />
+                Width="35"
+                Margin="0,0,35,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center" />
 
-            <Rectangle
-                Width="1"
-                Height="35"
-                DockPanel.Dock="Right"
-                Fill="{StaticResource BorderBrush}" />
+            <uc:CloseButton
+                x:Name="CloseButton"
+                Width="35"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center" />
 
-            <TextBlock
-                x:Name="Bar"
-                Height="35"
-                Padding="0,8.4,0,0"
-                VerticalAlignment="Center"
-                d:Text="HLSL Picture FX"
-                Background="{StaticResource BackgroundSubtleHighlightBrush}"
-                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                FontSize="15"
-                FontWeight="Bold"
-                Foreground="{StaticResource MainColorBrush}"
-                Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                TextAlignment="Center"
-                TextTrimming="CharacterEllipsis" />
-        </DockPanel>
+        </Grid>
+
+        <Rectangle
+            Height="1"
+            DockPanel.Dock="Top"
+            Fill="{StaticResource BorderBrush}" />
 
         <ScrollViewer
             x:Name="Scroller"
@@ -77,14 +54,9 @@
             <StackPanel>
                 <WrapPanel Margin="10,5" Orientation="Horizontal">
 
-                    <RadioButton
-                        x:Name="NegativeButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="NegativeButton" Background="Transparent">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource NegativeColors}"
@@ -93,19 +65,11 @@
                                 <SolidColorBrush x:Name="NegativeColorsText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="NegativeBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="GrayscaleButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="GrayscaleButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource BlackAndWhite}"
@@ -114,19 +78,11 @@
                                 <SolidColorBrush x:Name="BlackAndWhiteText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="GrayscaleBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="ColorToneButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="ColorToneButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource ColorTone}"
@@ -135,19 +91,11 @@
                                 <SolidColorBrush x:Name="ColorToneText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="ColortoneBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="OldMovieButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="OldMovieButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource OldMovie}"
@@ -156,19 +104,11 @@
                                 <SolidColorBrush x:Name="OldMovieText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="OldMovieBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="BloomButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="BloomButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource Bloom}"
@@ -177,19 +117,11 @@
                                 <SolidColorBrush x:Name="BloomText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="BloomBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="GloomButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="GloomButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource Gloom}"
@@ -198,19 +130,11 @@
                                 <SolidColorBrush x:Name="GloomText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="GloomBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="MonochromeButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="MonochromeButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource Monochrome}"
@@ -219,19 +143,11 @@
                                 <SolidColorBrush x:Name="MonochromeText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="MonocromeBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="WavewarperButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="WavewarperButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource WaveWarper}"
@@ -240,19 +156,11 @@
                                 <SolidColorBrush x:Name="WaveWarperText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="WavewarperBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="UnderwaterButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="UnderwaterButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource Underwater}"
@@ -261,19 +169,11 @@
                                 <SolidColorBrush x:Name="UnderwaterText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="UnderwaterBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="BandedSwirlButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="BandedSwirlButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource BandedSwirl}"
@@ -282,19 +182,11 @@
                                 <SolidColorBrush x:Name="BandedSwirlText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="BandedSwirlBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="RippleButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="RippleButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource Ripple}"
@@ -303,19 +195,11 @@
                                 <SolidColorBrush x:Name="RippleText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="RippleBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="RippleAltButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="RippleAltButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource RippleAlt}"
@@ -324,19 +208,11 @@
                                 <SolidColorBrush x:Name="RippleAltText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="RippleAltBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="BlurButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="BlurButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource Blur}"
@@ -345,19 +221,11 @@
                                 <SolidColorBrush x:Name="BlurText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="BlurBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="DirectionalBlurButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="DirectionalBlurButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource DirectionalBlur}"
@@ -366,19 +234,11 @@
                                 <SolidColorBrush x:Name="DirectionalBlurText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="DirectionalBlurBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="TelescopicBlurButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="TelescopicBlurButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource TelescopicBlur}"
@@ -387,19 +247,11 @@
                                 <SolidColorBrush x:Name="TelescopicBlurText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="TelescopicBlurBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="PixelateButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="PixelateButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource Pixelate}"
@@ -408,19 +260,11 @@
                                 <SolidColorBrush x:Name="PixelateText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="PixelateBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="EmbossedButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="EmbossedButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource Embossed}"
@@ -429,19 +273,11 @@
                                 <SolidColorBrush x:Name="EmbossedText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="EmbossedBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="SmoothMagnifyButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="SmoothMagnifyButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource SmoothMagnify}"
@@ -450,19 +286,11 @@
                                 <SolidColorBrush x:Name="SmoothMagnifyText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="SmoothMagnifyBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="PivotButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="PivotButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource Pivot}"
@@ -471,19 +299,11 @@
                                 <SolidColorBrush x:Name="PivotText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="PivotBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="PaperfoldButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="PaperfoldButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource PaperFold}"
@@ -492,19 +312,11 @@
                                 <SolidColorBrush x:Name="PaperFoldText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="PaperfoldBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="PencilSketchButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="PencilSketchButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource PencilSketch}"
@@ -513,19 +325,11 @@
                                 <SolidColorBrush x:Name="PencilSketchText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="PencilSketchBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="SketchButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="SketchButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource Sketch}"
@@ -534,19 +338,11 @@
                                 <SolidColorBrush x:Name="SketchText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="SketchBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="TonemappingButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="TonemappingButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource ToneMapping}"
@@ -555,19 +351,11 @@
                                 <SolidColorBrush x:Name="ToneMappingText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="TonemappingBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="FrostyOutlineButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="FrostyOutlineButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource FrostyOutline}"
@@ -576,19 +364,11 @@
                                 <SolidColorBrush x:Name="FrostyOutlineText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="FrostyOutlineBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="BandsButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="BandsButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource Bands}"
@@ -597,19 +377,11 @@
                                 <SolidColorBrush x:Name="BandsText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="BandsBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
 
-                    <RadioButton
-                        x:Name="GlasTileButton"
-                        MinWidth="125"
-                        Margin="5"
-                        Padding="10"
-                        Style="{StaticResource MetroFlatRadioButton}">
+                    <CheckBox x:Name="GlasTileButton">
                         <TextBlock
-                            MaxWidth="121"
+                            Width="140"
                             Margin="6,2,8,2"
                             FontSize="14"
                             Text="{StaticResource GlassTile}"
@@ -618,10 +390,7 @@
                                 <SolidColorBrush x:Name="GlassTileText" Color="{StaticResource MainColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <RadioButton.Background>
-                            <SolidColorBrush x:Name="GlasTileBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </RadioButton.Background>
-                    </RadioButton>
+                    </CheckBox>
                 </WrapPanel>
 
                 <TextBlock
@@ -630,23 +399,20 @@
                     Text="{StaticResource ClickToAddShaderEffectToImage}" />
                 <TextBlock HorizontalAlignment="Center" Text="{StaticResource UncheckToRemoveEffect}" />
 
-                <Border
-                    Width="105"
-                    Height="{DynamicResource LargeButtonHeight}"
-                    Margin="0,25,5,5"
-                    Style="{StaticResource ButtonBorder}">
-                    <Button
-                        x:Name="SaveButton"
-                        Content="{StaticResource Save}"
-                        FontSize="14">
-                        <Button.Background>
-                            <SolidColorBrush x:Name="SaveBrush" Color="Transparent" />
-                        </Button.Background>
-                        <Button.Foreground>
-                            <SolidColorBrush x:Name="SaveText" Color="{StaticResource MainColor}" />
-                        </Button.Foreground>
-                    </Button>
-                </Border>
+                <Button
+                    x:Name="SaveButton"
+                    Margin="0,12,0,0"
+                    Padding="26,7,26,7"
+                    HorizontalAlignment="Center"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    Content="{StaticResource Save}"
+                    FontSize="14"
+                    Style="{StaticResource MetroFlatButton}">
+                    <Button.Foreground>
+                        <SolidColorBrush x:Name="SaveText" Color="{StaticResource MainColor}" />
+                    </Button.Foreground>
+                </Button>
 
             </StackPanel>
         </ScrollViewer>
