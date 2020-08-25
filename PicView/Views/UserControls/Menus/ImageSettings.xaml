@@ -134,7 +134,7 @@
                             <TextBlock
                                 Margin="0,0,7,0"
                                 FontSize="14"
-                                Text="{StaticResource ShowContainedGallery}">
+                                Text="{StaticResource ShowHorizontalGallery}">
                                 <TextBlock.Foreground>
                                     <SolidColorBrush x:Name="ContainedTextBrush" Color="{StaticResource MainColor}" />
                                 </TextBlock.Foreground>

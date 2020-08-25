@@ -346,7 +346,7 @@
 
     <!--  Menu buttons text  -->
     <system:String x:Key="ShowFullscreenGallery">Show fullscreen gallery</system:String>
-    <system:String x:Key="ShowContainedGallery">Show contained gallery</system:String>
+    <system:String x:Key="ShowHorizontalGallery">Show horizontal gallery</system:String>
 
     <system:String x:Key="FillImageHeight">Fill image height</system:String>
 

@@ -346,7 +346,7 @@
 
     <!--  Menu buttons text  -->
     <system:String x:Key="ShowFullscreenGallery">Vis fuldskærmsgalleri</system:String>
-    <system:String x:Key="ShowContainedGallery">Vis indeholdt galleri</system:String>
+    <system:String x:Key="ShowHorizontalGallery">Vis vandret galleri</system:String>
 
     <system:String x:Key="FillImageHeight">Fyld billedhøjde</system:String>
 

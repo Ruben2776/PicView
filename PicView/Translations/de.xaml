@@ -346,7 +346,7 @@
 
     <!--  Menu buttons text  -->
     <system:String x:Key="ShowFullscreenGallery">Vollbild Galerie anzeigen</system:String>
-    <system:String x:Key="ShowContainedGallery">Eingegrenze Galerie anzeigen</system:String>
+    <system:String x:Key="ShowHorizontalGallery">Eingegrenze Galerie anzeigen</system:String>
 
     <system:String x:Key="FillImageHeight">Bildhöhe anpassen</system:String>
 
