@@ -32,6 +32,16 @@ namespace PicView.UILogic
         /// </summary>
         internal static System.Windows.Controls.ContextMenu cm;
 
+        internal static bool IsMainWindowTopMost 
+        { 
+            get { return Properties.Settings.Default.TopMost; }
+            set
+            {
+                Properties.Settings.Default.TopMost = value;
+                GetMainWindow.Topmost = value;
+            }
+        }
+
         #region Windows
 
         /// <summary>
@@ -136,7 +146,7 @@ namespace PicView.UILogic
         {
             if (GetImageInfoWindow == null)
             {
-                GetImageInfoWindow = new ImageInfoWindow();
+                GetImageInfoWindow = new ImageInfoWindow { Owner = GetMainWindow };
 
                 GetImageInfoWindow.Show();
             }
@@ -255,7 +265,7 @@ namespace PicView.UILogic
             }
             else
             {
-                GetMainWindow.Topmost = false;
+                GetMainWindow.Topmost = Properties.Settings.Default.TopMost;
 
                 if (Properties.Settings.Default.ShowInterface)
                 {

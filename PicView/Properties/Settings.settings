@@ -140,5 +140,8 @@
     <Setting Name="ZoomSpeed" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0.2</Value>
     </Setting>
+    <Setting Name="TopMost" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

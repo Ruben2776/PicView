@@ -145,6 +145,34 @@
                         </CheckBox.Content>
                     </CheckBox>
 
+                    <CheckBox x:Name="TopmostRadio" Padding="5,0,0,0">
+                        <CheckBox.Foreground>
+                            <SolidColorBrush x:Name="TopMostDirText" Color="{StaticResource MainColor}" />
+                        </CheckBox.Foreground>
+                        <CheckBox.Content>
+                            <TextBlock
+                                Width="279"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                Text="Stay on top of other windows" />
+                        </CheckBox.Content>
+                    </CheckBox>
+
+
+                    <CheckBox
+                        x:Name="CenterRadio"
+                        Padding="5,0,0,0"
+                        d:IsChecked="True">
+                        <CheckBox.Foreground>
+                            <SolidColorBrush x:Name="CenterubDirText" Color="{StaticResource MainColor}" />
+                        </CheckBox.Foreground>
+                        <CheckBox.Content>
+                            <TextBlock
+                                Width="279"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                Text="Keep window centered" />
+                        </CheckBox.Content>
+                    </CheckBox>
+
 
                     <Label Margin="0,15,0,0" Content="{StaticResource SetAsWallpaper}" />
 
@@ -185,12 +213,13 @@
                         HorizontalAlignment="Left" />
 
                     <TextBlock
-                        Margin="5,4,0,25"
+                        Margin="7,7,0,25"
                         HorizontalAlignment="Left"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Light Italic"
                         FontSize="12"
                         Foreground="{StaticResource MainColorBrush}"
-                        Text="{StaticResource ChangingLanguageRequiresRestart}" />
+                        Text="{StaticResource ChangingLanguageRequiresRestart}"
+                        TextWrapping="Wrap" />
 
                     <Label
                         Margin="0,10,0,4"
@@ -485,12 +514,13 @@
                     </Border>
 
                     <TextBlock
-                        Margin="5,7,0,25"
+                        Margin="7,7,6,25"
                         HorizontalAlignment="Center"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Light Italic"
                         FontSize="12"
                         Foreground="{StaticResource MainColorBrush}"
-                        Text="{StaticResource ChangingThemeRequiresRestart}" />
+                        Text="{StaticResource ChangingThemeRequiresRestart}"
+                        TextWrapping="Wrap" />
 
 
                     <CheckBox

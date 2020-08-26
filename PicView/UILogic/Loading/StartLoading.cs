@@ -149,6 +149,8 @@ namespace PicView.UILogic.Loading
                 Pic(arg.ToString());
             }
 
+            ConfigureWindows.GetMainWindow.Topmost = Properties.Settings.Default.TopMost;
+
             // Load UI and events
             AddUIElementsAndUpdateValues();
 
