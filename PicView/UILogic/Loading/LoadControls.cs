@@ -25,7 +25,7 @@ namespace PicView.UILogic.Loading
                     HorizontalAlignment = HorizontalAlignment.Right
                 };
 
-                LoadWindows.GetMainWindow.ParentContainer.Children.Add(GetClickArrowRight);
+                ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetClickArrowRight);
             }
             else
             {
@@ -37,7 +37,7 @@ namespace PicView.UILogic.Loading
                     HorizontalAlignment = HorizontalAlignment.Left
                 };
 
-                LoadWindows.GetMainWindow.ParentContainer.Children.Add(GetClickArrowLeft);
+                ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetClickArrowLeft);
 
 #if DEBUG
                 var x = right ? nameof(GetClickArrowRight) : nameof(GetClickArrowLeft);
@@ -60,7 +60,7 @@ namespace PicView.UILogic.Loading
                 ToolTip = Application.Current.Resources["Close"]
             };
 
-            LoadWindows.GetMainWindow.ParentContainer.Children.Add(Getx2);
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(Getx2);
 
 #if DEBUG
             Trace.WriteLine(nameof(Getx2) + " loaded ");
@@ -81,7 +81,7 @@ namespace PicView.UILogic.Loading
                 Margin = new Thickness(0, 0, 90, 0)
             };
 
-            LoadWindows.GetMainWindow.ParentContainer.Children.Add(GetMinus);
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetMinus);
 
 #if DEBUG
             Trace.WriteLine(nameof(GetMinus) + " loaded ");
@@ -102,7 +102,7 @@ namespace PicView.UILogic.Loading
                 Margin = new Thickness(0, 0, 50, 0)
             };
 
-            LoadWindows.GetMainWindow.ParentContainer.Children.Add(GetRestorebutton);
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetRestorebutton);
 
 #if DEBUG
             Trace.WriteLine(nameof(GetRestorebutton) + " loaded ");
@@ -122,7 +122,7 @@ namespace PicView.UILogic.Loading
                 HorizontalAlignment = HorizontalAlignment.Right
             };
 
-            LoadWindows.GetMainWindow.ParentContainer.Children.Add(GetGalleryShortcut);
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetGalleryShortcut);
 
 #if DEBUG
             Trace.WriteLine(nameof(GetGalleryShortcut) + " loaded ");
@@ -144,7 +144,7 @@ namespace PicView.UILogic.Loading
                 Margin = new Thickness(0, 0, 168, 0)
             };
 
-            LoadWindows.GetMainWindow.ParentContainer.Children.Add(GetFileMenu);
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetFileMenu);
 
 #if DEBUG
             Trace.WriteLine(nameof(GetFileMenu) + " loaded ");
@@ -166,7 +166,7 @@ namespace PicView.UILogic.Loading
                 Margin = new Thickness(0, 0, 73, 0)
             };
 
-            LoadWindows.GetMainWindow.ParentContainer.Children.Add(GetImageSettingsMenu);
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetImageSettingsMenu);
 
 #if DEBUG
             Trace.WriteLine(nameof(GetImageSettingsMenu) + " loaded ");
@@ -190,7 +190,7 @@ namespace PicView.UILogic.Loading
 
             GetQuickSettingsMenu.SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
 
-            LoadWindows.GetMainWindow.ParentContainer.Children.Add(GetQuickSettingsMenu);
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetQuickSettingsMenu);
 
 #if DEBUG
             Trace.WriteLine(nameof(GetQuickSettingsMenu) + " loaded ");
@@ -212,7 +212,7 @@ namespace PicView.UILogic.Loading
                 Margin = new Thickness(67, 0, 0, 0)
             };
 
-            LoadWindows.GetMainWindow.ParentContainer.Children.Add(GetToolsAndEffectsMenu);
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetToolsAndEffectsMenu);
 
 #if DEBUG
             Trace.WriteLine(nameof(GetToolsAndEffectsMenu) + " loaded ");
@@ -233,7 +233,7 @@ namespace PicView.UILogic.Loading
                 Visibility = Visibility.Hidden
             };
 
-            LoadWindows.GetMainWindow.ParentContainer.Children.Add(GetToolTipMessage);
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetToolTipMessage);
 
 #if DEBUG
             Trace.WriteLine(nameof(GetToolTipMessage) + " loaded ");
@@ -254,7 +254,7 @@ namespace PicView.UILogic.Loading
                 Height = 35
             };
 
-            LoadWindows.GetMainWindow.topLayer.Children.Add(GetAutoScrollSign);
+            ConfigureWindows.GetMainWindow.topLayer.Children.Add(GetAutoScrollSign);
 
 #if DEBUG
             Trace.WriteLine(nameof(GetAutoScrollSign) + " loaded ");
@@ -270,7 +270,7 @@ namespace PicView.UILogic.Loading
             {
             };
 
-            LoadWindows.GetMainWindow.ParentContainer.Children.Add(GetCropppingTool);
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetCropppingTool);
 
 #if DEBUG
             Trace.WriteLine(nameof(GetCropppingTool) + " loaded ");
@@ -286,7 +286,7 @@ namespace PicView.UILogic.Loading
             {
             };
 
-            LoadWindows.GetMainWindow.topLayer.Children.Add(GetColorPicker);
+            ConfigureWindows.GetMainWindow.topLayer.Children.Add(GetColorPicker);
 
 #if DEBUG
             Trace.WriteLine(nameof(GetColorPicker) + " loaded ");

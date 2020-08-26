@@ -23,21 +23,21 @@ namespace PicView.UILogic.PicGallery
     {
         internal static void Click(int id)
         {
-            LoadWindows.GetMainWindow.Focus();
+            ConfigureWindows.GetMainWindow.Focus();
 
             if (Properties.Settings.Default.PicGallery == 1)
             {
-                LoadWindows.GetMainWindow.MainImage.Visibility = Visibility.Hidden;
+                ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Hidden;
 
                 var z = GetPicGallery.Container.Children[id] as Views.UserControls.PicGalleryItem;
-                LoadWindows.GetMainWindow.MainImage.Source = z.img.Source;
+                ConfigureWindows.GetMainWindow.MainImage.Source = z.img.Source;
                 var size = ImageSize(Pics[id]);
                 if (size.HasValue)
                 {
                     FitImage(size.Value.Width, size.Value.Height);
                 }
 
-                if (WindowLogic.AutoFitWindow)
+                if (WindowSizing.AutoFitWindow)
                 {
                     GetPicGallery.Width = xWidth;
                     GetPicGallery.Height = xHeight;
@@ -89,7 +89,7 @@ namespace PicView.UILogic.PicGallery
 
                 da.Completed += delegate
                 {
-                    LoadWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
+                    ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
                     ItemClick(id);
                     border.Opacity = 0;
                     GetPicGallery.grid.Children.Remove(border);

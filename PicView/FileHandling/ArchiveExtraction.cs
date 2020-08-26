@@ -1,5 +1,5 @@
 ﻿using PicView.ChangeImage;
-using PicView.UILogic.Loading;
+using PicView.UILogic;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -188,8 +188,8 @@ namespace PicView.FileHandling
                 return true;
             }
 
-            LoadWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Unzipping"] as string;
-            LoadWindows.GetMainWindow.TitleText.ToolTip = LoadWindows.GetMainWindow.TitleText.Text;
+            ConfigureWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Unzipping"] as string;
+            ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.Text;
             await Task.Delay(100).ConfigureAwait(true);
 
             // TempZipPath is not null = images being extracted

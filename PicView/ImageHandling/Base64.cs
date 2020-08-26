@@ -71,7 +71,7 @@ namespace PicView.ImageHandling
             string path;
             if (Navigation.FolderIndex == 0)
             {
-                string url = FileFunctions.GetURL(LoadWindows.GetMainWindow.TitleText.Text);
+                string url = FileFunctions.GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
                 if (Uri.IsWellFormedUriString(url, UriKind.Absolute)) // Check if from web
                 {
                     using var webclient = new WebClient();

@@ -130,9 +130,9 @@ namespace PicView.UILogic.DragAndDrop
             {
                 RemoveDragOverlay();
             }
-            else if (LoadWindows.GetMainWindow.TitleText.Text == Application.Current.Resources["NoImage"] as string)
+            else if (ConfigureWindows.GetMainWindow.TitleText.Text == Application.Current.Resources["NoImage"] as string)
             {
-                LoadWindows.GetMainWindow.MainImage.Source = null;
+                ConfigureWindows.GetMainWindow.MainImage.Source = null;
             }
 
             CloseToolTipMessage();
@@ -157,7 +157,7 @@ namespace PicView.UILogic.DragAndDrop
                     string[] parts = dataStr.Split((char)10);
 
                     Pic(parts[0]);
-                    LoadWindows.GetMainWindow.Activate();
+                    ConfigureWindows.GetMainWindow.Activate();
                     return;
                 }
             }
@@ -180,7 +180,7 @@ namespace PicView.UILogic.DragAndDrop
                     if (Properties.Settings.Default.IncludeSubDirectories || Directory.GetFiles(files[0]).Length > 0)
                     {
                         PicFolder(files[0]);
-                        LoadWindows.GetMainWindow.Activate();
+                        ConfigureWindows.GetMainWindow.Activate();
                     }
                     return;
                 }
@@ -205,7 +205,7 @@ namespace PicView.UILogic.DragAndDrop
             // Don't show drop message any longer
             CloseToolTipMessage();
 
-            LoadWindows.GetMainWindow.Activate();
+            ConfigureWindows.GetMainWindow.Activate();
 
             // Start multiple clients if user drags multiple files
             // TODO no longer working after converting to .NET Core...
@@ -229,15 +229,15 @@ namespace PicView.UILogic.DragAndDrop
         {
             DropOverlay = new Views.UserControls.DragDropOverlay(element)
             {
-                Width = LoadWindows.GetMainWindow.ParentContainer.ActualWidth,
-                Height = LoadWindows.GetMainWindow.ParentContainer.ActualHeight
+                Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth,
+                Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight
             };
-            LoadWindows.GetMainWindow.topLayer.Children.Add(DropOverlay);
+            ConfigureWindows.GetMainWindow.topLayer.Children.Add(DropOverlay);
         }
 
         private static void RemoveDragOverlay()
         {
-            LoadWindows.GetMainWindow.topLayer.Children.Remove(DropOverlay);
+            ConfigureWindows.GetMainWindow.topLayer.Children.Remove(DropOverlay);
             DropOverlay = null;
         }
     }

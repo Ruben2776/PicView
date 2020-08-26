@@ -1,11 +1,10 @@
 ﻿using PicView.ImageHandling;
-using PicView.UILogic.Loading;
 using PicView.UILogic.TransformImage;
 using System;
 using static PicView.ChangeImage.Navigation;
-using static PicView.UILogic.Loading.LoadWindows;
+using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.PicGallery.GalleryFunctions;
-using static PicView.UILogic.Sizing.WindowLogic;
+using static PicView.UILogic.Sizing.WindowSizing;
 using static PicView.UILogic.TransformImage.Rotation;
 using static PicView.UILogic.TransformImage.Scroll;
 

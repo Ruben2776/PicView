@@ -78,7 +78,7 @@ namespace PicView.UILogic.TransformImage
         internal static void InitializeZoom()
         {
             // Initialize transforms
-            LoadWindows.GetMainWindow.MainImage.RenderTransform = new TransformGroup
+            ConfigureWindows.GetMainWindow.MainImage.RenderTransform = new TransformGroup
             {
                 Children = new TransformCollection {
                             new ScaleTransform(),
@@ -86,18 +86,18 @@ namespace PicView.UILogic.TransformImage
                         }
             };
 
-            LoadWindows.GetMainWindow.Scroller.ClipToBounds = LoadWindows.GetMainWindow.MainImage.ClipToBounds = true;
+            ConfigureWindows.GetMainWindow.Scroller.ClipToBounds = ConfigureWindows.GetMainWindow.MainImage.ClipToBounds = true;
 
             // Set transforms to UI elements
-            scaleTransform = (ScaleTransform)((TransformGroup)LoadWindows.GetMainWindow.MainImage.RenderTransform).Children.First(tr => tr is ScaleTransform);
-            translateTransform = (TranslateTransform)((TransformGroup)LoadWindows.GetMainWindow.MainImage.RenderTransform).Children.First(tr => tr is TranslateTransform);
+            scaleTransform = (ScaleTransform)((TransformGroup)ConfigureWindows.GetMainWindow.MainImage.RenderTransform).Children.First(tr => tr is ScaleTransform);
+            translateTransform = (TranslateTransform)((TransformGroup)ConfigureWindows.GetMainWindow.MainImage.RenderTransform).Children.First(tr => tr is TranslateTransform);
         }
 
         internal static void PreparePanImage(object sender, MouseButtonEventArgs e)
         {
             // Report position for image drag
-            LoadWindows.GetMainWindow.MainImage.CaptureMouse();
-            start = e.GetPosition(LoadWindows.GetMainWindow.MainImageBorder);
+            ConfigureWindows.GetMainWindow.MainImage.CaptureMouse();
+            start = e.GetPosition(ConfigureWindows.GetMainWindow.MainImageBorder);
             origin = new Point(translateTransform.X, translateTransform.Y);
         }
 
@@ -105,19 +105,19 @@ namespace PicView.UILogic.TransformImage
         {
             // Don't drag when full scale
             // and don't drag it if mouse not held down on image
-            if (!LoadWindows.GetMainWindow.MainImage.IsMouseCaptured || scaleTransform.ScaleX == 1)
+            if (!ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured || scaleTransform.ScaleX == 1)
             {
                 return;
             }
 
             // Drag image by modifying X,Y coordinates
-            var dragMousePosition = start - e.GetPosition(LoadWindows.GetMainWindow);
+            var dragMousePosition = start - e.GetPosition(ConfigureWindows.GetMainWindow);
 
             var newXproperty = origin.X - dragMousePosition.X;
             var newYproperty = origin.Y - dragMousePosition.Y;
 
-            var isXOutOfBorder = LoadWindows.GetMainWindow.MainImageBorder.ActualWidth < (LoadWindows.GetMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
-            var isYOutOfBorder = LoadWindows.GetMainWindow.MainImageBorder.ActualHeight < (LoadWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
+            var isXOutOfBorder = ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth < (ConfigureWindows.GetMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
+            var isYOutOfBorder = ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight < (ConfigureWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
             if ((isXOutOfBorder && newXproperty > 0) || (!isXOutOfBorder && newXproperty < 0))
             {
                 newXproperty = 0;
@@ -126,12 +126,12 @@ namespace PicView.UILogic.TransformImage
             {
                 newYproperty = 0;
             }
-            var maxX = LoadWindows.GetMainWindow.MainImageBorder.ActualWidth - (LoadWindows.GetMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
+            var maxX = ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth - (ConfigureWindows.GetMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
             if ((isXOutOfBorder && newXproperty < maxX) || (!isXOutOfBorder && newXproperty > maxX))
             {
                 newXproperty = maxX;
             }
-            var maxY = LoadWindows.GetMainWindow.MainImageBorder.ActualHeight - (LoadWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
+            var maxY = ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight - (ConfigureWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
             if ((isXOutOfBorder && newYproperty < maxY) || (!isXOutOfBorder && newYproperty > maxY))
             {
                 newYproperty = maxY;
@@ -148,7 +148,7 @@ namespace PicView.UILogic.TransformImage
         /// </summary>
         internal static void ResetZoom(bool animate = true)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Source == null) { return; }
+            if (ConfigureWindows.GetMainWindow.MainImage.Source == null) { return; }
 
             if (animate)
             {
@@ -167,11 +167,11 @@ namespace PicView.UILogic.TransformImage
             if (Pics.Count == 0)
             {
                 /// Display values from web
-                SetTitle.SetTitleString((int)LoadWindows.GetMainWindow.MainImage.Source.Width, (int)LoadWindows.GetMainWindow.MainImage.Source.Height);
+                SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height);
             }
             else
             {
-                SetTitle.SetTitleString((int)LoadWindows.GetMainWindow.MainImage.Source.Width, (int)LoadWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
+                SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
             }
 
             UC.GetQuickSettingsMenu.ZoomSlider.Value = 1.0;
@@ -277,11 +277,11 @@ namespace PicView.UILogic.TransformImage
             if (Pics.Count == 0)
             {
                 /// Display values from web
-                SetTitle.SetTitleString((int)LoadWindows.GetMainWindow.MainImage.Source.Width, (int)LoadWindows.GetMainWindow.MainImage.Source.Height);
+                SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height);
             }
             else
             {
-                SetTitle.SetTitleString((int)LoadWindows.GetMainWindow.MainImage.Source.Width, (int)LoadWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
+                SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
             }
 
             if (UC.GetQuickSettingsMenu.ZoomSlider.Value != value)
@@ -292,7 +292,7 @@ namespace PicView.UILogic.TransformImage
 
         private static void BeginZoomAnimation(double zoomValue)
         {
-            Point relative = Mouse.GetPosition(LoadWindows.GetMainWindow.MainImage);
+            Point relative = Mouse.GetPosition(ConfigureWindows.GetMainWindow.MainImage);
 
             // Calculate new position
             double absoluteX = relative.X * scaleTransform.ScaleX + translateTransform.X;

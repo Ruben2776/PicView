@@ -30,7 +30,7 @@ namespace PicView.SystemIntegration
         /// <param name="style"></param>
         internal static async void SetWallpaper(WallpaperStyle style)
         {
-            if (UILogic.Loading.LoadWindows.GetMainWindow.MainImage.Effect != null || Clipboard.ContainsImage())
+            if (UILogic.ConfigureWindows.GetMainWindow.MainImage.Effect != null || Clipboard.ContainsImage())
             {
                 try
                 {
@@ -76,7 +76,7 @@ namespace PicView.SystemIntegration
             }
             else
             {
-                string wallpaper = FileFunctions.GetURL(UILogic.Loading.LoadWindows.GetMainWindow.TitleText.Text);
+                string wallpaper = FileFunctions.GetURL(UILogic.ConfigureWindows.GetMainWindow.TitleText.Text);
 
                 if (Uri.IsWellFormedUriString(wallpaper, UriKind.Absolute)) // Check if from web
                 {

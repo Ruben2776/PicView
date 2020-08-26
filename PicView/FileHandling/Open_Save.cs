@@ -52,7 +52,7 @@ namespace PicView.FileHandling
             }
             else return;
 
-            if (!File.Exists(Pics[FolderIndex]) || LoadWindows.GetMainWindow.MainImage.Source == null)
+            if (!File.Exists(Pics[FolderIndex]) || ConfigureWindows.GetMainWindow.MainImage.Source == null)
             {
                 return;
             }
@@ -126,7 +126,7 @@ namespace PicView.FileHandling
         /// </summary>
         internal static void SaveFiles()
         {
-            if (LoadWindows.GetMainWindow.MainImage.Source == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Source == null)
             {
                 return;
             }
@@ -157,7 +157,7 @@ namespace PicView.FileHandling
 
             IsDialogOpen = true;
 
-            if (LoadWindows.GetMainWindow.MainImage.Effect != null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
                 if (!SaveImages.TrySaveImageWithEffect(Savedlg.FileName))
                 {
@@ -173,7 +173,7 @@ namespace PicView.FileHandling
             }
             else
             {
-                if (!SaveImages.TrySaveImage(Rotateint, Flipped, LoadWindows.GetMainWindow.MainImage.Source as BitmapSource, Savedlg.FileName))
+                if (!SaveImages.TrySaveImage(Rotateint, Flipped, ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource, Savedlg.FileName))
                 {
                     ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
                 }

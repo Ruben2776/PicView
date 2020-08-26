@@ -20,16 +20,16 @@ namespace PicView.Views.Windows
     {
         public SettingsWindow()
         {
-            MaxHeight = WindowLogic.MonitorInfo.WorkArea.Height;
+            MaxHeight = WindowSizing.MonitorInfo.WorkArea.Height;
             InitializeComponent();
-            Width *= WindowLogic.MonitorInfo.DpiScaling;
+            Width *= WindowSizing.MonitorInfo.DpiScaling;
 
             ContentRendered += delegate
             {
                 var colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.1) };
 
                 // Center vertically
-                Top = ((WindowLogic.MonitorInfo.WorkArea.Height * WindowLogic.MonitorInfo.DpiScaling) - ActualHeight) / 2 + WindowLogic.MonitorInfo.WorkArea.Top;
+                Top = ((WindowSizing.MonitorInfo.WorkArea.Height * WindowSizing.MonitorInfo.DpiScaling) - ActualHeight) / 2 + WindowSizing.MonitorInfo.WorkArea.Top;
 
                 KeyDown += (_,e) => Shortcuts.GenericWindowShortcuts.KeysDown(null, e, this);
                 AddGenericEvents();

@@ -1,4 +1,4 @@
-﻿using PicView.UILogic.Loading;
+﻿using PicView.UILogic;
 using System;
 using System.Windows;
 using System.Windows.Input;
@@ -17,7 +17,7 @@ namespace PicView.Views.Windows
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             // CloseButton
-            CloseButton.TheButton.Click += delegate { Hide(); LoadWindows.GetMainWindow.Focus(); };
+            CloseButton.TheButton.Click += delegate { Hide(); ConfigureWindows.GetMainWindow.Focus(); };
 
             // MinButton
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
@@ -29,7 +29,7 @@ namespace PicView.Views.Windows
                 if (e.Key == Key.Escape)
                 {
                     Hide();
-                    LoadWindows.GetMainWindow.Focus();
+                    ConfigureWindows.GetMainWindow.Focus();
                 }
                 else if (e.Key == Key.Q && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                 {

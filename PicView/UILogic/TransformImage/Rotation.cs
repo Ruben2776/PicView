@@ -20,7 +20,7 @@ namespace PicView.UILogic.TransformImage
         /// <param name="r"></param>
         internal static void Rotate(int r)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Source == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Source == null)
             {
                 return;
             }
@@ -36,11 +36,11 @@ namespace PicView.UILogic.TransformImage
                 var flip = new ScaleTransform { ScaleX = -1 };
                 tg.Children.Add(flip);
                 tg.Children.Add(rt);
-                LoadWindows.GetMainWindow.MainImage.LayoutTransform = tg;
+                ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = tg;
             }
             else
             {
-                LoadWindows.GetMainWindow.MainImage.LayoutTransform = rt;
+                ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = rt;
             }
         }
 
@@ -50,7 +50,7 @@ namespace PicView.UILogic.TransformImage
         /// <param name="right"></param>
         internal static void Rotate(bool right)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Source == null ||
+            if (ConfigureWindows.GetMainWindow.MainImage.Source == null ||
                 Properties.Settings.Default.PicGallery == 1 && GalleryFunctions.IsOpen)
             { return; }
 
@@ -73,7 +73,7 @@ namespace PicView.UILogic.TransformImage
         /// </summary>
         internal static void Flip()
         {
-            if (LoadWindows.GetMainWindow.MainImage.Source == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Source == null)
             {
                 return;
             }
@@ -96,7 +96,7 @@ namespace PicView.UILogic.TransformImage
             rt.Angle = Rotateint;
             tg.Children.Add(flip);
             tg.Children.Add(rt);
-            LoadWindows.GetMainWindow.MainImage.LayoutTransform = tg;
+            ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = tg;
         }
     }
 }

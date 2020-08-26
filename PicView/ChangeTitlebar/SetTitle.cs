@@ -73,9 +73,9 @@ namespace PicView.UILogic
                 return;
             }
 
-            LoadWindows.GetMainWindow.Title = titleString[0];
-            LoadWindows.GetMainWindow.TitleText.Text = titleString[1];
-            LoadWindows.GetMainWindow.TitleText.ToolTip = titleString[2];
+            ConfigureWindows.GetMainWindow.Title = titleString[0];
+            ConfigureWindows.GetMainWindow.TitleText.Text = titleString[1];
+            ConfigureWindows.GetMainWindow.TitleText.ToolTip = titleString[2];
         }
 
         /// <summary>
@@ -116,9 +116,9 @@ namespace PicView.UILogic
         internal static void SetTitleString(int width, int height, string path)
         {
             var titleString = TitleString(width, height, path);
-            LoadWindows.GetMainWindow.Title = titleString[0];
-            LoadWindows.GetMainWindow.TitleText.Text = titleString[1];
-            LoadWindows.GetMainWindow.TitleText.ToolTip = titleString[1];
+            ConfigureWindows.GetMainWindow.Title = titleString[0];
+            ConfigureWindows.GetMainWindow.TitleText.Text = titleString[1];
+            ConfigureWindows.GetMainWindow.TitleText.ToolTip = titleString[1];
         }
 
         /// <summary>
@@ -129,21 +129,21 @@ namespace PicView.UILogic
         /// <param name="height"></param>
         internal static void SetTitleString(int width, int height)
         {
-            string path = GetURL(LoadWindows.GetMainWindow.TitleText.Text);
+            string path = GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
 
             path = string.IsNullOrWhiteSpace(path) ? Application.Current.Resources["Image"] as string : path;
 
             var titleString = TitleString(width, height, path);
-            LoadWindows.GetMainWindow.Title = titleString[0];
-            LoadWindows.GetMainWindow.TitleText.Text = titleString[1];
-            LoadWindows.GetMainWindow.TitleText.ToolTip = titleString[1];
+            ConfigureWindows.GetMainWindow.Title = titleString[0];
+            ConfigureWindows.GetMainWindow.TitleText.Text = titleString[1];
+            ConfigureWindows.GetMainWindow.TitleText.ToolTip = titleString[1];
         }
 
         internal static void SetLoadingString()
         {
-            LoadWindows.GetMainWindow.Title = Application.Current.Resources["Loading"] as string;
-            LoadWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
-            LoadWindows.GetMainWindow.TitleText.ToolTip = Application.Current.Resources["Loading"] as string;
+            ConfigureWindows.GetMainWindow.Title = Application.Current.Resources["Loading"] as string;
+            ConfigureWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
+            ConfigureWindows.GetMainWindow.TitleText.ToolTip = Application.Current.Resources["Loading"] as string;
         }
     }
 }

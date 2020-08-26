@@ -12,7 +12,7 @@ using static PicView.FileHandling.Open_Save;
 using static PicView.FileHandling.RecentFiles;
 using static PicView.Library.Resources.SvgIcons;
 using static PicView.SystemIntegration.Wallpaper;
-using static PicView.UILogic.Loading.LoadWindows;
+using static PicView.UILogic.ConfigureWindows;
 
 namespace PicView.UILogic.Loading
 {
@@ -624,11 +624,11 @@ namespace PicView.UILogic.Loading
                 Fill = scbf
             };
             clcm.Icon = mclcmIcon;
-            clcm.Click += (s, x) => { cm.Visibility = Visibility.Collapsed; SystemCommands.CloseWindow(LoadWindows.GetMainWindow); };
+            clcm.Click += (s, x) => { cm.Visibility = Visibility.Collapsed; SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow); };
             cm.Items.Add(clcm);
 
             // Add to elements
-            LoadWindows.GetMainWindow.MainImage.ContextMenu = LoadWindows.GetMainWindow.ParentContainer.ContextMenu = cm;
+            ConfigureWindows.GetMainWindow.MainImage.ContextMenu = ConfigureWindows.GetMainWindow.ParentContainer.ContextMenu = cm;
             cm.Opened += (tt, yy) => Recentcm_Opened(recentcm);
 
 #if DEBUG

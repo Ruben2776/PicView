@@ -11,7 +11,7 @@ using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Loading.LoadContextMenus;
 using static PicView.UILogic.Loading.LoadControls;
-using static PicView.UILogic.Sizing.WindowLogic;
+using static PicView.UILogic.Sizing.WindowSizing;
 using static PicView.UILogic.TransformImage.Scroll;
 using static PicView.UILogic.TransformImage.ZoomLogic;
 using static PicView.UILogic.UC;
@@ -28,15 +28,15 @@ namespace PicView.UILogic.Loading
             Trace.WriteLine(SetTitle.AppName + " started at " + DateTime.Now);
 #endif
             // theese two line have to be exactly onload
-            HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(LoadWindows.GetMainWindow).Handle);
+            HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle);
             source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
 
             FreshStartup = true;
 
             if (!Properties.Settings.Default.ShowInterface)
             {
-                LoadWindows.GetMainWindow.TitleBar.Visibility =
-                LoadWindows.GetMainWindow.LowerBar.Visibility 
+                ConfigureWindows.GetMainWindow.TitleBar.Visibility =
+                ConfigureWindows.GetMainWindow.LowerBar.Visibility 
                 = Visibility.Collapsed;
             }
 
@@ -97,8 +97,8 @@ namespace PicView.UILogic.Loading
             IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
 
             // Set min size to DPI scaling
-            LoadWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
-            LoadWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
+            ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
+            ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
             Pics = new List<string>();
 
@@ -122,8 +122,8 @@ namespace PicView.UILogic.Loading
                 }
                 else
                 {
-                    LoadWindows.GetMainWindow.Width = 750 * MonitorInfo.DpiScaling;
-                    LoadWindows.GetMainWindow.MinHeight = 700 * MonitorInfo.DpiScaling;
+                    ConfigureWindows.GetMainWindow.Width = 750 * MonitorInfo.DpiScaling;
+                    ConfigureWindows.GetMainWindow.MinHeight = 700 * MonitorInfo.DpiScaling;
                 }
             }
             else
@@ -131,7 +131,7 @@ namespace PicView.UILogic.Loading
                 // Determine prefered UI for startup
                 if (Properties.Settings.Default.Fullscreen)
                 {
-                    Fullscreen_Restore(true);
+                    ConfigureWindows.Fullscreen_Restore(true);
                 }
                 else if (Properties.Settings.Default.PicGallery == 2)
                 {
@@ -158,23 +158,23 @@ namespace PicView.UILogic.Loading
 
             if (Properties.Settings.Default.AutoFitWindow)
             {
-                CenterWindowOnScreen();
+                ConfigureWindows.CenterWindowOnScreen();
             }
         }
 
         private static void SetLastWindowSize()
         {
-            LoadWindows.GetMainWindow.Top = Properties.Settings.Default.Top;
-            LoadWindows.GetMainWindow.Left = Properties.Settings.Default.Left;
-            LoadWindows.GetMainWindow.Width = Properties.Settings.Default.Width;
-            LoadWindows.GetMainWindow.Height = Properties.Settings.Default.Height;
+            ConfigureWindows.GetMainWindow.Top = Properties.Settings.Default.Top;
+            ConfigureWindows.GetMainWindow.Left = Properties.Settings.Default.Left;
+            ConfigureWindows.GetMainWindow.Width = Properties.Settings.Default.Width;
+            ConfigureWindows.GetMainWindow.Height = Properties.Settings.Default.Height;
         }
 
         private static void AddUIElementsAndUpdateValues()
         {
             // Update values
             ConfigureSettings.ConfigColors.SetColors();
-            LoadWindows.GetMainWindow.AllowDrop = true;
+            ConfigureWindows.GetMainWindow.AllowDrop = true;
 
             LoadClickArrow(true);
             LoadClickArrow(false);

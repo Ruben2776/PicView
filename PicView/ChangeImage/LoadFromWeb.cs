@@ -1,5 +1,5 @@
 ﻿using PicView.FileHandling;
-using PicView.UILogic.Loading;
+using PicView.UILogic;
 using System;
 using System.Diagnostics;
 using System.Net;
@@ -23,7 +23,7 @@ namespace PicView.ChangeImage
         /// <param name="path"></param>
         internal static async void PicWeb(string path)
         {
-            LoadWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
+            ConfigureWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
 
             BitmapSource pic;
             if (Pics != null && Pics.Count > 0)
@@ -55,9 +55,9 @@ namespace PicView.ChangeImage
             CanNavigate = false;
 
             // Fix not having focus after drag and drop
-            if (!LoadWindows.GetMainWindow.IsFocused)
+            if (!ConfigureWindows.GetMainWindow.IsFocused)
             {
-                LoadWindows.GetMainWindow.Focus();
+                ConfigureWindows.GetMainWindow.Focus();
             }
         }
 
@@ -74,14 +74,14 @@ namespace PicView.ChangeImage
             {
                 var client = new WebClient();
                 client.DownloadProgressChanged += (sender, e) =>
-                LoadWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                 {
-                    LoadWindows.GetMainWindow.Title = LoadWindows.GetMainWindow.TitleText.Text =
+                    ConfigureWindows.GetMainWindow.Title = ConfigureWindows.GetMainWindow.TitleText.Text =
                         $"{e.BytesReceived} / {e.TotalBytesToReceive} {e.ProgressPercentage} {Application.Current.Resources["PercentComplete"]}";
-                    LoadWindows.GetMainWindow.TitleText.ToolTip = LoadWindows.GetMainWindow.Title;
+                    ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.Title;
                 }));
                 client.DownloadDataCompleted += (sender, e) =>
-                LoadWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                 {
                     if (pic != null)
                     {

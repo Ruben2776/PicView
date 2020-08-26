@@ -64,13 +64,13 @@ namespace PicView.UILogic
         {
             if (show)
             {
-                LoadWindows.GetMainWindow.TitleBar.Visibility =
-                LoadWindows.GetMainWindow.LowerBar.Visibility = Visibility.Visible;
+                ConfigureWindows.GetMainWindow.TitleBar.Visibility =
+                ConfigureWindows.GetMainWindow.LowerBar.Visibility = Visibility.Visible;
             }
             else
             {
-                LoadWindows.GetMainWindow.TitleBar.Visibility =
-                LoadWindows.GetMainWindow.LowerBar.Visibility = Visibility.Collapsed;
+                ConfigureWindows.GetMainWindow.TitleBar.Visibility =
+                ConfigureWindows.GetMainWindow.LowerBar.Visibility = Visibility.Collapsed;
             }
         }
 

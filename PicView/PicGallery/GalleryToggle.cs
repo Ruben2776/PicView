@@ -1,15 +1,15 @@
 ﻿using PicView.UILogic.Animations;
-using PicView.UILogic.Loading;
 using PicView.UILogic.Sizing;
 using PicView.Views.Windows;
 using System;
 using System.Windows;
 using System.Windows.Media.Animation;
 using static PicView.ChangeImage.Navigation;
+using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.PicGallery.GalleryFunctions;
 using static PicView.UILogic.PicGallery.GalleryLoad;
 using static PicView.UILogic.PicGallery.GalleryScroll;
-using static PicView.UILogic.Sizing.WindowLogic;
+using static PicView.UILogic.Sizing.WindowSizing;
 using static PicView.UILogic.UC;
 
 namespace PicView.UILogic.PicGallery
@@ -90,12 +90,12 @@ namespace PicView.UILogic.PicGallery
             GetRestorebutton.Visibility =
             GetGalleryShortcut.Visibility = Visibility.Hidden;
 
-            if (fakeWindow != null)
+            if (GetFakeWindow != null)
             {
-                if (fakeWindow.grid.Children.Contains(GetPicGallery))
+                if (GetFakeWindow.grid.Children.Contains(GetPicGallery))
                 {
-                    fakeWindow.grid.Children.Remove(GetPicGallery);
-                    LoadWindows.GetMainWindow.ParentContainer.Children.Add(GetPicGallery);
+                    GetFakeWindow.grid.Children.Remove(GetPicGallery);
+                    GetMainWindow.ParentContainer.Children.Add(GetPicGallery);
                 }
             }
 
@@ -117,29 +117,29 @@ namespace PicView.UILogic.PicGallery
             Properties.Settings.Default.PicGallery = 2;
             LoadLayout();
 
-            if (fakeWindow == null)
+            if (GetFakeWindow == null)
             {
-                fakeWindow = new FakeWindow();
-                fakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtons
+                GetFakeWindow = new FakeWindow();
+                GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtons
                 {
                     Margin = new Thickness(1, 12, 0, 0),
                 });
             }
 
             // Switch gallery container to the correct window
-            if (LoadWindows.GetMainWindow.ParentContainer.Children.Contains(GetPicGallery))
+            if (GetMainWindow.ParentContainer.Children.Contains(GetPicGallery))
             {
-                LoadWindows.GetMainWindow.ParentContainer.Children.Remove(GetPicGallery);
-                fakeWindow.grid.Children.Add(GetPicGallery);
+                GetMainWindow.ParentContainer.Children.Remove(GetPicGallery);
+                GetFakeWindow.grid.Children.Add(GetPicGallery);
             }
-            else if (!fakeWindow.grid.Children.Contains(GetPicGallery))
+            else if (!GetFakeWindow.grid.Children.Contains(GetPicGallery))
             {
-                fakeWindow.grid.Children.Add(GetPicGallery);
+                GetFakeWindow.grid.Children.Add(GetPicGallery);
             }
 
-            fakeWindow.Show();
+            GetFakeWindow.Show();
             ScrollTo();
-            LoadWindows.GetMainWindow.Focus();
+            GetMainWindow.Focus();
 
             if (!FreshStartup)
             {
@@ -191,7 +191,7 @@ namespace PicView.UILogic.PicGallery
         {
             Properties.Settings.Default.PicGallery = 1;
             IsOpen = false;
-            fakeWindow.Hide();
+            GetFakeWindow.Hide();
 
             ConfigureSettings.ConfigColors.UpdateColor();
 
@@ -210,13 +210,13 @@ namespace PicView.UILogic.PicGallery
             Properties.Settings.Default.PicGallery = 1;
             LoadLayout();
 
-            if (fakeWindow.grid.Children.Contains(GetPicGallery))
+            if (GetFakeWindow.grid.Children.Contains(GetPicGallery))
             {
-                fakeWindow.grid.Children.Remove(GetPicGallery);
-                LoadWindows.GetMainWindow.ParentContainer.Children.Add(GetPicGallery);
+                GetFakeWindow.grid.Children.Remove(GetPicGallery);
+                GetMainWindow.ParentContainer.Children.Add(GetPicGallery);
             }
 
-            fakeWindow.Hide();
+            GetFakeWindow.Hide();
         }
 
         internal static void ChangeToPicGalleryTwo()
@@ -224,24 +224,24 @@ namespace PicView.UILogic.PicGallery
             Properties.Settings.Default.PicGallery = 2;
             LoadLayout();
 
-            if (fakeWindow != null)
+            if (GetFakeWindow != null)
             {
-                if (!fakeWindow.grid.Children.Contains(GetPicGallery))
+                if (!GetFakeWindow.grid.Children.Contains(GetPicGallery))
                 {
-                    LoadWindows.GetMainWindow.ParentContainer.Children.Remove(GetPicGallery);
-                    fakeWindow.grid.Children.Add(GetPicGallery);
+                    GetMainWindow.ParentContainer.Children.Remove(GetPicGallery);
+                    GetFakeWindow.grid.Children.Add(GetPicGallery);
                 }
             }
             else
             {
-                LoadWindows.GetMainWindow.ParentContainer.Children.Remove(GetPicGallery);
-                fakeWindow = new FakeWindow();
-                fakeWindow.grid.Children.Add(GetPicGallery);
+                GetMainWindow.ParentContainer.Children.Remove(GetPicGallery);
+                GetFakeWindow = new FakeWindow();
+                GetFakeWindow.grid.Children.Add(GetPicGallery);
             }
 
-            fakeWindow.Show();
+            GetFakeWindow.Show();
             ScrollTo();
-            LoadWindows.GetMainWindow.Focus();
+            GetMainWindow.Focus();
         }
 
         #endregion Change

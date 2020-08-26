@@ -1,12 +1,9 @@
 ﻿using PicView.SystemIntegration;
 using PicView.UILogic.Animations;
-using PicView.UILogic.Loading;
-using PicView.UILogic.Sizing;
 using System;
 using System.Timers;
 using System.Windows;
 using static PicView.ChangeImage.Navigation;
-using static PicView.UILogic.Sizing.WindowLogic;
 
 namespace PicView.UILogic
 {
@@ -44,9 +41,9 @@ namespace PicView.UILogic
                 SlideTimer.Start();
             }
 
-            if (LoadWindows.GetMainWindow.WindowState == WindowState.Normal)
+            if (ConfigureWindows.GetMainWindow.WindowState == WindowState.Normal)
             {
-                RenderFullscreen();
+                ConfigureWindows.RenderFullscreen();
             }
 
             _ = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED); // Stop screensaver when running
@@ -61,7 +58,7 @@ namespace PicView.UILogic
 
             if (!Properties.Settings.Default.Fullscreen)
             {
-                Fullscreen_Restore();
+                ConfigureWindows.Fullscreen_Restore();
             }
 
             _ = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS); // Allow screensaver again
@@ -74,9 +71,9 @@ namespace PicView.UILogic
         /// <param name="e"></param>
         private static void SlideTimer_Elapsed(object server, ElapsedEventArgs e)
         {
-            AnimationHelper.Fade(LoadWindows.GetMainWindow.MainImage, TimeSpan.FromSeconds(0.8), TimeSpan.FromSeconds(0), 0, .5);
+            AnimationHelper.Fade(ConfigureWindows.GetMainWindow.MainImage, TimeSpan.FromSeconds(0.8), TimeSpan.FromSeconds(0), 0, .5);
             Pic();
-            AnimationHelper.Fade(LoadWindows.GetMainWindow.MainImage, TimeSpan.FromSeconds(0.7), TimeSpan.FromSeconds(0), .5, 1);
+            AnimationHelper.Fade(ConfigureWindows.GetMainWindow.MainImage, TimeSpan.FromSeconds(0.7), TimeSpan.FromSeconds(0), .5, 1);
         }
     }
 }

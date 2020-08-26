@@ -1,5 +1,5 @@
-﻿using PicView.UILogic.Animations;
-using PicView.UILogic.Loading;
+﻿using PicView.UILogic;
+using PicView.UILogic.Animations;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,14 +22,14 @@ namespace PicView.Views.UserControls
 
             SettingsButton.TheButton.Click += delegate
             {
-                LoadWindows.AllSettingsWindow();
+                ConfigureWindows.AllSettingsWindow();
                 Close_UserControls();
             };
 
             InfoButton.TheButton.Click += delegate
             {
                 Close_UserControls();
-                LoadWindows.InfoWindow();
+                ConfigureWindows.InfoWindow();
             };
 
             ToggleFill.IsChecked = Properties.Settings.Default.FillImage;

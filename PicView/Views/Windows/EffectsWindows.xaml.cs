@@ -1,10 +1,7 @@
 ﻿using PicView.Editing.HlslEffects;
 using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.UILogic.Animations;
-using PicView.UILogic.Loading;
+using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using PicView.UILogic.TransformImage;
 using System;
 using System.Windows;
 using System.Windows.Input;
@@ -24,14 +21,14 @@ namespace PicView.Views.Windows
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             // Center vertically
-            Top = ((WindowLogic.MonitorInfo.WorkArea.Height * WindowLogic.MonitorInfo.DpiScaling) - ActualHeight) / 2 + WindowLogic.MonitorInfo.WorkArea.Top;
+            Top = ((WindowSizing.MonitorInfo.WorkArea.Height * WindowSizing.MonitorInfo.DpiScaling) - ActualHeight) / 2 + WindowSizing.MonitorInfo.WorkArea.Top;
 
             KeyDown += KeysDown;
             KeyUp += KeysUp;
             Scroller.MouseWheel += Info_MouseWheel;
 
             // CloseButton
-            CloseButton.TheButton.Click += delegate { Hide(); LoadWindows.GetMainWindow.Focus(); };
+            CloseButton.TheButton.Click += delegate { Hide(); ConfigureWindows.GetMainWindow.Focus(); };
 
             // MinButton
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
@@ -260,7 +257,7 @@ namespace PicView.Views.Windows
             {
                 case Key.Escape:
                     Hide();
-                    LoadWindows.GetMainWindow.Focus();
+                    ConfigureWindows.GetMainWindow.Focus();
                     break;
 
                 case Key.Q:
@@ -290,14 +287,14 @@ namespace PicView.Views.Windows
 
         private void Remove_Effects(object sender, RoutedEventArgs e)
         {
-            LoadWindows.GetMainWindow.MainImage.Effect = null;
+            ConfigureWindows.GetMainWindow.MainImage.Effect = null;
         }
 
         private void Negative(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new InvertColorEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new InvertColorEffect();
             }
             else
             {
@@ -307,9 +304,9 @@ namespace PicView.Views.Windows
 
         private void GraySceale(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new GrayscaleEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new GrayscaleEffect();
             }
             else
             {
@@ -319,9 +316,9 @@ namespace PicView.Views.Windows
 
         private void ColorToneEffect(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new ColorToneEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new ColorToneEffect();
             }
             else
             {
@@ -331,9 +328,9 @@ namespace PicView.Views.Windows
 
         private void RippleEffect1(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new Transition_RippleEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new Transition_RippleEffect();
             }
             else
             {
@@ -343,9 +340,9 @@ namespace PicView.Views.Windows
 
         private void RippleEffect2(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new RippleEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new RippleEffect();
             }
             else
             {
@@ -355,9 +352,9 @@ namespace PicView.Views.Windows
 
         private void BandedSwirlEffect(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new BandedSwirlEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new BandedSwirlEffect();
             }
             else
             {
@@ -367,9 +364,9 @@ namespace PicView.Views.Windows
 
         private void Monochrome(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new MonochromeEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new MonochromeEffect();
             }
             else
             {
@@ -379,9 +376,9 @@ namespace PicView.Views.Windows
 
         private void Swirl(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new SwirlEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new SwirlEffect();
             }
             else
             {
@@ -391,9 +388,9 @@ namespace PicView.Views.Windows
 
         private void Bloom(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new BloomEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new BloomEffect();
             }
             else
             {
@@ -403,9 +400,9 @@ namespace PicView.Views.Windows
 
         private void Gloom(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new GloomEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new GloomEffect();
             }
             else
             {
@@ -415,9 +412,9 @@ namespace PicView.Views.Windows
 
         private void ToneMapping(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new ToneMappingEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new ToneMappingEffect();
             }
             else
             {
@@ -427,9 +424,9 @@ namespace PicView.Views.Windows
 
         private void Teleskopisk_blur(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new TelescopicBlurPS3Effect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new TelescopicBlurPS3Effect();
             }
             else
             {
@@ -439,9 +436,9 @@ namespace PicView.Views.Windows
 
         private void Poison_blur(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new GrowablePoissonDiskEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new GrowablePoissonDiskEffect();
             }
             else
             {
@@ -451,9 +448,9 @@ namespace PicView.Views.Windows
 
         private void Dir_blur(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new DirectionalBlurEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new DirectionalBlurEffect();
             }
             else
             {
@@ -463,9 +460,9 @@ namespace PicView.Views.Windows
 
         private void bands(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new BandsEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new BandsEffect();
             }
             else
             {
@@ -475,9 +472,9 @@ namespace PicView.Views.Windows
 
         private void Embossed(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new EmbossedEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new EmbossedEffect();
             }
             else
             {
@@ -487,9 +484,9 @@ namespace PicView.Views.Windows
 
         private void GlasTileEffect(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new GlassTilesEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new GlassTilesEffect();
             }
             else
             {
@@ -499,9 +496,9 @@ namespace PicView.Views.Windows
 
         private void MagnifySmoothEffect(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new MagnifySmoothEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new MagnifySmoothEffect();
             }
             else
             {
@@ -511,9 +508,9 @@ namespace PicView.Views.Windows
 
         private void PaperFoldEffect(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new PaperFoldEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new PaperFoldEffect();
             }
             else
             {
@@ -523,9 +520,9 @@ namespace PicView.Views.Windows
 
         private void PivotEffect(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new PivotEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new PivotEffect();
             }
             else
             {
@@ -535,9 +532,9 @@ namespace PicView.Views.Windows
 
         private void UnderWaterEffect(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new UnderwaterEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new UnderwaterEffect();
             }
             else
             {
@@ -547,9 +544,9 @@ namespace PicView.Views.Windows
 
         private void WaveWarperEffect(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new WaveWarperEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new WaveWarperEffect();
             }
             else
             {
@@ -559,9 +556,9 @@ namespace PicView.Views.Windows
 
         private void FrostyOutlineEffect(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new FrostyOutlineEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new FrostyOutlineEffect();
             }
             else
             {
@@ -571,9 +568,9 @@ namespace PicView.Views.Windows
 
         private void OldMovieEffect(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new OldMovieEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new OldMovieEffect();
             }
             else
             {
@@ -583,9 +580,9 @@ namespace PicView.Views.Windows
 
         private void PixelateEffect(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new PixelateEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new PixelateEffect();
             }
             else
             {
@@ -595,9 +592,9 @@ namespace PicView.Views.Windows
 
         private void Sketch(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new SketchGraniteEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new SketchGraniteEffect();
             }
             else
             {
@@ -607,9 +604,9 @@ namespace PicView.Views.Windows
 
         private void SketchPencilStrokeEffect(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
             {
-                LoadWindows.GetMainWindow.MainImage.Effect = new SketchPencilStrokeEffect();
+                ConfigureWindows.GetMainWindow.MainImage.Effect = new SketchPencilStrokeEffect();
             }
             else
             {

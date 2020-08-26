@@ -16,8 +16,8 @@ namespace PicView.UILogic.PicGallery
         {
             // Add events and set fields, when it's loaded.
             UC.GetPicGallery.Scroller.PreviewMouseWheel += ScrollTo;
-            UC.GetPicGallery.Scroller.ScrollChanged += (s, x) => LoadWindows.GetMainWindow.Focus(); // Maintain window focus when scrolling manually
-            UC.GetPicGallery.grid.MouseLeftButtonDown += (s, x) => LoadWindows.GetMainWindow.Focus();
+            UC.GetPicGallery.Scroller.ScrollChanged += (s, x) => ConfigureWindows.GetMainWindow.Focus(); // Maintain window focus when scrolling manually
+            UC.GetPicGallery.grid.MouseLeftButtonDown += (s, x) => ConfigureWindows.GetMainWindow.Focus();
             UC.GetPicGallery.x2.MouseLeftButtonDown += delegate { GalleryToggle.CloseContainedGallery(); };
 
             SetSize();
@@ -25,15 +25,15 @@ namespace PicView.UILogic.PicGallery
 
         internal static void SetSize()
         {
-            if (WindowLogic.MonitorInfo.Width > 2100)
+            if (WindowSizing.MonitorInfo.Width > 2100)
             {
                 picGalleryItem_Size = 260;
             }
-            else if (WindowLogic.MonitorInfo.Width > 1700)
+            else if (WindowSizing.MonitorInfo.Width > 1700)
             {
                 picGalleryItem_Size = 210;
             }
-            else if (WindowLogic.MonitorInfo.Width > 1200)
+            else if (WindowSizing.MonitorInfo.Width > 1200)
             {
                 picGalleryItem_Size = 150;
             }
@@ -55,7 +55,7 @@ namespace PicView.UILogic.PicGallery
                     Visibility = Visibility.Collapsed
                 };
 
-                LoadWindows.GetMainWindow.ParentContainer.Children.Add(UC.GetPicGallery);
+                ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(UC.GetPicGallery);
                 Panel.SetZIndex(UC.GetPicGallery, 999);
             }
 
@@ -68,13 +68,13 @@ namespace PicView.UILogic.PicGallery
             {
                 if (Properties.Settings.Default.Fullscreen)
                 {
-                    UC.GetPicGallery.Width = WindowLogic.MonitorInfo.Width;
-                    UC.GetPicGallery.Height = WindowLogic.MonitorInfo.Height;
+                    UC.GetPicGallery.Width = WindowSizing.MonitorInfo.Width;
+                    UC.GetPicGallery.Height = WindowSizing.MonitorInfo.Height;
                 }
                 else
                 {
-                    UC.GetPicGallery.Width = LoadWindows.GetMainWindow.ParentContainer.ActualWidth;
-                    UC.GetPicGallery.Height = LoadWindows.GetMainWindow.ParentContainer.ActualHeight;
+                    UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+                    UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
                 }
 
                 UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -85,13 +85,13 @@ namespace PicView.UILogic.PicGallery
             }
             else
             {
-                UC.GetPicGallery.Width = (picGalleryItem_Size + 25) * WindowLogic.MonitorInfo.DpiScaling;
-                UC.GetPicGallery.Height = WindowLogic.MonitorInfo.WorkArea.Height;
+                UC.GetPicGallery.Width = (picGalleryItem_Size + 25) * WindowSizing.MonitorInfo.DpiScaling;
+                UC.GetPicGallery.Height = WindowSizing.MonitorInfo.WorkArea.Height;
 
-                LoadWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
-                LoadWindows.GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
+                ConfigureWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
+                ConfigureWindows.GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
 
-                WindowLogic.CenterWindowOnScreen();
+                ConfigureWindows.CenterWindowOnScreen();
 
                 UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Right;
                 UC.GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;

@@ -18,13 +18,13 @@ namespace PicView.Editing
         {
             IsRunning = true;
 
-            if (UC.GetColorPicker == null || !LoadWindows.GetMainWindow.topLayer.Children.Contains(UC.GetColorPicker))
+            if (UC.GetColorPicker == null || !ConfigureWindows.GetMainWindow.topLayer.Children.Contains(UC.GetColorPicker))
             {
                 LoadControls.LoadColorPicker();
             }
 
             // Set cursor for coloc picking
-            LoadWindows.GetMainWindow.Cursor = Cursors.Pen;
+            ConfigureWindows.GetMainWindow.Cursor = Cursors.Pen;
         }
 
         internal static void StartRunning()
@@ -45,7 +45,7 @@ namespace PicView.Editing
             };
 
             // Set to follow cursor
-            Scroll.AutoScrollOrigin = Mouse.GetPosition(LoadWindows.GetMainWindow);
+            Scroll.AutoScrollOrigin = Mouse.GetPosition(ConfigureWindows.GetMainWindow);
             Canvas.SetTop(UC.GetColorPicker, Scroll.AutoScrollOrigin.Value.Y);
             Canvas.SetLeft(UC.GetColorPicker, Scroll.AutoScrollOrigin.Value.X);
         }
@@ -53,7 +53,7 @@ namespace PicView.Editing
         internal static void StopRunning(bool addValue)
         {
             // Reset cursor from coloc picking
-            LoadWindows.GetMainWindow.Cursor = Cursors.Arrow;
+            ConfigureWindows.GetMainWindow.Cursor = Cursors.Arrow;
 
             if (UC.GetColorPicker != null)
             {
@@ -64,12 +64,12 @@ namespace PicView.Editing
                     Tooltip.ShowTooltipMessage(x + " " + Application.Current.Resources["AddedToClipboard"]);
                 }
 
-                LoadWindows.GetMainWindow.topLayer.Children.Remove(UC.GetColorPicker);
+                ConfigureWindows.GetMainWindow.topLayer.Children.Remove(UC.GetColorPicker);
             }
 
             IsRunning = false;
 
-            LoadWindows.GetMainWindow.Focus();
+            ConfigureWindows.GetMainWindow.Focus();
         }
 
         internal static string HexConverter(System.Drawing.Color c)

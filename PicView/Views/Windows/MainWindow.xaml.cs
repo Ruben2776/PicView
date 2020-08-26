@@ -3,7 +3,7 @@ using PicView.SystemIntegration;
 using PicView.UILogic.Animations;
 using PicView.UILogic.Loading;
 using System.Windows;
-using static PicView.UILogic.Sizing.WindowLogic;
+using static PicView.UILogic.Sizing.WindowSizing;
 using static PicView.UILogic.UC;
 
 namespace PicView.Views.Windows

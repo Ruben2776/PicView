@@ -33,7 +33,7 @@ namespace PicView.Views.UserControls
             ResizeButton.Click += delegate
             {
                 UC.Close_UserControls();
-                LoadWindows.ResizeAndOptimizeWindow();
+                ConfigureWindows.ResizeAndOptimizeWindow();
             };
 
             // EffectsButton
@@ -52,7 +52,7 @@ namespace PicView.Views.UserControls
             EffectsButton.Click += delegate
             {
                 UC.Close_UserControls();
-                LoadWindows.EffectsWindow();
+                ConfigureWindows.EffectsWindow();
             };
 
             // CropButton
@@ -122,7 +122,7 @@ namespace PicView.Views.UserControls
             ImageInfoButton.Click += delegate
             {
                 UC.Close_UserControls();
-                LoadWindows.ImageInfoWindow();
+                ConfigureWindows.ImageInfoWindow();
             };
         }
     }

@@ -34,13 +34,13 @@ namespace PicView.Views.Windows
                 Logo.Height = 133;
             }
 
-            MaxWidth = MinWidth = 565 * WindowLogic.MonitorInfo.DpiScaling;
+            MaxWidth = MinWidth = 565 * WindowSizing.MonitorInfo.DpiScaling;
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             // Center vertically
-            Top = ((WindowLogic.MonitorInfo.WorkArea.Height * WindowLogic.MonitorInfo.DpiScaling) - ActualHeight) / 2 + WindowLogic.MonitorInfo.WorkArea.Top;
+            Top = ((WindowSizing.MonitorInfo.WorkArea.Height * WindowSizing.MonitorInfo.DpiScaling) - ActualHeight) / 2 + WindowSizing.MonitorInfo.WorkArea.Top;
 
             KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(Scroller, e, this);
             Scroller.MouseWheel += (_, e) => Shortcuts.GenericWindowShortcuts.Window_MouseWheel(Scroller, e);

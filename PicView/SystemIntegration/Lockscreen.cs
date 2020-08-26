@@ -18,7 +18,7 @@ namespace PicView.SystemIntegration
                 return;
             }
 
-            if (UILogic.Loading.LoadWindows.GetMainWindow.MainImage.Effect != null || Clipboard.ContainsImage())
+            if (UILogic.ConfigureWindows.GetMainWindow.MainImage.Effect != null || Clipboard.ContainsImage())
             {
                 try
                 {

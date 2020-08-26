@@ -39,7 +39,7 @@ namespace PicView.UILogic.TransformImage
             set
             {
                 Properties.Settings.Default.ScrollEnabled = value;
-                LoadWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility =
+                ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility =
                     value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
 
                 // TODO fix error when image is from web
@@ -77,13 +77,13 @@ namespace PicView.UILogic.TransformImage
         internal static void StartAutoScroll(MouseButtonEventArgs e)
         {
             // Don't scroll if not scrollable
-            if (LoadWindows.GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed)
+            if (ConfigureWindows.GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed)
             {
                 return;
             }
 
             IsAutoScrolling = true;
-            AutoScrollOrigin = e.GetPosition(LoadWindows.GetMainWindow.Scroller);
+            AutoScrollOrigin = e.GetPosition(ConfigureWindows.GetMainWindow.Scroller);
 
             ShowAutoScrollSign();
         }
@@ -114,7 +114,7 @@ namespace PicView.UILogic.TransformImage
             }
 
             // Start in dispatcher because timer is threaded
-            await LoadWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
             {
                 if (AutoScrollOrigin.HasValue)
                 {
@@ -124,8 +124,8 @@ namespace PicView.UILogic.TransformImage
                     if (IsAutoScrolling)
                     {
                         // Tell the scrollviewer to scroll to calculated offset
-                        LoadWindows.GetMainWindow.Scroller.ScrollToVerticalOffset(
-                            LoadWindows.GetMainWindow.Scroller.VerticalOffset + offset);
+                        ConfigureWindows.GetMainWindow.Scroller.ScrollToVerticalOffset(
+                            ConfigureWindows.GetMainWindow.Scroller.VerticalOffset + offset);
                     }
                 }
             }));

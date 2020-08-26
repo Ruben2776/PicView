@@ -1,5 +1,4 @@
-﻿using PicView.UILogic.TransformImage;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -14,7 +13,7 @@ namespace PicView.Shortcuts
             {
                 case Key.Escape:
                     window.Hide();
-                    UILogic.Loading.LoadWindows.GetMainWindow.Focus();
+                    UILogic.ConfigureWindows.GetMainWindow.Focus();
                     break;
 
                 case Key.S:

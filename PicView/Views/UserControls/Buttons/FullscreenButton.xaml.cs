@@ -1,5 +1,5 @@
-﻿using PicView.UILogic.Animations;
-using PicView.UILogic.Sizing;
+﻿using PicView.UILogic;
+using PicView.UILogic.Animations;
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
@@ -34,7 +34,7 @@ namespace PicView.Views.UserControls
 
             TheButton.Click += delegate
             {
-                WindowLogic.Fullscreen_Restore();
+                ConfigureWindows.Fullscreen_Restore();
             };
 
 

@@ -1,6 +1,6 @@
 ﻿using PicView.ChangeImage;
 using PicView.ImageHandling;
-using PicView.UILogic.Loading;
+using PicView.UILogic;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -67,15 +67,15 @@ namespace PicView.FileHandling
         internal static void CopyBitmap()
         {
             BitmapSource pic;
-            if (LoadWindows.GetMainWindow.MainImage.Source != null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Source != null)
             {
-                if (LoadWindows.GetMainWindow.MainImage.Effect != null)
+                if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
                 {
                     pic = ImageDecoder.GetRenderedBitmapFrame();
                 }
                 else
                 {
-                    pic = (BitmapSource)LoadWindows.GetMainWindow.MainImage.Source;
+                    pic = (BitmapSource)ConfigureWindows.GetMainWindow.MainImage.Source;
                 }
 
                 Clipboard.SetImage(pic);

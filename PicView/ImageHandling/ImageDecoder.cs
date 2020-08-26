@@ -140,8 +140,8 @@ namespace PicView.ImageHandling
         {
             try
             {
-                var sauce = UILogic.Loading.LoadWindows.GetMainWindow.MainImage.Source as BitmapSource;
-                var effect = UILogic.Loading.LoadWindows.GetMainWindow.MainImage.Effect;
+                var sauce = UILogic.ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
+                var effect = UILogic.ConfigureWindows.GetMainWindow.MainImage.Effect;
 
                 var rectangle = new System.Windows.Shapes.Rectangle
                 {
@@ -189,15 +189,15 @@ namespace PicView.ImageHandling
 
         internal static RenderTargetBitmap ImageErrorMessage()
         {
-            var w = ScaleImage.xWidth != 0 ? ScaleImage.xWidth : 300 * WindowLogic.MonitorInfo.DpiScaling;
-            var h = ScaleImage.xHeight != 0 ? ScaleImage.xHeight : 300 * WindowLogic.MonitorInfo.DpiScaling;
+            var w = ScaleImage.xWidth != 0 ? ScaleImage.xWidth : 300 * WindowSizing.MonitorInfo.DpiScaling;
+            var h = ScaleImage.xHeight != 0 ? ScaleImage.xHeight : 300 * WindowSizing.MonitorInfo.DpiScaling;
             var rect = new Rect(new Size(w, h));
             var visual = new DrawingVisual();
             using (var ctx = visual.RenderOpen())
             {
                 var typeface = new Typeface("/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros");
                 //text
-                var text = new FormattedText("Unable to render image", CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, 16, Brushes.White, WindowLogic.MonitorInfo.DpiScaling)
+                var text = new FormattedText("Unable to render image", CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, 16, Brushes.White, WindowSizing.MonitorInfo.DpiScaling)
                 {
                     TextAlignment = System.Windows.TextAlignment.Center
                 };

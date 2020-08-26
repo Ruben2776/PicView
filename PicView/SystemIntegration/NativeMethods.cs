@@ -1,4 +1,4 @@
-﻿using PicView.UILogic.Loading;
+﻿using PicView.UILogic;
 using PicView.UILogic.PicGallery;
 using PicView.UILogic.Sizing;
 using System;
@@ -133,8 +133,8 @@ namespace PicView.SystemIntegration
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            UILogic.UC.GetPicGallery.Width = LoadWindows.GetMainWindow.ParentContainer.Width;
-                            UILogic.UC.GetPicGallery.Height = LoadWindows.GetMainWindow.ParentContainer.Height;
+                            UILogic.UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.Width;
+                            UILogic.UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.Height;
                         }
                     }
 

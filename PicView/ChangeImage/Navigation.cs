@@ -133,11 +133,11 @@ namespace PicView.ChangeImage
                 }
                 else
                 {
-                    LoadWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Unzipping"] as string;
-                    LoadWindows.GetMainWindow.TitleText.ToolTip = LoadWindows.GetMainWindow.TitleText.Text;
+                    ConfigureWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Unzipping"] as string;
+                    ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.Text;
                     FolderIndex = 0;
                 }
-                LoadWindows.GetMainWindow.Focus();
+                ConfigureWindows.GetMainWindow.Focus();
             }
 
             if (!FreshStartup)
@@ -217,16 +217,16 @@ namespace PicView.ChangeImage
                     // Don't allow image size to stretch the whole screen
                     if (xWidth == 0)
                     {
-                        LoadWindows.GetMainWindow.MainImage.Width = LoadWindows.GetMainWindow.MinWidth;
-                        LoadWindows.GetMainWindow.MainImage.Height = LoadWindows.GetMainWindow.MinHeight;
+                        ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.MinWidth;
+                        ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.MinHeight;
                     }
                     else
                     {
-                        LoadWindows.GetMainWindow.MainImage.Width = xWidth;
-                        LoadWindows.GetMainWindow.MainImage.Height = xHeight;
+                        ConfigureWindows.GetMainWindow.MainImage.Width = xWidth;
+                        ConfigureWindows.GetMainWindow.MainImage.Height = xHeight;
                     }
 
-                    LoadWindows.GetMainWindow.MainImage.Source = thumb;
+                    ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
                 }
 
                 // Dissallow changing image while loading
@@ -246,12 +246,12 @@ namespace PicView.ChangeImage
             }
 
             // Need to put UI change in dispatcher to fix slideshow bug
-            await LoadWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
             {
                 // Scroll to top if scroll enabled
                 if (IsScrollEnabled)
                 {
-                    LoadWindows.GetMainWindow.Scroller.ScrollToTop();
+                    ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
                 }
 
                 // Reset transforms if needed
@@ -261,10 +261,10 @@ namespace PicView.ChangeImage
                     UILogic.TransformImage.Rotation.Rotateint = 0;
                     GetImageSettingsMenu.FlipButton.TheButton.IsChecked = false;
 
-                    LoadWindows.GetMainWindow.MainImage.LayoutTransform = null;
+                    ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
                 }
 
-                LoadWindows.GetMainWindow.MainImage.Source = bitmapSource;
+                ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
                 FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
                 SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index);
             }));
@@ -274,11 +274,11 @@ namespace PicView.ChangeImage
             FolderIndex = index;
             FreshStartup = false;
 
-            if (LoadWindows.GetImageInfoWindow != null)
+            if (ConfigureWindows.GetImageInfoWindow != null)
             {
-                if (LoadWindows.GetImageInfoWindow.IsVisible)
+                if (ConfigureWindows.GetImageInfoWindow.IsVisible)
                 {
-                    LoadWindows.GetImageInfoWindow.UpdateValues();
+                    ConfigureWindows.GetImageInfoWindow.UpdateValues();
                 }
             }
 
@@ -312,10 +312,10 @@ namespace PicView.ChangeImage
 
             if (IsScrollEnabled)
             {
-                LoadWindows.GetMainWindow.Scroller.ScrollToTop();
+                ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
             }
 
-            LoadWindows.GetMainWindow.MainImage.Source = bitmap;
+            ConfigureWindows.GetMainWindow.MainImage.Source = bitmap;
 
             FitImage(bitmap.PixelWidth, bitmap.PixelHeight);
             CloseToolTipMessage();
@@ -327,11 +327,11 @@ namespace PicView.ChangeImage
             CanNavigate = false;
             FolderIndex = 0;
 
-            if (LoadWindows.GetImageInfoWindow != null)
+            if (ConfigureWindows.GetImageInfoWindow != null)
             {
-                if (LoadWindows.GetImageInfoWindow.IsVisible)
+                if (ConfigureWindows.GetImageInfoWindow.IsVisible)
                 {
-                    LoadWindows.GetImageInfoWindow.UpdateValues();
+                    ConfigureWindows.GetImageInfoWindow.UpdateValues();
                 }
             }
         }
@@ -349,10 +349,10 @@ namespace PicView.ChangeImage
 
             if (IsScrollEnabled)
             {
-                LoadWindows.GetMainWindow.Scroller.ScrollToTop();
+                ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
             }
 
-            LoadWindows.GetMainWindow.MainImage.Source = pic;
+            ConfigureWindows.GetMainWindow.MainImage.Source = pic;
 
             FitImage(pic.PixelWidth, pic.PixelHeight);
             CloseToolTipMessage();
@@ -363,11 +363,11 @@ namespace PicView.ChangeImage
 
             CanNavigate = false;
 
-            if (LoadWindows.GetImageInfoWindow != null)
+            if (ConfigureWindows.GetImageInfoWindow != null)
             {
-                if (LoadWindows.GetImageInfoWindow.IsVisible)
+                if (ConfigureWindows.GetImageInfoWindow.IsVisible)
                 {
-                    LoadWindows.GetImageInfoWindow.UpdateValues();
+                    ConfigureWindows.GetImageInfoWindow.UpdateValues();
                 }
             }
         }
@@ -607,16 +607,16 @@ namespace PicView.ChangeImage
 
             var image = Application.Current.Resources["Image"] as string;
 
-            LoadWindows.GetMainWindow.TitleText.ToolTip =
-            LoadWindows.GetMainWindow.Title =
-            LoadWindows.GetMainWindow.TitleText.Text
+            ConfigureWindows.GetMainWindow.TitleText.ToolTip =
+            ConfigureWindows.GetMainWindow.Title =
+            ConfigureWindows.GetMainWindow.TitleText.Text
             = $"{image} {(FolderIndex + 1)} / {Pics.Count}";
 
             var thumb = GetThumb(FolderIndex);
 
             if (thumb != null)
             {
-                LoadWindows.GetMainWindow.MainImage.Source = thumb;
+                ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
             }
 
             Taskbar.Progress(FolderIndex, Pics.Count);

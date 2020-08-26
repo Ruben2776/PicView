@@ -1,6 +1,6 @@
 ﻿using PicView.Library.Resources;
+using PicView.UILogic;
 using PicView.UILogic.Animations;
-using PicView.UILogic.Loading;
 using System;
 using System.Diagnostics;
 using System.Windows;
@@ -63,12 +63,12 @@ namespace PicView.ConfigureSettings
             mainColor = (Color)Application.Current.Resources["IconColor"];
             backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
 
-            if (LoadWindows.GetMainWindow.MainImageBorder == null)
+            if (ConfigureWindows.GetMainWindow.MainImageBorder == null)
             {
                 return;
             }
 
-            LoadWindows.GetMainWindow.MainImageBorder.Background = BackgroundColorBrush;
+            ConfigureWindows.GetMainWindow.MainImageBorder.Background = BackgroundColorBrush;
         }
 
         #endregion Update and set colors
@@ -77,7 +77,7 @@ namespace PicView.ConfigureSettings
 
         internal static void ChangeBackground(object sender, RoutedEventArgs e)
         {
-            if (LoadWindows.GetMainWindow.MainImageBorder == null)
+            if (ConfigureWindows.GetMainWindow.MainImageBorder == null)
             {
                 return;
             }
@@ -89,7 +89,7 @@ namespace PicView.ConfigureSettings
                 Properties.Settings.Default.BgColorChoice = 0;
             }
 
-            LoadWindows.GetMainWindow.MainImageBorder.Background = BackgroundColorBrush;
+            ConfigureWindows.GetMainWindow.MainImageBorder.Background = BackgroundColorBrush;
         }
 
         internal static Brush BackgroundColorBrush => Properties.Settings.Default.BgColorChoice switch

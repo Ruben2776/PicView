@@ -116,7 +116,7 @@ namespace PicView.UILogic
 
                 if (GetQuickSettingsMenu != null)
                 {
-                    if (Loading.LoadWindows.GetMainWindow.MainImage.Source != null)
+                    if (ConfigureWindows.GetMainWindow.MainImage.Source != null)
                     {
                         GetQuickSettingsMenu.GoToPic.GoToPicBox.Text =
                             (Navigation.FolderIndex + 1)

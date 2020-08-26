@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileLists;
-using static PicView.UILogic.Loading.LoadWindows;
+using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.TransformImage.Scroll;
 
@@ -190,12 +190,12 @@ namespace PicView.ConfigureSettings
         {
             if (windowBehaviour)
             {
-                WindowLogic.AutoFitWindow = true;
+                WindowSizing.AutoFitWindow = true;
                 UC.GetQuickSettingsMenu.SetFit.IsChecked = true;
             }
             else
             {
-                WindowLogic.AutoFitWindow = false;
+                WindowSizing.AutoFitWindow = false;
                 UC.GetQuickSettingsMenu.SetFit.IsChecked = false;
             }
 

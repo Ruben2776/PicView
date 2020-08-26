@@ -1,5 +1,5 @@
-﻿using PicView.UILogic.Animations;
-using PicView.UILogic.Loading;
+﻿using PicView.UILogic;
+using PicView.UILogic.Animations;
 using PicView.UILogic.PicGallery;
 using System.Windows;
 using System.Windows.Controls;
@@ -29,11 +29,11 @@ namespace PicView.Views.UserControls.Gallery
 
             RestoreButton.ToolTip = Application.Current.Resources["RestoreDown"];
 
-            CloseButton.MouseLeftButtonDown += delegate { SystemCommands.CloseWindow(LoadWindows.GetMainWindow); };
+            CloseButton.MouseLeftButtonDown += delegate { SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow); };
 
             CloseButton.ToolTip = Application.Current.Resources["Close"];
 
-            MinButton.MouseLeftButtonDown += delegate { SystemCommands.MinimizeWindow(LoadWindows.GetMainWindow); };
+            MinButton.MouseLeftButtonDown += delegate { SystemCommands.MinimizeWindow(ConfigureWindows.GetMainWindow); };
         }
     }
 }

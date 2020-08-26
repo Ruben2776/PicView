@@ -1,6 +1,6 @@
 ﻿using PicView.ImageHandling;
+using PicView.UILogic;
 using PicView.UILogic.Animations;
-using PicView.UILogic.Loading;
 using System;
 using System.Windows;
 using System.Windows.Input;
@@ -25,7 +25,7 @@ namespace PicView.Views.Windows
                 if (e.Key == Key.Escape)
                 {
                     Hide();
-                    LoadWindows.GetMainWindow.Focus();
+                    ConfigureWindows.GetMainWindow.Focus();
                 }
                 else if (e.Key == Key.Q)
                 {
@@ -45,7 +45,7 @@ namespace PicView.Views.Windows
             };
 
             // CloseButton
-            CloseButton.TheButton.Click += delegate { Hide(); LoadWindows.GetMainWindow.Focus(); };
+            CloseButton.TheButton.Click += delegate { Hide(); ConfigureWindows.GetMainWindow.Focus(); };
 
             // MinButton
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };

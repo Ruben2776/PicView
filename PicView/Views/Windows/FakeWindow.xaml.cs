@@ -1,4 +1,4 @@
-﻿using PicView.UILogic.Loading;
+﻿using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System;
 using System.Windows;
@@ -16,10 +16,10 @@ namespace PicView.Views.Windows
             Focusable = false;
             Topmost = false;
             InitializeComponent();
-            Width = WindowLogic.MonitorInfo.Width;
-            Height = WindowLogic.MonitorInfo.Height;
-            Width = WindowLogic.MonitorInfo.Width;
-            Height = WindowLogic.MonitorInfo.Height;
+            Width = WindowSizing.MonitorInfo.Width;
+            Height = WindowSizing.MonitorInfo.Height;
+            Width = WindowSizing.MonitorInfo.Width;
+            Height = WindowSizing.MonitorInfo.Height;
             ContentRendered += FakeWindow_ContentRendered;
         }
 
@@ -40,19 +40,19 @@ namespace PicView.Views.Windows
             var helper = new WindowInteropHelper(this).Handle;
             _ = SetWindowLong(helper, GWL_EX_STYLE, (GetWindowLong(helper, GWL_EX_STYLE) | WS_EX_TOOLWINDOW) & ~WS_EX_APPWINDOW);
 
-            LoadWindows.GetMainWindow.BringIntoView();
+            ConfigureWindows.GetMainWindow.BringIntoView();
         }
 
         private void FakeWindow_LostFocus(object sender, RoutedEventArgs e)
         {
-            LoadWindows.GetMainWindow.Focus();
+            ConfigureWindows.GetMainWindow.Focus();
         }
 
         private void FakeWindow_StateChanged(object sender, EventArgs e)
         {
             if (WindowState == WindowState.Normal)
             {
-                LoadWindows.GetMainWindow.Focus();
+                ConfigureWindows.GetMainWindow.Focus();
             }
         }
 
@@ -70,14 +70,14 @@ namespace PicView.Views.Windows
 
         private void MainWindow_StateChanged(object sender, EventArgs e)
         {
-            if (LoadWindows.GetMainWindow.WindowState == WindowState.Normal)
+            if (ConfigureWindows.GetMainWindow.WindowState == WindowState.Normal)
             {
                 if (Properties.Settings.Default.PicGallery == 1) { return; }
 
                 Show();
-                LoadWindows.GetMainWindow.BringIntoView();
+                ConfigureWindows.GetMainWindow.BringIntoView();
             }
-            else if (LoadWindows.GetMainWindow.WindowState == WindowState.Minimized)
+            else if (ConfigureWindows.GetMainWindow.WindowState == WindowState.Minimized)
             {
                 Hide();
             }
@@ -85,7 +85,7 @@ namespace PicView.Views.Windows
 
         private void FakeWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            LoadWindows.GetMainWindow.Focus();
+            ConfigureWindows.GetMainWindow.Focus();
         }
     }
 }
