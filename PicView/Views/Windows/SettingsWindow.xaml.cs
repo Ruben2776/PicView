@@ -106,6 +106,10 @@ namespace PicView.Views.Windows
                 TopmostRadio.Checked += (_, _) => ConfigureWindows.IsMainWindowTopMost = !Properties.Settings.Default.TopMost;
                 TopmostRadio.Unchecked += (_, _) => ConfigureWindows.IsMainWindowTopMost = false;
 
+                CenterRadio.IsChecked = Properties.Settings.Default.KeepCentered;
+                CenterRadio.Checked += (_, _) => Properties.Settings.Default.KeepCentered = true;
+                CenterRadio.Unchecked += (_, _) => Properties.Settings.Default.KeepCentered = false;
+
 
                 switch (Properties.Settings.Default.ColorTheme)
                 {
@@ -276,6 +280,16 @@ namespace PicView.Views.Windows
             SubDirRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(SubDirText); };
             SubDirRadio.MouseEnter += delegate { ButtonMouseOverAnim(SubDirText); };
             SubDirRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(SubDirText); };
+
+            // TopmostRadio
+            TopmostRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(TopMostDirText); };
+            TopmostRadio.MouseEnter += delegate { ButtonMouseOverAnim(TopMostDirText); };
+            TopmostRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(TopMostDirText); };
+
+            // CenterRadio
+            CenterRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(CenterubDirText); };
+            CenterRadio.MouseEnter += delegate { ButtonMouseOverAnim(CenterubDirText); };
+            CenterRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(CenterubDirText); };
 
             // BorderRadio
             BorderRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(BorderBrushText); };

@@ -218,7 +218,10 @@ namespace PicView.UILogic.Sizing
                     var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(xWidth, GetMainWindow.MinWidth) : Math.Max(xHeight, GetMainWindow.MinHeight);
                     GetMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
 
-                    CenterWindowOnScreen();
+                    if (Properties.Settings.Default.KeepCentered)
+                    {
+                        CenterWindowOnScreen();
+                    }
                 }
                 else
                 {

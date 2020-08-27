@@ -586,5 +586,17 @@ namespace PicView.Properties {
                 this["TopMost"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool KeepCentered {
+            get {
+                return ((bool)(this["KeepCentered"]));
+            }
+            set {
+                this["KeepCentered"] = value;
+            }
+        }
     }
 }
