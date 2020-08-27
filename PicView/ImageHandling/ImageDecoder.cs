@@ -197,7 +197,7 @@ namespace PicView.ImageHandling
             {
                 var typeface = new Typeface("/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros");
                 //text
-                var text = new FormattedText("Unable to render image", CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, 16, Brushes.White, WindowSizing.MonitorInfo.DpiScaling)
+                var text = new FormattedText("Unable to render image", CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, 16, (Brush)Application.Current.Resources["MainColorBrush"], WindowSizing.MonitorInfo.DpiScaling)
                 {
                     TextAlignment = System.Windows.TextAlignment.Center
                 };
