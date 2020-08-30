@@ -127,7 +127,7 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=NextImage}" />
                     </Border>
 
@@ -169,7 +169,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Previous image"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=PrevImage}" />
                     </Border>
 
@@ -211,7 +211,7 @@
                         BorderThickness="1,1,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=FirstImage}" />
                     </Border>
 
@@ -274,7 +274,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Last image"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=LastImage}" />
                     </Border>
 
@@ -337,7 +337,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Toggle looping"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=ToggleLooping}" />
                     </Border>
 
@@ -398,7 +398,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Rotate right"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=RotateRight}" />
                     </Border>
 
@@ -443,7 +443,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Rotate left"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=RotateLeft}" />
                     </Border>
 
@@ -488,7 +488,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Flip"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=Flip}" />
                     </Border>
 
@@ -502,7 +502,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="15"
+                            FontSize="14"
                             Text="F" />
                     </Border>
 
@@ -545,7 +545,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Zoom in"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=ZoomIn}" />
                     </Border>
 
@@ -589,7 +589,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Zoom out"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=ZoomOut}" />
                     </Border>
 
@@ -633,7 +633,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Pan"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=Pan}" />
                     </Border>
 
@@ -670,7 +670,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Reset zoom"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=ResetZoom}" />
                     </Border>
 
@@ -707,7 +707,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Toggle scroll"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=ToggleScroll}" />
                     </Border>
 
@@ -769,7 +769,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Normal window"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=NormalWindow}" />
                     </Border>
 
@@ -811,7 +811,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Fill height"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=FillHeight}" />
                     </Border>
 
@@ -853,7 +853,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Auto fit window"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=AutoFitWindow}" />
                     </Border>
 
@@ -895,7 +895,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Fill height"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=FillHeight}" />
                     </Border>
 
@@ -957,7 +957,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Hide/show interface"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=HideShowInterface}" />
                     </Border>
 
@@ -1008,7 +1008,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Change background"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=ChangeBackground}" />
                     </Border>
 
@@ -1051,7 +1051,7 @@
                             MaxWidth="155"
                             Margin="10,3,0,3"
                             d:Text="Toggle fullscreen"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=ToggleFullscreen}"
                             TextWrapping="Wrap" />
                     </Border>
@@ -1106,7 +1106,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Slideshow"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=Slideshow}" />
                     </Border>
 
@@ -1168,7 +1168,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Open"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=Open}" />
                     </Border>
 
@@ -1219,7 +1219,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Save"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=Save}" />
                     </Border>
 
@@ -1264,7 +1264,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Print"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=Print}" />
                     </Border>
 
@@ -1306,7 +1306,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Copy file"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=CopyFile}" />
                     </Border>
 
@@ -1372,7 +1372,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Cut file"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=FileCut}" />
                     </Border>
 
@@ -1417,7 +1417,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Delete file"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=DeleteFile}" />
                     </Border>
 
@@ -1472,7 +1472,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Rename file"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=RenameFile}" />
                     </Border>
 
@@ -1508,7 +1508,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Show in folder"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=ShowInFolder}" />
                     </Border>
 
@@ -1544,7 +1544,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="File properties"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=FileProperties}" />
                     </Border>
 
@@ -1611,7 +1611,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Info window"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=InfoWindow}" />
                     </Border>
 
@@ -1647,7 +1647,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Settings window"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=SettingsWindow}" />
                     </Border>
 
@@ -1683,7 +1683,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Close"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=Close}" />
                     </Border>
 
@@ -1737,7 +1737,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Move window"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=MoveWindow}" />
                     </Border>
 
@@ -1785,7 +1785,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Center window"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=CenterWindow}" />
                     </Border>
 
@@ -1822,7 +1822,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Fullscreen"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=Fullscreen}" />
                     </Border>
 
@@ -1889,7 +1889,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Open with.."
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=OpenWith}" />
                     </Border>
 
@@ -1925,7 +1925,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Reload"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=Reload}" />
                     </Border>
 
@@ -1970,7 +1970,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Crop"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=Crop}" />
                     </Border>
 
@@ -2024,7 +2024,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Next image"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=NextImage}" />
                     </Border>
 
@@ -2079,7 +2079,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             d:Text="Previous image"
-                            FontSize="15"
+                            FontSize="14"
                             Text="{StaticResource ResourceKey=PrevImage}" />
                     </Border>
 
@@ -2148,6 +2148,7 @@
                         ToolTip="https://useiconic.com/open/">
                         <Hyperlink
                             x:Name="Iconic"
+                            Focusable="False"
                             NavigateUri="https://useiconic.com/open/"
                             RequestNavigate="Hyperlink_RequestNavigate">
                             Iconic
@@ -2248,7 +2249,7 @@
                             Stretch="Fill" />
                     </StackPanel>
 
-                    <TextBlock HorizontalAlignment="Center" Margin="0,7,0,4">
+                    <TextBlock Margin="0,7,0,4" HorizontalAlignment="Center">
                         <Hyperlink NavigateUri="https://picView.org/" RequestNavigate="Hyperlink_RequestNavigate">
                             <Hyperlink.Foreground>
                                 <SolidColorBrush x:Name="PicViewBrush" Color="{StaticResource MainColor}" />
