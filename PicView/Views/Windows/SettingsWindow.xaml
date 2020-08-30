@@ -123,7 +123,7 @@
                     <Setter Property="Background" Value="{StaticResource NoisyBg}" />
                 </Style>
             </TabControl.Resources>
-            <TabItem Header="General Settings">
+            <TabItem Header="{StaticResource GeneralSettings}">
 
                 <StackPanel Margin="10,7,10,7">
 
@@ -153,7 +153,7 @@
                             <TextBlock
                                 Width="279"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                                Text="Stay on top of other windows" />
+                                Text="{StaticResource StayTopMost}" />
                         </CheckBox.Content>
                     </CheckBox>
 
@@ -169,7 +169,7 @@
                             <TextBlock
                                 Width="279"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                                Text="Keep window centered" />
+                                Text="{StaticResource StayCentered}" />
                         </CheckBox.Content>
                     </CheckBox>
 

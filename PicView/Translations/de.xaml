@@ -84,12 +84,18 @@
     <system:String x:Key="ChangingThemeRequiresRestart">* Das Theme zu ändern erfordert einen Neustart der Anwendung</system:String>
 
     <!--  Settings window, misc  -->
+    <system:String x:Key="GeneralSettings">General Settings</system:String>
+    <system:String x:Key="UISettings">UI Settings</system:String>
     <system:String x:Key="MiscSettings">Einstellungen</system:String>
     <system:String x:Key="SearchSubdirectory">Unterordner einbinden</system:String>
+    <system:String x:Key="StayTopMost">Stay on top of other windows</system:String>
+    <system:String x:Key="StayCentered">Hold vinduet centreret</system:String>
     <system:String x:Key="ColoredWindowBorder">Farbiger Fensterrand</system:String>
     <system:String x:Key="ShowButtonsInHiddenUI">Show buttons in hidden UI</system:String>
 
     <system:String x:Key="AdjustTimingForSlideshow">Passen Sie das Timing für die Diashow an</system:String>
+    <system:String x:Key="AdjustTimingForZoom">Adjust zooming speed</system:String>
+    <system:String x:Key="SecAbbreviation">Sek.</system:String>
     <system:String x:Key="RestartApp">Anwendung neustarten</system:String>
 
     <!--  Settings window, wallpaper  -->

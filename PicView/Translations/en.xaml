@@ -84,12 +84,18 @@
     <system:String x:Key="ChangingThemeRequiresRestart">* Changing theme requires restart</system:String>
 
     <!--  Settings window, misc  -->
+    <system:String x:Key="GeneralSettings">General Settings</system:String>
+    <system:String x:Key="UISettings">UI Settings</system:String>
     <system:String x:Key="MiscSettings">Misc settings</system:String>
     <system:String x:Key="SearchSubdirectory">Search subdirectories</system:String>
+    <system:String x:Key="StayTopMost">Stay on top of other windows</system:String>
+    <system:String x:Key="StayCentered">Keep window centered</system:String>
     <system:String x:Key="ColoredWindowBorder">Colored window border</system:String>
     <system:String x:Key="ShowButtonsInHiddenUI">Show buttons in hidden UI</system:String>
 
     <system:String x:Key="AdjustTimingForSlideshow">Adjust timing for slideshow</system:String>
+    <system:String x:Key="AdjustTimingForZoom">Adjust zooming speed</system:String>
+    <system:String x:Key="SecAbbreviation">Sec.</system:String>
     <system:String x:Key="RestartApp">Restart the application</system:String>
 
     <!--  Settings window, wallpaper  -->
