@@ -221,6 +221,12 @@
                         Text="{StaticResource ChangingLanguageRequiresRestart}"
                         TextWrapping="Wrap" />
 
+                    <TextBlock
+                        Margin="7,7,0,25"
+                        HorizontalAlignment="Left"
+                        Text="{StaticResource SetAsDefualt}"
+                        TextWrapping="Wrap" />
+
                     <Label
                         Margin="0,10,0,4"
                         HorizontalAlignment="Left"
@@ -514,7 +520,7 @@
                     </Border>
 
                     <TextBlock
-                        Margin="7,7,6,25"
+                        Margin="7,9,6,25"
                         HorizontalAlignment="Center"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Light Italic"
                         FontSize="12"
