@@ -83,6 +83,19 @@
     <system:String x:Key="LightTheme">Lyst tema</system:String>
     <system:String x:Key="ChangingThemeRequiresRestart">* Skiftning af tema kræver genstart</system:String>
 
+    <!--  Settings window, wallpaper  -->
+    <system:String x:Key="SetCurrentImageAsWallpaper">Sæt nuværende billede som skrivebordsbaggrund:</system:String>
+
+    <system:String x:Key="Fill">Fyld</system:String>
+    <system:String x:Key="Center">Centrer</system:String>
+    <system:String x:Key="Fit">Tilpas</system:String>
+    <system:String x:Key="Tile">Flise</system:String>
+    <system:String x:Key="Stretch">Stræk</system:String>
+
+    <!--  Settings window, language  -->
+    <system:String x:Key="Language">Sprog</system:String>
+    <system:String x:Key="ChangingLanguageRequiresRestart">* Skiftning af sprog kræver genstart</system:String>
+
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">Generale Indstillinger</system:String>
     <system:String x:Key="UISettings">UI indstillinger</system:String>
@@ -98,18 +111,8 @@
     <system:String x:Key="SecAbbreviation">Sek.</system:String>
     <system:String x:Key="RestartApp">Genstart programmet</system:String>
 
-    <!--  Settings window, wallpaper  -->
-    <system:String x:Key="SetCurrentImageAsWallpaper">Sæt nuværende billede som skrivebordsbaggrund:</system:String>
-
-    <system:String x:Key="Fill">Fyld</system:String>
-    <system:String x:Key="Center">Centrer</system:String>
-    <system:String x:Key="Fit">Tilpas</system:String>
-    <system:String x:Key="Tile">Flise</system:String>
-    <system:String x:Key="Stretch">Stræk</system:String>
-
-    <!--  Settings window, language  -->
-    <system:String x:Key="Language">Sprog</system:String>
-    <system:String x:Key="ChangingLanguageRequiresRestart">* Skiftning af sprog kræver genstart</system:String>
+    <!--  Set as Default  -->
+    <system:String x:Key="SetAsDefualt">Sæt som standard billedfremviser</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="HLSLPictureFX">HLSL Billede effekter</system:String>

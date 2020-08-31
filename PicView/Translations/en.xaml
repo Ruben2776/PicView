@@ -83,6 +83,19 @@
     <system:String x:Key="LightTheme">Light theme</system:String>
     <system:String x:Key="ChangingThemeRequiresRestart">* Changing theme requires restart</system:String>
 
+    <!--  Settings window, wallpaper  -->
+    <system:String x:Key="SetCurrentImageAsWallpaper">Set current image as wallpaper:</system:String>
+
+    <system:String x:Key="Fill">Fill</system:String>
+    <system:String x:Key="Center">Center</system:String>
+    <system:String x:Key="Fit">Fit</system:String>
+    <system:String x:Key="Tile">Tile</system:String>
+    <system:String x:Key="Stretch">Stretch</system:String>
+
+    <!--  Settings window, language  -->
+    <system:String x:Key="Language">Language</system:String>
+    <system:String x:Key="ChangingLanguageRequiresRestart">* Changing language requires restart</system:String>
+
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">General Settings</system:String>
     <system:String x:Key="UISettings">UI Settings</system:String>
@@ -98,18 +111,9 @@
     <system:String x:Key="SecAbbreviation">Sec.</system:String>
     <system:String x:Key="RestartApp">Restart the application</system:String>
 
-    <!--  Settings window, wallpaper  -->
-    <system:String x:Key="SetCurrentImageAsWallpaper">Set current image as wallpaper:</system:String>
+    <!--  Set as Default  -->
+    <system:String x:Key="SetAsDefualt">Set as default image viewer</system:String>
 
-    <system:String x:Key="Fill">Fill</system:String>
-    <system:String x:Key="Center">Center</system:String>
-    <system:String x:Key="Fit">Fit</system:String>
-    <system:String x:Key="Tile">Tile</system:String>
-    <system:String x:Key="Stretch">Stretch</system:String>
-
-    <!--  Settings window, language  -->
-    <system:String x:Key="Language">Language</system:String>
-    <system:String x:Key="ChangingLanguageRequiresRestart">* Changing language requires restart</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="HLSLPictureFX">HLSL Picture FX</system:String>
