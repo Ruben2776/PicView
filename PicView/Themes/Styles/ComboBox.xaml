@@ -132,7 +132,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsHighlighted" Value="true">
-                            <Setter TargetName="Border" Property="Background" Value="{StaticResource ResourceKey=ChosenColorBrush}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

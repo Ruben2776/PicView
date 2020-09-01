@@ -54,7 +54,7 @@
                 Grid.Row="1"
                 Height="4"
                 Margin="0"
-                Background="{StaticResource ChosenColorBrush}"
+                Background="{DynamicResource ChosenColorBrush}"
                 BorderThickness="1"
                 CornerRadius="2" />
             <Track x:Name="PART_Track" Grid.Row="1">
