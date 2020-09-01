@@ -222,6 +222,7 @@
                         TextWrapping="Wrap" />
 
                     <TextBlock
+                        x:Name="SetAsDefaultTxt"
                         Margin="7,7,0,25"
                         HorizontalAlignment="Left"
                         Text="{StaticResource SetAsDefualt}"

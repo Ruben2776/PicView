@@ -5,6 +5,7 @@ using PicView.UILogic;
 using PicView.UILogic.Animations;
 using PicView.UILogic.Sizing;
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -109,6 +110,8 @@ namespace PicView.Views.Windows
                 CenterRadio.IsChecked = Properties.Settings.Default.KeepCentered;
                 CenterRadio.Checked += (_, _) => Properties.Settings.Default.KeepCentered = true;
                 CenterRadio.Unchecked += (_, _) => Properties.Settings.Default.KeepCentered = false;
+
+                SetAsDefaultTxt.MouseLeftButtonDown += (_, _) => GeneralSettings.ElevateProcess(Process.GetCurrentProcess());
 
 
                 switch (Properties.Settings.Default.ColorTheme)

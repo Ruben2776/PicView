@@ -2,6 +2,7 @@
 using PicView.Translations;
 using System.Diagnostics;
 using System.IO;
+using System.Security.Permissions;
 using System.Windows;
 
 namespace PicView.ConfigureSettings
@@ -41,6 +42,33 @@ namespace PicView.ConfigureSettings
 
             Process.Start(new ProcessStartInfo(GetAppPath, args));
             Application.Current.Shutdown();
+        }
+
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
+        public static Process ElevateProcess(Process source)
+        {
+            using var target = new Process
+            {
+                StartInfo = source.StartInfo
+            };
+            target.StartInfo.FileName = source.MainModule.FileName;
+            target.StartInfo.WorkingDirectory = Path.GetDirectoryName(source.MainModule.FileName);
+
+            //Required for UAC to work
+            target.StartInfo.UseShellExecute = true;
+            target.StartInfo.Verb = "runas";
+
+            try
+            {
+                if (!target.Start())
+                    return null;
+            }
+            catch
+            {
+                return null;
+            }
+
+            return target;
         }
     }
 }
