@@ -61,7 +61,9 @@ namespace PicView.ConfigureSettings
             try
             {
                 if (!target.Start())
+                {
                     return null;
+                }
             }
             catch
             {
