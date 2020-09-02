@@ -41,12 +41,9 @@ namespace PicView.FileHandling
         /// <summary>
         /// Sort and return list of supported files
         /// </summary>
-        internal static List<string> FileList(string path, SortFilesBy sortFilesBy)
+        private static List<string> FileList(string path, SortFilesBy sortFilesBy)
         {
-            if (!Directory.Exists(path))
-            {
-                return null;
-            }
+            if (!Directory.Exists(path)) { return null; }
 
             var items = Directory.EnumerateFiles(path, "*.*",
                 Properties.Settings.Default.IncludeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)

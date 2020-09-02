@@ -236,9 +236,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Themes\Resources\fonts\Roboto-Black.ttf" />
-    <Resource Include="Themes\Resources\fonts\Roboto-BlackItalic.ttf" />
     <Resource Include="Themes\Resources\fonts\Roboto-Bold.ttf" />
-    <Resource Include="Themes\Resources\fonts\Roboto-BoldItalic.ttf" />
     <Resource Include="Themes\Resources\fonts\Roboto-Italic.ttf" />
     <Resource Include="Themes\Resources\fonts\Roboto-Light.ttf" />
     <Resource Include="Themes\Resources\fonts\Roboto-LightItalic.ttf" />
@@ -248,7 +246,6 @@
     <Resource Include="Themes\Resources\fonts\Roboto-Thin.ttf" />
     <Resource Include="Themes\Resources\fonts\Roboto-ThinItalic.ttf" />
     <Resource Include="Themes\Resources\fonts\texgyreheros-bold.otf" />
-    <Resource Include="Themes\Resources\fonts\texgyreheros-bolditalic.otf" />
     <Resource Include="Themes\Resources\fonts\texgyreheros-italic.otf" />
     <Resource Include="Themes\Resources\fonts\texgyreheros-regular.otf" />
     <Resource Include="Themes\Resources\img\icon-raster.180b.png" />
