@@ -1,4 +1,5 @@
-﻿using PicView.UILogic.Animations;
+﻿using PicView.ChangeImage;
+using PicView.UILogic.Animations;
 using PicView.UILogic.Sizing;
 using PicView.Views.Windows;
 using System;
@@ -103,6 +104,11 @@ namespace PicView.UILogic.PicGallery
 
             if (GetPicGallery.Container.Children.Count == 0)
             {
+                await Load().ConfigureAwait(false);
+            }
+            else if (GetPicGallery.Container.Children.Count != Pics.Count)
+            {
+                GetPicGallery.Container.Children.Clear();
                 await Load().ConfigureAwait(false);
             }
         }
