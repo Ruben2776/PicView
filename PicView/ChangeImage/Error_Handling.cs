@@ -249,7 +249,11 @@ namespace PicView.ChangeImage
                 ArchiveExtraction.TempZipPath = string.Empty;
             }
 
-            SystemIntegration.Taskbar.NoProgress();
+            try
+            {
+                SystemIntegration.Taskbar.NoProgress();
+            }
+            catch { return; }
         }
     }
 }

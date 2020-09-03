@@ -5,6 +5,7 @@ using PicView.UILogic.Sizing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Interop;
 using static PicView.ChangeImage.Error_Handling;
@@ -57,48 +58,6 @@ namespace PicView.UILogic.Loading
                     };
                 }
             }
-        }
-
-        internal static void Start()
-        {
-#if DEBUG
-            Trace.WriteLine("ContentRendered started");
-#endif
-            ConfigureSettings.ConfigColors.UpdateColor();
-
-            #region Add dictionaries
-
-            Application.Current.Resources.MergedDictionaries.Add(
-                new ResourceDictionary
-                {
-                    Source = new Uri(@"/PicView;component/Themes/Styles/Menu.xaml", UriKind.Relative)
-                }
-            );
-
-            Application.Current.Resources.MergedDictionaries.Add(
-                new ResourceDictionary
-                {
-                    Source = new Uri(@"/PicView;component/Themes/Styles/ToolTip.xaml", UriKind.Relative)
-                }
-            );
-
-            Application.Current.Resources.MergedDictionaries.Add(
-                new ResourceDictionary
-                {
-                    Source = new Uri(@"/PicView;component/Themes/Styles/Slider.xaml", UriKind.Relative)
-                }
-            );
-
-            #endregion Add dictionaries
-
-            // Load sizing properties
-            MonitorInfo = MonitorSize.GetMonitorSize();
-            AutoFitWindow = Properties.Settings.Default.AutoFitWindow;
-            IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
-
-            // Set min size to DPI scaling
-            ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
-            ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
             Pics = new List<string>();
 
@@ -126,8 +85,9 @@ namespace PicView.UILogic.Loading
                     ConfigureWindows.GetMainWindow.MinHeight = 700 * MonitorInfo.DpiScaling;
                 }
             }
-            else
+            else if (File.Exists(arg.ToString()))
             {
+                var file = arg.ToString();
                 // Determine prefered UI for startup
                 if (Properties.Settings.Default.Fullscreen)
                 {
@@ -137,17 +97,60 @@ namespace PicView.UILogic.Loading
                 {
                     GalleryToggle.OpenFullscreenGallery(true);
                 }
-                else if (AutoFitWindow)
-                {
-                    ScaleImage.TryFitImage(arg.ToString());
-                }
                 else if (Properties.Settings.Default.Width != 0)
                 {
                     SetLastWindowSize();
                 }
 
-                Pic(arg.ToString());
+                Pic(file);
             }
+            else
+            {
+                // Set file associations
+            }
+
+            // Load sizing properties
+            MonitorInfo = MonitorSize.GetMonitorSize();
+            AutoFitWindow = Properties.Settings.Default.AutoFitWindow;
+            IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
+
+            // Set min size to DPI scaling
+            ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
+            ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
+            ConfigureSettings.ConfigColors.UpdateColor();
+        }
+
+        internal static void Start()
+        {
+#if DEBUG
+            Trace.WriteLine("ContentRendered started");
+#endif
+            
+
+            #region Add dictionaries
+
+            Application.Current.Resources.MergedDictionaries.Add(
+                new ResourceDictionary
+                {
+                    Source = new Uri(@"/PicView;component/Themes/Styles/Menu.xaml", UriKind.Relative)
+                }
+            );
+
+            Application.Current.Resources.MergedDictionaries.Add(
+                new ResourceDictionary
+                {
+                    Source = new Uri(@"/PicView;component/Themes/Styles/ToolTip.xaml", UriKind.Relative)
+                }
+            );
+
+            Application.Current.Resources.MergedDictionaries.Add(
+                new ResourceDictionary
+                {
+                    Source = new Uri(@"/PicView;component/Themes/Styles/Slider.xaml", UriKind.Relative)
+                }
+            );
+
+            #endregion Add dictionaries
 
             ConfigureWindows.GetMainWindow.Topmost = Properties.Settings.Default.TopMost;
 
