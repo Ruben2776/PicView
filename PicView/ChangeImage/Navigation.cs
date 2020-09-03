@@ -2,12 +2,12 @@
 using PicView.ImageHandling;
 using PicView.SystemIntegration;
 using PicView.UILogic;
-using PicView.UILogic.Loading;
 using PicView.UILogic.PicGallery;
 using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Error_Handling;
@@ -190,19 +190,10 @@ namespace PicView.ChangeImage
                     return;
                 }
             }
-            else if (File.Exists(Pics[index])) // Checking if file exists fixes rare crashes
-            {
-                /// Retrieve from preloader if available
-                /// if not, it will be null
-                bitmapSource = Preloader.Get(Pics[index]);
-            }
-            else
-            {
-                /// Try to reload from backup if file does not exist
-                /// TODO needs testing
-                Reload(true);
-                return;
-            }
+
+            /// Retrieve from preloader if available
+            /// if not, it will be null
+            bitmapSource = Preloader.Get(Pics[index]);
 
             // Initate loading behavior, if needed
             if (bitmapSource == null)
@@ -229,14 +220,11 @@ namespace PicView.ChangeImage
                     ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
                 }
 
+                // Dissallow changing image while loading
+                CanNavigate = false;
+
                 // Get it!
                 await Preloader.Add(Pics[index]).ConfigureAwait(true);
-
-                if (index != FolderIndex)
-                {
-                    // User skipped image, exit
-                    return;
-                }
 
                 // Retry
                 bitmapSource = Preloader.Get(Pics[index]);
