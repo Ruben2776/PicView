@@ -253,7 +253,7 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool WindowBorderColorEnabled {
             get {
                 return ((bool)(this["WindowBorderColorEnabled"]));
@@ -596,6 +596,18 @@ namespace PicView.Properties {
             }
             set {
                 this["KeepCentered"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CtrlZoom {
+            get {
+                return ((bool)(this["CtrlZoom"]));
+            }
+            set {
+                this["CtrlZoom"] = value;
             }
         }
     }

@@ -93,10 +93,16 @@ namespace PicView.Views.Windows
                 };
 
                 AltUIRadio.IsChecked = Properties.Settings.Default.ShowAltInterfaceButtons;
-                AltUIRadio.Click += delegate 
+                AltUIRadio.Click += delegate
                 {
                     Properties.Settings.Default.ShowAltInterfaceButtons = !Properties.Settings.Default.ShowAltInterfaceButtons;
                 };
+
+                CtrlZoom.IsChecked = Properties.Settings.Default.CtrlZoom;
+                ScrollZoom.IsChecked = !Properties.Settings.Default.CtrlZoom;
+
+                CtrlZoom.Checked += (_, _) => Properties.Settings.Default.CtrlZoom = true;
+                ScrollZoom.Checked += (_, _) => Properties.Settings.Default.CtrlZoom = false;
 
                 RestartButton.Click += delegate
                 {
@@ -265,6 +271,18 @@ namespace PicView.Views.Windows
                 WallpaperApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
 
+            // SetAsDefaultTxt
+            SetAsDefaultTxt.MouseEnter += delegate {
+                colorAnimation.From = AnimationHelper.GetPrefferedColorOver();
+                colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
+                SetAsDefaultTxtBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            };
+            SetAsDefaultTxt.MouseLeave += delegate {
+                colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
+                colorAnimation.To = AnimationHelper.GetPrefferedColorOver();
+                SetAsDefaultTxtBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            };
+
             // DarkThemeRadio
             DarkThemeRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(DarkThemeText); };
             DarkThemeRadio.MouseEnter += delegate { ButtonMouseOverAnim(DarkThemeText); };
@@ -303,6 +321,16 @@ namespace PicView.Views.Windows
             AltUIRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(AltUIText); };
             AltUIRadio.MouseEnter += delegate { ButtonMouseOverAnim(AltUIText); };
             AltUIRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(AltUIText); };
+
+            // ScrollZoom
+            ScrollZoom.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ScrollZoomText); };
+            ScrollZoom.MouseEnter += delegate { ButtonMouseOverAnim(ScrollZoomText); };
+            ScrollZoom.MouseLeave += delegate { ButtonMouseLeaveAnim(ScrollZoomText); };
+
+            // CtrlZoom
+            CtrlZoom.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(CtrlZoomText); };
+            CtrlZoom.MouseEnter += delegate { ButtonMouseOverAnim(CtrlZoomText); };
+            CtrlZoom.MouseLeave += delegate { ButtonMouseLeaveAnim(CtrlZoomText); };
 
             // Restart
             RestartButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(RestartText); };

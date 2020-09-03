@@ -60,7 +60,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="WindowBorderColorEnabled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="BgColorChoice" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -145,6 +145,9 @@
     </Setting>
     <Setting Name="KeepCentered" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="CtrlZoom" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

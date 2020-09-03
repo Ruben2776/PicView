@@ -106,7 +106,7 @@
     <system:String x:Key="StayCentered">Hold vinduet centreret</system:String>
     <system:String x:Key="ColoredWindowBorder">Farbiger Fensterrand</system:String>
     <system:String x:Key="ShowButtonsInHiddenUI">Show buttons in hidden UI</system:String>
-
+    <system:String x:Key="Apply">Anwenden</system:String>
     <system:String x:Key="AdjustTimingForSlideshow">Passen Sie das Timing für die Diashow an</system:String>
     <system:String x:Key="AdjustTimingForZoom">Adjust zooming speed</system:String>
     <system:String x:Key="SecAbbreviation">Sek.</system:String>

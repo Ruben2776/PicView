@@ -766,15 +766,28 @@ namespace PicView.Shortcuts
                     }
                 }
             }
-            // Change image with shift being held down
-            else if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !IsAutoScrolling)
             {
-                Pic(e.Delta > 0);
+                if (Properties.Settings.Default.CtrlZoom)
+                {
+                    Zoom(e.Delta > 0);
+                }
+                else
+                {
+                    Pic(e.Delta > 0);
+                }
+                
             }
-            // Zoom
-            else if (!IsAutoScrolling)
+            else
             {
-                Zoom(e.Delta > 0);
+                if (Properties.Settings.Default.CtrlZoom)
+                {
+                    Pic(e.Delta > 0); 
+                }
+                else
+                {
+                    Zoom(e.Delta > 0);
+                }
             }
         }
     }

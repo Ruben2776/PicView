@@ -229,11 +229,14 @@ namespace PicView.ChangeImage
                     ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
                 }
 
-                // Dissallow changing image while loading
-                CanNavigate = false;
-
                 // Get it!
                 await Preloader.Add(Pics[index]).ConfigureAwait(true);
+
+                if (index != FolderIndex)
+                {
+                    // User skipped image, exit
+                    return;
+                }
 
                 // Retry
                 bitmapSource = Preloader.Get(Pics[index]);
