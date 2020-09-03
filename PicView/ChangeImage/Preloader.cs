@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
@@ -90,13 +91,7 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            if (File.Exists(Pics[i]))
-            {
-                if (Contains(Pics[i]))
-                {
-                    Remove(Pics[i]);
-                }
-            }
+            Remove(Pics[i]);
         }
 
         /// <summary>
