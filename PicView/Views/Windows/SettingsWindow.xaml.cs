@@ -12,6 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
 using static PicView.ConfigureSettings.ConfigColors;
 using static PicView.SystemIntegration.Wallpaper;
 using static PicView.UILogic.Animations.MouseOverAnimations;
@@ -20,11 +21,15 @@ namespace PicView.Views.Windows
 {
     public partial class SettingsWindow : Window
     {
+        static FileAssociationsWindow fileAssocWin;
+
         public SettingsWindow()
         {
+            Title = Application.Current.Resources["SettingsWindow"] + " - PicView";
             MaxHeight = WindowSizing.MonitorInfo.WorkArea.Height;
             InitializeComponent();
             Width *= WindowSizing.MonitorInfo.DpiScaling;
+            
 
             ContentRendered += delegate
             {
@@ -117,7 +122,50 @@ namespace PicView.Views.Windows
                 CenterRadio.Unchecked += (_, _) => Properties.Settings.Default.KeepCentered = false;
                 CenterRadio.IsChecked = Properties.Settings.Default.KeepCentered;
 
-                SetAsDefaultTxt.MouseLeftButtonDown += (_, _) => GeneralSettings.ElevateProcess(Process.GetCurrentProcess());
+                fileAssocWin = new FileAssociationsWindow 
+                {
+                    Owner = this,
+                    Width = ActualWidth,
+                    Height = ActualHeight
+                };
+                SetAsDefaultTxt.MouseLeftButtonDown += delegate
+                {
+                    if (fileAssocWin.Visibility == Visibility.Visible)
+                    {
+                        fileAssocWin.Focus();
+                    }
+                    else
+                    {
+                        // Show it with animation
+                        Effect = new BlurEffect
+                        {
+                            RenderingBias = RenderingBias.Quality,
+                            KernelType = KernelType.Gaussian,
+                            Radius = 9
+                        };
+
+                        fileAssocWin.BeginAnimation(OpacityProperty, new DoubleAnimation
+                        {
+                            From = 0,
+                            To = 1,
+                            Duration = TimeSpan.FromSeconds(.3)
+                        });
+
+                        // Make it stay centered
+                        fileAssocWin.Left = Left + (Width - fileAssocWin.Width) / 2;
+                        fileAssocWin.Top = Top + (Height - fileAssocWin.Height) / 2;
+
+                        fileAssocWin.ShowDialog();
+                    }
+                };
+
+                IsVisibleChanged += (_, e) =>
+                {
+                    if (!(bool)e.NewValue && fileAssocWin.IsVisible)
+                    {
+                        fileAssocWin.HideLogic();
+                    }
+                };
 
 
                 switch (Properties.Settings.Default.ColorTheme)
