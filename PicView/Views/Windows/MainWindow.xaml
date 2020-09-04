@@ -9,8 +9,6 @@
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
     Foreground="{StaticResource MainColorBrush}"
-    ResizeMode="CanMinimize"
-    SizeToContent="WidthAndHeight"
     Style="{DynamicResource MyWindowStyle}"
     WindowStartupLocation="CenterScreen">
 

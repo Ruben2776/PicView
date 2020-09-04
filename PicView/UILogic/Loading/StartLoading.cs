@@ -32,34 +32,25 @@ namespace PicView.UILogic.Loading
             HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle);
             source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
 
-            FreshStartup = true;
-
             if (!Properties.Settings.Default.ShowInterface)
             {
                 ConfigureWindows.GetMainWindow.TitleBar.Visibility =
-                ConfigureWindows.GetMainWindow.LowerBar.Visibility 
+                ConfigureWindows.GetMainWindow.LowerBar.Visibility
                 = Visibility.Collapsed;
             }
 
-            if (Properties.Settings.Default.UserLanguage != "en")
-            {
-                try
-                {
-                    Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
-                    {
-                        Source = new Uri(@"/PicView;component/Translations/" + Properties.Settings.Default.UserLanguage + ".xaml", UriKind.Relative)
-                    };
-                }
-                catch (Exception)
-                {
-                    Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
-                    {
-                        Source = new Uri(@"/PicView;component/Translations/en.xaml", UriKind.Relative)
-                    };
-                }
-            }
+            FreshStartup = true;
 
             Pics = new List<string>();
+
+            // Load sizing properties
+            MonitorInfo = MonitorSize.GetMonitorSize();
+            AutoFitWindow = Properties.Settings.Default.AutoFitWindow;
+            IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
+
+            // Set min size to DPI scaling
+            ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
+            ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
             // Load image if possible
             var arg = Application.Current.Properties["ArbitraryArgName"];
@@ -97,6 +88,10 @@ namespace PicView.UILogic.Loading
                 {
                     GalleryToggle.OpenFullscreenGallery(true);
                 }
+                else if (AutoFitWindow)
+                {
+                    ScaleImage.TryFitImage(file);
+                }
                 else if (Properties.Settings.Default.Width != 0)
                 {
                     SetLastWindowSize();
@@ -109,15 +104,23 @@ namespace PicView.UILogic.Loading
                 // Set file associations
             }
 
-            // Load sizing properties
-            MonitorInfo = MonitorSize.GetMonitorSize();
-            AutoFitWindow = Properties.Settings.Default.AutoFitWindow;
-            IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
-
-            // Set min size to DPI scaling
-            ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
-            ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
-            ConfigureSettings.ConfigColors.UpdateColor();
+            if (Properties.Settings.Default.UserLanguage != "en")
+            {
+                try
+                {
+                    Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
+                    {
+                        Source = new Uri(@"/PicView;component/Translations/" + Properties.Settings.Default.UserLanguage + ".xaml", UriKind.Relative)
+                    };
+                }
+                catch (Exception)
+                {
+                    Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
+                    {
+                        Source = new Uri(@"/PicView;component/Translations/en.xaml", UriKind.Relative)
+                    };
+                }
+            }
         }
 
         internal static void Start()
@@ -125,7 +128,6 @@ namespace PicView.UILogic.Loading
 #if DEBUG
             Trace.WriteLine("ContentRendered started");
 #endif
-            
 
             #region Add dictionaries
 
@@ -152,6 +154,7 @@ namespace PicView.UILogic.Loading
 
             #endregion Add dictionaries
 
+            ConfigureSettings.ConfigColors.UpdateColor();
             ConfigureWindows.GetMainWindow.Topmost = Properties.Settings.Default.TopMost;
 
             // Load UI and events
@@ -164,7 +167,9 @@ namespace PicView.UILogic.Loading
             if (Properties.Settings.Default.AutoFitWindow)
             {
                 ConfigureWindows.CenterWindowOnScreen();
+                ConfigureWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
             }
+
         }
 
         private static void SetLastWindowSize()
