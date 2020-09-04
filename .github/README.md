@@ -14,7 +14,6 @@ PicView is a fast Picture Viewer with minimal UI. Features image effects, image 
     <img alt="Windows OS" src="https://img.shields.io/badge/OS-Windows%2064%20bit-00adef.svg?maxAge=3600&style=flat-square">
 </p>
 
----
 
 <br>
 <img src="https://picview.org/assets/screenshots/dark-theme01.webp" align="left" height="670"/>
