@@ -1,8 +1,6 @@
 <h1 align="center">
-<img src="https://picview.app/wp-content/uploads/2020/07/Rectangle-Image-Copy.png" height="215" />
-  <br>
+<img src="PicView-logo.svg" height="100" />
 </h1>
-<br>
 
 PicView is a fast Picture Viewer with minimal UI. Features image effects, image galleries, image info and more. The app can automatically adjusts itself to your screen. 
 
