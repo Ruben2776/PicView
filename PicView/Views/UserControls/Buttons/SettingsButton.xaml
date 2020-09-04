@@ -9,7 +9,7 @@
         BorderThickness="0"
         ToolTip="{StaticResource ShowAllSettingsWindow}">
         <Button.Background>
-            <SolidColorBrush x:Name="ReloadButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+            <SolidColorBrush x:Name="SettingsButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
         </Button.Background>
         <Image Width="18" Height="18">
             <Image.Source>

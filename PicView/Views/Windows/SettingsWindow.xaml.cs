@@ -109,13 +109,13 @@ namespace PicView.Views.Windows
                     GeneralSettings.RestartApp();
                 };
 
-                TopmostRadio.IsChecked = Properties.Settings.Default.TopMost;
                 TopmostRadio.Checked += (_, _) => ConfigureWindows.IsMainWindowTopMost = !Properties.Settings.Default.TopMost;
                 TopmostRadio.Unchecked += (_, _) => ConfigureWindows.IsMainWindowTopMost = false;
-
-                CenterRadio.IsChecked = Properties.Settings.Default.KeepCentered;
+                TopmostRadio.IsChecked = Properties.Settings.Default.TopMost;
+                
                 CenterRadio.Checked += (_, _) => Properties.Settings.Default.KeepCentered = true;
                 CenterRadio.Unchecked += (_, _) => Properties.Settings.Default.KeepCentered = false;
+                CenterRadio.IsChecked = Properties.Settings.Default.KeepCentered;
 
                 SetAsDefaultTxt.MouseLeftButtonDown += (_, _) => GeneralSettings.ElevateProcess(Process.GetCurrentProcess());
 
