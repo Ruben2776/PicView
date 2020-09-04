@@ -1,17 +1,20 @@
 <h1 align="center">
-<img src="https://picview.app/wp-content/uploads/2020/07/Rectangle-Image-Copy.png" height="215" />
-  <br>
+<img src="PicView-logo.svg" height="100" />
 </h1>
-<br>
 
 PicView is a fast Picture Viewer with minimal UI. Features image effects, image galleries, image info and more. The app can automatically adjusts itself to your screen. 
 
-[![Total Downloads](https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=downloads&style=for-the-badge)](https://github.com/Ruben2776/PicView/releases)
- [![GPL Licence](https://img.shields.io/badge/license-GPLv3-green.svg?maxAge=3600&style=for-the-badge)](https://github.com/Ruben2776/PicView/blob/master/LICENSE.txt)
-![Windows OS](https://img.shields.io/badge/OS-Windows%2064%20bit-00adef.svg?maxAge=3600&style=for-the-badge)
+<br>
+<p align=center>
+    <a href="https://github.com/Ruben2776/PicView/releases">
+        <img alt="Downloads shield" src="https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=downloads&style=flat-square">
+    </a>
+    <a href="https://github.com/Ruben2776/PicView/blob/master/LICENSE.txt">
+        <img alt="GPL v3 License" src="https://img.shields.io/badge/license-GPLv3-green.svg?maxAge=3600&style=flat-square">
+    </a>
+    <img alt="Windows OS" src="https://img.shields.io/badge/OS-Windows%2064%20bit-00adef.svg?maxAge=3600&style=flat-square">
+</p>
 
-
----
 
 <br>
 <img src="https://picview.org/assets/screenshots/dark-theme01.webp" align="left" height="670"/>
