@@ -300,6 +300,26 @@ namespace PicView.Shortcuts
                         {
                             Color_Picking.StopRunning(false);
                         }
+                        else if (GetResizeAndOptimize != null && GetResizeAndOptimize.IsVisible)
+                        {
+                            GetResizeAndOptimize.Hide();
+                        }
+                        else if (GetEffectsWindow != null && GetEffectsWindow.IsVisible)
+                        {
+                            GetEffectsWindow.Hide();
+                        }
+                        else if (GetImageInfoWindow != null && GetImageInfoWindow.IsVisible)
+                        {
+                            GetImageInfoWindow.Hide();
+                        }
+                        else if (GetInfoWindow != null && GetInfoWindow.IsVisible)
+                        {
+                            GetInfoWindow.Hide();
+                        }
+                        else if (GetSettingsWindow != null && GetSettingsWindow.IsVisible)
+                        {
+                            GetSettingsWindow.Hide();
+                        }
                         else if (!cm.IsVisible)
                         {
                             SystemCommands.CloseWindow(GetMainWindow);
