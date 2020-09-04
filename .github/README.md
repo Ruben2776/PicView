@@ -4,6 +4,7 @@
 
 PicView is a fast Picture Viewer with minimal UI. Features image effects, image galleries, image info and more. The app can automatically adjusts itself to your screen. 
 
+<br>
 <p align=center>
     <a href="https://github.com/Ruben2776/PicView/releases">
         <img alt="Downloads shield" src="https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=downloads&style=flat-square">
