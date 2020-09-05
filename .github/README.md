@@ -59,7 +59,7 @@ For images with a transparent background, the background can be changed to a che
 <br>
 <h2>Display Image Info</h2>
 
-<img src="https://i.imgur.com/IK3qgB4.png" width="918"/>
+<img src="https://picview.org/assets/screenshots/image-info-white.webp" width="918"/>
 The image info window will update values as you browse through images.
 
 <br>
@@ -68,7 +68,7 @@ The image info window will update values as you browse through images.
 View all files in current folder as a fullscreen thumbnail gallery, where you can quickly scroll to desired image.
 
 <br>
-<h2>Contained Image Gallery:</h2>
+<h2>Horizontal Image Gallery:</h2>
 <img src="https://picview.org/assets/screenshots/horizontal-gallery-white.webp"/>
 View all files in current folder as a thumbnail gallery, with custom animations.
 
