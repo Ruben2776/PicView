@@ -20,10 +20,6 @@ PicView is a fast Picture Viewer with minimal UI. Features image effects, image 
 <br>
 <img src="https://picview.org/assets/screenshots/wide-white-theme.webp"/>
 
-
-### Features:
-
-
 <h2>Customizable Themes</h2>
 <img src="https://picview.org/assets/screenshots/themes-3.webp"/>
 
