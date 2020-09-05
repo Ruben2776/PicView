@@ -3,8 +3,9 @@
 </h1>
 
 PicView is a fast Picture Viewer with minimal UI. Features image effects, image galleries, image info and more. The app can automatically adjusts itself to your screen. 
+<br>Portable, free to use. No pop-ups, no installtation required, no registry edits or system files changed.
 
-<br>
+
 <p align=center>
     <a href="https://github.com/Ruben2776/PicView/releases">
         <img alt="Downloads shield" src="https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=downloads&style=flat-square">
@@ -17,32 +18,8 @@ PicView is a fast Picture Viewer with minimal UI. Features image effects, image 
 
 
 <br>
-<img src="https://picview.org/assets/screenshots/dark-theme01.webp" align="left" height="670"/>
+<img src="https://picview.org/assets/screenshots/wide-white-theme.webp"/>
 
-
-### Features:
-
-Portable, free to use. No pop-ups, no installtation required, no registry edits or system files changed.
-
-
-If you have 7-Zip or WinRAR installed, you can view images inside archives, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
-
-
-**Switch between image scaling modes;** 
-
-Pressing `1` Centers the image in the window, while retaining the image's original size. <br> Pressing `2` Also centers the image in the window, but the image will be stretched to window height, while retaining aspect ratio. 
-
-Pressing `3` enables the auto window sizing feature. It will resize the window to the image's size, while keeping the window centered.<br> Pressing `4` also enables the window sizing feature, but the image will be stretched to the monitor's height, while retaining aspect ratio. 
-
-Slideshow `F11` with adjustable timer in the Settings window `F4`.
-
-Integrated color tool to quickly pick a color from the shown image.
-
-Quickly crop images by pressing `C`.
-
-
-Drag and drop from files Windows explorer or your browser. You can also hold `Ctrl` to drag currently viewed image to your file system.
-<br>
 <h2>Customizable Themes</h2>
 <img src="https://picview.org/assets/screenshots/themes-3.webp"/>
 
@@ -59,7 +36,7 @@ For images with a transparent background, the background can be changed to a che
 <br>
 <h2>Display Image Info</h2>
 
-<img src="https://i.imgur.com/IK3qgB4.png" width="918"/>
+<img src="https://picview.org/assets/screenshots/image-info-white.webp" width="918"/>
 The image info window will update values as you browse through images.
 
 <br>
@@ -68,7 +45,7 @@ The image info window will update values as you browse through images.
 View all files in current folder as a fullscreen thumbnail gallery, where you can quickly scroll to desired image.
 
 <br>
-<h2>Contained Image Gallery:</h2>
+<h2>Horizontal Image Gallery:</h2>
 <img src="https://picview.org/assets/screenshots/horizontal-gallery-white.webp"/>
 View all files in current folder as a thumbnail gallery, with custom animations.
 
@@ -78,6 +55,25 @@ Choose between 26 different shader effects, including negative colors, old movie
 The effect can be copied to clipholder `Ctrl + C` or you can save it on your file system. The effect will also be applied when setting image as a wallpaper or lock screen image.
 
 ## Other features
+
+If you have 7-Zip or WinRAR installed, you can view images inside archives, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
+
+
+**Switch between image scaling modes;** 
+
+Pressing `1` Centers the image in the window, while retaining the image's original size. <br> Pressing `2` Also centers the image in the window, but the image will be stretched to window height, while retaining aspect ratio. 
+
+Pressing `3` enables the auto window sizing feature. It will resize the window to the image's size, while keeping the window centered.<br> Pressing `4` also enables the window sizing feature, but the image will be stretched to the monitor's height, while retaining aspect ratio. 
+
+Slideshow `F11` with adjustable timer in the Settings window `F4`.
+
+Integrated color tool to quickly pick a color from the shown image.
+
+Quickly crop images by pressing `C`.
+
+Drag and drop from files Windows explorer or your browser. You can also hold `Ctrl` to drag currently viewed image to your file system.
+<br>
+
 **File support** 
  > .jpg .jpeg .jpe .png .bmp .tif .tiff .gif .ico .wdp .jfif .ktx .webp .wbmp .psd .psb .svg .3fr .arw .cr2 .crw .dcr .dng .erf .kdc .mdc .mef .mos .mrw .nef .nrw .orf .pef .pgm .ppm .raf .raw .rw2 .srf .x3f .bpg .cur .cut .dib .emf .exif .exr .pcx .tga .wmf .wpg .xbm .xpm .hdr .heic
  
