@@ -18,6 +18,7 @@
         <Style TargetType="{x:Type CheckBox}">
             <Setter Property="SnapsToDevicePixels" Value="true" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type CheckBox}">
@@ -73,60 +74,80 @@
         </Style>
     </Window.Resources>
 
-    <DockPanel
+    <Border
         Width="285"
         HorizontalAlignment="Center"
         VerticalAlignment="Center"
-        Background="{StaticResource NoisyBg}">
-        <Grid
-            x:Name="TitleBar"
-            Height="35"
-            Background="{StaticResource WindowBackgroundColorBrush}"
-            DockPanel.Dock="Top">
+        Background="{StaticResource NoisyBg}"
+        BorderBrush="{DynamicResource WindowBorderColorBrush}"
+        BorderThickness="1">
+        <DockPanel>
+            <Grid
+                x:Name="TitleBar"
+                Height="35"
+                Background="{StaticResource WindowBackgroundColorBrush}"
+                DockPanel.Dock="Top">
 
-            <uc:Logo HorizontalAlignment="Left" />
+                <uc:Logo HorizontalAlignment="Left" />
 
-            <uc:CloseButton
-                x:Name="CloseButton"
-                Width="35"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center" />
+                <uc:CloseButton
+                    x:Name="CloseButton"
+                    Width="35"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center" />
 
-        </Grid>
+            </Grid>
 
-        <Rectangle
-            Height="1"
-            DockPanel.Dock="Top"
-            Fill="{StaticResource BorderBrush}" />
+            <Rectangle
+                Height="1"
+                DockPanel.Dock="Top"
+                Fill="{StaticResource BorderBrush}" />
 
-        <StackPanel>
+            <StackPanel Margin="10,0,10,20">
 
-            <Label Margin="6,5,6,0" Content="Common formats" />
+                <Label Margin="6,5,6,0" Content="Raster formats" />
 
-            <WrapPanel Margin="12,0,12,0">
-                <CheckBox d:IsChecked="True" Content=".jpg" />
-            </WrapPanel>
+                <WrapPanel Margin="12,0,12,0">
+                    <CheckBox Content=".jpg" IsChecked="True" />
+                    <CheckBox Content=".png" IsChecked="True" />
+                    <CheckBox Content=".bmp" IsChecked="True" />
+                    <CheckBox Content=".ico" IsChecked="True" />
+                    <CheckBox Content=".gif" IsChecked="True" />
+                    <CheckBox Content=".webp" IsChecked="True" />
+                    <CheckBox Content=".jfif" IsChecked="True" />
+                    <CheckBox Content=".tiff" IsChecked="True" />
+                    <CheckBox Content=".ppm" IsChecked="True" />
+                    <CheckBox Content=".wbmp" IsChecked="True" />
+                </WrapPanel>
 
-            <Label Margin="6,5,6,0" Content="Photoshop" />
+                <Label Margin="6,5,6,0" Content="Photoshop" />
 
-            <StackPanel Margin="12,0,12,0" Orientation="Horizontal">
-                <CheckBox Content=".psd" />
-                <CheckBox Content=".psb" />
+                <StackPanel Margin="12,0,12,0" Orientation="Horizontal">
+                    <CheckBox Content=".psd" />
+                    <CheckBox Content=".psb" />
+                </StackPanel>
+
+                <Label Margin="6,5,6,0" Content="Vector Graphics" />
+
+                <StackPanel Margin="12,0,12,0" Orientation="Horizontal">
+                    <CheckBox Content=".svg" />
+                </StackPanel>
+
+                <Label Margin="6,5,6,0" Content="Raw Camera Images" />
+
+                <WrapPanel Margin="12,0,12,0" Orientation="Horizontal">
+                    <CheckBox Content=".raw" />
+                </WrapPanel>
+
+                <Label Margin="6,5,6,0" Content="Other formats" />
+
+                <WrapPanel Margin="12,0,12,0" Orientation="Horizontal">
+                    <CheckBox Content=".hdr" />
+                    <CheckBox Content=".heic" />
+                </WrapPanel>
+
             </StackPanel>
 
-            <Label Margin="6,5,6,0" Content="Vector Graphics" />
-
-            <StackPanel Margin="12,0,12,0" Orientation="Horizontal">
-                <CheckBox Content=".svg" />
-            </StackPanel>
-
-            <Label Margin="6,5,6,0" Content="Raw Camera Images" />
-
-            <WrapPanel Margin="12,0,12,0" Orientation="Horizontal">
-                <CheckBox Content=".raw" />
-            </WrapPanel>
-
-        </StackPanel>
-
-    </DockPanel>
+        </DockPanel>
+    </Border>
 </Window>
