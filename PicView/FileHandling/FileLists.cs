@@ -60,8 +60,8 @@ namespace PicView.FileHandling
                         || file.EndsWith("tiff", StringComparison.OrdinalIgnoreCase)
                         || file.EndsWith("gif", StringComparison.OrdinalIgnoreCase)
                         || file.EndsWith("ico", StringComparison.OrdinalIgnoreCase)
-                        || file.EndsWith("wdp", StringComparison.OrdinalIgnoreCase)
                         || file.EndsWith("jfif", StringComparison.OrdinalIgnoreCase)
+                        || file.EndsWith("ppm", StringComparison.OrdinalIgnoreCase)
 
                         // Photoshop
                         || file.EndsWith("psd", StringComparison.OrdinalIgnoreCase)
@@ -70,7 +70,6 @@ namespace PicView.FileHandling
                         // Web
                         || file.EndsWith("svg", StringComparison.OrdinalIgnoreCase)
                         || file.EndsWith("webp", StringComparison.OrdinalIgnoreCase)
-                        || file.EndsWith("ktx", StringComparison.OrdinalIgnoreCase)
                         || file.EndsWith("wbmp", StringComparison.OrdinalIgnoreCase)
 
                         // Raw Camera
