@@ -133,7 +133,10 @@
                         Content="{StaticResource MiscSettings}"
                         Foreground="{StaticResource MainColorBrush}" />
 
-                    <CheckBox x:Name="SubDirRadio" Padding="5,0,0,0">
+                    <CheckBox
+                        x:Name="SubDirRadio"
+                        Padding="5,0,0,0"
+                        Focusable="False">
                         <CheckBox.Foreground>
                             <SolidColorBrush x:Name="SubDirText" Color="{StaticResource MainColor}" />
                         </CheckBox.Foreground>
@@ -145,7 +148,10 @@
                         </CheckBox.Content>
                     </CheckBox>
 
-                    <CheckBox x:Name="TopmostRadio" Padding="5,0,0,0">
+                    <CheckBox
+                        x:Name="TopmostRadio"
+                        Padding="5,0,0,0"
+                        Focusable="False">
                         <CheckBox.Foreground>
                             <SolidColorBrush x:Name="TopMostDirText" Color="{StaticResource MainColor}" />
                         </CheckBox.Foreground>
@@ -161,7 +167,8 @@
                     <CheckBox
                         x:Name="CenterRadio"
                         Padding="5,0,0,0"
-                        d:IsChecked="True">
+                        d:IsChecked="True"
+                        Focusable="False">
                         <CheckBox.Foreground>
                             <SolidColorBrush x:Name="CenterubDirText" Color="{StaticResource MainColor}" />
                         </CheckBox.Foreground>
@@ -244,6 +251,7 @@
                         Padding="5,0,0,0"
                         d:IsChecked="True"
                         BorderThickness="0"
+                        Focusable="False"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto">
                         <RadioButton.Foreground>
                             <SolidColorBrush x:Name="CtrlZoomText" Color="{StaticResource MainColor}" />
@@ -259,6 +267,7 @@
                         Margin="0,3,0,0"
                         Padding="5,0,0,0"
                         BorderThickness="0"
+                        Focusable="False"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto">
                         <RadioButton.Foreground>
                             <SolidColorBrush x:Name="ScrollZoomText" Color="{StaticResource MainColor}" />
@@ -574,7 +583,8 @@
                     <CheckBox
                         x:Name="BorderRadio"
                         Margin="18,0,10,0"
-                        HorizontalContentAlignment="Center">
+                        HorizontalContentAlignment="Center"
+                        Focusable="False">
                         <CheckBox.Foreground>
                             <SolidColorBrush x:Name="BorderBrushText" Color="{StaticResource MainColor}" />
                         </CheckBox.Foreground>
@@ -589,7 +599,8 @@
                     <CheckBox
                         x:Name="AltUIRadio"
                         Margin="18,4,10,15"
-                        HorizontalContentAlignment="Center">
+                        HorizontalContentAlignment="Center"
+                        Focusable="False">
                         <CheckBox.Foreground>
                             <SolidColorBrush x:Name="AltUIText" Color="{StaticResource MainColor}" />
                         </CheckBox.Foreground>
