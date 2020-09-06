@@ -7,6 +7,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -20,42 +21,33 @@ namespace PicView.ImageHandling
         /// </summary>
         /// <param name="file">Absolute path of the file</param>
         /// <returns></returns>
-        internal static BitmapSource RenderToBitmapSource(string file)
+        internal static async Task <BitmapSource> RenderToBitmapSource(string file)
         {
             var check = SupportedFiles.IsSupportedFile(file);
             if (!check.HasValue) { return null; }
 
             try
             {
-
-                using var filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
-
                 if (check.Value)
                 {
+                    var filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
                     var sKBitmap = SKBitmap.Decode(filestream);
+                    await filestream.DisposeAsync().ConfigureAwait(false);
 
                     if (sKBitmap == null) { return null; }
 
                     var pic = sKBitmap.ToWriteableBitmap();
                     pic.Freeze();
                     sKBitmap.Dispose();
-
-
                     return pic;
                 }
                 else
                 {
                     using MagickImage magick = new MagickImage();
-                    var mrs = new MagickReadSettings()
-                    {
-                        Density = new Density(300, 300),
-                        BackgroundColor = MagickColors.Transparent,
-                    };
 
                     try
                     {
-                        magick.Read(filestream, mrs);
-                        filestream.Close();
+                        magick.Read(file);
                     }
                     catch (MagickException e)
                     {
@@ -71,7 +63,6 @@ namespace PicView.ImageHandling
 
                     var pic = magick.ToBitmapSource();
                     pic.Freeze();
-                    magick.Dispose();
 
                     return pic;
                 }

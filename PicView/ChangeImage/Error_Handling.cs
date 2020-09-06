@@ -53,7 +53,7 @@ namespace PicView.ChangeImage
                 {
                     if (x < Pics.Count)
                     {
-                        pic = RenderToBitmapSource(Pics[x]);
+                        pic = await RenderToBitmapSource(Pics[x]).ConfigureAwait(true);
                         if (pic != null)
                         {
                             return pic;
@@ -68,7 +68,7 @@ namespace PicView.ChangeImage
             }
             else if (x < 0)
             {
-                pic = RenderToBitmapSource(Pics[x]);
+                pic = await RenderToBitmapSource(Pics[x]).ConfigureAwait(true);
                 if (pic != null)
                 {
                     return pic;
@@ -99,7 +99,7 @@ namespace PicView.ChangeImage
             // Retry if exists, fixes rare error
             if (File.Exists(file))
             {
-                pic = RenderToBitmapSource(file);
+                pic = await RenderToBitmapSource(file).ConfigureAwait(true);
                 if (pic != null)
                 {
                     return pic;

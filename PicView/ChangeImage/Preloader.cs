@@ -1,8 +1,6 @@
 ﻿using PicView.ImageHandling;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
@@ -22,12 +20,12 @@ namespace PicView.ChangeImage
             BitmapSource> Sources = new ConcurrentDictionary<string, BitmapSource>();
 
         /// <summary>
-        /// Add file to prelader
+        /// Add file to preloader
         /// </summary>
         /// <param name="file">file path</param>
-        internal static Task Add(string file) => Task.Run(() =>
+        internal static Task Add(string file) => Task.Run(async() =>
         {
-            Sources.TryAdd(file, ImageDecoder.RenderToBitmapSource(file));
+            Sources.TryAdd(file, await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(false));
         });
 
         /// <summary>
