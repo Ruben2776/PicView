@@ -19,7 +19,7 @@ namespace PicView.FileHandling
             return ext switch
             {
                 // Standards
-                ".jpg" or ".jpeg" or ".jpe" or ".png" or ".bmp" or ".tif" or ".tiff" or ".gif" or ".ico" or ".jfif" or ".ppm" or ".webp" or ".wbmp" => true,
+                ".jpg" or ".jpeg" or ".jpe" or ".png" or ".bmp" or ".tif" or ".tiff" or ".gif" or ".ico" or ".jfif" or ".ppm" or ".webp" or ".wbmp" or ".ppm" => true,
 
                 // Non-standards
 
@@ -31,8 +31,13 @@ namespace PicView.FileHandling
                 
                 // Camera
                 ".3fr" or ".arw" or ".cr2" or ".crw" or ".dcr" or ".dng" or ".erf" or ".kdc" or ".mdc" or ".mef" or ".mos" or ".mrw" or ".nef" or ".nrw" or ".orf" or ".pef"
-                or ".pgm" or ".ppm" or ".raf" or ".raw" or ".rw2" or ".srf" or ".x3f" or ".bpg" or ".cur" or ".cut" or ".dib" or ".emf" or ".exif" or ".exr" or ".hdr"
-                or ".heic" or ".pcx" or ".tga" or ".wmf" or ".wpg" or ".xbm" or ".xpm" => false,
+                 or ".raf" or ".raw" or ".rw2" or ".srf" or ".x3f" or ".dib" or ".emf" or ".exif" or ".exr"
+                or ".heic" or ".pcx" or ".tga" or ".wmf" or ".wpg" or ".xbm" or ".xpm"
+
+                // Others
+                or ".pgm" or ".hdr" or ".cut"
+
+                => false,
                 // Non supported
                 _ => null,
             };

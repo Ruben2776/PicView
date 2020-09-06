@@ -27,9 +27,8 @@ namespace PicView.Views.Windows
         {
             Title = Application.Current.Resources["SettingsWindow"] + " - PicView";
             MaxHeight = WindowSizing.MonitorInfo.WorkArea.Height;
-            InitializeComponent();
             Width *= WindowSizing.MonitorInfo.DpiScaling;
-            
+            InitializeComponent();
 
             ContentRendered += delegate
             {

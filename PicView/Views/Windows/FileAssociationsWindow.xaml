@@ -13,10 +13,10 @@
     WindowStyle="None"
     mc:Ignorable="d">
     <Window.Resources>
-        <!--  PressedBrush is used for Pressed in Button, Radio Button, CheckBox  -->
-
         <Style TargetType="{x:Type CheckBox}">
             <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="Margin" Value="0,3,5,3" />
+            <Setter Property="Width" Value="55" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
             <Setter Property="Template">
@@ -28,43 +28,56 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
                             <!--  BulletDecorator is used to provide baseline alignment between the checkmark and the Content  -->
-                            <BulletDecorator x:Name="test" Grid.Column="0">
+                            <BulletDecorator Grid.Column="0">
                                 <BulletDecorator.Bullet>
-                                    <Canvas Width="15" Height="15">
+                                    <Canvas
+                                        x:Name="canvas"
+                                        Width="16"
+                                        Height="16">
                                         <Border
-                                            x:Name="Border"
-                                            Width="15"
-                                            Height="15"
-                                            Background="Transparent"
-                                            BorderBrush="{StaticResource BorderBrush}"
+                                            Width="16"
+                                            Height="16"
+                                            BorderBrush="{StaticResource MainColorBrush}"
                                             BorderThickness="1">
                                             <Rectangle
-                                                x:Name="CheckMark"
-                                                Width="8"
-                                                Height="8"
+                                                x:Name="bg"
+                                                Width="16"
+                                                Height="16"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
                                                 Fill="{DynamicResource ChosenColorBrush}"
                                                 SnapsToDevicePixels="False" />
                                         </Border>
+                                        <Path
+                                            x:Name="CheckMark"
+                                            Canvas.Left="-5"
+                                            Canvas.Top="3"
+                                            Width="9"
+                                            Height="9"
+                                            Margin="9,0,5,0"
+                                            Data="M461.6,109.6l-54.9-43.3c-1.7-1.4-3.8-2.4-6.2-2.4c-2.4,0-4.6,1-6.3,2.5L194.5,323c0,0-78.5-75.5-80.7-77.7  c-2.2-2.2-5.1-5.9-9.5-5.9c-4.4,0-6.4,3.1-8.7,5.4c-1.7,1.8-29.7,31.2-43.5,45.8c-0.8,0.9-1.3,1.4-2,2.1c-1.2,1.7-2,3.6-2,5.7  c0,2.2,0.8,4,2,5.7l2.8,2.6c0,0,139.3,133.8,141.6,136.1c2.3,2.3,5.1,5.2,9.2,5.2c4,0,7.3-4.3,9.2-6.2L462,121.8  c1.2-1.7,2-3.6,2-5.8C464,113.5,463,111.4,461.6,109.6z"
+                                            Fill="#fff"
+                                            SnapsToDevicePixels="False"
+                                            Stretch="Fill" />
                                     </Canvas>
                                 </BulletDecorator.Bullet>
                             </BulletDecorator>
                             <ContentPresenter
                                 Grid.Column="1"
-                                Margin="{TemplateBinding Padding}"
+                                Margin="3,0,0,2"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                RecognizesAccessKey="True" />
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="False" />
 
                         </Grid>
                         <!--  This uses Visibility to hide and show the CheckMark on IsChecked  -->
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="false">
                                 <Setter TargetName="CheckMark" Property="Visibility" Value="Collapsed" />
+                                <Setter TargetName="bg" Property="Visibility" Value="Collapsed" />
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="true">
-                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
+                                <Setter TargetName="canvas" Property="Background" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
 
@@ -98,12 +111,7 @@
 
             </Grid>
 
-            <Rectangle
-                Height="1"
-                DockPanel.Dock="Top"
-                Fill="{StaticResource BorderBrush}" />
-
-            <StackPanel Margin="10,0,10,20">
+            <StackPanel Margin="10,0,5,10">
 
                 <Label Margin="6,5,6,0" Content="Raster formats" />
 
@@ -136,16 +144,65 @@
                 <Label Margin="6,5,6,0" Content="Raw Camera Images" />
 
                 <WrapPanel Margin="12,0,12,0" Orientation="Horizontal">
+                    <CheckBox Content=".3fr" />
+                    <CheckBox Content=".arw" />
+                    <CheckBox Content=".cr2" />
+                    <CheckBox Content=".crw" />
+                    <CheckBox Content=".dcr" />
+                    <CheckBox Content=".dng" />
+                    <CheckBox Content=".erf" />
+                    <CheckBox Content=".kdc" />
+                    <CheckBox Content=".mef" />
+                    <CheckBox Content=".mdc" />
+                    <CheckBox Content=".mos" />
+                    <CheckBox Content=".mrw" />
+                    <CheckBox Content=".nef" />
+                    <CheckBox Content=".nrw" />
+                    <CheckBox Content=".orf" />
+                    <CheckBox Content=".pef" />
+                    <CheckBox Content=".raf" />
                     <CheckBox Content=".raw" />
+                    <CheckBox Content=".rw2" />
+                    <CheckBox Content=".srf" />
+                    <CheckBox Content=".x3f" />
+
+
+
                 </WrapPanel>
 
                 <Label Margin="6,5,6,0" Content="Other formats" />
 
                 <WrapPanel Margin="12,0,12,0" Orientation="Horizontal">
+                    <CheckBox Content=".cut" IsChecked="True" />
                     <CheckBox Content=".hdr" />
                     <CheckBox Content=".heic" />
+                    <CheckBox Content=".pgm" />
                 </WrapPanel>
 
+                <Rectangle
+                    Height="1"
+                    Margin="10,17,10,3"
+                    Fill="{StaticResource BorderBrush}" />
+
+                <Border
+                    Margin="10,10,10,10"
+                    Padding="0,7,0,7"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="3"
+                    DockPanel.Dock="Bottom">
+                    <Border.Background>
+                        <SolidColorBrush x:Name="RestartBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Border.Background>
+                    <Button
+                        x:Name="ApplyButton"
+                        Content="{StaticResource Apply}"
+                        FontSize="14">
+                        <Button.Foreground>
+                            <SolidColorBrush x:Name="ApplyText" Color="{StaticResource MainColor}" />
+                        </Button.Foreground>
+                    </Button>
+                </Border>
             </StackPanel>
 
         </DockPanel>
