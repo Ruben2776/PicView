@@ -123,7 +123,7 @@
                     <Setter Property="Background" Value="{StaticResource NoisyBg}" />
                 </Style>
             </TabControl.Resources>
-            <TabItem Header="{StaticResource GeneralSettings}">
+            <TabItem FontSize="14" Header="{StaticResource GeneralSettings}">
 
                 <StackPanel Margin="10,7,10,7">
 
@@ -199,7 +199,7 @@
                             x:Name="WallpaperApply"
                             Margin="10,0,0,0"
                             VerticalAlignment="Center"
-                            Text="Apply">
+                            Text="{StaticResource Apply}">
                             <TextBlock.Foreground>
                                 <SolidColorBrush x:Name="WallpaperApplyBrush" Color="{DynamicResource ChosenColor}" />
                             </TextBlock.Foreground>
@@ -220,28 +220,21 @@
                         HorizontalAlignment="Left" />
 
                     <TextBlock
+                        x:Name="LanguageRestart"
                         Margin="7,7,0,25"
                         HorizontalAlignment="Left"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Light Italic"
                         FontSize="12"
-                        Foreground="{StaticResource MainColorBrush}"
                         Text="{StaticResource ChangingLanguageRequiresRestart}"
-                        TextWrapping="Wrap" />
-
-                    <TextBlock
-                        x:Name="SetAsDefaultTxt"
-                        Margin="7,7,0,25"
-                        HorizontalAlignment="Left"
-                        Text="{StaticResource SetAsDefualt}"
-                        TextWrapping="Wrap">
+                        TextWrapping="Wrap"
+                        ToolTip="{StaticResource RestartApp}">
                         <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="SetAsDefaultTxtBrush" Color="{DynamicResource ChosenColor}" />
+                            <SolidColorBrush x:Name="LanguageRestartTxt" Color="{StaticResource MainColor}" />
                         </TextBlock.Foreground>
                     </TextBlock>
 
-
                     <Label
-                        Margin="0,10,0,4"
+                        Margin="0,3,0,4"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                         Content="{StaticResource MouseWheel}" />
@@ -259,7 +252,7 @@
                         <TextBlock
                             Width="270"
                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                            Text="Ctrl to zoom, scroll to navigate" />
+                            Text="{StaticResource CtrlToZoom}" />
                     </RadioButton>
 
                     <RadioButton
@@ -275,7 +268,7 @@
                         <TextBlock
                             Width="270"
                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                            Text="Scroll to zoom, Ctrl to navigate" />
+                            Text="{StaticResource ScrollToZoom}" />
                     </RadioButton>
 
                     <Label
@@ -352,11 +345,61 @@
                             TextAlignment="Center" />
                     </StackPanel>
 
+                    <TextBlock
+                        x:Name="SetAsDefaultTxt"
+                        Margin="7,7,0,25"
+                        HorizontalAlignment="Center"
+                        Text="{StaticResource SetAsDefualt}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="SetAsDefaultTxtBrush" Color="{DynamicResource ChosenColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+
                 </StackPanel>
             </TabItem>
 
-            <TabItem Header="Ui Settings">
-                <StackPanel>
+            <TabItem FontSize="14" Header="Ui Settings">
+                <StackPanel Margin="10,7,10,7">
+
+                    <Label
+                        Margin="0,0,0,5"
+                        VerticalAlignment="Center"
+                        Content="{StaticResource MiscSettings}"
+                        Foreground="{StaticResource MainColorBrush}" />
+
+                    <CheckBox
+                        x:Name="BorderRadio"
+                        Margin="7,0,0,0"
+                        HorizontalContentAlignment="Center"
+                        Focusable="False">
+                        <CheckBox.Foreground>
+                            <SolidColorBrush x:Name="BorderBrushText" Color="{StaticResource MainColor}" />
+                        </CheckBox.Foreground>
+                        <CheckBox.Content>
+                            <TextBlock
+                                Width="279"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                Text="{StaticResource ColoredWindowBorder}" />
+                        </CheckBox.Content>
+                    </CheckBox>
+
+                    <CheckBox
+                        x:Name="AltUIRadio"
+                        Margin="7,0,0,0"
+                        HorizontalContentAlignment="Center"
+                        Focusable="False">
+                        <CheckBox.Foreground>
+                            <SolidColorBrush x:Name="AltUIText" Color="{StaticResource MainColor}" />
+                        </CheckBox.Foreground>
+                        <CheckBox.Content>
+                            <TextBlock
+                                Width="279"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                Text="{StaticResource ShowButtonsInHiddenUI}" />
+                        </CheckBox.Content>
+                    </CheckBox>
+
                     <Label
                         Margin="0,20,0,5"
                         HorizontalAlignment="Center"
@@ -571,76 +614,21 @@
                     </Border>
 
                     <TextBlock
+                        x:Name="ThemeRestart"
                         Margin="7,9,6,25"
                         HorizontalAlignment="Center"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Light Italic"
                         FontSize="12"
-                        Foreground="{StaticResource MainColorBrush}"
                         Text="{StaticResource ChangingThemeRequiresRestart}"
-                        TextWrapping="Wrap" />
-
-
-                    <CheckBox
-                        x:Name="BorderRadio"
-                        Margin="18,0,10,0"
-                        HorizontalContentAlignment="Center"
-                        Focusable="False">
-                        <CheckBox.Foreground>
-                            <SolidColorBrush x:Name="BorderBrushText" Color="{StaticResource MainColor}" />
-                        </CheckBox.Foreground>
-                        <CheckBox.Content>
-                            <TextBlock
-                                Width="279"
-                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                                Text="{StaticResource ColoredWindowBorder}" />
-                        </CheckBox.Content>
-                    </CheckBox>
-
-                    <CheckBox
-                        x:Name="AltUIRadio"
-                        Margin="18,4,10,15"
-                        HorizontalContentAlignment="Center"
-                        Focusable="False">
-                        <CheckBox.Foreground>
-                            <SolidColorBrush x:Name="AltUIText" Color="{StaticResource MainColor}" />
-                        </CheckBox.Foreground>
-                        <CheckBox.Content>
-                            <TextBlock
-                                Width="279"
-                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                                Text="{StaticResource ShowButtonsInHiddenUI}" />
-                        </CheckBox.Content>
-                    </CheckBox>
-
+                        TextWrapping="Wrap"
+                        ToolTip="{StaticResource RestartApp}">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="ThemeRestartTxt" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
                 </StackPanel>
             </TabItem>
         </TabControl>
-
-        <Border
-            Margin="10,10,10,20"
-            Padding="0,7,0,7"
-            BorderBrush="{StaticResource BorderBrush}"
-            BorderThickness="1"
-            CornerRadius="3"
-            DockPanel.Dock="Bottom">
-            <Border.Background>
-                <SolidColorBrush x:Name="RestartBrush" Color="{StaticResource BackgroundColorAlt}" />
-            </Border.Background>
-            <Button
-                x:Name="RestartButton"
-                Content="{StaticResource RestartApp}"
-                FontSize="14">
-                <Button.Foreground>
-                    <SolidColorBrush x:Name="RestartText" Color="{StaticResource MainColor}" />
-                </Button.Foreground>
-            </Button>
-        </Border>
-
-        <Rectangle
-            Height="1"
-            Margin="10,7,10,7"
-            DockPanel.Dock="Bottom"
-            Fill="{StaticResource BorderBrush}" />
 
     </DockPanel>
 </Window>

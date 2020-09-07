@@ -108,10 +108,8 @@ namespace PicView.Views.Windows
                 CtrlZoom.Checked += (_, _) => Properties.Settings.Default.CtrlZoom = true;
                 ScrollZoom.Checked += (_, _) => Properties.Settings.Default.CtrlZoom = false;
 
-                RestartButton.Click += delegate
-                {
-                    GeneralSettings.RestartApp();
-                };
+                ThemeRestart.MouseLeftButtonDown += (_,_) => GeneralSettings.RestartApp();
+                LanguageRestart.MouseLeftButtonDown += (_, _) => GeneralSettings.RestartApp();
 
                 TopmostRadio.Checked += (_, _) => ConfigureWindows.IsMainWindowTopMost = !Properties.Settings.Default.TopMost;
                 TopmostRadio.Unchecked += (_, _) => ConfigureWindows.IsMainWindowTopMost = false;
@@ -330,6 +328,30 @@ namespace PicView.Views.Windows
                 SetAsDefaultTxtBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
 
+            // RestartTheme
+            ThemeRestart.MouseEnter += delegate {
+                colorAnimation.From = mainColor;
+                colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
+                ThemeRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            };
+            ThemeRestart.MouseLeave += delegate {
+                colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
+                colorAnimation.To = mainColor;
+                ThemeRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            };
+
+            // LanguageRestart
+            LanguageRestart.MouseEnter += delegate {
+                colorAnimation.From = mainColor;
+                colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
+                LanguageRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            };
+            LanguageRestart.MouseLeave += delegate {
+                colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
+                colorAnimation.To = mainColor;
+                LanguageRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            };
+
             // DarkThemeRadio
             DarkThemeRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(DarkThemeText); };
             DarkThemeRadio.MouseEnter += delegate { ButtonMouseOverAnim(DarkThemeText); };
@@ -378,13 +400,6 @@ namespace PicView.Views.Windows
             CtrlZoom.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(CtrlZoomText); };
             CtrlZoom.MouseEnter += delegate { ButtonMouseOverAnim(CtrlZoomText); };
             CtrlZoom.MouseLeave += delegate { ButtonMouseLeaveAnim(CtrlZoomText); };
-
-            // Restart
-            RestartButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(RestartText); };
-            RestartButton.MouseEnter += delegate { ButtonMouseOverAnim(RestartText); };
-            RestartButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(RestartBrush); };
-            RestartButton.MouseLeave += delegate { ButtonMouseLeaveAnim(RestartText); };
-            RestartButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(RestartBrush); };
 
             if (!Properties.Settings.Default.DarkTheme)
             {
