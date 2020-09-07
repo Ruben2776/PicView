@@ -105,11 +105,14 @@
     <system:String x:Key="StayCentered">Keep window centered</system:String>
     <system:String x:Key="ColoredWindowBorder">Colored window border</system:String>
     <system:String x:Key="ShowButtonsInHiddenUI">Show buttons in hidden UI</system:String>
+    <system:String x:Key="CtrlToZoom">Ctrl to zoom, scroll to navigate</system:String>
+    <system:String x:Key="ScrollToZoom">Scroll to zoom, Ctrl to navigate</system:String>
     <system:String x:Key="Apply">Apply</system:String>
     <system:String x:Key="AdjustTimingForSlideshow">Adjust timing for slideshow</system:String>
     <system:String x:Key="AdjustTimingForZoom">Adjust zooming speed</system:String>
     <system:String x:Key="SecAbbreviation">Sec.</system:String>
     <system:String x:Key="RestartApp">Restart the application</system:String>
+
 
     <!--  Set as Default  -->
     <system:String x:Key="SetAsDefualt">Set as default image viewer</system:String>

@@ -105,6 +105,8 @@
     <system:String x:Key="StayCentered">Keep window centered</system:String>
     <system:String x:Key="ColoredWindowBorder">Farvede vinduekanter</system:String>
     <system:String x:Key="ShowButtonsInHiddenUI">Vis knapper, når interfacet er skjult</system:String>
+    <system:String x:Key="CtrlToZoom">Zoom med Ctrl, naviger med musehjulet</system:String>
+    <system:String x:Key="ScrollToZoom">Zoom med musehjulet, naviger med Ctrl</system:String>
     <system:String x:Key="Apply">Anvend</system:String>
     <system:String x:Key="AdjustTimingForSlideshow">Juster timing for slideshowet</system:String>
     <system:String x:Key="AdjustTimingForZoom">Justér zooming hastighed</system:String>

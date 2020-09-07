@@ -103,9 +103,11 @@
     <system:String x:Key="MiscSettings">Einstellungen</system:String>
     <system:String x:Key="SearchSubdirectory">Unterordner einbinden</system:String>
     <system:String x:Key="StayTopMost">Stay on top of other windows</system:String>
-    <system:String x:Key="StayCentered">Hold vinduet centreret</system:String>
+    <system:String x:Key="StayCentered">Keep window centered</system:String>
     <system:String x:Key="ColoredWindowBorder">Farbiger Fensterrand</system:String>
     <system:String x:Key="ShowButtonsInHiddenUI">Show buttons in hidden UI</system:String>
+    <system:String x:Key="CtrlToZoom">Ctrl to zoom, scroll to navigate</system:String>
+    <system:String x:Key="ScrollToZoom">Scroll to zoom, Ctrl to navigate</system:String>
     <system:String x:Key="Apply">Anwenden</system:String>
     <system:String x:Key="AdjustTimingForSlideshow">Passen Sie das Timing für die Diashow an</system:String>
     <system:String x:Key="AdjustTimingForZoom">Adjust zooming speed</system:String>
