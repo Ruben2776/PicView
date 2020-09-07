@@ -19,7 +19,7 @@
             <Setter Property="Width" Value="70" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
-            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontSize" Value="14" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type CheckBox}">
@@ -198,9 +198,17 @@
 
                 <WrapPanel Margin="41,0,0,0" Orientation="Horizontal">
                     <CheckBox Content=".cut" IsChecked="True" />
+                    <CheckBox Content=".exr" IsChecked="True" />
+                    <CheckBox Content=".emf" />
+                    <CheckBox Content=".dib" IsChecked="True" />
                     <CheckBox Content=".hdr" />
                     <CheckBox Content=".heic" />
-                    <CheckBox Content=".pgm" />
+                    <CheckBox Content=".pcx" IsChecked="True" />
+                    <CheckBox Content=".pgm" IsChecked="True" />
+                    <CheckBox Content=".wmf" />
+                    <CheckBox Content=".wpg" />
+                    <CheckBox Content=".xbm" IsChecked="True" />
+                    <CheckBox Content=".xpm" IsChecked="True" />
                 </WrapPanel>
 
                 <Rectangle

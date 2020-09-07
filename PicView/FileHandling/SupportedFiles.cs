@@ -31,11 +31,10 @@ namespace PicView.FileHandling
                 
                 // Camera
                 ".3fr" or ".arw" or ".cr2" or ".crw" or ".dcr" or ".dng" or ".erf" or ".kdc" or ".mdc" or ".mef" or ".mos" or ".mrw" or ".nef" or ".nrw" or ".orf" or ".pef"
-                 or ".raf" or ".raw" or ".rw2" or ".srf" or ".x3f" or ".dib" or ".emf" or ".exif" or ".exr"
-                or ".heic" or ".pcx" or ".tga" or ".wmf" or ".wpg" or ".xbm" or ".xpm"
+                 or ".raf" or ".raw" or ".rw2" or ".srf" or ".x3f"
 
                 // Others
-                or ".pgm" or ".hdr" or ".cut"
+                or ".pgm" or ".hdr" or ".cut" or ".exr" or ".dib" or ".heic" or ".emf" or ".wmf" or ".wpg" or ".pcx" or ".xbm" or ".xpm"
 
                 => false,
                 // Non supported
