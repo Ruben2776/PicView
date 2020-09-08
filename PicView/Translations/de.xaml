@@ -102,21 +102,24 @@
     <system:String x:Key="UISettings">UI Settings</system:String>
     <system:String x:Key="MiscSettings">Einstellungen</system:String>
     <system:String x:Key="SearchSubdirectory">Unterordner einbinden</system:String>
-    <system:String x:Key="StayTopMost">Stay on top of other windows</system:String>
-    <system:String x:Key="StayCentered">Keep window centered</system:String>
+    <system:String x:Key="StayTopMost">Immer im Vordergrund</system:String>
+    <system:String x:Key="StayCentered">Fenster zentriert halten</system:String>
     <system:String x:Key="ColoredWindowBorder">Farbiger Fensterrand</system:String>
     <system:String x:Key="ShowButtonsInHiddenUI">Show buttons in hidden UI</system:String>
-    <system:String x:Key="CtrlToZoom">Ctrl to zoom, scroll to navigate</system:String>
-    <system:String x:Key="ScrollToZoom">Scroll to zoom, Ctrl to navigate</system:String>
+    <system:String x:Key="CtrlToZoom">Strg zum zoomen, Scrollen zum navigieren</system:String>
+    <system:String x:Key="ScrollToZoom">Scrollen zum zoomen, Strg zum navigieren</system:String>
     <system:String x:Key="Apply">Anwenden</system:String>
     <system:String x:Key="AdjustTimingForSlideshow">Passen Sie das Timing für die Diashow an</system:String>
-    <system:String x:Key="AdjustTimingForZoom">Adjust zooming speed</system:String>
+    <system:String x:Key="AdjustTimingForZoom">Zoom-Geschwindigkeit anpassen</system:String>
     <system:String x:Key="SecAbbreviation">Sek.</system:String>
     <system:String x:Key="RestartApp">Anwendung neustarten</system:String>
 
     <!--  Set as Default  -->
-    <system:String x:Key="SetAsDefualt">Set as default image viewer</system:String>
-
+    <system:String x:Key="SetAsDefualt">Als Standart Foto-Applikation setzen</system:String>
+    <system:String x:Key="RasterFormats">Rasterformate</system:String>
+    <system:String x:Key="VectorGraphics">Vektorgrafik</system:String>
+    <system:String x:Key="RawCamera">Kamera Rohdaten</system:String>
+    <system:String x:Key="OtherFormats">Andere Formate</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="HLSLPictureFX">HLSL Bild FX</system:String>

@@ -98,7 +98,7 @@
 
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">Generale Indstillinger</system:String>
-    <system:String x:Key="UISettings">UI indstillinger</system:String>
+    <system:String x:Key="UISettings">UI-indstillinger</system:String>
     <system:String x:Key="MiscSettings">Diverse indstillinger</system:String>
     <system:String x:Key="SearchSubdirectory">Tilføj undermapper til filsøgningen</system:String>
     <system:String x:Key="StayTopMost">Vinduet skal holdes øverst</system:String>
@@ -115,6 +115,10 @@
 
     <!--  Set as Default  -->
     <system:String x:Key="SetAsDefualt">Sæt som standard billedfremviser</system:String>
+    <system:String x:Key="RasterFormats">Rasterformater</system:String>
+    <system:String x:Key="VectorGraphics">Vektorgrafik</system:String>
+    <system:String x:Key="RawCamera">Rå kameraformater</system:String>
+    <system:String x:Key="OtherFormats">Andre formater</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="HLSLPictureFX">HLSL Billede effekter</system:String>

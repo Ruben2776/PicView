@@ -116,7 +116,7 @@
                     Width="264"
                     Margin="1,4,3,0"
                     IsChecked="True">
-                    <Label Margin="0,-4,0,0" Content="Raster formats" />
+                    <Label Margin="0,-4,0,0" Content="{StaticResource RasterFormats}" />
                 </CheckBox>
 
                 <WrapPanel Margin="41,0,0,0">
@@ -178,7 +178,7 @@
                     x:Name="VectorCheck"
                     Width="264"
                     Margin="1,13,3,0">
-                    <Label Margin="0,-4,0,0" Content="Vector Graphic" />
+                    <Label Margin="0,-4,0,0" Content="{StaticResource VectorGraphics}" />
                 </CheckBox>
 
                 <StackPanel Margin="41,0,0,0" Orientation="Horizontal">
@@ -190,7 +190,7 @@
                     x:Name="RawCameraCheck"
                     Width="264"
                     Margin="1,13,3,0">
-                    <Label Margin="0,-4,0,0" Content="Raw Camera files" />
+                    <Label Margin="0,-4,0,0" Content="{StaticResource RawCamera}" />
                 </CheckBox>
 
                 <WrapPanel Margin="41,0,0,0" Orientation="Horizontal">
@@ -223,7 +223,7 @@
                     x:Name="OtherCheck"
                     Width="264"
                     Margin="1,13,3,0">
-                    <Label Margin="0,-4,0,0" Content="Other Formats" />
+                    <Label Margin="0,-4,0,0" Content="{StaticResource OtherFormats}" />
                 </CheckBox>
 
                 <WrapPanel Margin="41,0,0,0" Orientation="Horizontal">
