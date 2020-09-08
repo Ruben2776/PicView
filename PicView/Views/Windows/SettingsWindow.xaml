@@ -125,7 +125,7 @@
             </TabControl.Resources>
             <TabItem FontSize="14" Header="{StaticResource GeneralSettings}">
 
-                <StackPanel Margin="10,7,10,7">
+                <StackPanel Margin="10,10,10,10">
 
                     <Label
                         Margin="0,0,0,5"
@@ -306,9 +306,10 @@
                             TextAlignment="Center" />
 
                         <TextBlock
+                            Margin="2,2,0,0"
                             VerticalAlignment="Center"
                             Foreground="{StaticResource MainColorFadedBrush}"
-                            Text="Sec." />
+                            Text="{StaticResource SecAbbreviation}" />
                     </StackPanel>
 
                     <Label
@@ -345,9 +346,14 @@
                             TextAlignment="Center" />
                     </StackPanel>
 
+                    <Rectangle
+                        Height="1"
+                        Margin="10,25,10,3"
+                        Fill="{StaticResource BorderBrush}" />
+
                     <TextBlock
                         x:Name="SetAsDefaultTxt"
-                        Margin="7,7,0,25"
+                        Margin="7,25,0,25"
                         HorizontalAlignment="Center"
                         Text="{StaticResource SetAsDefualt}"
                         TextWrapping="Wrap">
@@ -360,7 +366,7 @@
             </TabItem>
 
             <TabItem FontSize="14" Header="Ui Settings">
-                <StackPanel Margin="10,7,10,7">
+                <StackPanel Margin="10">
 
                     <Label
                         Margin="0,0,0,5"
@@ -615,7 +621,7 @@
 
                     <TextBlock
                         x:Name="ThemeRestart"
-                        Margin="7,9,6,25"
+                        Margin="7,11,6,25"
                         HorizontalAlignment="Center"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Light Italic"
                         FontSize="12"

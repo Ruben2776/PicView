@@ -120,16 +120,46 @@
                 </CheckBox>
 
                 <WrapPanel Margin="41,0,0,0">
-                    <CheckBox Content=".jpg" IsChecked="True" />
-                    <CheckBox Content=".png" IsChecked="True" />
-                    <CheckBox Content=".bmp" IsChecked="True" />
-                    <CheckBox Content=".ico" IsChecked="True" />
-                    <CheckBox Content=".gif" IsChecked="True" />
-                    <CheckBox Content=".webp" IsChecked="True" />
-                    <CheckBox Content=".jfif" IsChecked="True" />
-                    <CheckBox Content=".tiff" IsChecked="True" />
-                    <CheckBox Content=".ppm" IsChecked="True" />
-                    <CheckBox Content=".wbmp" IsChecked="True" />
+                    <CheckBox
+                        x:Name="jpg"
+                        Content=".jpg"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="png"
+                        Content=".png"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="bmp"
+                        Content=".bmp"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="ico"
+                        Content=".ico"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="gif"
+                        Content=".gif"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="webp"
+                        Content=".webp"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="jfif"
+                        Content=".jfif"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="tiff"
+                        Content=".tiff"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="ppm"
+                        Content=".ppm"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="wbmp"
+                        Content=".wbmp"
+                        IsChecked="True" />
                 </WrapPanel>
 
                 <CheckBox
@@ -140,8 +170,8 @@
                 </CheckBox>
 
                 <StackPanel Margin="41,0,0,0" Orientation="Horizontal">
-                    <CheckBox Content=".psd" />
-                    <CheckBox Content=".psb" />
+                    <CheckBox x:Name="psd" Content=".psd" />
+                    <CheckBox x:Name="psb" Content=".psb" />
                 </StackPanel>
 
                 <CheckBox
@@ -152,7 +182,7 @@
                 </CheckBox>
 
                 <StackPanel Margin="41,0,0,0" Orientation="Horizontal">
-                    <CheckBox Content=".svg" />
+                    <CheckBox x:Name="svg" Content=".svg" />
                 </StackPanel>
 
 
@@ -164,27 +194,27 @@
                 </CheckBox>
 
                 <WrapPanel Margin="41,0,0,0" Orientation="Horizontal">
-                    <CheckBox Content=".3fr" />
-                    <CheckBox Content=".arw" />
-                    <CheckBox Content=".cr2" />
-                    <CheckBox Content=".crw" />
-                    <CheckBox Content=".dcr" />
-                    <CheckBox Content=".dng" />
-                    <CheckBox Content=".erf" />
-                    <CheckBox Content=".kdc" />
-                    <CheckBox Content=".mef" />
-                    <CheckBox Content=".mdc" />
-                    <CheckBox Content=".mos" />
-                    <CheckBox Content=".mrw" />
-                    <CheckBox Content=".nef" />
-                    <CheckBox Content=".nrw" />
-                    <CheckBox Content=".orf" />
-                    <CheckBox Content=".pef" />
-                    <CheckBox Content=".raf" />
-                    <CheckBox Content=".raw" />
-                    <CheckBox Content=".rw2" />
-                    <CheckBox Content=".srf" />
-                    <CheckBox Content=".x3f" />
+                    <CheckBox x:Name="threefr" Content=".3fr" />
+                    <CheckBox x:Name="arw" Content=".arw" />
+                    <CheckBox x:Name="cr2" Content=".cr2" />
+                    <CheckBox x:Name="crw" Content=".crw" />
+                    <CheckBox x:Name="dcr" Content=".dcr" />
+                    <CheckBox x:Name="dng" Content=".dng" />
+                    <CheckBox x:Name="erf" Content=".erf" />
+                    <CheckBox x:Name="kdc" Content=".kdc" />
+                    <CheckBox x:Name="mef" Content=".mef" />
+                    <CheckBox x:Name="mdc" Content=".mdc" />
+                    <CheckBox x:Name="mos" Content=".mos" />
+                    <CheckBox x:Name="mrw" Content=".mrw" />
+                    <CheckBox x:Name="nef" Content=".nef" />
+                    <CheckBox x:Name="nrw" Content=".nrw" />
+                    <CheckBox x:Name="orf" Content=".orf" />
+                    <CheckBox x:Name="pef" Content=".pef" />
+                    <CheckBox x:Name="raf" Content=".raf" />
+                    <CheckBox x:Name="raw" Content=".raw" />
+                    <CheckBox x:Name="rw2" Content=".rw2" />
+                    <CheckBox x:Name="srf" Content=".srf" />
+                    <CheckBox x:Name="x3f" Content=".x3f" />
 
                 </WrapPanel>
 
@@ -197,18 +227,39 @@
                 </CheckBox>
 
                 <WrapPanel Margin="41,0,0,0" Orientation="Horizontal">
-                    <CheckBox Content=".cut" IsChecked="True" />
-                    <CheckBox Content=".exr" IsChecked="True" />
-                    <CheckBox Content=".emf" />
-                    <CheckBox Content=".dib" IsChecked="True" />
-                    <CheckBox Content=".hdr" />
-                    <CheckBox Content=".heic" />
-                    <CheckBox Content=".pcx" IsChecked="True" />
-                    <CheckBox Content=".pgm" IsChecked="True" />
-                    <CheckBox Content=".wmf" />
-                    <CheckBox Content=".wpg" />
-                    <CheckBox Content=".xbm" IsChecked="True" />
-                    <CheckBox Content=".xpm" IsChecked="True" />
+                    <CheckBox
+                        x:Name="cut"
+                        Content=".cut"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="exr"
+                        Content=".exr"
+                        IsChecked="True" />
+                    <CheckBox x:Name="emf" Content=".emf" />
+                    <CheckBox
+                        x:Name="dib"
+                        Content=".dib"
+                        IsChecked="True" />
+                    <CheckBox x:Name="hdr" Content=".hdr" />
+                    <CheckBox x:Name="heic" Content=".heic" />
+                    <CheckBox
+                        x:Name="pcx"
+                        Content=".pcx"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="pgm"
+                        Content=".pgm"
+                        IsChecked="True" />
+                    <CheckBox x:Name="wmf" Content=".wmf" />
+                    <CheckBox x:Name="wpg" Content=".wpg" />
+                    <CheckBox
+                        x:Name="xbm"
+                        Content=".xbm"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="xpm"
+                        Content=".xpm"
+                        IsChecked="True" />
                 </WrapPanel>
 
                 <Rectangle

@@ -1,10 +1,9 @@
 ﻿using PicView.UILogic;
+using System;
 using System.Windows;
 using System.Windows.Interop;
-using static PicView.SystemIntegration.NativeMethods;
-using System.Windows.Media.Effects;
 using System.Windows.Media.Animation;
-using System;
+using static PicView.SystemIntegration.NativeMethods;
 
 namespace PicView.Views.Windows
 {
@@ -26,7 +25,70 @@ namespace PicView.Views.Windows
                 var helper = new WindowInteropHelper(this).Handle;
                 _ = SetWindowLong(helper, GWL_EX_STYLE, (GetWindowLong(helper, GWL_EX_STYLE) | WS_EX_TOOLWINDOW) & ~WS_EX_APPWINDOW);
 
-                CloseButton.TheButton.Click += (_, _) => HideLogic();
+                TitleBar.MouseLeftButtonDown += (_, _) => DragMove();
+                LocationChanged += delegate // Move parent window as well
+                {
+                    ConfigureWindows.GetSettingsWindow.Top = Top;
+                    ConfigureWindows.GetSettingsWindow.Left = Left;
+                };
+                CloseButton.TheButton.Click += (_, _) => HideLogic();             
+
+                RasterFormatsCheck.Checked += delegate 
+                {
+                    jpg.IsChecked = png.IsChecked = bmp.IsChecked = ico.IsChecked = gif.IsChecked =
+                    webp.IsChecked = jfif.IsChecked = tiff.IsChecked = ppm.IsChecked = wbmp.IsChecked = true;
+                };
+                RasterFormatsCheck.Unchecked += delegate
+                {
+                    jpg.IsChecked = png.IsChecked = bmp.IsChecked = ico.IsChecked = gif.IsChecked =
+                    webp.IsChecked = jfif.IsChecked = tiff.IsChecked = ppm.IsChecked = wbmp.IsChecked = false;
+                };
+
+                PhotoshopCheck.Checked += delegate
+                {
+                    psd.IsChecked = psb.IsChecked = true;
+                };
+                PhotoshopCheck.Unchecked += delegate
+                {
+                    psd.IsChecked = psb.IsChecked = false;
+                };
+
+                VectorCheck.Checked += delegate
+                {
+                    svg.IsChecked = true;
+                };
+                VectorCheck.Unchecked += delegate
+                {
+                    svg.IsChecked = false;
+                };
+
+                RawCameraCheck.Checked += delegate
+                {
+                    threefr.IsChecked = arw.IsChecked = cr2.IsChecked = crw.IsChecked = dcr.IsChecked =
+                    dng.IsChecked = erf.IsChecked = kdc.IsChecked = mef.IsChecked = mdc.IsChecked =
+                    mos.IsChecked = mrw.IsChecked = nef.IsChecked = nrw.IsChecked = orf.IsChecked =
+                    pef.IsChecked = raf.IsChecked = raw.IsChecked = rw2.IsChecked = srf.IsChecked =
+                    x3f.IsChecked = true;
+                };
+                RawCameraCheck.Unchecked += delegate
+                {
+                    threefr.IsChecked = arw.IsChecked = cr2.IsChecked = crw.IsChecked = dcr.IsChecked =
+                    dng.IsChecked = erf.IsChecked = kdc.IsChecked = mef.IsChecked = mdc.IsChecked =
+                    mos.IsChecked = mrw.IsChecked = nef.IsChecked = nrw.IsChecked = orf.IsChecked =
+                    pef.IsChecked = raf.IsChecked = raw.IsChecked = rw2.IsChecked = srf.IsChecked =
+                    x3f.IsChecked = false;
+                };
+
+                OtherCheck.Checked += delegate
+                {
+                    cut.IsChecked = exr.IsChecked = emf.IsChecked = dib.IsChecked = hdr.IsChecked = heic.IsChecked =
+                    pcx.IsChecked = pgm.IsChecked = wmf.IsChecked = wpg.IsChecked = xbm.IsChecked = xpm.IsChecked = true;
+                };
+                OtherCheck.Unchecked += delegate
+                {
+                    cut.IsChecked = exr.IsChecked = emf.IsChecked = dib.IsChecked = hdr.IsChecked = heic.IsChecked =
+                    pcx.IsChecked = pgm.IsChecked = wmf.IsChecked = wpg.IsChecked = xbm.IsChecked = xpm.IsChecked = false;
+                };
             };      
 
             KeyDown += (_, e) => 
