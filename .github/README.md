@@ -70,9 +70,9 @@ Rename or move files in the titlebar by pressing `F2`
 
 
 **File support** 
- > .jpg  .jpeg  .jpe  .png  .bmp  .tif  .tiff  .gif  .ico  .jfif  .ppm  .webp  .wbmp <br>
+ > .jpg  .jpeg  .jpe  .png  .bmp  .tif  .tiff  .gif  .ico  .jfif  .webp <br>
    .psd  .psb <br>.svg<br>.3fr  .arw  .cr2  .crw  .dcr  .dng  .erf  .kdc  .mdc  .mef  .mos  .mrw  .nef  .nrw  .f  .pef .raf  .raw  .rw2  .srf  .x3f<br>
-   .pgm  .hdr  .cut  .exr  .dib  .heic  .emf  .wmf  .wpg  .pcx  .xbm  .xpm
+   .pgm  .hdr  .cut  .exr  .dib  .heic  .emf  .wmf  .wpg  .pcx  .xbm  .xpm .wbmp
 
 ## Contributions
 ![Visual Studio 2019](https://img.shields.io/badge/IDE-Visual%20Studio%202019-964ad4.svg?maxAge=3600)
