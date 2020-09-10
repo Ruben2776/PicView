@@ -98,8 +98,8 @@
 
 
     <!--  Settings window, misc  -->
-    <system:String x:Key="GeneralSettings">General Settings</system:String>
-    <system:String x:Key="UISettings">UI Settings</system:String>
+    <system:String x:Key="GeneralSettings">Allgemeine Einstellungen</system:String>
+    <system:String x:Key="UISettings">UI-Einstellungen</system:String>
     <system:String x:Key="MiscSettings">Einstellungen</system:String>
     <system:String x:Key="SearchSubdirectory">Unterordner einbinden</system:String>
     <system:String x:Key="StayTopMost">Immer im Vordergrund</system:String>
