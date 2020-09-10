@@ -107,7 +107,6 @@ namespace PicView.FileHandling
                     || file.EndsWith("wpg", StringComparison.OrdinalIgnoreCase)
                     || file.EndsWith("xbm", StringComparison.OrdinalIgnoreCase)
                     || file.EndsWith("xpm", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("ppm", StringComparison.OrdinalIgnoreCase)
 
             );
 

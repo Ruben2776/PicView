@@ -19,7 +19,7 @@ namespace PicView.FileHandling
             return ext switch
             {
                 // Standards
-                ".jpg" or ".jpeg" or ".jpe" or ".png" or ".bmp" or ".tif" or ".tiff" or ".gif" or ".ico" or ".jfif" or ".ppm" or ".webp" or ".wbmp" or ".ppm" => true,
+                ".jpg" or ".jpeg" or ".jpe" or ".png" or ".bmp" or ".tif" or ".tiff" or ".gif" or ".ico" or ".jfif" or ".ppm" or ".webp" or ".wbmp" => true,
 
                 // Non-standards
 

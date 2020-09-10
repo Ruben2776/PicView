@@ -119,7 +119,7 @@
                     <Label Margin="0,-4,0,0" Content="{StaticResource RasterFormats}" />
                 </CheckBox>
 
-                <WrapPanel Margin="41,0,0,0">
+                <WrapPanel x:Name="RasterFormatsContainer" Margin="41,0,0,0">
                     <CheckBox
                         x:Name="jpg"
                         Content=".jpg"
@@ -153,10 +153,6 @@
                         Content=".tiff"
                         IsChecked="True" />
                     <CheckBox
-                        x:Name="ppm"
-                        Content=".ppm"
-                        IsChecked="True" />
-                    <CheckBox
                         x:Name="wbmp"
                         Content=".wbmp"
                         IsChecked="True" />
@@ -169,7 +165,10 @@
                     <Label Margin="0,-4,0,0" Content="Photoshop" />
                 </CheckBox>
 
-                <StackPanel Margin="41,0,0,0" Orientation="Horizontal">
+                <StackPanel
+                    x:Name="PhotoshopContainer"
+                    Margin="41,0,0,0"
+                    Orientation="Horizontal">
                     <CheckBox x:Name="psd" Content=".psd" />
                     <CheckBox x:Name="psb" Content=".psb" />
                 </StackPanel>
@@ -181,7 +180,10 @@
                     <Label Margin="0,-4,0,0" Content="{StaticResource VectorGraphics}" />
                 </CheckBox>
 
-                <StackPanel Margin="41,0,0,0" Orientation="Horizontal">
+                <StackPanel
+                    x:Name="VectorContainer"
+                    Margin="41,0,0,0"
+                    Orientation="Horizontal">
                     <CheckBox x:Name="svg" Content=".svg" />
                 </StackPanel>
 
@@ -193,7 +195,10 @@
                     <Label Margin="0,-4,0,0" Content="{StaticResource RawCamera}" />
                 </CheckBox>
 
-                <WrapPanel Margin="41,0,0,0" Orientation="Horizontal">
+                <WrapPanel
+                    x:Name="CameraFormatsContainer"
+                    Margin="41,0,0,0"
+                    Orientation="Horizontal">
                     <CheckBox x:Name="threefr" Content=".3fr" />
                     <CheckBox x:Name="arw" Content=".arw" />
                     <CheckBox x:Name="cr2" Content=".cr2" />
@@ -226,7 +231,10 @@
                     <Label Margin="0,-4,0,0" Content="{StaticResource OtherFormats}" />
                 </CheckBox>
 
-                <WrapPanel Margin="41,0,0,0" Orientation="Horizontal">
+                <WrapPanel
+                    x:Name="OtherFormatsContainer"
+                    Margin="41,0,0,0"
+                    Orientation="Horizontal">
                     <CheckBox
                         x:Name="cut"
                         Content=".cut"
@@ -275,7 +283,7 @@
                     CornerRadius="3"
                     DockPanel.Dock="Bottom">
                     <Border.Background>
-                        <SolidColorBrush x:Name="RestartBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        <SolidColorBrush x:Name="ApplyBrush" Color="{StaticResource BackgroundColorAlt}" />
                     </Border.Background>
                     <Button
                         x:Name="ApplyButton"

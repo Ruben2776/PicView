@@ -1,9 +1,17 @@
 ﻿using PicView.UILogic;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media.Animation;
+using static PicView.ConfigureSettings.ConfigColors;
+using static PicView.SystemIntegration.Wallpaper;
+using static PicView.UILogic.Animations.MouseOverAnimations;
 using static PicView.SystemIntegration.NativeMethods;
+using PicView.UILogic.Animations;
 
 namespace PicView.Views.Windows
 {
@@ -35,59 +43,87 @@ namespace PicView.Views.Windows
 
                 RasterFormatsCheck.Checked += delegate 
                 {
-                    jpg.IsChecked = png.IsChecked = bmp.IsChecked = ico.IsChecked = gif.IsChecked =
-                    webp.IsChecked = jfif.IsChecked = tiff.IsChecked = ppm.IsChecked = wbmp.IsChecked = true;
+                    var list = RasterFormatsContainer.Children.OfType<CheckBox>();
+                    foreach (var item in list)
+                    {
+                        item.IsChecked = true;
+                    }
                 };
                 RasterFormatsCheck.Unchecked += delegate
                 {
-                    jpg.IsChecked = png.IsChecked = bmp.IsChecked = ico.IsChecked = gif.IsChecked =
-                    webp.IsChecked = jfif.IsChecked = tiff.IsChecked = ppm.IsChecked = wbmp.IsChecked = false;
+                    var list = RasterFormatsContainer.Children.OfType<CheckBox>();
+                    foreach (var item in list)
+                    {
+                        item.IsChecked = false;
+                    }
                 };
 
                 PhotoshopCheck.Checked += delegate
                 {
-                    psd.IsChecked = psb.IsChecked = true;
+                    var list = PhotoshopContainer.Children.OfType<CheckBox>();
+                    foreach (var item in list)
+                    {
+                        item.IsChecked = true;
+                    }
                 };
                 PhotoshopCheck.Unchecked += delegate
                 {
-                    psd.IsChecked = psb.IsChecked = false;
+                    var list = PhotoshopContainer.Children.OfType<CheckBox>();
+                    foreach (var item in list)
+                    {
+                        item.IsChecked = false;
+                    }
                 };
 
                 VectorCheck.Checked += delegate
                 {
-                    svg.IsChecked = true;
+                    var list = VectorContainer.Children.OfType<CheckBox>();
+                    foreach (var item in list)
+                    {
+                        item.IsChecked = true;
+                    }
                 };
                 VectorCheck.Unchecked += delegate
                 {
-                    svg.IsChecked = false;
+                    var list = VectorContainer.Children.OfType<CheckBox>();
+                    foreach (var item in list)
+                    {
+                        item.IsChecked = false;
+                    }
                 };
 
                 RawCameraCheck.Checked += delegate
                 {
-                    threefr.IsChecked = arw.IsChecked = cr2.IsChecked = crw.IsChecked = dcr.IsChecked =
-                    dng.IsChecked = erf.IsChecked = kdc.IsChecked = mef.IsChecked = mdc.IsChecked =
-                    mos.IsChecked = mrw.IsChecked = nef.IsChecked = nrw.IsChecked = orf.IsChecked =
-                    pef.IsChecked = raf.IsChecked = raw.IsChecked = rw2.IsChecked = srf.IsChecked =
-                    x3f.IsChecked = true;
+                    var list = CameraFormatsContainer.Children.OfType<CheckBox>();
+                    foreach (var item in list)
+                    {
+                        item.IsChecked = true;
+                    }
                 };
                 RawCameraCheck.Unchecked += delegate
                 {
-                    threefr.IsChecked = arw.IsChecked = cr2.IsChecked = crw.IsChecked = dcr.IsChecked =
-                    dng.IsChecked = erf.IsChecked = kdc.IsChecked = mef.IsChecked = mdc.IsChecked =
-                    mos.IsChecked = mrw.IsChecked = nef.IsChecked = nrw.IsChecked = orf.IsChecked =
-                    pef.IsChecked = raf.IsChecked = raw.IsChecked = rw2.IsChecked = srf.IsChecked =
-                    x3f.IsChecked = false;
+                    var list = CameraFormatsContainer.Children.OfType<CheckBox>();
+                    foreach (var item in list)
+                    {
+                        item.IsChecked = false;
+                    }
                 };
 
                 OtherCheck.Checked += delegate
                 {
-                    cut.IsChecked = exr.IsChecked = emf.IsChecked = dib.IsChecked = hdr.IsChecked = heic.IsChecked =
-                    pcx.IsChecked = pgm.IsChecked = wmf.IsChecked = wpg.IsChecked = xbm.IsChecked = xpm.IsChecked = true;
+                    var list = OtherFormatsContainer.Children.OfType<CheckBox>();
+                    foreach (var item in list)
+                    {
+                        item.IsChecked = true;
+                    }
                 };
                 OtherCheck.Unchecked += delegate
                 {
-                    cut.IsChecked = exr.IsChecked = emf.IsChecked = dib.IsChecked = hdr.IsChecked = heic.IsChecked =
-                    pcx.IsChecked = pgm.IsChecked = wmf.IsChecked = wpg.IsChecked = xbm.IsChecked = xpm.IsChecked = false;
+                    var list = OtherFormatsContainer.Children.OfType<CheckBox>();
+                    foreach (var item in list)
+                    {
+                        item.IsChecked = false;
+                    }
                 };
             };      
 
@@ -98,6 +134,36 @@ namespace PicView.Views.Windows
                     HideLogic();
                 }
             };
+
+            ApplyButton.Click += delegate 
+            {
+                var rasterFormats = RasterFormatsContainer.Children.OfType<CheckBox>().Where(x => x.IsChecked == true);
+                var photoshopFormats = PhotoshopContainer.Children.OfType<CheckBox>().Where(x => x.IsChecked == true);
+                var vectorFormats = VectorContainer.Children.OfType<CheckBox>().Where(x => x.IsChecked == true);
+                var cameraFormats = CameraFormatsContainer.Children.OfType<CheckBox>().Where(x => x.IsChecked == true);
+                var otherFormats = OtherFormatsContainer.Children.OfType<CheckBox>().Where(x => x.IsChecked == true);
+
+                var list = rasterFormats.Concat(photoshopFormats).Concat(vectorFormats).Concat(cameraFormats).Concat(otherFormats);
+                var sb = new StringBuilder();
+
+                for (int i = 0; i < list.Count(); i++)
+                {
+                    sb.Append(list.ElementAt(i).Content);
+
+                    if (i != list.Count() - 1)
+                    {
+                        sb.Append(',');
+                    }
+                }
+                ConfigureSettings.GeneralSettings.ElevateProcess(sb.ToString());
+            };
+
+            // ApplyButton
+            ApplyButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ApplyText); };
+            ApplyButton.MouseEnter += delegate { ButtonMouseOverAnim(ApplyText); };
+            ApplyButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ApplyBrush); };
+            ApplyButton.MouseLeave += delegate { ButtonMouseLeaveAnim(ApplyText); };
+            ApplyButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ApplyBrush); };
         }
 
         internal void HideLogic()

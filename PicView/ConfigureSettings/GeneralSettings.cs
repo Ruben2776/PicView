@@ -19,7 +19,7 @@ namespace PicView.ConfigureSettings
         {
             Properties.Settings.Default.Save();
 
-            var GetAppPath = Application.ResourceAssembly.Location;
+            var GetAppPath = Process.GetCurrentProcess().MainModule.FileName;
 
             if (Path.GetExtension(GetAppPath) == ".dll")
             {
@@ -44,33 +44,27 @@ namespace PicView.ConfigureSettings
             Application.Current.Shutdown();
         }
 
+
         [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
-        public static Process ElevateProcess(Process source)
+        public static void ElevateProcess(string args)
         {
+            var GetAppPath = Process.GetCurrentProcess().MainModule.FileName;
+
+            if (Path.GetExtension(GetAppPath) == ".dll")
+            {
+                GetAppPath = GetAppPath.Replace(".dll", ".exe", System.StringComparison.InvariantCultureIgnoreCase);
+            }
+
             using var target = new Process
             {
-                StartInfo = source.StartInfo
+                StartInfo = new ProcessStartInfo(GetAppPath, args)
             };
-            target.StartInfo.FileName = source.MainModule.FileName;
-            target.StartInfo.WorkingDirectory = Path.GetDirectoryName(source.MainModule.FileName);
 
             //Required for UAC to work
             target.StartInfo.UseShellExecute = true;
             target.StartInfo.Verb = "runas";
 
-            try
-            {
-                if (!target.Start())
-                {
-                    return null;
-                }
-            }
-            catch
-            {
-                return null;
-            }
-
-            return target;
+            target.Start();
         }
     }
 }
