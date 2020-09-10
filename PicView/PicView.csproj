@@ -524,7 +524,7 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <PropertyGroup>
-    <FileVersion>0.9.9.8</FileVersion>
+    <FileVersion>1.0.0.0</FileVersion>
     <SignAssembly>false</SignAssembly>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
