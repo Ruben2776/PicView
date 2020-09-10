@@ -50,65 +50,29 @@ View all files in current folder as a fullscreen thumbnail gallery, where you ca
 View all files in current folder as a thumbnail gallery, with custom animations.
 
 
-## Shader effects
-Choose between 26 different shader effects, including negative colors, old movie effect, pencil sketch etc. The effects can be applied to the currently viewed image, allowing you to quickly see how each image would look with a certain effect applied to them. <br>
+## Shader effects/Image filters
+Choose between 26 different shader effects (image filters), including negative colors, old movie effect, pencil sketch etc. The effects can be applied to the currently viewed image, allowing you to quickly see how each image would look with a certain effect applied to them. <br>
 The effect can be copied to clipholder `Ctrl + C` or you can save it on your file system. The effect will also be applied when setting image as a wallpaper or lock screen image.
 
 ## Other features
 
 If you have 7-Zip or WinRAR installed, you can view images inside archives, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
 
+* Set image as wallpaper or lock screen image. (Image effect will be applied as well)
+* Basic editing: rotate, flip, crop, change file type
+* Drag & drop/paste from clipholder support for files, folders, URLs and archives
+* Scroll function
+* Open file in external application, show it in folder or view file properties
+* Color picker
 
-**Switch between image scaling modes;** 
+<img src="https://i.imgur.com/MzMCVSG.png"/><br>
+Rename or move files in the titlebar by pressing `F2` 
 
-Pressing `1` Centers the image in the window, while retaining the image's original size. <br> Pressing `2` Also centers the image in the window, but the image will be stretched to window height, while retaining aspect ratio. 
-
-Pressing `3` enables the auto window sizing feature. It will resize the window to the image's size, while keeping the window centered.<br> Pressing `4` also enables the window sizing feature, but the image will be stretched to the monitor's height, while retaining aspect ratio. 
-
-Slideshow `F11` with adjustable timer in the Settings window `F4`.
-
-Integrated color tool to quickly pick a color from the shown image.
-
-Quickly crop images by pressing `C`.
-
-Drag and drop from files Windows explorer or your browser. You can also hold `Ctrl` to drag currently viewed image to your file system.
-<br>
 
 **File support** 
  > .jpg  .jpeg  .jpe  .png  .bmp  .tif  .tiff  .gif  .ico  .jfif  .ppm  .webp  .wbmp <br>
    .psd  .psb <br>.svg<br>.3fr  .arw  .cr2  .crw  .dcr  .dng  .erf  .kdc  .mdc  .mef  .mos  .mrw  .nef  .nrw  .f  .pef .raf  .raw  .rw2  .srf  .x3f<br>
    .pgm  .hdr  .cut  .exr  .dib  .heic  .emf  .wmf  .wpg  .pcx  .xbm  .xpm
- 
- **File management** 
-<br>
-Copy `Ctrl + Shift + C`, Move `Ctrl + X`, Paste `Ctrl + V` images, file paths, web addresses or base64 images.
-
-Open file in another application `E`.
-
-<img src="https://i.imgur.com/MzMCVSG.png"/><br>
-Rename or move files in the titlebar by pressing `F2`
-
-Save and convert files `Ctrl + S`. <br>
-
-Send file to the recycle bin `Del` or permanently delete it `Shift + Delete`.
-
-View file details `Ctrl + I`.
-
-Show file in folder `F3`.
-
- **Basic image controls** 
-<br>
-Toggleable scroll function by pressing `X` <br>
-Scroll function supports auto scroll, by middle mouse clicking
-
-Rotate image left or right `Ctrl + Up`, `Ctrl + Down`<br>
-Flip image back and forth (horizontally) `F`
-
- **Misc** 
- 
-Set image as wallpaper or lock screen image. 
- 
-View and access most recent files in the contextmenu, including ones from web addresses.
 
 ## Contributions
 ![Visual Studio 2019](https://img.shields.io/badge/IDE-Visual%20Studio%202019-964ad4.svg?maxAge=3600)
