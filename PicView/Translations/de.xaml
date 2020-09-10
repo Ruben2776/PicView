@@ -31,8 +31,7 @@
     <system:String x:Key="DragImage">Bild ziehen</system:String>
     <system:String x:Key="AdditionalFunctions">Zusätzliche Funktionen</system:String>
     <system:String x:Key="Reload">Neu laden</system:String>
-    <system:String x:Key="ExtraMouseKeyFunctions">Extra Maustasten Funktionen</system:String>
-    <system:String x:Key="AttributionAndCredits">Impressum</system:String>
+    <system:String x:Key="Credits">Impressum</system:String>
     <system:String x:Key="IconsUsed">Benutzte Icons:</system:String>
     <system:String x:Key="GithubRepo">Github repository</system:String>
     <system:String x:Key="ViewLicenseFile">Lizens-Datei anschauen</system:String>

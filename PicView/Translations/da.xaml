@@ -31,8 +31,7 @@
     <system:String x:Key="DragImage">Træk billede</system:String>
     <system:String x:Key="AdditionalFunctions">Diverse funktioner</system:String>
     <system:String x:Key="Reload">Genindlæs</system:String>
-    <system:String x:Key="ExtraMouseKeyFunctions">Ekstra funktioner med museknapperne</system:String>
-    <system:String x:Key="AttributionAndCredits">Anerkendelser</system:String>
+    <system:String x:Key="Credits">Anerkendelser</system:String>
     <system:String x:Key="IconsUsed">Brugte ikoner:</system:String>
     <system:String x:Key="GithubRepo">Github side</system:String>
     <system:String x:Key="ViewLicenseFile">Se licensfilen</system:String>
