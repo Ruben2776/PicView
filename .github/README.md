@@ -75,7 +75,9 @@ Drag and drop from files Windows explorer or your browser. You can also hold `Ct
 <br>
 
 **File support** 
- > .jpg .jpeg .jpe .png .bmp .tif .tiff .gif .ico .wdp .jfif .ktx .webp .wbmp .psd .psb .svg .3fr .arw .cr2 .crw .dcr .dng .erf .kdc .mdc .mef .mos .mrw .nef .nrw .orf .pef .pgm .ppm .raf .raw .rw2 .srf .x3f .bpg .cur .cut .dib .emf .exif .exr .pcx .tga .wmf .wpg .xbm .xpm .hdr .heic
+ > .jpg  .jpeg  .jpe  .png  .bmp  .tif  .tiff  .gif  .ico  .jfif  .ppm  .webp  .wbmp <br>
+   .psd  .psb <br>.svg<br>.3fr  .arw  .cr2  .crw  .dcr  .dng  .erf  .kdc  .mdc  .mef  .mos  .mrw  .nef  .nrw  .f  .pef .raf  .raw  .rw2  .srf  .x3f<br>
+   .pgm  .hdr  .cut  .exr  .dib  .heic  .emf  .wmf  .wpg  .pcx  .xbm  .xpm
  
  **File management** 
 <br>
