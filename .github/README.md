@@ -2,8 +2,7 @@
 <img src="PicView-logo.svg" height="100" />
 </h1>
 
-PicView is a fast Picture Viewer with minimal UI. Features image effects, image galleries, image info and more. The app can automatically adjusts itself to your screen. 
-<br>Portable, free to use. No pop-ups, no installtation required, no registry edits or system files changed.
+PicView is a fast Picture Viewer with compact UI, that can be hidden. Features image effects, galleries, image info and more. The app can automatically adjusts itself to your screen.<br>Portable, free to use. No pop-ups, no installtation required, no registry edits or system files changed.
 
 
 <p align=center>
@@ -32,17 +31,20 @@ PicView is a fast Picture Viewer with minimal UI. Features image effects, image 
 The interface can be toggled to just show the image by pressing `Alt + Z`. The hover buttons and the colored window border can be toggled on/off in the settings window.
 
 For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
- 
+
+
 <br>
 <h2>Display Image Info</h2>
 
 <img src="https://picview.org/assets/screenshots/image-info-white.webp" width="918"/>
 The image info window will update values as you browse through images.
 
+
 <br>
 <h2>Fullscreen Image Gallery:</h2>
 <img src="https://i.imgur.com/aIEzJOa.png"/>
 View all files in current folder as a fullscreen thumbnail gallery, where you can quickly scroll to desired image.
+
 
 <br>
 <h2>Horizontal Image Gallery:</h2>
@@ -79,7 +81,7 @@ Rename or move files in the titlebar by pressing `F2`
 ![.NET Core 3.1](https://img.shields.io/badge/.NET-Core%203.1-lightgrey.svg?maxAge=3600)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/bf0fd0f740f9486ba306bdec7fe8bde7)](https://www.codacy.com/manual/ruben_8/PicView?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Ruben2776/PicView&amp;utm_campaign=Badge_Grade)
 
-Looking for translators!
+<a href="https://github.com/Ruben2776/PicView/issues/13">Looking for translators!</a>
 
 I am just a single developer working on this in my spare time. So if you like what I have created please star it to show your support, as it would motive me to keep working on it! <br>
 Feedback and questions are always appreciated. Create an issue or take a look at an existing one if you want to report a bug or request a feature, or have something on your mind! 😊
