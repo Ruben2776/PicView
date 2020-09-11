@@ -1,4 +1,5 @@
 ﻿using ImageMagick;
+using Pfim;
 using PicView.FileHandling;
 using PicView.UILogic.Sizing;
 using SkiaSharp;
@@ -7,6 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -21,50 +23,76 @@ namespace PicView.ImageHandling
         /// </summary>
         /// <param name="file">Absolute path of the file</param>
         /// <returns></returns>
-        internal static async Task <BitmapSource> RenderToBitmapSource(string file)
+        internal static async Task<BitmapSource> RenderToBitmapSource(string file)
         {
-            var check = SupportedFiles.IsSupportedFile(file);
-            if (!check.HasValue) { return null; }
-
             try
             {
-                if (check.Value)
+                var ext = Path.GetExtension(file).ToUpperInvariant();
+                FileStream filestream;
+                switch (ext)
                 {
-                    var filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
-                    var sKBitmap = SKBitmap.Decode(filestream);
-                    await filestream.DisposeAsync().ConfigureAwait(false);
+                    case ".JPG":
+                    case ".JPEG":
+                    case ".JPE":
+                    case ".PNG":
+                    case ".BMP":
+                    case ".TIF":
+                    case ".TIFF":
+                    case ".GIF":
+                    case ".ICO":
+                    case ".JFIF":
+                    case ".WEBP":
+                    case ".WBMP":
+                        filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
+                        var sKBitmap = SKBitmap.Decode(filestream);
+                        await filestream.DisposeAsync().ConfigureAwait(false);
 
-                    if (sKBitmap == null) { return null; }
+                        if (sKBitmap == null) { return null; }
 
-                    var pic = sKBitmap.ToWriteableBitmap();
-                    pic.Freeze();
-                    sKBitmap.Dispose();
-                    return pic;
-                }
-                else
-                {
-                    using MagickImage magick = new MagickImage();
+                        var skPic = sKBitmap.ToWriteableBitmap();
+                        skPic.Freeze();
+                        sKBitmap.Dispose();
+                        return skPic;
 
-                    try
-                    {
+                    case ".DDS":
+                    case "TGA":
+                        filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
+                        var image = Pfim.Pfim.FromStream(filestream);
+                        await filestream.DisposeAsync().ConfigureAwait(false);
+                        var pinnedArray = GCHandle.Alloc(image.Data, GCHandleType.Pinned);
+                        var addr = pinnedArray.AddrOfPinnedObject();
+                        return BitmapSource.Create(image.Width, image.Height, 96.0, 96.0,
+                            PixelFormat(image), null, addr, image.DataLen, image.Stride);
+
+                    case ".PSD":
+                    case ".PSB":
+                        filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
+                        var photoShopmagick = new MagickImage();
+                        photoShopmagick.Read(filestream);
+                        await filestream.DisposeAsync().ConfigureAwait(false);
+
+                        photoShopmagick.Quality = 100;
+                        photoShopmagick.ColorSpace = ColorSpace.Transparent;
+
+                        var psd = photoShopmagick.ToBitmapSource();
+                        photoShopmagick.Dispose();
+                        psd.Freeze();
+
+                        return psd;
+
+                    default:
+                        var magick = new MagickImage();
                         magick.Read(file);
-                    }
-                    catch (MagickException e)
-                    {
-#if DEBUG
-                        Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
-#endif
-                        return null;
-                    }
 
-                    // Set values for maximum quality
-                    magick.Quality = 100;
-                    magick.ColorSpace = ColorSpace.Transparent;
+                        // Set values for maximum quality
+                        magick.Quality = 100;
+                        magick.ColorSpace = ColorSpace.Transparent;
 
-                    var pic = magick.ToBitmapSource();
-                    pic.Freeze();
+                        var pic = magick.ToBitmapSource();
+                        magick.Dispose();
+                        pic.Freeze();
 
-                    return pic;
+                        return pic;
                 }
             }
             catch (Exception e)
@@ -73,6 +101,27 @@ namespace PicView.ImageHandling
                 Trace.WriteLine("RenderToBitmapSource returned " + file + " null, \n" + e.Message);
 #endif
                 return null;
+            }
+        }
+
+        private static PixelFormat PixelFormat(IImage image)
+        {
+            switch (image.Format)
+            {
+                case ImageFormat.Rgb24:
+                    return PixelFormats.Bgr24;
+                case ImageFormat.Rgba32:
+                    return PixelFormats.Bgr32;
+                case ImageFormat.Rgb8:
+                    return PixelFormats.Gray8;
+                case ImageFormat.R5g5b5a1:
+                case ImageFormat.R5g5b5:
+                    return PixelFormats.Bgr555;
+                case ImageFormat.R5g6b5:
+                    return PixelFormats.Bgr565;
+                default: 
+                    throw new Exception($"Unable to convert {image.Format} to WPF PixelFormat");
+
             }
         }
 
@@ -147,7 +196,6 @@ namespace PicView.ImageHandling
                 var rtb = new RenderTargetBitmap(sauce.PixelWidth, sauce.PixelHeight, sauce.DpiX, sauce.DpiY, PixelFormats.Default);
                 rtb.Render(rectangle);
 
-
                 return BitmapFrame.Create(rtb);
             }
             catch (Exception) { return null; }
@@ -200,6 +248,5 @@ namespace PicView.ImageHandling
             rtv.Freeze();
             return rtv;
         }
-
-    }      
+    }
 }

@@ -72,6 +72,10 @@ namespace PicView.FileHandling
                     || file.EndsWith("webp", StringComparison.OrdinalIgnoreCase)
                     || file.EndsWith("wbmp", StringComparison.OrdinalIgnoreCase)
 
+                    // Pfim
+                    || file.EndsWith("dds", StringComparison.OrdinalIgnoreCase)
+                    || file.EndsWith("tga", StringComparison.OrdinalIgnoreCase)
+
                     // Raw Camera
                     || file.EndsWith("3fr", StringComparison.OrdinalIgnoreCase)
                     || file.EndsWith("arw", StringComparison.OrdinalIgnoreCase)

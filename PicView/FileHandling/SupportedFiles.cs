@@ -19,12 +19,15 @@ namespace PicView.FileHandling
             return ext switch
             {
                 // Standards
-                ".jpg" or ".jpeg" or ".jpe" or ".png" or ".bmp" or ".tif" or ".tiff" or ".gif" or ".ico" or ".jfif" or ".ppm" or ".webp" or ".wbmp" => true,
+                ".jpg" or ".jpeg" or ".jpe" or ".png" or ".bmp" or ".tif" or ".tiff" or ".gif" or ".ico" or ".jfif" or ".webp" or ".wbmp" => true,
 
                 // Non-standards
 
                 // Photoshop
-                ".psd" or ".psb" or 
+                ".psd" or ".psb" or
+
+                // Pfim
+                ".tga" or ".dds" or
 
                 // Vector
                 ".svg" or
