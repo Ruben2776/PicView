@@ -61,8 +61,11 @@ namespace PicView.ImageHandling
                         await filestream.DisposeAsync().ConfigureAwait(false);
                         var pinnedArray = GCHandle.Alloc(image.Data, GCHandleType.Pinned);
                         var addr = pinnedArray.AddrOfPinnedObject();
-                        return BitmapSource.Create(image.Width, image.Height, 96.0, 96.0,
+                        var pfimPic = BitmapSource.Create(image.Width, image.Height, 96.0, 96.0,
                             PixelFormat(image), null, addr, image.DataLen, image.Stride);
+                        image.Dispose();
+                        pfimPic.Freeze();
+                        return pfimPic;
 
                     case ".PSD":
                     case ".PSB":
@@ -104,26 +107,15 @@ namespace PicView.ImageHandling
             }
         }
 
-        private static PixelFormat PixelFormat(IImage image)
+        private static PixelFormat PixelFormat(IImage image) => image.Format switch
         {
-            switch (image.Format)
-            {
-                case ImageFormat.Rgb24:
-                    return PixelFormats.Bgr24;
-                case ImageFormat.Rgba32:
-                    return PixelFormats.Bgr32;
-                case ImageFormat.Rgb8:
-                    return PixelFormats.Gray8;
-                case ImageFormat.R5g5b5a1:
-                case ImageFormat.R5g5b5:
-                    return PixelFormats.Bgr555;
-                case ImageFormat.R5g6b5:
-                    return PixelFormats.Bgr565;
-                default: 
-                    throw new Exception($"Unable to convert {image.Format} to WPF PixelFormat");
-
-            }
-        }
+            ImageFormat.Rgb24 => PixelFormats.Bgr24,
+            ImageFormat.Rgba32 => PixelFormats.Bgr32,
+            ImageFormat.Rgb8 => PixelFormats.Gray8,
+            ImageFormat.R5g5b5a1 or ImageFormat.R5g5b5 => PixelFormats.Bgr555,
+            ImageFormat.R5g6b5 => PixelFormats.Bgr565,
+            _ => throw new Exception($"Unable to convert {image.Format} to WPF PixelFormat"),
+        };
 
         /// <summary>Gets the magick image.</summary>
         /// <param name="s">The stream</param>

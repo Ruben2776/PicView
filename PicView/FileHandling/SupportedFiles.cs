@@ -30,11 +30,11 @@ namespace PicView.FileHandling
                 ".tga" or ".dds" or
 
                 // Vector
-                ".svg" or
-                
+                ".svg" or // Maybe add svgz at some point
+
                 // Camera
-                ".3fr" or ".arw" or ".cr2" or ".crw" or ".dcr" or ".dng" or ".erf" or ".kdc" or ".mdc" or ".mef" or ".mos" or ".mrw" or ".nef" or ".nrw" or ".orf" or ".pef"
-                 or ".raf" or ".raw" or ".rw2" or ".srf" or ".x3f"
+                ".3fr" or ".arw" or ".cr2" or ".crw" or ".dcr" or ".dng" or ".erf" or ".kdc" or ".mdc" or ".mef" or ".mos" or ".mrw" or ".nef" or ".nrw" or ".orf" or
+                ".pef" or ".raf" or ".raw" or ".rw2" or ".srf" or ".x3f"
 
                 // Others
                 or ".pgm" or ".hdr" or ".cut" or ".exr" or ".dib" or ".heic" or ".emf" or ".wmf" or ".wpg" or ".pcx" or ".xbm" or ".xpm"
