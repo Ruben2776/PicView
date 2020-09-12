@@ -2,7 +2,7 @@
 <img src="PicView-logo.svg" height="100" />
 </h1>
 
-PicView is a fast Picture Viewer with compact UI, that can be hidden. Features image effects, galleries, image info and more. The app can automatically adjusts itself to your screen.<br>Portable, free to use. No pop-ups, no installtation required, no registry edits or system files changed.
+PicView is a fast Picture Viewer with compact UI, that can be hidden. Features image effects, galleries, image info and more. The app can automatically adjusts itself to your screen.
 
 
 <p align=center>
@@ -73,8 +73,10 @@ Rename or move files in the titlebar by pressing `F2`
 
 **File support** 
  > .jpg  .jpeg  .jpe  .png  .bmp  .tif  .tiff  .gif  .ico  .jfif  .webp <br>
-   .psd  .psb <br>.svg<br>.3fr  .arw  .cr2  .crw  .dcr  .dng  .erf  .kdc  .mdc  .mef  .mos  .mrw  .nef  .nrw  .f  .pef .raf  .raw  .rw2  .srf  .x3f<br>
-   .pgm  .hdr  .cut  .exr  .dib  .heic  .emf  .wmf  .wpg  .pcx  .xbm  .xpm .wbmp
+   .psd  .psb <br>.svg<br>.3fr  .arw  .cr2  .crw  .dcr  .dng  .erf  .kdc  .mdc  .mef  .mos  .mrw  .nef  .nrw  .f  .pef .raf  .raw  .rw2  .srf  .x3f *<br>
+   .pgm  .hdr  .cut  .exr  .dib  .heic  .emf  .wmf  .wpg  .pcx  .xbm  .xpm .wbmp *
+   
+   _* Uncommon formats may be slower to load_
 
 ## Contributions
 ![Visual Studio 2019](https://img.shields.io/badge/IDE-Visual%20Studio%202019-964ad4.svg?maxAge=3600)
