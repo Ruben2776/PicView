@@ -160,24 +160,6 @@
     <system:String x:Key="Bands">Streifen</system:String>
     <system:String x:Key="GlassTile">Glassplitter</system:String>
 
-    <!--  Batch resize window  -->
-    <system:String x:Key="Rotate">Rotieren:</system:String>
-    <system:String x:Key="Misc">Allgemeines:</system:String>
-    <system:String x:Key="OptimizeFileSize">Dateigröße optimieren</system:String>
-    <system:String x:Key="Quality">Qualität:</system:String>
-
-    <system:String x:Key="Resize">Größe ändern:</system:String>
-    <system:String x:Key="KeepAspectRatio">Seitenverhältnis beibehalten</system:String>
-    <system:String x:Key="FlipImages">Bild(er) umdrehen</system:String>
-
-    <system:String x:Key="RenameTo">Umbenennen in:</system:String>
-    <system:String x:Key="Destination">Ziel</system:String>
-
-    <system:String x:Key="SelectedImage">Ausgewähltes Bild</system:String>
-    <system:String x:Key="FromFolder">Aus Ordner:</system:String>
-    <system:String x:Key="Start">Start</system:String>
-    <system:String x:Key="Stop">Stop</system:String>
-
     <!--  Navigation related  -->
     <system:String x:Key="Navigation">Navigation</system:String>
     <system:String x:Key="NextImage">Next image</system:String>

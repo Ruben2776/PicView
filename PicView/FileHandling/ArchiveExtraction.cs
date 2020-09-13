@@ -190,7 +190,6 @@ namespace PicView.FileHandling
 
             ConfigureWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Unzipping"] as string;
             ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.Text;
-            await Task.Delay(100).ConfigureAwait(true);
 
             // TempZipPath is not null = images being extracted
             short count = 0;

@@ -161,24 +161,6 @@
     <system:String x:Key="Bands">Bands</system:String>
     <system:String x:Key="GlassTile">Glass Tile</system:String>
 
-    <!--  Batch resize window  -->
-    <system:String x:Key="Rotate">Rotate:</system:String>
-    <system:String x:Key="Misc">Misc:</system:String>
-    <system:String x:Key="OptimizeFileSize">Optimize file size</system:String>
-    <system:String x:Key="Quality">Quality:</system:String>
-
-    <system:String x:Key="Resize">Resize:</system:String>
-    <system:String x:Key="KeepAspectRatio">Keep aspect ratio</system:String>
-    <system:String x:Key="FlipImages">Flip image(s)</system:String>
-
-    <system:String x:Key="RenameTo">Rename to:</system:String>
-    <system:String x:Key="Destination">Destination</system:String>
-
-    <system:String x:Key="SelectedImage">Selected image</system:String>
-    <system:String x:Key="FromFolder">From folder:</system:String>
-    <system:String x:Key="Start">Start</system:String>
-    <system:String x:Key="Stop">Stop</system:String>
-
     <!--  Navigation related  -->
     <system:String x:Key="Navigation">Navigation</system:String>
     <system:String x:Key="NextImage">Next image</system:String>

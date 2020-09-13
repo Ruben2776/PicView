@@ -159,24 +159,6 @@
     <system:String x:Key="Bands">Bånd</system:String>
     <system:String x:Key="GlassTile">Glasflise</system:String>
 
-    <!--  Batch resize window  -->
-    <system:String x:Key="Rotate">Roter:</system:String>
-    <system:String x:Key="Misc">Diverse:</system:String>
-    <system:String x:Key="OptimizeFileSize">Optimer filstørrelse</system:String>
-    <system:String x:Key="Quality">Kvalitet:</system:String>
-
-    <system:String x:Key="Resize">Resize:</system:String>
-    <system:String x:Key="KeepAspectRatio">Hold sideforhold</system:String>
-    <system:String x:Key="FlipImages">Spejlvend billede(r)</system:String>
-
-    <system:String x:Key="RenameTo">Omdøb til:</system:String>
-    <system:String x:Key="Destination">Destination</system:String>
-
-    <system:String x:Key="SelectedImage">Valgt billede</system:String>
-    <system:String x:Key="FromFolder">Fra mappe:</system:String>
-    <system:String x:Key="Start">Start</system:String>
-    <system:String x:Key="Stop">Stop</system:String>
-
     <!--  Navigation related  -->
     <system:String x:Key="Navigation">Navigering</system:String>
     <system:String x:Key="NextImage">Næste billede</system:String>
