@@ -45,8 +45,18 @@ namespace PicView.FileHandling
         {
             if (!Directory.Exists(path)) { return null; }
 
-            var items = Directory.EnumerateFiles(path, "*.*",
-                Properties.Settings.Default.IncludeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
+            SearchOption searchOption;
+
+            if (!Properties.Settings.Default.IncludeSubDirectories || !string.IsNullOrWhiteSpace(TempZipFile))
+            {
+                searchOption = SearchOption.TopDirectoryOnly;
+            }
+            else
+            {
+                searchOption = SearchOption.AllDirectories;
+            }
+
+            var items = Directory.EnumerateFiles(path, "*.*", searchOption)
                 .AsParallel()
                 .Where(file =>
 

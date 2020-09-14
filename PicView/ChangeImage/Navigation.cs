@@ -124,6 +124,11 @@ namespace PicView.ChangeImage
             // Fix large archive extraction error
             if (FolderIndex == -1)
             {
+                if (string.IsNullOrWhiteSpace(TempZipFile))
+                {
+                    Reload();
+                }
+
                 var recovery = await RecoverFailedArchiveAsync().ConfigureAwait(true);
                 if (!recovery)
                 {
@@ -280,7 +285,10 @@ namespace PicView.ChangeImage
                 await Preloader.PreLoad(index).ConfigureAwait(false);
             }
 
-            RecentFiles.Add(Pics[index]);
+            if (string.IsNullOrWhiteSpace(TempZipFile))
+            {
+                RecentFiles.Add(Pics[index]);
+            }
 
 #if DEBUG
             stopWatch.Stop();

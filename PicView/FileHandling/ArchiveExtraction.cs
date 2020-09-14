@@ -114,16 +114,13 @@ namespace PicView.FileHandling
                 CreateNoWindow = true
 #endif
             });
-            x.EnableRaisingEvents = true;
-            x.Exited += delegate
-            {
-                SetDirectory();
-            };
 
             if (x == null)
             {
                 return false;
             }
+
+            SetDirectory();
 
             return true;
         }
@@ -137,6 +134,10 @@ namespace PicView.FileHandling
             return Directory.Exists(TempZipPath);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private static bool SetDirectory()
         {
             if (string.IsNullOrEmpty(TempZipPath))
@@ -167,7 +168,7 @@ namespace PicView.FileHandling
                 }
 
                 // Add zipped files as recent file
-                RecentFiles.SetZipped(TempZipFile);
+                RecentFiles.Add(TempZipFile);
 
                 return true;
             }

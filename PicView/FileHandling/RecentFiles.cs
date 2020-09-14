@@ -26,12 +26,9 @@ namespace PicView.FileHandling
         /// </summary>
         private const int MRUcount = 11;
 
-        internal static bool IsZipped { get; set; }
-
         internal static void Initialize()
         {
             MRUlist = new Queue<string>();
-            IsZipped = false;
 
             LoadRecent();
         }
@@ -62,12 +59,6 @@ namespace PicView.FileHandling
         /// <returns></returns>
         internal static void Add(string fileName)
         {
-            // Don't add zipped files
-            if (IsZipped || MRUlist == null)
-            {
-                return;
-            }
-
             // Prevent duplication on recent list
             if (!MRUlist.Contains(fileName))
             {
@@ -110,16 +101,6 @@ namespace PicView.FileHandling
             streamWriter.Flush();
             // Close the stream and reclaim memory
             streamWriter.Close();
-        }
-
-        internal static void SetZipped(string zipfile, bool isZipped = true)
-        {
-            if (!string.IsNullOrWhiteSpace(zipfile))
-            {
-                Add(zipfile);
-            }
-
-            IsZipped = isZipped;
         }
 
         /// <summary>

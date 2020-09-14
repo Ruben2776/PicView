@@ -46,6 +46,8 @@ namespace PicView.FileHandling
             {
                 return;
             }
+
+            ArchiveExtraction.TempZipFile = ArchiveExtraction.TempZipPath = null;
         }
 
         /// <summary>
