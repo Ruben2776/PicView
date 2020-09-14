@@ -1,4 +1,5 @@
 ﻿using PicView.UILogic.Animations;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
@@ -24,10 +25,13 @@ namespace PicView.Views.UserControls
                 {
                     ButtonMouseLeaveAnimBgColor(RotateButtonBrush, false);
                 };
-                TheButton.Click += delegate
+                TheButton.Click += async delegate
                 {
                     UILogic.TransformImage.Rotation.Rotate(false);
-                    // TODO move cursor if necessary
+                    // Move cursor after rotating
+                    await Task.Delay(15).ConfigureAwait(true); // Delay it, so that the move takes place after window has resized
+                    var p = TheButton.PointToScreen(new System.Windows.Point(25, 25));
+                    SystemIntegration.NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 };
 
 
