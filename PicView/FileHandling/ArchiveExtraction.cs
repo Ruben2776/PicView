@@ -15,9 +15,15 @@ namespace PicView.FileHandling
     internal static class ArchiveExtraction
     {
         private const string SupportedFilesFilter =
-            " *.jpg *.jpeg *.jpe *.png *.bmp *.tif *.tiff *.gif *.ico *.wdp *.jfif *.ktx *.webp *.wbmp *.psd *.psb *.svg *.3fr *.arw *.cr2 *.crw *.dcr *.dng *"
-            + ".erf *.kdc *.mdc *.mef *.mos *.mrw *.nef *.nrw *.orf *.pef *.pgm *.ppm *.raf *.raw *.rw2 *.srf *.x3f *.bpg *.cur *.cut *.dib *.emf *.exif *.exr *"
-            + ".pcx *.tga *.wmf *.wpg *.xbm *.xpm *.hdr *.heic *";
+            " *.jpg *.jpeg *.jpe *.png *.bmp *.tif *.tiff *.gif *.ico *.jfif *.webp *.wbmp "
+            + "*.psd *.psb "
+            + "*.tga *.dds "
+            + "*.svg "
+            + "*.3fr *.arw *.cr2 *.crw *.dcr *.dng *.erf *.kdc *.mdc *.mef *.mos *.mrw *.nef *.nrw *.orf "
+            + "*.pef *.raf *.raw *.rw2 *.srf *.x3f "
+            + "*.pgm *.hdr *.cut *.exr *.dib *.heic *.emf *.wmf *.wpg *.pcx *.xbm *.xpm";
+
+
 
         /// <summary>
         /// File path for the extracted folder
@@ -120,7 +126,12 @@ namespace PicView.FileHandling
                 return false;
             }
 
-            SetDirectory();
+            x.EnableRaisingEvents = true;
+            x.Exited += delegate
+            {
+                SetDirectory();
+                Pic(0);
+            };
 
             return true;
         }
@@ -183,25 +194,17 @@ namespace PicView.FileHandling
 #if DEBUG
             Trace.WriteLine("Entered RecoverFailedArchiveAsync");
 #endif
-
-            if (Pics.Count > 0)
-            {
-                return true;
-            }
-
             ConfigureWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Unzipping"] as string;
             ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.Text;
 
-            // TempZipPath is not null = images being extracted
-            short count = 0;
-            do
+            while (Pics.Count < 1)
             {
                 if (SetDirectory())
                 {
+                    await Preloader.PreLoad(0).ConfigureAwait(true);
                     return true;
                 }
-
-                if (count > 3)
+                else
                 {
                     var processed = false;
                     var getProcesses = Process.GetProcessesByName("7z");
@@ -224,50 +227,24 @@ namespace PicView.FileHandling
                         // Kill it if it's asking for password
                         if (!getProcesses[0].HasExited)
                         {
-                            if (getProcesses[0].Threads[0].ThreadState == ThreadState.Wait)
+                            if (getProcesses[0].Threads[0].ThreadState == ThreadState.Wait && getProcesses[0].Threads[0].WaitReason == ThreadWaitReason.UserRequest)
                             {
 #if DEBUG
                                 Trace.WriteLine("Process killed");
 #endif
-                                ShowTooltipMessage(Application.Current.Resources["PasswordArchive"]);
                                 Error_Handling.Reload(true);
                                 getProcesses[0].Kill();
+                                ShowTooltipMessage(Application.Current.Resources["PasswordArchive"]);
                                 return false;
                             }
                         }
                     }
-                    break;
                 }
-
-                switch (count)
-                {
-                    case 0:
-                        await Task.Delay(200).ConfigureAwait(true);
-                        break;
-
-                    case 1:
-                        await Task.Delay(400).ConfigureAwait(true);
-                        break;
-
-                    case 2:
-                        await Task.Delay(700).ConfigureAwait(true);
-                        break;
-
-                    default:
-                        await Task.Delay(1500).ConfigureAwait(true);
-                        break;
-                }
-                count++;
-            } while (Pics.Count < 1);
+            }
 
 #if DEBUG
             Trace.WriteLine("RecoverFailedArchiveAsync processed");
 #endif
-
-            if (SetDirectory())
-            {
-                return true;
-            }
 
             return false;
         }

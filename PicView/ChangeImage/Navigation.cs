@@ -120,28 +120,23 @@ namespace PicView.ChangeImage
             }
 
             FolderIndex = Pics.IndexOf(path);
-
-            // Fix large archive extraction error
+           
             if (FolderIndex == -1)
             {
+                // Test for archive extraction error
                 if (string.IsNullOrWhiteSpace(TempZipFile))
                 {
                     Reload();
                 }
-
-                var recovery = await RecoverFailedArchiveAsync().ConfigureAwait(true);
-                if (!recovery)
-                {
-                    Reload(true);
-                    return;
-                }
                 else
                 {
-                    ConfigureWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Unzipping"] as string;
-                    ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.Text;
-                    FolderIndex = 0;
+                    var recovery = await RecoverFailedArchiveAsync().ConfigureAwait(true);
+                    if (!recovery)
+                    {
+                        Reload(true);
+                    }                                  
                 }
-                ConfigureWindows.GetMainWindow.Focus();
+                return;
             }
 
             if (!FreshStartup)
@@ -202,26 +197,33 @@ namespace PicView.ChangeImage
             // Initate loading behavior, if needed
             if (bitmapSource == null)
             {
-                // Set loading from translation service
-                SetLoadingString();
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
+                {
+                    // Set loading from translation service
+                    SetLoadingString();
+                }));
+
 
                 // Show a thumbnail while loading
                 var thumb = GetThumb(index, true);
                 if (thumb != null && Properties.Settings.Default.PicGallery != 2)
                 {
-                    // Don't allow image size to stretch the whole screen
-                    if (xWidth == 0)
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
                     {
-                        ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.MinWidth;
-                        ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.MinHeight;
-                    }
-                    else
-                    {
-                        ConfigureWindows.GetMainWindow.MainImage.Width = xWidth;
-                        ConfigureWindows.GetMainWindow.MainImage.Height = xHeight;
-                    }
+                        // Don't allow image size to stretch the whole screen
+                        if (xWidth == 0)
+                        {
+                            ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.MinWidth;
+                            ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.MinHeight;
+                        }
+                        else
+                        {
+                            ConfigureWindows.GetMainWindow.MainImage.Width = xWidth;
+                            ConfigureWindows.GetMainWindow.MainImage.Height = xHeight;
+                        }
 
-                    ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
+                        ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
+                    }));
                 }
 
                 // Dissallow changing image while loading

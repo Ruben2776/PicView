@@ -218,7 +218,6 @@ namespace PicView.ChangeImage
             else
             {
                 Unload();
-                ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
             }
         }
 
