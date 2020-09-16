@@ -148,7 +148,7 @@ namespace PicView.Views.Windows
 
                 if (jpg.IsChecked.Value)
                 {
-                    sb.Append(".jpeg,.jpe");
+                    sb.Append(".jpeg,.jpe,");
                 }
 
                 for (int i = 0; i < list.Count(); i++)

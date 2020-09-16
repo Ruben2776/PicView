@@ -2002,8 +2002,7 @@
                     <Label
                         Margin="1,0,0,11"
                         HorizontalAlignment="Center"
-                        d:Content="Attribtution and credits"
-                        Content="{StaticResource ResourceKey=AttributionAndCredits}"
+                        Content="{StaticResource ResourceKey=Credits}"
                         FontSize="16" />
 
                     <Label

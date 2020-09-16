@@ -292,6 +292,7 @@ namespace PicView.UILogic.TransformImage
 
         private static void BeginZoomAnimation(double zoomValue)
         {
+            // TODO Make zoom work when image rotated
             Point relative = Mouse.GetPosition(ConfigureWindows.GetMainWindow.MainImage);
 
             // Calculate new position
