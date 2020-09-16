@@ -146,6 +146,11 @@ namespace PicView.Views.Windows
                 var list = rasterFormats.Concat(photoshopFormats).Concat(vectorFormats).Concat(cameraFormats).Concat(otherFormats);
                 var sb = new StringBuilder();
 
+                if (jpg.IsChecked.Value)
+                {
+                    sb.Append(".jpeg,.jpe");
+                }
+
                 for (int i = 0; i < list.Count(); i++)
                 {
                     sb.Append(list.ElementAt(i).Content);

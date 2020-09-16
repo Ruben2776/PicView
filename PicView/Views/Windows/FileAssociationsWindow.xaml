@@ -245,11 +245,19 @@
                         IsChecked="True" />
                     <CheckBox x:Name="emf" Content=".emf" />
                     <CheckBox
+                        x:Name="dds"
+                        Content=".dds"
+                        IsChecked="True" />
+                    <CheckBox
                         x:Name="dib"
                         Content=".dib"
                         IsChecked="True" />
                     <CheckBox x:Name="hdr" Content=".hdr" />
                     <CheckBox x:Name="heic" Content=".heic" />
+                    <CheckBox
+                        x:Name="tga"
+                        Content=".tga"
+                        IsChecked="True" />
                     <CheckBox
                         x:Name="pcx"
                         Content=".pcx"
