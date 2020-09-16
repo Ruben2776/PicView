@@ -1,9 +1,7 @@
-﻿using PicView.UILogic.Loading;
-using PicView.UILogic.PicGallery;
+﻿using PicView.UILogic.PicGallery;
 using PicView.UILogic.TransformImage;
 using System;
 using System.Timers;
-using System.Windows;
 using static PicView.UILogic.UC;
 
 namespace PicView.UILogic.Animations

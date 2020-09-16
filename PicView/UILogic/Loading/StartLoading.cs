@@ -174,12 +174,6 @@ namespace PicView.UILogic.Loading
             Trace.WriteLine("Start Completed ");
 #endif
 
-            if (Properties.Settings.Default.AutoFitWindow)
-            {
-                ConfigureWindows.CenterWindowOnScreen();
-                ConfigureWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
-            }
-
         }
 
         private static void SetLastWindowSize()

@@ -1,5 +1,4 @@
-﻿using PicView.UILogic.Loading;
-using PicView.UILogic.PicGallery;
+﻿using PicView.UILogic.PicGallery;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.UILogic.Animations.FadeControls;
