@@ -59,6 +59,8 @@ namespace PicView.FileHandling
         /// <returns></returns>
         internal static void Add(string fileName)
         {
+            if (MRUlist == null) { return; }
+
             // Prevent duplication on recent list
             if (!MRUlist.Contains(fileName))
             {

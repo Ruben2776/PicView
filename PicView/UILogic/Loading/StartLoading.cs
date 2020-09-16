@@ -1,5 +1,4 @@
-﻿using PicView.ConfigureSettings;
-using PicView.FileHandling;
+﻿using PicView.FileHandling;
 using PicView.SystemIntegration;
 using PicView.UILogic.PicGallery;
 using PicView.UILogic.Sizing;
@@ -7,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Windows;
 using System.Windows.Interop;
 using static PicView.ChangeImage.Error_Handling;
@@ -78,7 +76,21 @@ namespace PicView.UILogic.Loading
                     ConfigureWindows.GetMainWindow.MinHeight = 700 * MonitorInfo.DpiScaling;
                 }
             }
-            else if (File.Exists(arg.ToString()))
+            else if (arg.ToString().StartsWith('.'))
+            {
+                // Set file associations
+
+                var process = Process.GetCurrentProcess();
+                var args = arg.ToString().Split(',');
+
+                foreach (var item in args)
+                {
+                    NativeMethods.SetAssociation(item, process.Id.ToString(CultureInfo.InvariantCulture), item, process.MainModule.FileName);
+                }
+
+                Environment.Exit(0);
+            }
+            else
             {
                 var file = arg.ToString();
                 // Determine prefered UI for startup
@@ -100,20 +112,6 @@ namespace PicView.UILogic.Loading
                 }
 
                 Pic(file);
-            }
-            else
-            {
-                // Set file associations
-
-                var process = Process.GetCurrentProcess();
-                var args = arg.ToString().Split(',');
-
-                foreach (var item in args)
-                {
-                    NativeMethods.SetAssociation(item, process.Id.ToString(CultureInfo.InvariantCulture), item, process.MainModule.FileName);
-                }
-                
-                Environment.Exit(0);
             }
 
             if (Properties.Settings.Default.UserLanguage != "en")

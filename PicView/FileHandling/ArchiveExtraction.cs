@@ -86,19 +86,13 @@ namespace PicView.FileHandling
         /// <param name="winrar">If WinRar or 7-Zip</param>
         private static bool Extract(string path, string exe, bool winrar)
         {
-#if DEBUG
             if (CreateTempDirectory(path))
             {
+#if DEBUG
                 Trace.WriteLine("Created temp dir: " + TempZipPath);
-            }
-            else
-            {
-                return false;
-            }
-#else
-            if (!CreateTempDirectory(path))
-                return false;
 #endif
+            }
+            else { return false; }
 
             var arguments = winrar ?
                 // Add WinRAR specifics
@@ -121,10 +115,7 @@ namespace PicView.FileHandling
 #endif
             });
 
-            if (x == null)
-            {
-                return false;
-            }
+            if (x == null) { return false; }
 
             x.EnableRaisingEvents = true;
             x.Exited += delegate
@@ -201,7 +192,7 @@ namespace PicView.FileHandling
             {
                 if (SetDirectory())
                 {
-                    await Preloader.PreLoad(0).ConfigureAwait(true);
+                    await Preloader.PreLoad(0).ConfigureAwait(false);
                     return true;
                 }
                 else
