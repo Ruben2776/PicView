@@ -134,7 +134,7 @@ namespace PicView.SystemIntegration
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            UILogic.UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.Width;
+                            UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.Width;
                             UILogic.UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.Height;
                         }
                     }
@@ -284,15 +284,22 @@ namespace PicView.SystemIntegration
 
         #region Set Associations
         // needed so that Explorer windows get refreshed after the registry is updated
-        [System.Runtime.InteropServices.DllImport("Shell32.dll")]
+        [DllImport("Shell32.dll")]
         private static extern int SHChangeNotify(int eventId, int flags, IntPtr item1, IntPtr item2);
 
         internal static bool SetAssociation(string extension, string progId, string applicationFilePath)
         {
             bool madeChanges = false;
             madeChanges |= SetKeyDefaultValue(@"Software\Classes\" + extension, progId);
-            madeChanges |= SetKeyDefaultValue(@"Software\Classes\" + progId, null);
             madeChanges |= SetKeyDefaultValue($@"Software\Classes\{progId}\shell\open\command", "\"" + applicationFilePath + "\" \"%1\"");
+            return madeChanges;
+        }
+
+        internal static bool RemoveAssociation(string extension, string progId)
+        {
+            bool madeChanges = false;
+            madeChanges |= RemoveKeyDefaultValue(@"Software\Classes\" + extension);
+            madeChanges |= RemoveKeyDefaultValue($@"Software\Classes\{progId}\shell\open\command");
             return madeChanges;
         }
 
@@ -309,6 +316,21 @@ namespace PicView.SystemIntegration
 
             return false;
         }
+
+        private static bool RemoveKeyDefaultValue(string keyPath)
+        {
+            try
+            {
+                using var key = Registry.CurrentUser.OpenSubKey(keyPath);
+                key.DeleteValue(keyPath);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         #endregion
     }
 }
