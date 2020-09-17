@@ -317,7 +317,8 @@ namespace PicView.UILogic
                 if (GetMainWindow.WindowState == WindowState.Maximized)
                 {
                     GetMainWindow.WindowState = WindowState.Normal;
-                    GetMainWindow.BorderThickness = new Thickness(0);
+                    // Reset margin from fullscreen
+                    GetMainWindow.ParentContainer.Margin = new Thickness(0);
                 }
 
                 if (Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
@@ -349,9 +350,11 @@ namespace PicView.UILogic
             GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
             GetMainWindow.SizeToContent = SizeToContent.Manual;
             GetMainWindow.WindowState = WindowState.Maximized;
-            GetMainWindow.BorderThickness = new Thickness(8);
             GetMainWindow.Width = MonitorInfo.Width;
             GetMainWindow.Height = MonitorInfo.Height;
+
+            // Fix buttons appearing out of window
+            GetMainWindow.ParentContainer.Margin = new Thickness(8);
 
             GetMainWindow.Top = MonitorInfo.WorkArea.Top;
             GetMainWindow.Left = MonitorInfo.WorkArea.Left;

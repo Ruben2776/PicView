@@ -287,11 +287,11 @@ namespace PicView.SystemIntegration
         [System.Runtime.InteropServices.DllImport("Shell32.dll")]
         private static extern int SHChangeNotify(int eventId, int flags, IntPtr item1, IntPtr item2);
 
-        internal static bool SetAssociation(string extension, string progId, string fileTypeDescription, string applicationFilePath)
+        internal static bool SetAssociation(string extension, string progId, string applicationFilePath)
         {
             bool madeChanges = false;
             madeChanges |= SetKeyDefaultValue(@"Software\Classes\" + extension, progId);
-            madeChanges |= SetKeyDefaultValue(@"Software\Classes\" + progId, fileTypeDescription);
+            madeChanges |= SetKeyDefaultValue(@"Software\Classes\" + progId, null);
             madeChanges |= SetKeyDefaultValue($@"Software\Classes\{progId}\shell\open\command", "\"" + applicationFilePath + "\" \"%1\"");
             return madeChanges;
         }

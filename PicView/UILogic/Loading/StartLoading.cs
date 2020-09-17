@@ -85,7 +85,7 @@ namespace PicView.UILogic.Loading
 
                 foreach (var item in args)
                 {
-                    NativeMethods.SetAssociation(item, process.Id.ToString(CultureInfo.InvariantCulture), item, process.MainModule.FileName);
+                    NativeMethods.SetAssociation(item, process.Id.ToString(CultureInfo.InvariantCulture), process.MainModule.FileName);
                 }
 
                 Environment.Exit(0);
@@ -169,6 +169,12 @@ namespace PicView.UILogic.Loading
 
             // Load UI and events
             AddUIElementsAndUpdateValues();
+
+            if (Properties.Settings.Default.AutoFitWindow && !Properties.Settings.Default.Fullscreen)
+            {
+                ConfigureWindows.CenterWindowOnScreen();
+                ConfigureWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
+            }
 
 #if DEBUG
             Trace.WriteLine("Start Completed ");

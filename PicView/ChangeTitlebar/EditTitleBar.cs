@@ -78,9 +78,27 @@ namespace PicView.UILogic
         {
             if (FileFunctions.RenameFile(Pics[FolderIndex], ConfigureWindows.GetMainWindow.TitleText.Text))
             {
-                Pics[FolderIndex] = ConfigureWindows.GetMainWindow.TitleText.Text;
-                Refocus();
-                Error_Handling.Reload(); // TODO proper renaming of window title, tooltip, etc.
+                // Check if the file is not in the same folder
+                if (Path.GetDirectoryName(ConfigureWindows.GetMainWindow.TitleText.Text) != Path.GetDirectoryName(Pics[FolderIndex]))
+                {
+                    Pics.Remove(Pics[FolderIndex]);
+                    if (Pics.Count > 0)
+                    {
+                        Pic();
+                    }
+                    else
+                    {
+                        Pic(ConfigureWindows.GetMainWindow.TitleText.Text);
+                    }
+                }
+                else
+                {
+                    Pics[FolderIndex] = ConfigureWindows.GetMainWindow.TitleText.Text;
+                    ConfigureWindows.GetMainWindow.Title = ConfigureWindows.GetMainWindow.Title.Replace(Path.GetFileName(Pics[FolderIndex]), Pics[FolderIndex], System.StringComparison.InvariantCultureIgnoreCase);
+                    ConfigureWindows.GetMainWindow.TitleText.Text = ConfigureWindows.GetMainWindow.TitleText.Text.Replace(Path.GetFileName(Pics[FolderIndex]), Pics[FolderIndex], System.StringComparison.InvariantCultureIgnoreCase);
+                    ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.ToolTip.ToString().Replace(Path.GetFileName(Pics[FolderIndex]), Pics[FolderIndex], System.StringComparison.InvariantCultureIgnoreCase);
+                }
+                Refocus(false);
             }
             else
             {
@@ -92,7 +110,7 @@ namespace PicView.UILogic
         /// <summary>
         /// Removes focus from titlebar and sets it to the mainwindow
         /// </summary>
-        internal static void Refocus()
+        internal static void Refocus(bool backup = true)
         {
             if (!ConfigureWindows.GetMainWindow.TitleText.IsFocused)
             {
@@ -103,8 +121,11 @@ namespace PicView.UILogic
             Keyboard.ClearFocus();
             ConfigureWindows.GetMainWindow.Focus();
 
-            ConfigureWindows.GetMainWindow.TitleText.Text = backupTitle;
-            backupTitle = string.Empty;
+            if (backup)
+            {
+                ConfigureWindows.GetMainWindow.TitleText.Text = backupTitle;
+                backupTitle = string.Empty;
+            }
         }
     }
 }
