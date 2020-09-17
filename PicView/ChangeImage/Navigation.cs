@@ -73,6 +73,8 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static bool ClickArrowLeftClicked { get; set; }
 
+        internal static bool FastPicRunning { get; private set; }
+
         #endregion Static fields
 
         #region Update Image values
@@ -170,10 +172,8 @@ namespace PicView.ChangeImage
         /// <param name="index">The index of file to load from Pics</param>
         internal static async void Pic(int index)
         {
-#if DEBUG
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
-#endif
+            FolderIndex = index;
+
             // Declare variable to be used to set image source
             BitmapSource bitmapSource;
 
@@ -197,7 +197,7 @@ namespace PicView.ChangeImage
             // Initate loading behavior, if needed
             if (bitmapSource == null)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
                 {
                     // Set loading from translation service
                     SetLoadingString();
@@ -205,10 +205,10 @@ namespace PicView.ChangeImage
 
 
                 // Show a thumbnail while loading
-                var thumb = GetThumb(index, true);
+                var thumb = GetThumb(index);
                 if (thumb != null && Properties.Settings.Default.PicGallery != 2)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
                     {
                         // Don't allow image size to stretch the whole screen
                         if (xWidth == 0)
@@ -268,7 +268,6 @@ namespace PicView.ChangeImage
 
             // Update values
             CanNavigate = true;
-            FolderIndex = index;
             FreshStartup = false;
 
             if (ConfigureWindows.GetImageInfoWindow != null)
@@ -291,12 +290,6 @@ namespace PicView.ChangeImage
             {
                 RecentFiles.Add(Pics[index]);
             }
-
-#if DEBUG
-            stopWatch.Stop();
-            var s = $"Pic(); executed in {stopWatch.Elapsed.TotalMilliseconds} milliseconds";
-            Trace.WriteLine(s);
-#endif
         }
 
         /// <summary>
@@ -576,6 +569,7 @@ namespace PicView.ChangeImage
         /// <param name="forwards">The direction</param>
         internal static void FastPic(bool forwards)
         {
+            FastPicRunning = true;
             /// TODO FastPic Changes...
             /// Need solution for slowing down this thing to something useful
             /// await task delay only works once, it seems
@@ -632,7 +626,14 @@ namespace PicView.ChangeImage
             /// Need a solution that will make sure no unused values
             /// are in the preloader collection
 
-            Pic(FolderIndex);
+            // Make sure it's only updated when the key is actually held down
+            if (FastPicRunning)
+            {
+                Preloader.Clear();
+                Pic(FolderIndex);
+            }
+
+            FastPicRunning = false;
         }
 
         #endregion Change navigation values

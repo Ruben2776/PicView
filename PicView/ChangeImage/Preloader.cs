@@ -19,6 +19,8 @@ namespace PicView.ChangeImage
             string,
             BitmapSource> Sources = new ConcurrentDictionary<string, BitmapSource>();
 
+        internal static int Count { get => Sources.Count; }
+
         /// <summary>
         /// Add file to preloader
         /// </summary>
@@ -124,6 +126,8 @@ namespace PicView.ChangeImage
             return Sources[key];
         }
 
+        
+
         /// <summary>
         /// Checks if the specified key exists
         /// </summary>
@@ -147,12 +151,6 @@ namespace PicView.ChangeImage
         /// <param name="reverse"></param>
         internal static Task PreLoad(int index) => Task.Run(() =>
         {
-#if DEBUG
-            Trace.WriteLine("Preolader started, "
-                + string.Concat(Properties.Settings.Default.Looping ? "looping " : string.Empty)
-                + string.Concat(Reverse ? "backwards" : "forwards"));
-#endif
-
             var loadInfront = 2;
             var loadBehind = 1;
 
