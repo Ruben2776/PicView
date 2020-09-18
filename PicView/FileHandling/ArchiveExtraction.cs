@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PicView.SystemIntegration;
+using System;
 using System.Diagnostics;
 using System.IO;
 using static PicView.ChangeImage.Navigation;
@@ -34,16 +35,13 @@ namespace PicView.FileHandling
         /// <returns></returns>
         internal static bool Extract(string path)
         {
-            // TODO find a way to make user set path and app
-            // if installed in irregular way
-
             var Winrar = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\WinRAR\\WinRAR.exe";
             if (!File.Exists(Winrar))
             {
                 Winrar = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\WinRAR\\WinRAR.exe";
             }
 
-            if (File.Exists(Winrar))
+            if (File.Exists(Winrar) || NativeMethods.IsSoftwareInstalled("WinRAR"))  // TODO test if works
             {
                 return Extract(path, Winrar, true);
             }
@@ -54,7 +52,7 @@ namespace PicView.FileHandling
                 sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\7-Zip\\7z.exe";
             }
 
-            if (File.Exists(sevenZip))
+            if (File.Exists(sevenZip) || NativeMethods.IsSoftwareInstalled("7-Zip")) // TODO test if works
             {
                 return Extract(path, sevenZip, false);
             }
