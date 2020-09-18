@@ -436,7 +436,7 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <PropertyGroup>
-    <FileVersion>1.0.0.0</FileVersion>
+    <FileVersion>1.0.5.0</FileVersion>
     <SignAssembly>true</SignAssembly>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
@@ -449,6 +449,7 @@
     <Authors>Ruben2776</Authors>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageIcon>icon-raster.128b.png</PackageIcon>
+    <AssemblyVersion>1.0.5.0</AssemblyVersion>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
