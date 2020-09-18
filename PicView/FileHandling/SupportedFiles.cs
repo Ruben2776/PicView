@@ -31,6 +31,7 @@ namespace PicView.FileHandling
 
                 // Vector
                 ".svg" or // Maybe add svgz at some point
+                ".xcf" or
 
                 // Camera
                 ".3fr" or ".arw" or ".cr2" or ".crw" or ".dcr" or ".dng" or ".erf" or ".kdc" or ".mdc" or ".mef" or ".mos" or ".mrw" or ".nef" or ".nrw" or ".orf" or

@@ -18,7 +18,7 @@ namespace PicView.UILogic.DragAndDrop
         /// <summary>
         /// Backup of image
         /// </summary>
-        private static Views.UserControls.DragDropOverlay DropOverlay;
+        private static DragDropOverlay DropOverlay;
 
         /// <summary>
         /// Check if dragged file is valid,
@@ -54,7 +54,7 @@ namespace PicView.UILogic.DragAndDrop
         {
             UIElement element = null;
 
-            if (!(e.Data.GetData(DataFormats.FileDrop, true) is string[] files))
+            if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
             {
                 var data = e.Data.GetData(DataFormats.Text);
 

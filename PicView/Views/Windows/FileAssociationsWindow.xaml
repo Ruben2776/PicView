@@ -267,6 +267,7 @@
                         x:Name="xbm"
                         Content=".xbm"
                         IsChecked="True" />
+                    <CheckBox x:Name="xcf" Content=".xcf" />
                     <CheckBox
                         x:Name="xpm"
                         Content=".xpm"

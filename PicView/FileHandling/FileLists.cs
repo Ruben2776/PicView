@@ -75,6 +75,7 @@ namespace PicView.FileHandling
                     // Photoshop
                     || file.EndsWith("psd", StringComparison.OrdinalIgnoreCase)
                     || file.EndsWith("psb", StringComparison.OrdinalIgnoreCase)
+                    || file.EndsWith("xcf", StringComparison.OrdinalIgnoreCase)
 
                     // Web
                     || file.EndsWith("svg", StringComparison.OrdinalIgnoreCase)

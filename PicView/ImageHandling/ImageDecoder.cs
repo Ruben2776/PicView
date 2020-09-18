@@ -69,16 +69,18 @@ namespace PicView.ImageHandling
 
                     case ".PSD":
                     case ".PSB":
+                    case ".SVG":
+                    case ".XCF":
                         filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
-                        var photoShopmagick = new MagickImage();
-                        photoShopmagick.Read(filestream);
+                        var transMagick = new MagickImage();
+                        transMagick.Read(filestream);
                         await filestream.DisposeAsync().ConfigureAwait(false);
 
-                        photoShopmagick.Quality = 100;
-                        photoShopmagick.ColorSpace = ColorSpace.Transparent;
+                        transMagick.Quality = 100;
+                        transMagick.ColorSpace = ColorSpace.Transparent;
 
-                        var psd = photoShopmagick.ToBitmapSource();
-                        photoShopmagick.Dispose();
+                        var psd = transMagick.ToBitmapSource();
+                        transMagick.Dispose();
                         psd.Freeze();
 
                         return psd;
@@ -89,7 +91,6 @@ namespace PicView.ImageHandling
 
                         // Set values for maximum quality
                         magick.Quality = 100;
-                        magick.ColorSpace = ColorSpace.Transparent;
 
                         var pic = magick.ToBitmapSource();
                         magick.Dispose();
