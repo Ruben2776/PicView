@@ -164,12 +164,12 @@ namespace PicView.Shortcuts
 
                             ScrollTo(true, ctrlDown);
                         }
-                        else if (ctrlDown)
+                        else
                         {
                             Rotate(true);
                         }
                     }
-                    else if (ctrlDown)
+                    else
                     {
                         Rotate(false);
                     }
