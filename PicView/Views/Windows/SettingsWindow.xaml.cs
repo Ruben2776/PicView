@@ -20,7 +20,7 @@ namespace PicView.Views.Windows
 {
     public partial class SettingsWindow : Window
     {
-        static FileAssociationsWindow fileAssocWin;
+        private static FileAssociationsWindow fileAssocWin;
 
         public SettingsWindow()
         {
@@ -32,7 +32,7 @@ namespace PicView.Views.Windows
             ContentRendered += delegate
             {
                 var colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.1) };
-                
+
                 AddGenericEvents(colorAnimation);
 
                 // SubDirRadio
@@ -50,7 +50,7 @@ namespace PicView.Views.Windows
                     BorderRadio.IsChecked = true;
                 }
 
-                WallpaperApply.MouseLeftButtonDown += delegate 
+                WallpaperApply.MouseLeftButtonDown += delegate
                 {
                     var x = WallpaperStyle.Fill;
                     if (Fit.IsSelected) { x = WallpaperStyle.Fit; }
@@ -65,7 +65,7 @@ namespace PicView.Views.Windows
                 SlideshowSlider.ValueChanged += (_, e) => Properties.Settings.Default.SlideTimer = e.NewValue * 1000;
 
                 ZoomSlider.Value = Properties.Settings.Default.ZoomSpeed;
-                ZoomSlider.ValueChanged += (_,e) => Properties.Settings.Default.ZoomSpeed = e.NewValue;
+                ZoomSlider.ValueChanged += (_, e) => Properties.Settings.Default.ZoomSpeed = e.NewValue;
 
                 LightThemeRadio.IsChecked = !Properties.Settings.Default.DarkTheme;
                 DarkThemeRadio.IsChecked = Properties.Settings.Default.DarkTheme;
@@ -107,18 +107,18 @@ namespace PicView.Views.Windows
                 CtrlZoom.Checked += (_, _) => Properties.Settings.Default.CtrlZoom = true;
                 ScrollZoom.Checked += (_, _) => Properties.Settings.Default.CtrlZoom = false;
 
-                ThemeRestart.MouseLeftButtonDown += (_,_) => GeneralSettings.RestartApp();
+                ThemeRestart.MouseLeftButtonDown += (_, _) => GeneralSettings.RestartApp();
                 LanguageRestart.MouseLeftButtonDown += (_, _) => GeneralSettings.RestartApp();
 
                 TopmostRadio.Checked += (_, _) => ConfigureWindows.IsMainWindowTopMost = !Properties.Settings.Default.TopMost;
                 TopmostRadio.Unchecked += (_, _) => ConfigureWindows.IsMainWindowTopMost = false;
                 TopmostRadio.IsChecked = Properties.Settings.Default.TopMost;
-                
+
                 CenterRadio.Checked += (_, _) => Properties.Settings.Default.KeepCentered = true;
                 CenterRadio.Unchecked += (_, _) => Properties.Settings.Default.KeepCentered = false;
                 CenterRadio.IsChecked = Properties.Settings.Default.KeepCentered;
 
-                fileAssocWin = new FileAssociationsWindow 
+                fileAssocWin = new FileAssociationsWindow
                 {
                     Owner = this,
                     Width = ActualWidth,
@@ -162,7 +162,6 @@ namespace PicView.Views.Windows
                         fileAssocWin.HideLogic();
                     }
                 };
-
 
                 switch (Properties.Settings.Default.ColorTheme)
                 {
@@ -213,7 +212,7 @@ namespace PicView.Views.Windows
                     case 12:
                         LimeRadio.IsChecked = true;
                         break;
-                }               
+                }
             };
         }
 
@@ -304,48 +303,56 @@ namespace PicView.Views.Windows
             LimeRadio.MouseLeave += Lime_MouseLeave;
 
             // WallpaperApply
-            WallpaperApply.MouseEnter += delegate {
+            WallpaperApply.MouseEnter += delegate
+            {
                 colorAnimation.From = AnimationHelper.GetPrefferedColorOver();
                 colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
                 WallpaperApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
-            WallpaperApply.MouseLeave += delegate {
+            WallpaperApply.MouseLeave += delegate
+            {
                 colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
                 colorAnimation.To = AnimationHelper.GetPrefferedColorOver();
                 WallpaperApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
 
             // SetAsDefaultTxt
-            SetAsDefaultTxt.MouseEnter += delegate {
+            SetAsDefaultTxt.MouseEnter += delegate
+            {
                 colorAnimation.From = AnimationHelper.GetPrefferedColorOver();
                 colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
                 SetAsDefaultTxtBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
-            SetAsDefaultTxt.MouseLeave += delegate {
+            SetAsDefaultTxt.MouseLeave += delegate
+            {
                 colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
                 colorAnimation.To = AnimationHelper.GetPrefferedColorOver();
                 SetAsDefaultTxtBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
 
             // RestartTheme
-            ThemeRestart.MouseEnter += delegate {
+            ThemeRestart.MouseEnter += delegate
+            {
                 colorAnimation.From = mainColor;
                 colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
                 ThemeRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
-            ThemeRestart.MouseLeave += delegate {
+            ThemeRestart.MouseLeave += delegate
+            {
                 colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
                 colorAnimation.To = mainColor;
                 ThemeRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
 
             // LanguageRestart
-            LanguageRestart.MouseEnter += delegate {
+            LanguageRestart.MouseEnter += delegate
+            {
                 colorAnimation.From = mainColor;
                 colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
                 LanguageRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
-            LanguageRestart.MouseLeave += delegate {
+            LanguageRestart.MouseLeave += delegate
+            {
                 colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
                 colorAnimation.To = mainColor;
                 LanguageRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
@@ -402,133 +409,157 @@ namespace PicView.Views.Windows
 
             if (!Properties.Settings.Default.DarkTheme)
             {
-                BlueRadio.MouseEnter += delegate {
+                BlueRadio.MouseEnter += delegate
+                {
                     colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     colorAnimation.To = Colors.White;
                     BlueText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
-                BlueRadio.MouseLeave += delegate {
+                BlueRadio.MouseLeave += delegate
+                {
                     colorAnimation.From = Colors.White;
                     colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     BlueText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
 
-                CyanRadio.MouseEnter += delegate {
+                CyanRadio.MouseEnter += delegate
+                {
                     colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     colorAnimation.To = Colors.White;
                     CyanText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
-                CyanRadio.MouseLeave += delegate {
+                CyanRadio.MouseLeave += delegate
+                {
                     colorAnimation.From = Colors.White;
                     colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     CyanText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
 
-                AquaRadio.MouseEnter += delegate {
+                AquaRadio.MouseEnter += delegate
+                {
                     colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     colorAnimation.To = Colors.White;
                     AquaText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
-                AquaRadio.MouseLeave += delegate {
+                AquaRadio.MouseLeave += delegate
+                {
                     colorAnimation.From = Colors.White;
                     colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     AquaText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
 
-                TealRadio.MouseEnter += delegate {
+                TealRadio.MouseEnter += delegate
+                {
                     colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     colorAnimation.To = Colors.White;
                     TealText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
-                TealRadio.MouseLeave += delegate {
+                TealRadio.MouseLeave += delegate
+                {
                     colorAnimation.From = Colors.White;
                     colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     TealText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
 
-                LimeRadio.MouseEnter += delegate {
+                LimeRadio.MouseEnter += delegate
+                {
                     colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     colorAnimation.To = Colors.White;
                     LimeText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
-                LimeRadio.MouseLeave += delegate {
+                LimeRadio.MouseLeave += delegate
+                {
                     colorAnimation.From = Colors.White;
                     colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     LimeText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
 
-                GreenRadio.MouseEnter += delegate {
+                GreenRadio.MouseEnter += delegate
+                {
                     colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     colorAnimation.To = Colors.White;
                     GreenText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
-                GreenRadio.MouseLeave += delegate {
+                GreenRadio.MouseLeave += delegate
+                {
                     colorAnimation.From = Colors.White;
                     colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     GreenText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
 
-                GoldenRadio.MouseEnter += delegate {
+                GoldenRadio.MouseEnter += delegate
+                {
                     colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     colorAnimation.To = Colors.White;
                     GoldenText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
-                GoldenRadio.MouseLeave += delegate {
+                GoldenRadio.MouseLeave += delegate
+                {
                     colorAnimation.From = Colors.White;
                     colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     GoldenText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
 
-                OrangeRadio.MouseEnter += delegate {
+                OrangeRadio.MouseEnter += delegate
+                {
                     colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     colorAnimation.To = Colors.White;
                     OrangeText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
-                OrangeRadio.MouseLeave += delegate {
+                OrangeRadio.MouseLeave += delegate
+                {
                     colorAnimation.From = Colors.White;
                     colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     OrangeText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
 
-                RedRadio.MouseEnter += delegate {
+                RedRadio.MouseEnter += delegate
+                {
                     colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     colorAnimation.To = Colors.White;
                     RedText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
-                RedRadio.MouseLeave += delegate {
+                RedRadio.MouseLeave += delegate
+                {
                     colorAnimation.From = Colors.White;
                     colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     RedText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
 
-                PinkRadio.MouseEnter += delegate {
+                PinkRadio.MouseEnter += delegate
+                {
                     colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     colorAnimation.To = Colors.White;
                     PinkText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
-                PinkRadio.MouseLeave += delegate {
+                PinkRadio.MouseLeave += delegate
+                {
                     colorAnimation.From = Colors.White;
                     colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     PinkText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
 
-                MagentaRadio.MouseEnter += delegate {
+                MagentaRadio.MouseEnter += delegate
+                {
                     colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     colorAnimation.To = Colors.White;
                     MagentaText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
-                MagentaRadio.MouseLeave += delegate {
+                MagentaRadio.MouseLeave += delegate
+                {
                     colorAnimation.From = Colors.White;
                     colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     MagentaText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
 
-                PurpleRadio.MouseEnter += delegate {
+                PurpleRadio.MouseEnter += delegate
+                {
                     colorAnimation.From = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     colorAnimation.To = Colors.White;
                     PurpleText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
-                PurpleRadio.MouseLeave += delegate {
+                PurpleRadio.MouseLeave += delegate
+                {
                     colorAnimation.From = Colors.White;
                     colorAnimation.To = Color.FromArgb(mainColor.A, mainColor.R, mainColor.G, mainColor.B);
                     PurpleText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);

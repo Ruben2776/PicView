@@ -95,7 +95,6 @@
     <system:String x:Key="Language">Sprache</system:String>
     <system:String x:Key="ChangingLanguageRequiresRestart">* Die Sprache ändern erfordert einen Neustart</system:String>
 
-
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">Allgemeine Einstellungen</system:String>
     <system:String x:Key="UISettings">UI-Einstellungen</system:String>

@@ -1,5 +1,4 @@
-﻿using PicView.UILogic.Loading;
-using System;
+﻿using System;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,6 +20,7 @@ namespace PicView.UILogic.TransformImage
         /// Current point of AutoScroll
         /// </summary>
         internal static Point AutoScrollPos;
+
         internal static readonly Timer AutoScrollTimer = new Timer()
         {
             Interval = 7,

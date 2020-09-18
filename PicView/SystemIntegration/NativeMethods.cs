@@ -283,6 +283,7 @@ namespace PicView.SystemIntegration
         #endregion GetPixelColor
 
         #region Set Associations
+
         // needed so that Explorer windows get refreshed after the registry is updated
         [DllImport("Shell32.dll")]
         private static extern int SHChangeNotify(int eventId, int flags, IntPtr item1, IntPtr item2);
@@ -331,6 +332,6 @@ namespace PicView.SystemIntegration
             return true;
         }
 
-        #endregion
+        #endregion Set Associations
     }
 }

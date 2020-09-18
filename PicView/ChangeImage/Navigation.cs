@@ -41,7 +41,7 @@ namespace PicView.ChangeImage
         internal static string BackupPath { get; set; }
 
         /// <summary>
-        /// Used for error handling to prevent navigating 
+        /// Used for error handling to prevent navigating
         /// when not possibe
         /// </summary>
         internal static bool CanNavigate { get; set; }
@@ -60,14 +60,17 @@ namespace PicView.ChangeImage
         /// Used to move cursor when clicked
         /// </summary>
         internal static bool LeftbuttonClicked { get; set; }
+
         /// <summary>
         /// Used to move cursor when clicked
         /// </summary>
         internal static bool RightbuttonClicked { get; set; }
+
         /// <summary>
         /// Used to move cursor when clicked
         /// </summary>
         internal static bool ClickArrowRightClicked { get; set; }
+
         /// <summary>
         /// Used to move cursor when clicked
         /// </summary>
@@ -78,15 +81,6 @@ namespace PicView.ChangeImage
         #endregion Static fields
 
         #region Update Image values
-
-        internal static async void PicArvhive(string path)
-        {
-            Pics.Clear();
-            GalleryFunctions.Clear();
-            Preloader.Clear();
-            FreshStartup = true;
-            await GetValues(path).ConfigureAwait(true);
-        }
 
         /// <summary>
         /// Loads a picture from a given file path and does extra error checking

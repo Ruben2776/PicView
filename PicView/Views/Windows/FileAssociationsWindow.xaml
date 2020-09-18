@@ -65,7 +65,6 @@
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="Center"
                                 RecognizesAccessKey="False" />
-
                         </Grid>
                         <!--  This uses Visibility to hide and show the CheckMark on IsChecked  -->
                         <ControlTemplate.Triggers>
@@ -78,7 +77,6 @@
                                 <Setter TargetName="bg" Property="Fill" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
-
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -107,7 +105,6 @@
                     Width="35"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center" />
-
             </Grid>
 
             <StackPanel Margin="7,7,7,10" HorizontalAlignment="Center">
@@ -188,7 +185,6 @@
                     <CheckBox x:Name="svg" Content=".svg" />
                 </StackPanel>
 
-
                 <CheckBox
                     x:Name="RawCameraCheck"
                     Width="264"
@@ -221,9 +217,7 @@
                     <CheckBox x:Name="rw2" Content=".rw2" />
                     <CheckBox x:Name="srf" Content=".srf" />
                     <CheckBox x:Name="x3f" Content=".x3f" />
-
                 </WrapPanel>
-
 
                 <CheckBox
                     x:Name="OtherCheck"
@@ -313,7 +307,6 @@
                     </Label.Foreground>
                 </Label>
             </StackPanel>
-
         </DockPanel>
     </Border>
 </Window>

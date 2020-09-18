@@ -1,5 +1,4 @@
 ﻿using PicView.ImageHandling;
-using PicView.UILogic.Loading;
 using PicView.UILogic.Sizing;
 using System.Threading.Tasks;
 using System.Windows;
@@ -123,7 +122,6 @@ namespace PicView.UILogic.PicGallery
                 if (pic == null)
                 {
                     pic = ImageDecoder.ImageErrorMessage();
-                    
                 }
                 else if (!pic.IsFrozen)
                 {

@@ -1,5 +1,4 @@
-﻿using PicView.UILogic.Loading;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Windows;
 using static PicView.ChangeImage.Navigation;

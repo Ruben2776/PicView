@@ -1,5 +1,4 @@
 ﻿using PicView.FileHandling;
-using PicView.UILogic.Loading;
 using PicView.UILogic.TransformImage;
 using System;
 using System.Collections.Specialized;

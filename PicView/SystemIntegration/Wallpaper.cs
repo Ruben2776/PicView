@@ -82,20 +82,20 @@ namespace PicView.SystemIntegration
                 {
                     await Task.Run(() =>
                      {
-                        // Create temp directory
-                        var tempPath = Path.GetTempPath();
+                         // Create temp directory
+                         var tempPath = Path.GetTempPath();
                          var randomName = Path.GetRandomFileName();
 
-                        // Download to it
-                        using var webClient = new System.Net.WebClient();
+                         // Download to it
+                         using var webClient = new System.Net.WebClient();
                          Directory.CreateDirectory(tempPath);
                          webClient.DownloadFile(wallpaper, tempPath + randomName);
 
-                        // Use it
-                        SetDesktopWallpaper(tempPath + randomName, style);
+                         // Use it
+                         SetDesktopWallpaper(tempPath + randomName, style);
 
-                        // Clean up
-                        File.Delete(tempPath + randomName);
+                         // Clean up
+                         File.Delete(tempPath + randomName);
                          using var timer = new Timer(2000);
                          timer.Elapsed += (s, x) => Directory.Delete(tempPath);
                      }).ConfigureAwait(false);

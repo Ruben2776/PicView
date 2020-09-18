@@ -1,5 +1,4 @@
-﻿using PicView.ChangeImage;
-using PicView.FileHandling;
+﻿using PicView.FileHandling;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;

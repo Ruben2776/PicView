@@ -37,7 +37,6 @@
                 Width="35"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center" />
-
         </Grid>
 
         <Rectangle
@@ -413,7 +412,6 @@
                         <SolidColorBrush x:Name="SaveText" Color="{StaticResource MainColor}" />
                     </Button.Foreground>
                 </Button>
-
             </StackPanel>
         </ScrollViewer>
     </DockPanel>

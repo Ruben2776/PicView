@@ -44,7 +44,6 @@ namespace PicView.ConfigureSettings
             Application.Current.Shutdown();
         }
 
-
         [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
         public static void ElevateProcess(string args)
         {

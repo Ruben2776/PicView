@@ -1,5 +1,4 @@
 ﻿using PicView.FileHandling;
-using PicView.UILogic.Loading;
 using PicView.Views.UserControls;
 using PicView.Views.UserControls.Misc;
 using System.Diagnostics;
@@ -191,11 +190,11 @@ namespace PicView.UILogic.DragAndDrop
                 }
                 else if (SupportedFiles.IsSupportedArchives(Path.GetExtension(files[0])))
                 {
-                    PicArvhive(files[0]);
+                    FreshStartup = true;
+                    Pic(files[0]);
                 }
                 return;
             }
-
 
             // Check if same file
             if (files.Length == 1 && Pics.Count > 0)

@@ -35,9 +35,9 @@ namespace PicView.Views.Windows
                     ConfigureWindows.GetSettingsWindow.Top = Top;
                     ConfigureWindows.GetSettingsWindow.Left = Left;
                 };
-                CloseButton.TheButton.Click += (_, _) => HideLogic();             
+                CloseButton.TheButton.Click += (_, _) => HideLogic();
 
-                RasterFormatsCheck.Checked += delegate 
+                RasterFormatsCheck.Checked += delegate
                 {
                     var list = RasterFormatsContainer.Children.OfType<CheckBox>();
                     foreach (var item in list)
@@ -121,9 +121,9 @@ namespace PicView.Views.Windows
                         item.IsChecked = false;
                     }
                 };
-            };      
+            };
 
-            KeyDown += (_, e) => 
+            KeyDown += (_, e) =>
             {
                 if (e.Key == System.Windows.Input.Key.Escape)
                 {
@@ -132,7 +132,7 @@ namespace PicView.Views.Windows
             };
 
             // ApplyButton
-            ApplyButton.Click += delegate 
+            ApplyButton.Click += delegate
             {
                 var rasterFormats = RasterFormatsContainer.Children.OfType<CheckBox>().Where(x => x.IsChecked == true);
                 var photoshopFormats = PhotoshopContainer.Children.OfType<CheckBox>().Where(x => x.IsChecked == true);
@@ -161,7 +161,7 @@ namespace PicView.Views.Windows
                 var xx = sb.ToString();
                 ConfigureSettings.GeneralSettings.ElevateProcess(sb.ToString());
             };
-           
+
             ApplyButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ApplyText); };
             ApplyButton.MouseEnter += delegate { ButtonMouseOverAnim(ApplyText); };
             ApplyButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ApplyBrush); };
@@ -171,13 +171,15 @@ namespace PicView.Views.Windows
             var colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.1) };
 
             // RmFileAssoc
-            RmFileAssoc.MouseLeftButtonDown += (_,_) => ConfigureSettings.GeneralSettings.ElevateProcess(".remove");
-            RmFileAssoc.MouseEnter += delegate {
+            RmFileAssoc.MouseLeftButtonDown += (_, _) => ConfigureSettings.GeneralSettings.ElevateProcess(".remove");
+            RmFileAssoc.MouseEnter += delegate
+            {
                 colorAnimation.From = AnimationHelper.GetPrefferedColorOver();
                 colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
                 RmFileAssocBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
-            RmFileAssoc.MouseLeave += delegate {
+            RmFileAssoc.MouseLeave += delegate
+            {
                 colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
                 colorAnimation.To = AnimationHelper.GetPrefferedColorOver();
                 RmFileAssocBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);

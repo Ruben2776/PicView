@@ -2,7 +2,6 @@
 using PicView.Editing.Crop;
 using PicView.UILogic;
 using PicView.UILogic.Animations;
-using PicView.UILogic.Loading;
 using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 

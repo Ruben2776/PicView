@@ -61,7 +61,7 @@ namespace PicView.SystemIntegration
             }
         }
 
-        static async Task Apply(string path)
+        private static async Task Apply(string path)
         {
             try
             {

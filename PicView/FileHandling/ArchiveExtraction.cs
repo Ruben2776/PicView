@@ -1,14 +1,8 @@
-﻿using PicView.ChangeImage;
-using PicView.UILogic;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
-using System.Windows;
 using static PicView.ChangeImage.Navigation;
-using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.FileLists;
-using static PicView.UILogic.Tooltip;
 
 namespace PicView.FileHandling
 {
@@ -22,8 +16,6 @@ namespace PicView.FileHandling
             + "*.3fr *.arw *.cr2 *.crw *.dcr *.dng *.erf *.kdc *.mdc *.mef *.mos *.mrw *.nef *.nrw *.orf "
             + "*.pef *.raf *.raw *.rw2 *.srf *.x3f "
             + "*.pgm *.hdr *.cut *.exr *.dib *.heic *.emf *.wmf *.wpg *.pcx *.xbm *.xpm";
-
-
 
         /// <summary>
         /// File path for the extracted folder
@@ -131,7 +123,7 @@ namespace PicView.FileHandling
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         private static bool SetDirectory()

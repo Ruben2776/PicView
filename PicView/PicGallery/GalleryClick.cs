@@ -1,6 +1,4 @@
-﻿using PicView.ChangeImage;
-using PicView.UILogic.Loading;
-using PicView.UILogic.Sizing;
+﻿using PicView.UILogic.Sizing;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -43,7 +41,7 @@ namespace PicView.UILogic.PicGallery
                     GetPicGallery.Height = xHeight;
                 }
 
-                GetPicGallery.x2.Visibility = Visibility.Hidden;                
+                GetPicGallery.x2.Visibility = Visibility.Hidden;
 
                 var img = new Image()
                 {

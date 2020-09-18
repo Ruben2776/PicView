@@ -40,7 +40,6 @@
                 Width="35"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center" />
-
         </Grid>
 
         <Rectangle
@@ -163,7 +162,6 @@
                         </CheckBox.Content>
                     </CheckBox>
 
-
                     <CheckBox
                         x:Name="CenterRadio"
                         Padding="5,0,0,0"
@@ -179,7 +177,6 @@
                                 Text="{StaticResource StayCentered}" />
                         </CheckBox.Content>
                     </CheckBox>
-
 
                     <Label Margin="0,15,0,0" Content="{StaticResource SetAsWallpaper}" />
 
@@ -204,7 +201,6 @@
                                 <SolidColorBrush x:Name="WallpaperApplyBrush" Color="{DynamicResource ChosenColor}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-
                     </StackPanel>
 
                     <Label
@@ -361,7 +357,6 @@
                             <SolidColorBrush x:Name="SetAsDefaultTxtBrush" Color="{DynamicResource ChosenColor}" />
                         </TextBlock.Foreground>
                     </TextBlock>
-
                 </StackPanel>
             </TabItem>
 
@@ -563,7 +558,6 @@
                         </RadioButton>
                     </WrapPanel>
 
-
                     <Label
                         Margin="0,10,0,0"
                         HorizontalAlignment="Center"
@@ -635,6 +629,5 @@
                 </StackPanel>
             </TabItem>
         </TabControl>
-
     </DockPanel>
 </Window>

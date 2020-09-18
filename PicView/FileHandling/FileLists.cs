@@ -72,7 +72,6 @@ namespace PicView.FileHandling
                     || file.EndsWith("ico", StringComparison.OrdinalIgnoreCase)
                     || file.EndsWith("jfif", StringComparison.OrdinalIgnoreCase)
 
-
                     // Photoshop
                     || file.EndsWith("psd", StringComparison.OrdinalIgnoreCase)
                     || file.EndsWith("psb", StringComparison.OrdinalIgnoreCase)

@@ -23,12 +23,10 @@ namespace PicView.Views.UserControls
                 s += " [F5]";
                 ToolTip = s;
 
-
                 if (!Properties.Settings.Default.DarkTheme)
                 {
                     AnimationHelper.LightThemeMouseEvent(this, SlideshowBrush);
                 }
-
             };
         }
     }

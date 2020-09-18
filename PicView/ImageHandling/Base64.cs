@@ -1,9 +1,7 @@
 ﻿using ImageMagick;
 using PicView.ChangeImage;
 using PicView.FileHandling;
-using PicView.Library;
 using PicView.UILogic;
-using PicView.UILogic.Loading;
 using System;
 using System.Diagnostics;
 using System.IO;

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Win32;
 using PicView.ImageHandling;
 using PicView.UILogic;
-using PicView.UILogic.Loading;
 using System;
 using System.Diagnostics;
 using System.IO;

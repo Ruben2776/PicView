@@ -1,5 +1,4 @@
-﻿using PicView.UILogic.Loading;
-using PicView.UILogic.PicGallery;
+﻿using PicView.UILogic.PicGallery;
 using PicView.UILogic.Sizing;
 using System.Windows.Media;
 

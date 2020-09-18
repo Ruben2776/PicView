@@ -242,7 +242,7 @@ namespace PicView.Shortcuts
                     else if (Properties.Settings.Default.ScrollEnabled)
                     {
                         GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + 30);
-                    }               
+                    }
                     return;
 
                 // Zoom
@@ -374,7 +374,7 @@ namespace PicView.Shortcuts
 
                             if (shiftDown)
                             {
-                                Copyfile(); 
+                                Copyfile();
                             }
                             else if (altDown)
                             {
@@ -796,13 +796,12 @@ namespace PicView.Shortcuts
                 {
                     Pic(e.Delta > 0);
                 }
-                
             }
             else
             {
                 if (Properties.Settings.Default.CtrlZoom)
                 {
-                    Pic(e.Delta > 0); 
+                    Pic(e.Delta > 0);
                 }
                 else
                 {

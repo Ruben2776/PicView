@@ -37,12 +37,10 @@ namespace PicView.Views.UserControls
                     SystemIntegration.NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 };
 
-
                 if (!Properties.Settings.Default.DarkTheme)
                 {
                     AnimationHelper.LightThemeMouseEvent(this, IconBrush);
                 }
-
             };
         }
     }

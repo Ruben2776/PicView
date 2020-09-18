@@ -25,7 +25,7 @@ namespace PicView.ChangeImage
         /// Add file to preloader
         /// </summary>
         /// <param name="file">file path</param>
-        internal static Task Add(string file) => Task.Run(async() =>
+        internal static Task Add(string file) => Task.Run(async () =>
         {
             Sources.TryAdd(file, await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(false));
         });
@@ -125,8 +125,6 @@ namespace PicView.ChangeImage
 
             return Sources[key];
         }
-
-        
 
         /// <summary>
         /// Checks if the specified key exists

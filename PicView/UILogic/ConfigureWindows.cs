@@ -32,8 +32,8 @@ namespace PicView.UILogic
         /// </summary>
         internal static System.Windows.Controls.ContextMenu cm;
 
-        internal static bool IsMainWindowTopMost 
-        { 
+        internal static bool IsMainWindowTopMost
+        {
             get { return Properties.Settings.Default.TopMost; }
             set
             {

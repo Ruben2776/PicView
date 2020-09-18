@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using static PicView.ConfigureSettings.ConfigColors;
 
 namespace PicView.UILogic.Animations
 {
@@ -15,9 +14,9 @@ namespace PicView.UILogic.Animations
 
         */
 
-        static readonly Color mainColor = (Color)Application.Current.Resources["IconColor"];
+        private static readonly Color mainColor = (Color)Application.Current.Resources["IconColor"];
 
-        static readonly Color backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
+        private static readonly Color backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
 
         #region ALtInterface hover anims
 

@@ -37,12 +37,10 @@ namespace PicView.Views.UserControls
                 ConfigureWindows.Fullscreen_Restore();
             };
 
-
             if (!Properties.Settings.Default.DarkTheme)
             {
                 AnimationHelper.LightThemeMouseEvent(this, IconBrush);
             }
-
         }
     }
 }

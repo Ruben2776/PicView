@@ -24,7 +24,7 @@ namespace PicView.Views.Windows
 
             TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
 
-            KeyUp += (_,e) =>
+            KeyUp += (_, e) =>
             {
                 if (e.Key == Key.Escape)
                 {

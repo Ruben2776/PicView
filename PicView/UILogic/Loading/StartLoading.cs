@@ -192,7 +192,6 @@ namespace PicView.UILogic.Loading
 #if DEBUG
             Trace.WriteLine("Start Completed ");
 #endif
-
         }
 
         private static void SetLastWindowSize()

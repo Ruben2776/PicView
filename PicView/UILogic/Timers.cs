@@ -17,7 +17,7 @@ namespace PicView.UILogic
                 AutoReset = true,
                 Enabled = false
             };
-            ActivityTimer.Elapsed += delegate 
+            ActivityTimer.Elapsed += delegate
             {
                 FadeControlsAsync(false);
             };

@@ -1,10 +1,8 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Diagnostics;
 
 namespace PicView.SystemIntegration
 {
-
     internal static class FileAssociations
     {
         // needed so that Explorer windows get refreshed after the registry is updated

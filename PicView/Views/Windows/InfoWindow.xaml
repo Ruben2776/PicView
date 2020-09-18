@@ -2070,7 +2070,6 @@
                         </Hyperlink>
                     </TextBlock>
 
-
                     <TextBlock TextAlignment="Center">
                         <Hyperlink NavigateUri="https://www.flaticon.com/authors/freepik" RequestNavigate="Hyperlink_RequestNavigate">
                             <TextBlock
@@ -2084,7 +2083,6 @@
                             </Hyperlink.Foreground>
                         </Hyperlink>
                     </TextBlock>
-
                 </StackPanel>
 
                 <StackPanel Margin="0,36,0,0">
