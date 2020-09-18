@@ -5,7 +5,6 @@ using PicView.UILogic;
 using PicView.UILogic.Animations;
 using PicView.UILogic.Sizing;
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;

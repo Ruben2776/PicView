@@ -9,6 +9,7 @@
     Background="{StaticResource BackgroundColorBrushFade}"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
+    SizeToContent="WidthAndHeight"
     WindowStartupLocation="CenterOwner"
     WindowStyle="None"
     mc:Ignorable="d">
@@ -86,7 +87,7 @@
 
     <Border
         x:Name="MainBorder"
-        Width="300"
+        Width="325"
         HorizontalAlignment="Center"
         VerticalAlignment="Center"
         Background="{StaticResource NoisyBg}"
@@ -109,7 +110,7 @@
 
             </Grid>
 
-            <StackPanel Margin="7,7,7,10">
+            <StackPanel Margin="7,7,7,10" HorizontalAlignment="Center">
 
                 <CheckBox
                     x:Name="RasterFormatsCheck"
@@ -302,6 +303,15 @@
                         </Button.Foreground>
                     </Button>
                 </Border>
+
+                <Label
+                    x:Name="RmFileAssoc"
+                    HorizontalAlignment="Center"
+                    Content="Remove file associations">
+                    <Label.Foreground>
+                        <SolidColorBrush x:Name="RmFileAssocBrush" Color="{DynamicResource ChosenColor}" />
+                    </Label.Foreground>
+                </Label>
             </StackPanel>
 
         </DockPanel>

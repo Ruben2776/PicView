@@ -1,17 +1,15 @@
 ﻿using PicView.UILogic;
+using PicView.UILogic.Animations;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
-using static PicView.ConfigureSettings.ConfigColors;
-using static PicView.SystemIntegration.Wallpaper;
-using static PicView.UILogic.Animations.MouseOverAnimations;
 using static PicView.SystemIntegration.NativeMethods;
-using PicView.UILogic.Animations;
+using static PicView.UILogic.Animations.MouseOverAnimations;
 
 namespace PicView.Views.Windows
 {
@@ -23,8 +21,6 @@ namespace PicView.Views.Windows
         public FileAssociationsWindow()
         {
             Title = Application.Current.Resources["SetAsDefualt"] + " - PicView";
-            Width = ConfigureWindows.GetSettingsWindow.ActualWidth;
-            Height = ConfigureWindows.GetSettingsWindow.ActualHeight;
             InitializeComponent();
 
             ContentRendered += delegate
@@ -135,6 +131,7 @@ namespace PicView.Views.Windows
                 }
             };
 
+            // ApplyButton
             ApplyButton.Click += delegate 
             {
                 var rasterFormats = RasterFormatsContainer.Children.OfType<CheckBox>().Where(x => x.IsChecked == true);
@@ -160,15 +157,31 @@ namespace PicView.Views.Windows
                         sb.Append(',');
                     }
                 }
+
+                var xx = sb.ToString();
                 ConfigureSettings.GeneralSettings.ElevateProcess(sb.ToString());
             };
-
-            // ApplyButton
+           
             ApplyButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ApplyText); };
             ApplyButton.MouseEnter += delegate { ButtonMouseOverAnim(ApplyText); };
             ApplyButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ApplyBrush); };
             ApplyButton.MouseLeave += delegate { ButtonMouseLeaveAnim(ApplyText); };
             ApplyButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ApplyBrush); };
+
+            var colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.1) };
+
+            // RmFileAssoc
+            RmFileAssoc.MouseLeftButtonDown += (_,_) => ConfigureSettings.GeneralSettings.ElevateProcess(".remove");
+            RmFileAssoc.MouseEnter += delegate {
+                colorAnimation.From = AnimationHelper.GetPrefferedColorOver();
+                colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
+                RmFileAssocBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            };
+            RmFileAssoc.MouseLeave += delegate {
+                colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
+                colorAnimation.To = AnimationHelper.GetPrefferedColorOver();
+                RmFileAssocBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            };
         }
 
         internal void HideLogic()

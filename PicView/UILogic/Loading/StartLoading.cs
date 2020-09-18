@@ -81,11 +81,24 @@ namespace PicView.UILogic.Loading
                 // Set file associations
 
                 var process = Process.GetCurrentProcess();
-                var args = arg.ToString().Split(',');
 
-                foreach (var item in args)
+                if (arg.ToString() == ".remove")
                 {
-                    NativeMethods.SetAssociation(item, process.Id.ToString(CultureInfo.InvariantCulture), process.MainModule.FileName);
+                    var removestring = ".jpeg,.jpe,.jpg,.png,.bmp,.ico,.gif,.webp,.jfif,.tiff,.wbmp,.psd,.psb,.svg,.3fr,.arw,.cr2,.crw,.dcr,.dng,.erf,.kdc,.mef,.mdc,.mos,.mrw,.nef,.nrw,.orf,.pef,.raf,.raw,.rw2,.srf,.x3f,.cut,.exr,.emf,.dds,.dib,.hdr,.heic,.tga,.pcx,.pgm,.wmf,.wpg,.xbm,.xpm";
+                    var rmArgs = removestring.Split(',');
+                    foreach (var item in rmArgs)
+                    {
+                        NativeMethods.RemoveAssociation(item, process.Id.ToString(CultureInfo.InvariantCulture));
+                    }
+                }
+                else
+                {
+                    var args = arg.ToString().Split(',');
+
+                    foreach (var item in args)
+                    {
+                        NativeMethods.SetAssociation(item, process.Id.ToString(CultureInfo.InvariantCulture), process.MainModule.FileName);
+                    }
                 }
 
                 Environment.Exit(0);
