@@ -79,6 +79,15 @@ namespace PicView.ChangeImage
 
         #region Update Image values
 
+        internal static async void PicArvhive(string path)
+        {
+            Pics.Clear();
+            GalleryFunctions.Clear();
+            Preloader.Clear();
+            FreshStartup = true;
+            await GetValues(path).ConfigureAwait(true);
+        }
+
         /// <summary>
         /// Loads a picture from a given file path and does extra error checking
         /// </summary>
@@ -122,24 +131,6 @@ namespace PicView.ChangeImage
             }
 
             FolderIndex = Pics.IndexOf(path);
-           
-            if (FolderIndex == -1)
-            {
-                // Test for archive extraction error
-                if (string.IsNullOrWhiteSpace(TempZipFile))
-                {
-                    Reload();
-                }
-                else
-                {
-                    var recovery = await RecoverFailedArchiveAsync().ConfigureAwait(true);
-                    if (!recovery)
-                    {
-                        Reload(true);
-                    }                                  
-                }
-                return;
-            }
 
             if (!FreshStartup)
             {
@@ -154,7 +145,7 @@ namespace PicView.ChangeImage
 #endif
 
             // Navigate to picture using obtained index
-            Pic(FolderIndex);
+            Pic(FolderIndex == -1 ? 0 : FolderIndex);
 
             // Load new gallery values, if changing folder
             if (GetPicGallery != null && Properties.Settings.Default.PicGallery == 2)
@@ -202,7 +193,6 @@ namespace PicView.ChangeImage
                     // Set loading from translation service
                     SetLoadingString();
                 }));
-
 
                 // Show a thumbnail while loading
                 var thumb = GetThumb(index);
@@ -627,12 +617,13 @@ namespace PicView.ChangeImage
             /// are in the preloader collection
 
             // Make sure it's only updated when the key is actually held down
-            if (FastPicRunning)
+            if (!FastPicRunning)
             {
-                Preloader.Clear();
-                Pic(FolderIndex);
+                return;
             }
 
+            Preloader.Clear();
+            Pic(FolderIndex);
             FastPicRunning = false;
         }
 

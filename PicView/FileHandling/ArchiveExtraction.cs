@@ -42,14 +42,6 @@ namespace PicView.FileHandling
         /// <returns></returns>
         internal static bool Extract(string path)
         {
-            if (!string.IsNullOrWhiteSpace(TempZipPath))
-            {
-#if DEBUG
-                Trace.WriteLine("Extract function delete temp files");
-#endif
-                DeleteTempFiles();
-            }
-
             // TODO find a way to make user set path and app
             // if installed in irregular way
 
@@ -120,8 +112,10 @@ namespace PicView.FileHandling
             x.EnableRaisingEvents = true;
             x.Exited += delegate
             {
-                SetDirectory();
-                Pic(0);
+                if (SetDirectory())
+                {
+                    Pic(0);
+                }
             };
 
             return true;
@@ -174,69 +168,6 @@ namespace PicView.FileHandling
 
                 return true;
             }
-            return false;
-        }
-
-        /// <summary>
-        /// Attemps to recover from failed archive extraction
-        /// </summary>
-        internal static async Task<bool> RecoverFailedArchiveAsync()
-        {
-#if DEBUG
-            Trace.WriteLine("Entered RecoverFailedArchiveAsync");
-#endif
-            ConfigureWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Unzipping"] as string;
-            ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.Text;
-
-            while (Pics.Count < 1)
-            {
-                if (SetDirectory())
-                {
-                    await Preloader.PreLoad(0).ConfigureAwait(false);
-                    return true;
-                }
-                else
-                {
-                    var processed = false;
-                    var getProcesses = Process.GetProcessesByName("7z");
-                    if (getProcesses.Length > 0)
-                    {
-                        processed = true;
-                    }
-
-                    if (!processed)
-                    {
-                        getProcesses = Process.GetProcessesByName("Zip");
-                        if (getProcesses.Length > 0)
-                        {
-                            processed = true;
-                        }
-                    }
-
-                    if (processed)
-                    {
-                        // Kill it if it's asking for password
-                        if (!getProcesses[0].HasExited)
-                        {
-                            if (getProcesses[0].Threads[0].ThreadState == ThreadState.Wait && getProcesses[0].Threads[0].WaitReason == ThreadWaitReason.UserRequest)
-                            {
-#if DEBUG
-                                Trace.WriteLine("Process killed");
-#endif
-                                Error_Handling.Reload(true);
-                                getProcesses[0].Kill();
-                                ShowTooltipMessage(Application.Current.Resources["PasswordArchive"]);
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }
-
-#if DEBUG
-            Trace.WriteLine("RecoverFailedArchiveAsync processed");
-#endif
-
             return false;
         }
     }

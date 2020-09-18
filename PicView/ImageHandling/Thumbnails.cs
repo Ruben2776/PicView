@@ -1,5 +1,4 @@
 ﻿using ImageMagick;
-using PicView.FileHandling;
 using PicView.Views.UserControls;
 using System.Diagnostics;
 using System.Globalization;
@@ -19,6 +18,11 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         internal static BitmapSource GetThumb(int x)
         {
+            if (Pics.Count == x)
+            {
+                return null;
+            }
+
             BitmapSource pic;
 
             if (GetPicGallery != null)

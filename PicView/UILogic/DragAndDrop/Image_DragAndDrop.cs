@@ -163,10 +163,15 @@ namespace PicView.UILogic.DragAndDrop
             }
 
             // Get files as strings
-            if (!(e.Data.GetData(DataFormats.FileDrop, true) is string[] files))
+            if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
             {
                 return;
             }
+
+            // Don't show drop message any longer
+            CloseToolTipMessage();
+
+            ConfigureWindows.GetMainWindow.Activate();
 
             // check if valid
             if (!Drag_Drop_Check(files).HasValue)
@@ -184,11 +189,13 @@ namespace PicView.UILogic.DragAndDrop
                     }
                     return;
                 }
-                else if (!SupportedFiles.IsSupportedArchives(Path.GetExtension(files[0])))
+                else if (SupportedFiles.IsSupportedArchives(Path.GetExtension(files[0])))
                 {
-                    return;
+                    PicArvhive(files[0]);
                 }
+                return;
             }
+
 
             // Check if same file
             if (files.Length == 1 && Pics.Count > 0)
@@ -201,11 +208,6 @@ namespace PicView.UILogic.DragAndDrop
 
             // Load it
             Pic(files[0]);
-
-            // Don't show drop message any longer
-            CloseToolTipMessage();
-
-            ConfigureWindows.GetMainWindow.Activate();
 
             // Start multiple clients if user drags multiple files
             // TODO no longer working after converting to .NET Core...
@@ -227,7 +229,7 @@ namespace PicView.UILogic.DragAndDrop
 
         private static void AddDragOverlay(UIElement element)
         {
-            DropOverlay = new Views.UserControls.DragDropOverlay(element)
+            DropOverlay = new DragDropOverlay(element)
             {
                 Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth,
                 Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight

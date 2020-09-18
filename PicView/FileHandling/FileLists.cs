@@ -168,8 +168,8 @@ namespace PicView.FileHandling
                 if (!Extract(path))
                 {
                     Error_Handling.Reload(true);
-                    return;
                 }
+                return;
             }
 
             // Set files to Pics and get index
