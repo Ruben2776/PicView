@@ -88,7 +88,7 @@ namespace PicView.UILogic.Loading
                     var rmArgs = removestring.Split(',');
                     foreach (var item in rmArgs)
                     {
-                        NativeMethods.RemoveAssociation(item, process.Id.ToString(CultureInfo.InvariantCulture));
+                        NativeMethods.DeleteAssociation(item, process.Id.ToString(CultureInfo.InvariantCulture), process.MainModule.FileName);
                     }
                 }
                 else

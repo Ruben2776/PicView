@@ -3,6 +3,7 @@ using PicView.UILogic;
 using PicView.UILogic.PicGallery;
 using PicView.UILogic.Sizing;
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Windows;
@@ -28,6 +29,7 @@ namespace PicView.SystemIntegration
         internal static extern bool SystemParametersInfo(uint uiAction, uint uiParam,
         string pvParam, uint fWinIni);
 
+        #region File properties
         // file properties
         //http://stackoverflow.com/a/1936957
 
@@ -80,8 +82,9 @@ namespace PicView.SystemIntegration
             public IntPtr hIcon;
             public IntPtr hProcess;
         }
+        #endregion
 
-        // Remove from Alt + tab
+        #region Remove from Alt + tab
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
@@ -100,6 +103,10 @@ namespace PicView.SystemIntegration
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern uint SetThreadExecutionState([In] uint esFlags);
 
+        #endregion
+
+        #region windproc
+
         // https://stackoverflow.com/a/60938929/13646636
         private const int WM_SIZING = 0x214;
 
@@ -109,8 +116,6 @@ namespace PicView.SystemIntegration
         /// Supress warnings about unused parameters, because they are required by OS.
         /// Executes when user manually resized window
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA1801:Review unused parameters", Justification = "<Pending>")]
-#pragma warning disable IDE0060 // Remove unused parameter
-#pragma warning restore IDE0060 // Remove unused parameter
         public static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             if (msg == WM_SIZING)
@@ -147,9 +152,9 @@ namespace PicView.SystemIntegration
             return IntPtr.Zero;
         }
 
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool GetCursorPos(ref Win32Point pt);
+        #endregion
+
+        #region Blur
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct Win32Point
@@ -255,7 +260,13 @@ namespace PicView.SystemIntegration
             Marshal.FreeHGlobal(accentPtr);
         }
 
+        #endregion
+
         #region GetPixelColor
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool GetCursorPos(ref Win32Point pt);
 
         // https://stackoverflow.com/a/24759418/13646636
 
@@ -296,14 +307,6 @@ namespace PicView.SystemIntegration
             return madeChanges;
         }
 
-        internal static bool RemoveAssociation(string extension, string progId)
-        {
-            bool madeChanges = false;
-            madeChanges |= RemoveKeyDefaultValue(@"Software\Classes\" + extension);
-            madeChanges |= RemoveKeyDefaultValue($@"Software\Classes\{progId}\shell\open\command");
-            return madeChanges;
-        }
-
         private static bool SetKeyDefaultValue(string keyPath, string value)
         {
             using (var key = Registry.CurrentUser.CreateSubKey(keyPath))
@@ -318,20 +321,57 @@ namespace PicView.SystemIntegration
             return false;
         }
 
-        private static bool RemoveKeyDefaultValue(string keyPath)
+        public static void DeleteAssociation(string Extension, string progId, string applicationFilePath)
         {
             try
             {
-                using var key = Registry.CurrentUser.OpenSubKey(keyPath);
-                key.DeleteValue(keyPath);
+                // Delete the key instead of trying to change it
+                var defaultApp = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\" + Extension, true);
+                if (defaultApp == null)
+                {
+                    return;
+                }
+                defaultApp.DeleteSubKey("UserChoice", false);
+                defaultApp.Close();
+
+                var openWithContextMenuItem = Registry.CurrentUser.OpenSubKey($@"Software\Classes\{progId}\shell\open\command", true);
+                if (openWithContextMenuItem == null)
+                {
+                    return;
+                }
+                openWithContextMenuItem.DeleteSubKey("\"" + applicationFilePath + "\" \"%1\"");
+                openWithContextMenuItem.Close();
             }
             catch (Exception)
             {
-                return false;
+                return;
             }
-            return true;
+
+            // Tell explorer the file association has been changed
+            _ = SHChangeNotify(0x08000000, 0x0000, IntPtr.Zero, IntPtr.Zero);
         }
 
         #endregion Set Associations
+
+        #region Check if application exists
+
+        internal static bool IsSoftwareInstalled(string softwareName)
+        {
+            using var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall") ??
+                      Registry.LocalMachine.OpenSubKey(
+                          @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
+
+            if (key == null)
+            {
+                return false;
+            }
+
+            return key.GetSubKeyNames()
+                .Select(keyName => key.OpenSubKey(keyName))
+                .Select(subkey => subkey.GetValue("DisplayName") as string)
+                .Any(displayName => displayName != null && displayName.Contains(softwareName, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        #endregion
     }
 }
