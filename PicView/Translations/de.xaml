@@ -115,6 +115,7 @@
 
     <!--  Set as Default  -->
     <system:String x:Key="SetAsDefualt">Als Standart Foto-Applikation setzen</system:String>
+    <system:String x:Key="RemoveFileAssociations">Entfernen von Dateizuordnungen</system:String>
     <system:String x:Key="RasterFormats">Rasterformate</system:String>
     <system:String x:Key="VectorGraphics">Vektorgrafik</system:String>
     <system:String x:Key="RawCamera">Kamera Rohdaten</system:String>

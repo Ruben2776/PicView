@@ -114,6 +114,7 @@
 
     <!--  Set as Default  -->
     <system:String x:Key="SetAsDefualt">Sæt som standard billedfremviser</system:String>
+    <system:String x:Key="RemoveFileAssociations">Fjern standard filtilknytninger</system:String>
     <system:String x:Key="RasterFormats">Rasterformater</system:String>
     <system:String x:Key="VectorGraphics">Vektorgrafik</system:String>
     <system:String x:Key="RawCamera">Rå kameraformater</system:String>
