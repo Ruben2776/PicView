@@ -160,7 +160,7 @@
                     x:Name="PhotoshopCheck"
                     Width="264"
                     Margin="1,13,3,0">
-                    <Label Margin="0,-4,0,0" Content="Photoshop" />
+                    <Label Margin="0,-4,0,0" Content="Photoshop/GIMP" />
                 </CheckBox>
 
                 <StackPanel
@@ -169,6 +169,7 @@
                     Orientation="Horizontal">
                     <CheckBox x:Name="psd" Content=".psd" />
                     <CheckBox x:Name="psb" Content=".psb" />
+                    <CheckBox x:Name="xcf" Content=".xcf" />
                 </StackPanel>
 
                 <CheckBox
@@ -267,7 +268,6 @@
                         x:Name="xbm"
                         Content=".xbm"
                         IsChecked="True" />
-                    <CheckBox x:Name="xcf" Content=".xcf" />
                     <CheckBox
                         x:Name="xpm"
                         Content=".xpm"
