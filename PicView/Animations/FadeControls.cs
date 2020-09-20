@@ -19,7 +19,7 @@ namespace PicView.UILogic.Animations
         /// <param name="show"></param>
         internal static async void FadeControlsAsync(bool show, double time = .5)
         {
-            if (Properties.Settings.Default.ShowInterface
+            if (Properties.Settings.Default.ShowInterface && !Properties.Settings.Default.Fullscreen
                 || GetClickArrowRight == null
                 || GetClickArrowLeft == null
                 || Getx2 == null
