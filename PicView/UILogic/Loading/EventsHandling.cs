@@ -62,7 +62,7 @@ namespace PicView.UILogic.Loading
             GetImageSettingsMenu.Contained_Gallery.Click += delegate
             {
                 Close_UserControls();
-                GalleryToggle.OpenContainedGallery();
+                GalleryToggle.OpenHorizontalGallery();
             };
             GetImageSettingsMenu.Fullscreen_Gallery.Click += delegate
             {
@@ -99,7 +99,7 @@ namespace PicView.UILogic.Loading
             GetMinus.MouseLeftButtonDown += (s, x) => SystemCommands.MinimizeWindow(ConfigureWindows.GetMainWindow);
 
             // GalleryShortcut
-            GetGalleryShortcut.MouseLeftButtonDown += (s, x) => GalleryToggle.OpenContainedGallery();
+            GetGalleryShortcut.MouseLeftButtonDown += (s, x) => GalleryToggle.OpenHorizontalGallery();
 
             // Bar
             ConfigureWindows.GetMainWindow.TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;

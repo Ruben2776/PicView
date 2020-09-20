@@ -182,36 +182,39 @@ namespace PicView.ChangeImage
             // Initate loading behavior, if needed
             if (bitmapSource == null)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
-                {
-                    // Set loading from translation service
-                    SetLoadingString();
-                }));
+                // Dissallow changing image while loading
+                CanNavigate = false;
 
-                // Show a thumbnail while loading
-                var thumb = GetThumb(index);
-                if (thumb != null && Properties.Settings.Default.PicGallery != 2)
+                if (!GalleryFunctions.IsOpen)
                 {
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
                     {
-                        // Don't allow image size to stretch the whole screen
-                        if (xWidth == 0)
-                        {
-                            ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.MinWidth;
-                            ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.MinHeight;
-                        }
-                        else
-                        {
-                            ConfigureWindows.GetMainWindow.MainImage.Width = xWidth;
-                            ConfigureWindows.GetMainWindow.MainImage.Height = xHeight;
-                        }
-
-                        ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
+                        // Set loading from translation service
+                        SetLoadingString();
                     }));
-                }
 
-                // Dissallow changing image while loading
-                CanNavigate = false;
+                    // Show a thumbnail while loading
+                    var thumb = GetThumb(index);
+                    if (thumb != null && Properties.Settings.Default.PicGallery != 2)
+                    {
+                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                        {
+                            // Don't allow image size to stretch the whole screen
+                            if (xWidth == 0)
+                            {
+                                ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.MinWidth;
+                                ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.MinHeight;
+                            }
+                            else
+                            {
+                                ConfigureWindows.GetMainWindow.MainImage.Width = xWidth;
+                                ConfigureWindows.GetMainWindow.MainImage.Height = xHeight;
+                            }
+
+                            ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
+                        }));
+                    }
+                }
 
                 // Get it!
                 await Preloader.Add(Pics[index]).ConfigureAwait(true);

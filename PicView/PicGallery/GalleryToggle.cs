@@ -34,7 +34,7 @@ namespace PicView.UILogic.PicGallery
                 {
                     if (!IsOpen)
                     {
-                        OpenContainedGallery();
+                        OpenHorizontalGallery();
                     }
                     else
                     {
@@ -71,7 +71,7 @@ namespace PicView.UILogic.PicGallery
 
         #region Open
 
-        internal static async void OpenContainedGallery()
+        internal static async void OpenHorizontalGallery()
         {
             if (Pics.Count < 1)
             {
@@ -105,7 +105,9 @@ namespace PicView.UILogic.PicGallery
             {
                 await Load().ConfigureAwait(false);
             }
-            else if (GetPicGallery.Container.Children.Count != Pics.Count)
+            // Fix weird bug when changing folder and one item remains
+            // TODO investigate if selected gallery item does not get removed?
+            else if (GetPicGallery.Container.Children.Count == 1 && Pics.Count > 1)
             {
                 GetPicGallery.Container.Children.Clear();
                 await Load().ConfigureAwait(false);
