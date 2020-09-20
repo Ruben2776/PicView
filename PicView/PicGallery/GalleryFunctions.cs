@@ -1,19 +1,17 @@
-﻿using System;
+﻿using PicView.UILogic;
+using PicView.UILogic.PicGallery;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media;
+
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.UILogic.UC;
 
-namespace PicView.UILogic.PicGallery
+namespace PicView.PicGallery
 {
     internal static class GalleryFunctions
     {
-        internal static int picGalleryItem_Size;
-        internal static int picGalleryItem_Size_s;
-
         private static bool Open;
 
         internal static bool IsOpen
@@ -54,26 +52,6 @@ namespace PicView.UILogic.PicGallery
 #if DEBUG
             Trace.WriteLine("Cleared Gallery children");
 #endif
-        }
-
-        internal static void SetSelected(int x)
-        {
-            if (x > GetPicGallery.Container.Children.Count) { return; }
-
-            // Select next item
-            var nextItem = GetPicGallery.Container.Children[x] as Views.UserControls.PicGalleryItem;
-            nextItem.innerborder.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
-            nextItem.innerborder.Width = nextItem.innerborder.Height = picGalleryItem_Size;
-        }
-
-        internal static void SetUnselected(int x)
-        {
-            if (x > GetPicGallery.Container.Children.Count) { return; }
-
-            // Deselect current item
-            var prevItem = GetPicGallery.Container.Children[x] as Views.UserControls.PicGalleryItem;
-            prevItem.innerborder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
-            prevItem.innerborder.Width = prevItem.innerborder.Height = picGalleryItem_Size_s;
         }
     }
 }

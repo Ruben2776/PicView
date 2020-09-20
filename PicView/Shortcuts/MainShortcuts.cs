@@ -1,6 +1,7 @@
 ﻿using PicView.Editing;
 using PicView.Editing.Crop;
 using PicView.ImageHandling;
+using PicView.PicGallery;
 using PicView.UILogic;
 using PicView.UILogic.PicGallery;
 using System.Windows;
@@ -70,6 +71,7 @@ namespace PicView.Shortcuts
                         {
                             if (Properties.Settings.Default.PicGallery == 1)
                             {
+                                GalleryNavigation.Right();
                                 return;
                             }
                         }
@@ -101,6 +103,7 @@ namespace PicView.Shortcuts
                         {
                             if (Properties.Settings.Default.PicGallery == 1)
                             {
+                                GalleryNavigation.Left();
                                 return;
                             }
                         }
@@ -156,13 +159,19 @@ namespace PicView.Shortcuts
                     return;
 
                 case Key.Up:
+                case Key.W:
                     if (GetPicGallery != null)
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            if (Properties.Settings.Default.PicGallery == 1) { return; }
-
-                            ScrollTo(true, ctrlDown);
+                            if (Properties.Settings.Default.PicGallery == 1) 
+                            {
+                                GalleryNavigation.Up();
+                            }
+                            else
+                            {
+                                ScrollTo(true, ctrlDown);
+                            }
                         }
                         else
                         {
@@ -179,33 +188,19 @@ namespace PicView.Shortcuts
                     }
                     return;
 
-                case Key.W:
-                    if (GetPicGallery != null)
-                    {
-                        if (GalleryFunctions.IsOpen)
-                        {
-                            if (Properties.Settings.Default.PicGallery == 2)
-                            {
-                                ScrollTo(true, ctrlDown);
-                            }
-
-                            return;
-                        }
-                    }
-                    if (Properties.Settings.Default.ScrollEnabled)
-                    {
-                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
-                    }
-                    return;
-
                 case Key.Down:
                     if (GetPicGallery != null)
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            if (Properties.Settings.Default.PicGallery == 1) { return; }
-
-                            ScrollTo(false, ctrlDown);
+                            if (Properties.Settings.Default.PicGallery == 1)
+                            {
+                                GalleryNavigation.Down();
+                            }
+                            else
+                            {
+                                ScrollTo(false, ctrlDown);
+                            }
                         }
                         else if (ctrlDown)
                         {
@@ -231,12 +226,14 @@ namespace PicView.Shortcuts
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            if (Properties.Settings.Default.PicGallery == 2)
+                            if (Properties.Settings.Default.PicGallery == 1)
+                            {
+                                GalleryNavigation.Down();
+                            }
+                            else
                             {
                                 ScrollTo(false, ctrlDown);
                             }
-
-                            return;
                         }
                     }
                     else if (Properties.Settings.Default.ScrollEnabled)
@@ -421,6 +418,10 @@ namespace PicView.Shortcuts
                         {
                             Reload();
                         }
+                        else
+                        {
+                            OpenWith(Pics[FolderIndex]);
+                        }
                         break;
 
                     // L
@@ -428,9 +429,17 @@ namespace PicView.Shortcuts
                         ConfigureSettings.UpdateUIValues.SetLooping(sender, e);
                         break;
 
-                    // E
+                    // E || Enter
                     case Key.E:
-                        OpenWith(Pics[FolderIndex]);
+                    case Key.Enter:
+                        if (GalleryFunctions.IsOpen)
+                        {
+                            GalleryNavigation.LoadSelected();
+                        }
+                        else if (Properties.Settings.Default.PicGallery == 1)
+                        {
+                            OpenHorizontalGallery();
+                        }
                         break;
 
                     // T

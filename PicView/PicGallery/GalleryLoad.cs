@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.UILogic.HideInterfaceLogic;
-using static PicView.UILogic.PicGallery.GalleryFunctions;
+using static PicView.PicGallery.GalleryFunctions;
 using static PicView.UILogic.PicGallery.GalleryScroll;
+using PicView.PicGallery;
 
 namespace PicView.UILogic.PicGallery
 {
@@ -17,7 +18,7 @@ namespace PicView.UILogic.PicGallery
             UC.GetPicGallery.Scroller.PreviewMouseWheel += ScrollTo;
             UC.GetPicGallery.Scroller.ScrollChanged += (s, x) => ConfigureWindows.GetMainWindow.Focus(); // Maintain window focus when scrolling manually
             UC.GetPicGallery.grid.MouseLeftButtonDown += (s, x) => ConfigureWindows.GetMainWindow.Focus();
-            UC.GetPicGallery.x2.MouseLeftButtonDown += delegate { GalleryToggle.CloseContainedGallery(); };
+            UC.GetPicGallery.x2.MouseLeftButtonDown += delegate { GalleryToggle.CloseHorizontalGallery(); };
 
             SetSize();
         }
@@ -26,22 +27,22 @@ namespace PicView.UILogic.PicGallery
         {
             if (WindowSizing.MonitorInfo.Width > 2100)
             {
-                picGalleryItem_Size = 260;
+                GalleryNavigation.picGalleryItem_Size = 260;
             }
             else if (WindowSizing.MonitorInfo.Width > 1700)
             {
-                picGalleryItem_Size = 210;
+                GalleryNavigation.picGalleryItem_Size = 210;
             }
             else if (WindowSizing.MonitorInfo.Width > 1200)
             {
-                picGalleryItem_Size = 150;
+                GalleryNavigation.picGalleryItem_Size = 150;
             }
             else
             {
-                picGalleryItem_Size = 100;
+                GalleryNavigation.picGalleryItem_Size = 100;
             }
 
-            picGalleryItem_Size_s = picGalleryItem_Size - 30;
+            GalleryNavigation.picGalleryItem_Size_s = GalleryNavigation.picGalleryItem_Size - 30;
         }
 
         internal static void LoadLayout()
@@ -58,7 +59,7 @@ namespace PicView.UILogic.PicGallery
                 Panel.SetZIndex(UC.GetPicGallery, 999);
             }
 
-            if (picGalleryItem_Size == 0)
+            if (GalleryNavigation.picGalleryItem_Size == 0)
             {
                 SetSize();
             }
@@ -84,7 +85,7 @@ namespace PicView.UILogic.PicGallery
             }
             else
             {
-                UC.GetPicGallery.Width = (picGalleryItem_Size + 25) * WindowSizing.MonitorInfo.DpiScaling;
+                UC.GetPicGallery.Width = (GalleryNavigation.picGalleryItem_Size + 25) * WindowSizing.MonitorInfo.DpiScaling;
                 UC.GetPicGallery.Height = WindowSizing.MonitorInfo.WorkArea.Height;
 
                 ConfigureWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;

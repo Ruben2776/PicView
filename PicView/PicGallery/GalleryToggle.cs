@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Media.Animation;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.ConfigureWindows;
-using static PicView.UILogic.PicGallery.GalleryFunctions;
+using static PicView.PicGallery.GalleryFunctions;
 using static PicView.UILogic.PicGallery.GalleryLoad;
 using static PicView.UILogic.PicGallery.GalleryScroll;
 using static PicView.UILogic.Sizing.WindowSizing;
@@ -38,7 +38,7 @@ namespace PicView.UILogic.PicGallery
                     }
                     else
                     {
-                        CloseContainedGallery();
+                        CloseHorizontalGallery();
                     }
                 }
                 else
@@ -168,7 +168,7 @@ namespace PicView.UILogic.PicGallery
 
         #region Close
 
-        internal static void CloseContainedGallery()
+        internal static void CloseHorizontalGallery()
         {
             IsOpen = false;
 

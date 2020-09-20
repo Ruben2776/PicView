@@ -1,4 +1,5 @@
-﻿using PicView.UILogic.Sizing;
+﻿using PicView.PicGallery;
+using PicView.UILogic.Sizing;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,7 +8,7 @@ using System.Windows.Media.Animation;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.ImageDecoder;
 using static PicView.ImageHandling.Thumbnails;
-using static PicView.UILogic.PicGallery.GalleryFunctions;
+using static PicView.PicGallery.GalleryFunctions;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.UC;
 
@@ -59,7 +60,7 @@ namespace PicView.UILogic.PicGallery
                 border.Child = img;
                 GetPicGallery.grid.Children.Add(border);
 
-                var from = picGalleryItem_Size;
+                var from = GalleryNavigation.picGalleryItem_Size;
                 var to = new double[] { xWidth, xHeight };
                 var acceleration = 0.2;
                 var deceleration = 0.4;
@@ -107,7 +108,7 @@ namespace PicView.UILogic.PicGallery
         internal static void ItemClick(int id)
         {
             // Deselect current item
-            SetUnselected(FolderIndex);
+            GalleryNavigation.SetUnselected(FolderIndex);
 
             // Change image
             Pic(id);
@@ -125,7 +126,7 @@ namespace PicView.UILogic.PicGallery
             }
 
             // Select next item
-            SetSelected(id);
+            GalleryNavigation.SetSelected(id);
         }
     }
 }

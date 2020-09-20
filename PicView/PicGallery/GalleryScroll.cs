@@ -1,7 +1,7 @@
 ﻿using PicView.ChangeImage;
 using System;
 using System.Windows.Input;
-using static PicView.UILogic.PicGallery.GalleryFunctions;
+using static PicView.PicGallery.GalleryNavigation;
 using static PicView.UILogic.UC;
 
 namespace PicView.UILogic.PicGallery
@@ -10,7 +10,7 @@ namespace PicView.UILogic.PicGallery
     {
         #region int calculations
 
-        private static int Horizontal_items
+        internal static int Horizontal_items
         {
             get
             {
@@ -20,7 +20,7 @@ namespace PicView.UILogic.PicGallery
             }
         }
 
-        private static int Vertical_items
+        internal static int Vertical_items
         {
             get
             {
@@ -31,7 +31,7 @@ namespace PicView.UILogic.PicGallery
             }
         }
 
-        private static int Items_per_page
+        internal static int Items_per_page
         {
             get
             {
@@ -43,7 +43,7 @@ namespace PicView.UILogic.PicGallery
             }
         }
 
-        private static int Current_page
+        internal static int Current_page
         {
             get
             {
