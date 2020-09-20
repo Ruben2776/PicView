@@ -303,7 +303,6 @@
     <system:String x:Key="Unflip">Spejlvend tilbage</system:String>
 
     <!--  Archives  -->
-    <system:String x:Key="Unzipping">Udpakker...</system:String>
     <system:String x:Key="BadArchive">Arkivet kunne ikke behandles</system:String>
     <system:String x:Key="PasswordArchive">Adgangskodebeskyttet arkiv understøttes ikke</system:String>
 

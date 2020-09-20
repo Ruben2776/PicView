@@ -303,7 +303,6 @@
     <system:String x:Key="Unflip">Zurückdrehen</system:String>
 
     <!--  Archives  -->
-    <system:String x:Key="Unzipping">Entpacken...</system:String>
     <system:String x:Key="BadArchive">Das Archiv konnte nicht entpackt werden</system:String>
     <system:String x:Key="PasswordArchive">Passwort geschützte Archive werden nicht unterstützt</system:String>
 

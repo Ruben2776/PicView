@@ -303,7 +303,6 @@
     <system:String x:Key="Unflip">Unflip</system:String>
 
     <!--  Archives  -->
-    <system:String x:Key="Unzipping">Unzipping...</system:String>
     <system:String x:Key="BadArchive">Archive could not be processed</system:String>
     <system:String x:Key="PasswordArchive">Password protected archive not supported</system:String>
 
