@@ -1,4 +1,4 @@
-﻿using PicView.UILogic.PicGallery;
+﻿using PicView.PicGallery;
 using PicView.UILogic.TransformImage;
 using System;
 using System.Timers;

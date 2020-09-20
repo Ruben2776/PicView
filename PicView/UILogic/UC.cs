@@ -1,5 +1,5 @@
 ﻿using PicView.ChangeImage;
-using PicView.UILogic.PicGallery;
+using PicView.PicGallery;
 using PicView.Views.UserControls;
 using PicView.Views.UserControls.Misc;
 using System;

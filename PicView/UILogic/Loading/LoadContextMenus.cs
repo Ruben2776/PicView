@@ -1,6 +1,6 @@
 ﻿using PicView.ImageHandling;
+using PicView.PicGallery;
 using PicView.SystemIntegration;
-using PicView.UILogic.PicGallery;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;

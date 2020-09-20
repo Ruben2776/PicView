@@ -1,4 +1,5 @@
-﻿using PicView.UILogic;
+﻿using PicView.PicGallery;
+using PicView.UILogic;
 using PicView.UILogic.PicGallery;
 using PicView.UILogic.Sizing;
 using System.IO;

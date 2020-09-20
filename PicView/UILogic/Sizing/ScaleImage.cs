@@ -2,8 +2,8 @@
 using PicView.UILogic.TransformImage;
 using System;
 using static PicView.ChangeImage.Navigation;
+using static PicView.PicGallery.GalleryNavigation;
 using static PicView.UILogic.ConfigureWindows;
-using static PicView.UILogic.PicGallery.GalleryFunctions;
 using static PicView.UILogic.Sizing.WindowSizing;
 using static PicView.UILogic.TransformImage.Rotation;
 using static PicView.UILogic.TransformImage.Scroll;

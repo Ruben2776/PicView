@@ -1,5 +1,6 @@
 ﻿using PicView.FileHandling;
 using PicView.ImageHandling;
+using PicView.PicGallery;
 using PicView.UILogic;
 using PicView.UILogic.PicGallery;
 using PicView.UILogic.Sizing;

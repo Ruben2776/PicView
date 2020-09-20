@@ -1,6 +1,6 @@
 ﻿using Microsoft.Win32;
+using PicView.PicGallery;
 using PicView.UILogic;
-using PicView.UILogic.PicGallery;
 using PicView.UILogic.Sizing;
 using System;
 using System.Linq;
@@ -135,12 +135,12 @@ namespace PicView.SystemIntegration
                     // your stuff to do
                     ScaleImage.TryFitImage();
 
-                    if (UILogic.UC.GetPicGallery != null)
+                    if (UC.GetPicGallery != null)
                     {
                         if (GalleryFunctions.IsOpen)
                         {
                             UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.Width;
-                            UILogic.UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.Height;
+                            UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.Height;
                         }
                     }
 

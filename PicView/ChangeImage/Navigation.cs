@@ -1,5 +1,6 @@
 ﻿using PicView.FileHandling;
 using PicView.ImageHandling;
+using PicView.PicGallery;
 using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.PicGallery;
@@ -483,10 +484,10 @@ namespace PicView.ChangeImage
                 {
                     if (indexBackup != FolderIndex)
                     {
-                        GalleryFunctions.SetUnselected(indexBackup);
+                        GalleryNavigation.SetUnselected(indexBackup);
                     }
 
-                    GalleryFunctions.SetSelected(FolderIndex);
+                    GalleryNavigation.SetSelected(FolderIndex);
                     GalleryScroll.ScrollTo();
                 }
                 else
