@@ -3,7 +3,6 @@ using PicView.Editing.Crop;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.UILogic;
-using PicView.UILogic.PicGallery;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.ChangeImage.Error_Handling;
@@ -12,7 +11,6 @@ using static PicView.FileHandling.Copy_Paste;
 using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.Open_Save;
 using static PicView.UILogic.ConfigureWindows;
-using static PicView.UILogic.PicGallery.GalleryScroll;
 using static PicView.UILogic.PicGallery.GalleryToggle;
 using static PicView.UILogic.TransformImage.Rotation;
 using static PicView.UILogic.TransformImage.Scroll;
@@ -131,7 +129,7 @@ namespace PicView.Shortcuts
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            ScrollTo(true, ctrlDown);
+                            GalleryNavigation.ScrollTo(true, ctrlDown);
                             return;
                         }
                     }
@@ -147,7 +145,7 @@ namespace PicView.Shortcuts
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                            GalleryNavigation.ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
                             return;
                         }
                     }
@@ -170,7 +168,7 @@ namespace PicView.Shortcuts
                             }
                             else
                             {
-                                ScrollTo(true, ctrlDown);
+                                GalleryNavigation.ScrollTo(true, ctrlDown);
                             }
                         }
                         else
@@ -199,7 +197,7 @@ namespace PicView.Shortcuts
                             }
                             else
                             {
-                                ScrollTo(false, ctrlDown);
+                                GalleryNavigation.ScrollTo(false, ctrlDown);
                             }
                         }
                         else if (ctrlDown)
@@ -232,7 +230,7 @@ namespace PicView.Shortcuts
                             }
                             else
                             {
-                                ScrollTo(false, ctrlDown);
+                                GalleryNavigation.ScrollTo(false, ctrlDown);
                             }
                         }
                     }
@@ -453,7 +451,7 @@ namespace PicView.Shortcuts
                         {
                             if (GalleryFunctions.IsOpen)
                             {
-                                ScrollTo();
+                                GalleryNavigation.ScrollTo();
                                 return;
                             }
                         }

@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Controls;
 using static PicView.UILogic.HideInterfaceLogic;
 using static PicView.PicGallery.GalleryFunctions;
-using static PicView.UILogic.PicGallery.GalleryScroll;
 using PicView.PicGallery;
 
 namespace PicView.UILogic.PicGallery
@@ -15,7 +14,7 @@ namespace PicView.UILogic.PicGallery
         internal static void PicGallery_Loaded(object sender, RoutedEventArgs e)
         {
             // Add events and set fields, when it's loaded.
-            UC.GetPicGallery.Scroller.PreviewMouseWheel += ScrollTo;
+            UC.GetPicGallery.Scroller.PreviewMouseWheel += GalleryNavigation.ScrollTo;
             UC.GetPicGallery.Scroller.ScrollChanged += (s, x) => ConfigureWindows.GetMainWindow.Focus(); // Maintain window focus when scrolling manually
             UC.GetPicGallery.grid.MouseLeftButtonDown += (s, x) => ConfigureWindows.GetMainWindow.Focus();
             UC.GetPicGallery.x2.MouseLeftButtonDown += delegate { GalleryToggle.CloseHorizontalGallery(); };

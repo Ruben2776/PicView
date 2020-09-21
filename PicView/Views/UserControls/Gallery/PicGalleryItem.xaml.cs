@@ -45,6 +45,7 @@ namespace PicView.Views.UserControls
             {
                 innerborder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColorOverAlpha());
                 innerborder.Width = innerborder.Height = picGalleryItem_Size;
+                index = id;
             }
         }
     }

@@ -488,7 +488,7 @@ namespace PicView.ChangeImage
                     }
 
                     GalleryNavigation.SetSelected(FolderIndex);
-                    GalleryScroll.ScrollTo();
+                    GalleryNavigation.ScrollTo();
                 }
                 else
                 {
@@ -511,7 +511,7 @@ namespace PicView.ChangeImage
             {
                 if (GalleryFunctions.IsOpen)
                 {
-                    GalleryScroll.ScrollTo(!right);
+                    GalleryNavigation.ScrollTo(!right);
                     return;
                 }
 

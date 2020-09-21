@@ -8,9 +8,9 @@ using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.PicGallery.GalleryFunctions;
 using static PicView.UILogic.PicGallery.GalleryLoad;
-using static PicView.UILogic.PicGallery.GalleryScroll;
 using static PicView.UILogic.Sizing.WindowSizing;
 using static PicView.UILogic.UC;
+using PicView.PicGallery;
 
 namespace PicView.UILogic.PicGallery
 {
@@ -99,7 +99,8 @@ namespace PicView.UILogic.PicGallery
                 }
             }
 
-            ScrollTo();
+            GalleryNavigation.SetSelected(FolderIndex);
+            GalleryNavigation.ScrollTo();
 
             if (GetPicGallery.Container.Children.Count == 0)
             {
@@ -145,7 +146,7 @@ namespace PicView.UILogic.PicGallery
             }
 
             GetFakeWindow.Show();
-            ScrollTo();
+            GalleryNavigation.ScrollTo();
             GetMainWindow.Focus();
 
             if (!FreshStartup)
@@ -247,7 +248,7 @@ namespace PicView.UILogic.PicGallery
             }
 
             GetFakeWindow.Show();
-            ScrollTo();
+            GalleryNavigation.ScrollTo();
             GetMainWindow.Focus();
         }
 

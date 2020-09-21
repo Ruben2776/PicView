@@ -256,7 +256,7 @@ namespace PicView.UILogic
                 if (GalleryFunctions.IsOpen)
                 {
                     GalleryLoad.LoadLayout();
-                    GalleryScroll.ScrollTo();
+                    GalleryNavigation.ScrollTo();
                 }
 
                 ShowNavigation(Properties.Settings.Default.ShowAltInterfaceButtons);

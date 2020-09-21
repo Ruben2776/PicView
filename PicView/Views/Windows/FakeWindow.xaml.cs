@@ -1,11 +1,11 @@
-﻿using PicView.UILogic;
+﻿using PicView.PicGallery;
+using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using static PicView.SystemIntegration.NativeMethods;
-using static PicView.UILogic.PicGallery.GalleryScroll;
 
 namespace PicView.Views.Windows
 {
@@ -60,11 +60,11 @@ namespace PicView.Views.Windows
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
-                ScrollTo(e.Delta > 0, true);
+                GalleryNavigation.ScrollTo(e.Delta > 0, true);
             }
             else
             {
-                ScrollTo(e.Delta > 0, false, true);
+                GalleryNavigation.ScrollTo(e.Delta > 0, false, true);
             }
         }
 
