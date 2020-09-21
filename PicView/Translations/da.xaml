@@ -119,6 +119,7 @@
     <system:String x:Key="VectorGraphics">Vektorgrafik</system:String>
     <system:String x:Key="RawCamera">Rå kameraformater</system:String>
     <system:String x:Key="OtherFormats">Andre formater</system:String>
+    <system:String x:Key="ComicFormats">Comic books</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="HLSLPictureFX">HLSL Billede effekter</system:String>

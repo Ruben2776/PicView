@@ -274,6 +274,40 @@
                         IsChecked="True" />
                 </WrapPanel>
 
+                <CheckBox
+                    x:Name="ComicCheck"
+                    Width="264"
+                    Margin="1,13,3,0"
+                    IsChecked="True">
+                    <Label Margin="0,-4,0,0" Content="{StaticResource ComicFormats}" />
+                </CheckBox>
+
+                <WrapPanel
+                    x:Name="ComicContainer"
+                    Margin="41,0,0,0"
+                    Orientation="Horizontal">
+                    <CheckBox
+                        x:Name="cbr"
+                        Content=".cbr"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="cb7"
+                        Content=".cb7"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="cbt"
+                        Content=".cbt"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="cbz"
+                        Content=".cbz"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="cba"
+                        Content=".cba"
+                        IsChecked="True" />
+                </WrapPanel>
+
                 <Rectangle
                     Height="1"
                     Margin="10,23,10,3"
