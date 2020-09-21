@@ -437,7 +437,7 @@
   </ItemGroup>
   <PropertyGroup>
     <FileVersion>1.0.5.0</FileVersion>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
     <PackageProjectUrl>https://github.com/Ruben2776/PicView</PackageProjectUrl>

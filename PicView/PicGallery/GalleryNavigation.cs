@@ -141,11 +141,6 @@ namespace PicView.PicGallery
 
             var x = index - 1 < 0 ? 0 : index - 1;
 
-            if (true) // TODO figure out how to determine if out of sight
-            {
-                // TODO change page
-            }
-
             SetSelected(x);
         }
 
@@ -160,11 +155,6 @@ namespace PicView.PicGallery
                 GetPicGallery.Container.Children.Count ? GetPicGallery.Container.Children.Count - 1
                 : index + 1;
 
-            if (true) // TODO figure out how to determine if out of sight
-            {
-                // TODO change page
-            }
-
             SetSelected(x);
         }
 
@@ -175,9 +165,10 @@ namespace PicView.PicGallery
                 SetUnselected(index);
             }
 
-            var x = index - 1 - Horizontal_items < 0 ? 0 : index - 1 - Horizontal_items;
+            var x = index - 1 - Items_per_page < 0 ? 0 : index - 1 - Items_per_page;
 
             GetPicGallery.Scroller.ScrollToHorizontalOffset(GetPicGallery.Scroller.HorizontalOffset - picGalleryItem_Size);
+
             SetSelected(x);
         }
 
@@ -188,11 +179,22 @@ namespace PicView.PicGallery
                 SetUnselected(index);
             }
 
-            var x = index + 1 + Horizontal_items >= GetPicGallery.Container.Children.Count?
+            int next;
+
+            if (Vertical_items == 1)
+            {
+                next = index + 1 > GetPicGallery.Container.Children.Count - 1 ?
+                    GetPicGallery.Container.Children.Count - 1 : index + 1;
+            }
+            else
+            {
+                next = index + 1 + Horizontal_items >= GetPicGallery.Container.Children.Count ?
                 GetPicGallery.Container.Children.Count - 1 : index + 1 + Horizontal_items;
+            }
+
+            SetSelected(next);
 
             GetPicGallery.Scroller.ScrollToHorizontalOffset(GetPicGallery.Scroller.HorizontalOffset + picGalleryItem_Size);
-            SetSelected(x);
         }
 
         internal static void LoadSelected()

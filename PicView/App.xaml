@@ -7,7 +7,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary x:Name="Language" Source="Translations\en.xaml" />
-                <ResourceDictionary x:Name="ThemeColors" Source="Themes\Styles\ColorThemes\Light.xaml" />
+                <ResourceDictionary x:Name="ThemeColors" Source="Themes\Styles\ColorThemes\Dark.xaml" />
                 <ResourceDictionary Source="Themes\Styles\MyWindowStyle.xaml" />
                 <ResourceDictionary Source="Themes\Styles\Button.xaml" />
                 <ResourceDictionary Source="Themes\Styles\Border.xaml" />
