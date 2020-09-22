@@ -99,7 +99,7 @@ namespace PicView.UILogic.PicGallery
                 }
             }
 
-            GalleryNavigation.SetSelected(FolderIndex);
+            GalleryNavigation.SetSelected(FolderIndex, true);
             GalleryNavigation.ScrollTo();
 
             if (GetPicGallery.Container.Children.Count == 0)

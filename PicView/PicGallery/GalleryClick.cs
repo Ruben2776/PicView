@@ -108,7 +108,7 @@ namespace PicView.UILogic.PicGallery
         internal static void ItemClick(int id)
         {
             // Deselect current item
-            GalleryNavigation.SetUnselected(FolderIndex);
+            GalleryNavigation.SetSelected(FolderIndex, false);
 
             // Change image
             Pic(id);
@@ -126,7 +126,7 @@ namespace PicView.UILogic.PicGallery
             }
 
             // Select next item
-            GalleryNavigation.SetSelected(id);
+            GalleryNavigation.SetSelected(id, true);
         }
     }
 }

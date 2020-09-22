@@ -484,10 +484,10 @@ namespace PicView.ChangeImage
                 {
                     if (indexBackup != FolderIndex)
                     {
-                        GalleryNavigation.SetUnselected(indexBackup);
+                        GalleryNavigation.SetSelected(indexBackup, false);
                     }
 
-                    GalleryNavigation.SetSelected(FolderIndex);
+                    GalleryNavigation.SetSelected(FolderIndex, true);
                     GalleryNavigation.ScrollTo();
                 }
                 else
