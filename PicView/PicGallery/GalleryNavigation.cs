@@ -239,7 +239,7 @@ namespace PicView.PicGallery
 
         internal static void SetSelected(int x, bool selected)
         {
-            if (x > GetPicGallery.Container.Children.Count) { return; }
+            if (x > GetPicGallery.Container.Children.Count || x < 0) { return; }
 
             if (index == 0 && FolderIndex != 0)
             {
@@ -265,7 +265,7 @@ namespace PicView.PicGallery
 
         private static void Deselect(int x)
         {
-            if (x > GetPicGallery.Container.Children.Count) { return; }
+            if (x > GetPicGallery.Container.Children.Count || x < 0) { return; }
 
             // Deselect current item
             var deselectedItem = GetPicGallery.Container.Children[x] as Views.UserControls.PicGalleryItem;

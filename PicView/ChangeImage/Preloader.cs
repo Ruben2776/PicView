@@ -12,14 +12,24 @@ namespace PicView.ChangeImage
     /// </summary>
     internal static class Preloader
     {
+        internal class PreloadValue
+        {
+            internal BitmapSource bitmapSource;
+            internal bool isLoading;
+
+            internal PreloadValue(BitmapSource bitmap, bool loading)
+            {
+                bitmapSource = bitmap;
+                isLoading = loading;
+            }
+        }
+
         /// <summary>
         /// Preloader list of BitmapSources
         /// </summary>
         private static readonly ConcurrentDictionary<
             string,
-            BitmapSource> Sources = new ConcurrentDictionary<string, BitmapSource>();
-
-        internal static int Count { get => Sources.Count; }
+            PreloadValue> Sources = new ConcurrentDictionary<string, PreloadValue>();
 
         /// <summary>
         /// Add file to preloader
@@ -27,7 +37,14 @@ namespace PicView.ChangeImage
         /// <param name="file">file path</param>
         internal static Task Add(string file) => Task.Run(async () =>
         {
-            Sources.TryAdd(file, await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(false));
+            PreloadValue preloadValue;
+
+            if (Sources.TryAdd(file, preloadValue = new PreloadValue(null, true)))
+            {
+                var x = await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(false);
+                preloadValue.bitmapSource = x;
+                preloadValue.isLoading = false;
+            }
         });
 
         /// <summary>
@@ -116,7 +133,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        internal static BitmapSource Get(string key)
+        internal static PreloadValue Get(string key)
         {
             if (string.IsNullOrWhiteSpace(key) || !Contains(key))
             {

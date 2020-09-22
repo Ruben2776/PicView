@@ -2,14 +2,12 @@
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.UILogic;
-using PicView.UILogic.PicGallery;
 using PicView.UILogic.Sizing;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.FileLists;
@@ -25,9 +23,9 @@ namespace PicView.ChangeImage
         /// Attemps to fix erros and prevent crashes
         /// </summary>
         /// <param name="x">The index to start from</param>
-        internal static async Task<BitmapSource> PicErrorFix(int x)
+        internal static async Task<Preloader.PreloadValue> PicErrorFix(int x)
         {
-            BitmapSource pic = null;
+            Preloader.PreloadValue pic = null;
 #if DEBUG
             Trace.WriteLine("Entered PicErrorFix");
 #endif
@@ -54,7 +52,7 @@ namespace PicView.ChangeImage
                 {
                     if (x < Pics.Count)
                     {
-                        pic = await RenderToBitmapSource(Pics[x]).ConfigureAwait(true);
+                        pic = new Preloader.PreloadValue(await RenderToBitmapSource(Pics[x]).ConfigureAwait(true), false);
                         if (pic != null)
                         {
                             return pic;
@@ -69,7 +67,7 @@ namespace PicView.ChangeImage
             }
             else if (x < 0)
             {
-                pic = await RenderToBitmapSource(Pics[x]).ConfigureAwait(true);
+                pic = new Preloader.PreloadValue(await RenderToBitmapSource(Pics[x]).ConfigureAwait(true), false);
                 if (pic != null)
                 {
                     return pic;
@@ -100,7 +98,7 @@ namespace PicView.ChangeImage
             // Retry if exists, fixes rare error
             if (File.Exists(file))
             {
-                pic = await RenderToBitmapSource(file).ConfigureAwait(true);
+                pic = new Preloader.PreloadValue(await RenderToBitmapSource(file).ConfigureAwait(true), false);
                 if (pic != null)
                 {
                     return pic;

@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Error_Handling;
@@ -159,15 +160,13 @@ namespace PicView.ChangeImage
         internal static async void Pic(int index)
         {
             FolderIndex = index;
-
-            // Declare variable to be used to set image source
-            BitmapSource bitmapSource;
+            var preloadValue = Preloader.Get(Pics[index]);
 
             // Error checking to fix rare cases of crashing
             if (Pics.Count < index)
             {
-                bitmapSource = await PicErrorFix(index).ConfigureAwait(true);
-                if (bitmapSource == null)
+                preloadValue = await PicErrorFix(index).ConfigureAwait(true);
+                if (preloadValue == null)
                 {
                     /// Try to recover
                     /// TODO needs testing
@@ -176,12 +175,8 @@ namespace PicView.ChangeImage
                 }
             }
 
-            /// Retrieve from preloader if available
-            /// if not, it will be null
-            bitmapSource = Preloader.Get(Pics[index]);
-
             // Initate loading behavior, if needed
-            if (bitmapSource == null)
+            if (preloadValue == null || preloadValue.isLoading)
             {
                 // Dissallow changing image while loading
                 CanNavigate = false;
@@ -217,16 +212,26 @@ namespace PicView.ChangeImage
                     }
                 }
 
-                // Get it!
-                await Preloader.Add(Pics[index]).ConfigureAwait(true);
+                // Get it, if not loading
+                if (!Preloader.Contains(Pics[index]))
+                {
+                    await Preloader.Add(Pics[index]).ConfigureAwait(true);
+                }
+                else
+                {
+                    do
+                    {
+                        await Task.Delay(5).ConfigureAwait(true);
+                    } while (preloadValue.isLoading);
+                }
 
                 // Retry
-                bitmapSource = Preloader.Get(Pics[index]);
+                preloadValue = Preloader.Get(Pics[index]);
 
-                if (bitmapSource == null)
+                if (preloadValue.bitmapSource == null)
                 {
                     // If pic is still null, image can't be rendered
-                    bitmapSource = ImageDecoder.ImageErrorMessage();
+                    preloadValue.bitmapSource = ImageDecoder.ImageErrorMessage();
                 }
             }
 
@@ -249,9 +254,9 @@ namespace PicView.ChangeImage
                     ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
                 }
 
-                ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
-                FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
-                SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index);
+                ConfigureWindows.GetMainWindow.MainImage.Source = preloadValue.bitmapSource;
+                FitImage(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight);
+                SetTitleString(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight, index);
             }));
 
             // Update values
@@ -362,7 +367,7 @@ namespace PicView.ChangeImage
             ChangeFolder(true);
 
             // If searching subdirectories, it might freeze UI, so wrap it in task
-            await System.Threading.Tasks.Task.Run(() =>
+            await Task.Run(() =>
             {
                 Pics = FileList(folder);
             }).ConfigureAwait(true);
