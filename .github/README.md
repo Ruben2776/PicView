@@ -22,7 +22,7 @@ PicView is a fast Picture Viewer with compact UI, that can be hidden. Features i
 <h2>Customizable Themes</h2>
 <img src="https://picview.org/assets/screenshots/themes-3.webp"/>
 
- A choice between dark theme and light theme can be found in the settings menu `F4`, along with 12 highlight colors to choose from. 
+ A choice between dark theme and light theme can be found in the settings menu `F4`, along with 12 accent colors to choose from. 
  
 <br>
 <h2>Configure UI</h2>
@@ -59,6 +59,7 @@ The effect can be copied to clipholder `Ctrl + C` or you can save it on your fil
 ## Other features
 
 If you have 7-Zip or WinRAR installed, you can view images inside archives, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
+The scroll function is built with manga/comics in mind.
 
 * Set image as wallpaper or lock screen image. (Image effect will be applied as well)
 * Basic editing: rotate, flip, crop, change file type
