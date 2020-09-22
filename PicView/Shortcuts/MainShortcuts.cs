@@ -434,7 +434,11 @@ namespace PicView.Shortcuts
                         {
                             GalleryNavigation.LoadSelected();
                         }
-                        else if (Properties.Settings.Default.PicGallery == 1)
+                        else if (Properties.Settings.Default.PicGallery == 1 
+                            && !GetQuickSettingsMenu.IsVisible
+                            && !GetToolsAndEffectsMenu.IsVisible
+                            && !GetFileMenu.IsVisible
+                            && !GetImageSettingsMenu.IsVisible)
                         {
                             OpenHorizontalGallery();
                         }

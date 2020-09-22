@@ -37,11 +37,11 @@ namespace PicView.ChangeImage
         /// <param name="file">file path</param>
         internal static Task Add(string file) => Task.Run(async () =>
         {
-            PreloadValue preloadValue;
-
-            if (Sources.TryAdd(file, preloadValue = new PreloadValue(null, true)))
+            // Add bitmapsource as null and set loading to true, to avoid consecutively adding value
+            var preloadValue = new PreloadValue(null, true);
+            if (Sources.TryAdd(file, preloadValue))
             {
-                var x = await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(false);
+                var x = await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(true);
                 preloadValue.bitmapSource = x;
                 preloadValue.isLoading = false;
             }

@@ -217,12 +217,12 @@ namespace PicView.ChangeImage
                 {
                     await Preloader.Add(Pics[index]).ConfigureAwait(true);
                 }
-                else
+                else // Wait until loading finnished
                 {
-                    do
+                    while (preloadValue.isLoading)
                     {
                         await Task.Delay(5).ConfigureAwait(true);
-                    } while (preloadValue.isLoading);
+                    };
                 }
 
                 // Retry
