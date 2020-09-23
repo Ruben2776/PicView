@@ -1886,7 +1886,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Text="E" />
+                            Text="G" />
                     </Border>
 
                     <Border

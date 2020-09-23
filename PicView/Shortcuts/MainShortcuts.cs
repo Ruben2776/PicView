@@ -416,10 +416,6 @@ namespace PicView.Shortcuts
                         {
                             Reload();
                         }
-                        else
-                        {
-                            OpenWith(Pics[FolderIndex]);
-                        }
                         break;
 
                     // L
@@ -447,6 +443,11 @@ namespace PicView.Shortcuts
                     // T
                     case Key.T:
                         ConfigureSettings.ConfigColors.ChangeBackground(sender, e);
+                        break;
+
+                    // G
+                    case Key.G:
+                        OpenWith(Pics[FolderIndex]);
                         break;
 
                     // Space
