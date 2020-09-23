@@ -97,7 +97,7 @@ namespace PicView.UILogic.Loading
 
                     foreach (var item in args)
                     {
-                        NativeMethods.SetAssociation(item, process.Id.ToString(CultureInfo.InvariantCulture), process.MainModule.FileName);
+                        NativeMethods.SetAssociation(item, process.Id.ToString(CultureInfo.InvariantCulture));
                     }
                 }
 

@@ -162,7 +162,7 @@ namespace PicView.Shortcuts
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            if (Properties.Settings.Default.PicGallery == 1) 
+                            if (Properties.Settings.Default.PicGallery == 1)
                             {
                                 GalleryNavigation.Up();
                             }
@@ -423,6 +423,7 @@ namespace PicView.Shortcuts
                         ConfigureSettings.UpdateUIValues.SetLooping(sender, e);
                         break;
 
+#if DEBUG
                     // E || Enter
                     case Key.E:
                     case Key.Enter:
@@ -430,7 +431,7 @@ namespace PicView.Shortcuts
                         {
                             GalleryNavigation.LoadSelected();
                         }
-                        else if (Properties.Settings.Default.PicGallery == 1 
+                        else if (Properties.Settings.Default.PicGallery == 1
                             && !GetQuickSettingsMenu.IsVisible
                             && !GetToolsAndEffectsMenu.IsVisible
                             && !GetFileMenu.IsVisible
@@ -439,6 +440,7 @@ namespace PicView.Shortcuts
                             OpenHorizontalGallery();
                         }
                         break;
+#endif
 
                     // T
                     case Key.T:
