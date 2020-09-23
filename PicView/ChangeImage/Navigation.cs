@@ -139,9 +139,12 @@ namespace PicView.ChangeImage
                 Trace.WriteLine("Pic(string path) entering Pic(int x)");
             }
 #endif
+            if (FolderIndex != -1) // if it is -1, it means it being extracted and need to wait for it instead
+            {
+                // Navigate to picture using obtained index
+                Pic(FolderIndex);
+            }
 
-            // Navigate to picture using obtained index
-            Pic(FolderIndex == -1 ? 0 : FolderIndex);
 
             // Load new gallery values, if changing folder
             if (GetPicGallery != null && Properties.Settings.Default.PicGallery == 2)
@@ -159,9 +162,7 @@ namespace PicView.ChangeImage
         /// <param name="index">The index of file to load from Pics</param>
         internal static async void Pic(int index)
         {
-            FolderIndex = index;
-            var preloadValue = Preloader.Get(Pics[index]);
-
+            Preloader.PreloadValue preloadValue;
             // Error checking to fix rare cases of crashing
             if (Pics.Count < index)
             {
@@ -174,6 +175,9 @@ namespace PicView.ChangeImage
                     return;
                 }
             }
+
+            FolderIndex = index;
+            preloadValue = Preloader.Get(Pics[index]);
 
             // Initate loading behavior, if needed
             if (preloadValue == null || preloadValue.isLoading)
@@ -222,7 +226,7 @@ namespace PicView.ChangeImage
                     while (preloadValue.isLoading)
                     {
                         await Task.Delay(5).ConfigureAwait(true);
-                    };
+                    }
                 }
 
                 // Retry
@@ -279,6 +283,7 @@ namespace PicView.ChangeImage
                 await Preloader.PreLoad(index).ConfigureAwait(false);
             }
 
+            // Add recent files, except when browing archive
             if (string.IsNullOrWhiteSpace(TempZipFile))
             {
                 RecentFiles.Add(Pics[index]);
