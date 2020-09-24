@@ -200,18 +200,18 @@ namespace PicView.Shortcuts
                                 GalleryNavigation.ScrollTo(false, ctrlDown);
                             }
                         }
-                        else if (ctrlDown)
+                        else
                         {
                             Rotate(true);
                         }
                     }
-                    else if (ctrlDown)
-                    {
-                        Rotate(true);
-                    }
                     else if (Properties.Settings.Default.ScrollEnabled)
                     {
                         GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + 30);
+                    }
+                    else
+                    {
+                        Rotate(true);
                     }
                     return;
 
@@ -233,10 +233,18 @@ namespace PicView.Shortcuts
                                 GalleryNavigation.ScrollTo(false, ctrlDown);
                             }
                         }
+                        else
+                        {
+                            Rotate(false);
+                        }
                     }
                     else if (Properties.Settings.Default.ScrollEnabled)
                     {
                         GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + 30);
+                    }
+                    else
+                    {
+                        Rotate(false);
                     }
                     return;
 

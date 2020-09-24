@@ -241,9 +241,16 @@ namespace PicView.PicGallery
         {
             if (x > GetPicGallery.Container.Children.Count || x < 0) { return; }
 
-            if (index == 0 && FolderIndex != 0)
+            if (index == 0)
             {
-                index = FolderIndex;
+                if (GetPicGallery.Container.Children.Count == 0)
+                {
+                    return;
+                }
+                else if (FolderIndex != 0)
+                {
+                    index = FolderIndex;
+                }
             }
 
             // Select next item
