@@ -55,7 +55,7 @@ namespace PicView.ImageHandling
                         return skPic;
 
                     case ".DDS":
-                    case "TGA":
+                    case "TGA": // TODO some tga files are created upside down https://github.com/Ruben2776/PicView/issues/22
                         filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
                         var image = Pfim.Pfim.FromStream(filestream);
                         await filestream.DisposeAsync().ConfigureAwait(false);
@@ -85,7 +85,7 @@ namespace PicView.ImageHandling
 
                         return psd;
 
-                    default:
+                    default: // some formats cause exceptions when using filestream, so defaulting to reading from file
                         var magick = new MagickImage();
                         magick.Read(file);
 
