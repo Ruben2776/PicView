@@ -95,7 +95,7 @@ namespace PicView.UILogic.Loading
             var openwcm = new MenuItem
             {
                 Header = Application.Current.Resources["OpenWith"] as string,
-                InputGestureText = "G"
+                InputGestureText = "E"
             };
             var openwIcon = new System.Windows.Shapes.Path
             {
