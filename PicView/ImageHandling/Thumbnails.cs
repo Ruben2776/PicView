@@ -109,25 +109,8 @@ namespace PicView.ImageHandling
         /// </summary>
         /// <param name="path">The path to the file</param>
         /// <returns></returns>
-        private static BitmapSource GetWindowsThumbnail(string path, bool extralarge = false)
+        private static BitmapSource GetWindowsThumbnail(string path)
         {
-            if (!File.Exists(path))
-            {
-                return null;
-            }
-
-            if (extralarge)
-            {
-                try
-                {
-                    return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.ExtraLargeBitmapSource;
-                }
-                catch (System.Exception)
-                {
-                    return null;
-                }
-            }
-
             try
             {
                 return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
