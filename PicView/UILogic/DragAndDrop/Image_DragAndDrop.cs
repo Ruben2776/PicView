@@ -1,4 +1,5 @@
-﻿using PicView.FileHandling;
+﻿using PicView.ChangeImage;
+using PicView.FileHandling;
 using PicView.Views.UserControls;
 using PicView.Views.UserControls.Misc;
 using System.Diagnostics;
@@ -191,6 +192,7 @@ namespace PicView.UILogic.DragAndDrop
                 else if (SupportedFiles.IsSupportedArchives(Path.GetExtension(files[0])))
                 {
                     FreshStartup = true;
+                    Error_Handling.ChangeFolder();
                     Pic(files[0]);
                 }
                 return;

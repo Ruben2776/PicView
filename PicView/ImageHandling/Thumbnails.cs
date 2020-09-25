@@ -118,10 +118,24 @@ namespace PicView.ImageHandling
 
             if (extralarge)
             {
-                return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.ExtraLargeBitmapSource;
+                try
+                {
+                    return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.ExtraLargeBitmapSource;
+                }
+                catch (System.Exception)
+                {
+                    return null;
+                }
             }
 
-            return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
+            try
+            {
+                return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
+            }
+            catch (System.Exception)
+            {
+                return null;
+            }
         }
     }
 }

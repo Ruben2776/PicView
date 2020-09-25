@@ -1,4 +1,6 @@
-﻿using PicView.SystemIntegration;
+﻿using PicView.ChangeImage;
+using PicView.SystemIntegration;
+using PicView.UILogic;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -89,6 +91,7 @@ namespace PicView.FileHandling
             {
                 FileName = exe,
                 Arguments = arguments,
+                RedirectStandardOutput = true,
 
 #if DEBUG
                 CreateNoWindow = false
@@ -100,11 +103,26 @@ namespace PicView.FileHandling
             if (x == null) { return false; }
 
             x.EnableRaisingEvents = true;
+            x.BeginOutputReadLine();
+            x.OutputDataReceived += delegate
+            {
+                while (Pics.Count < 1)
+                {
+                    SetDirectory();
+                }
+                if (Pics.Count >= 1)
+                {
+                    Pic(0);
+                }
+            };
             x.Exited += delegate
             {
                 if (SetDirectory())
                 {
                     Pic(0);
+
+                    // Add zipped files as recent file
+                    RecentFiles.Add(TempZipFile);
                 }
             };
 
@@ -152,9 +170,6 @@ namespace PicView.FileHandling
                 {
                     return false;
                 }
-
-                // Add zipped files as recent file
-                RecentFiles.Add(TempZipFile);
 
                 return true;
             }

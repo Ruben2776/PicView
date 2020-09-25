@@ -223,6 +223,11 @@ namespace PicView.ChangeImage
                 }
                 else // Wait until loading finnished
                 {
+                    if (preloadValue == null)
+                    {
+                        await Preloader.Add(Pics[index]).ConfigureAwait(true);
+                        preloadValue = Preloader.Get(Pics[index]);
+                    }
                     while (preloadValue.isLoading)
                     {
                         await Task.Delay(5).ConfigureAwait(true);
@@ -231,6 +236,12 @@ namespace PicView.ChangeImage
 
                 // Retry
                 preloadValue = Preloader.Get(Pics[index]);
+
+                if (preloadValue == null)
+                {
+                    await Preloader.Add(Pics[index]).ConfigureAwait(true);
+                    preloadValue = Preloader.Get(Pics[index]);
+                }
 
                 if (preloadValue.bitmapSource == null)
                 {
