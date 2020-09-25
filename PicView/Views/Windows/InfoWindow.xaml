@@ -1859,6 +1859,7 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
                     <Border
@@ -1886,7 +1887,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Text="G" />
+                            Text="E" />
                     </Border>
 
                     <Border
@@ -1977,6 +1978,42 @@
                         Background="{StaticResource BackgroundSubtleHighlightBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,0,1,1" />
+
+                    <Border
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1,1,1,0">
+                        <TextBlock
+                            Margin="10,3,0,3"
+                            FontSize="14"
+                            Text="{StaticResource ResourceKey=ShowHorizontalGallery}" />
+                    </Border>
+
+                    <Border
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,1,1,0">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            Text="G" />
+                    </Border>
+
+                    <Border
+                        Grid.Row="3"
+                        Grid.Column="2"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,1,1,0" />
+
                 </Grid>
 
                 <StackPanel Margin="0,28,0,7">
