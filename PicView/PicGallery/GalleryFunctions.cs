@@ -12,19 +12,7 @@ namespace PicView.PicGallery
 {
     internal static class GalleryFunctions
     {
-        private static bool Open;
-
-        internal static bool IsOpen
-        {
-            get { return Open; }
-            set
-            {
-                Open = value;
-#if DEBUG
-                Trace.WriteLine("IsOpen changed value to: " + IsOpen);
-#endif
-            }
-        }
+        internal static bool IsOpen;
 
         internal static async Task Add(BitmapSource pic, int id)
         {

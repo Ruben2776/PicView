@@ -1,5 +1,4 @@
-﻿using PicView.UILogic.PicGallery;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -14,7 +13,6 @@ namespace PicView.PicGallery
 
         internal static int picGalleryItem_Size;
         internal static int picGalleryItem_Size_s;
-        internal static int index;
 
         internal static int Horizontal_items
         {
@@ -132,126 +130,11 @@ namespace PicView.PicGallery
 
         #endregion ScrollTo
 
-        internal static void Up()
-        {
-            Deselect(FolderIndex);
-
-            if (index != FolderIndex)
-            {
-                SetSelected(index, false);
-            }
-
-            var x = index - 1 < 0 ? 0 : index - 1;
-
-            SetSelected(x, true);
-
-            if (Vertical_items == 1)
-            {
-                GetPicGallery.Scroller.ScrollToHorizontalOffset(GetPicGallery.Scroller.HorizontalOffset - picGalleryItem_Size);
-            }
-        }
-
-        internal static void Down()
-        {
-            Deselect(FolderIndex);
-
-            if (index != FolderIndex)
-            {
-                SetSelected(index, false);
-            }
-
-            var x = index + 1 >=
-                GetPicGallery.Container.Children.Count ? GetPicGallery.Container.Children.Count - 1
-                : index + 1;
-
-            SetSelected(x, true);
-
-            if (Vertical_items == 1)
-            {
-                GetPicGallery.Scroller.ScrollToHorizontalOffset(GetPicGallery.Scroller.HorizontalOffset + picGalleryItem_Size);
-            }
-        }
-
-        internal static void Left()
-        {
-            Deselect(FolderIndex);
-
-            if (index != FolderIndex)
-            {
-                SetSelected(index, false);
-            }
-
-            int next;
-
-            if (Vertical_items == 1)
-            {
-                next = index - 1 < 0 ? 0 : index - 1;
-            }
-            else
-            {
-                next = index - Vertical_items < 0 ? 0 : index - Vertical_items;
-            }
-
-            GetPicGallery.Scroller.ScrollToHorizontalOffset(GetPicGallery.Scroller.HorizontalOffset - picGalleryItem_Size);
-
-            SetSelected(next, true);
-        }
-
-        internal static void Right()
-        {
-            Deselect(FolderIndex);
-
-            if (index != FolderIndex)
-            {
-                SetSelected(index, false);
-            }
-
-            int next;
-
-            if (Vertical_items == 1)
-            {
-                next = index + 1 > GetPicGallery.Container.Children.Count - 1 ?
-                    GetPicGallery.Container.Children.Count - 1 : index + 1;
-            }
-            else
-            {
-                next = index + Vertical_items >= GetPicGallery.Container.Children.Count ?
-                GetPicGallery.Container.Children.Count - 1 : index + Vertical_items;
-            }
-
-            SetSelected(next, true);
-
-            GetPicGallery.Scroller.ScrollToHorizontalOffset(GetPicGallery.Scroller.HorizontalOffset + picGalleryItem_Size);
-        }
-
-        internal static void LoadSelected()
-        {
-            if (index == FolderIndex)
-            {
-                GalleryToggle.CloseHorizontalGallery();
-            }
-            else
-            {
-                SetSelected(FolderIndex, false);
-                GalleryClick.Click(index);
-            }
-        }
+        #region Select and deselect behaviour       
 
         internal static void SetSelected(int x, bool selected)
         {
             if (x > GetPicGallery.Container.Children.Count || x < 0) { return; }
-
-            if (index == 0)
-            {
-                if (GetPicGallery.Container.Children.Count == 0)
-                {
-                    return;
-                }
-                else if (FolderIndex != 0)
-                {
-                    index = FolderIndex;
-                }
-            }
 
             // Select next item
             var nextItem = GetPicGallery.Container.Children[x] as Views.UserControls.PicGalleryItem;
@@ -260,8 +143,6 @@ namespace PicView.PicGallery
             {
                 nextItem.innerborder.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
                 nextItem.innerborder.Width = nextItem.innerborder.Height = picGalleryItem_Size;
-
-                index = x;
             }
             else
             {
@@ -270,14 +151,6 @@ namespace PicView.PicGallery
             }
         }
 
-        private static void Deselect(int x)
-        {
-            if (x > GetPicGallery.Container.Children.Count || x < 0) { return; }
-
-            // Deselect current item
-            var deselectedItem = GetPicGallery.Container.Children[x] as Views.UserControls.PicGalleryItem;
-            deselectedItem.innerborder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
-            deselectedItem.innerborder.Width = deselectedItem.innerborder.Height = picGalleryItem_Size;
-        }
+        #endregion
     }
 }
