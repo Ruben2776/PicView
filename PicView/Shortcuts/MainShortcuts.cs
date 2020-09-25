@@ -3,6 +3,7 @@ using PicView.Editing.Crop;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.UILogic;
+using PicView.UILogic.PicGallery;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.ChangeImage.Error_Handling;
@@ -11,7 +12,6 @@ using static PicView.FileHandling.Copy_Paste;
 using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.Open_Save;
 using static PicView.UILogic.ConfigureWindows;
-using static PicView.UILogic.PicGallery.GalleryToggle;
 using static PicView.UILogic.TransformImage.Rotation;
 using static PicView.UILogic.TransformImage.Scroll;
 using static PicView.UILogic.TransformImage.ZoomLogic;
@@ -67,17 +67,13 @@ namespace PicView.Shortcuts
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            if (Properties.Settings.Default.PicGallery == 1)
-                            {
-                                GalleryNavigation.Right();
-                                return;
-                            }
+                            return;
                         }
                     }
                     if (!e.IsRepeat)
                     {
                         // Go to first if Ctrl held down
-                        if (ctrlDown)
+                        if (ctrlDown && !GalleryFunctions.IsOpen)
                         {
                             Pic(true, true);
                         }
@@ -99,17 +95,13 @@ namespace PicView.Shortcuts
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            if (Properties.Settings.Default.PicGallery == 1)
-                            {
-                                GalleryNavigation.Left();
-                                return;
-                            }
+                            return;
                         }
                     }
                     if (!e.IsRepeat)
                     {
                         // Go to last if Ctrl held down
-                        if (ctrlDown)
+                        if (ctrlDown && !GalleryFunctions.IsOpen)
                         {
                             Pic(false, true);
                         }
@@ -162,14 +154,7 @@ namespace PicView.Shortcuts
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            if (Properties.Settings.Default.PicGallery == 1)
-                            {
-                                GalleryNavigation.Up();
-                            }
-                            else
-                            {
-                                GalleryNavigation.ScrollTo(true, ctrlDown);
-                            }
+                            GalleryNavigation.ScrollTo(true, ctrlDown);
                         }
                         else
                         {
@@ -191,14 +176,7 @@ namespace PicView.Shortcuts
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            if (Properties.Settings.Default.PicGallery == 1)
-                            {
-                                GalleryNavigation.Down();
-                            }
-                            else
-                            {
-                                GalleryNavigation.ScrollTo(false, ctrlDown);
-                            }
+                            GalleryNavigation.ScrollTo(false, ctrlDown);
                         }
                         else
                         {
@@ -216,7 +194,7 @@ namespace PicView.Shortcuts
                     return;
 
                 case Key.S:
-                    if (ctrlDown)
+                    if (ctrlDown && !GalleryFunctions.IsOpen)
                     {
                         SaveFiles();
                     }
@@ -224,14 +202,7 @@ namespace PicView.Shortcuts
                     {
                         if (GalleryFunctions.IsOpen)
                         {
-                            if (Properties.Settings.Default.PicGallery == 1)
-                            {
-                                GalleryNavigation.Down();
-                            }
-                            else
-                            {
-                                GalleryNavigation.ScrollTo(false, ctrlDown);
-                            }
+                            GalleryNavigation.ScrollTo(false, ctrlDown);
                         }
                         else
                         {
@@ -280,7 +251,7 @@ namespace PicView.Shortcuts
                         {
                             if (GalleryFunctions.IsOpen)
                             {
-                                Toggle();
+                                GalleryToggle.Toggle();
                             }
                             else
                             {
@@ -293,7 +264,7 @@ namespace PicView.Shortcuts
                         }
                         else if (GalleryFunctions.IsOpen)
                         {
-                            Toggle();
+                            GalleryToggle.Toggle();
                         }
                         else if (IsDialogOpen)
                         {
@@ -344,7 +315,7 @@ namespace PicView.Shortcuts
 
                     // X, Ctrl + X
                     case Key.X:
-                        if (ctrlDown)
+                        if (ctrlDown && !GalleryFunctions.IsOpen)
                         {
                             Cut(Pics[FolderIndex]);
                         }
@@ -355,17 +326,23 @@ namespace PicView.Shortcuts
                         break;
                     // F
                     case Key.F:
-                        Flip();
+                        if (!GalleryFunctions.IsOpen)
+                        {
+                            Flip();
+                        }
                         break;
 
                     // Delete, Shift + Delete
                     case Key.Delete:
-                        DeleteFile(!shiftDown);
+                        if (!GalleryFunctions.IsOpen)
+                        {
+                            DeleteFile(!shiftDown);
+                        }
                         break;
 
                     // Ctrl + C, Ctrl + Shift + C, Ctrl + Alt + C
                     case Key.C:
-                        if (ctrlDown)
+                        if (ctrlDown && !GalleryFunctions.IsOpen)
                         {
                             if (GetResizeAndOptimize != null)
                             {
@@ -396,7 +373,7 @@ namespace PicView.Shortcuts
 
                     // Ctrl + V
                     case Key.V:
-                        if (ctrlDown)
+                        if (ctrlDown && !GalleryFunctions.IsOpen)
                         {
                             Paste();
                         }
@@ -404,7 +381,7 @@ namespace PicView.Shortcuts
 
                     // Ctrl + I
                     case Key.I:
-                        if (ctrlDown)
+                        if (ctrlDown && !GalleryFunctions.IsOpen)
                         {
                             SystemIntegration.NativeMethods.ShowFileProperties(Pics[FolderIndex]);
                         }
@@ -412,7 +389,7 @@ namespace PicView.Shortcuts
 
                     // Ctrl + P
                     case Key.P:
-                        if (ctrlDown)
+                        if (ctrlDown && !GalleryFunctions.IsOpen)
                         {
                             Print(Pics[FolderIndex]);
                         }
@@ -420,7 +397,7 @@ namespace PicView.Shortcuts
 
                     // Ctrl + R
                     case Key.R:
-                        if (ctrlDown)
+                        if (ctrlDown && !GalleryFunctions.IsOpen)
                         {
                             Reload();
                         }
@@ -431,33 +408,32 @@ namespace PicView.Shortcuts
                         ConfigureSettings.UpdateUIValues.SetLooping(sender, e);
                         break;
 
-#if DEBUG
-                    // E || Enter
+                    // E
                     case Key.E:
-                    case Key.Enter:
-                        if (GalleryFunctions.IsOpen)
+                        if (!GalleryFunctions.IsOpen)
                         {
-                            GalleryNavigation.LoadSelected();
+                            OpenWith(Pics[FolderIndex]);
                         }
-                        else if (Properties.Settings.Default.PicGallery == 1
-                            && !GetQuickSettingsMenu.IsVisible
-                            && !GetToolsAndEffectsMenu.IsVisible
-                            && !GetFileMenu.IsVisible
-                            && !GetImageSettingsMenu.IsVisible)
-                        {
-                            OpenHorizontalGallery();
-                        }
-                        break;
-#endif
+                    break;
 
                     // T
                     case Key.T:
-                        ConfigureSettings.ConfigColors.ChangeBackground(sender, e);
+                        if (!GalleryFunctions.IsOpen)
+                        {
+                            ConfigureSettings.ConfigColors.ChangeBackground(sender, e);
+                        }
                         break;
 
                     // G
                     case Key.G:
-                        OpenWith(Pics[FolderIndex]);
+                        if (Properties.Settings.Default.PicGallery == 1
+                          && !GetQuickSettingsMenu.IsVisible
+                          && !GetToolsAndEffectsMenu.IsVisible
+                          && !GetFileMenu.IsVisible
+                          && !GetImageSettingsMenu.IsVisible)
+                        {
+                            GalleryToggle.Toggle();
+                        }
                         break;
 
                     // Space
@@ -531,7 +507,10 @@ namespace PicView.Shortcuts
 
                     // F5
                     case Key.F5:
-                        Slideshow.StartSlideshow();
+                        if (!GalleryFunctions.IsOpen)
+                        {
+                            Slideshow.StartSlideshow();
+                        }
                         break;
 
                     // F6
