@@ -24,14 +24,19 @@ namespace PicView.FileHandling
         /// </summary>
         internal const string FilterFiles =
             "Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg;*.webp;*"                                   // Common pics
-            + "|webp|*.webp;"                                                                               // TGA
+            + "|jpg| *.jpg;*.jpeg*"                                                                         // JPG
+            + "|PNG|*.png;"                                                                                 // PNG
+            + "|gif|*.gif;"                                                                                 // GIF
+            + "|ico|*.ico;"                                                                                 // ICO
+            + "|svg|*.svg;"                                                                                 // SVG
+            + "|webp|*.webp;"                                                                               // WEBP
             + "|tga|*.tga;"                                                                                 // TGA
-            + "|dds|*.dds;"                                                                                 // ICO
+            + "|dds|*.dds;"                                                                                 // DDS
             + "|ico|*.ico;"                                                                                 // ICO
             + "|wdp|*.wdp;"                                                                                 // WDP
             + "|svg|*.svg;"                                                                                 // SVG
             + "|Photoshop|*.psd;*.psb"                                                                      // PSD
-            + "|GIMP|*.xcf"                                                                                 // PSD
+            + "|GIMP|*.xcf"                                                                                 // GIMP
             + "|Archives|*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"                           // Archives
             + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz"                                                        // Comics
             + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw";      // Camera files
