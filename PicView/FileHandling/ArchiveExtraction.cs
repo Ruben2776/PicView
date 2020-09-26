@@ -1,4 +1,5 @@
 ﻿using PicView.ChangeImage;
+using PicView.ImageHandling;
 using PicView.SystemIntegration;
 using PicView.UILogic;
 using System;
@@ -104,15 +105,19 @@ namespace PicView.FileHandling
 
             x.EnableRaisingEvents = true;
             x.BeginOutputReadLine();
-            x.OutputDataReceived += delegate
+            x.OutputDataReceived += async delegate
             {
-                while (Pics.Count < 1)
+                while (Pics.Count < 2)
                 {
                     SetDirectory();
                 }
-                if (Pics.Count >= 1)
+                if (Pics.Count >= 2 && !x.HasExited)
                 {
-                    Pic(0);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
+                    {
+                        ConfigureWindows.GetMainWindow.MainImage.Source = Thumbnails.GetBitmapSourceThumb(Pics[0]);
+                    }));
+                    await Preloader.PreLoad(0).ConfigureAwait(false);
                 }
             };
             x.Exited += delegate
