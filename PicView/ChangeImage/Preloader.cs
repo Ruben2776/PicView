@@ -57,10 +57,7 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            if (!Contains(Pics[i]))
-            {
-                Add(Pics[i]);
-            }
+            Add(Pics[i]);
         }
 
         /// <summary>
@@ -134,7 +131,7 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static PreloadValue Get(string key)
         {
-            if (string.IsNullOrWhiteSpace(key) || !Contains(key))
+            if (!Contains(key))
             {
                 return null;
             }

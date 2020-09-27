@@ -183,7 +183,7 @@ namespace PicView.ChangeImage
             if (preloadValue == null || preloadValue.isLoading)
             {
                 // Dissallow changing image while loading
-                CanNavigate = false;
+                //CanNavigate = false;
 
                 if (!GalleryFunctions.IsOpen)
                 {
@@ -250,29 +250,32 @@ namespace PicView.ChangeImage
                 }
             }
 
-            // Need to put UI change in dispatcher to fix slideshow bug
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
+            if (index == FolderIndex) // Show new image, if not skipped
             {
-                // Scroll to top if scroll enabled
-                if (IsScrollEnabled)
+                // Need to put UI change in dispatcher to fix slideshow bug
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
                 {
-                    ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
-                }
+                    // Scroll to top if scroll enabled
+                    if (IsScrollEnabled)
+                    {
+                        ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
+                    }
 
-                // Reset transforms if needed
-                if (UILogic.TransformImage.Rotation.Flipped || UILogic.TransformImage.Rotation.Rotateint != 0)
-                {
-                    UILogic.TransformImage.Rotation.Flipped = false;
-                    UILogic.TransformImage.Rotation.Rotateint = 0;
-                    GetImageSettingsMenu.FlipButton.TheButton.IsChecked = false;
+                    // Reset transforms if needed
+                    if (UILogic.TransformImage.Rotation.Flipped || UILogic.TransformImage.Rotation.Rotateint != 0)
+                    {
+                        UILogic.TransformImage.Rotation.Flipped = false;
+                        UILogic.TransformImage.Rotation.Rotateint = 0;
+                        GetImageSettingsMenu.FlipButton.TheButton.IsChecked = false;
 
-                    ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
-                }
+                        ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
+                    }
 
-                ConfigureWindows.GetMainWindow.MainImage.Source = preloadValue.bitmapSource;
-                FitImage(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight);
-                SetTitleString(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight, index);
-            }));
+                    ConfigureWindows.GetMainWindow.MainImage.Source = preloadValue.bitmapSource;
+                    FitImage(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight);
+                    SetTitleString(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight, index);
+                }));
+            }
 
             // Update values
             CanNavigate = true;
