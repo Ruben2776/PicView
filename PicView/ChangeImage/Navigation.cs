@@ -145,7 +145,6 @@ namespace PicView.ChangeImage
                 Pic(FolderIndex);
             }
 
-
             // Load new gallery values, if changing folder
             if (GetPicGallery != null && Properties.Settings.Default.PicGallery == 2)
             {
@@ -183,7 +182,7 @@ namespace PicView.ChangeImage
             if (preloadValue == null || preloadValue.isLoading)
             {
                 // Dissallow changing image while loading
-                //CanNavigate = false;
+                CanNavigate = false;
 
                 if (!GalleryFunctions.IsOpen)
                 {
@@ -216,22 +215,15 @@ namespace PicView.ChangeImage
                     }
                 }
 
-                // Get it, if not loading
-                if (!Preloader.Contains(Pics[index]))
+                if (preloadValue == null) // Error correctiom
                 {
                     await Preloader.Add(Pics[index]).ConfigureAwait(true);
+                    preloadValue = Preloader.Get(Pics[index]);
                 }
-                else // Wait until loading finnished
+                while (preloadValue.isLoading)
                 {
-                    if (preloadValue == null)
-                    {
-                        await Preloader.Add(Pics[index]).ConfigureAwait(true);
-                        preloadValue = Preloader.Get(Pics[index]);
-                    }
-                    while (preloadValue.isLoading)
-                    {
-                        await Task.Delay(5).ConfigureAwait(true);
-                    }
+                    // Wait for finnished result
+                    await Task.Delay(2).ConfigureAwait(true);
                 }
 
                 // Retry
@@ -243,39 +235,40 @@ namespace PicView.ChangeImage
                     preloadValue = Preloader.Get(Pics[index]);
                 }
 
-                if (preloadValue.bitmapSource == null)
+                // Check if works, if not show error message
+                if (preloadValue == null)
                 {
-                    // If pic is still null, image can't be rendered
+                    preloadValue = new Preloader.PreloadValue(ImageDecoder.ImageErrorMessage(), false);
+                }
+                else if (preloadValue.bitmapSource == null)
+                {
                     preloadValue.bitmapSource = ImageDecoder.ImageErrorMessage();
                 }
             }
 
-            if (index == FolderIndex) // Show new image, if not skipped
+            // Need to put UI change in dispatcher to fix slideshow bug
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
             {
-                // Need to put UI change in dispatcher to fix slideshow bug
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
+                // Scroll to top if scroll enabled
+                if (IsScrollEnabled)
                 {
-                    // Scroll to top if scroll enabled
-                    if (IsScrollEnabled)
-                    {
-                        ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
-                    }
+                    ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
+                }
 
-                    // Reset transforms if needed
-                    if (UILogic.TransformImage.Rotation.Flipped || UILogic.TransformImage.Rotation.Rotateint != 0)
-                    {
-                        UILogic.TransformImage.Rotation.Flipped = false;
-                        UILogic.TransformImage.Rotation.Rotateint = 0;
-                        GetImageSettingsMenu.FlipButton.TheButton.IsChecked = false;
+                // Reset transforms if needed
+                if (UILogic.TransformImage.Rotation.Flipped || UILogic.TransformImage.Rotation.Rotateint != 0)
+                {
+                    UILogic.TransformImage.Rotation.Flipped = false;
+                    UILogic.TransformImage.Rotation.Rotateint = 0;
+                    GetImageSettingsMenu.FlipButton.TheButton.IsChecked = false;
 
-                        ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
-                    }
+                    ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
+                }
 
-                    ConfigureWindows.GetMainWindow.MainImage.Source = preloadValue.bitmapSource;
-                    FitImage(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight);
-                    SetTitleString(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight, index);
-                }));
-            }
+                ConfigureWindows.GetMainWindow.MainImage.Source = preloadValue.bitmapSource;
+                FitImage(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight);
+                SetTitleString(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight, index);
+            }));
 
             // Update values
             CanNavigate = true;
