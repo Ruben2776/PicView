@@ -50,7 +50,7 @@ namespace PicView.UILogic.TransformImage
         internal static void Rotate(bool right)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Source == null ||
-                Properties.Settings.Default.PicGallery == 1 && GalleryFunctions.IsOpen)
+                Properties.Settings.Default.FullscreenGallery == false && GalleryFunctions.IsOpen)
             { return; }
 
             if (right)

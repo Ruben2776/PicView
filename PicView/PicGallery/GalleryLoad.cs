@@ -1,13 +1,13 @@
 ﻿using PicView.ImageHandling;
+using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using static PicView.UILogic.HideInterfaceLogic;
 using static PicView.PicGallery.GalleryFunctions;
-using PicView.PicGallery;
+using static PicView.UILogic.HideInterfaceLogic;
 
-namespace PicView.UILogic.PicGallery
+namespace PicView.PicGallery
 {
     internal static class GalleryLoad
     {
@@ -63,7 +63,7 @@ namespace PicView.UILogic.PicGallery
                 SetSize();
             }
 
-            if (Properties.Settings.Default.PicGallery == 1)
+            if (Properties.Settings.Default.FullscreenGallery == false)
             {
                 if (Properties.Settings.Default.Fullscreen)
                 {

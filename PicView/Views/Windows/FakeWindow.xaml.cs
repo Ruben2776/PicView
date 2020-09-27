@@ -72,7 +72,7 @@ namespace PicView.Views.Windows
         {
             if (ConfigureWindows.GetMainWindow.WindowState == WindowState.Normal)
             {
-                if (Properties.Settings.Default.PicGallery == 1) { return; }
+                if (Properties.Settings.Default.FullscreenGallery == false) { return; }
 
                 Show();
                 ConfigureWindows.GetMainWindow.BringIntoView();

@@ -3,7 +3,6 @@ using PicView.Editing.Crop;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.UILogic;
-using PicView.UILogic.PicGallery;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.ChangeImage.Error_Handling;
@@ -426,7 +425,7 @@ namespace PicView.Shortcuts
 
                     // G
                     case Key.G:
-                        if (Properties.Settings.Default.PicGallery == 1
+                        if (Properties.Settings.Default.FullscreenGallery == false
                           && !GetQuickSettingsMenu.IsVisible
                           && !GetToolsAndEffectsMenu.IsVisible
                           && !GetFileMenu.IsVisible
@@ -565,7 +564,7 @@ namespace PicView.Shortcuts
                 // Alt + Enter
                 else if ((e.SystemKey == Key.Enter))
                 {
-                    if (Properties.Settings.Default.PicGallery != 2)
+                    if (Properties.Settings.Default.FullscreenGallery == false)
                     {
                         Fullscreen_Restore();
                     }

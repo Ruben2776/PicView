@@ -30,7 +30,7 @@ namespace PicView.PicGallery
             {
                 if (GetPicGallery == null) { return 0; }
 
-                return Properties.Settings.Default.PicGallery == 1 ?
+                return Properties.Settings.Default.FullscreenGallery == false ?
                     (int)Math.Floor(GetPicGallery.Height / picGalleryItem_Size) : Pics.Count;
             }
         }
@@ -41,7 +41,7 @@ namespace PicView.PicGallery
             {
                 if (GetPicGallery == null) { return 0; }
 
-                return Properties.Settings.Default.PicGallery == 1 ?
+                return Properties.Settings.Default.FullscreenGallery == false ?
                     Horizontal_items * Vertical_items :
                     (int)Math.Floor(GetPicGallery.Height / picGalleryItem_Size);
             }
@@ -65,7 +65,7 @@ namespace PicView.PicGallery
         /// <param name="item">The index of picGalleryItem</param>
         internal static void ScrollTo()
         {
-            if (Properties.Settings.Default.PicGallery == 1)
+            if (Properties.Settings.Default.FullscreenGallery == false)
             {
                 GetPicGallery.Scroller.ScrollToHorizontalOffset(picGalleryItem_Size * Horizontal_items * Current_page);
             }
@@ -110,7 +110,7 @@ namespace PicView.PicGallery
                 var speed = speedUp ? picGalleryItem_Size * 4.7 : picGalleryItem_Size;
                 var direction = next ? GetPicGallery.Scroller.HorizontalOffset - speed : GetPicGallery.Scroller.HorizontalOffset + speed;
 
-                if (Properties.Settings.Default.PicGallery == 1)
+                if (Properties.Settings.Default.FullscreenGallery == false)
                 {
                     GetPicGallery.Scroller.ScrollToHorizontalOffset(direction);
                 }

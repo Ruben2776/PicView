@@ -1,5 +1,4 @@
 ﻿using PicView.UILogic;
-using PicView.UILogic.PicGallery;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;

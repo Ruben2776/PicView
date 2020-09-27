@@ -1,18 +1,17 @@
-﻿using PicView.UILogic.Animations;
+﻿using PicView.UILogic;
+using PicView.UILogic.Animations;
 using PicView.UILogic.Sizing;
 using PicView.Views.Windows;
 using System;
 using System.Windows;
 using System.Windows.Media.Animation;
 using static PicView.ChangeImage.Navigation;
-using static PicView.UILogic.ConfigureWindows;
 using static PicView.PicGallery.GalleryFunctions;
-using static PicView.UILogic.PicGallery.GalleryLoad;
+using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.Sizing.WindowSizing;
 using static PicView.UILogic.UC;
-using PicView.PicGallery;
 
-namespace PicView.UILogic.PicGallery
+namespace PicView.PicGallery
 {
     internal static class GalleryToggle
     {
@@ -25,12 +24,10 @@ namespace PicView.UILogic.PicGallery
                 return;
             }
 
-            var picGallery = Properties.Settings.Default.PicGallery;
-
             /// Toggle PicGallery, when not changed
             if (!change)
             {
-                if (picGallery == 1)
+                if (Properties.Settings.Default.FullscreenGallery == false)
                 {
                     if (!IsOpen)
                     {
@@ -56,13 +53,13 @@ namespace PicView.UILogic.PicGallery
             /// Toggle PicGallery, when changed
             else
             {
-                if (picGallery == 1)
+                if (Properties.Settings.Default.FullscreenGallery)
                 {
-                    ChangeToPicGalleryTwo();
+                    ChangeToFullscreenGallery();
                 }
                 else
                 {
-                    ChangeToPicGalleryOne();
+                    ChangeToHorizontalGallery();
                 }
             }
         }
@@ -78,8 +75,8 @@ namespace PicView.UILogic.PicGallery
                 return;
             }
 
-            Properties.Settings.Default.PicGallery = 1;
-            LoadLayout();
+            Properties.Settings.Default.FullscreenGallery = false;
+            GalleryLoad.LoadLayout();
 
             AnimationHelper.Fade(GetPicGallery, TimeSpan.FromSeconds(.3), TimeSpan.Zero, 0, 1);
 
@@ -104,14 +101,14 @@ namespace PicView.UILogic.PicGallery
 
             if (GetPicGallery.Container.Children.Count == 0)
             {
-                await Load().ConfigureAwait(false);
+                await GalleryLoad.Load().ConfigureAwait(false);
             }
             // Fix weird bug when changing folder and one item remains
             // TODO investigate if selected gallery item does not get removed?
             else if (GetPicGallery.Container.Children.Count == 1 && Pics.Count > 1)
             {
                 GetPicGallery.Container.Children.Clear();
-                await Load().ConfigureAwait(false);
+                await GalleryLoad.Load().ConfigureAwait(false);
             }
         }
 
@@ -122,8 +119,8 @@ namespace PicView.UILogic.PicGallery
                 return;
             }
 
-            Properties.Settings.Default.PicGallery = 2;
-            LoadLayout();
+            Properties.Settings.Default.FullscreenGallery = true;
+            GalleryLoad.LoadLayout();
 
             if (GetFakeWindow == null)
             {
@@ -161,7 +158,7 @@ namespace PicView.UILogic.PicGallery
 
             if (GetPicGallery.Container.Children.Count == 0)
             {
-                await Load().ConfigureAwait(false);
+                await GalleryLoad.Load().ConfigureAwait(false);
             }
         }
 
@@ -197,7 +194,7 @@ namespace PicView.UILogic.PicGallery
 
         internal static void CloseFullscreenGallery()
         {
-            Properties.Settings.Default.PicGallery = 1;
+            Properties.Settings.Default.FullscreenGallery = false;
             IsOpen = false;
             GetFakeWindow.Hide();
 
@@ -213,10 +210,10 @@ namespace PicView.UILogic.PicGallery
 
         #region Change
 
-        internal static void ChangeToPicGalleryOne()
+        internal static void ChangeToHorizontalGallery()
         {
-            Properties.Settings.Default.PicGallery = 1;
-            LoadLayout();
+            Properties.Settings.Default.FullscreenGallery = false;
+            GalleryLoad.LoadLayout();
 
             if (GetFakeWindow.grid.Children.Contains(GetPicGallery))
             {
@@ -227,10 +224,10 @@ namespace PicView.UILogic.PicGallery
             GetFakeWindow.Hide();
         }
 
-        internal static void ChangeToPicGalleryTwo()
+        internal static void ChangeToFullscreenGallery()
         {
-            Properties.Settings.Default.PicGallery = 2;
-            LoadLayout();
+            Properties.Settings.Default.FullscreenGallery = true;
+            GalleryLoad.LoadLayout();
 
             if (GetFakeWindow != null)
             {

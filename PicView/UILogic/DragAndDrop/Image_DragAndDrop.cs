@@ -53,6 +53,11 @@ namespace PicView.UILogic.DragAndDrop
         /// <param name="e"></param>
         internal static void Image_DragEnter(object sender, DragEventArgs e)
         {
+            if (!Properties.Settings.Default.FullscreenGallery && PicGallery.GalleryFunctions.IsOpen)
+            {
+                return;
+            }
+
             UIElement element = null;
 
             if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
@@ -145,6 +150,11 @@ namespace PicView.UILogic.DragAndDrop
         /// <param name="e"></param>
         internal static void Image_Drop(object sender, DragEventArgs e)
         {
+            if (!Properties.Settings.Default.FullscreenGallery && PicGallery.GalleryFunctions.IsOpen)
+            {
+                return;
+            }
+
             RemoveDragOverlay();
 
             // Load dropped URL

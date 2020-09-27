@@ -1,6 +1,6 @@
 ﻿using PicView.FileHandling;
+using PicView.PicGallery;
 using PicView.SystemIntegration;
-using PicView.UILogic.PicGallery;
 using PicView.UILogic.Sizing;
 using System;
 using System.Collections.Generic;
@@ -60,7 +60,7 @@ namespace PicView.UILogic.Loading
 
                 // Reset PicGallery and don't allow it to run,
                 // if only 1 image
-                Properties.Settings.Default.PicGallery = 1;
+                Properties.Settings.Default.FullscreenGallery = false;
 
                 // Don't start it in fullscreen with no image
                 Properties.Settings.Default.Fullscreen = false;
@@ -111,7 +111,7 @@ namespace PicView.UILogic.Loading
                 {
                     ConfigureWindows.Fullscreen_Restore(true);
                 }
-                else if (Properties.Settings.Default.PicGallery == 2)
+                else if (Properties.Settings.Default.FullscreenGallery)
                 {
                     GalleryToggle.OpenFullscreenGallery(true);
                 }

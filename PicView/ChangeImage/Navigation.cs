@@ -3,7 +3,6 @@ using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.SystemIntegration;
 using PicView.UILogic;
-using PicView.UILogic.PicGallery;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -146,7 +145,7 @@ namespace PicView.ChangeImage
             }
 
             // Load new gallery values, if changing folder
-            if (GetPicGallery != null && Properties.Settings.Default.PicGallery == 2)
+            if (GetPicGallery != null && Properties.Settings.Default.FullscreenGallery)
             {
                 if (GetPicGallery.Container.Children.Count == 0)
                 {
@@ -194,7 +193,7 @@ namespace PicView.ChangeImage
 
                     // Show a thumbnail while loading
                     var thumb = GetThumb(index);
-                    if (thumb != null && Properties.Settings.Default.PicGallery != 2)
+                    if (thumb != null && Properties.Settings.Default.FullscreenGallery == false)
                     {
                         await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
                         {
@@ -396,7 +395,7 @@ namespace PicView.ChangeImage
             GetQuickSettingsMenu.GoToPic.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
 
             // Load new gallery values, if changing folder
-            if (GetPicGallery != null && Properties.Settings.Default.PicGallery == 2)
+            if (GetPicGallery != null && Properties.Settings.Default.FullscreenGallery)
             {
                 if (GetPicGallery.Container.Children.Count == 0)
                 {
@@ -426,7 +425,7 @@ namespace PicView.ChangeImage
             // exit if browsing PicGallery
             if (GetPicGallery != null)
             {
-                if (Properties.Settings.Default.PicGallery == 1)
+                if (Properties.Settings.Default.FullscreenGallery == false)
                 {
                     if (GalleryFunctions.IsOpen)
                     {

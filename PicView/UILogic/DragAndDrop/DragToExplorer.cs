@@ -17,7 +17,7 @@ namespace PicView.UILogic.DragAndDrop
                 || Keyboard.Modifiers != ModifierKeys.Control
                 || Keyboard.Modifiers == ModifierKeys.Shift
                 || Keyboard.Modifiers == ModifierKeys.Alt
-                || Properties.Settings.Default.PicGallery == 2
+                || Properties.Settings.Default.FullscreenGallery
                 || Properties.Settings.Default.Fullscreen
                 || Scroll.IsAutoScrolling)
             {

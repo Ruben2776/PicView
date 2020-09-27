@@ -50,8 +50,8 @@
     <Setting Name="SortPreference" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="PicGallery" Type="System.Byte" Scope="User">
-      <Value Profile="(Default)">1</Value>
+    <Setting Name="FullscreenGallery" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="SlideTimer" Type="System.Double" Scope="User">
       <Value Profile="(Default)">5000</Value>

@@ -124,7 +124,7 @@ namespace PicView.UILogic.Sizing
                 padding = 0;
             }
 
-            if (Properties.Settings.Default.PicGallery == 2)
+            if (Properties.Settings.Default.FullscreenGallery)
             {
                 /// Extra padding for picgallery required
                 padding += picGalleryItem_Size - 50;
@@ -197,7 +197,7 @@ namespace PicView.UILogic.Sizing
                 /// Update TitleBar
                 var interfaceSize = 205 * MonitorInfo.DpiScaling; // logo and buttons width
 
-                if (Properties.Settings.Default.PicGallery == 2)
+                if (Properties.Settings.Default.FullscreenGallery)
                 {
                     if (xWidth >= monitorWidth - (UC.GetPicGallery.ActualWidth + 5) * 1.88)
                     {

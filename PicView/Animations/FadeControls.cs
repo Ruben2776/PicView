@@ -25,7 +25,7 @@ namespace PicView.UILogic.Animations
                 || Getx2 == null
                 || GetGalleryShortcut == null
                 || Scroll.IsAutoScrolling
-                || Properties.Settings.Default.PicGallery == 1 && GalleryFunctions.IsOpen)
+                || Properties.Settings.Default.FullscreenGallery == false && GalleryFunctions.IsOpen)
             {
                 return;
             }

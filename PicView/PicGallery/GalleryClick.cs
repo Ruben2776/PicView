@@ -1,4 +1,4 @@
-﻿using PicView.PicGallery;
+﻿using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System;
 using System.Windows;
@@ -12,7 +12,7 @@ using static PicView.PicGallery.GalleryFunctions;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.UC;
 
-namespace PicView.UILogic.PicGallery
+namespace PicView.PicGallery
 {
     /// <summary>
     /// Logick for what happens when user clicks on
@@ -24,7 +24,7 @@ namespace PicView.UILogic.PicGallery
         {
             ConfigureWindows.GetMainWindow.Focus();
 
-            if (Properties.Settings.Default.PicGallery == 1)
+            if (Properties.Settings.Default.FullscreenGallery == false)
             {
                 ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Hidden;
 
@@ -113,7 +113,7 @@ namespace PicView.UILogic.PicGallery
             // Change image
             Pic(id);
 
-            if (Properties.Settings.Default.PicGallery == 1)
+            if (Properties.Settings.Default.FullscreenGallery == false)
             {
                 GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
 

@@ -1,5 +1,5 @@
-﻿using PicView.UILogic.Animations;
-using PicView.UILogic.PicGallery;
+﻿using PicView.PicGallery;
+using PicView.UILogic.Animations;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;

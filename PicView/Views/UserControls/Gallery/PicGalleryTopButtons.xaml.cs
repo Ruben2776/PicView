@@ -1,6 +1,6 @@
-﻿using PicView.UILogic;
+﻿using PicView.PicGallery;
+using PicView.UILogic;
 using PicView.UILogic.Animations;
-using PicView.UILogic.PicGallery;
 using System.Windows;
 using System.Windows.Controls;
 
