@@ -14,43 +14,38 @@ namespace PicView.ImageHandling
 {
     internal static class Base64
     {
-        internal static async Task<BitmapSource> Base64StringToBitmap(string base64String)
+        internal static Task<BitmapSource> Base64StringToBitmap(string base64String) => Task.Run(() =>
         {
-            return await Task.Run(() =>
+            byte[] binaryData = Convert.FromBase64String(base64String);
+
+            using MagickImage magick = new MagickImage();
+            var mrs = new MagickReadSettings()
             {
-                byte[] binaryData = Convert.FromBase64String(base64String);
+                Density = new Density(300, 300),
+                BackgroundColor = MagickColors.Transparent,
+            };
 
-                using (MagickImage magick = new MagickImage())
-                {
-                    var mrs = new MagickReadSettings()
-                    {
-                        Density = new Density(300, 300),
-                        BackgroundColor = MagickColors.Transparent,
-                    };
-
-                    try
-                    {
-                        magick.Read(new MemoryStream(binaryData), mrs);
-                    }
+            try
+            {
+                magick.Read(new MemoryStream(binaryData), mrs);
+            }
 #if DEBUG
-                    catch (MagickException e)
-                    {
-                        Trace.WriteLine("Base64StringToBitmap " + base64String + " null, \n" + e.Message);
-                        return null;
-                    }
+            catch (MagickException e)
+            {
+                Trace.WriteLine("Base64StringToBitmap " + base64String + " null, \n" + e.Message);
+                return null;
+            }
 #else
                 catch (MagickException) { return null; }
 #endif
-                    // Set values for maximum quality
-                    magick.Quality = 100;
-                    magick.ColorSpace = ColorSpace.Transparent;
+            // Set values for maximum quality
+            magick.Quality = 100;
+            magick.ColorSpace = ColorSpace.Transparent;
 
-                    var pic = magick.ToBitmapSource();
-                    pic.Freeze();
-                    return pic;
-                }
-            }).ConfigureAwait(true);
-        }
+            var pic = magick.ToBitmapSource();
+            pic.Freeze();
+            return pic;
+        });
 
         internal static bool IsBase64String(string base64)
         {

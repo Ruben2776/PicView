@@ -340,33 +340,37 @@ namespace PicView.ChangeImage
         /// <param name="imageName"></param>
         internal static async void Pic64(string base64string)
         {
-            var pic = await Base64.Base64StringToBitmap(base64string).ConfigureAwait(true);
+            var pic = await Base64.Base64StringToBitmap(base64string).ConfigureAwait(false);
 
-            Unload();
-
-            if (IsScrollEnabled)
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
             {
-                ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
-            }
+                Unload();
 
-            ConfigureWindows.GetMainWindow.MainImage.Source = pic;
+                if (IsScrollEnabled)
+                {
+                    ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
+                }
 
-            FitImage(pic.PixelWidth, pic.PixelHeight);
-            CloseToolTipMessage();
+                ConfigureWindows.GetMainWindow.MainImage.Source = pic;
 
-            SetTitleString(pic.PixelWidth, pic.PixelHeight, Application.Current.Resources["Base64Image"] as string);
+                FitImage(pic.PixelWidth, pic.PixelHeight);
+                CloseToolTipMessage();
+
+                SetTitleString(pic.PixelWidth, pic.PixelHeight, Application.Current.Resources["Base64Image"] as string);
+
+                if (ConfigureWindows.GetImageInfoWindow != null)
+                {
+                    if (ConfigureWindows.GetImageInfoWindow.IsVisible)
+                    {
+                        ConfigureWindows.GetImageInfoWindow.UpdateValues();
+                    }
+                }
+
+            }));
 
             Taskbar.NoProgress();
 
             CanNavigate = false;
-
-            if (ConfigureWindows.GetImageInfoWindow != null)
-            {
-                if (ConfigureWindows.GetImageInfoWindow.IsVisible)
-                {
-                    ConfigureWindows.GetImageInfoWindow.UpdateValues();
-                }
-            }
         }
 
         /// <summary>
