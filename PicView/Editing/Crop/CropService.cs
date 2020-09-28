@@ -114,6 +114,11 @@ namespace PicView.Editing.Crop
             var touch = GetTouchPoint(point);
             if (touch == TouchPoint.OutsideRectangle)
             {
+                if (cropTool.Width >= 1 && cropTool.Height >= 1)
+                {
+                    // Don't deselect when clicking outside rect
+                    return;
+                }
                 currentToolState = createState;
             }
             else if (touch == TouchPoint.InsideRectangle)
@@ -125,23 +130,25 @@ namespace PicView.Editing.Crop
 
         private TouchPoint GetTouchPoint(Point mousePoint)
         {
+            // 13 to not hit resize function
+
             //left
-            if (mousePoint.X < cropTool.TopLeftX)
+            if (mousePoint.X < cropTool.TopLeftX + 13)
             {
                 return TouchPoint.OutsideRectangle;
             }
             //right
-            if (mousePoint.X > cropTool.BottomRightX)
+            if (mousePoint.X > cropTool.BottomRightX - 13)
             {
                 return TouchPoint.OutsideRectangle;
             }
             //top
-            if (mousePoint.Y < cropTool.TopLeftY)
+            if (mousePoint.Y < cropTool.TopLeftY + 13)
             {
                 return TouchPoint.OutsideRectangle;
             }
             //bottom
-            if (mousePoint.Y > cropTool.BottomRightY)
+            if (mousePoint.Y > cropTool.BottomRightY - 13) 
             {
                 return TouchPoint.OutsideRectangle;
             }
