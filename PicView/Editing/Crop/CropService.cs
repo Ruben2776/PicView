@@ -48,6 +48,8 @@ namespace PicView.Editing.Crop
                 return;
             }
 
+            _ = new CropContextMenu();
+
             canvas = new Canvas
             {
                 Height = adornedElement.ActualHeight,

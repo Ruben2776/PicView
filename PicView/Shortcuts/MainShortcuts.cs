@@ -295,6 +295,10 @@ namespace PicView.Shortcuts
                         }
                         else if (!cm.IsVisible)
                         {
+                            if (GetCropppingTool != null && GetCropppingTool.IsVisible)
+                            {
+                                return;
+                            }
                             SystemCommands.CloseWindow(GetMainWindow);
                         }
                         break;
