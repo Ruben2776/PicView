@@ -48,6 +48,10 @@ namespace PicView.Editing.Crop
                 return;
             }
 
+            // Make sure menus are hidden when cropping
+            UILogic.UC.Close_UserControls();
+
+            // Show context menu
             _ = new CropContextMenu();
 
             canvas = new Canvas

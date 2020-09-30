@@ -379,6 +379,8 @@ namespace PicView.ChangeImage
         /// <param name="folder"></param>
         internal static async void PicFolder(string folder)
         {
+            // TODO add new function that can go to next/prev folder
+
             ChangeFolder(true);
 
             // If searching subdirectories, it might freeze UI, so wrap it in task
