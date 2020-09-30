@@ -24,6 +24,7 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.KeyDown += MainWindow_KeysDown;
             ConfigureWindows.GetMainWindow.KeyUp += MainWindow_KeysUp;
             ConfigureWindows.GetMainWindow.MouseDown += MainWindow_MouseDown;
+            ConfigureWindows.GetMainWindow.ParentContainer.PreviewMouseWheel += MainWindow_MouseWheel;
 
             // MinButton
             ConfigureWindows.GetMainWindow.MinButton.TheButton.Click += (s, x) => SystemCommands.MinimizeWindow(ConfigureWindows.GetMainWindow);

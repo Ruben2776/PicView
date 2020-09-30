@@ -813,5 +813,19 @@ namespace PicView.Shortcuts
                 }
             }
         }
+
+        /// <summary>
+        /// Zooms, scrolls or changes image with mousewheel
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        internal static void MainWindow_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            // Cycle between images when it is enabled and mouse not on image
+            if (Properties.Settings.Default.CtrlZoom || (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                Pic(e.Delta > 0);
+            }
+        }
     }
 }
