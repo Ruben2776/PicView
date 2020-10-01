@@ -4,7 +4,6 @@ using PicView.PicGallery;
 using PicView.SystemIntegration;
 using PicView.UILogic;
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
@@ -132,12 +131,6 @@ namespace PicView.ChangeImage
                 Preloader.Clear();
             }
 
-#if DEBUG
-            if (FreshStartup)
-            {
-                Trace.WriteLine("Pic(string path) entering Pic(int x)");
-            }
-#endif
             if (FolderIndex != -1) // if it is -1, it means it being extracted and need to wait for it instead
             {
                 // Navigate to picture using obtained index

@@ -248,8 +248,6 @@
     <Resource Include="Themes\Resources\fonts\texgyreheros-bold.otf" />
     <Resource Include="Themes\Resources\fonts\texgyreheros-italic.otf" />
     <Resource Include="Themes\Resources\fonts\texgyreheros-regular.otf" />
-    <Resource Include="Themes\Resources\img\icon-raster.180b.png" />
-    <Resource Include="Themes\Resources\img\icon-raster.180l.png" />
     <Resource Include="Themes\Resources\img\noisy-texture-100x100-o4-d13-c-fafafa-t0.png" />
     <Resource Include="Themes\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
   </ItemGroup>

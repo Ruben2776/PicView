@@ -4,7 +4,6 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 
 namespace PicView.Views.Windows
@@ -21,18 +20,6 @@ namespace PicView.Views.Windows
             appVersion.Content += fvi.FileVersion;
 
             ContentRendered += Window_ContentRendered;
-
-            if (Properties.Settings.Default.DarkTheme)
-            {
-                var Source = new BitmapImage();
-                Source.BeginInit();
-                Source.UriSource = new Uri("pack://application:,,,/PicView;component/Themes/Resources/img/icon-raster.180l.png");
-                Source.EndInit();
-
-                Logo.Source = Source;
-                Logo.Width = 180;
-                Logo.Height = 133;
-            }
 
             MaxWidth = MinWidth = 565 * WindowSizing.MonitorInfo.DpiScaling;
         }
