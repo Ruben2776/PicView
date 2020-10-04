@@ -19,7 +19,7 @@ namespace PicView.Views.Windows
 
             InitializeComponent();
             Loaded += delegate { StartLoading.PreStart(); };
-            ContentRendered += delegate { InvalidateVisual(); StartLoading.Start(); };
+            ContentRendered += delegate { StartLoading.Start(); };
         }
 
         #region OnRenderSizeChanged override

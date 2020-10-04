@@ -39,6 +39,24 @@ namespace PicView.UILogic.Loading
                 = Visibility.Collapsed;
             }
 
+            if (Properties.Settings.Default.UserLanguage != "en")
+            {
+                try
+                {
+                    Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
+                    {
+                        Source = new Uri(@"/PicView;component/Translations/" + Properties.Settings.Default.UserLanguage + ".xaml", UriKind.Relative)
+                    };
+                }
+                catch (Exception)
+                {
+                    Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
+                    {
+                        Source = new Uri(@"/PicView;component/Translations/en.xaml", UriKind.Relative)
+                    };
+                }
+            }
+
             FreshStartup = true;
 
             Pics = new List<string>();
@@ -125,24 +143,6 @@ namespace PicView.UILogic.Loading
                 }
 
                 Pic(file);
-            }
-
-            if (Properties.Settings.Default.UserLanguage != "en")
-            {
-                try
-                {
-                    Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
-                    {
-                        Source = new Uri(@"/PicView;component/Translations/" + Properties.Settings.Default.UserLanguage + ".xaml", UriKind.Relative)
-                    };
-                }
-                catch (Exception)
-                {
-                    Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
-                    {
-                        Source = new Uri(@"/PicView;component/Translations/en.xaml", UriKind.Relative)
-                    };
-                }
             }
         }
 
