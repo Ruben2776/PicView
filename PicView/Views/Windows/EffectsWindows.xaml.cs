@@ -3,8 +3,9 @@ using PicView.FileHandling;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System;
+using System.Linq;
 using System.Windows;
-using System.Windows.Input;
+using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
 namespace PicView.Views.Windows
@@ -14,18 +15,16 @@ namespace PicView.Views.Windows
         public EffectsWindow()
         {
             InitializeComponent();
+            Title = Application.Current.Resources["HLSLPictureFX"] + " - PicView";
+            MaxHeight = WindowSizing.MonitorInfo.WorkArea.Height;
+            Width *= WindowSizing.MonitorInfo.DpiScaling;
 
             ContentRendered += Window_ContentRendered;
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            // Center vertically
-            Top = ((WindowSizing.MonitorInfo.WorkArea.Height * WindowSizing.MonitorInfo.DpiScaling) - ActualHeight) / 2 + WindowSizing.MonitorInfo.WorkArea.Top;
-
-            KeyDown += KeysDown;
-            KeyUp += KeysUp;
-            Scroller.MouseWheel += Info_MouseWheel;
+            KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(null, e, this);
 
             // CloseButton
             CloseButton.TheButton.Click += delegate { Hide(); ConfigureWindows.GetMainWindow.Focus(); };
@@ -35,184 +34,137 @@ namespace PicView.Views.Windows
 
             TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
 
-            NegativeButton.Checked += Negative;
-            NegativeButton.Unchecked += Remove_Effects;
-
+            NegativeButton.Click += Negative;
             NegativeButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(NegativeColorsText); };
             NegativeButton.MouseEnter += delegate { ButtonMouseOverAnim(NegativeColorsText); };
             NegativeButton.MouseLeave += delegate { ButtonMouseLeaveAnim(NegativeColorsText); };
 
-            GrayscaleButton.Checked += GraySceale;
-            GrayscaleButton.Unchecked += Remove_Effects;
-
+            GrayscaleButton.Click += GraySceale;
             GrayscaleButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(BlackAndWhiteText); };
             GrayscaleButton.MouseEnter += delegate { ButtonMouseOverAnim(BlackAndWhiteText); };
             GrayscaleButton.MouseLeave += delegate { ButtonMouseLeaveAnim(BlackAndWhiteText); };
 
-            ColorToneButton.Checked += ColorToneEffect;
-            ColorToneButton.Unchecked += Remove_Effects;
-
+            ColorToneButton.Click += ColorToneEffect;
             ColorToneButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ColorToneText); };
             ColorToneButton.MouseEnter += delegate { ButtonMouseOverAnim(ColorToneText); };
             ColorToneButton.MouseLeave += delegate { ButtonMouseLeaveAnim(ColorToneText); };
 
-            OldMovieButton.Checked += OldMovieEffect;
-            OldMovieButton.Unchecked += Remove_Effects;
-
+            OldMovieButton.Click += OldMovieEffect;
             OldMovieButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(OldMovieText); };
             OldMovieButton.MouseEnter += delegate { ButtonMouseOverAnim(OldMovieText); };
             OldMovieButton.MouseLeave += delegate { ButtonMouseLeaveAnim(OldMovieText); };
 
-            BloomButton.Checked += Bloom;
-            BloomButton.Unchecked += Remove_Effects;
-
+            BloomButton.Click += Bloom;
             BloomButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(BloomText); };
             BloomButton.MouseEnter += delegate { ButtonMouseOverAnim(BloomText); };
             BloomButton.MouseLeave += delegate { ButtonMouseLeaveAnim(BloomText); };
 
-            GloomButton.Checked += Gloom;
-            GloomButton.Unchecked += Remove_Effects;
-
+            GloomButton.Click += Gloom;
             GloomButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(GloomText); };
             GloomButton.MouseEnter += delegate { ButtonMouseOverAnim(GloomText); };
             GloomButton.MouseLeave += delegate { ButtonMouseLeaveAnim(GloomText); };
 
-            MonochromeButton.Checked += Monochrome;
-            MonochromeButton.Unchecked += Remove_Effects;
-
+            MonochromeButton.Click += Monochrome;
             MonochromeButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(MonochromeText); };
             MonochromeButton.MouseEnter += delegate { ButtonMouseOverAnim(MonochromeText); };
             MonochromeButton.MouseLeave += delegate { ButtonMouseLeaveAnim(MonochromeText); };
 
-            WavewarperButton.Checked += WaveWarperEffect;
-            WavewarperButton.Unchecked += Remove_Effects;
-
+            WavewarperButton.Click += WaveWarperEffect;
             WavewarperButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(WaveWarperText); };
             WavewarperButton.MouseEnter += delegate { ButtonMouseOverAnim(WaveWarperText); };
             WavewarperButton.MouseLeave += delegate { ButtonMouseLeaveAnim(WaveWarperText); };
 
-            UnderwaterButton.Checked += UnderWaterEffect;
-            UnderwaterButton.Unchecked += Remove_Effects;
-
+            UnderwaterButton.Click += UnderWaterEffect;
             UnderwaterButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(UnderwaterText); };
             UnderwaterButton.MouseEnter += delegate { ButtonMouseOverAnim(UnderwaterText); };
             UnderwaterButton.MouseLeave += delegate { ButtonMouseLeaveAnim(UnderwaterText); };
 
-            BandedSwirlButton.Checked += BandedSwirlEffect;
-            BandedSwirlButton.Unchecked += Remove_Effects;
-
+            BandedSwirlButton.Click += BandedSwirlEffect;
             BandedSwirlButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(BandedSwirlText); };
             BandedSwirlButton.MouseEnter += delegate { ButtonMouseOverAnim(BandedSwirlText); };
             BandedSwirlButton.MouseLeave += delegate { ButtonMouseLeaveAnim(BandedSwirlText); };
 
-            RippleButton.Checked += RippleEffect1;
-            RippleButton.Unchecked += Remove_Effects;
+            SwirlButton.Click += SwirlEffect;
+            SwirlButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(SwirlText); };
+            SwirlButton.MouseEnter += delegate { ButtonMouseOverAnim(SwirlText); };
+            SwirlButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SwirlText); };
 
+            RippleButton.Click += RippleEffect1;
             RippleButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(RippleText); };
             RippleButton.MouseEnter += delegate { ButtonMouseOverAnim(RippleText); };
             RippleButton.MouseLeave += delegate { ButtonMouseLeaveAnim(RippleText); };
 
-            RippleAltButton.Checked += RippleEffect2;
-            RippleAltButton.Unchecked += Remove_Effects;
-
+            RippleAltButton.Click += RippleEffect2;
             RippleAltButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(RippleAltText); };
             RippleAltButton.MouseEnter += delegate { ButtonMouseOverAnim(RippleAltText); };
             RippleAltButton.MouseLeave += delegate { ButtonMouseLeaveAnim(RippleAltText); };
 
-            BlurButton.Checked += Poison_blur;
-            BlurButton.Unchecked += Remove_Effects;
-
+            BlurButton.Click += BlurEffect;
             BlurButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(BlurText); };
             BlurButton.MouseEnter += delegate { ButtonMouseOverAnim(BlurText); };
             BlurButton.MouseLeave += delegate { ButtonMouseLeaveAnim(BlurText); };
 
-            DirectionalBlurButton.Checked += Dir_blur;
-            DirectionalBlurButton.Unchecked += Remove_Effects;
-
+            DirectionalBlurButton.Click += Dir_blur;
             DirectionalBlurButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(DirectionalBlurText); };
             DirectionalBlurButton.MouseEnter += delegate { ButtonMouseOverAnim(DirectionalBlurText); };
             DirectionalBlurButton.MouseLeave += delegate { ButtonMouseLeaveAnim(DirectionalBlurText); };
 
-            TelescopicBlurButton.Checked += Teleskopisk_blur;
-            TelescopicBlurButton.Unchecked += Remove_Effects;
-
+            TelescopicBlurButton.Click += Teleskopisk_blur;
             TelescopicBlurButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(TelescopicBlurText); };
             TelescopicBlurButton.MouseEnter += delegate { ButtonMouseOverAnim(TelescopicBlurText); };
             TelescopicBlurButton.MouseLeave += delegate { ButtonMouseLeaveAnim(TelescopicBlurText); };
 
-            PixelateButton.Checked += PixelateEffect;
-            PixelateButton.Unchecked += Remove_Effects;
-
+            PixelateButton.Click += PixelateEffect;
             PixelateButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(PixelateText); };
             PixelateButton.MouseEnter += delegate { ButtonMouseOverAnim(PixelateText); };
             PixelateButton.MouseLeave += delegate { ButtonMouseLeaveAnim(PixelateText); };
 
-            EmbossedButton.Checked += Embossed;
-            EmbossedButton.Unchecked += Remove_Effects;
-
+            EmbossedButton.Click += Embossed;
             EmbossedButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(EmbossedText); };
             EmbossedButton.MouseEnter += delegate { ButtonMouseOverAnim(EmbossedText); };
             EmbossedButton.MouseLeave += delegate { ButtonMouseLeaveAnim(EmbossedText); };
 
-            SmoothMagnifyButton.Checked += MagnifySmoothEffect;
-            SmoothMagnifyButton.Unchecked += Remove_Effects;
-
+            SmoothMagnifyButton.Click += MagnifySmoothEffect;
             SmoothMagnifyButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(SmoothMagnifyText); };
             SmoothMagnifyButton.MouseEnter += delegate { ButtonMouseOverAnim(SmoothMagnifyText); };
             SmoothMagnifyButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SmoothMagnifyText); };
 
-            PivotButton.Checked += PivotEffect;
-            PivotButton.Unchecked += Remove_Effects;
-
+            PivotButton.Click += PivotEffect;
             PivotButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(PivotText); };
             PivotButton.MouseEnter += delegate { ButtonMouseOverAnim(PivotText); };
             PivotButton.MouseLeave += delegate { ButtonMouseLeaveAnim(PivotText); };
 
-            PaperfoldButton.Checked += PaperFoldEffect;
-            PaperfoldButton.Unchecked += Remove_Effects;
-
+            PaperfoldButton.Click += PaperFoldEffect;
             PaperfoldButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(PaperFoldText); };
             PaperfoldButton.MouseEnter += delegate { ButtonMouseOverAnim(PaperFoldText); };
             PaperfoldButton.MouseLeave += delegate { ButtonMouseLeaveAnim(PaperFoldText); };
 
-            PencilSketchButton.Checked += SketchPencilStrokeEffect;
-            PencilSketchButton.Unchecked += Remove_Effects;
-
+            PencilSketchButton.Click += SketchPencilStrokeEffect;
             PencilSketchButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(PencilSketchText); };
             PencilSketchButton.MouseEnter += delegate { ButtonMouseOverAnim(PencilSketchText); };
             PencilSketchButton.MouseLeave += delegate { ButtonMouseLeaveAnim(PencilSketchText); };
 
-            SketchButton.Checked += Sketch;
-            SketchButton.Unchecked += Remove_Effects;
-
+            SketchButton.Click += Sketch;
             SketchButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(SketchText); };
             SketchButton.MouseEnter += delegate { ButtonMouseOverAnim(SketchText); };
             SketchButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SketchText); };
 
-            TonemappingButton.Checked += ToneMapping;
-            TonemappingButton.Unchecked += Remove_Effects;
-
+            TonemappingButton.Click += ToneMapping;
             TonemappingButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ToneMappingText); };
             TonemappingButton.MouseEnter += delegate { ButtonMouseOverAnim(ToneMappingText); };
             TonemappingButton.MouseLeave += delegate { ButtonMouseLeaveAnim(ToneMappingText); };
 
-            BandsButton.Checked += bands;
-            BandsButton.Unchecked += Remove_Effects;
-
+            BandsButton.Click += Bands;
             BandsButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(BandsText); };
             BandsButton.MouseEnter += delegate { ButtonMouseOverAnim(BandsText); };
             BandsButton.MouseLeave += delegate { ButtonMouseLeaveAnim(BandsText); };
 
-            GlasTileButton.Checked += GlasTileEffect;
-            GlasTileButton.Unchecked += Remove_Effects;
-
+            GlasTileButton.Click += GlasTileEffect;
             GlasTileButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(GlassTileText); };
             GlasTileButton.MouseEnter += delegate { ButtonMouseOverAnim(GlassTileText); };
             GlasTileButton.MouseLeave += delegate { ButtonMouseLeaveAnim(GlassTileText); };
 
-            FrostyOutlineButton.Checked += FrostyOutlineEffect;
-            FrostyOutlineButton.Unchecked += Remove_Effects;
-
+            FrostyOutlineButton.Click += FrostyOutlineEffect;
             FrostyOutlineButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(FrostyOutlineText); };
             FrostyOutlineButton.MouseEnter += delegate { ButtonMouseOverAnim(FrostyOutlineText); };
             FrostyOutlineButton.MouseLeave += delegate { ButtonMouseLeaveAnim(FrostyOutlineText); };
@@ -224,394 +176,404 @@ namespace PicView.Views.Windows
             SaveButton.Click += (_, _) => Open_Save.SaveFiles();
         }
 
-        #region Keyboard Shortcuts
-
-        private void KeysDown(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Down:
-                case Key.PageDown:
-                case Key.S:
-                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 10);
-                    break;
-
-                case Key.Up:
-                case Key.PageUp:
-                case Key.W:
-                    Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 10);
-                    break;
-
-                case Key.Q:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        Environment.Exit(0);
-                    }
-                    break;
-            }
-        }
-
-        private void KeysUp(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Escape:
-                    Hide();
-                    ConfigureWindows.GetMainWindow.Focus();
-                    break;
-
-                case Key.Q:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        Environment.Exit(0);
-                    }
-                    break;
-            }
-        }
-
-        private void Info_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            if (e.Delta > 0)
-            {
-                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset - 10);
-            }
-            else if (e.Delta < 0)
-            {
-                Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + 10);
-            }
-        }
-
-        #endregion Keyboard Shortcuts
-
         #region HLSL Shader Effects
 
-        private void Remove_Effects(object sender, RoutedEventArgs e)
+        private bool Remove_Effects()
         {
             ConfigureWindows.GetMainWindow.MainImage.Effect = null;
+
+            var list = EffectsContainer.Children.OfType<CheckBox>().Where(x => x.IsChecked == true);
+
+            if (list.Any())
+            {
+                foreach (var item in list)
+                {
+                    item.IsChecked = false;
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         private void Negative(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new InvertColorEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                NegativeButton.IsChecked = false;
-            }
+            
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new InvertColorEffect();
+            NegativeButton.IsChecked = true;
         }
 
         private void GraySceale(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new GrayscaleEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                GrayscaleButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new GrayscaleEffect();
+            GrayscaleButton.IsChecked = true;
         }
 
         private void ColorToneEffect(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new ColorToneEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                ColorToneButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new ColorToneEffect();
+            ColorToneButton.IsChecked = true;
         }
 
         private void RippleEffect1(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new Transition_RippleEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                RippleButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new Transition_RippleEffect();
+            RippleButton.IsChecked = true;
         }
 
         private void RippleEffect2(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new RippleEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                RippleAltButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new RippleEffect();
+            RippleAltButton.IsChecked = true;
         }
 
         private void BandedSwirlEffect(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new BandedSwirlEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                BandedSwirlButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new BandedSwirlEffect();
+            BandedSwirlButton.IsChecked = true;
         }
 
         private void Monochrome(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new MonochromeEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                MonochromeButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new MonochromeEffect();
+            MonochromeButton.IsChecked = true;
         }
 
-        private void Swirl(object sender, RoutedEventArgs e)
+        private void SwirlEffect(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new SwirlEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                BandedSwirlButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new SwirlEffect();
+            SwirlButton.IsChecked = true;
         }
 
         private void Bloom(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new BloomEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                BloomButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new BloomEffect();
+            BloomButton.IsChecked = true;
         }
 
         private void Gloom(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new GloomEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                GloomButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new GloomEffect();
+            GloomButton.IsChecked = true;
         }
 
         private void ToneMapping(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new ToneMappingEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                TonemappingButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new ToneMappingEffect();
+            TonemappingButton.IsChecked = true;
         }
 
         private void Teleskopisk_blur(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new TelescopicBlurPS3Effect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                TelescopicBlurButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new TelescopicBlurPS3Effect();
+            TelescopicBlurButton.IsChecked = true;
         }
 
-        private void Poison_blur(object sender, RoutedEventArgs e)
+        private void BlurEffect(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new GrowablePoissonDiskEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                BlurButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new GrowablePoissonDiskEffect();
+            BlurButton.IsChecked = true;
         }
 
         private void Dir_blur(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new DirectionalBlurEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                DirectionalBlurButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new DirectionalBlurEffect();
+            DirectionalBlurButton.IsChecked = true;
         }
 
-        private void bands(object sender, RoutedEventArgs e)
+        private void Bands(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new BandsEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                BandsButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new BandsEffect();
+            BandsButton.IsChecked = true;
         }
 
         private void Embossed(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new EmbossedEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                EmbossedButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new EmbossedEffect();
+            EmbossedButton.IsChecked = true;
         }
 
         private void GlasTileEffect(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new GlassTilesEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                GlasTileButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new GlassTilesEffect();
+            GlasTileButton.IsChecked = true;
         }
 
         private void MagnifySmoothEffect(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new MagnifySmoothEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                SmoothMagnifyButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new MagnifySmoothEffect();
+            SmoothMagnifyButton.IsChecked = true;
         }
 
         private void PaperFoldEffect(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new PaperFoldEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                PaperfoldButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new PaperFoldEffect();
+            PaperfoldButton.IsChecked = true;
         }
 
         private void PivotEffect(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new PivotEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                PivotButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new PivotEffect();
+            PivotButton.IsChecked = true;
         }
 
         private void UnderWaterEffect(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new UnderwaterEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                UnderwaterButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new UnderwaterEffect();
+            UnderwaterButton.IsChecked = true;
         }
 
         private void WaveWarperEffect(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new WaveWarperEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                WavewarperButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new WaveWarperEffect();
+            WavewarperButton.IsChecked = true;
         }
 
         private void FrostyOutlineEffect(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new FrostyOutlineEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                FrostyOutlineButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new FrostyOutlineEffect();
+            FrostyOutlineButton.IsChecked = true;
         }
 
         private void OldMovieEffect(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new OldMovieEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                OldMovieButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new OldMovieEffect();
+            OldMovieButton.IsChecked = true;
         }
 
         private void PixelateEffect(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new PixelateEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                PixelateButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new PixelateEffect();
+            PixelateButton.IsChecked = true;
         }
 
         private void Sketch(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new SketchGraniteEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                SketchButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new SketchGraniteEffect();
+            SketchButton.IsChecked = true;
         }
 
         private void SketchPencilStrokeEffect(object sender, RoutedEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect == null)
+            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
-                ConfigureWindows.GetMainWindow.MainImage.Effect = new SketchPencilStrokeEffect();
+                if (!Remove_Effects())
+                {
+                    return;
+                }
             }
-            else
-            {
-                PencilSketchButton.IsChecked = false;
-            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new SketchPencilStrokeEffect();
+            PencilSketchButton.IsChecked = true;
         }
 
         #endregion HLSL Shader Effects

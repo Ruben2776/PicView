@@ -6,8 +6,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
     Title="{StaticResource HLSLPictureFX}"
-    Width="530"
-    Height="392"
+    Width="559"
+    Height="450"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros"
@@ -44,375 +44,551 @@
             DockPanel.Dock="Top"
             Fill="{StaticResource BorderBrush}" />
 
-        <ScrollViewer
-            x:Name="Scroller"
-            Background="{StaticResource NoisyBg}"
-            HorizontalScrollBarVisibility="Disabled"
-            VerticalScrollBarVisibility="Auto">
 
-            <StackPanel>
-                <WrapPanel Margin="10,5" Orientation="Horizontal">
 
-                    <CheckBox x:Name="NegativeButton" Background="Transparent">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource NegativeColors}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="NegativeColorsText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
+        <StackPanel Background="{StaticResource NoisyBg}">
+            <WrapPanel
+                x:Name="EffectsContainer"
+                Margin="10,10,10,0"
+                Orientation="Horizontal">
 
-                    <CheckBox x:Name="GrayscaleButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource BlackAndWhite}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="BlackAndWhiteText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="ColorToneButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource ColorTone}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="ColorToneText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="OldMovieButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource OldMovie}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="OldMovieText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="BloomButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource Bloom}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="BloomText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="GloomButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource Gloom}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="GloomText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="MonochromeButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource Monochrome}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="MonochromeText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="WavewarperButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource WaveWarper}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="WaveWarperText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="UnderwaterButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource Underwater}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="UnderwaterText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="BandedSwirlButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource BandedSwirl}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="BandedSwirlText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="RippleButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource Ripple}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="RippleText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="RippleAltButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource RippleAlt}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="RippleAltText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="BlurButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource Blur}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="BlurText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="DirectionalBlurButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource DirectionalBlur}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="DirectionalBlurText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="TelescopicBlurButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource TelescopicBlur}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="TelescopicBlurText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="PixelateButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource Pixelate}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="PixelateText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="EmbossedButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource Embossed}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="EmbossedText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="SmoothMagnifyButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource SmoothMagnify}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="SmoothMagnifyText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="PivotButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource Pivot}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="PivotText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="PaperfoldButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource PaperFold}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="PaperFoldText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="PencilSketchButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource PencilSketch}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="PencilSketchText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="SketchButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource Sketch}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="SketchText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="TonemappingButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource ToneMapping}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="ToneMappingText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="FrostyOutlineButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource FrostyOutline}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="FrostyOutlineText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="BandsButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource Bands}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="BandsText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-
-                    <CheckBox x:Name="GlasTileButton">
-                        <TextBlock
-                            Width="140"
-                            Margin="6,2,8,2"
-                            FontSize="14"
-                            Text="{StaticResource GlassTile}"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="GlassTileText" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </CheckBox>
-                </WrapPanel>
-
-                <TextBlock
-                    Margin="0,20,0,4"
-                    HorizontalAlignment="Center"
-                    Text="{StaticResource ClickToAddShaderEffectToImage}" />
-                <TextBlock HorizontalAlignment="Center" Text="{StaticResource UncheckToRemoveEffect}" />
-
-                <Button
-                    x:Name="SaveButton"
-                    Margin="0,12,0,0"
-                    Padding="26,7,26,7"
-                    HorizontalAlignment="Center"
+                <CheckBox
+                    x:Name="NegativeButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
                     BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1"
-                    Content="{StaticResource Save}"
-                    FontSize="14"
-                    Style="{StaticResource MetroFlatButton}">
-                    <Button.Foreground>
-                        <SolidColorBrush x:Name="SaveText" Color="{StaticResource MainColor}" />
-                    </Button.Foreground>
-                </Button>
-            </StackPanel>
-        </ScrollViewer>
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource NegativeColors}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="NegativeColorsText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="GrayscaleButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource BlackAndWhite}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="BlackAndWhiteText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="ColorToneButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource ColorTone}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="ColorToneText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="OldMovieButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource OldMovie}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="OldMovieText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="BloomButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource Bloom}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="BloomText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="GloomButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource Gloom}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="GloomText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="MonochromeButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource Monochrome}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="MonochromeText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="WavewarperButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource WaveWarper}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="WaveWarperText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="UnderwaterButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource Underwater}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="UnderwaterText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="BandedSwirlButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource BandedSwirl}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="BandedSwirlText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="SwirlButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="Swirl"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="SwirlText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="RippleButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource Ripple}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="RippleText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="RippleAltButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource RippleAlt}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="RippleAltText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="BlurButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource Blur}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="BlurText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="DirectionalBlurButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource DirectionalBlur}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="DirectionalBlurText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="TelescopicBlurButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource TelescopicBlur}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="TelescopicBlurText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="PixelateButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource Pixelate}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="PixelateText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="EmbossedButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource Embossed}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="EmbossedText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="SmoothMagnifyButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource SmoothMagnify}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="SmoothMagnifyText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="PivotButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource Pivot}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="PivotText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="PaperfoldButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource PaperFold}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="PaperFoldText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="PencilSketchButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource PencilSketch}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="PencilSketchText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="SketchButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource Sketch}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="SketchText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="TonemappingButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource ToneMapping}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="ToneMappingText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="FrostyOutlineButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource FrostyOutline}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="FrostyOutlineText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="BandsButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource Bands}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="BandsText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+                <CheckBox
+                    x:Name="GlasTileButton"
+                    Margin="0,0,4,4"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Width="140"
+                        Margin="6,2,8,2"
+                        FontSize="14"
+                        Text="{StaticResource GlassTile}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush x:Name="GlassTileText" Color="{StaticResource MainColor}" />
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </CheckBox>
+
+
+
+            </WrapPanel>
+
+            <TextBlock
+                Margin="0,8,0,4"
+                HorizontalAlignment="Center"
+                Text="{StaticResource ClickToAddShaderEffectToImage}" />
+            <TextBlock HorizontalAlignment="Center" Text="{StaticResource UncheckToRemoveEffect}" />
+
+            <Button
+                x:Name="SaveButton"
+                Margin="0,12,0,0"
+                Padding="26,7,26,7"
+                HorizontalAlignment="Center"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                Content="{StaticResource Save}"
+                FontSize="14"
+                Style="{StaticResource MetroFlatButton}">
+                <Button.Foreground>
+                    <SolidColorBrush x:Name="SaveText" Color="{StaticResource MainColor}" />
+                </Button.Foreground>
+            </Button>
+        </StackPanel>
     </DockPanel>
 </Window>
