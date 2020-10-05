@@ -825,6 +825,8 @@ namespace PicView.Shortcuts
             if (Properties.Settings.Default.CtrlZoom || (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
                 Pic(e.Delta > 0);
+
+                e.Handled = true;
             }
         }
     }

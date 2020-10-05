@@ -24,7 +24,6 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.KeyDown += MainWindow_KeysDown;
             ConfigureWindows.GetMainWindow.KeyUp += MainWindow_KeysUp;
             ConfigureWindows.GetMainWindow.MouseDown += MainWindow_MouseDown;
-            ConfigureWindows.GetMainWindow.ParentContainer.PreviewMouseWheel += MainWindow_MouseWheel;
 
             // MinButton
             ConfigureWindows.GetMainWindow.MinButton.TheButton.Click += (s, x) => SystemCommands.MinimizeWindow(ConfigureWindows.GetMainWindow);
@@ -102,26 +101,27 @@ namespace PicView.UILogic.Loading
             // GalleryShortcut
             GetGalleryShortcut.MouseLeftButtonDown += (s, x) => GalleryToggle.OpenHorizontalGallery();
 
-            // Bar
+            // TitleText
             ConfigureWindows.GetMainWindow.TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
             ConfigureWindows.GetMainWindow.TitleText.InnerTextBox.PreviewKeyDown += CustomTextBoxShortcuts.CustomTextBox_KeyDown;
             ConfigureWindows.GetMainWindow.TitleText.PreviewMouseLeftButtonDown += EditTitleBar.Bar_PreviewMouseLeftButtonDown;
             ConfigureWindows.GetMainWindow.TitleText.PreviewMouseRightButtonDown += EditTitleBar.Bar_PreviewMouseRightButtonDown;
 
-            // img
+            // MainImage
             ConfigureWindows.GetMainWindow.MainImage.PreviewMouseLeftButtonDown += DragAndDrop.DragToExplorer.DragFile;
             ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonDown += MainImage_MouseLeftButtonDown;
             ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonUp += MainImage_MouseLeftButtonUp;
             ConfigureWindows.GetMainWindow.MainImage.MouseMove += MainImage_MouseMove;
-            ConfigureWindows.GetMainWindow.MainImage.MouseWheel += MainImage_MouseWheel;
 
-            // bg
+
+            // ParentContainer
             ConfigureWindows.GetMainWindow.ParentContainer.MouseLeftButtonDown += Bg_MouseLeftButtonDown;
             ConfigureWindows.GetMainWindow.ParentContainer.Drop += Image_Drop;
             ConfigureWindows.GetMainWindow.ParentContainer.DragEnter += Image_DragEnter;
             ConfigureWindows.GetMainWindow.ParentContainer.DragLeave += Image_DragLeave;
             ConfigureWindows.GetMainWindow.ParentContainer.MouseMove += Interface_MouseMove;
             ConfigureWindows.GetMainWindow.ParentContainer.MouseLeave += Interface_MouseLeave;
+            ConfigureWindows.GetMainWindow.ParentContainer.PreviewMouseWheel += MainImage_MouseWheel;
 
             // TooltipStyle
             GetToolTipMessage.MouseWheel += MainImage_MouseWheel;

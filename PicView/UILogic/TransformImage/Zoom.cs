@@ -199,35 +199,42 @@ namespace PicView.UILogic.TransformImage
             if (increment)
             {
                 // Increase speed determined by how much is zoomed in
-                if (ZoomValue > 1.3 && ZoomValue < 1.5)
-                {
-                    zoomSpeed += .1;
-                }
-                else if (ZoomValue > 1.5 && ZoomValue < 1.7)
+                if (ZoomValue >= 1.2)
                 {
                     zoomSpeed += .2;
                 }
-                else if (ZoomValue > 1.7 && ZoomValue < 2)
+                if (ZoomValue >= 1.4)
                 {
                     zoomSpeed += .25;
                 }
-                else if (ZoomValue > 2 && ZoomValue < 2.3)
+                if (ZoomValue >= 1.8)
                 {
-                    zoomSpeed += .55;
+                    zoomSpeed += .3;
                 }
-                else if (ZoomValue > 2.3)
+                if (ZoomValue >= 2)
                 {
-                    zoomSpeed += .75;
+                    zoomSpeed += .4;
+                }
+                if (ZoomValue >= 2.2)
+                {
+                    zoomSpeed += .6;
                 }
             }
             else
             {
-                // Zoom out faster
-                if (ZoomValue > 1.2)
+                if (ZoomValue >= 1.2)
+                {
+                    zoomSpeed += .3;
+                }
+                if (ZoomValue >= 1.4)
                 {
                     zoomSpeed += .4;
                 }
-                if (ZoomValue > 1.5)
+                if (ZoomValue >= 1.8)
+                {
+                    zoomSpeed += .5;
+                }
+                if (ZoomValue >= 2)
                 {
                     zoomSpeed += .55;
                 }
