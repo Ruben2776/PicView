@@ -26,35 +26,35 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.MouseDown += MainWindow_MouseDown;
 
             // MinButton
-            ConfigureWindows.GetMainWindow.MinButton.TheButton.Click += (s, x) => SystemCommands.MinimizeWindow(ConfigureWindows.GetMainWindow);
+            ConfigureWindows.GetMainWindow.MinButton.TheButton.Click += (_, _) => SystemCommands.MinimizeWindow(ConfigureWindows.GetMainWindow);
 
             // CloseButton
-            ConfigureWindows.GetMainWindow.CloseButton.TheButton.Click += (s, x) => SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
+            ConfigureWindows.GetMainWindow.CloseButton.TheButton.Click += (_, _) => SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
 
             // FileMenuButton
-            ConfigureWindows.GetMainWindow.FileMenuButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ConfigureWindows.GetMainWindow.FolderFill);
-            ConfigureWindows.GetMainWindow.FileMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ConfigureWindows.GetMainWindow.FolderFill);
-            ConfigureWindows.GetMainWindow.FileMenuButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(ConfigureWindows.GetMainWindow.FileMenuBg);
-            ConfigureWindows.GetMainWindow.FileMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(ConfigureWindows.GetMainWindow.FolderFill);
-            ConfigureWindows.GetMainWindow.FileMenuButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(ConfigureWindows.GetMainWindow.FileMenuBg);
+            ConfigureWindows.GetMainWindow.FileMenuButton.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(ConfigureWindows.GetMainWindow.FolderFill);
+            ConfigureWindows.GetMainWindow.FileMenuButton.MouseEnter += (_, _) => ButtonMouseOverAnim(ConfigureWindows.GetMainWindow.FolderFill);
+            ConfigureWindows.GetMainWindow.FileMenuButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(ConfigureWindows.GetMainWindow.FileMenuBg);
+            ConfigureWindows.GetMainWindow.FileMenuButton.MouseLeave += (_, _) => ButtonMouseLeaveAnim(ConfigureWindows.GetMainWindow.FolderFill);
+            ConfigureWindows.GetMainWindow.FileMenuButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(ConfigureWindows.GetMainWindow.FileMenuBg);
             ConfigureWindows.GetMainWindow.FileMenuButton.Click += Toggle_open_menu;
 
-            GetFileMenu.Open.Click += (s, x) => Open();
-            GetFileMenu.FileLocation.Click += (s, x) => Open_In_Explorer();
-            GetFileMenu.Print.Click += (s, x) => Print(Pics[FolderIndex]);
-            GetFileMenu.SaveButton.Click += (s, x) => SaveFiles();
+            GetFileMenu.Open.Click += (_, _) => Open();
+            GetFileMenu.FileLocation.Click += (_, _) => Open_In_Explorer();
+            GetFileMenu.Print.Click += (_, _) => Print(Pics[FolderIndex]);
+            GetFileMenu.SaveButton.Click += (_, _) => SaveFiles();
 
-            GetFileMenu.OpenBorder.MouseLeftButtonUp += (s, x) => Open();
-            GetFileMenu.FileLocationBorder.MouseLeftButtonUp += (s, x) => Open_In_Explorer();
-            GetFileMenu.PrintBorder.MouseLeftButtonUp += (s, x) => Print(Pics[FolderIndex]);
-            GetFileMenu.SaveBorder.MouseLeftButtonUp += (s, x) => SaveFiles();
+            GetFileMenu.OpenBorder.MouseLeftButtonUp += (_, _) => Open();
+            GetFileMenu.FileLocationBorder.MouseLeftButtonUp += (_, _) => Open_In_Explorer();
+            GetFileMenu.PrintBorder.MouseLeftButtonUp += (_, _) => Print(Pics[FolderIndex]);
+            GetFileMenu.SaveBorder.MouseLeftButtonUp += (_, _) => SaveFiles();
 
             // image_button
-            ConfigureWindows.GetMainWindow.image_button.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ConfigureWindows.GetMainWindow.ImagePath1Fill, ConfigureWindows.GetMainWindow.ImagePath2Fill, ConfigureWindows.GetMainWindow.ImagePath3Fill);
-            ConfigureWindows.GetMainWindow.image_button.MouseEnter += (s, x) => ButtonMouseOverAnim(ConfigureWindows.GetMainWindow.ImagePath1Fill, ConfigureWindows.GetMainWindow.ImagePath2Fill, ConfigureWindows.GetMainWindow.ImagePath3Fill);
-            ConfigureWindows.GetMainWindow.image_button.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(ConfigureWindows.GetMainWindow.ImageMenuBg);
-            ConfigureWindows.GetMainWindow.image_button.MouseLeave += (s, x) => ButtonMouseLeaveAnim(ConfigureWindows.GetMainWindow.ImagePath1Fill, ConfigureWindows.GetMainWindow.ImagePath2Fill, ConfigureWindows.GetMainWindow.ImagePath3Fill);
-            ConfigureWindows.GetMainWindow.image_button.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(ConfigureWindows.GetMainWindow.ImageMenuBg);
+            ConfigureWindows.GetMainWindow.image_button.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(ConfigureWindows.GetMainWindow.ImagePath1Fill, ConfigureWindows.GetMainWindow.ImagePath2Fill, ConfigureWindows.GetMainWindow.ImagePath3Fill);
+            ConfigureWindows.GetMainWindow.image_button.MouseEnter += (_, _) => ButtonMouseOverAnim(ConfigureWindows.GetMainWindow.ImagePath1Fill, ConfigureWindows.GetMainWindow.ImagePath2Fill, ConfigureWindows.GetMainWindow.ImagePath3Fill);
+            ConfigureWindows.GetMainWindow.image_button.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(ConfigureWindows.GetMainWindow.ImageMenuBg);
+            ConfigureWindows.GetMainWindow.image_button.MouseLeave += (_, _) => ButtonMouseLeaveAnim(ConfigureWindows.GetMainWindow.ImagePath1Fill, ConfigureWindows.GetMainWindow.ImagePath2Fill, ConfigureWindows.GetMainWindow.ImagePath3Fill);
+            ConfigureWindows.GetMainWindow.image_button.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(ConfigureWindows.GetMainWindow.ImageMenuBg);
             ConfigureWindows.GetMainWindow.image_button.Click += Toggle_image_menu;
 
             // imageSettingsMenu Buttons
@@ -71,35 +71,35 @@ namespace PicView.UILogic.Loading
             };
 
             // SettingsButton
-            ConfigureWindows.GetMainWindow.SettingsButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(ConfigureWindows.GetMainWindow.SettingsButtonFill);
-            ConfigureWindows.GetMainWindow.SettingsButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ConfigureWindows.GetMainWindow.SettingsButtonFill);
-            ConfigureWindows.GetMainWindow.SettingsButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(ConfigureWindows.GetMainWindow.SettingsMenuBg);
-            ConfigureWindows.GetMainWindow.SettingsButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(ConfigureWindows.GetMainWindow.SettingsButtonFill);
-            ConfigureWindows.GetMainWindow.SettingsButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(ConfigureWindows.GetMainWindow.SettingsMenuBg);
+            ConfigureWindows.GetMainWindow.SettingsButton.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(ConfigureWindows.GetMainWindow.SettingsButtonFill);
+            ConfigureWindows.GetMainWindow.SettingsButton.MouseEnter += (_, _) => ButtonMouseOverAnim(ConfigureWindows.GetMainWindow.SettingsButtonFill);
+            ConfigureWindows.GetMainWindow.SettingsButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(ConfigureWindows.GetMainWindow.SettingsMenuBg);
+            ConfigureWindows.GetMainWindow.SettingsButton.MouseLeave += (_, _) => ButtonMouseLeaveAnim(ConfigureWindows.GetMainWindow.SettingsButtonFill);
+            ConfigureWindows.GetMainWindow.SettingsButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(ConfigureWindows.GetMainWindow.SettingsMenuBg);
             ConfigureWindows.GetMainWindow.SettingsButton.Click += Toggle_quick_settings_menu;
 
             //FunctionButton
             var MagicBrush = ConfigureWindows.GetMainWindow.TryFindResource("MagicBrush") as SolidColorBrush;
-            ConfigureWindows.GetMainWindow.FunctionMenuButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(MagicBrush);
-            ConfigureWindows.GetMainWindow.FunctionMenuButton.MouseEnter += (s, x) => ButtonMouseOverAnim(MagicBrush);
-            ConfigureWindows.GetMainWindow.FunctionMenuButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(ConfigureWindows.GetMainWindow.EffectsMenuBg);
-            ConfigureWindows.GetMainWindow.FunctionMenuButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(MagicBrush);
-            ConfigureWindows.GetMainWindow.FunctionMenuButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(ConfigureWindows.GetMainWindow.EffectsMenuBg);
+            ConfigureWindows.GetMainWindow.FunctionMenuButton.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(MagicBrush);
+            ConfigureWindows.GetMainWindow.FunctionMenuButton.MouseEnter += (_, _) => ButtonMouseOverAnim(MagicBrush);
+            ConfigureWindows.GetMainWindow.FunctionMenuButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(ConfigureWindows.GetMainWindow.EffectsMenuBg);
+            ConfigureWindows.GetMainWindow.FunctionMenuButton.MouseLeave += (_, _) => ButtonMouseLeaveAnim(MagicBrush);
+            ConfigureWindows.GetMainWindow.FunctionMenuButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(ConfigureWindows.GetMainWindow.EffectsMenuBg);
             ConfigureWindows.GetMainWindow.FunctionMenuButton.Click += Toggle_Functions_menu;
 
             // ClickArrows
-            GetClickArrowLeft.MouseLeftButtonDown += (s, x) => PicButton(true, false);
+            GetClickArrowLeft.MouseLeftButtonDown += (_, _) => PicButton(true, false);
 
-            GetClickArrowRight.MouseLeftButtonDown += (s, x) => PicButton(true, true);
+            GetClickArrowRight.MouseLeftButtonDown += (_, _) => PicButton(true, true);
 
             // x2
-            Getx2.MouseLeftButtonDown += (x, xx) => SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
+            Getx2.MouseLeftButtonDown += (_, _) => SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
 
             // Minus
-            GetMinus.MouseLeftButtonDown += (s, x) => SystemCommands.MinimizeWindow(ConfigureWindows.GetMainWindow);
+            GetMinus.MouseLeftButtonDown += (_, _) => SystemCommands.MinimizeWindow(ConfigureWindows.GetMainWindow);
 
             // GalleryShortcut
-            GetGalleryShortcut.MouseLeftButtonDown += (s, x) => GalleryToggle.OpenHorizontalGallery();
+            GetGalleryShortcut.MouseLeftButtonDown += (_, _) => GalleryToggle.OpenHorizontalGallery();
 
             // TitleText
             ConfigureWindows.GetMainWindow.TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;

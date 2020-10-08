@@ -91,7 +91,7 @@ namespace PicView.UILogic.Loading
                 else
                 {
                     ConfigureWindows.GetMainWindow.Width = ConfigureWindows.GetMainWindow.MinWidth;
-                    ConfigureWindows.GetMainWindow.MinHeight = ConfigureWindows.GetMainWindow.MinHeight;
+                    ConfigureWindows.GetMainWindow.Height = ConfigureWindows.GetMainWindow.MinHeight;
                 }
             }
             else if (arg.ToString().StartsWith('.'))
