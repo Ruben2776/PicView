@@ -64,7 +64,7 @@ namespace PicView.Shortcuts
                 case Key.D:
                     if (GetPicGallery != null)
                     {
-                        if (GalleryFunctions.IsOpen)
+                        if (GalleryFunctions.IsOpen && !Properties.Settings.Default.FullscreenGallery)
                         {
                             return;
                         }
@@ -72,7 +72,7 @@ namespace PicView.Shortcuts
                     if (!e.IsRepeat)
                     {
                         // Go to first if Ctrl held down
-                        if (ctrlDown && !GalleryFunctions.IsOpen)
+                        if (ctrlDown)
                         {
                             Pic(true, true);
                         }
@@ -92,7 +92,7 @@ namespace PicView.Shortcuts
                 case Key.A:
                     if (GetPicGallery != null)
                     {
-                        if (GalleryFunctions.IsOpen)
+                        if (GalleryFunctions.IsOpen && !Properties.Settings.Default.FullscreenGallery)
                         {
                             return;
                         }
@@ -100,7 +100,7 @@ namespace PicView.Shortcuts
                     if (!e.IsRepeat)
                     {
                         // Go to last if Ctrl held down
-                        if (ctrlDown && !GalleryFunctions.IsOpen)
+                        if (ctrlDown)
                         {
                             Pic(false, true);
                         }

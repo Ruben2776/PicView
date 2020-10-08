@@ -137,14 +137,18 @@ namespace PicView.ChangeImage
                 await LoadPicAt(FolderIndex).ConfigureAwait(false);
             }
 
-            // Load new gallery values, if changing folder
-            if (GetPicGallery != null && Properties.Settings.Default.FullscreenGallery)
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(async() =>
             {
-                if (GetPicGallery.Container.Children.Count == 0)
+                // Load new gallery values, if changing folder
+                if (GetPicGallery != null && Properties.Settings.Default.FullscreenGallery)
                 {
-                    await GalleryLoad.Load().ConfigureAwait(false);
+                    if (GetPicGallery.Container.Children.Count == 0)
+                    {
+                        await GalleryLoad.Load().ConfigureAwait(false);
+                    }
                 }
-            }
+            }));
+
         }
 
         /// <summary>
@@ -211,7 +215,7 @@ namespace PicView.ChangeImage
                 while (preloadValue.isLoading)
                 {
                     // Wait for finnished result
-                    await Task.Delay(2).ConfigureAwait(true);
+                    await Task.Delay(5).ConfigureAwait(true);
                 }
 
                 // Retry
@@ -485,20 +489,23 @@ namespace PicView.ChangeImage
             // Update PicGallery selected item, if needed
             if (GalleryFunctions.IsOpen)
             {
-                if (GetPicGallery.Container.Children.Count > FolderIndex && GetPicGallery.Container.Children.Count > indexBackup)
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
                 {
-                    if (indexBackup != FolderIndex)
+                    if (GetPicGallery.Container.Children.Count > FolderIndex && GetPicGallery.Container.Children.Count > indexBackup)
                     {
-                        GalleryNavigation.SetSelected(indexBackup, false);
-                    }
+                        if (indexBackup != FolderIndex)
+                        {
+                            GalleryNavigation.SetSelected(indexBackup, false);
+                        }
 
-                    GalleryNavigation.SetSelected(FolderIndex, true);
-                    GalleryNavigation.ScrollTo();
-                }
-                else
-                {
-                    // TODO Find way to get PicGalleryItem an alternative way...
-                }
+                        GalleryNavigation.SetSelected(FolderIndex, true);
+                        GalleryNavigation.ScrollTo();
+                    }
+                    else
+                    {
+                        // TODO Find way to get PicGalleryItem an alternative way...
+                    }
+                }));
             }
 
             CloseToolTipMessage();

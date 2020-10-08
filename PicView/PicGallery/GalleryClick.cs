@@ -113,20 +113,24 @@ namespace PicView.PicGallery
             // Change image
             await LoadPicAt(id).ConfigureAwait(false);
 
-            if (Properties.Settings.Default.FullscreenGallery == false)
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
             {
-                GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
-
-                // Restore interface elements if needed
-                if (!Properties.Settings.Default.ShowInterface || Properties.Settings.Default.Fullscreen)
+                if (Properties.Settings.Default.FullscreenGallery == false)
                 {
-                    HideInterfaceLogic.ShowNavigation(true);
-                    HideInterfaceLogic.ShowShortcuts(true);
-                }
-            }
+                    GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
 
-            // Select next item
-            GalleryNavigation.SetSelected(id, true);
+                    // Restore interface elements if needed
+                    if (!Properties.Settings.Default.ShowInterface || Properties.Settings.Default.Fullscreen)
+                    {
+                        HideInterfaceLogic.ShowNavigation(true);
+                        HideInterfaceLogic.ShowShortcuts(true);
+                    }
+                }
+
+                // Select next item
+                GalleryNavigation.SetSelected(id, true);
+            }));
+
         }
     }
 }

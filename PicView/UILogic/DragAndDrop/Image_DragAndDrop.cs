@@ -193,9 +193,8 @@ namespace PicView.UILogic.DragAndDrop
                 else if (Directory.Exists(files[0]))
                 {
                     if (Properties.Settings.Default.IncludeSubDirectories || Directory.GetFiles(files[0]).Length > 0)
-                    {
-                        await PicFolder(files[0]).ConfigureAwait(false);
-                        ConfigureWindows.GetMainWindow.Activate();
+                    {   
+                        await PicFolder(files[0]).ConfigureAwait(false);                        
                     }
                     return;
                 }
