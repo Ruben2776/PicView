@@ -90,8 +90,8 @@ namespace PicView.UILogic.Loading
                 }
                 else
                 {
-                    ConfigureWindows.GetMainWindow.Width = 750 * MonitorInfo.DpiScaling;
-                    ConfigureWindows.GetMainWindow.MinHeight = 700 * MonitorInfo.DpiScaling;
+                    ConfigureWindows.GetMainWindow.Width = ConfigureWindows.GetMainWindow.MinWidth;
+                    ConfigureWindows.GetMainWindow.MinHeight = ConfigureWindows.GetMainWindow.MinHeight;
                 }
             }
             else if (arg.ToString().StartsWith('.'))
