@@ -26,7 +26,7 @@ namespace PicView.ConfigureSettings
             if (!string.IsNullOrWhiteSpace(tmp))
             {
                 Pics = FileList(Path.GetDirectoryName(tmp));
-                Pic(Pics.IndexOf(tmp));
+                _ = LoadPicAt(Pics.IndexOf(tmp));
             }
             var sortcm = cm.Items[6] as MenuItem;
 

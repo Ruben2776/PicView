@@ -77,7 +77,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// Open a file dialog where user can select a supported file
         /// </summary>
-        internal static void Open()
+        internal static async void Open()
         {
             IsDialogOpen = true;
 
@@ -88,14 +88,18 @@ namespace PicView.FileHandling
             };
             if (dlg.ShowDialog().Value)
             {
-                Pic(dlg.FileName);
+                await LoadPiFrom(dlg.FileName).ConfigureAwait(false);
             }
             else
             {
                 return;
             }
 
-            Close_UserControls();
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+            {
+                Close_UserControls();
+            }));
+            
         }
 
         /// <summary>

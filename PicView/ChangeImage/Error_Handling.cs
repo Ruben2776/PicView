@@ -25,7 +25,7 @@ namespace PicView.ChangeImage
         /// <param name="x">The index to start from</param>
         internal static async Task<Preloader.PreloadValue> PicErrorFix(int x)
         {
-            Preloader.PreloadValue pic = null;
+            Preloader.PreloadValue pic;
 #if DEBUG
             Trace.WriteLine("Entered PicErrorFix");
 #endif
@@ -192,7 +192,7 @@ namespace PicView.ChangeImage
                 // Need a sort method instead
                 GalleryFunctions.Clear();
 
-                Pic(s);
+                _ = LoadPiFrom(s);
 
                 // Reset
 

@@ -86,7 +86,7 @@ namespace PicView.ChangeImage
         /// Loads a picture from a given file path and does extra error checking
         /// </summary>
         /// <param name="path"></param>
-        internal static async void Pic(string path)
+        internal static async Task LoadPiFrom(string path)
         {
             // Set Loading
             SetLoadingString();
@@ -134,7 +134,7 @@ namespace PicView.ChangeImage
             if (FolderIndex != -1) // if it is -1, it means it being extracted and need to wait for it instead
             {
                 // Navigate to picture using obtained index
-                Pic(FolderIndex);
+                await LoadPicAt(FolderIndex).ConfigureAwait(false);
             }
 
             // Load new gallery values, if changing folder
@@ -151,7 +151,7 @@ namespace PicView.ChangeImage
         /// Loads image at specified index
         /// </summary>
         /// <param name="index">The index of file to load from Pics</param>
-        internal static async void Pic(int index)
+        internal static async Task LoadPicAt(int index)
         {
             Preloader.PreloadValue preloadValue;
             // Error checking to fix rare cases of crashing
@@ -173,38 +173,34 @@ namespace PicView.ChangeImage
             // Initate loading behavior, if needed
             if (preloadValue == null || preloadValue.isLoading)
             {
-                // Dissallow changing image while loading
-                CanNavigate = false;
+                CanNavigate = false; // Dissallow changing image while loading
 
                 if (!GalleryFunctions.IsOpen)
                 {
+                    // Show a thumbnail while loading
+                    var thumb = GetThumb(index);
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
                     {
                         // Set loading from translation service
                         SetLoadingString();
-                    }));
 
-                    // Show a thumbnail while loading
-                    var thumb = GetThumb(index);
-                    if (thumb != null && Properties.Settings.Default.FullscreenGallery == false)
-                    {
-                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                        // Don't allow image size to stretch the whole screen
+                        if (xWidth == 0)
                         {
-                            // Don't allow image size to stretch the whole screen
-                            if (xWidth == 0)
-                            {
-                                ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
-                                ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
-                            }
-                            else
-                            {
-                                ConfigureWindows.GetMainWindow.MainImage.Width = xWidth;
-                                ConfigureWindows.GetMainWindow.MainImage.Height = xHeight;
-                            }
+                            ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+                            ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
+                        }
+                        else
+                        {
+                            ConfigureWindows.GetMainWindow.MainImage.Width = xWidth;
+                            ConfigureWindows.GetMainWindow.MainImage.Height = xHeight;
+                        }
 
+                        if (thumb != null)
+                        {
                             ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
-                        }));
-                    }
+                        }
+                    }));
                 }
 
                 if (preloadValue == null) // Error correctiom
@@ -220,12 +216,6 @@ namespace PicView.ChangeImage
 
                 // Retry
                 preloadValue = Preloader.Get(Pics[index]);
-
-                if (preloadValue == null)
-                {
-                    await Preloader.Add(Pics[index]).ConfigureAwait(true);
-                    preloadValue = Preloader.Get(Pics[index]);
-                }
 
                 // Check if works, if not show error message
                 if (preloadValue == null)
@@ -370,7 +360,7 @@ namespace PicView.ChangeImage
         /// Handle logic if user wants to load from a folder
         /// </summary>
         /// <param name="folder"></param>
-        internal static async void PicFolder(string folder)
+        internal static async Task PicFolder(string folder)
         {
             // TODO add new function that can go to next/prev folder
 
@@ -384,7 +374,7 @@ namespace PicView.ChangeImage
 
             if (Pics.Count > 0)
             {
-                Pic(0);
+                await LoadPicAt(0).ConfigureAwait(true);
             }
             else
             {
@@ -413,7 +403,7 @@ namespace PicView.ChangeImage
         /// <param name="next">Whether it's forward or not</param>
         /// <param name="end">Whether to go to last or first,
         /// depending on the next value</param>
-        internal static void Pic(bool next = true, bool end = false)
+        internal static async void Pic(bool next = true, bool end = false)
         {
             // Exit if not intended to change picture
             if (!CanNavigate)
@@ -490,7 +480,7 @@ namespace PicView.ChangeImage
             }
 
             // Go to the image!
-            Pic(FolderIndex);
+            await LoadPicAt(FolderIndex).ConfigureAwait(false);
 
             // Update PicGallery selected item, if needed
             if (GalleryFunctions.IsOpen)
@@ -622,7 +612,7 @@ namespace PicView.ChangeImage
         /// <summary>
         /// Update after FastPic() was used
         /// </summary>
-        internal static void FastPicUpdate()
+        internal static async void FastPicUpdate()
         {
             /// TODO optimize preloader usage here, to not cause delays
             /// when very quickly browsing images
@@ -636,7 +626,7 @@ namespace PicView.ChangeImage
             }
 
             Preloader.Clear();
-            Pic(FolderIndex);
+            await LoadPicAt(FolderIndex).ConfigureAwait(false);
             FastPicRunning = false;
         }
 

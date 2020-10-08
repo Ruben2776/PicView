@@ -93,7 +93,7 @@ namespace PicView.ChangeImage
 
                 var bytes = await client.DownloadDataTaskAsync(new Uri(address)).ConfigureAwait(true);
                 pic = GetMagickImage(bytes);
-            }).ConfigureAwait(true);
+            }).ConfigureAwait(false);
             return pic;
         }
     }

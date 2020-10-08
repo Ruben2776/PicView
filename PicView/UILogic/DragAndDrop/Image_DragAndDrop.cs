@@ -148,7 +148,7 @@ namespace PicView.UILogic.DragAndDrop
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static void Image_Drop(object sender, DragEventArgs e)
+        internal static async void Image_Drop(object sender, DragEventArgs e)
         {
             if (!Properties.Settings.Default.FullscreenGallery && PicGallery.GalleryFunctions.IsOpen)
             {
@@ -166,7 +166,7 @@ namespace PicView.UILogic.DragAndDrop
                     string dataStr = Encoding.Unicode.GetString(data.ToArray());
                     string[] parts = dataStr.Split((char)10);
 
-                    Pic(parts[0]);
+                    await LoadPiFrom(parts[0]).ConfigureAwait(false);
                     ConfigureWindows.GetMainWindow.Activate();
                     return;
                 }
@@ -188,13 +188,13 @@ namespace PicView.UILogic.DragAndDrop
             {
                 if (Path.GetExtension(files[0]) == ".url")
                 {
-                    Pic(files[0]);
+                    await LoadPiFrom(files[0]).ConfigureAwait(false);
                 }
                 else if (Directory.Exists(files[0]))
                 {
                     if (Properties.Settings.Default.IncludeSubDirectories || Directory.GetFiles(files[0]).Length > 0)
                     {
-                        PicFolder(files[0]);
+                        await PicFolder(files[0]).ConfigureAwait(false);
                         ConfigureWindows.GetMainWindow.Activate();
                     }
                     return;
@@ -203,7 +203,7 @@ namespace PicView.UILogic.DragAndDrop
                 {
                     FreshStartup = true;
                     Error_Handling.ChangeFolder();
-                    Pic(files[0]);
+                    await LoadPiFrom(files[0]).ConfigureAwait(false);
                 }
                 return;
             }
@@ -218,7 +218,7 @@ namespace PicView.UILogic.DragAndDrop
             }
 
             // Load it
-            Pic(files[0]);
+            await LoadPiFrom(files[0]).ConfigureAwait(false);
 
             // Start multiple clients if user drags multiple files
             // TODO no longer working after converting to .NET Core...

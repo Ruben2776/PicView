@@ -87,7 +87,7 @@ namespace PicView.UILogic
                     }
                     else
                     {
-                        Pic(ConfigureWindows.GetMainWindow.TitleText.Text);
+                        _ = LoadPiFrom(ConfigureWindows.GetMainWindow.TitleText.Text);
                     }
                 }
                 else

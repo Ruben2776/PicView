@@ -88,7 +88,7 @@ namespace PicView.FileHandling
         /// Retrieves the data from the clipboard and attemps to load image, if possible
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
-        internal static void Paste()
+        internal static async void Paste()
         {
             // file
 
@@ -105,16 +105,16 @@ namespace PicView.FileHandling
                         // If from same folder
                         if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]) && Path.GetDirectoryName(x) == Path.GetDirectoryName(Pics[FolderIndex]))
                         {
-                            Pic(Pics.IndexOf(x));
+                            await LoadPicAt(Pics.IndexOf(x)).ConfigureAwait(false);
                         }
                         else
                         {
-                            Pic(x);
+                            await LoadPiFrom(x).ConfigureAwait(false);
                         }
                     }
                     else
                     {
-                        Pic(x);
+                        await LoadPiFrom(x).ConfigureAwait(false);
                     }
 
                     if (files.Length > 1)
@@ -163,7 +163,7 @@ namespace PicView.FileHandling
 
             if (File.Exists(s))
             {
-                Pic(s);
+                await LoadPiFrom(s).ConfigureAwait(false);
             }
             else if (Directory.Exists(s))
             {
@@ -171,7 +171,7 @@ namespace PicView.FileHandling
                 Pics = FileList(s);
                 if (Pics.Count > 0)
                 {
-                    Pic(Pics[0]);
+                    await LoadPiFrom(Pics[0]).ConfigureAwait(false);
                 }
                 else if (Pics.Count == 0)
                 {
@@ -179,7 +179,7 @@ namespace PicView.FileHandling
                 }
                 else if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]))
                 {
-                    Pic(Pics[FolderIndex]);
+                    await LoadPiFrom(Pics[FolderIndex]).ConfigureAwait(false);
                 }
                 else
                 {

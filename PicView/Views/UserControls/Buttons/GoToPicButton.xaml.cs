@@ -46,7 +46,7 @@ namespace PicView.Views.UserControls
                 x--;
                 x = x <= 0 ? 0 : x;
                 x = x >= Pics.Count ? Pics.Count - 1 : x;
-                Pic(x);
+                await LoadPicAt(x).ConfigureAwait(false);
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
                 {
                     GetQuickSettingsMenu.GoToPic.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture);

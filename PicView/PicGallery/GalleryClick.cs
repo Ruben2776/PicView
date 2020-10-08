@@ -105,13 +105,13 @@ namespace PicView.PicGallery
             }
         }
 
-        internal static void ItemClick(int id)
+        internal static async void ItemClick(int id)
         {
             // Deselect current item
             GalleryNavigation.SetSelected(FolderIndex, false);
 
             // Change image
-            Pic(id);
+            await LoadPicAt(id).ConfigureAwait(false);
 
             if (Properties.Settings.Default.FullscreenGallery == false)
             {

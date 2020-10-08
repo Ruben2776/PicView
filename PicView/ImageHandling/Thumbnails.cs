@@ -1,8 +1,6 @@
 ﻿using ImageMagick;
 using PicView.Views.UserControls;
 using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
@@ -25,24 +23,13 @@ namespace PicView.ImageHandling
 
             BitmapSource pic;
 
-            if (GetPicGallery != null)
+            if (GetPicGallery != null
+                && GetPicGallery.Container.Children.Count > 0
+                && x < GetPicGallery.Container.Children.Count
+                && GetPicGallery.Container.Children.Count == Pics.Count)
             {
-                if (GetPicGallery.Container.Children.Count > 0)
-                {
-                    if (x < GetPicGallery.Container.Children.Count && GetPicGallery.Container.Children.Count == Pics.Count)
-                    {
-                        var y = GetPicGallery.Container.Children[x] as PicGalleryItem;
-                        pic = (BitmapSource)y.img.Source;
-                    }
-                    else
-                    {
-                        pic = GetBitmapSourceThumb(Pics[x]);
-                    }
-                }
-                else
-                {
-                    pic = GetBitmapSourceThumb(Pics[x]);
-                }
+                var y = GetPicGallery.Container.Children[x] as PicGalleryItem;
+                pic = (BitmapSource)y.img.Source;
             }
             else
             {

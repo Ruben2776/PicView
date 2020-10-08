@@ -120,11 +120,11 @@ namespace PicView.FileHandling
                     await Preloader.PreLoad(0).ConfigureAwait(false);
                 }
             };
-            x.Exited += delegate
+            x.Exited += async delegate
             {
                 if (SetDirectory())
                 {
-                    Pic(0);
+                    await LoadPicAt(0).ConfigureAwait(false);
 
                     // Add zipped files as recent file
                     RecentFiles.Add(TempZipFile);
