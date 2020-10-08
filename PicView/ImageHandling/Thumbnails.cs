@@ -62,12 +62,17 @@ namespace PicView.ImageHandling
             return pic;
         }
 
-        internal static BitmapSource GetBitmapSourceThumb(string path) => (Path.GetExtension(path).ToLower(CultureInfo.CurrentCulture)) switch
+        internal static BitmapSource GetBitmapSourceThumb(string path)
         {
-            // Return windows thumbnails if applicable, else use imagemagick
-            ".jpg" or ".jpeg" or ".jpe" or ".png" or ".bmp" or ".gif" or ".ico" => GetWindowsThumbnail(path),
-            _ => GetMagickImageThumb(path),
-        };
+            var thumb = GetWindowsThumbnail(path);
+
+            if (thumb == null)
+            {
+                return GetMagickImageThumb(path);
+            }
+
+            return thumb;
+        }
 
         /// <summary>
         /// Returns BitmapSource at specified quality and pixel size
@@ -111,14 +116,20 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         private static BitmapSource GetWindowsThumbnail(string path)
         {
-            try
+            var thumb = Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.FormatOption;
+            if (thumb == Microsoft.WindowsAPICodePack.Shell.ShellThumbnailFormatOption.ThumbnailOnly)
             {
-                return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
+                try
+                {
+                    return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
+                }
+                catch (System.Exception)
+                {
+                    return null;
+                }
             }
-            catch (System.Exception)
-            {
-                return null;
-            }
+
+            return null;
         }
     }
 }
