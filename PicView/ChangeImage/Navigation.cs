@@ -194,11 +194,6 @@ namespace PicView.ChangeImage
                             ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
                             ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
                         }
-                        else
-                        {
-                            ConfigureWindows.GetMainWindow.MainImage.Width = xWidth;
-                            ConfigureWindows.GetMainWindow.MainImage.Height = xHeight;
-                        }
 
                         if (thumb != null)
                         {
@@ -217,19 +212,12 @@ namespace PicView.ChangeImage
                     // Wait for finnished result
                     await Task.Delay(5).ConfigureAwait(true);
                 }
+            }
 
-                // Retry
-                preloadValue = Preloader.Get(Pics[index]);
-
-                // Check if works, if not show error message
-                if (preloadValue == null)
-                {
-                    preloadValue = new Preloader.PreloadValue(ImageDecoder.ImageErrorMessage(), false);
-                }
-                else if (preloadValue.bitmapSource == null)
-                {
-                    preloadValue.bitmapSource = ImageDecoder.ImageErrorMessage();
-                }
+            // Check if works, if not show error message
+            if (preloadValue == null || preloadValue.bitmapSource == null)
+            {
+                preloadValue = new Preloader.PreloadValue(ImageDecoder.ImageErrorMessage(), false);
             }
 
             // Need to put UI change in dispatcher to fix slideshow bug
