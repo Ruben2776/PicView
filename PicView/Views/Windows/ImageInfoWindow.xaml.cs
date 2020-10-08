@@ -20,21 +20,7 @@ namespace PicView.Views.Windows
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            KeyUp += (_, e) =>
-            {
-                if (e.Key == Key.Escape)
-                {
-                    Hide();
-                    ConfigureWindows.GetMainWindow.Focus();
-                }
-                else if (e.Key == Key.Q)
-                {
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        Environment.Exit(0);
-                    }
-                }
-            };
+            KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(null, e, this);
 
             // Hack to deselect border on mouse click
             MouseLeftButtonDown += delegate

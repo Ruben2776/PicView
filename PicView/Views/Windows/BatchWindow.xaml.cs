@@ -24,18 +24,7 @@ namespace PicView.Views.Windows
 
             TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
 
-            KeyUp += (_, e) =>
-            {
-                if (e.Key == Key.Escape)
-                {
-                    Hide();
-                    ConfigureWindows.GetMainWindow.Focus();
-                }
-                else if (e.Key == Key.Q && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                {
-                    Environment.Exit(0);
-                }
-            };
+            KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(null, e, this);
         }
     }
 }
