@@ -21,7 +21,7 @@ namespace PicView.UILogic.Loading
 {
     internal static class StartLoading
     {
-        internal static async void PreStart()
+        internal static void LoadedEvemt()
         {
 #if DEBUG
             Trace.Listeners.Add(new TextWriterTraceListener("Debug.log"));
@@ -142,11 +142,11 @@ namespace PicView.UILogic.Loading
                     SetLastWindowSize();
                 }
 
-                await LoadPiFrom(file).ConfigureAwait(false);
+                _ = LoadPiFrom(file);
             }
         }
 
-        internal static void Start()
+        internal static void ContentRenderedEvent()
         {
 #if DEBUG
             Trace.WriteLine("ContentRendered started");

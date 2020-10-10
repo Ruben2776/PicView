@@ -137,7 +137,7 @@ namespace PicView.ChangeImage
                 await LoadPicAt(FolderIndex).ConfigureAwait(false);
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(async() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(async () =>
             {
                 // Load new gallery values, if changing folder
                 if (GetPicGallery != null && Properties.Settings.Default.FullscreenGallery)
@@ -148,7 +148,6 @@ namespace PicView.ChangeImage
                     }
                 }
             }));
-
         }
 
         /// <summary>
@@ -210,7 +209,7 @@ namespace PicView.ChangeImage
                 while (preloadValue.isLoading)
                 {
                     // Wait for finnished result
-                    await Task.Delay(5).ConfigureAwait(true);
+                    await Task.Delay(3).ConfigureAwait(true);
                 }
             }
 
@@ -340,7 +339,6 @@ namespace PicView.ChangeImage
                         ConfigureWindows.GetImageInfoWindow.UpdateValues();
                     }
                 }
-
             }));
 
             Taskbar.NoProgress();
