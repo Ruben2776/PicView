@@ -1,4 +1,5 @@
 ﻿using PicView.UILogic.Animations;
+using System.Windows;
 using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
@@ -21,7 +22,9 @@ namespace PicView.Views.UserControls
                 }
 
                 MouseLeave += (s, x) => ButtonMouseLeaveAnim(MinButtonBrush, true);
-            };
+
+                ToolTip = Application.Current.Resources["Minimize"];
+            };         
         }
     }
 }

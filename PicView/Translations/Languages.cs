@@ -4,6 +4,7 @@
     {
         en,
         da,
-        de
+        de,
+        zh_CN
     }
 }

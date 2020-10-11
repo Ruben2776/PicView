@@ -1,6 +1,7 @@
 ﻿using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.SystemIntegration;
+using PicView.Translations;
 using PicView.UILogic.Sizing;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,8 @@ namespace PicView.UILogic.Loading
             HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle);
             source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
 
+            LoadLanguage.DetermineLanguage();
+
             if (!Properties.Settings.Default.ShowInterface)
             {
                 ConfigureWindows.GetMainWindow.TitleBar.Visibility =
@@ -39,26 +42,7 @@ namespace PicView.UILogic.Loading
                 = Visibility.Collapsed;
             }
 
-            if (Properties.Settings.Default.UserLanguage != "en")
-            {
-                try
-                {
-                    Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
-                    {
-                        Source = new Uri(@"/PicView;component/Translations/" + Properties.Settings.Default.UserLanguage + ".xaml", UriKind.Relative)
-                    };
-                }
-                catch (Exception)
-                {
-                    Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
-                    {
-                        Source = new Uri(@"/PicView;component/Translations/en.xaml", UriKind.Relative)
-                    };
-                }
-            }
-
             FreshStartup = true;
-
             Pics = new List<string>();
 
             // Load sizing properties

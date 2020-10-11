@@ -336,7 +336,7 @@
                 <Label
                     x:Name="RmFileAssoc"
                     HorizontalAlignment="Center"
-                    Content="Remove file associations">
+                    Content="{StaticResource RemoveFileAssociations}">
                     <Label.Foreground>
                         <SolidColorBrush x:Name="RmFileAssocBrush" Color="{DynamicResource ChosenColor}" />
                     </Label.Foreground>
