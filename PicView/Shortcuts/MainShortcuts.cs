@@ -656,7 +656,7 @@ namespace PicView.Shortcuts
         internal static void MainImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             // Move window when Shift is being held down
-            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift || !Properties.Settings.Default.ShowInterface)
             {
                 Move(sender, e);
                 return;
