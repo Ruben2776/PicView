@@ -92,7 +92,7 @@ namespace PicView.Views.Windows
 
                 LanguageBox.SelectionChanged += delegate
                 {
-                    GeneralSettings.ChangeLanguage((LanguageBox.SelectedIndex));
+                    LoadLanguage.ChangeLanguage((LanguageBox.SelectedIndex));
                 };
 
                 AltUIRadio.IsChecked = Properties.Settings.Default.ShowAltInterfaceButtons;

@@ -9,11 +9,6 @@ namespace PicView.ConfigureSettings
 {
     internal static class GeneralSettings
     {
-        internal static void ChangeLanguage(int language)
-        {
-            var choice = (Languages)language;
-            Properties.Settings.Default.UserLanguage = choice.ToString();
-        }
 
         internal static void RestartApp()
         {

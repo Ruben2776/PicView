@@ -39,5 +39,11 @@ namespace PicView.Translations
                 };
             }
         }
+
+        internal static void ChangeLanguage(int language)
+        {
+            var choice = (Languages)language;
+            Properties.Settings.Default.UserLanguage = choice.ToString();
+        }
     }
 }
