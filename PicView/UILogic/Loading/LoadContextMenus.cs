@@ -373,6 +373,19 @@ namespace PicView.UILogic.Loading
             transcm.Click += ConfigureSettings.ConfigColors.ChangeBackground;
             settingscm.Items.Add(transcm);
 
+            ///////////////////////////
+            /// Settings shortcut  \\\\
+            ///////////////////////////
+            settingscm.Items.Add(new Separator());
+
+            var settingscmShortcut = new MenuItem
+            {
+                Header = Application.Current.Resources["ShowAllSettingsWindow"] as string,
+                InputGestureText = "F4"
+            };
+            settingscmShortcut.Click += (_, _) => AllSettingsWindow();
+            settingscm.Items.Add(settingscmShortcut);
+
             cm.Items.Add(new Separator());
 
             ///////////////////////////
