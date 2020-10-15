@@ -53,18 +53,17 @@ View all files in current folder as a thumbnail gallery, with custom animations.
 
 
 ## Shader effects/Image filters
-Choose between 26 different shader effects (image filters), including negative colors, old movie effect, pencil sketch etc. The effects can be applied to the currently viewed image, allowing you to quickly see how each image would look with a certain effect applied to them. <br>
+Choose between 27 different shader effects (image filters), including negative colors, old movie effect, pencil sketch etc. The effects can be applied to the currently viewed image, allowing you to quickly see how each image would look with a certain effect applied to them. <br>
 The effect can be copied to clipholder `Ctrl + C` or you can save it on your file system. The effect will also be applied when setting image as a wallpaper or lock screen image.
 
 ## Other features
 
 If you have 7-Zip or WinRAR installed, you can view images inside archives, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
-The scroll function is built with manga/comics in mind.
 
 * Set image as wallpaper or lock screen image. (Image effect will be applied as well)
 * Basic editing: rotate, flip, crop, change file type
 * Drag & drop/paste from clipholder support for files, folders, URLs and archives
-* Scroll function
+* Scroll function (built with manga/comics in mind)
 * Open file in external application, show it in folder or view file properties
 * Color picker
 
