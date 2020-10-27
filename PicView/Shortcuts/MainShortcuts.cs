@@ -417,7 +417,7 @@ namespace PicView.Shortcuts
                         {
                             OpenWith(Pics[FolderIndex]);
                         }
-                    break;
+                        break;
 
                     // T
                     case Key.T:

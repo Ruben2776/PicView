@@ -27,7 +27,7 @@ namespace PicView.Editing.Crop
                 InputGestureText = Application.Current.Resources["Enter"] as string,
                 Icon = cropIcon
             };
-            cropCm.Click += (_,_) => CropFunctions.PerformCrop();
+            cropCm.Click += (_, _) => CropFunctions.PerformCrop();
 
             ContextMenu.Items.Add(cropCm);
 
@@ -51,7 +51,6 @@ namespace PicView.Editing.Crop
             ContextMenu.Items.Add(closeCm);
 
             UC.GetCropppingTool.ContextMenu = ContextMenu;
-
         }
     }
 }

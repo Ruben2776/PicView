@@ -24,7 +24,7 @@ namespace PicView.Views.UserControls
                 MouseLeave += (s, x) => ButtonMouseLeaveAnim(MinButtonBrush, true);
 
                 ToolTip = Application.Current.Resources["Minimize"];
-            };         
+            };
         }
     }
 }

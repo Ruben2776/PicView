@@ -1,7 +1,6 @@
 ﻿using PicView.UILogic;
 using System;
 using System.Windows;
-using System.Windows.Input;
 
 namespace PicView.Views.Windows
 {

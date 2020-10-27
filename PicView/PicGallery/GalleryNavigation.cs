@@ -130,7 +130,7 @@ namespace PicView.PicGallery
 
         #endregion ScrollTo
 
-        #region Select and deselect behaviour       
+        #region Select and deselect behaviour
 
         internal static void SetSelected(int x, bool selected)
         {
@@ -151,6 +151,6 @@ namespace PicView.PicGallery
             }
         }
 
-        #endregion
+        #endregion Select and deselect behaviour
     }
 }

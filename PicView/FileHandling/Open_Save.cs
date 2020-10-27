@@ -99,7 +99,6 @@ namespace PicView.FileHandling
             {
                 Close_UserControls();
             }));
-            
         }
 
         /// <summary>

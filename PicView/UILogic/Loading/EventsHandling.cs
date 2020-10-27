@@ -113,7 +113,6 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonUp += MainImage_MouseLeftButtonUp;
             ConfigureWindows.GetMainWindow.MainImage.MouseMove += MainImage_MouseMove;
 
-
             // ParentContainer
             ConfigureWindows.GetMainWindow.ParentContainer.MouseLeftButtonDown += Bg_MouseLeftButtonDown;
             ConfigureWindows.GetMainWindow.ParentContainer.Drop += Image_Drop;

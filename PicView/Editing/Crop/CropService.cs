@@ -154,7 +154,7 @@ namespace PicView.Editing.Crop
                 return TouchPoint.OutsideRectangle;
             }
             //bottom
-            if (mousePoint.Y > cropTool.BottomRightY - 13) 
+            if (mousePoint.Y > cropTool.BottomRightY - 13)
             {
                 return TouchPoint.OutsideRectangle;
             }

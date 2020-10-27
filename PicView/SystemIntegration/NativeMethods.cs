@@ -30,6 +30,7 @@ namespace PicView.SystemIntegration
         string pvParam, uint fWinIni);
 
         #region File properties
+
         // file properties
         //http://stackoverflow.com/a/1936957
 
@@ -82,9 +83,11 @@ namespace PicView.SystemIntegration
             public IntPtr hIcon;
             public IntPtr hProcess;
         }
-        #endregion
+
+        #endregion File properties
 
         #region Remove from Alt + tab
+
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
@@ -103,7 +106,7 @@ namespace PicView.SystemIntegration
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern uint SetThreadExecutionState([In] uint esFlags);
 
-        #endregion
+        #endregion Remove from Alt + tab
 
         #region windproc
 
@@ -152,7 +155,7 @@ namespace PicView.SystemIntegration
             return IntPtr.Zero;
         }
 
-        #endregion
+        #endregion windproc
 
         #region Blur
 
@@ -260,7 +263,7 @@ namespace PicView.SystemIntegration
             Marshal.FreeHGlobal(accentPtr);
         }
 
-        #endregion
+        #endregion Blur
 
         #region GetPixelColor
 
@@ -371,6 +374,6 @@ namespace PicView.SystemIntegration
                 .Any(displayName => displayName != null && displayName.Contains(softwareName, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        #endregion
+        #endregion Check if application exists
     }
 }

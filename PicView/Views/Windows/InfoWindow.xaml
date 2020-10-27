@@ -2013,7 +2013,6 @@
                         Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,0" />
-
                 </Grid>
 
                 <StackPanel Margin="0,28,0,7">
@@ -2106,7 +2105,7 @@
 
                 <StackPanel Margin="0,36,0,0">
 
-                    <uc:Logo Margin="0" Height="40"/>
+                    <uc:Logo Margin="0" Height="40" />
 
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                         <TextBlock>

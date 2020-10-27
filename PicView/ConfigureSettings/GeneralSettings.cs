@@ -1,5 +1,4 @@
 ﻿using PicView.ChangeImage;
-using PicView.Translations;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Permissions;
@@ -9,7 +8,6 @@ namespace PicView.ConfigureSettings
 {
     internal static class GeneralSettings
     {
-
         internal static void RestartApp()
         {
             Properties.Settings.Default.Save();

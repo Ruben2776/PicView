@@ -207,7 +207,7 @@ namespace PicView.Views.Windows
                     return;
                 }
             }
-            
+
             ConfigureWindows.GetMainWindow.MainImage.Effect = new InvertColorEffect();
             NegativeButton.IsChecked = true;
         }

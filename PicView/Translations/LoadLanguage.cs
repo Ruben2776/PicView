@@ -15,7 +15,6 @@ namespace PicView.Translations
                     Load();
                 }
             }
-
             else if (Properties.Settings.Default.UserLanguage != "en")
             {
                 Load();

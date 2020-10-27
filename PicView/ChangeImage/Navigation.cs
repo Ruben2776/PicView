@@ -470,7 +470,7 @@ namespace PicView.ChangeImage
             }
 
             // Go to the image!
-            await LoadPicAt(FolderIndex).ConfigureAwait(false);
+            await LoadPicAt(FolderIndex).ConfigureAwait(true);
 
             // Update PicGallery selected item, if needed
             if (GalleryFunctions.IsOpen)

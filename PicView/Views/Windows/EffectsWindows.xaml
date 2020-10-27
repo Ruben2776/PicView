@@ -44,8 +44,6 @@
             DockPanel.Dock="Top"
             Fill="{StaticResource BorderBrush}" />
 
-
-
         <StackPanel Background="{StaticResource NoisyBg}">
             <WrapPanel
                 x:Name="EffectsContainer"
@@ -564,9 +562,6 @@
                         </TextBlock.Foreground>
                     </TextBlock>
                 </CheckBox>
-
-
-
             </WrapPanel>
 
             <TextBlock

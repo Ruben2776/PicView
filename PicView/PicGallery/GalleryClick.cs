@@ -130,7 +130,6 @@ namespace PicView.PicGallery
                 // Select next item
                 GalleryNavigation.SetSelected(id, true);
             }));
-
         }
     }
 }
