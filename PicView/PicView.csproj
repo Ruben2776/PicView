@@ -252,13 +252,13 @@
     <Resource Include="Themes\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Magick.NET-Q16-x64" Version="7.22.0" />
-    <PackageReference Include="Magick.NET.SystemDrawing" Version="2.0.4" />
-    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="2.0.2" />
+    <PackageReference Include="Magick.NET-Q16-x64" Version="7.22.1" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="2.0.5" />
+    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="2.0.3" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-ShellExtensions" Version="1.1.4" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
