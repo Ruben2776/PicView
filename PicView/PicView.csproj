@@ -448,6 +448,7 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageIcon>icon-raster.128b.png</PackageIcon>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

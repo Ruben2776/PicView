@@ -177,7 +177,7 @@ namespace PicView.FileHandling
                     Icon = cmIcon
                 };
                 // Set tooltip as argument to avoid subscribing and unsubscribing to events
-                menuItem.Click += delegate { LoadPiFrom(menuItem.ToolTip.ToString()); };
+                menuItem.Click += async delegate { await LoadPiFrom(menuItem.ToolTip.ToString()).ConfigureAwait(false); };
                 var ext = Path.GetExtension(item);
                 var ext5 = !string.IsNullOrWhiteSpace(ext) && ext.Length >= 5 ? ext.Substring(0, 5) : ext;
                 menuItem.InputGestureText = ext5;
