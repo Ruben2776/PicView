@@ -30,7 +30,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFramework>net5.0-windows</TargetFramework>
+	<TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <Version>1.0.0.0</Version>
   </PropertyGroup>
@@ -252,9 +252,9 @@
     <Resource Include="Themes\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Magick.NET-Q16-x64" Version="7.22.2" />
-    <PackageReference Include="Magick.NET.SystemDrawing" Version="2.0.6" />
-    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="3.0.0" />
+    <PackageReference Include="Magick.NET-Q16-x64" Version="7.22.2.1" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="2.0.7" />
+    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="3.0.1" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-ShellExtensions" Version="1.1.4" />
@@ -262,10 +262,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.19041.1" />
     <PackageReference Include="Pfim" Version="0.9.1" />
-    <PackageReference Include="SkiaSharp" Version="2.80.3-preview.18" />
-    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.80.3-preview.18" />
+    <PackageReference Include="SkiaSharp" Version="2.80.2" />
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.80.2" />
     <PackageReference Include="WpfScreenHelper" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>

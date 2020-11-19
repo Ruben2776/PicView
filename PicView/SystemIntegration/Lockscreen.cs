@@ -4,8 +4,8 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
-using Windows.Storage;
-using Windows.System.UserProfile;
+//using Windows.Storage;
+//using Windows.System.UserProfile;
 
 namespace PicView.SystemIntegration
 {
@@ -13,10 +13,10 @@ namespace PicView.SystemIntegration
     {
         internal static async Task ChangeLockScreenBackground(string path)
         {
-            if (!UserProfilePersonalizationSettings.IsSupported())
-            {
-                return;
-            }
+            //if (!UserProfilePersonalizationSettings.IsSupported())
+            //{
+            //    return;
+            //}
 
             if (UILogic.ConfigureWindows.GetMainWindow.MainImage.Effect != null || Clipboard.ContainsImage())
             {
@@ -65,10 +65,10 @@ namespace PicView.SystemIntegration
         {
             try
             {
-                var storageFile = await StorageFile.GetFileFromPathAsync(path);
+                //var storageFile = await StorageFile.GetFileFromPathAsync(path);
 
-                using var stream = await storageFile.OpenAsync(FileAccessMode.ReadWrite);
-                await LockScreen.SetImageStreamAsync(stream);
+                //using var stream = await storageFile.OpenAsync(FileAccessMode.ReadWrite);
+                //await LockScreen.SetImageStreamAsync(stream);
             }
             catch (Exception e)
             {
