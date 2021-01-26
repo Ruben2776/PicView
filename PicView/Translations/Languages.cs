@@ -5,6 +5,7 @@
         en,
         da,
         de,
+        es,
         zh_CN
     }
 }
