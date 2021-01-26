@@ -1,0 +1,362 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!--  Text in the title bar  -->
+    <system:String x:Key="Loading">Cargando...</system:String>
+    <system:String x:Key="NoImage">No se ha cargado imagen</system:String>
+    <system:String x:Key="Files">archivos</system:String>
+    <system:String x:Key="File">archivo</system:String>
+    <system:String x:Key="PercentComplete">% completado...</system:String>
+    <system:String x:Key="CropMessage">Presiona Esc para cerrar, Enter para guardar</system:String>
+    <system:String x:Key="ClipboardImage">Imagen de Portapapeles</system:String>
+    <system:String x:Key="Base64Image">Imagen en Base64</system:String>
+
+    <!--  Generic Window  -->
+    <system:String x:Key="Close">Cerrar</system:String>
+    <system:String x:Key="RestoreDown">Restaurar Abajo</system:String>
+    <system:String x:Key="Maximize">Maximizar</system:String>
+    <system:String x:Key="Minimize">Minimizar</system:String>
+    <system:String x:Key="Fullscreen">Pantalla Completa</system:String>
+    <system:String x:Key="NewWindow">Nueva Ventana</system:String>
+
+    <!--  Info window  -->
+    <system:String x:Key="InfoWindowTitle">Información y atajos</system:String>
+    <system:String x:Key="ApplicationShortcuts">Atajos de la aplicación</system:String>
+    <system:String x:Key="SavedOnNextStartUp">(Guardados en el próximo inicio)</system:String>
+    <system:String x:Key="ImageControl">Control de Imagen</system:String>
+    <system:String x:Key="FileManagement">Gestión de archivos</system:String>
+    <system:String x:Key="DragFileTo">Arrastra el archivo al Explorador de Windows o a otra aplicación/navegador</system:String>
+    <system:String x:Key="DragImage">Arrastrar imagen</system:String>
+    <system:String x:Key="AdditionalFunctions">Funciones adicionales</system:String>
+    <system:String x:Key="Reload">Recargar</system:String>
+    <system:String x:Key="Credits">Créditos</system:String>
+    <system:String x:Key="IconsUsed">Íconos usados:</system:String>
+    <system:String x:Key="GithubRepo">Repositorio de Github</system:String>
+    <system:String x:Key="ViewLicenseFile">Ver archivo de licencia</system:String>
+    <system:String x:Key="Version">Versión:</system:String>
+
+    <!--  Info window, window scaling  -->
+    <system:String x:Key="WindowScaling">Escalado de ventana</system:String>
+    <system:String x:Key="NormalWindow">Ventana normal</system:String>
+    <system:String x:Key="FillHeight">⇔ Rellenar altura</system:String>
+    <system:String x:Key="AutoFitWindow">Auto ajustar ventana</system:String>
+
+    <!--  info window, interface configuration  -->
+    <system:String x:Key="InterfaceConfiguration">Configuración de interfaz</system:String>
+    <system:String x:Key="HideShowInterface">Ocultar/mostrar interfaz</system:String>
+    <system:String x:Key="ChangeBackground">Cambiar fondo de pantalla</system:String>
+    <system:String x:Key="ToggleFullscreen">Alternar pantalla completa</system:String>
+
+    <!--  Info window, window management  -->
+    <system:String x:Key="WindowManagement">Gestión de ventana</system:String>
+    <system:String x:Key="InfoWindow">Ventana de información</system:String>
+    <system:String x:Key="SettingsWindow">Ventana de Opciones</system:String>
+    <system:String x:Key="EscCloseTooltip">Cierra el menú/ventana actualmente abierto</system:String>
+    <system:String x:Key="CloseApp">Cierra la aplicación por completo</system:String>
+    <system:String x:Key="MoveWindow">Mover ventana</system:String>
+    <system:String x:Key="CenterWindow">Centrar ventana</system:String>
+
+    <!--  Settings window, colors  -->
+    <system:String x:Key="HighlightColor">Color de resaltado</system:String>
+
+    <system:String x:Key="Blue">Azul</system:String>
+    <system:String x:Key="Cyan">Cian</system:String>
+    <system:String x:Key="Aqua">Aguamarina</system:String>
+    <system:String x:Key="Teal">Verde azulado</system:String>
+
+    <system:String x:Key="Lime">Lima</system:String>
+    <system:String x:Key="Green">Verde</system:String>
+    <system:String x:Key="Golden">Dorado</system:String>
+    <system:String x:Key="Orange">Naranja</system:String>
+
+    <system:String x:Key="Red">Rojo</system:String>
+    <system:String x:Key="Pink">Rosa</system:String>
+    <system:String x:Key="Magenta">Magenta</system:String>
+    <system:String x:Key="Purple">Púrpura</system:String>
+
+    <!--  Settings window, theme  -->
+    <system:String x:Key="Theme">Tema</system:String>
+    <system:String x:Key="DarkTheme">Tema oscuro</system:String>
+    <system:String x:Key="LightTheme">Tema claro</system:String>
+    <system:String x:Key="ChangingThemeRequiresRestart">* Cambiar el tema requiere reabrir el programa</system:String>
+
+    <!--  Settings window, wallpaper  -->
+    <system:String x:Key="SetCurrentImageAsWallpaper">Establecer imagen actual como fondo de pantalla:</system:String>
+
+    <system:String x:Key="Fill">Rellenar</system:String>
+    <system:String x:Key="Center">Centro</system:String>
+    <system:String x:Key="Fit">Ajustar</system:String>
+    <system:String x:Key="Tile">Mosaico</system:String>
+    <system:String x:Key="Stretch">Estirar</system:String>
+
+    <!--  Settings window, language  -->
+    <system:String x:Key="Language">Lenguaje</system:String>
+    <system:String x:Key="ChangingLanguageRequiresRestart">* Cambiar el lenguaje requiere reabrir el programa</system:String>
+
+    <!--  Settings window, misc  -->
+    <system:String x:Key="GeneralSettings">Opciones Generales</system:String>
+    <system:String x:Key="UISettings">Opciones de interfaz</system:String>
+    <system:String x:Key="MiscSettings">Otras opciones</system:String>
+    <system:String x:Key="SearchSubdirectory">Buscar subdirectorios</system:String>
+    <system:String x:Key="StayTopMost">Mostrar sobre otras ventanas</system:String>
+    <system:String x:Key="StayCentered">Mantener ventana centrada</system:String>
+    <system:String x:Key="ColoredWindowBorder">Borde de ventana coloreada</system:String>
+    <system:String x:Key="ShowButtonsInHiddenUI">Mostrar botones en interfaz oculta</system:String>
+    <system:String x:Key="CtrlToZoom">Ctrl para zoom, rueda para navegar</system:String>
+    <system:String x:Key="ScrollToZoom">Rueda para zoom, Ctrl para navegar</system:String>
+    <system:String x:Key="Apply">Aplicar</system:String>
+    <system:String x:Key="AdjustTimingForSlideshow">Ajustar velocidad de presentación</system:String>
+    <system:String x:Key="AdjustTimingForZoom">Ajustar velocidad de acercado/alejado</system:String>
+    <system:String x:Key="SecAbbreviation">Seg.</system:String>
+    <system:String x:Key="RestartApp">Reiniciar la aplicación</system:String>
+
+    <!--  Set as Default  -->
+    <system:String x:Key="SetAsDefualt">Establecer como visor de imágenes predeterminado</system:String>
+    <system:String x:Key="RemoveFileAssociations">Quitar asociaciones de archivos</system:String>
+    <system:String x:Key="RasterFormats">Formatos Rasterizados</system:String>
+    <system:String x:Key="VectorGraphics">Gráfico Vectorizado</system:String>
+    <system:String x:Key="RawCamera">Formatos en Crudo</system:String>
+    <system:String x:Key="OtherFormats">Otros formatos</system:String>
+    <system:String x:Key="ComicFormats">Historietas</system:String>
+
+    <!--  Effects Window  -->
+    <system:String x:Key="HLSLPictureFX">Efectos de imagen HLSL</system:String>
+    <system:String x:Key="ClickToAddShaderEffectToImage">Haz click al botón para agregar un efecto de sombra especificado a la imagen</system:String>
+    <system:String x:Key="UncheckToRemoveEffect">Desmarca para quitar efecto</system:String>
+
+    <system:String x:Key="NegativeColors">Negativo</system:String>
+    <system:String x:Key="BlackAndWhite">Blanco y Negro</system:String>
+    <system:String x:Key="ColorTone">Tono de Color</system:String>
+
+    <system:String x:Key="OldMovie">Filme Antiguo</system:String>
+    <system:String x:Key="Bloom">Luz</system:String>
+    <system:String x:Key="Gloom">Oscuridad</system:String>
+
+    <system:String x:Key="Monochrome">Monocroma</system:String>
+    <system:String x:Key="WaveWarper">Distorsión</system:String>
+    <system:String x:Key="Underwater">Bajo el agua</system:String>
+
+    <system:String x:Key="BandedSwirl">Remolino</system:String>
+    <system:String x:Key="Ripple">Onda</system:String>
+    <system:String x:Key="RippleAlt">Onda Alternativa</system:String>
+
+    <system:String x:Key="Blur">Desenfoque</system:String>
+    <system:String x:Key="DirectionalBlur">Desenfoque Lineal</system:String>
+    <system:String x:Key="TelescopicBlur">Desenfoque Telescópico</system:String>
+
+    <system:String x:Key="Pixelate">Pixelado</system:String>
+    <system:String x:Key="Embossed">Estampado</system:String>
+    <system:String x:Key="SmoothMagnify">Aumento Suave</system:String>
+
+    <system:String x:Key="Pivot">Perspectiva</system:String>
+    <system:String x:Key="PaperFold">Doblar</system:String>
+    <system:String x:Key="PencilSketch">Dibujo a lápiz</system:String>
+
+    <system:String x:Key="Sketch">Boceto</system:String>
+    <system:String x:Key="ToneMapping">Exaltar</system:String>
+    <system:String x:Key="FrostyOutline">Resaltar</system:String>
+
+    <system:String x:Key="Bands">Bandas</system:String>
+    <system:String x:Key="GlassTile">Cubos de Cristal</system:String>
+
+    <!--  Navigation related  -->
+    <system:String x:Key="Navigation">Navegación</system:String>
+    <system:String x:Key="NextImage">Imagen siguiente</system:String>
+    <system:String x:Key="PrevImage">Imagen anterior</system:String>
+    <system:String x:Key="LastImage">Última imagen</system:String>
+    <system:String x:Key="FirstImage">Primera imagen</system:String>
+    <system:String x:Key="ToggleLooping">Alternar bucles</system:String>
+    <system:String x:Key="Slideshow">Presentación</system:String>
+
+    <!--  Zoom related  -->
+    <system:String x:Key="Zoom">Zoom</system:String>
+    <system:String x:Key="ZoomIn">Acercar</system:String>
+    <system:String x:Key="ZoomOut">Alejar</system:String>
+    <system:String x:Key="Pan">Ajustar Tamaño</system:String>
+    <system:String x:Key="MouseDrag">Arrastrar con el ratón</system:String>
+    <system:String x:Key="ResetZoom">Reset zoom</system:String>
+    <system:String x:Key="ToggleScroll">Alternar desplazamiento</system:String>
+
+    <!--  File related  -->
+    <system:String x:Key="Open">Abrir</system:String>
+    <system:String x:Key="OpenWith">Abrir con...</system:String>
+    <system:String x:Key="OpenFileDialog">Abrir selector de archivo</system:String>
+    <system:String x:Key="ShowInFolder">Mostrar en carpeta</system:String>
+    <system:String x:Key="Save">Guardar</system:String>
+    <system:String x:Key="SaveImage">Guardar Imagen</system:String>
+    <system:String x:Key="Print">Imprimir</system:String>
+    <system:String x:Key="RecentFiles">Archivos recientes</system:String>
+    <system:String x:Key="FileProperties">Propiedades del archivo</system:String>
+    <system:String x:Key="DeleteFile">Eliminar archivo</system:String>
+    <system:String x:Key="Folder">Carpeta</system:String>
+    <system:String x:Key="FullPath">Nombre completo de la carpeta</system:String>
+    <system:String x:Key="RenameFile">Renombrar archivo</system:String>
+
+    <!--  Sort files  -->
+    <system:String x:Key="SortFilesBy">Ordenar archivos por</system:String>
+    <system:String x:Key="FileName">Nombre de archivo</system:String>
+    <system:String x:Key="FileSize">Tamaño de archivo</system:String>
+    <system:String x:Key="CreationTime">Fecha de creación</system:String>
+    <system:String x:Key="FileExtension">Extensión de archivo</system:String>
+    <system:String x:Key="LastAccessTime">Fecha de último acceso</system:String>
+    <system:String x:Key="LastWriteTime">Fecha de última modificación</system:String>
+    <system:String x:Key="Random">Aleatorio</system:String>
+
+    <!--  Settings  -->
+    <system:String x:Key="Settings">Opciones</system:String>
+    <system:String x:Key="Scrolling">Desplazar</system:String>
+    <system:String x:Key="Looping">Bucle</system:String>
+    <system:String x:Key="FitToWindow">Ajustar a ventana/imagen</system:String>
+    <system:String x:Key="ShowHideUI">Mostrar/ocultar interfaz</system:String>
+    <system:String x:Key="ChangeBg">Cambiar fondo</system:String>
+    <system:String x:Key="ChangeBgTooltip">Cambiar entre color de fondo para imágenes de fondo transparente</system:String>
+
+    <!--  Copy related  -->
+    <system:String x:Key="Copy">Copiar</system:String>
+    <system:String x:Key="AddedToClipboard">agregada al portapapeles</system:String>
+
+    <!--  Copy file  -->
+    <system:String x:Key="CopyFile">Copiar archivo</system:String>
+    <system:String x:Key="FileCopy">Archivo agregado al portapapeles</system:String>
+    <system:String x:Key="FileCopyPath">Copiar carpeta del archivo</system:String>
+    <system:String x:Key="FileCopyPathMessage">Carpeta del archivo agregada al portapapeles</system:String>
+    <system:String x:Key="FileCutMessage">Archivo agregada para mover al portapapeles</system:String>
+
+    <!--  Copy image  -->
+    <system:String x:Key="CopyImage">Copiar imagen</system:String>
+    <system:String x:Key="CopiedImage">Copiar imagen al portapapeles</system:String>
+    <system:String x:Key="CopyImageTooltip">Copiar como imagen del portapapeles de Windows</system:String>
+
+    <!--  Paste  -->
+    <system:String x:Key="FilePaste">Pegar archivo</system:String>
+
+    <!--  Cut  -->
+    <system:String x:Key="FileCut">Cortar archivo</system:String>
+
+    <!--  Image info  -->
+    <system:String x:Key="ImageInfo">Información de Imagen</system:String>
+    <system:String x:Key="Image">Imagen</system:String>
+    <system:String x:Key="Width">Ancho</system:String>
+    <system:String x:Key="Height">Alto</system:String>
+    <system:String x:Key="Date">Fecha</system:String>
+    <system:String x:Key="Created">Creado</system:String>
+    <system:String x:Key="Modified">Modificado</system:String>
+    <system:String x:Key="Size">Tamaño</system:String>
+    <system:String x:Key="SizePx">Tamaño (px)</system:String>
+    <system:String x:Key="Pixels">pixeles</system:String>
+    <system:String x:Key="SizeMp">Tamaño (mp)</system:String>
+    <system:String x:Key="MegaPixels">megapixeles</system:String>
+    <system:String x:Key="Resolution">Resolución</system:String>
+    <system:String x:Key="Dpi">DPI</system:String>
+    <system:String x:Key="DiskSize">Tamaño en disco</system:String>
+    <system:String x:Key="AspectRatio">Dimensiones</system:String>
+    <system:String x:Key="Portrait">Vertical</system:String>
+    <system:String x:Key="Landscape">Horizontal</system:String>
+    <system:String x:Key="Square">Cuadrado</system:String>
+    <system:String x:Key="PrintSizeIn">Tamaño de impresión (in)</system:String>
+    <system:String x:Key="PrintSizeCm">Tamaño de impresión (cm)</system:String>
+    <system:String x:Key="Centimeters">centímetros</system:String>
+    <system:String x:Key="Inches">pulgadas</system:String>
+    <system:String x:Key="BitDepth">Profundidad de bits</system:String>
+
+    <!--  Keyboard key names  -->
+    <system:String x:Key="Delete">Eliminar</system:String>
+    <system:String x:Key="Ctrl">Ctrl</system:String>
+    <system:String x:Key="Shift">Shift</system:String>
+    <system:String x:Key="Alt">Alt</system:String>
+    <system:String x:Key="Space">Espacio</system:String>
+    <system:String x:Key="Enter">Enter</system:String>
+    <system:String x:Key="Esc">Esc</system:String>
+    <system:String x:Key="NumpadPlus">Teclado numérico +</system:String>
+    <system:String x:Key="NumpadMinus">Teclado numérico -</system:String>
+    <!--  Mouse key names  -->
+    <system:String x:Key="MouseWheel">Rueda del ratón</system:String>
+    <system:String x:Key="MouseKeyForward">Rueda del ratón hacia atrás</system:String>
+    <system:String x:Key="MouseKeyBack">Tecla de retroceder del ratón</system:String>
+    <system:String x:Key="DoubleClick">Doble Click</system:String>
+    <!--  Arrow key names  -->
+    <system:String x:Key="Left">Izquierda</system:String>
+    <system:String x:Key="Right">Derecha</system:String>
+    <system:String x:Key="Up">Arriba</system:String>
+    <system:String x:Key="Down">Abajo</system:String>
+
+    <!--  Error messages  -->
+    <system:String x:Key="SavingFileFailed">Guardando archivo fallido</system:String>
+    <system:String x:Key="UnexpectedError">Ha ocurrido un error desconocido</system:String>
+    <system:String x:Key="NoImages">No hay imágenes</system:String>
+    <system:String x:Key="AnErrorOccuredMovingFile">Ha ocurrido un error al mover los archivos</system:String>
+
+    <!--  Drag and drop  -->
+    <system:String x:Key="DragOverString">Arrastra para cargar una imagen</system:String>
+
+    <!--  Wallpaper  -->
+    <system:String x:Key="SetAs">Establecer como...</system:String>
+    <system:String x:Key="SetAsWallpaper">Establecer como fondo de pantalla</system:String>
+    <system:String x:Key="SetAsLockScreenImage">Establecer como imagen de bloqueo</system:String>
+
+    <!--  Edit  -->
+    <system:String x:Key="Crop">Recortar</system:String>
+    <system:String x:Key="RotateRight">Rotar a la derecha</system:String>
+    <system:String x:Key="RotateLeft">Rotar a la izquierda</system:String>
+    <system:String x:Key="Flip">Voltear horizontalmente</system:String>
+    <system:String x:Key="Unflip">Deshacer volteado</system:String>
+
+    <!--  Archives  -->
+    <system:String x:Key="BadArchive">No se ha podido procesar el archivo</system:String>
+    <system:String x:Key="PasswordArchive">Archivo protegido por contraseña no soportado</system:String>
+
+    <!--  Delete file messages  -->
+    <system:String x:Key="SentFileToRecycleBin">Enviar archivo a papelera de reciclaje</system:String>
+    <system:String x:Key="DeletedFile">Archivo eliminado</system:String>
+    <system:String x:Key="AnErrorOccuredWhenDeleting">Ha ocurrido un error al eliminar</system:String>
+
+    <!--  Scaling messages  -->
+    <system:String x:Key="CenterImageInWindow">Centrar imagen en la ventana</system:String>
+    <system:String x:Key="CenterImageInWindowFillHeight">Centrar imagen en la ventana, rellenar altura</system:String>
+    <system:String x:Key="CenterApplicationToWindow">Centrar aplicación a ventana</system:String>
+    <system:String x:Key="CenterApplicationToWindowFillHeight">Centrar aplicación a ventana, rellenar altura</system:String>
+
+    <system:String x:Key="ScrollingEnabled">Rueda del mouse activada</system:String>
+    <system:String x:Key="ScrollingDisabled">Rueda del mouse desactivada</system:String>
+
+    <!--  Misc messages  -->
+    <system:String x:Key="ConvertedToBase64">Convertido a base64</system:String>
+    <system:String x:Key="LoopingEnabled">Bucle activado</system:String>
+    <system:String x:Key="LoopingDisabled">Bucle desactivado</system:String>
+    <system:String x:Key="Applying">Aplicando</system:String>
+
+    <!--  Button hover tooltips  -->
+    <system:String x:Key="ShowInfoWindow">Mostrar ventana de información</system:String>
+    <system:String x:Key="ShowAllSettingsWindow">Ventana de mostrar todas las opciones</system:String>
+
+    <system:String x:Key="ToggleBackgroundColor">Alternar color de fondo</system:String>
+    <system:String x:Key="ShowImageGallery">Mostrar galería de imáagenes</system:String>
+    <system:String x:Key="GoToImageAtSpecifiedIndex">Ir a imagen en índice especificado</system:String>
+    <system:String x:Key="AdjustZoomLevel">Ajustar nivel de zoom</system:String>
+
+    <system:String x:Key="PasteImageFromClipholder">Pegar imagen desde portapapeles</system:String>
+    <system:String x:Key="SendCurrentImageToRecycleBin">Enviar imagen actual a papelera de reciclaje</system:String>
+    <system:String x:Key="StartSlideshow">Iniciar presentación</system:String>
+    <system:String x:Key="CloseGallery">Cerrar galería</system:String>
+
+    <!--  Menu buttons text  -->
+    <system:String x:Key="ShowFullscreenGallery">Mostrar galería en pantalla completa</system:String>
+    <system:String x:Key="ShowHorizontalGallery">Mostrar galería horizontal</system:String>
+
+    <system:String x:Key="FillImageHeight">Rellenar a la altura de imagen</system:String>
+
+    <system:String x:Key="OptimizeResize">Optimizar y Redimensionar</system:String>
+    <system:String x:Key="OptimizeResizeTooltip">Redimensionado en cantidad y optimizar imágenes</system:String>
+
+    <system:String x:Key="ShaderEffects">Efectos de Sombra</system:String>
+    <system:String x:Key="ShaderEffectsTooltip">Mostrar ventana de efectos</system:String>
+
+    <system:String x:Key="CropPicture">Recortar Imagen</system:String>
+
+    <system:String x:Key="ShowImageInfo">Mostrar Información de Imagen</system:String>
+
+    <system:String x:Key="ColorPickerTool">Cuentagotas</system:String>
+    <system:String x:Key="ColorPickerToolTooltip">Elegir color desde imagen</system:String>
+</ResourceDictionary>
