@@ -84,9 +84,11 @@
                         FontSize="14">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
-                                Margin="0,0,7,0"
+                                MaxWidth="175"
+                                Margin="0,0,10,0"
                                 FontSize="14"
-                                Text="{StaticResource ShowFullscreenGallery}">
+                                Text="{StaticResource ShowFullscreenGallery}"
+                                TextWrapping="Wrap">
                                 <TextBlock.Foreground>
                                     <SolidColorBrush x:Name="FullscreenTextBrush" Color="{StaticResource MainColor}" />
                                 </TextBlock.Foreground>
@@ -132,9 +134,11 @@
                         FontSize="14">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
+                                MaxWidth="175"
                                 Margin="0,0,7,0"
                                 FontSize="14"
-                                Text="{StaticResource ShowHorizontalGallery}">
+                                Text="{StaticResource ShowHorizontalGallery}"
+                                TextWrapping="Wrap">
                                 <TextBlock.Foreground>
                                     <SolidColorBrush x:Name="ContainedTextBrush" Color="{StaticResource MainColor}" />
                                 </TextBlock.Foreground>

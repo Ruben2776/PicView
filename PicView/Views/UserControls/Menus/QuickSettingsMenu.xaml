@@ -171,9 +171,14 @@
                     <CheckBox
                         x:Name="ToggleFill"
                         HorizontalContentAlignment="Center"
-                        Content="{StaticResource FillImageHeight}"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                         Style="{StaticResource Checkstyle}">
+                        <CheckBox.Content>
+                            <TextBlock
+                                MaxWidth="127"
+                                Text="{StaticResource ResourceKey=FillImageHeight}"
+                                TextWrapping="Wrap" />
+                        </CheckBox.Content>
                         <CheckBox.Foreground>
                             <SolidColorBrush x:Name="ToggleFillFill" Color="{StaticResource MainColor}" />
                         </CheckBox.Foreground>
@@ -196,9 +201,14 @@
                     <CheckBox
                         x:Name="ToggleScroll"
                         HorizontalContentAlignment="Center"
-                        Content="{StaticResource ToggleScroll}"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                         Style="{StaticResource Checkstyle}">
+                        <CheckBox.Content>
+                            <TextBlock
+                                MaxWidth="127"
+                                Text="{StaticResource ResourceKey=ToggleScroll}"
+                                TextWrapping="Wrap" />
+                        </CheckBox.Content>
                         <CheckBox.Foreground>
                             <SolidColorBrush x:Name="ToggleScrollFill" Color="{StaticResource MainColor}" />
                         </CheckBox.Foreground>
@@ -221,9 +231,14 @@
                     <CheckBox
                         x:Name="ToggleLooping"
                         HorizontalContentAlignment="Center"
-                        Content="{StaticResource ToggleLooping}"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                         Style="{StaticResource Checkstyle}">
+                        <CheckBox.Content>
+                            <TextBlock
+                                MaxWidth="127"
+                                Text="{StaticResource ResourceKey=ToggleLooping}"
+                                TextWrapping="Wrap" />
+                        </CheckBox.Content>
                         <CheckBox.Foreground>
                             <SolidColorBrush x:Name="ToggleLoopFill" Color="{StaticResource MainColor}" />
                         </CheckBox.Foreground>

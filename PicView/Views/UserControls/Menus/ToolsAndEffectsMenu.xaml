@@ -61,9 +61,10 @@
                         <Button.Background>
                             <SolidColorBrush x:Name="EffectsButtonBrush" Color="Transparent" />
                         </Button.Background>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel MaxWidth="135" Orientation="Horizontal">
                             <TextBlock
-                                Margin="0,0,6,0"
+                                MaxWidth="105"
+                                Margin="6,2,8,2"
                                 FontSize="14"
                                 Text="{StaticResource ShaderEffects}">
                                 <TextBlock.Foreground>
@@ -101,9 +102,9 @@
                         <Button.Background>
                             <SolidColorBrush x:Name="ResizeButtonBrush" Color="Transparent" />
                         </Button.Background>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel MaxWidth="160" Orientation="Horizontal">
                             <TextBlock
-                                MaxWidth="121"
+                                MaxWidth="135"
                                 Margin="6,2,8,2"
                                 FontSize="14"
                                 Text="{StaticResource OptimizeResize}"
@@ -140,7 +141,8 @@
                         </Button.Background>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
-                                Margin="0,0,6,0"
+                                MaxWidth="120"
+                                Margin="0,0,10,0"
                                 VerticalAlignment="Center"
                                 FontSize="14"
                                 Text="{StaticResource CropPicture}">
@@ -177,7 +179,8 @@
                         </Button.Background>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
-                                Margin="0,0,6,0"
+                                MaxWidth="120"
+                                Margin="0,0,10,0"
                                 VerticalAlignment="Center"
                                 FontSize="14"
                                 Text="{StaticResource ColorPickerTool}">
@@ -211,7 +214,8 @@
                         </Button.Background>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
-                                Margin="0,0,6,0"
+                                MaxWidth="120"
+                                Margin="0,0,10,0"
                                 VerticalAlignment="Center"
                                 FontSize="14"
                                 Text="{StaticResource ShowImageInfo}">
