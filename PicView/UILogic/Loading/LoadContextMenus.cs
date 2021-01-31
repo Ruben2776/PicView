@@ -436,6 +436,10 @@ namespace PicView.UILogic.Loading
             lockCmIcon.Width = lockCmIcon.Height = 12;
             lockCmIcon.Fill = scbf;
             lockCm.Icon = lockCmIcon;
+
+            lockCm.IsEnabled = false;
+            lockCm.Opacity = .5;
+
             setAsCm.Items.Add(lockCm);
 
             cm.Items.Add(setAsCm);
