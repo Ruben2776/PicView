@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows;
 
 namespace PicView.SystemIntegration
@@ -13,7 +14,7 @@ namespace PicView.SystemIntegration
 
         internal readonly double DpiScaling { get; }
 
-        internal readonly Rect WorkArea { get; }
+        internal readonly Rectangle WorkArea { get; }
 
         public bool Equals(MonitorSize other)
         {
@@ -44,7 +45,7 @@ namespace PicView.SystemIntegration
         /// <param name="height">The WorkArea Pixel Height</param>
         /// <param name="dpiScaling"></param>
         /// <param name="workArea"></param>
-        private MonitorSize(double width, double height, double dpiScaling, Rect workArea)
+        private MonitorSize(double width, double height, double dpiScaling, Rectangle workArea)
         {
             Width = width;
             Height = height;
@@ -59,7 +60,7 @@ namespace PicView.SystemIntegration
         internal static MonitorSize GetMonitorSize()
         {
             // https://stackoverflow.com/a/32599760
-            var currentMonitor = WpfScreenHelper.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow).Handle);
+            var currentMonitor = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow).Handle);
 
             //find out if the app is being scaled by the monitor
             var source = PresentationSource.FromVisual(Application.Current.MainWindow);
