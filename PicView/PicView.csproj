@@ -219,6 +219,9 @@
     <Resource Include="Editing\ShaderEffects\PsEffects\WaveWarperEffect.ps">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+	  <Resource Include="Themes\Resources\img\favicon.ico">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
@@ -247,7 +250,12 @@
     <Resource Include="Themes\Resources\fonts\texgyreheros-bold.otf" />
     <Resource Include="Themes\Resources\fonts\texgyreheros-italic.otf" />
     <Resource Include="Themes\Resources\fonts\texgyreheros-regular.otf" />
-    <Resource Include="Themes\Resources\img\noisy-texture-100x100-o4-d13-c-fafafa-t0.png" />
+    <Content Include="Themes\Resources\img\favicon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Themes\Resources\img\noisy-texture-100x100-o4-d13-c-fafafa-t0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Themes\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
   </ItemGroup>
   <ItemGroup>
@@ -424,6 +432,9 @@
     <Content Include="Editing\ShaderEffects\PsEffects\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Themes\Resources\img\favicon.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />

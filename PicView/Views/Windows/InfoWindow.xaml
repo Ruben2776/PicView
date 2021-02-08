@@ -2105,7 +2105,7 @@
 
                 <StackPanel Margin="0,36,0,0">
 
-                    <uc:Logo Margin="0" Height="40" />
+                    <uc:Logo Height="40" Margin="0" />
 
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                         <TextBlock>
@@ -2168,12 +2168,24 @@
                         </Hyperlink>
                     </TextBlock>
 
-                    <Label
+                    <TextBlock
                         x:Name="appVersion"
                         Margin="0,17,0,15"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Bottom"
-                        Content="{StaticResource ResourceKey=Version}" />
+                        FontSize="14"
+                        FontWeight="Bold">
+                        <Hyperlink NavigateUri="https://github.com/Ruben2776/PicView/releases" RequestNavigate="Hyperlink_RequestNavigate">
+                            <Hyperlink.Foreground>
+                                <SolidColorBrush x:Name="UpdateBrush" Color="{StaticResource MainColor}" />
+                            </Hyperlink.Foreground>
+                            <TextBlock
+                                x:Name="Update"
+                                FontSize="14"
+                                Text="{StaticResource ResourceKey=Version}" />
+                        </Hyperlink>
+                    </TextBlock>
+
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

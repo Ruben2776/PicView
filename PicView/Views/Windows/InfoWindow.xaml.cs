@@ -17,7 +17,7 @@ namespace PicView.Views.Windows
             // Get version
             Assembly assembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            appVersion.Content += fvi.FileVersion;
+            Update.Text += fvi.FileVersion;
 
             ContentRendered += Window_ContentRendered;
 
@@ -55,6 +55,10 @@ namespace PicView.Views.Windows
             License.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(LicenseBrush); };
             License.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(LicenseBrush); };
             License.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(LicenseBrush); };
+
+            Update.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(UpdateBrush); };
+            Update.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(UpdateBrush); };
+            Update.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(UpdateBrush); };
 
             zondicons.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(zondiconsBrush); };
             zondicons.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(zondiconsBrush); };
