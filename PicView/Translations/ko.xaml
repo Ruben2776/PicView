@@ -298,7 +298,7 @@
 
     <!--  Edit  -->
     <system:String x:Key="Crop">자르기</system:String>
-    <system:String x:Key="RotateRight"오른쪽으로 회전</system:String>
+    <system:String x:Key="RotateRight">오른쪽으로 회전</system:String>
     <system:String x:Key="RotateLeft">왼쪽으로 회전</system:String>
     <system:String x:Key="Flip">수평으로 뒤집기</system:String>
     <system:String x:Key="Unflip">뒤집기 취소</system:String>
