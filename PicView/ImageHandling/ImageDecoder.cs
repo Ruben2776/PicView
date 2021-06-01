@@ -47,8 +47,8 @@ namespace PicView.ImageHandling
                         var sKBitmap = SKBitmap.Decode(filestream);
                         await filestream.DisposeAsync().ConfigureAwait(false);
 
-                        if (sKBitmap == null) 
-                        { 
+                        if (sKBitmap == null)
+                        {
                             return null; 
                         }
 

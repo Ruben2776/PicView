@@ -107,23 +107,22 @@ namespace PicView.FileHandling
         /// <param name="file">The absolute path to the file</param>
         internal static void OpenWith(string file)
         {
-            using (var process = new Process())
+            try
             {
+                using var process = new Process();
                 process.StartInfo.FileName = "openwith";
                 process.StartInfo.Arguments = $"\"{file}\"";
                 process.StartInfo.ErrorDialog = true;
-                try
-                {
-                    process.Start();
-                }
-                catch (Exception e)
-                {
+
+                process.Start();
+            }
+            catch (Exception e)
+            {
 #if DEBUG
-                    Trace.WriteLine("OpenWith exception \n" + e.Message);
+                Trace.WriteLine("OpenWith exception \n" + e.Message);
 
 #endif
-                    ShowTooltipMessage(e.Message, true);
-                }
+                ShowTooltipMessage(e.Message, true);
             }
         }
 
@@ -152,7 +151,7 @@ namespace PicView.FileHandling
             var Savedlg = new SaveFileDialog()
             {
                 Filter = FilterFiles,
-                Title = Application.Current.Resources["Save"] as string + $" - {SetTitle.AppName}",
+                Title = Application.Current.Resources["Save"] + $" - {SetTitle.AppName}",
                 FileName = fileName
             };
 

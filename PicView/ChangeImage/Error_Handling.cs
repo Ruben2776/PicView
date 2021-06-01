@@ -225,8 +225,8 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static void Unload()
         {
-            ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["NoImage"] as string;
-            ConfigureWindows.GetMainWindow.Title = Application.Current.Resources["NoImage"] as string + " - " + SetTitle.AppName;
+            ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["NoImage"];
+            ConfigureWindows.GetMainWindow.Title = Application.Current.Resources["NoImage"] + " - " + SetTitle.AppName;
             CanNavigate = false;
             ConfigureWindows.GetMainWindow.MainImage.Source = null;
             FreshStartup = true;

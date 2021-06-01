@@ -63,17 +63,17 @@ namespace PicView.SystemIntegration
 
         private static async Task Apply(string path)
         {
-            try
-            {
-                //var storageFile = await StorageFile.GetFileFromPathAsync(path);
+            //try
+            //{
+            //    var storageFile = await StorageFile.GetFileFromPathAsync(path);
 
-                //using var stream = await storageFile.OpenAsync(FileAccessMode.ReadWrite);
-                //await LockScreen.SetImageStreamAsync(stream);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
+            //    using var stream = await storageFile.OpenAsync(FileAccessMode.ReadWrite);
+            //    await LockScreen.SetImageStreamAsync(stream);
+            //}
+            //catch (Exception e)
+            //{
+            //    MessageBox.Show(e.Message);
+            //}
         }
     }
 }

@@ -31,8 +31,8 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var opencm = new MenuItem
             {
-                Header = Application.Current.Resources["Open"] as string,
-                InputGestureText = $"{Application.Current.Resources["Ctrl"] as string} + O"
+                Header = Application.Current.Resources["Open"],
+                InputGestureText = $"{Application.Current.Resources["Ctrl"]} + O"
             };
             var opencmIcon = new System.Windows.Shapes.Path
             {
@@ -52,8 +52,8 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var savecm = new MenuItem()
             {
-                Header = Application.Current.Resources["Save"] as string,
-                InputGestureText = $"{Application.Current.Resources["Ctrl"] as string} + S"
+                Header = Application.Current.Resources["Save"],
+                InputGestureText = $"{Application.Current.Resources["Ctrl"]} + S"
             };
             var savecmIcon = new System.Windows.Shapes.Path
             {
@@ -73,8 +73,8 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var printcm = new MenuItem
             {
-                Header = Application.Current.Resources["Print"] as string,
-                InputGestureText = $"{Application.Current.Resources["Ctrl"] as string} + P"
+                Header = Application.Current.Resources["Print"],
+                InputGestureText = $"{Application.Current.Resources["Ctrl"]} + P"
             };
             var printcmIcon = new System.Windows.Shapes.Path
             {
@@ -94,7 +94,7 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var openwcm = new MenuItem
             {
-                Header = Application.Current.Resources["OpenWith"] as string,
+                Header = Application.Current.Resources["OpenWith"],
                 InputGestureText = "E"
             };
             var openwIcon = new System.Windows.Shapes.Path
@@ -116,7 +116,7 @@ namespace PicView.UILogic.Loading
             cm.Items.Add(new Separator());
             var recentcm = new MenuItem
             {
-                Header = Application.Current.Resources["RecentFiles"] as string,
+                Header = Application.Current.Resources["RecentFiles"],
             };
             var recentcmIcon = new System.Windows.Shapes.Path
             {
@@ -135,7 +135,7 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var sortcm = new MenuItem
             {
-                Header = Application.Current.Resources["SortFilesBy"] as string,
+                Header = Application.Current.Resources["SortFilesBy"],
             };
             var sortcmIcon = new System.Windows.Shapes.Path
             {
@@ -152,7 +152,7 @@ namespace PicView.UILogic.Loading
             var sortcmChild0 = new MenuItem();
             var sortcmChild0Header = new RadioButton
             {
-                Content = Application.Current.Resources["FileName"] as string,
+                Content = Application.Current.Resources["FileName"],
                 BorderThickness = new Thickness(0, 0, 0, 0),
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 0
@@ -168,7 +168,7 @@ namespace PicView.UILogic.Loading
             var sortcmChild1 = new MenuItem();
             var sortcmChild1Header = new RadioButton
             {
-                Content = Application.Current.Resources["FileSize"] as string,
+                Content = Application.Current.Resources["FileSize"],
                 BorderThickness = new Thickness(0, 0, 0, 0),
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 1
@@ -184,7 +184,7 @@ namespace PicView.UILogic.Loading
             var sortcmChild2 = new MenuItem();
             var sortcmChild2Header = new RadioButton
             {
-                Content = Application.Current.Resources["CreationTime"] as string,
+                Content = Application.Current.Resources["CreationTime"],
                 BorderThickness = new Thickness(0, 0, 0, 0),
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 2
@@ -200,7 +200,7 @@ namespace PicView.UILogic.Loading
             var sortcmChild3 = new MenuItem();
             var sortcmChild3Header = new RadioButton
             {
-                Content = Application.Current.Resources["FileExtension"] as string,
+                Content = Application.Current.Resources["FileExtension"],
                 BorderThickness = new Thickness(0, 0, 0, 0),
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 3
@@ -216,7 +216,7 @@ namespace PicView.UILogic.Loading
             var sortcmChild4 = new MenuItem();
             var sortcmChild4Header = new RadioButton
             {
-                Content = Application.Current.Resources["LastAccessTime"] as string,
+                Content = Application.Current.Resources["LastAccessTime"],
                 BorderThickness = new Thickness(0, 0, 0, 0),
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 4
@@ -232,7 +232,7 @@ namespace PicView.UILogic.Loading
             var sortcmChild5 = new MenuItem();
             var sortcmChild5Header = new RadioButton
             {
-                Content = Application.Current.Resources["LastWriteTime"] as string,
+                Content = Application.Current.Resources["LastWriteTime"],
                 BorderThickness = new Thickness(0, 0, 0, 0),
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 5
@@ -248,7 +248,7 @@ namespace PicView.UILogic.Loading
             var sortcmChild6 = new MenuItem();
             var sortcmChild6Header = new RadioButton
             {
-                Content = Application.Current.Resources["Random"] as string,
+                Content = Application.Current.Resources["Random"],
                 BorderThickness = new Thickness(0, 0, 0, 0),
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 6
@@ -266,7 +266,7 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var settingscm = new MenuItem
             {
-                Header = Application.Current.Resources["Settings"] as string,
+                Header = Application.Current.Resources["Settings"],
             };
             var settingscmIcon = new System.Windows.Shapes.Path
             {
@@ -288,7 +288,7 @@ namespace PicView.UILogic.Loading
             var settingscmLoopHeader = new CheckBox
             {
                 IsChecked = Properties.Settings.Default.Looping,
-                Content = Application.Current.Resources["Looping"] as string,
+                Content = Application.Current.Resources["Looping"],
                 FontSize = 13,
                 MinWidth = 125,
                 HorizontalAlignment = HorizontalAlignment.Left,
@@ -310,7 +310,7 @@ namespace PicView.UILogic.Loading
             var settingscmScrollHeader = new CheckBox
             {
                 IsChecked = Properties.Settings.Default.ScrollEnabled,
-                Content = Application.Current.Resources["Scrolling"] as string,
+                Content = Application.Current.Resources["Scrolling"],
                 FontSize = 13,
                 MinWidth = 125,
                 HorizontalAlignment = HorizontalAlignment.Left,
@@ -331,7 +331,7 @@ namespace PicView.UILogic.Loading
             };
             var altcmHeader = new CheckBox
             {
-                Content = Application.Current.Resources["ShowHideUI"] as string,
+                Content = Application.Current.Resources["ShowHideUI"],
                 IsChecked = Properties.Settings.Default.ShowInterface,
                 FontSize = 13,
                 MinWidth = 125,
@@ -361,8 +361,8 @@ namespace PicView.UILogic.Loading
             };
             var transcmHeader = new Button
             {
-                Content = Application.Current.Resources["ChangeBg"] as string,
-                ToolTip = Application.Current.Resources["ChangeBgTooltip"] as string,
+                Content = Application.Current.Resources["ChangeBg"],
+                ToolTip = Application.Current.Resources["ChangeBgTooltip"],
                 FontSize = 13,
                 Width = double.NaN,
                 Height = double.NaN,
@@ -380,7 +380,7 @@ namespace PicView.UILogic.Loading
 
             var settingscmShortcut = new MenuItem
             {
-                Header = Application.Current.Resources["ShowAllSettingsWindow"] as string,
+                Header = Application.Current.Resources["ShowAllSettingsWindow"],
                 InputGestureText = "F4"
             };
             settingscmShortcut.Click += (_, _) => AllSettingsWindow();
@@ -396,7 +396,7 @@ namespace PicView.UILogic.Loading
 
             var setAsCm = new MenuItem
             {
-                Header = Application.Current.Resources["SetAs"] as string,
+                Header = Application.Current.Resources["SetAs"],
             };
 
             var setAsCmIcon = new System.Windows.Shapes.Path
@@ -410,7 +410,7 @@ namespace PicView.UILogic.Loading
 
             var wallcm = new MenuItem
             {
-                Header = Application.Current.Resources["SetAsWallpaper"] as string,
+                Header = Application.Current.Resources["SetAsWallpaper"],
             };
             wallcm.Click += (s, x) => SetWallpaper(WallpaperStyle.Fill);
             var wallcmIcon = new System.Windows.Shapes.Path
@@ -425,7 +425,7 @@ namespace PicView.UILogic.Loading
 
             var lockCm = new MenuItem
             {
-                Header = Application.Current.Resources["SetAsLockScreenImage"] as string,
+                Header = Application.Current.Resources["SetAsLockScreenImage"],
             };
             lockCm.Click += async delegate { await Lockscreen.ChangeLockScreenBackground(Pics[FolderIndex]).ConfigureAwait(false); };
             var lockCmIcon = new System.Windows.Shapes.Path
@@ -451,7 +451,7 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var lcdcm = new MenuItem
             {
-                Header = Application.Current.Resources["ShowInFolder"] as string,
+                Header = Application.Current.Resources["ShowInFolder"],
                 InputGestureText = "F3"
             };
             var lcdcmIcon = new System.Windows.Shapes.Path
@@ -472,7 +472,7 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var fildecm = new MenuItem
             {
-                Header = Application.Current.Resources["ImageInfo"] as string,
+                Header = Application.Current.Resources["ImageInfo"],
             };
             var fildecmIcon = new System.Windows.Shapes.Path
             {
@@ -493,7 +493,7 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var cpm = new MenuItem
             {
-                Header = Application.Current.Resources["Copy"] as string,
+                Header = Application.Current.Resources["Copy"],
             };
 
             var cpmIcon = new System.Windows.Shapes.Path
@@ -510,10 +510,9 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var cppcm = new MenuItem
             {
-                Header = Application.Current.Resources["CopyFile"] as string,
-                ToolTip = Application.Current.Resources["CopyFile"] as string
-                + $" [{Application.Current.Resources["Ctrl"] as string} + " +
-                $"{Application.Current.Resources["Shift"] as string}  + C]",
+                Header = Application.Current.Resources["CopyFile"],
+                ToolTip = Application.Current.Resources["CopyFile"] + $" [{Application.Current.Resources["Ctrl"]} + " +
+                $"{Application.Current.Resources["Shift"]}  + C]",
             };
             cppcm.Click += (s, x) => Copyfile();
             cpm.Items.Add(cppcm);
@@ -523,10 +522,10 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var cpxcm = new MenuItem
             {
-                Header = Application.Current.Resources["Copy"] as string + " base64",
-                ToolTip = Application.Current.Resources["Copy"] as string + " base64"
-                + $" [{Application.Current.Resources["Ctrl"] as string} + " +
-                $"{Application.Current.Resources["Alt"] as string}  + C]",
+                Header = Application.Current.Resources["Copy"] + " base64",
+                ToolTip = Application.Current.Resources["Copy"] + " base64"
+                + $" [{Application.Current.Resources["Ctrl"]} + " +
+                $"{Application.Current.Resources["Alt"]}  + C]",
             };
             cpxcm.Click += async delegate { await Base64.SendToClipboard().ConfigureAwait(false); };
             cpm.Items.Add(cpxcm);
@@ -536,9 +535,9 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var cpxbm = new MenuItem
             {
-                Header = Application.Current.Resources["CopyImage"] as string,
-                ToolTip = Application.Current.Resources["CopyImageTooltip"] as string
-                + $" [{Application.Current.Resources["Ctrl"] as string}  + C]",
+                Header = Application.Current.Resources["CopyImage"],
+                ToolTip = Application.Current.Resources["CopyImageTooltip"]
+                + $" [{Application.Current.Resources["Ctrl"]}  + C]",
             };
             cpxbm.Click += (s, x) => CopyBitmap();
             cpm.Items.Add(cpxbm);
@@ -548,7 +547,7 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var cppfm = new MenuItem
             {
-                Header = Application.Current.Resources["FileCopyPath"] as string,
+                Header = Application.Current.Resources["FileCopyPath"],
             };
             cppfm.Click += (s, x) => CopyText();
             cpm.Items.Add(cppfm);
@@ -562,8 +561,8 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var cpccm = new MenuItem
             {
-                Header = Application.Current.Resources["FileCut"] as string,
-                InputGestureText = $"{Application.Current.Resources["Ctrl"] as string} + X"
+                Header = Application.Current.Resources["FileCut"],
+                InputGestureText = $"{Application.Current.Resources["Ctrl"]} + X"
             };
             var cpccmIcon = new System.Windows.Shapes.Path
             {
@@ -583,8 +582,8 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var pastecm = new MenuItem
             {
-                Header = Application.Current.Resources["FilePaste"] as string,
-                InputGestureText = $"{Application.Current.Resources["Ctrl"] as string} + V"
+                Header = Application.Current.Resources["FilePaste"],
+                InputGestureText = $"{Application.Current.Resources["Ctrl"]} + V"
             };
             var pastecmIcon = new System.Windows.Shapes.Path
             {
@@ -605,8 +604,8 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var MovetoRecycleBin = new MenuItem
             {
-                Header = Application.Current.Resources["DeleteFile"] as string,
-                InputGestureText = Application.Current.Resources["Delete"] as string,
+                Header = Application.Current.Resources["DeleteFile"],
+                InputGestureText = (string)Application.Current.Resources["Delete"]
             };
             var MovetoRecycleBinIcon = new System.Windows.Shapes.Path
             {
@@ -628,8 +627,8 @@ namespace PicView.UILogic.Loading
             cm.Items.Add(new Separator());
             var clcm = new MenuItem
             {
-                Header = Application.Current.Resources["Close"] as string,
-                InputGestureText = Application.Current.Resources["Esc"] as string,
+                Header = Application.Current.Resources["Close"],
+                InputGestureText = (string)Application.Current.Resources["Esc"],
                 StaysOpenOnClick = false
             };
             var mclcmIcon = new System.Windows.Shapes.Path
