@@ -160,14 +160,8 @@ namespace PicView.ChangeImage
             // Error checking to fix rare cases of crashing
             if (Pics.Count < index)
             {
-                preloadValue = await PicErrorFix(index).ConfigureAwait(true);
-                if (preloadValue == null)
-                {
-                    /// Try to recover
-                    /// TODO needs testing
-                    Reload(true);
-                    return;
-                }
+                Reload(false);
+                return;
             }
 
             FolderIndex = index;
@@ -209,7 +203,7 @@ namespace PicView.ChangeImage
                 while (preloadValue.isLoading)
                 {
                     // Wait for finnished result
-                    await Task.Delay(3).ConfigureAwait(true);
+                    await Task.Delay(5).ConfigureAwait(true);
                 }
             }
 
@@ -238,7 +232,15 @@ namespace PicView.ChangeImage
                     ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
                 }
 
-                ConfigureWindows.GetMainWindow.MainImage.Source = preloadValue.bitmapSource;
+                if (Path.GetExtension(Pics[index]).Equals(".gif", StringComparison.OrdinalIgnoreCase))
+                {
+                    XamlAnimatedGif.AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(Pics[index]));
+                }
+                else
+                {
+                    ConfigureWindows.GetMainWindow.MainImage.Source = preloadValue.bitmapSource;
+                }
+                
                 FitImage(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight);
                 SetTitleString(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight, index);
             }));

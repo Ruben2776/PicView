@@ -4,8 +4,6 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
-//using Windows.Storage;
-//using Windows.System.UserProfile;
 
 namespace PicView.SystemIntegration
 {
@@ -13,10 +11,6 @@ namespace PicView.SystemIntegration
     {
         internal static async Task ChangeLockScreenBackground(string path)
         {
-            //if (!UserProfilePersonalizationSettings.IsSupported())
-            //{
-            //    return;
-            //}
 
             if (UILogic.ConfigureWindows.GetMainWindow.MainImage.Effect != null || Clipboard.ContainsImage())
             {
@@ -48,7 +42,7 @@ namespace PicView.SystemIntegration
                         timer.Elapsed += (s, x) => Directory.Delete(tempPath);
                     }).ConfigureAwait(true);
 
-                    SaveImage.Dispose(); // Make visual studio happy
+                    SaveImage.Dispose();
                 }
                 catch (Exception e)
                 {
@@ -63,6 +57,10 @@ namespace PicView.SystemIntegration
 
         private static async Task Apply(string path)
         {
+            // Windows SDK Contracts error:
+            // SupportedOSPlatformVersion 10.0.19041.0 cannot be higher than TargetPlatformVersion 7.0.
+            // TODO find new lock screen saving method
+
             //try
             //{
             //    var storageFile = await StorageFile.GetFileFromPathAsync(path);

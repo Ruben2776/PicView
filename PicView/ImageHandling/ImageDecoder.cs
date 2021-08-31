@@ -38,7 +38,6 @@ namespace PicView.ImageHandling
                     case ".BMP":
                     case ".TIF":
                     case ".TIFF":
-                    case ".GIF":
                     case ".ICO":
                     case ".JFIF":
                     case ".WEBP":
@@ -56,6 +55,7 @@ namespace PicView.ImageHandling
                         skPic.Freeze();
                         sKBitmap.Dispose();
                         return skPic;
+                    // ".GIF": empty since XamlAnimatedGif dynamically loads it
 
                     case ".DDS":
                     case "TGA": // TODO some tga files are created upside down https://github.com/Ruben2776/PicView/issues/22
@@ -128,7 +128,7 @@ namespace PicView.ImageHandling
         {
             BitmapSource pic;
 
-            using MagickImage magick = new MagickImage
+            using MagickImage magick = new()
             {
                 Quality = 100
             };
@@ -239,7 +239,7 @@ namespace PicView.ImageHandling
 
                 ctx.DrawText(text, new Point(rect.Left + rect.Width / 2, rect.Top + rect.Height / 2));
             }
-            RenderTargetBitmap rtv = new RenderTargetBitmap((int)w, (int)h, 96.0, 96.0, PixelFormats.Default);
+            RenderTargetBitmap rtv = new((int)w, (int)h, 96.0, 96.0, PixelFormats.Default);
             rtv.Render(visual);
             rtv.Freeze();
             return rtv;

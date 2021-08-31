@@ -22,7 +22,7 @@
     <DockPanel Background="{StaticResource NoisyBg}">
         <Grid
             x:Name="TitleBar"
-            Height="35"
+            Height="30"
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
@@ -30,14 +30,14 @@
 
             <uc:MinButton
                 x:Name="MinButton"
-                Width="35"
+                Width="30"
                 Margin="0,0,35,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center" />
 
             <uc:CloseButton
                 x:Name="CloseButton"
-                Width="35"
+                Width="30"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center" />
         </Grid>
@@ -293,7 +293,7 @@
 
                         <TextBox
                             x:Name="txtSlide"
-                            Width="35"
+                            Width="30"
                             Margin="5,3"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"

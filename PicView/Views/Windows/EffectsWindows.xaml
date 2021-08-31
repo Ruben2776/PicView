@@ -19,11 +19,11 @@
     <DockPanel LastChildFill="True">
         <Grid
             x:Name="TitleBar"
-            Height="35"
+            Height="30"
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Logo HorizontalAlignment="Left" />
+            <uc:Logo Margin="7,-3,0,0" HorizontalAlignment="Left" />
 
             <uc:MinButton
                 x:Name="MinButton"

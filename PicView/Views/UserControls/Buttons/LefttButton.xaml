@@ -5,7 +5,7 @@
     <Button
         x:Name="TheButton"
         Width="90"
-        Height="35"
+        Height="30"
         FocusVisualStyle="{x:Null}"
         Focusable="False">
         <Button.Background>

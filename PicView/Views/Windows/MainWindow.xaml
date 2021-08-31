@@ -19,46 +19,54 @@
     <DockPanel LastChildFill="True">
         <DockPanel
             x:Name="TitleBar"
-            Height="35"
+            Height="30"
             MinWidth="444"
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Logo />
+            <uc:Logo Margin="7,-3,0,0" />
 
             <Rectangle
                 Width="1"
-                Height="35"
+                Height="30"
                 Margin="8,0,0,0"
                 Fill="{StaticResource BorderBrush}" />
 
             <uc:CloseButton
                 x:Name="CloseButton"
+                Width="30"
+                Height="30"
                 VerticalAlignment="Center"
                 DockPanel.Dock="Right" />
 
             <Rectangle
                 Width="1"
-                Height="35"
+                Height="30"
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
-            <uc:FullscreenButton x:Name="FullscreenButton" DockPanel.Dock="Right" />
+            <uc:FullscreenButton
+                x:Name="FullscreenButton"
+                Width="30"
+                Height="30"
+                DockPanel.Dock="Right" />
 
             <Rectangle
                 Width="1"
-                Height="35"
+                Height="30"
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
             <uc:MinButton
                 x:Name="MinButton"
+                Width="30"
+                Height="30"
                 VerticalAlignment="Center"
                 DockPanel.Dock="Right" />
 
             <Rectangle
                 Width="1"
-                Height="35"
+                Height="30"
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
@@ -67,24 +75,24 @@
 
         <Grid
             x:Name="LowerBar"
-            Height="35"
+            Height="30"
             MinWidth="444"
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Bottom">
 
             <Canvas
                 Width="404"
-                Height="35"
+                Height="30"
                 HorizontalAlignment="Center"
                 Background="{StaticResource BackgroundSubtleHighlightBrush}">
 
                 <Rectangle
                     Width="1"
-                    Height="35"
+                    Height="30"
                     Fill="{StaticResource BorderBrush}" />
 
                 <Rectangle
-                    Canvas.Top="34"
+                    Canvas.Top="30"
                     Width="56"
                     Height="1"
                     Fill="{StaticResource BorderBrush}" />
@@ -93,7 +101,7 @@
                     x:Name="FileMenuButton"
                     Canvas.Left="1"
                     Width="55"
-                    Height="35"
+                    Height="30"
                     FocusVisualStyle="{x:Null}"
                     Focusable="False">
                     <Button.Background>
@@ -115,12 +123,12 @@
                     Canvas.Left="56"
                     Canvas.Top="0"
                     Width="1"
-                    Height="35"
+                    Height="30"
                     Fill="{StaticResource BorderBrush}" />
 
                 <Rectangle
                     Canvas.Left="57"
-                    Canvas.Top="34"
+                    Canvas.Top="30"
                     Width="56"
                     Height="1"
                     Fill="{StaticResource BorderBrush}" />
@@ -129,7 +137,7 @@
                     x:Name="image_button"
                     Canvas.Left="57"
                     Width="55"
-                    Height="35"
+                    Height="30"
                     FocusVisualStyle="{x:Null}"
                     Focusable="False">
                     <Button.Background>
@@ -137,7 +145,7 @@
                     </Button.Background>
                     <Canvas
                         Width="28"
-                        Height="31"
+                        Height="28"
                         Margin="14,0,0,0">
                         <Path
                             x:Name="ImagePath1"
@@ -182,11 +190,11 @@
                 <Canvas
                     Canvas.Left="112"
                     Width="182"
-                    Height="35"
+                    Height="30"
                     Background="{StaticResource BackgroundColorBrushFadeSubtle}">
 
                     <Rectangle
-                        Canvas.Top="34"
+                        Canvas.Top="30"
                         Width="182"
                         Height="1"
                         Fill="{StaticResource BorderBrush}" />
@@ -195,7 +203,7 @@
                         Canvas.Left="90"
                         Canvas.Top="0"
                         Width="1"
-                        Height="35"
+                        Height="30"
                         Fill="{StaticResource BorderBrush}" />
                     <Rectangle
                         Canvas.Left="0"
@@ -218,7 +226,7 @@
 
                 <Rectangle
                     Canvas.Left="294"
-                    Canvas.Top="34"
+                    Canvas.Top="30"
                     Width="56"
                     Height="1"
                     Fill="{StaticResource BorderBrush}" />
@@ -227,14 +235,14 @@
                     Canvas.Left="349"
                     Canvas.Top="0"
                     Width="1"
-                    Height="35"
+                    Height="30"
                     Fill="{StaticResource BorderBrush}" />
 
                 <Button
                     x:Name="SettingsButton"
                     Canvas.Left="294"
                     Width="55"
-                    Height="35"
+                    Height="30"
                     Margin="0"
                     FocusVisualStyle="{x:Null}"
                     Focusable="False">
@@ -255,7 +263,7 @@
 
                 <Rectangle
                     Canvas.Left="349"
-                    Canvas.Top="34"
+                    Canvas.Top="30"
                     Width="56"
                     Height="1"
                     Fill="{StaticResource BorderBrush}" />
@@ -265,7 +273,7 @@
                     Canvas.Left="349"
                     Canvas.Top="0"
                     Width="55"
-                    Height="35"
+                    Height="30"
                     FocusVisualStyle="{x:Null}"
                     Focusable="False">
                     <Button.Background>

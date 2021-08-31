@@ -319,7 +319,7 @@ namespace PicView.UILogic.Loading
             };
             settingscmScrollHeader.Click += ConfigureSettings.UpdateUIValues.SetScrolling;
             settingscmScroll.Header = settingscmScrollHeader;
-            settingscmScroll.Click += (s, x) => { ConfigureSettings.UpdateUIValues.SetScrolling(s, x); settingscmScrollHeader.IsChecked = (bool)settingscmScrollHeader.IsChecked ? false : true; };
+            settingscmScroll.Click += (s, x) => { ConfigureSettings.UpdateUIValues.SetScrolling(s, x); settingscmScrollHeader.IsChecked = !(bool)settingscmScrollHeader.IsChecked; };
             settingscm.Items.Add(settingscmScroll);
 
             ///////////////////////////

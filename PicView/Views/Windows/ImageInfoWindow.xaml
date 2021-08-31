@@ -19,21 +19,21 @@
     <DockPanel>
         <DockPanel
             x:Name="TitleBar"
-            Height="33"
+            Height="30"
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Logo />
+            <uc:Logo Margin="2,-2,0,0" />
 
             <Rectangle
                 Width="1"
-                Height="35"
+                Height="30"
                 Margin="8,0,0,0"
                 Fill="{StaticResource BorderBrush}" />
 
             <Button
                 x:Name="FileProperties"
-                Height="34"
+                Height="30"
                 Padding="15,1,15,1"
                 Content="{StaticResource FileProperties}"
                 Style="{StaticResource MetroFlatButton}">
@@ -47,12 +47,12 @@
 
             <Rectangle
                 Width="1"
-                Height="35"
+                Height="30"
                 Fill="{StaticResource BorderBrush}" />
 
             <Button
                 x:Name="Print"
-                Height="34"
+                Height="30"
                 Padding="15,1,15,1"
                 Content="{StaticResource Print}"
                 Style="{StaticResource MetroFlatButton}">
@@ -66,12 +66,12 @@
 
             <Rectangle
                 Width="1"
-                Height="35"
+                Height="30"
                 Fill="{StaticResource BorderBrush}" />
 
             <Button
                 x:Name="OpenWith"
-                Height="34"
+                Height="30"
                 Padding="15,1,15,1"
                 Content="{StaticResource OpenWith}"
                 Style="{StaticResource MetroFlatButton}">
@@ -85,12 +85,12 @@
 
             <Rectangle
                 Width="1"
-                Height="35"
+                Height="30"
                 Fill="{StaticResource BorderBrush}" />
 
             <Button
                 x:Name="ShowInFoler"
-                Height="34"
+                Height="30"
                 Padding="15,1,15,1"
                 Content="{StaticResource ShowInFolder}"
                 Style="{StaticResource MetroFlatButton}">
@@ -104,34 +104,38 @@
 
             <Rectangle
                 Width="1"
-                Height="35"
+                Height="30"
                 Fill="{StaticResource BorderBrush}" />
 
             <uc:CloseButton
                 x:Name="CloseButton"
+                Width="30"
+                Height="30"
                 VerticalAlignment="Center"
                 DockPanel.Dock="Right" />
 
             <Rectangle
                 Width="1"
-                Height="35"
+                Height="30"
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
             <uc:MinButton
                 x:Name="MinButton"
+                Width="30"
+                Height="30"
                 VerticalAlignment="Center"
                 DockPanel.Dock="Right" />
 
             <Rectangle
                 Width="1"
-                Height="35"
+                Height="30"
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
             <TextBlock
                 x:Name="Bar"
-                Height="35"
+                Height="30"
                 Padding="0,8.4,0,0"
                 VerticalAlignment="Center"
                 d:Text="Image Info"

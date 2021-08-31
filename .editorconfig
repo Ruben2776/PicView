@@ -8,3 +8,6 @@ dotnet_code_quality_unused_parameters = all:suggestion
 
 # IDE0008: Use explicit type
 csharp_style_var_elsewhere = true
+
+# Default severity for analyzer diagnostics with category 'Style'
+dotnet_analyzer_diagnostic.category-Style.severity = none
