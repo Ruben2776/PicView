@@ -115,25 +115,29 @@ namespace PicView.UILogic.TransformImage
             var newXproperty = origin.X - dragMousePosition.X;
             var newYproperty = origin.Y - dragMousePosition.Y;
 
-            var isXOutOfBorder = ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth < (ConfigureWindows.GetMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
-            var isYOutOfBorder = ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight < (ConfigureWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
-            if ((isXOutOfBorder && newXproperty > 0) || (!isXOutOfBorder && newXproperty < 0))
+            // Keep panning it in bounds if in normal window
+            if (Properties.Settings.Default.Fullscreen == false)
             {
-                newXproperty = 0;
-            }
-            if ((isYOutOfBorder && newYproperty > 0) || (!isYOutOfBorder && newYproperty < 0))
-            {
-                newYproperty = 0;
-            }
-            var maxX = ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth - (ConfigureWindows.GetMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
-            if ((isXOutOfBorder && newXproperty < maxX) || (!isXOutOfBorder && newXproperty > maxX))
-            {
-                newXproperty = maxX;
-            }
-            var maxY = ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight - (ConfigureWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
-            if ((isXOutOfBorder && newYproperty < maxY) || (!isXOutOfBorder && newYproperty > maxY))
-            {
-                newYproperty = maxY;
+                var isXOutOfBorder = ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth < (ConfigureWindows.GetMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
+                var isYOutOfBorder = ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight < (ConfigureWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
+                if ((isXOutOfBorder && newXproperty > 0) || (!isXOutOfBorder && newXproperty < 0))
+                {
+                    newXproperty = 0;
+                }
+                if ((isYOutOfBorder && newYproperty > 0) || (!isYOutOfBorder && newYproperty < 0))
+                {
+                    newYproperty = 0;
+                }
+                var maxX = ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth - (ConfigureWindows.GetMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
+                if ((isXOutOfBorder && newXproperty < maxX) || (!isXOutOfBorder && newXproperty > maxX))
+                {
+                    newXproperty = maxX;
+                }
+                var maxY = ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight - (ConfigureWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
+                if ((isXOutOfBorder && newYproperty < maxY) || (!isXOutOfBorder && newYproperty > maxY))
+                {
+                    newYproperty = maxY;
+                }
             }
 
             translateTransform.X = newXproperty;
