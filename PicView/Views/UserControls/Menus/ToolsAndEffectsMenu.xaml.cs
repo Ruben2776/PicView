@@ -16,25 +16,6 @@ namespace PicView.Views.UserControls
         {
             InitializeComponent();
 
-            // ResizeButton
-            ResizeButton.MouseEnter += delegate
-            {
-                ButtonMouseOverAnim(ResizeText);
-                ButtonMouseOverAnim(ResizeFill);
-                AnimationHelper.MouseEnterBgTexColor(ResizeButtonBrush);
-            };
-            ResizeButton.MouseLeave += delegate
-            {
-                ButtonMouseLeaveAnim(ResizeText);
-                ButtonMouseLeaveAnim(ResizeFill);
-                AnimationHelper.MouseLeaveBgTexColor(ResizeButtonBrush);
-            };
-            ResizeButton.Click += delegate
-            {
-                UC.Close_UserControls();
-                ConfigureWindows.ResizeAndOptimizeWindow();
-            };
-
             // EffectsButton
             EffectsButton.MouseEnter += delegate
             {
@@ -54,27 +35,12 @@ namespace PicView.Views.UserControls
                 ConfigureWindows.EffectsWindow();
             };
 
-            // CropButton
-            CropButton.PreviewMouseLeftButtonDown += delegate
-            {
-                PreviewMouseButtonDownAnim(CropButtonBrush);
-            };
-            CropButton.MouseEnter += delegate
-            {
-                ButtonMouseOverAnim(CropText);
-                ButtonMouseOverAnim(CropFill);
-                AnimationHelper.MouseEnterBgTexColor(CropButtonBrush);
-            };
-            CropButton.MouseLeave += delegate
-            {
-                ButtonMouseLeaveAnim(CropText);
-                ButtonMouseLeaveAnim(CropFill);
-                AnimationHelper.MouseLeaveBgTexColor(CropButtonBrush);
-            };
-            CropButton.Click += delegate
+
+            // InfoButton
+            InfoButton.TheButton.Click += delegate
             {
                 UC.Close_UserControls();
-                CropFunctions.StartCrop();
+                ConfigureWindows.InfoWindow();
             };
 
             // ColorPickerButton

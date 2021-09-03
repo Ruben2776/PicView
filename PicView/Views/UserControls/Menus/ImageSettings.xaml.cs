@@ -38,6 +38,7 @@ namespace PicView.Views.UserControls
             ContainedGalleryBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(ContainedFill); };
             ContainedGalleryBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(ContainedTextBrush); };
             ContainedGalleryBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ContainedButtonBrush); };
+
         }
     }
 }

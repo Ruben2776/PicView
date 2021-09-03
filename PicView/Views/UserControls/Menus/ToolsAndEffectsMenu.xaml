@@ -8,7 +8,7 @@
     <StackPanel>
         <Border
             Width="358"
-            Height="178"
+            Height="120"
             Background="{StaticResource NoisyBg}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1"
@@ -36,7 +36,7 @@
                         StrokeThickness="1" />
 
                     <Rectangle
-                        Canvas.Left="166"
+                        Canvas.Left="143"
                         Width="1"
                         Height="50"
                         Panel.ZIndex="1"
@@ -53,8 +53,8 @@
 
                     <Button
                         x:Name="EffectsButton"
-                        Canvas.Left="166"
-                        Width="138"
+                        Canvas.Left="144"
+                        Width="160"
                         Height="51"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold"
                         ToolTip="{StaticResource ShaderEffectsTooltip}">
@@ -92,149 +92,92 @@
                         </StackPanel>
                     </Button>
 
-                    <Button
-                        x:Name="ResizeButton"
-                        Canvas.Left="0"
-                        Width="166"
+
+                    <uc:InfoButton x:Name="InfoButton" Width="143" />
+
+                    <Border
+                        x:Name="ImageInfoButtonBorder"
+                        Canvas.Left="6"
+                        Canvas.Top="58"
+                        Width="160"
                         Height="51"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold"
-                        ToolTip="{StaticResource OptimizeResizeTooltip}">
-                        <Button.Background>
-                            <SolidColorBrush x:Name="ResizeButtonBrush" Color="Transparent" />
-                        </Button.Background>
-                        <StackPanel MaxWidth="160" Orientation="Horizontal">
-                            <TextBlock
-                                MaxWidth="135"
-                                Margin="6,2,8,2"
-                                FontSize="14"
-                                Text="{StaticResource OptimizeResize}"
-                                TextWrapping="Wrap">
-                                <TextBlock.Foreground>
-                                    <SolidColorBrush x:Name="ResizeText" Color="{StaticResource MainColor}" />
-                                </TextBlock.Foreground>
-                            </TextBlock>
-                            <Path
-                                Width="16"
-                                Height="16"
-                                Data="M480 416v16c0 26.51-21.49 48-48 48H48c-26.51 0-48-21.49-48-48V176c0-26.51 21.49-48 48-48h16v208c0 44.112 35.888 80 80 80h336zm96-80V80c0-26.51-21.49-48-48-48H144c-26.51 0-48 21.49-48 48v256c0 26.51 21.49 48 48 48h384c26.51 0 48-21.49 48-48zM256 128c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-96 144l55.515-55.515c4.686-4.686 12.284-4.686 16.971 0L272 256l135.515-135.515c4.686-4.686 12.284-4.686 16.971 0L512 208v112H160v-48z"
-                                Stretch="Fill">
-                                <Path.Fill>
-                                    <SolidColorBrush x:Name="ResizeFill" Color="{StaticResource IconColor}" />
-                                </Path.Fill>
-                            </Path>
-                        </StackPanel>
-                    </Button>
+                        Style="{StaticResource ButtonBorder}">
+                        <Button
+                            x:Name="ImageInfoButton"
+                            Canvas.Left="196"
+                            Canvas.Top="59"
+                            Width="154"
+                            Height="51"
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold"
+                            ToolTip="{StaticResource ShowImageInfo}">
+                            <Button.Background>
+                                <SolidColorBrush x:Name="ImageInfoBrush" Color="Transparent" />
+                            </Button.Background>
+                            <StackPanel MaxWidth="160" Orientation="Horizontal">
+                                <TextBlock
+                                    MaxWidth="135"
+                                    Margin="6,2,8,2"
+                                    FontSize="14"
+                                    Text="{StaticResource ImageInfo}"
+                                    TextWrapping="Wrap">
+                                    <TextBlock.Foreground>
+                                        <SolidColorBrush x:Name="ImageInfoText" Color="{StaticResource MainColor}" />
+                                    </TextBlock.Foreground>
+                                </TextBlock>
+                                <Path
+                                    Width="17"
+                                    Height="17"
+                                    Data="M48 32C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48H48zm0 32h106c3.3 0 6 2.7 6 6v20c0 3.3-2.7 6-6 6H38c-3.3 0-6-2.7-6-6V80c0-8.8 7.2-16 16-16zm426 96H38c-3.3 0-6-2.7-6-6v-36c0-3.3 2.7-6 6-6h138l30.2-45.3c1.1-1.7 3-2.7 5-2.7H464c8.8 0 16 7.2 16 16v74c0 3.3-2.7 6-6 6zM256 424c-66.2 0-120-53.8-120-120s53.8-120 120-120 120 53.8 120 120-53.8 120-120 120zm0-208c-48.5 0-88 39.5-88 88s39.5 88 88 88 88-39.5 88-88-39.5-88-88-88zm-48 104c-8.8 0-16-7.2-16-16 0-35.3 28.7-64 64-64 8.8 0 16 7.2 16 16s-7.2 16-16 16c-17.6 0-32 14.4-32 32 0 8.8-7.2 16-16 16z"
+                                    Stretch="Fill">
+                                    <Path.Fill>
+                                        <SolidColorBrush x:Name="ImageInfoFill" Color="{StaticResource IconColor}" />
+                                    </Path.Fill>
+                                </Path>
+                            </StackPanel>
+                        </Button>
+                    </Border>
+
+                    <Border
+                        x:Name="ColorPickerButtonBorder"
+                        Canvas.Left="172"
+                        Canvas.Top="58"
+                        Width="176"
+                        Height="51"
+                        Style="{StaticResource ButtonBorder}">
+                        <Button
+                            x:Name="ColorPickerButton"
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold"
+                            ToolTip="{StaticResource ColorPickerToolTooltip}">
+                            <Button.Background>
+                                <SolidColorBrush x:Name="ColorPickerBrush" Color="Transparent" />
+                            </Button.Background>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock
+                                    MaxWidth="120"
+                                    Margin="0,0,10,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="14"
+                                    Text="{StaticResource ColorPickerTool}">
+                                    <TextBlock.Foreground>
+                                        <SolidColorBrush x:Name="ColorPickerText" Color="{StaticResource MainColor}" />
+                                    </TextBlock.Foreground>
+                                </TextBlock>
+                                <Path
+                                    Width="20"
+                                    Height="20"
+                                    Data="M50.75 333.25c-12 12-18.75 28.28-18.75 45.26V424L0 480l32 32 56-32h45.49c16.97 0 33.25-6.74 45.25-18.74l126.64-126.62-128-128L50.75 333.25zM483.88 28.12c-37.47-37.5-98.28-37.5-135.75 0l-77.09 77.09-13.1-13.1c-9.44-9.44-24.65-9.31-33.94 0l-40.97 40.97c-9.37 9.37-9.37 24.57 0 33.94l161.94 161.94c9.44 9.44 24.65 9.31 33.94 0L419.88 288c9.37-9.37 9.37-24.57 0-33.94l-13.1-13.1 77.09-77.09c37.51-37.48 37.51-98.26.01-135.75z"
+                                    Stretch="Fill">
+                                    <Path.Fill>
+                                        <SolidColorBrush x:Name="ColorPickerFill" Color="{StaticResource IconColor}" />
+                                    </Path.Fill>
+                                </Path>
+                            </StackPanel>
+                        </Button>
+                    </Border>
 
                     <uc:MenuCloseButton x:Name="CloseButton" Canvas.Left="305" />
                 </Canvas>
 
-                <Border
-                    x:Name="CropButtonBorder"
-                    Canvas.Left="8"
-                    Canvas.Top="58"
-                    Width="156"
-                    Height="51"
-                    Style="{StaticResource ButtonBorder}">
-                    <Button x:Name="CropButton" FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold">
-                        <Button.Background>
-                            <SolidColorBrush x:Name="CropButtonBrush" Color="Transparent" />
-                        </Button.Background>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock
-                                MaxWidth="120"
-                                Margin="0,0,10,0"
-                                VerticalAlignment="Center"
-                                FontSize="14"
-                                Text="{StaticResource CropPicture}">
-                                <TextBlock.Foreground>
-                                    <SolidColorBrush x:Name="CropText" Color="{StaticResource MainColor}" />
-                                </TextBlock.Foreground>
-                            </TextBlock>
-                            <Path
-                                Width="17"
-                                Height="17"
-                                Data="M488 352h-40V109.25l59.31-59.31c6.25-6.25 6.25-16.38 0-22.63L484.69 4.69c-6.25-6.25-16.38-6.25-22.63 0L402.75 64H192v96h114.75L160 306.75V24c0-13.26-10.75-24-24-24H88C74.75 0 64 10.74 64 24v40H24C10.75 64 0 74.74 0 88v48c0 13.25 10.75 24 24 24h40v264c0 13.25 10.75 24 24 24h232v-96H205.25L352 205.25V488c0 13.25 10.75 24 24 24h48c13.25 0 24-10.75 24-24v-40h40c13.25 0 24-10.75 24-24v-48c0-13.26-10.75-24-24-24z"
-                                Stretch="Fill">
-                                <Path.Fill>
-                                    <SolidColorBrush x:Name="CropFill" Color="{StaticResource IconColor}" />
-                                </Path.Fill>
-                            </Path>
-                        </StackPanel>
-                    </Button>
-                </Border>
-
-                <Border
-                    x:Name="ColorPickerButtonBorder"
-                    Canvas.Left="173"
-                    Canvas.Top="58"
-                    Width="176"
-                    Height="51"
-                    Style="{StaticResource ButtonBorder}">
-                    <Button
-                        x:Name="ColorPickerButton"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold"
-                        ToolTip="{StaticResource ColorPickerToolTooltip}">
-                        <Button.Background>
-                            <SolidColorBrush x:Name="ColorPickerBrush" Color="Transparent" />
-                        </Button.Background>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock
-                                MaxWidth="120"
-                                Margin="0,0,10,0"
-                                VerticalAlignment="Center"
-                                FontSize="14"
-                                Text="{StaticResource ColorPickerTool}">
-                                <TextBlock.Foreground>
-                                    <SolidColorBrush x:Name="ColorPickerText" Color="{StaticResource MainColor}" />
-                                </TextBlock.Foreground>
-                            </TextBlock>
-                            <Path
-                                Width="20"
-                                Height="20"
-                                Data="M50.75 333.25c-12 12-18.75 28.28-18.75 45.26V424L0 480l32 32 56-32h45.49c16.97 0 33.25-6.74 45.25-18.74l126.64-126.62-128-128L50.75 333.25zM483.88 28.12c-37.47-37.5-98.28-37.5-135.75 0l-77.09 77.09-13.1-13.1c-9.44-9.44-24.65-9.31-33.94 0l-40.97 40.97c-9.37 9.37-9.37 24.57 0 33.94l161.94 161.94c9.44 9.44 24.65 9.31 33.94 0L419.88 288c9.37-9.37 9.37-24.57 0-33.94l-13.1-13.1 77.09-77.09c37.51-37.48 37.51-98.26.01-135.75z"
-                                Stretch="Fill">
-                                <Path.Fill>
-                                    <SolidColorBrush x:Name="ColorPickerFill" Color="{StaticResource IconColor}" />
-                                </Path.Fill>
-                            </Path>
-                        </StackPanel>
-                    </Button>
-                </Border>
-
-                <Border
-                    x:Name="ImageInfoButtonBorder"
-                    Canvas.Left="8"
-                    Canvas.Top="115"
-                    Width="156"
-                    Height="51"
-                    Style="{StaticResource ButtonBorder}">
-                    <Button x:Name="ImageInfoButton" FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold">
-                        <Button.Background>
-                            <SolidColorBrush x:Name="ImageInfoBrush" Color="Transparent" />
-                        </Button.Background>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock
-                                MaxWidth="120"
-                                Margin="0,0,10,0"
-                                VerticalAlignment="Center"
-                                FontSize="14"
-                                Text="{StaticResource ShowImageInfo}">
-                                <TextBlock.Foreground>
-                                    <SolidColorBrush x:Name="ImageInfoText" Color="{StaticResource MainColor}" />
-                                </TextBlock.Foreground>
-                            </TextBlock>
-                            <Path
-                                Width="17"
-                                Height="17"
-                                Data="M48 32C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48H48zm0 32h106c3.3 0 6 2.7 6 6v20c0 3.3-2.7 6-6 6H38c-3.3 0-6-2.7-6-6V80c0-8.8 7.2-16 16-16zm426 96H38c-3.3 0-6-2.7-6-6v-36c0-3.3 2.7-6 6-6h138l30.2-45.3c1.1-1.7 3-2.7 5-2.7H464c8.8 0 16 7.2 16 16v74c0 3.3-2.7 6-6 6zM256 424c-66.2 0-120-53.8-120-120s53.8-120 120-120 120 53.8 120 120-53.8 120-120 120zm0-208c-48.5 0-88 39.5-88 88s39.5 88 88 88 88-39.5 88-88-39.5-88-88-88zm-48 104c-8.8 0-16-7.2-16-16 0-35.3 28.7-64 64-64 8.8 0 16 7.2 16 16s-7.2 16-16 16c-17.6 0-32 14.4-32 32 0 8.8-7.2 16-16 16z"
-                                Stretch="Fill">
-                                <Path.Fill>
-                                    <SolidColorBrush x:Name="ImageInfoFill" Color="{StaticResource IconColor}" />
-                                </Path.Fill>
-                            </Path>
-                        </StackPanel>
-                    </Button>
-                </Border>
             </Canvas>
         </Border>
         <Rectangle

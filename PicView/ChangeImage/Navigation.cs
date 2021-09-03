@@ -227,7 +227,7 @@ namespace PicView.ChangeImage
                 {
                     UILogic.TransformImage.Rotation.Flipped = false;
                     UILogic.TransformImage.Rotation.Rotateint = 0;
-                    GetImageSettingsMenu.FlipButton.TheButton.IsChecked = false;
+                    GetQuickSettingsMenu.FlipButton.TheButton.IsChecked = false;
 
                     ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
                 }
@@ -373,7 +373,7 @@ namespace PicView.ChangeImage
                 Reload(true);
             }
 
-            GetQuickSettingsMenu.GoToPic.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
+            GetImageSettingsMenu.GoToPic.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
 
             // Load new gallery values, if changing folder
             if (GetPicGallery != null && Properties.Settings.Default.FullscreenGallery)

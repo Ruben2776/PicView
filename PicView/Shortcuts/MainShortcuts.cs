@@ -273,10 +273,6 @@ namespace PicView.Shortcuts
                         {
                             Color_Picking.StopRunning(false);
                         }
-                        else if (GetResizeAndOptimize != null && GetResizeAndOptimize.IsVisible)
-                        {
-                            GetResizeAndOptimize.Hide();
-                        }
                         else if (GetEffectsWindow != null && GetEffectsWindow.IsVisible)
                         {
                             GetEffectsWindow.Hide();
@@ -347,14 +343,6 @@ namespace PicView.Shortcuts
                     case Key.C:
                         if (ctrlDown && !GalleryFunctions.IsOpen)
                         {
-                            if (GetResizeAndOptimize != null)
-                            {
-                                if (GetResizeAndOptimize.IsVisible)
-                                {
-                                    return; // Prevent paste errors
-                                }
-                            }
-
                             if (shiftDown)
                             {
                                 Copyfile();

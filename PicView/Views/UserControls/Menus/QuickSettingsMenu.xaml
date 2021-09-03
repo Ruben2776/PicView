@@ -7,7 +7,7 @@
     <StackPanel>
         <Border
             Width="358"
-            Height="178"
+            Height="230"
             Background="{StaticResource NoisyBg}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1"
@@ -24,104 +24,89 @@
 
                 <Rectangle
                     Canvas.Top="50"
-                    Width="357"
+                    Width="356"
                     Panel.ZIndex="1"
                     Stroke="{StaticResource BorderBrush}"
                     StrokeThickness="1" />
 
+                <uc:SettingsButton x:Name="SettingsButton" Width="118" />
+
                 <Rectangle
-                    Canvas.Left="51"
-                    Width="1"
-                    Height="50"
-                    Panel.ZIndex="1"
-                    Stroke="{StaticResource BorderBrush}"
-                    StrokeThickness="1" />
-                <Rectangle
-                    Canvas.Left="102"
+                    Canvas.Left="118"
                     Canvas.Top="-1"
                     Width="1"
                     Height="51"
                     Panel.ZIndex="1"
                     Stroke="{StaticResource BorderBrush}"
                     StrokeThickness="1" />
-                <Rectangle
-                    Canvas.Left="304"
-                    Width="1"
-                    Height="50"
-                    Panel.ZIndex="1"
-                    Stroke="{StaticResource BorderBrush}"
-                    StrokeThickness="1" />
-                <Rectangle
-                    Canvas.Left="154"
-                    Canvas.Top="0"
-                    Width="1"
-                    Height="50"
-                    Panel.ZIndex="1"
-                    Stroke="{StaticResource BorderBrush}"
-                    StrokeThickness="1" />
-
-                <uc:InfoButton x:Name="InfoButton" />
-
-                <uc:SettingsButton x:Name="SettingsButton" Canvas.Left="51" />
-
-                <uc:SearchButton x:Name="ZoomButton" Canvas.Left="103" />
-
-                <Canvas
-                    x:Name="ZoomSliderParent"
-                    Opacity="0"
-                    Visibility="Collapsed">
-                    <Border
-                        Canvas.Left="80"
-                        Canvas.Top="-44"
-                        Panel.ZIndex="3"
-                        BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="2">
-                        <Canvas
-                            Width="115"
-                            Height="27"
-                            Background="{StaticResource BackgroundColorBrushAlt}">
-                            <Slider
-                                x:Name="ZoomSlider"
-                                Canvas.Left="3"
-                                Canvas.Top="3"
-                                Width="95"
-                                Maximum="14"
-                                Minimum="1" />
-                        </Canvas>
-                    </Border>
-
-                    <Rectangle
-                        Canvas.Left="113"
-                        Canvas.Top="-15"
-                        Width="28"
-                        Height="2"
-                        Panel.ZIndex="4"
-                        Fill="{StaticResource BackgroundColorBrush}" />
-                    <Polygon
-                        Canvas.Left="112"
-                        Canvas.Top="-14"
-                        Fill="{StaticResource BackgroundColorBrush}"
-                        Points="0,0 15,30, 30,0"
-                        Stroke="{StaticResource BorderBrush}"
-                        StrokeThickness="2" />
-                </Canvas>
 
                 <uc:BackGroundButton
                     x:Name="BackgroundButton"
-                    Canvas.Left="155"
-                    Width="51"
+                    Canvas.Left="119"
+                    Width="185"
                     Height="51" />
 
+                <Border
+                    x:Name="RotateLeftButtonBorder"
+                    Canvas.Left="6"
+                    Canvas.Top="57"
+                    Width="51"
+                    Height="51"
+                    Style="{StaticResource ButtonBorder}">
+                    <uc:RotateLeftButton x:Name="RotateLeftButton" />
+                </Border>
+
+                <Border
+                    x:Name="RotateRightButtonBorder"
+                    Canvas.Left="64"
+                    Canvas.Top="57"
+                    Width="51"
+                    Height="51"
+                    Style="{StaticResource ButtonBorder}">
+                    <uc:RotateRightButton x:Name="RotaRighttButton" />
+                </Border>
+
+                <Border
+                    x:Name="FlipButtonBorder"
+                    Canvas.Left="122"
+                    Canvas.Top="57"
+                    Width="51"
+                    Height="51"
+                    Style="{StaticResource ButtonBorder}">
+                    <uc:FlipButton x:Name="FlipButton" />
+                </Border>
+
+                <Border
+                    x:Name="CropButtonBorder"
+                    Canvas.Left="184"
+                    Canvas.Top="57"
+                    Width="51"
+                    Height="51"
+                    Style="{StaticResource ButtonBorder}">
+                    <Button x:Name="CropButton" FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="CropButtonBrush" Color="Transparent" />
+                        </Button.Background>
+                        <Path
+                            Width="17"
+                            Height="17"
+                            Data="M488 352h-40V109.25l59.31-59.31c6.25-6.25 6.25-16.38 0-22.63L484.69 4.69c-6.25-6.25-16.38-6.25-22.63 0L402.75 64H192v96h114.75L160 306.75V24c0-13.26-10.75-24-24-24H88C74.75 0 64 10.74 64 24v40H24C10.75 64 0 74.74 0 88v48c0 13.25 10.75 24 24 24h40v264c0 13.25 10.75 24 24 24h232v-96H205.25L352 205.25V488c0 13.25 10.75 24 24 24h48c13.25 0 24-10.75 24-24v-40h40c13.25 0 24-10.75 24-24v-48c0-13.26-10.75-24-24-24z"
+                            Stretch="Fill">
+                            <Path.Fill>
+                                <SolidColorBrush x:Name="CropFill" Color="{StaticResource IconColor}" />
+                            </Path.Fill>
+                        </Path>
+                    </Button>
+                </Border>
+
                 <Rectangle
-                    Canvas.Left="206"
+                    Canvas.Left="304"
                     Canvas.Top="0"
                     Width="1"
                     Height="50"
                     Panel.ZIndex="1"
                     Stroke="{StaticResource BorderBrush}"
                     StrokeThickness="1" />
-
-                <uc:GoToPicButton x:Name="GoToPic" Canvas.Left="207" />
 
                 <uc:MenuCloseButton
                     x:Name="CloseButton"
@@ -130,7 +115,7 @@
 
                 <Border
                     Canvas.Left="6"
-                    Canvas.Top="58"
+                    Canvas.Top="114"
                     Width="167"
                     Height="51"
                     Background="{StaticResource BackgroundColorBrushAlt}"
@@ -160,7 +145,7 @@
 
                 <Border
                     Canvas.Left="184"
-                    Canvas.Top="58"
+                    Canvas.Top="114"
                     Width="167"
                     Height="51"
                     Background="{StaticResource BackgroundColorBrushAlt}"
@@ -190,7 +175,7 @@
 
                 <Border
                     Canvas.Left="184"
-                    Canvas.Top="115"
+                    Canvas.Top="169"
                     Width="167"
                     Height="51"
                     Background="{StaticResource BackgroundColorBrushAlt}"
@@ -220,7 +205,7 @@
 
                 <Border
                     Canvas.Left="6"
-                    Canvas.Top="115"
+                    Canvas.Top="169"
                     Width="167"
                     Height="51"
                     Background="{StaticResource BackgroundColorBrushAlt}"
@@ -247,7 +232,9 @@
                         </CheckBox.Background>
                     </CheckBox>
                 </Border>
+
             </Canvas>
+
         </Border>
         <Rectangle
             Width="24"

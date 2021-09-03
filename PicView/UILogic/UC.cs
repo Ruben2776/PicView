@@ -106,7 +106,6 @@ namespace PicView.UILogic
                     da.Completed += delegate
                     {
                         GetQuickSettingsMenu.Visibility = Visibility.Hidden;
-                        GetQuickSettingsMenu.ZoomSliderParent.Visibility = Visibility.Collapsed;
                     };
                 }
                 else
@@ -118,7 +117,7 @@ namespace PicView.UILogic
                 {
                     if (ConfigureWindows.GetMainWindow.MainImage.Source != null)
                     {
-                        GetQuickSettingsMenu.GoToPic.GoToPicBox.Text =
+                        GetImageSettingsMenu.GoToPic.GoToPicBox.Text =
                             (Navigation.FolderIndex + 1)
                             .ToString(System.Globalization.CultureInfo.CurrentCulture);
                     }

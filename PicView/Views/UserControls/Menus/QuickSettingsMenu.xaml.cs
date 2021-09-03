@@ -26,12 +26,6 @@ namespace PicView.Views.UserControls
                 Close_UserControls();
             };
 
-            InfoButton.TheButton.Click += delegate
-            {
-                Close_UserControls();
-                ConfigureWindows.InfoWindow();
-            };
-
             ToggleFill.IsChecked = Properties.Settings.Default.FillImage;
             ToggleFill.Click += ConfigureSettings.UpdateUIValues.SetAutoFill;
 
@@ -41,20 +35,19 @@ namespace PicView.Views.UserControls
             SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
             SetFit.Click += ConfigureSettings.UpdateUIValues.SetAutoFit;
 
-            ZoomButton.TheButton.Click += delegate
+
+            // CropButton
+            CropButton.PreviewMouseLeftButtonDown += delegate
             {
-                if (ZoomSliderParent.Visibility == Visibility.Collapsed || ZoomSliderParent.Opacity == 0)
-                {
-                    ZoomSliderParent.Visibility = Visibility.Visible;
-                    AnimationHelper.Fade(ZoomSliderParent, 1, TimeSpan.FromSeconds(.4));
-                }
-                else
-                {
-                    AnimationHelper.Fade(ZoomSliderParent, 0, TimeSpan.FromSeconds(.3));
-                }
+                PreviewMouseButtonDownAnim(CropButtonBrush);
             };
 
-            ZoomSlider.ValueChanged += delegate { UILogic.TransformImage.ZoomLogic.Zoom(ZoomSlider.Value); };
+            CropButton.Click += delegate
+            {
+                UC.Close_UserControls();
+                Editing.Crop.CropFunctions.StartCrop();
+            };
+
 
             #region Animation events
 
@@ -85,6 +78,18 @@ namespace PicView.Views.UserControls
             ToggleFill.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ToggleFillBrush); };
             ToggleFill.MouseLeave += delegate { ButtonMouseLeaveAnim(ToggleFillFill); };
             ToggleFill.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ToggleFillBrush); };
+
+            // CropButton
+            CropButton.MouseEnter += delegate
+            {
+                ButtonMouseOverAnim(CropFill);
+                AnimationHelper.MouseEnterBgTexColor(CropButtonBrush);
+            };
+            CropButton.MouseLeave += delegate
+            {
+                ButtonMouseLeaveAnim(CropFill);
+                AnimationHelper.MouseLeaveBgTexColor(CropButtonBrush);
+            };
 
             #endregion Animation events
         }

@@ -4,42 +4,49 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Button
         x:Name="TheButton"
-        Width="51"
         Height="51"
         BorderThickness="0"
         ToolTip="{StaticResource ShowInfoWindow}">
         <Button.Background>
             <SolidColorBrush x:Name="BgBrush" Color="{StaticResource BackgroundColorAlt}" />
         </Button.Background>
-        <Image
-            Canvas.Left="29"
-            Canvas.Top="-7"
-            Width="30"
-            Height="33">
-            <Image.Source>
-                <DrawingImage>
-                    <DrawingImage.Drawing>
-                        <DrawingGroup ClipGeometry="M0,0 V16 H16 V0 H0 Z">
-                            <GeometryDrawing Geometry="F1 M16,16z M0,0z M8.93,6.588L6.64,6.875 6.558,7.255 7.008,7.338C7.302,7.408,7.36,7.514,7.296,7.807L6.558,11.275C6.364,12.172 6.663,12.594 7.366,12.594 7.911,12.594 8.544,12.342 8.831,11.996L8.919,11.58C8.719,11.756 8.427,11.826 8.233,11.826 7.958,11.826 7.858,11.633 7.929,11.293L8.93,6.588z">
-                                <GeometryDrawing.Brush>
-                                    <SolidColorBrush x:Name="IconBrush1" Color="{StaticResource IconColor}" />
-                                </GeometryDrawing.Brush>
-                            </GeometryDrawing>
-                            <GeometryDrawing>
-                                <GeometryDrawing.Geometry>
-                                    <EllipseGeometry
-                                        Center="8,4.5"
-                                        RadiusX="1"
-                                        RadiusY="1" />
-                                </GeometryDrawing.Geometry>
-                                <GeometryDrawing.Brush>
-                                    <SolidColorBrush x:Name="IconBrush2" Color="{StaticResource IconColor}" />
-                                </GeometryDrawing.Brush>
-                            </GeometryDrawing>
-                        </DrawingGroup>
-                    </DrawingImage.Drawing>
-                </DrawingImage>
-            </Image.Source>
-        </Image>
+        <StackPanel Orientation="Horizontal">
+            <Image
+                Width="14"
+                Height="14"
+                Margin="5,0,0,0">
+                <Image.Source>
+                    <DrawingImage>
+                        <DrawingImage.Drawing>
+                            <DrawingGroup ClipGeometry="M0,0 V16 H16 V0 H0 Z">
+                                <GeometryDrawing Geometry="F1 M16,16z M0,0z M8.93,6.588L6.64,6.875 6.558,7.255 7.008,7.338C7.302,7.408,7.36,7.514,7.296,7.807L6.558,11.275C6.364,12.172 6.663,12.594 7.366,12.594 7.911,12.594 8.544,12.342 8.831,11.996L8.919,11.58C8.719,11.756 8.427,11.826 8.233,11.826 7.958,11.826 7.858,11.633 7.929,11.293L8.93,6.588z">
+                                    <GeometryDrawing.Brush>
+                                        <SolidColorBrush x:Name="IconBrush1" Color="{StaticResource IconColor}" />
+                                    </GeometryDrawing.Brush>
+                                </GeometryDrawing>
+                                <GeometryDrawing>
+                                    <GeometryDrawing.Geometry>
+                                        <EllipseGeometry
+                                            Center="8,4.5"
+                                            RadiusX="1"
+                                            RadiusY="1" />
+                                    </GeometryDrawing.Geometry>
+                                    <GeometryDrawing.Brush>
+                                        <SolidColorBrush x:Name="IconBrush2" Color="{StaticResource IconColor}" />
+                                    </GeometryDrawing.Brush>
+                                </GeometryDrawing>
+                            </DrawingGroup>
+                        </DrawingImage.Drawing>
+                    </DrawingImage>
+                </Image.Source>
+            </Image>
+            <TextBlock
+                Margin="5,0,5,0"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                FontSize="14"
+                FontWeight="Normal"
+                Foreground="{StaticResource MainColorBrush}"
+                Text="{StaticResource InfoWindow}" />
+        </StackPanel>
     </Button>
 </UserControl>

@@ -5,7 +5,7 @@
     xmlns:uc="clr-namespace:PicView.Views.UserControls">
     <StackPanel>
         <Border
-            Width="257"
+            Width="275"
             Height="180"
             Background="{StaticResource NoisyBg}"
             BorderBrush="{StaticResource BorderBrush}"
@@ -23,58 +23,41 @@
 
                 <Rectangle
                     Canvas.Top="50"
-                    Width="255"
+                    Width="273"
                     Panel.ZIndex="1"
                     Stroke="{StaticResource BorderBrush}"
                     StrokeThickness="1" />
+
                 <Rectangle
-                    Canvas.Left="51"
-                    Width="1"
-                    Height="51"
-                    Panel.ZIndex="1"
-                    Stroke="{StaticResource BorderBrush}"
-                    StrokeThickness="1" />
-                <Rectangle
-                    Canvas.Left="101"
-                    Width="1"
-                    Height="51"
-                    Panel.ZIndex="1"
-                    Stroke="{DynamicResource BorderBrush}"
-                    StrokeThickness="1" />
-                <Rectangle
-                    Canvas.Left="153"
-                    Width="1"
-                    Height="51"
-                    Panel.ZIndex="1"
-                    Stroke="{DynamicResource BorderBrush}"
-                    StrokeThickness="1" />
-                <Rectangle
-                    Canvas.Left="203"
+                    Canvas.Left="130"
                     Width="1"
                     Height="51"
                     Panel.ZIndex="1"
                     Stroke="{DynamicResource BorderBrush}"
                     StrokeThickness="1" />
 
-                <uc:SlideshowButton x:Name="SlideshowButton" Canvas.Left="0" />
+                <uc:SlideshowButton
+                    x:Name="SlideshowButton"
+                    Canvas.Left="0"
+                    Width="130" />
 
-                <uc:RotateLeftButton x:Name="RotateLeftButton" Canvas.Left="51" />
+                <uc:GoToPicButton x:Name="GoToPic" Canvas.Left="131" />
 
-                <uc:RotateRightButton x:Name="RotateRightButton" Canvas.Left="102" />
+                <Rectangle
+                    Canvas.Left="221"
+                    Width="1"
+                    Height="51"
+                    Panel.ZIndex="1"
+                    Stroke="{DynamicResource BorderBrush}"
+                    StrokeThickness="1" />
 
-                <uc:FlipButton
-                    x:Name="FlipButton"
-                    Canvas.Left="153"
-                    Width="51"
-                    Height="51" />
-
-                <uc:MenuCloseButton x:Name="CloseButton" Canvas.Left="204" />
+                <uc:MenuCloseButton x:Name="CloseButton" Canvas.Left="222" />
 
                 <Border
                     x:Name="FullscreenGalleryBorder"
-                    Canvas.Left="7.5"
+                    Canvas.Left="8"
                     Canvas.Top="59"
-                    Width="240"
+                    Width="255"
                     Background="{StaticResource BackgroundColorBrushAlt}"
                     Style="{StaticResource ButtonBorder}">
                     <Button
@@ -122,9 +105,9 @@
 
                 <Border
                     x:Name="ContainedGalleryBorder"
-                    Canvas.Left="7.5"
+                    Canvas.Left="8"
                     Canvas.Top="116"
-                    Width="240"
+                    Width="255"
                     Background="{StaticResource BackgroundColorBrushAlt}"
                     Style="{StaticResource ButtonBorder}">
                     <Button

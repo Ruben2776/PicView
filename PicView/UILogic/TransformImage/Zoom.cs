@@ -176,8 +176,6 @@ namespace PicView.UILogic.TransformImage
             {
                 SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
             }
-
-            UC.GetQuickSettingsMenu.ZoomSlider.Value = 1.0;
         }
 
         /// <summary>
@@ -264,11 +262,6 @@ namespace PicView.UILogic.TransformImage
         /// <param name="value"></param>
         internal static void Zoom(double value)
         {
-            if (value > UC.GetQuickSettingsMenu.ZoomSlider.Maximum)
-            {
-                return;
-            }
-
             ZoomValue = value;
 
             BeginZoomAnimation(ZoomValue);
@@ -292,11 +285,6 @@ namespace PicView.UILogic.TransformImage
             else
             {
                 SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
-            }
-
-            if (UC.GetQuickSettingsMenu.ZoomSlider.Value != value)
-            {
-                UC.GetQuickSettingsMenu.ZoomSlider.Value = value;
             }
         }
 

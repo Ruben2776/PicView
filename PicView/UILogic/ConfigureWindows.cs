@@ -19,7 +19,6 @@ namespace PicView.UILogic
         internal static SettingsWindow GetSettingsWindow { get; set; }
         internal static InfoWindow GetInfoWindow { get; set; }
         internal static EffectsWindow GetEffectsWindow { get; set; }
-        internal static BatchWindow GetResizeAndOptimize { get; set; }
         internal static ImageInfoWindow GetImageInfoWindow { get; set; }
 
         /// <summary>
@@ -111,30 +110,6 @@ namespace PicView.UILogic
                 else
                 {
                     GetEffectsWindow.Show();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Show Effects window
-        /// </summary>
-        internal static void ResizeAndOptimizeWindow()
-        {
-            if (GetResizeAndOptimize == null)
-            {
-                GetResizeAndOptimize = new BatchWindow();
-
-                GetResizeAndOptimize.Show();
-            }
-            else
-            {
-                if (GetResizeAndOptimize.Visibility == Visibility.Visible)
-                {
-                    GetResizeAndOptimize.Focus();
-                }
-                else
-                {
-                    GetResizeAndOptimize.Show();
                 }
             }
         }

@@ -49,7 +49,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>
     </DefineConstants>
@@ -282,9 +282,6 @@
     <Compile Update="Views\UserControls\Buttons\BackgroundButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\UserControls\Buttons\SearchButton.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Views\UserControls\Buttons\LefttButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -370,9 +367,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\UserControls\Buttons\BackgroundButton.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\UserControls\Buttons\SearchButton.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\UserControls\Buttons\LefttButton.xaml">

@@ -41,7 +41,7 @@ namespace PicView.Views.UserControls
 
         internal static async void GoToPicEvent(object sender, RoutedEventArgs e)
         {
-            if (int.TryParse(GetQuickSettingsMenu.GoToPic.GoToPicBox.Text.ToString(), out int x))
+            if (int.TryParse(GetImageSettingsMenu.GoToPic.GoToPicBox.Text.ToString(), out int x))
             {
                 x--;
                 x = x <= 0 ? 0 : x;
@@ -49,19 +49,19 @@ namespace PicView.Views.UserControls
                 await LoadPicAt(x).ConfigureAwait(false);
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
                 {
-                    GetQuickSettingsMenu.GoToPic.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture);
+                    GetImageSettingsMenu.GoToPic.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture);
                 }));
             }
             else if (Pics.Count > 0 && Pics.Count > FolderIndex)
             {
-                GetQuickSettingsMenu.GoToPic.GoToPicBox.Text = FolderIndex.ToString(CultureInfo.CurrentCulture);
+                GetImageSettingsMenu.GoToPic.GoToPicBox.Text = FolderIndex.ToString(CultureInfo.CurrentCulture);
             }
         }
 
         internal static void ClearGoTo()
         {
-            GetQuickSettingsMenu.GoToPic.GoToPicBox.CaretBrush = new SolidColorBrush(Colors.Transparent);
-            FocusManager.SetFocusedElement(FocusManager.GetFocusScope(GetQuickSettingsMenu.GoToPic.GoToPicBox), null);
+            GetImageSettingsMenu.GoToPic.GoToPicBox.CaretBrush = new SolidColorBrush(Colors.Transparent);
+            FocusManager.SetFocusedElement(FocusManager.GetFocusScope(GetImageSettingsMenu.GoToPic.GoToPicBox), null);
             Close_UserControls();
             Keyboard.ClearFocus();
             ConfigureWindows.GetMainWindow.Focus();

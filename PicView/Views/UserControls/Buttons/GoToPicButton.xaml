@@ -5,7 +5,7 @@
     ToolTip="{StaticResource GoToImageAtSpecifiedIndex}">
     <Button
         x:Name="TheButton"
-        Width="97"
+        Width="90"
         Height="50">
         <Button.Background>
             <SolidColorBrush x:Name="GoToPicBrush" Color="{StaticResource BackgroundColorAlt}" />
