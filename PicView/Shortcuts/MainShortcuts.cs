@@ -758,7 +758,12 @@ namespace PicView.Shortcuts
             // Disable normal scroll, so we can use our own values
             e.Handled = true;
 
-            if (Properties.Settings.Default.ScrollEnabled && !IsAutoScrolling)
+            if (GalleryFunctions.IsOpen)
+            {
+                GalleryNavigation.ScrollTo(sender, e);
+            }
+
+            else if (Properties.Settings.Default.ScrollEnabled && !IsAutoScrolling)
             {
                 if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
                 {
@@ -799,22 +804,6 @@ namespace PicView.Shortcuts
                 {
                     Zoom(e.Delta > 0);
                 }
-            }
-        }
-
-        /// <summary>
-        /// Zooms, scrolls or changes image with mousewheel
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        internal static void MainWindow_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            // Cycle between images when it is enabled and mouse not on image
-            if (Properties.Settings.Default.CtrlZoom || (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-            {
-                Pic(e.Delta > 0);
-
-                e.Handled = true;
             }
         }
     }

@@ -94,6 +94,7 @@ namespace PicView.PicGallery
                     GetPicGallery.grid.Children.Remove(border);
                     img = null;
                     IsOpen = false;
+                    GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
                 };
 
                 border.BeginAnimation(FrameworkElement.WidthProperty, da);
@@ -117,8 +118,6 @@ namespace PicView.PicGallery
             {
                 if (Properties.Settings.Default.FullscreenGallery == false)
                 {
-                    GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
-
                     // Restore interface elements if needed
                     if (!Properties.Settings.Default.ShowInterface || Properties.Settings.Default.Fullscreen)
                     {
