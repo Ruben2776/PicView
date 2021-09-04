@@ -14,10 +14,32 @@ namespace PicView.Views.UserControls
 
             Loaded += delegate
             {
-                TheButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(SlideshowButtonBrush);
-                TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(SlideshowButtonBrush, true);
-                TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(SlideshowButtonBrush, false);
-                TheButton.Click += delegate { UC.Close_UserControls(); Slideshow.StartSlideshow(); };
+                TheButton.PreviewMouseLeftButtonDown += delegate
+                {
+                    PreviewMouseButtonDownAnim(IconBrush);
+                    PreviewMouseButtonDownAnim(txtBrush);
+                };
+
+                TheButton.MouseEnter += delegate
+                {
+                    ButtonMouseOverAnim(IconBrush);
+                    ButtonMouseOverAnim(txtBrush);
+                    AnimationHelper.MouseEnterBgTexColor(TheButtonBrush);
+                };
+
+                TheButton.MouseLeave += delegate
+                {
+                    ButtonMouseLeaveAnim(IconBrush);
+                    ButtonMouseLeaveAnim(txtBrush);
+                    AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
+                };
+
+
+                TheButton.Click += delegate 
+                { 
+                    UC.Close_UserControls();
+                    Slideshow.StartSlideshow();
+                };
 
                 var s = Application.Current.Resources["StartSlideshow"] as string;
                 s += " [F5]";
@@ -25,7 +47,8 @@ namespace PicView.Views.UserControls
 
                 if (!Properties.Settings.Default.DarkTheme)
                 {
-                    AnimationHelper.LightThemeMouseEvent(this, SlideshowBrush);
+                    AnimationHelper.LightThemeMouseEvent(this, IconBrush);
+                    AnimationHelper.LightThemeMouseEvent(this, txtBrush);
                 }
             };
         }

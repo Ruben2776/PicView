@@ -23,11 +23,10 @@
                 </Canvas.Effect>
 
                 <Rectangle
-                    Canvas.Top="50"
+                    Canvas.Top="1"
                     Width="356"
-                    Panel.ZIndex="1"
-                    Stroke="{StaticResource BorderBrush}"
-                    StrokeThickness="1" />
+                    Height="49"
+                    Fill="{StaticResource BackgroundColorBrushAlt}" />
 
                 <uc:SettingsButton x:Name="SettingsButton" Width="118" />
 
@@ -45,6 +44,18 @@
                     Canvas.Left="119"
                     Width="185"
                     Height="51" />
+
+                <uc:MenuCloseButton
+                    x:Name="CloseButton"
+                    Canvas.Left="305"
+                    ToolTip="Close" />
+
+                <Rectangle
+                    Canvas.Top="50"
+                    Width="356"
+                    Panel.ZIndex="1"
+                    Stroke="{StaticResource BorderBrush}"
+                    StrokeThickness="1" />
 
                 <Border
                     x:Name="RotateLeftButtonBorder"
@@ -107,11 +118,6 @@
                     Panel.ZIndex="1"
                     Stroke="{StaticResource BorderBrush}"
                     StrokeThickness="1" />
-
-                <uc:MenuCloseButton
-                    x:Name="CloseButton"
-                    Canvas.Left="305"
-                    ToolTip="Close" />
 
                 <Border
                     Canvas.Left="6"

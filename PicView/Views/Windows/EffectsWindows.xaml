@@ -28,6 +28,7 @@
             <uc:MinButton
                 x:Name="MinButton"
                 Width="35"
+                Height="35"
                 Margin="0,0,35,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center" />
@@ -35,6 +36,7 @@
             <uc:CloseButton
                 x:Name="CloseButton"
                 Width="35"
+                Height="35"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center" />
         </Grid>

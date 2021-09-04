@@ -5,7 +5,7 @@
     ToolTip="{StaticResource ToggleBackgroundColor}">
     <Button x:Name="TheButton" BorderThickness="0">
         <Button.Background>
-            <SolidColorBrush x:Name="bgBrush" Color="{StaticResource BackgroundColorAlt}" />
+            <SolidColorBrush x:Name="TheButtonBrush" Color="Transparent" />
         </Button.Background>
         <StackPanel Margin="5,0,5,0" Orientation="Horizontal">
             <Image Width="17" Height="17">
@@ -106,8 +106,11 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                 FontSize="14"
                 FontWeight="Normal"
-                Foreground="{StaticResource MainColorBrush}"
-                Text="{StaticResource ChangeBackground}" />
+                Text="{StaticResource ChangeBackground}">
+                <TextBlock.Foreground>
+                    <SolidColorBrush x:Name="txtBrush" Color="{StaticResource MainColor}" />
+                </TextBlock.Foreground>
+            </TextBlock>
         </StackPanel>
     </Button>
 </UserControl>

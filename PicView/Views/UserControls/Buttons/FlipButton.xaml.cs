@@ -16,12 +16,13 @@ namespace PicView.Views.UserControls
             {
                 TheButton.PreviewMouseLeftButtonDown += delegate
                 {
-                    PreviewMouseButtonDownAnim(FlipButtonBrush);
+                    PreviewMouseButtonDownAnim(IconBrush);
                 };
 
                 TheButton.MouseEnter += delegate
                 {
-                    ButtonMouseOverAnim(FlipButtonBrush, true);
+                    ButtonMouseOverAnim(IconBrush);
+                    AnimationHelper.MouseEnterBgTexColor(TheButtonBrush);
 
                     ToolTip = TheButton.IsChecked.Value ?
                         Application.Current.Resources["Unflip"] :
@@ -30,7 +31,8 @@ namespace PicView.Views.UserControls
 
                 TheButton.MouseLeave += delegate
                 {
-                    ButtonMouseLeaveAnimBgColor(FlipButtonBrush, false);
+                    ButtonMouseLeaveAnim(IconBrush);
+                    AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
                 };
 
                 TheButton.Click += delegate

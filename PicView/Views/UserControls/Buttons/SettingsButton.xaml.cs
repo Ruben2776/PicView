@@ -12,9 +12,26 @@ namespace PicView.Views.UserControls
 
             Loaded += delegate
             {
-                TheButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(SettingsButtonBrush);
-                TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(SettingsButtonBrush, true);
-                TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(SettingsButtonBrush, false);
+                TheButton.PreviewMouseLeftButtonDown += delegate
+                {
+                    PreviewMouseButtonDownAnim(TheButtonBrush);
+                };
+
+                TheButton.MouseEnter += delegate
+                {
+                    ButtonMouseOverAnim(IconBrush1);
+                    ButtonMouseOverAnim(IconBrush2);
+                    ButtonMouseOverAnim(txtBrush);
+                    AnimationHelper.MouseEnterBgTexColor(TheButtonBrush);
+                };
+
+                TheButton.MouseLeave += delegate
+                {
+                    ButtonMouseLeaveAnim(IconBrush1);
+                    ButtonMouseLeaveAnim(IconBrush2);
+                    ButtonMouseLeaveAnim(txtBrush);
+                    AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
+                };
 
                 if (!Properties.Settings.Default.DarkTheme)
                 {

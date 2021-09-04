@@ -10,7 +10,7 @@
         BorderBrush="{x:Null}"
         Foreground="{x:Null}">
         <Button.Background>
-            <SolidColorBrush x:Name="RotateButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+            <SolidColorBrush x:Name="TheButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
         </Button.Background>
         <Path
             Canvas.Top="19"

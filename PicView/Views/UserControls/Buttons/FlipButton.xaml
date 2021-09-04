@@ -9,7 +9,7 @@
         BorderBrush="{x:Null}"
         Foreground="{x:Null}">
         <CheckBox.Background>
-            <SolidColorBrush x:Name="FlipButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+            <SolidColorBrush x:Name="TheButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
         </CheckBox.Background>
         <CheckBox.Content>
             <Path

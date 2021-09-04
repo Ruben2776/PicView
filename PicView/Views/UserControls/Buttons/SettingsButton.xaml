@@ -8,7 +8,7 @@
         BorderThickness="0"
         ToolTip="{StaticResource ShowAllSettingsWindow}">
         <Button.Background>
-            <SolidColorBrush x:Name="SettingsButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+            <SolidColorBrush x:Name="TheButtonBrush" Color="Transparent" />
         </Button.Background>
         <StackPanel Orientation="Horizontal">
             <Image
@@ -55,8 +55,11 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                 FontSize="14"
                 FontWeight="Normal"
-                Foreground="{StaticResource MainColorBrush}"
-                Text="{StaticResource Settings}" />
+                Text="{StaticResource Settings}">
+                <TextBlock.Foreground>
+                    <SolidColorBrush x:Name="txtBrush" Color="{StaticResource MainColor}" />
+                </TextBlock.Foreground>
+            </TextBlock>
         </StackPanel>
     </Button>
 </UserControl>

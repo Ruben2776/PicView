@@ -8,7 +8,7 @@
         Width="90"
         Height="50">
         <Button.Background>
-            <SolidColorBrush x:Name="GoToPicBrush" Color="{StaticResource BackgroundColorAlt}" />
+            <SolidColorBrush x:Name="GoToPicBrush" Color="Transparent" />
         </Button.Background>
         <Button.Content>
             <Canvas>

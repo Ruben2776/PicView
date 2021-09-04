@@ -11,7 +11,7 @@
         FontWeight="Bold"
         Foreground="{x:Null}">
         <Button.Background>
-            <SolidColorBrush x:Name="SlideshowButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+            <SolidColorBrush x:Name="TheButtonBrush" Color="Transparent" />
         </Button.Background>
         <StackPanel Orientation="Horizontal">
             <TextBlock
@@ -19,8 +19,11 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                 FontSize="14"
                 FontWeight="Normal"
-                Foreground="{StaticResource MainColorBrush}"
-                Text="{StaticResource Slideshow}" />
+                Text="{StaticResource Slideshow}">
+                <TextBlock.Foreground>
+                    <SolidColorBrush x:Name="txtBrush" Color="{StaticResource MainColor}" />
+                </TextBlock.Foreground>
+            </TextBlock>
             <Path
                 Width="14"
                 Height="14"
@@ -28,7 +31,7 @@
                 Data="M20 16v16l10-8-10-8zm18-10h-28c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4v-28c0-2.21-1.79-4-4-4zm0 32h-28v-28h28v28z"
                 Stretch="Fill">
                 <Path.Fill>
-                    <SolidColorBrush x:Name="SlideshowBrush" Color="{StaticResource IconColor}" />
+                    <SolidColorBrush x:Name="IconBrush" Color="{StaticResource IconColor}" />
                 </Path.Fill>
             </Path>
 

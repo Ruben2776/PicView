@@ -22,6 +22,12 @@
                 </Canvas.Effect>
 
                 <Rectangle
+                    Canvas.Top="1"
+                    Width="273"
+                    Height="49"
+                    Fill="{StaticResource BackgroundColorBrushAlt}" />
+
+                <Rectangle
                     Canvas.Top="50"
                     Width="273"
                     Panel.ZIndex="1"
