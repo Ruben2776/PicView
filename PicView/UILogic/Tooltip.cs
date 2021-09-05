@@ -45,9 +45,12 @@ namespace PicView.UILogic
         /// Shows a black tooltip on screen for a small time
         /// </summary>
         /// <param name="message">The message to display</param>
-        internal static void ShowTooltipMessage(object message, bool center = false)
+        internal static async void ShowTooltipMessage(object message, bool center = false)
         {
-            ShowTooltipMessage(message, center, TimeSpan.FromSeconds(1));
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+            {
+                ShowTooltipMessage(message, center, TimeSpan.FromSeconds(1));
+            }));
         }
 
         /// <summary>

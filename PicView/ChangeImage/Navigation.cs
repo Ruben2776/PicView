@@ -96,7 +96,7 @@ namespace PicView.ChangeImage
             {
                 if (Uri.IsWellFormedUriString(path, UriKind.Absolute))
                 {
-                    LoadFromWeb.PicWeb(path);
+                    WebFunctions.PicWeb(path);
                     return;
                 }
                 else if (Directory.Exists(path))
@@ -277,12 +277,8 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="pic"></param>
         /// <param name="imageName"></param>
-        internal static void Pic(BitmapSource bitmap, string imageName)
+        internal static void Pic(BitmapSource bitmap, string imageName, string path)
         {
-            /// Old method, might need updates?
-
-            Unload();
-
             if (IsScrollEnabled)
             {
                 ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
@@ -307,6 +303,45 @@ namespace PicView.ChangeImage
                     ConfigureWindows.GetImageInfoWindow.UpdateValues();
                 }
             }
+
+            DeleteFiles.DeleteTempFiles();
+        }
+
+        /// <summary>
+        /// Load a picture from a prepared string
+        /// </summary>
+        /// <param name="pic"></param>
+        /// <param name="imageName"></param>
+        internal static void Pic(string file, string imageName)
+        {
+            if (IsScrollEnabled)
+            {
+                ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
+            }
+
+            XamlAnimatedGif.AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(file));
+
+            var imageSize = ImageDecoder.ImageSize(file);
+            if (imageSize.HasValue)
+            {
+                FitImage(imageSize.Value.Width, imageSize.Value.Height);
+                SetTitleString((int)imageSize.Value.Width, (int)imageSize.Value.Height, imageName);
+            }
+
+            CloseToolTipMessage();       
+            Taskbar.NoProgress();
+            CanNavigate = false;
+            FolderIndex = 0;
+
+            if (ConfigureWindows.GetImageInfoWindow != null)
+            {
+                if (ConfigureWindows.GetImageInfoWindow.IsVisible)
+                {
+                    ConfigureWindows.GetImageInfoWindow.UpdateValues();
+                }
+            }
+
+            DeleteFiles.DeleteTempFiles();
         }
 
         /// <summary>

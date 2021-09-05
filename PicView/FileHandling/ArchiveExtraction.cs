@@ -24,7 +24,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// File path for the extracted folder
         /// </summary>
-        internal static string TempZipPath { get; set; }
+        internal static string TempFilePath { get; set; }
 
         /// <summary>
         /// File path for the extracted zip file
@@ -74,7 +74,7 @@ namespace PicView.FileHandling
             if (CreateTempDirectory(path))
             {
 #if DEBUG
-                Trace.WriteLine("Created temp dir: " + TempZipPath);
+                Trace.WriteLine("Created temp dir: " + TempFilePath);
 #endif
             }
             else { return false; }
@@ -86,7 +86,7 @@ namespace PicView.FileHandling
                 // Add 7-Zip specifics
                 "x \"" + path + "\" -o";
 
-            arguments += TempZipPath + SupportedFilesFilter + " -r -aou";
+            arguments += TempFilePath + SupportedFilesFilter + " -r -aou";
 
             var x = Process.Start(new ProcessStartInfo
             {
@@ -134,13 +134,13 @@ namespace PicView.FileHandling
             return true;
         }
 
-        private static bool CreateTempDirectory(string path)
+        internal static bool CreateTempDirectory(string path)
         {
             TempZipFile = path;
-            TempZipPath = Path.GetTempPath() + Path.GetRandomFileName();
-            Directory.CreateDirectory(TempZipPath);
+            TempFilePath = Path.GetTempPath() + Path.GetRandomFileName();
+            Directory.CreateDirectory(TempFilePath);
 
-            return Directory.Exists(TempZipPath);
+            return Directory.Exists(TempFilePath);
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace PicView.FileHandling
         /// <returns></returns>
         private static bool SetDirectory()
         {
-            if (string.IsNullOrEmpty(TempZipPath))
+            if (string.IsNullOrEmpty(TempFilePath))
             {
 #if DEBUG
                 Trace.WriteLine("SetDirectory empty zip path");
@@ -158,15 +158,15 @@ namespace PicView.FileHandling
             }
 
             // Set extracted files to Pics
-            if (Directory.Exists(TempZipPath))
+            if (Directory.Exists(TempFilePath))
             {
-                var directory = Directory.GetDirectories(TempZipPath);
+                var directory = Directory.GetDirectories(TempFilePath);
                 if (directory.Length > 0)
                 {
-                    TempZipPath = directory[0];
+                    TempFilePath = directory[0];
                 }
 
-                var extractedFiles = FileList(TempZipPath);
+                var extractedFiles = FileList(TempFilePath);
                 if (extractedFiles.Count > 0)
                 {
                     Pics = extractedFiles;

@@ -1,5 +1,4 @@
 ﻿using ImageMagick;
-using Pfim;
 using PicView.FileHandling;
 using PicView.UILogic.Sizing;
 using SkiaSharp;
@@ -8,7 +7,6 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -59,34 +57,23 @@ namespace PicView.ImageHandling
 
                     case ".DDS":
                     case "TGA": // TODO some tga files are created upside down https://github.com/Ruben2776/PicView/issues/22
-                        filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
-                        var image = Pfim.Pfim.FromStream(filestream);
-                        await filestream.DisposeAsync().ConfigureAwait(false);
-                        var pinnedArray = GCHandle.Alloc(image.Data, GCHandleType.Pinned);
-                        var addr = pinnedArray.AddrOfPinnedObject();
-                        var pfimPic = BitmapSource.Create(image.Width, image.Height, 96.0, 96.0,
-                            PixelFormat(image), null, addr, image.DataLen, image.Stride);
-                        image.Dispose();
-                        pfimPic.Freeze();
-                        return pfimPic;
-
                     case ".PSD":
                     case ".PSB":
                     case ".SVG":
                     case ".XCF":
                         filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
-                        var transMagick = new MagickImage();
-                        transMagick.Read(filestream);
+                        MagickImage magickImage = new();
+                        magickImage.Read(filestream);
                         await filestream.DisposeAsync().ConfigureAwait(false);
 
-                        transMagick.Quality = 100;
-                        transMagick.ColorSpace = ColorSpace.Transparent;
+                        magickImage.Quality = 100;
+                        magickImage.ColorSpace = ColorSpace.Transparent;
 
-                        var psd = transMagick.ToBitmapSource();
-                        transMagick.Dispose();
-                        psd.Freeze();
+                        var bitmap = magickImage.ToBitmapSource();
+                        magickImage.Dispose();
+                        bitmap.Freeze();
 
-                        return psd;
+                        return bitmap;
 
                     default: // some formats cause exceptions when using filestream, so defaulting to reading from file
                         var magick = new MagickImage();
@@ -110,16 +97,6 @@ namespace PicView.ImageHandling
                 return null;
             }
         }
-
-        private static PixelFormat PixelFormat(IImage image) => image.Format switch
-        {
-            ImageFormat.Rgb24 => PixelFormats.Bgr24,
-            ImageFormat.Rgba32 => PixelFormats.Bgr32,
-            ImageFormat.Rgb8 => PixelFormats.Gray8,
-            ImageFormat.R5g5b5a1 or ImageFormat.R5g5b5 => PixelFormats.Bgr555,
-            ImageFormat.R5g6b5 => PixelFormats.Bgr565,
-            _ => throw new Exception($"Unable to convert {image.Format} to WPF PixelFormat"),
-        };
 
         /// <summary>Gets the magick image.</summary>
         /// <param name="s">The stream</param>

@@ -134,7 +134,7 @@ namespace PicView.FileHandling
             // Clipboard Image
             if (Clipboard.ContainsImage())
             {
-                Pic(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]);
+                Pic(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"], null);
                 return;
             }
 
@@ -188,7 +188,7 @@ namespace PicView.FileHandling
             }
             else if (Uri.IsWellFormedUriString(s, UriKind.Absolute)) // Check if from web
             {
-                LoadFromWeb.PicWeb(s);
+                WebFunctions.PicWeb(s);
             }
         }
 

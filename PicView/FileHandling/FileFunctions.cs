@@ -118,5 +118,6 @@ namespace PicView.FileHandling
                 return string.Empty;
             }
         }
+
     }
 }

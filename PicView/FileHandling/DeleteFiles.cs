@@ -18,14 +18,14 @@ namespace PicView.FileHandling
         /// </summary>
         internal static void DeleteTempFiles()
         {
-            if (!Directory.Exists(ArchiveExtraction.TempZipPath))
+            if (!Directory.Exists(ArchiveExtraction.TempFilePath))
             {
                 return;
             }
 
             try
             {
-                Array.ForEach(Directory.GetFiles(ArchiveExtraction.TempZipPath), File.Delete);
+                Array.ForEach(Directory.GetFiles(ArchiveExtraction.TempFilePath), File.Delete);
 #if DEBUG
                 Trace.WriteLine("Temp zip files deleted");
 #endif
@@ -37,9 +37,9 @@ namespace PicView.FileHandling
 
             try
             {
-                Directory.Delete(ArchiveExtraction.TempZipPath);
+                Directory.Delete(ArchiveExtraction.TempFilePath);
 #if DEBUG
-                Trace.WriteLine("Temp zip folder " + ArchiveExtraction.TempZipPath + " deleted");
+                Trace.WriteLine("Temp zip folder " + ArchiveExtraction.TempFilePath + " deleted");
 #endif
             }
             catch (Exception)
@@ -47,7 +47,7 @@ namespace PicView.FileHandling
                 return;
             }
 
-            ArchiveExtraction.TempZipFile = ArchiveExtraction.TempZipPath = null;
+            ArchiveExtraction.TempZipFile = ArchiveExtraction.TempFilePath = null;
         }
 
         /// <summary>

@@ -19,7 +19,7 @@ namespace PicView.UILogic.TransformImage
         /// <summary>
         /// Current point of AutoScroll
         /// </summary>
-        internal static Point AutoScrollPos;
+        internal static Point? AutoScrollPos;
 
         internal static readonly Timer AutoScrollTimer = new Timer()
         {
@@ -116,10 +116,10 @@ namespace PicView.UILogic.TransformImage
             // Start in dispatcher because timer is threaded
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
             {
-                if (AutoScrollOrigin.HasValue)
+                if (AutoScrollOrigin.HasValue && AutoScrollPos.HasValue)
                 {
                     // Calculate offset by Y coordinate
-                    var offset = (AutoScrollPos.Y - AutoScrollOrigin.Value.Y) / 15;
+                    var offset = (AutoScrollPos.Value.Y - AutoScrollOrigin.Value.Y) / 15;
 
                     if (IsAutoScrolling)
                     {

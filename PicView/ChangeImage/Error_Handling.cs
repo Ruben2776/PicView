@@ -94,7 +94,7 @@ namespace PicView.ChangeImage
             }
             else if (Uri.IsWellFormedUriString(s, UriKind.Absolute)) // Check if from web
             {
-                LoadFromWeb.PicWeb(s);
+                WebFunctions.PicWeb(s);
             }
             else
             {
@@ -123,10 +123,10 @@ namespace PicView.ChangeImage
             ConfigureWindows.GetMainWindow.MainImage.Height = double.NaN;
             ScaleImage.xWidth = ScaleImage.xHeight = 0;
 
-            if (!string.IsNullOrWhiteSpace(ArchiveExtraction.TempZipPath))
+            if (!string.IsNullOrWhiteSpace(ArchiveExtraction.TempFilePath))
             {
                 DeleteTempFiles();
-                ArchiveExtraction.TempZipPath = string.Empty;
+                ArchiveExtraction.TempFilePath = string.Empty;
             }
 
             try

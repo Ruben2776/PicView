@@ -1,8 +1,10 @@
-﻿using PicView.FileHandling;
+﻿using PicView.ChangeImage;
+using PicView.FileHandling;
 using PicView.UILogic.TransformImage;
 using System;
 using System.Collections.Specialized;
 using System.IO;
+using System.Net.Http;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.ChangeImage.Navigation;
@@ -11,7 +13,7 @@ namespace PicView.UILogic.DragAndDrop
 {
     internal static class DragToExplorer
     {
-        internal static void DragFile(object sender, MouseButtonEventArgs e)
+        internal static async void DragFile(object sender, MouseButtonEventArgs e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Source == null
                 || Keyboard.Modifiers != ModifierKeys.Control
@@ -34,24 +36,26 @@ namespace PicView.UILogic.DragAndDrop
 
             if (Pics.Count == 0)
             {
-                string url = FileFunctions.GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
-                if (Uri.IsWellFormedUriString(url, UriKind.Absolute)) // Check if from web
+                try
                 {
-                    // Create temp directory
-                    var tempPath = Path.GetTempPath();
-                    var fileName = Path.GetFileName(url);
-
-                    // Download to it
-                    using var webClient = new System.Net.WebClient();
-                    Directory.CreateDirectory(tempPath);
-                    webClient.DownloadFileAsync(new Uri(url), tempPath + fileName);
-
-                    file = tempPath + fileName;
+                    // Download from internet
+                    // TODO check file exceptions and errors
+                    string url = FileFunctions.GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
+                    if (Uri.IsWellFormedUriString(url, UriKind.Absolute)) // Check if from web
+                    {
+                        file = await WebFunctions.DownloadData(url, false).ConfigureAwait(true);
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
+                    MessageBox.Show(ex.ToString());
                     return;
                 }
+
             }
             else if (Pics.Count > FolderIndex)
             {
