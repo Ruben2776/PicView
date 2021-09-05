@@ -163,7 +163,7 @@ namespace PicView.UILogic.Loading
                 Visibility = Visibility.Hidden,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 0, 73, 0)
+                Margin = new Thickness(0, 0, 58, 0)
             };
 
             ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetImageSettingsMenu);
