@@ -248,9 +248,7 @@
     <Resource Include="Themes\Resources\fonts\texgyreheros-bold.otf" />
     <Resource Include="Themes\Resources\fonts\texgyreheros-italic.otf" />
     <Resource Include="Themes\Resources\fonts\texgyreheros-regular.otf" />
-    <Content Include="Themes\Resources\img\favicon.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Themes\Resources\img\favicon.ico" />
     <Resource Include="Themes\Resources\img\noisy-texture-100x100-o4-d13-c-fafafa-t0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -263,11 +261,8 @@
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-ShellExtensions" Version="1.1.4" />
-    <PackageReference Include="Pfim" Version="0.10.1" />
     <PackageReference Include="SkiaSharp" Version="2.80.2" />
     <PackageReference Include="SkiaSharp.Views.WPF" Version="2.80.1" />
-    <PackageReference Include="System.Runtime.WindowsRuntime" Version="5.0.0-preview.5.20278.1" />
-    <PackageReference Include="System.Runtime.WindowsRuntime.UI.Xaml" Version="5.0.0-preview.5.20278.1" />
     <PackageReference Include="XamlAnimatedGif" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>

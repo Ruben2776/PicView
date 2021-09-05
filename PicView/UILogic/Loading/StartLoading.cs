@@ -55,8 +55,8 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
             // Load image if possible
-            var arg = Application.Current.Properties["ArbitraryArgName"];
-            if (arg == null)
+            var args = Environment.GetCommandLineArgs();
+            if (args.Length == 1)
             {
                 Unload();
 
@@ -78,13 +78,13 @@ namespace PicView.UILogic.Loading
                     ConfigureWindows.GetMainWindow.Height = ConfigureWindows.GetMainWindow.MinHeight;
                 }
             }
-            else if (arg.ToString().StartsWith('.'))
+            else if (args[1].StartsWith('.'))
             {
                 // Set file associations
 
                 var process = Process.GetCurrentProcess();
 
-                if (arg.ToString() == ".remove")
+                if (args[1] == ".remove")
                 {
                     var removestring = ".jpeg,.jpe,.jpg,.png,.bmp,.ico,.gif,.webp,.jfif,.tiff,.wbmp,.psd,.psb,.svg,.3fr,.arw,.cr2,.crw,.dcr,.dng,.erf,.kdc,.mef,.mdc,.mos,.mrw,.nef,.nrw,.orf,.pef,.raf,.raw,.rw2,.srf,.x3f,.cut,.exr,.emf,.dds,.dib,.hdr,.heic,.tga,.pcx,.pgm,.wmf,.wpg,.xbm,.xcf.xpm";
                     var rmArgs = removestring.Split(',');
@@ -95,7 +95,7 @@ namespace PicView.UILogic.Loading
                 }
                 else
                 {
-                    var args = arg.ToString().Split(',');
+                    var exts = args[1].Split(',');
 
                     foreach (var item in args)
                     {
@@ -107,7 +107,6 @@ namespace PicView.UILogic.Loading
             }
             else
             {
-                var file = arg.ToString();
                 // Determine prefered UI for startup
                 if (Properties.Settings.Default.Fullscreen)
                 {
@@ -119,14 +118,14 @@ namespace PicView.UILogic.Loading
                 }
                 else if (AutoFitWindow)
                 {
-                    ScaleImage.TryFitImage(file);
+                    ScaleImage.TryFitImage(args[1]);
                 }
                 else if (Properties.Settings.Default.Width != 0)
                 {
                     SetLastWindowSize();
                 }
 
-                _ = LoadPiFrom(file);
+                _ = LoadPiFrom(args[1]);
             }
         }
 
