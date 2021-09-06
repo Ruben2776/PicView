@@ -75,12 +75,21 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it
    
    _* RAW camera formats may be slower to load_
 
+
+# Translators/Languages
+Chinese by <a href="https://github.com/Crystal-RainSlide">Crystal-RainSlide</a><br>
+Spanish by <a href="https://github.com/lk-KEVIN">lk.KEVIN</a><br>
+Korean by <a href="https://github.com/VenusGirl">VenusGirl</a><br>
+German by <a href="https://github.com/Brotbox">Brotbox</a><br>
+English and Danish by me<br>
+
+<a href="https://github.com/Ruben2776/PicView/issues/13">Looking for translators!</a><br>
+If you want to be help translate another language and be listed here. 
+
 ## Contributions
 ![Visual Studio 2019](https://img.shields.io/badge/IDE-Visual%20Studio%202019-964ad4.svg?maxAge=3600)
 ![.Net](https://img.shields.io/badge/.NET-5C2D91?style=badge&logo=.net&logoColor=white)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/bf0fd0f740f9486ba306bdec7fe8bde7)](https://www.codacy.com/manual/ruben_8/PicView?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Ruben2776/PicView&amp;utm_campaign=Badge_Grade)
-
-<a href="https://github.com/Ruben2776/PicView/issues/13">Looking for translators!</a>
 
 I am just a single developer working on this in my spare time. So if you like what I have created please star it to show your support, as it would motive me to keep working on it! <br>
 Feedback and questions are always appreciated. Create an issue or take a look at an existing one if you want to report a bug or request a feature, or have something on your mind! 😊
