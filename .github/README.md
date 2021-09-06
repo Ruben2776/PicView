@@ -2,7 +2,7 @@
 src="https://picview.org/assets/screenshots/configure-ui01.webp" width="958" height="488" />
 </img>
 <h1 align="center">
-<img src="PicView-logo.svg" height="100" />
+<img src="https://picview.org/assets/images/PicView-logo-dark.png" height="100" />
 </h1>
 
 PicView is a fast Picture Viewer with compact UI, that can be hidden. Features image effects, galleries, image info and more. The app can automatically adjusts itself to your screen.
