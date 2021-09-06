@@ -276,17 +276,19 @@ namespace PicView.UILogic.TransformImage
             {
                 Tooltip.CloseToolTipMessage();
             }
-
-            /// Display updated values
-            if (Pics.Count == 0)
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
             {
-                /// Display values from web
-                SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height);
-            }
-            else
-            {
-                SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
-            }
+                /// Display updated values
+                if (Pics.Count == 0)
+                {
+                    /// Display values from web
+                    SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height);
+                }
+                else
+                {
+                    SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
+                }
+            }));
         }
 
         private static void BeginZoomAnimation(double zoomValue)

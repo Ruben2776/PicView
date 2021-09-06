@@ -431,7 +431,7 @@
     <PackageProjectUrl>https://github.com/Ruben2776/PicView</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Ruben2776/PicView</RepositoryUrl>
     <PackageLicenseExpression></PackageLicenseExpression>
-    <AssemblyOriginatorKeyFile>PicViewKeyFile.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>PicViewSignFile.pfx</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
     <LangVersion>preview</LangVersion>
     <Authors>Ruben2776</Authors>
