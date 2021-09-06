@@ -67,7 +67,7 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Themes\Resources\img\favicon.ico</ApplicationIcon>
+    <ApplicationIcon>icon__Q6k_icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -217,9 +217,6 @@
     <Resource Include="Editing\ShaderEffects\PsEffects\WaveWarperEffect.ps">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-	  <Resource Include="Themes\Resources\img\favicon.ico">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Resource>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
@@ -248,16 +245,15 @@
     <Resource Include="Themes\Resources\fonts\texgyreheros-bold.otf" />
     <Resource Include="Themes\Resources\fonts\texgyreheros-italic.otf" />
     <Resource Include="Themes\Resources\fonts\texgyreheros-regular.otf" />
-    <Content Include="Themes\Resources\img\favicon.ico" />
     <Resource Include="Themes\Resources\img\noisy-texture-100x100-o4-d13-c-fafafa-t0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Themes\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Magick.NET-Q16-x64" Version="8.2.1" />
-    <PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.4" />
-    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="4.0.4" />
+    <PackageReference Include="Magick.NET-Q16-x64" Version="8.3.0" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.5" />
+    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="4.0.5" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-ShellExtensions" Version="1.1.4" />
