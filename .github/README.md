@@ -1,3 +1,6 @@
+<img align="center" style="box-shadow: 48px 16px 48px rgba(24,37,56,0.12);transform: perspective(1000px) rotateY(5deg) translateY(4%);"
+src="https://picview.org/assets/screenshots/configure-ui01.webp" width="958" height="488" />
+</img>
 <h1 align="center">
 <img src="PicView-logo.svg" height="100" />
 </h1>
@@ -17,7 +20,6 @@ PicView is a fast Picture Viewer with compact UI, that can be hidden. Features i
 
 
 <br>
-<img src="https://picview.org/assets/screenshots/wide-white-theme.webp"/>
 
 <h2>Customizable Themes</h2>
 <img src="https://picview.org/assets/screenshots/themes-3.webp"/>
@@ -80,7 +82,7 @@ Rename or move files in the titlebar by pressing `F2`
 
 ## Contributions
 ![Visual Studio 2019](https://img.shields.io/badge/IDE-Visual%20Studio%202019-964ad4.svg?maxAge=3600)
-![.NET Core 3.1](https://img.shields.io/badge/.NET-Core%203.1-lightgrey.svg?maxAge=3600)
+![.Net](https://img.shields.io/badge/.NET-5C2D91?style=badge&logo=.net&logoColor=white)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/bf0fd0f740f9486ba306bdec7fe8bde7)](https://www.codacy.com/manual/ruben_8/PicView?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Ruben2776/PicView&amp;utm_campaign=Badge_Grade)
 
 <a href="https://github.com/Ruben2776/PicView/issues/13">Looking for translators!</a>
