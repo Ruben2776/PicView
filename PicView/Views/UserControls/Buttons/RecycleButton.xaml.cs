@@ -22,7 +22,7 @@ namespace PicView.Views.UserControls
                     AnimationHelper.LightThemeMouseEvent(this, IconBrush);
                 }
 
-                TheButton.Click += delegate { DeleteFiles.DeleteFile(false); };
+                TheButton.Click += async (_, _) => await DeleteFiles.DeleteFileAsync(false);
             };
         }
     }

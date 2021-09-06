@@ -2,6 +2,7 @@
 using PicView.UILogic.Loading;
 using PicView.UILogic.TransformImage;
 using System.Globalization;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -50,7 +51,7 @@ namespace PicView.Editing
             Canvas.SetLeft(UC.GetColorPicker, Scroll.AutoScrollOrigin.Value.X);
         }
 
-        internal static void StopRunning(bool addValue)
+        internal static async Task StopRunningAsync(bool addValue)
         {
             // Reset cursor from coloc picking
             ConfigureWindows.GetMainWindow.Cursor = Cursors.Arrow;
@@ -61,7 +62,7 @@ namespace PicView.Editing
                 {
                     var x = UC.GetColorPicker.HexCodePresenter.Content.ToString();
                     Clipboard.SetText(x);
-                    Tooltip.ShowTooltipMessage(x + " " + Application.Current.Resources["AddedToClipboard"]);
+                    await Tooltip.ShowTooltipMessage(x + " " + Application.Current.Resources["AddedToClipboard"]).ConfigureAwait(false);
                 }
 
                 ConfigureWindows.GetMainWindow.topLayer.Children.Remove(UC.GetColorPicker);

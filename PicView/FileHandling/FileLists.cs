@@ -157,7 +157,7 @@ namespace PicView.FileHandling
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        internal static Task GetValues(string path) => Task.Run(() =>
+        internal static Task GetValues(string path) => Task.Run(async () =>
         {
             var extension = Path.GetExtension(path);
             extension = extension.ToLower(CultureInfo.CurrentCulture);
@@ -167,7 +167,7 @@ namespace PicView.FileHandling
             {
                 if (!Extract(path))
                 {
-                    Error_Handling.Reload(true);
+                    await Error_Handling.ReloadAsync(true).ConfigureAwait(false);
                 }
                 return;
             }

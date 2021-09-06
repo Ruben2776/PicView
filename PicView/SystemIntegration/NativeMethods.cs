@@ -118,7 +118,6 @@ namespace PicView.SystemIntegration
 
         /// Supress warnings about unused parameters, because they are required by OS.
         /// Executes when user manually resized window
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA1801:Review unused parameters", Justification = "<Pending>")]
         public static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             if (msg == WM_SIZING)

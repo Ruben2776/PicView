@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Error_Handling;
@@ -21,16 +22,16 @@ namespace PicView.FileHandling
         /// <summary>
         /// Copy image location to clipboard
         /// </summary>
-        internal static void CopyText()
+        internal static async Task CopyTextAsync()
         {
             Clipboard.SetText(Pics[FolderIndex]);
-            ShowTooltipMessage(Application.Current.Resources["FileCopyPath"] as string);
+            await ShowTooltipMessage(Application.Current.Resources["FileCopyPath"] as string).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Add file to clipboard
         /// </summary>
-        internal static void Copyfile()
+        internal static async Task CopyfileAsync()
         {
             if (Pics == null)
             {
@@ -39,32 +40,32 @@ namespace PicView.FileHandling
 
             if (Pics.Count == 0)
             {
-                CopyBitmap();
+                await CopyBitmapAsync().ConfigureAwait(false);
                 return;
             }
 
             // Copy pic if from web
             if (string.IsNullOrWhiteSpace(Pics[FolderIndex]) || Uri.IsWellFormedUriString(Pics[FolderIndex], UriKind.Absolute))
             {
-                CopyBitmap();
+                await CopyBitmapAsync().ConfigureAwait(false);
             }
             else
             {
-                Copyfile(Pics[FolderIndex]);
+                await CopyfileAsync(Pics[FolderIndex]).ConfigureAwait(false);
             }
         }
 
         /// <summary>
         /// Add file to clipboard
         /// </summary>
-        internal static void Copyfile(string path)
+        internal static async Task CopyfileAsync(string path)
         {
             var paths = new System.Collections.Specialized.StringCollection { path };
             Clipboard.SetFileDropList(paths);
-            ShowTooltipMessage(Application.Current.Resources["FileCopy"]);
+            await ShowTooltipMessage(Application.Current.Resources["FileCopy"]).ConfigureAwait(false);
         }
 
-        internal static void CopyBitmap()
+        internal static async Task CopyBitmapAsync()
         {
             BitmapSource pic;
             if (ConfigureWindows.GetMainWindow.MainImage.Source != null)
@@ -81,13 +82,12 @@ namespace PicView.FileHandling
                 Clipboard.SetImage(pic);
             }
 
-            ShowTooltipMessage(Application.Current.Resources["CopiedImage"]);
+            await ShowTooltipMessage(Application.Current.Resources["CopiedImage"]).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Retrieves the data from the clipboard and attemps to load image, if possible
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
         internal static async void Paste()
         {
             // file
@@ -188,7 +188,7 @@ namespace PicView.FileHandling
             }
             else if (Uri.IsWellFormedUriString(s, UriKind.Absolute)) // Check if from web
             {
-                WebFunctions.PicWeb(s);
+                await WebFunctions.PicWeb(s).ConfigureAwait(false);
             }
         }
 
@@ -196,7 +196,7 @@ namespace PicView.FileHandling
         /// Add file to move/paste clipboard
         /// </summary>
         /// <param name="path"></param>
-        internal static void Cut(string path)
+        internal static async Task CutAsync(string path)
         {
             var x = new System.Collections.Specialized.StringCollection
             {
@@ -216,7 +216,7 @@ namespace PicView.FileHandling
                 Clipboard.SetDataObject(data, true);
             }
 
-            ShowTooltipMessage(Application.Current.Resources["FileCut"] as string);
+            await ShowTooltipMessage(Application.Current.Resources["FileCut"] as string).ConfigureAwait(false);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace PicView.ChangeImage
         /// <summary>
         /// Refresh the current list of pics and reload them if there is some missing or changes.
         /// </summary>
-        internal static void Reload(bool fromBackup = false)
+        internal static async Task ReloadAsync(bool fromBackup = false)
         {
             if (fromBackup && string.IsNullOrWhiteSpace(BackupPath))
             {
@@ -94,7 +94,7 @@ namespace PicView.ChangeImage
             }
             else if (Uri.IsWellFormedUriString(s, UriKind.Absolute)) // Check if from web
             {
-                WebFunctions.PicWeb(s);
+                await WebFunctions.PicWeb(s).ConfigureAwait(false);
             }
             else
             {

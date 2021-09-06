@@ -21,9 +21,9 @@ namespace PicView.UILogic.Loading
         internal static void Go()
         {
             // keyboard and Mouse_Keys Keys
-            ConfigureWindows.GetMainWindow.KeyDown += MainWindow_KeysDown;
+            ConfigureWindows.GetMainWindow.KeyDown += async (sender, e) => await MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
             ConfigureWindows.GetMainWindow.KeyUp += MainWindow_KeysUp;
-            ConfigureWindows.GetMainWindow.MouseDown += MainWindow_MouseDown;
+            ConfigureWindows.GetMainWindow.MouseDown += async (sender, e) => await MainWindow_MouseDownAsync(sender, e).ConfigureAwait(false);
 
             // MinButton
             ConfigureWindows.GetMainWindow.MinButton.TheButton.Click += (_, _) => SystemCommands.MinimizeWindow(ConfigureWindows.GetMainWindow);
@@ -42,12 +42,12 @@ namespace PicView.UILogic.Loading
             GetFileMenu.Open.Click += (_, _) => Open();
             GetFileMenu.FileLocation.Click += (_, _) => Open_In_Explorer();
             GetFileMenu.Print.Click += (_, _) => Print(Pics[FolderIndex]);
-            GetFileMenu.SaveButton.Click += (_, _) => SaveFiles();
+            GetFileMenu.SaveButton.Click += async (sender, e) => await SaveFilesAsync();
 
             GetFileMenu.OpenBorder.MouseLeftButtonUp += (_, _) => Open();
             GetFileMenu.FileLocationBorder.MouseLeftButtonUp += (_, _) => Open_In_Explorer();
             GetFileMenu.PrintBorder.MouseLeftButtonUp += (_, _) => Print(Pics[FolderIndex]);
-            GetFileMenu.SaveBorder.MouseLeftButtonUp += (_, _) => SaveFiles();
+            GetFileMenu.SaveBorder.MouseLeftButtonUp += async (sender, e) => await SaveFilesAsync();
 
             // image_button
             ConfigureWindows.GetMainWindow.image_button.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(ConfigureWindows.GetMainWindow.ImagePath1Fill, ConfigureWindows.GetMainWindow.ImagePath2Fill, ConfigureWindows.GetMainWindow.ImagePath3Fill);
@@ -103,7 +103,7 @@ namespace PicView.UILogic.Loading
 
             // TitleText
             ConfigureWindows.GetMainWindow.TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
-            ConfigureWindows.GetMainWindow.TitleText.InnerTextBox.PreviewKeyDown += CustomTextBoxShortcuts.CustomTextBox_KeyDown;
+            ConfigureWindows.GetMainWindow.TitleText.InnerTextBox.PreviewKeyDown += async (sender, e) => await CustomTextBoxShortcuts.CustomTextBox_KeyDownAsync(sender, e).ConfigureAwait(false);
             ConfigureWindows.GetMainWindow.TitleText.PreviewMouseLeftButtonDown += EditTitleBar.Bar_PreviewMouseLeftButtonDown;
             ConfigureWindows.GetMainWindow.TitleText.PreviewMouseRightButtonDown += EditTitleBar.Bar_PreviewMouseRightButtonDown;
 
@@ -114,16 +114,16 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.MainImage.MouseMove += MainImage_MouseMove;
 
             // ParentContainer
-            ConfigureWindows.GetMainWindow.ParentContainer.MouseLeftButtonDown += Bg_MouseLeftButtonDown;
+            ConfigureWindows.GetMainWindow.ParentContainer.MouseLeftButtonDown += async (sender, e) => await Bg_MouseLeftButtonDownAsync(sender, e).ConfigureAwait(false);
             ConfigureWindows.GetMainWindow.ParentContainer.Drop += Image_Drop;
             ConfigureWindows.GetMainWindow.ParentContainer.DragEnter += Image_DragEnter;
             ConfigureWindows.GetMainWindow.ParentContainer.DragLeave += Image_DragLeave;
             ConfigureWindows.GetMainWindow.ParentContainer.MouseMove += Interface_MouseMove;
             ConfigureWindows.GetMainWindow.ParentContainer.MouseLeave += Interface_MouseLeave;
-            ConfigureWindows.GetMainWindow.ParentContainer.PreviewMouseWheel += MainImage_MouseWheel;
+            ConfigureWindows.GetMainWindow.ParentContainer.PreviewMouseWheel += async (sender, e) => await MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);
 
             // TooltipStyle
-            GetToolTipMessage.MouseWheel += MainImage_MouseWheel;
+            GetToolTipMessage.MouseWheel += async (sender, e) => await MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);
 
             // TitleBar
             ConfigureWindows.GetMainWindow.TitleBar.MouseLeftButtonDown += ConfigureWindows.Move;

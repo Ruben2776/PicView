@@ -11,27 +11,25 @@ using System.Windows.Threading;
 using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.ImageDecoder;
-using static PicView.UILogic.SetTitle;
 using static PicView.UILogic.Tooltip;
 
 namespace PicView.FileHandling
 {
     public class WebFunctions
     {
-
         #region UI configured methods
 
         /// <summary>
         /// Attemps to download image and display it
         /// </summary>
         /// <param name="path"></param>
-        internal static async void PicWeb(string url)
+        internal static async Task PicWeb(string url)
         {
             ConfigureWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
 
             CanNavigate = false;
             Error_Handling.ChangeFolder(true);
-            
+
             try
             {
                 var destination = await DownloadData(url, true).ConfigureAwait(false);
@@ -56,7 +54,7 @@ namespace PicView.FileHandling
                     }
                     else
                     {
-                        Reload(true);
+                        await ReloadAsync(true).ConfigureAwait(false);
                         return;
                     }
                 }
@@ -68,27 +66,21 @@ namespace PicView.FileHandling
                     {
                         ConfigureWindows.GetMainWindow.Focus();
                     }
-                    if (ConfigureWindows.GetMainWindow.MainImage.Source != null)
-                    {
-                        SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, destination);
-                    }
                 }));
-
             }
             catch (Exception e)
             {
 #if DEBUG
                 Trace.WriteLine("PicWeb caught exception, message = " + e.Message);
 #endif
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(async () =>
                 {
-                    ShowTooltipMessage(e.Message, true);
-                    Reload(true);
+                    await ShowTooltipMessage(e.Message, true).ConfigureAwait(false);
+                    await ReloadAsync(true).ConfigureAwait(false);
                 }));
 
                 return;
             }
-
         }
 
         internal static async Task<string> DownloadData(string url, bool displayProgress)
@@ -127,7 +119,7 @@ namespace PicView.FileHandling
             return tempPath + fileName;
         }
 
-        #endregion
+        #endregion UI configured methods
 
         #region Logic
 
@@ -192,7 +184,9 @@ namespace PicView.FileHandling
                         readCount += 1;
 
                         if (readCount % 100 == 0)
+                        {
                             TriggerProgressChanged(totalDownloadSize, totalBytesRead);
+                        }
                     }
                     while (isMoreToRead);
                 }
@@ -201,11 +195,15 @@ namespace PicView.FileHandling
             private void TriggerProgressChanged(long? totalDownloadSize, long totalBytesRead)
             {
                 if (ProgressChanged == null)
+                {
                     return;
+                }
 
                 double? progressPercentage = null;
                 if (totalDownloadSize.HasValue)
+                {
                     progressPercentage = Math.Round((double)totalBytesRead / totalDownloadSize.Value * 100, 2);
+                }
 
                 ProgressChanged(totalDownloadSize, totalBytesRead, progressPercentage);
             }
@@ -233,6 +231,6 @@ namespace PicView.FileHandling
             }
         }
 
-        #endregion
+        #endregion Logic
     }
 }

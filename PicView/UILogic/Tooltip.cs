@@ -1,5 +1,6 @@
 ﻿using PicView.UILogic.Animations;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Animation;
 using static PicView.UILogic.UC;
@@ -45,7 +46,7 @@ namespace PicView.UILogic
         /// Shows a black tooltip on screen for a small time
         /// </summary>
         /// <param name="message">The message to display</param>
-        internal static async void ShowTooltipMessage(object message, bool center = false)
+        internal static async Task ShowTooltipMessage(object message, bool center = false)
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
             {

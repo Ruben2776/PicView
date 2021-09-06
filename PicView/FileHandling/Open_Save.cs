@@ -4,6 +4,7 @@ using PicView.UILogic;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Error_Handling;
@@ -105,7 +106,7 @@ namespace PicView.FileHandling
         /// Start Windows "Open With" function
         /// </summary>
         /// <param name="file">The absolute path to the file</param>
-        internal static void OpenWith(string file)
+        internal static async Task OpenWithAsync(string file)
         {
             try
             {
@@ -122,14 +123,14 @@ namespace PicView.FileHandling
                 Trace.WriteLine("OpenWith exception \n" + e.Message);
 
 #endif
-                ShowTooltipMessage(e.Message, true);
+                await ShowTooltipMessage(e.Message, true).ConfigureAwait(false);
             }
         }
 
         /// <summary>
         /// Open a File Dialog, where the user can save a supported file type.
         /// </summary>
-        internal static void SaveFiles()
+        internal static async Task SaveFilesAsync()
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Source == null)
             {
@@ -166,28 +167,28 @@ namespace PicView.FileHandling
             {
                 if (!SaveImages.TrySaveImageWithEffect(Savedlg.FileName))
                 {
-                    ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
+                    await ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]).ConfigureAwait(false);
                 }
             }
             else if (Pics.Count > 0)
             {
                 if (!SaveImages.TrySaveImage(Rotateint, Flipped, Pics[FolderIndex], Savedlg.FileName))
                 {
-                    ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
+                    await ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]).ConfigureAwait(false);
                 }
             }
             else
             {
                 if (!SaveImages.TrySaveImage(Rotateint, Flipped, ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource, Savedlg.FileName))
                 {
-                    ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
+                    await ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]).ConfigureAwait(false);
                 }
             }
 
             if (Savedlg.FileName == fileName)
             {
                 //Refresh the list of pictures.
-                Reload();
+                await ReloadAsync().ConfigureAwait(false);
             }
 
             Close_UserControls();

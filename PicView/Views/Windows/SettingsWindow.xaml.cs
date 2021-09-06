@@ -37,10 +37,10 @@ namespace PicView.Views.Windows
 
                 // SubDirRadio
                 SubDirRadio.IsChecked = Properties.Settings.Default.IncludeSubDirectories;
-                SubDirRadio.Click += delegate
+                SubDirRadio.Click += async delegate
                 {
                     Properties.Settings.Default.IncludeSubDirectories = !Properties.Settings.Default.IncludeSubDirectories;
-                    Error_Handling.Reload();
+                    await Error_Handling.ReloadAsync().ConfigureAwait(false);
                 };
 
                 // BorderColorRadio
@@ -50,7 +50,7 @@ namespace PicView.Views.Windows
                     BorderRadio.IsChecked = true;
                 }
 
-                WallpaperApply.MouseLeftButtonDown += delegate
+                WallpaperApply.MouseLeftButtonDown += async delegate
                 {
                     var x = WallpaperStyle.Fill;
                     if (Fit.IsSelected) { x = WallpaperStyle.Fit; }
@@ -58,7 +58,7 @@ namespace PicView.Views.Windows
                     if (Tile.IsSelected) { x = WallpaperStyle.Tile; }
                     if (Fit.IsSelected) { x = WallpaperStyle.Fit; }
 
-                    SetWallpaper(x);
+                    await SetWallpaperAsync(x).ConfigureAwait(false);
                 };
 
                 SlideshowSlider.Value = Properties.Settings.Default.SlideTimer / 1000;

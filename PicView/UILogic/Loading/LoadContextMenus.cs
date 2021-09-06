@@ -63,7 +63,7 @@ namespace PicView.UILogic.Loading
             savecmIcon.Width = savecmIcon.Height = 12;
             savecmIcon.Fill = scbf;
             savecm.Icon = savecmIcon;
-            savecm.Click += (s, x) => SaveFiles();
+            savecm.Click += async (s, x) => await SaveFilesAsync().ConfigureAwait(false);
             cm.Items.Add(savecm);
 
             ///////////////////////////
@@ -105,7 +105,7 @@ namespace PicView.UILogic.Loading
             openwIcon.Width = openwIcon.Height = 12;
             openwIcon.Fill = scbf;
             openwcm.Icon = openwIcon;
-            openwcm.Click += (s, x) => OpenWith(Pics[FolderIndex]);
+            openwcm.Click += async (_, _) => await OpenWithAsync(Pics[FolderIndex]);
             cm.Items.Add(openwcm);
 
             ///////////////////////////
@@ -296,8 +296,8 @@ namespace PicView.UILogic.Loading
                 Height = double.NaN
             };
             settingscmLoop.Header = settingscmLoopHeader;
-            settingscmLoop.Click += (s, x) => { ConfigureSettings.UpdateUIValues.SetLooping(s, x); };
-            settingscmLoopHeader.Click += (s, x) => { ConfigureSettings.UpdateUIValues.SetLooping(s, x); };
+            settingscmLoop.Click += async (_, _) => await ConfigureSettings.UpdateUIValues.SetLooping().ConfigureAwait(false);
+            settingscmLoopHeader.Click += async(_, _) => await ConfigureSettings.UpdateUIValues.SetLooping().ConfigureAwait(false); ;
             settingscm.Items.Add(settingscmLoop);
 
             ///////////////////////////
@@ -412,7 +412,7 @@ namespace PicView.UILogic.Loading
             {
                 Header = Application.Current.Resources["SetAsWallpaper"],
             };
-            wallcm.Click += (s, x) => SetWallpaper(WallpaperStyle.Fill);
+            wallcm.Click += async (_, _) => await SetWallpaperAsync(WallpaperStyle.Fill);
             var wallcmIcon = new System.Windows.Shapes.Path
             {
                 Data = Geometry.Parse(SVGiconCamera),
@@ -514,7 +514,7 @@ namespace PicView.UILogic.Loading
                 ToolTip = Application.Current.Resources["CopyFile"] + $" [{Application.Current.Resources["Ctrl"]} + " +
                 $"{Application.Current.Resources["Shift"]}  + C]",
             };
-            cppcm.Click += (s, x) => Copyfile();
+            cppcm.Click += async (_, _) => await CopyfileAsync();
             cpm.Items.Add(cppcm);
 
             ///////////////////////////
@@ -539,7 +539,7 @@ namespace PicView.UILogic.Loading
                 ToolTip = Application.Current.Resources["CopyImageTooltip"]
                 + $" [{Application.Current.Resources["Ctrl"]}  + C]",
             };
-            cpxbm.Click += (s, x) => CopyBitmap();
+            cpxbm.Click += async (_, _) => await CopyBitmapAsync();
             cpm.Items.Add(cpxbm);
 
             ///////////////////////////
@@ -549,7 +549,7 @@ namespace PicView.UILogic.Loading
             {
                 Header = Application.Current.Resources["FileCopyPath"],
             };
-            cppfm.Click += (s, x) => CopyText();
+            cppfm.Click += async (_, _) => await CopyTextAsync();
             cpm.Items.Add(cppfm);
 
             cm.Items.Add(cpm);
@@ -572,7 +572,7 @@ namespace PicView.UILogic.Loading
             cpccmIcon.Width = cpccmIcon.Height = 12;
             cpccmIcon.Fill = scbf;
             cpccm.Icon = cpccmIcon;
-            cpccm.Click += (s, x) => Cut(Pics[FolderIndex]);
+            cpccm.Click += async (_, _) => await CutAsync(Pics[FolderIndex]);
             cm.Items.Add(cpccm);
 
             ///////////////////////////
@@ -616,7 +616,7 @@ namespace PicView.UILogic.Loading
                 Fill = scbf
             };
             MovetoRecycleBin.Icon = MovetoRecycleBinIcon;
-            MovetoRecycleBin.Click += delegate { DeleteFile(true); };
+            MovetoRecycleBin.Click += async (_, _) => await DeleteFileAsync(true);
             cm.Items.Add(MovetoRecycleBin);
 
             ///////////////////////////

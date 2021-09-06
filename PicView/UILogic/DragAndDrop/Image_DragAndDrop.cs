@@ -167,7 +167,6 @@ namespace PicView.UILogic.DragAndDrop
                     string[] parts = dataStr.Split((char)10);
 
                     await LoadPiFrom(parts[0]).ConfigureAwait(false);
-                    ConfigureWindows.GetMainWindow.Activate();
                     return;
                 }
             }

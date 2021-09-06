@@ -67,9 +67,9 @@ namespace PicView.Views.Windows
             OpenWith.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(OpenWithBrush); };
             OpenWith.MouseLeave += delegate { ButtonMouseLeaveAnim(OpenWithFill); };
             OpenWith.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(OpenWithBrush); };
-            OpenWith.Click += delegate
+            OpenWith.Click += async delegate
             {
-                FileHandling.Open_Save.OpenWith(Pics[FolderIndex]);
+                await FileHandling.Open_Save.OpenWithAsync(Pics[FolderIndex]).ConfigureAwait(false);
             };
 
             // ShowInFoler

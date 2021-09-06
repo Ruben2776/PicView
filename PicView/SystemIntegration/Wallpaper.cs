@@ -28,7 +28,7 @@ namespace PicView.SystemIntegration
         /// NOT thread safe!
         /// </summary>
         /// <param name="style"></param>
-        internal static async void SetWallpaper(WallpaperStyle style)
+        internal static async Task SetWallpaperAsync(WallpaperStyle style)
         {
             if (UILogic.ConfigureWindows.GetMainWindow.MainImage.Effect != null || Clipboard.ContainsImage())
             {
@@ -37,7 +37,7 @@ namespace PicView.SystemIntegration
                     var SaveImage = ImageDecoder.GetRenderedMagickImage();
                     if (SaveImage == null) { return; }
 
-                    UILogic.Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"]);
+                    await UILogic.Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"]).ConfigureAwait(false);
 
                     await Task.Run(() =>
                     {
@@ -80,24 +80,13 @@ namespace PicView.SystemIntegration
 
                 if (Uri.IsWellFormedUriString(wallpaper, UriKind.Absolute)) // Check if from web
                 {
-                    await Task.Run(() =>
+                    await Task.Run(async () =>
                      {
-                         // Create temp directory
-                         var tempPath = Path.GetTempPath();
-                         var randomName = Path.GetRandomFileName();
-
-                         // Download to it
-                         using var webClient = new System.Net.WebClient();
-                         Directory.CreateDirectory(tempPath);
-                         webClient.DownloadFile(wallpaper, tempPath + randomName);
-
-                         // Use it
-                         SetDesktopWallpaper(tempPath + randomName, style);
+                         var dataPath = await WebFunctions.DownloadData(wallpaper, false).ConfigureAwait(true); 
+                         SetDesktopWallpaper(dataPath, style);
 
                          // Clean up
-                         File.Delete(tempPath + randomName);
-                         using var timer = new Timer(2000);
-                         timer.Elapsed += (s, x) => Directory.Delete(tempPath);
+                         //File.Delete(dataPath);
                      }).ConfigureAwait(false);
 
                     return;

@@ -1,6 +1,7 @@
 ﻿using PicView.PicGallery;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -182,7 +183,7 @@ namespace PicView.UILogic.TransformImage
         /// Determine zoom direction and speed
         /// </summary>
         /// <param name="i">increment</param>
-        internal static void Zoom(bool increment)
+        internal static async Task ZoomAsync(bool increment)
         {
             /// Don't zoom when gallery is open
             if (UC.GetPicGallery != null)
@@ -253,14 +254,14 @@ namespace PicView.UILogic.TransformImage
                 ZoomValue = 1.0;
             }
 
-            Zoom(ZoomValue);
+            await ZoomAsync(ZoomValue).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Zooms to given value
         /// </summary>
         /// <param name="value"></param>
-        internal static void Zoom(double value)
+        internal static async Task ZoomAsync(double value)
         {
             ZoomValue = value;
 
@@ -269,7 +270,7 @@ namespace PicView.UILogic.TransformImage
             /// Displays zoompercentage in the center window
             if (!string.IsNullOrEmpty(ZoomPercentage))
             {
-                Tooltip.ShowTooltipMessage(ZoomPercentage, true);
+                await Tooltip.ShowTooltipMessage(ZoomPercentage, true).ConfigureAwait(false);
             }
             else
             {

@@ -1,5 +1,6 @@
 ﻿using PicView.FileHandling;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.ChangeImage.Navigation;
@@ -73,7 +74,7 @@ namespace PicView.UILogic
             ConfigureWindows.GetMainWindow.TitleText.InnerTextBox.Select(start, end);
         }
 
-        internal static void HandleRename()
+        internal static async Task HandleRename()
         {
             if (FileFunctions.RenameFile(Pics[FolderIndex], ConfigureWindows.GetMainWindow.TitleText.Text))
             {
@@ -101,7 +102,7 @@ namespace PicView.UILogic
             }
             else
             {
-                Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
+                await Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]).ConfigureAwait(false);
                 Refocus();
             }
         }

@@ -3,6 +3,7 @@ using PicView.Editing.Crop;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.UILogic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.ChangeImage.Error_Handling;
@@ -20,7 +21,7 @@ namespace PicView.Shortcuts
 {
     internal static class MainShortcuts
     {
-        internal static void MainWindow_KeysDown(object sender, KeyEventArgs e)
+        internal static async Task MainWindow_KeysDownAsync(object sender, KeyEventArgs e)
         {
             // Don't allow keys when typing in text
             if (GetMainWindow.TitleText.IsKeyboardFocusWithin) { return; }
@@ -195,7 +196,7 @@ namespace PicView.Shortcuts
                 case Key.S:
                     if (ctrlDown && !GalleryFunctions.IsOpen)
                     {
-                        SaveFiles();
+                        await SaveFilesAsync().ConfigureAwait(false);
                     }
                     else if (GetPicGallery != null)
                     {
@@ -221,12 +222,12 @@ namespace PicView.Shortcuts
                 // Zoom
                 case Key.Add:
                 case Key.OemPlus:
-                    Zoom(true);
+                    await ZoomAsync(true).ConfigureAwait(false);
                     return;
 
                 case Key.Subtract:
                 case Key.OemMinus:
-                    Zoom(false);
+                    await ZoomAsync(false).ConfigureAwait(false);
                     return;
 
                 default: break;
@@ -271,7 +272,7 @@ namespace PicView.Shortcuts
                         }
                         else if (Color_Picking.IsRunning)
                         {
-                            Color_Picking.StopRunning(false);
+                            await Color_Picking.StopRunningAsync(false).ConfigureAwait(false);
                         }
                         else if (GetEffectsWindow != null && GetEffectsWindow.IsVisible)
                         {
@@ -316,7 +317,7 @@ namespace PicView.Shortcuts
                     case Key.X:
                         if (ctrlDown && !GalleryFunctions.IsOpen)
                         {
-                            Cut(Pics[FolderIndex]);
+                            await CutAsync(Pics[FolderIndex]).ConfigureAwait(false);
                         }
                         else
                         {
@@ -335,7 +336,7 @@ namespace PicView.Shortcuts
                     case Key.Delete:
                         if (!GalleryFunctions.IsOpen)
                         {
-                            DeleteFile(!shiftDown);
+                           await DeleteFileAsync(!shiftDown).ConfigureAwait(false);
                         }
                         break;
 
@@ -345,7 +346,7 @@ namespace PicView.Shortcuts
                         {
                             if (shiftDown)
                             {
-                                Copyfile();
+                                await CopyfileAsync().ConfigureAwait(false);
                             }
                             else if (altDown)
                             {
@@ -353,7 +354,7 @@ namespace PicView.Shortcuts
                             }
                             else
                             {
-                                CopyBitmap();
+                                await CopyBitmapAsync().ConfigureAwait(false);
                             }
                         }
                         else if (!GalleryFunctions.IsOpen)
@@ -390,20 +391,20 @@ namespace PicView.Shortcuts
                     case Key.R:
                         if (ctrlDown && !GalleryFunctions.IsOpen)
                         {
-                            Reload();
+                            await ReloadAsync().ConfigureAwait(false);
                         }
                         break;
 
                     // L
                     case Key.L:
-                        ConfigureSettings.UpdateUIValues.SetLooping(sender, e);
+                        await ConfigureSettings.UpdateUIValues.SetLooping().ConfigureAwait(false);
                         break;
 
                     // E
                     case Key.E:
                         if (!GalleryFunctions.IsOpen)
                         {
-                            OpenWith(Pics[FolderIndex]);
+                            await OpenWithAsync(Pics[FolderIndex]).ConfigureAwait(false);
                         }
                         break;
 
@@ -445,7 +446,7 @@ namespace PicView.Shortcuts
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen
                         || Properties.Settings.Default.Fullscreen) { break; }
 
-                        Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterImageInWindow"]);
+                        await Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterImageInWindow"]).ConfigureAwait(false);
                         ConfigureSettings.UpdateUIValues.SetScalingBehaviour(false, false);
                         break;
 
@@ -454,7 +455,7 @@ namespace PicView.Shortcuts
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen
                         || Properties.Settings.Default.Fullscreen) { break; }
 
-                        Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterImageInWindowFillHeight"]);
+                        await Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterImageInWindowFillHeight"]).ConfigureAwait(false);
                         ConfigureSettings.UpdateUIValues.SetScalingBehaviour(false, true);
                         break;
 
@@ -463,7 +464,7 @@ namespace PicView.Shortcuts
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen
                         || Properties.Settings.Default.Fullscreen) { break; }
 
-                        Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterApplicationToWindow"]);
+                        await Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterApplicationToWindow"]).ConfigureAwait(false);
                         ConfigureSettings.UpdateUIValues.SetScalingBehaviour(true, false);
                         break;
 
@@ -472,7 +473,7 @@ namespace PicView.Shortcuts
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen
                         || Properties.Settings.Default.Fullscreen) { break; }
 
-                        Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterApplicationToWindowFillHeight"]);
+                        await Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterApplicationToWindowFillHeight"]).ConfigureAwait(false);
                         ConfigureSettings.UpdateUIValues.SetScalingBehaviour(true, true);
                         break;
 
@@ -587,7 +588,7 @@ namespace PicView.Shortcuts
             }
         }
 
-        internal static void MainWindow_MouseDown(object sender, MouseButtonEventArgs e)
+        internal static async Task MainWindow_MouseDownAsync(object sender, MouseButtonEventArgs e)
         {
             switch (e.ChangedButton)
             {
@@ -595,7 +596,7 @@ namespace PicView.Shortcuts
                     // Stop running color picking when right clicking
                     if (Color_Picking.IsRunning)
                     {
-                        Color_Picking.StopRunning(false);
+                        await Color_Picking.StopRunningAsync(false).ConfigureAwait(false);
                     }
                     else if (IsAutoScrolling)
                     {
@@ -674,7 +675,7 @@ namespace PicView.Shortcuts
             }
         }
 
-        internal static void Bg_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        internal static async Task Bg_MouseLeftButtonDownAsync(object sender, MouseButtonEventArgs e)
         {
             if (GetMainWindow.TitleText.InnerTextBox.IsKeyboardFocusWithin)
             {
@@ -692,7 +693,7 @@ namespace PicView.Shortcuts
 
             if (Color_Picking.IsRunning)
             {
-                Color_Picking.StopRunning(true);
+                await Color_Picking.StopRunningAsync(true).ConfigureAwait(false);
             }
 
             // Reset zoom on double click
@@ -753,7 +754,7 @@ namespace PicView.Shortcuts
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static void MainImage_MouseWheel(object sender, MouseWheelEventArgs e)
+        internal static async Task MainImage_MouseWheelAsync(object sender, MouseWheelEventArgs e)
         {
             // Disable normal scroll, so we can use our own values
             e.Handled = true;
@@ -787,7 +788,7 @@ namespace PicView.Shortcuts
             {
                 if (Properties.Settings.Default.CtrlZoom)
                 {
-                    Zoom(e.Delta > 0);
+                    await ZoomAsync(e.Delta > 0).ConfigureAwait(false);
                 }
                 else
                 {
@@ -802,7 +803,7 @@ namespace PicView.Shortcuts
                 }
                 else
                 {
-                    Zoom(e.Delta > 0);
+                    await ZoomAsync(e.Delta > 0).ConfigureAwait(false);
                 }
             }
         }

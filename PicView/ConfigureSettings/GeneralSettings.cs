@@ -12,7 +12,7 @@ namespace PicView.ConfigureSettings
         {
             Properties.Settings.Default.Save();
 
-            var GetAppPath = Process.GetCurrentProcess().MainModule.FileName;
+            var GetAppPath = System.Environment.ProcessPath;
 
             if (Path.GetExtension(GetAppPath) == ".dll")
             {
@@ -37,10 +37,12 @@ namespace PicView.ConfigureSettings
             Application.Current.Shutdown();
         }
 
+#pragma warning disable SYSLIB0003 // Type or member is obsolete
         [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
+#pragma warning restore SYSLIB0003 // Type or member is obsolete
         public static void ElevateProcess(string args)
         {
-            var GetAppPath = Process.GetCurrentProcess().MainModule.FileName;
+            var GetAppPath = System.Environment.ProcessPath;
 
             if (Path.GetExtension(GetAppPath) == ".dll")
             {

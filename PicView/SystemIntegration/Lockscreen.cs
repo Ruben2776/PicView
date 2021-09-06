@@ -19,7 +19,7 @@ namespace PicView.SystemIntegration
                     var SaveImage = ImageDecoder.GetRenderedMagickImage();
                     if (SaveImage == null) { return; }
 
-                    UILogic.Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"]);
+                    await UILogic.Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"]).ConfigureAwait(false);
 
                     await Task.Run(() =>
                     {

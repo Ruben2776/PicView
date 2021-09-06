@@ -1,15 +1,16 @@
 ﻿using PicView.UILogic;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace PicView
 {
     internal static class CustomTextBoxShortcuts
     {
-        internal static void CustomTextBox_KeyDown(object sender, KeyEventArgs e)
+        internal static async Task CustomTextBox_KeyDownAsync(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                EditTitleBar.HandleRename();
+                await EditTitleBar.HandleRename().ConfigureAwait(false);
             }
             else if (e.Key == Key.Escape)
             {

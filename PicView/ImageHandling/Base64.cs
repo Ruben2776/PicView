@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -67,9 +68,15 @@ namespace PicView.ImageHandling
                 string url = FileFunctions.GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
                 if (Uri.IsWellFormedUriString(url, UriKind.Absolute)) // Check if from web
                 {
-                    using var webclient = new WebClient();
-                    var data = await webclient.DownloadDataTaskAsync(new Uri(url)).ConfigureAwait(true);
-                    path = Convert.ToBase64String(data);
+                    using (var client = new HttpClient())
+                    {
+                        using (var response = await client.GetAsync(url))
+                        {
+                            byte[] imageBytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(true);
+                            path = Convert.ToBase64String(imageBytes);
+                        }
+                    }
+                    
                 }
                 else
                 {
@@ -85,7 +92,7 @@ namespace PicView.ImageHandling
             if (!string.IsNullOrWhiteSpace(path))
             {
                 Clipboard.SetText(path);
-                Tooltip.ShowTooltipMessage(Application.Current.Resources["ConvertedToBase64"]);
+                await Tooltip.ShowTooltipMessage(Application.Current.Resources["ConvertedToBase64"]).ConfigureAwait(false);
             }
         }
     }

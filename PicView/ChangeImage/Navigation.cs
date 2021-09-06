@@ -96,7 +96,7 @@ namespace PicView.ChangeImage
             {
                 if (Uri.IsWellFormedUriString(path, UriKind.Absolute))
                 {
-                    WebFunctions.PicWeb(path);
+                    await WebFunctions.PicWeb(path).ConfigureAwait(false);
                     return;
                 }
                 else if (Directory.Exists(path))
@@ -160,7 +160,7 @@ namespace PicView.ChangeImage
             // Error checking to fix rare cases of crashing
             if (Pics.Count < index)
             {
-                Reload(false);
+                await ReloadAsync(false).ConfigureAwait(false);
                 return;
             }
 
@@ -405,7 +405,7 @@ namespace PicView.ChangeImage
             }
             else
             {
-                Reload(true);
+                await ReloadAsync(true).ConfigureAwait(false);
             }
 
             GetImageSettingsMenu.GoToPic.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);

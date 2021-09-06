@@ -4,6 +4,7 @@ using PicView.UILogic;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
@@ -86,11 +87,11 @@ namespace PicView.FileHandling
         /// and display information
         /// </summary>
         /// <param name="Recyclebin"></param>
-        internal static void DeleteFile(bool Recyclebin)
+        internal static async Task DeleteFileAsync(bool Recyclebin)
         {
             if (!TryDeleteFile(Pics[FolderIndex], Recyclebin))
             {
-                ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredWhenDeleting"] + Environment.NewLine + Pics[FolderIndex]);
+                await ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredWhenDeleting"] + Environment.NewLine + Pics[FolderIndex]).ConfigureAwait(false);
                 return;
             }
 
@@ -113,7 +114,7 @@ namespace PicView.FileHandling
 
             Pic(false);
 
-            ShowTooltipMessage(Recyclebin ? Application.Current.Resources["SentFileToRecycleBin"] : Application.Current.Resources["Deleted"]);
+            await ShowTooltipMessage(Recyclebin ? Application.Current.Resources["SentFileToRecycleBin"] : Application.Current.Resources["Deleted"]).ConfigureAwait(false);
         }
     }
 }
