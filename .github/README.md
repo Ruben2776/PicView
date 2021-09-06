@@ -5,7 +5,7 @@ src="https://picview.org/assets/screenshots/configure-ui01.webp" width="958" hei
 <img src="https://picview.org/assets/images/PicView-logo-dark.png" height="100" />
 </h1>
 
-PicView is a fast Picture Viewer with compact UI, that can be hidden. Features image effects, galleries, image info and more. The app can automatically adjusts itself to your screen.
+PicView is a fast Picture Viewer with compact UI, that can be hidden. Features image effects, galleries, light & dark theme, image info and more. The app can automatically adjusts itself to your screen.
 
 
 <p align=center>
@@ -19,12 +19,17 @@ PicView is a fast Picture Viewer with compact UI, that can be hidden. Features i
 </p>
 
 
+
 <br>
+<h2>Fullscreen Image Gallery:</h2>
+<img src="https://i.imgur.com/aIEzJOa.png"/>
+View all files in current folder as a fullscreen thumbnail gallery, where you can quickly scroll to desired image.
 
-<h2>Customizable Themes</h2>
-<img src="https://picview.org/assets/screenshots/themes-3.webp"/>
 
- A choice between dark theme and light theme can be found in the settings menu `F4`, along with 12 accent colors to choose from. 
+<br>
+<h2>Horizontal Image Gallery:</h2>
+<img src="https://picview.org/assets/images/Screenshot-2021-09-06-201303.webp"/>
+View all files in current folder as a thumbnail gallery, with custom animations.
  
 <br>
 <h2>Configure UI</h2>
@@ -42,16 +47,6 @@ For images with a transparent background, the background can be changed to a che
 The image info window will update values as you browse through images.
 
 
-<br>
-<h2>Fullscreen Image Gallery:</h2>
-<img src="https://i.imgur.com/aIEzJOa.png"/>
-View all files in current folder as a fullscreen thumbnail gallery, where you can quickly scroll to desired image.
-
-
-<br>
-<h2>Horizontal Image Gallery:</h2>
-<img src="https://picview.org/assets/screenshots/horizontal-gallery-white.webp"/>
-View all files in current folder as a thumbnail gallery, with custom animations.
 
 
 ## Shader effects/Image filters
@@ -70,7 +65,7 @@ If you have 7-Zip or WinRAR installed, you can view images inside archives, such
 * Color picker
 
 <img src="https://i.imgur.com/MzMCVSG.png"/><br>
-Rename or move files in the titlebar by pressing `F2` 
+Rename or move files in the titlebar by pressing `F2` or right clicking it
 
 
 **File support** 
@@ -78,7 +73,7 @@ Rename or move files in the titlebar by pressing `F2`
    .psd  .psb .xcf .svg .heic .tga .dds<br>.3fr  .arw  .cr2  .crw  .dcr  .dng  .erf  .kdc  .mdc  .mef  .mos  .mrw  .nef  .nrw  .f  .pef .raf  .raw  .rw2  .srf  .x3f *<br>
    .pgm  .hdr  .cut  .exr  .dib  .emf  .wmf  .wpg  .pcx  .xbm  .xpm .wbmp *
    
-   _* Uncommon formats may be slower to load_
+   _* RAW camera formats may be slower to load_
 
 ## Contributions
 ![Visual Studio 2019](https://img.shields.io/badge/IDE-Visual%20Studio%202019-964ad4.svg?maxAge=3600)
