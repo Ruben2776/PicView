@@ -32,32 +32,25 @@ View all files in current folder as a fullscreen thumbnail gallery, where you ca
 View all files in current folder as a thumbnail gallery, with custom animations.
  
 <br>
-<h2>Configure UI</h2>
-<img src="https://picview.org/assets/screenshots/themes-white01.webp"/>
-
-The interface can be toggled to just show the image by pressing `Alt + Z`. The hover buttons and the colored window border can be toggled on/off in the settings window.
-
-For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
-
-
-<br>
-<h2>Display Image Info</h2>
-
-<img src="https://picview.org/assets/screenshots/image-info-white.webp" width="918"/>
-The image info window will update values as you browse through images.
-
-
 
 
 ## Shader effects/Image filters
 <img align="center" src="https://picview.org/assets/screenshots/hlsl.gif" width="743" height="450" />
 Choose between 27 different shader effects (image filters), including negative colors, old movie effect, pencil sketch etc. The effects can be applied to the currently viewed image, allowing you to quickly see how each image would look with a certain effect applied to them. <br>
 The effect can be copied to clipholder `Ctrl + C` or you can save it on your file system. The effect will also be applied when setting image as a wallpaper.
+<br>
+<h2>Display Image Info</h2>
+<img src="https://picview.org/assets/screenshots/image-info-white.webp" width="918"/>
+Quickly view image info, which will update values as you browse through images.
+
 
 ## Other features
 
 If you have 7-Zip or WinRAR installed, you can view images inside archives, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
 
+* For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
+* Interface can be toggled to just show the image by pressing `Alt + Z`.
+* hover buttons and the colored window border can be toggled on/off in the settings window.
 * Basic editing: rotate, flip, crop, change file type
 * Drag & drop/paste from clipholder support for files, folders, URLs and archives
 * Scroll function (built with manga/comics in mind)
