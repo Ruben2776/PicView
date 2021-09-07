@@ -2,10 +2,10 @@
 src="https://picview.org/assets/screenshots/configure-ui01.webp" width="958" height="488" />
 </img>
 <h1 align="center">
-<img src="PicView-logo.svg" height="100" />
+<img src="https://picview.org/assets/images/PicView-logo-dark.png" height="100" />
 </h1>
 
-PicView is a fast Picture Viewer with compact UI, that can be hidden. Features image effects, galleries, image info and more. The app can automatically adjusts itself to your screen.
+PicView is a fast Picture Viewer with compact UI, that can be hidden. Features image effects, galleries, light & dark theme, image info and more. The app can automatically adjusts itself to your screen.
 
 
 <p align=center>
@@ -19,28 +19,6 @@ PicView is a fast Picture Viewer with compact UI, that can be hidden. Features i
 </p>
 
 
-<br>
-
-<h2>Customizable Themes</h2>
-<img src="https://picview.org/assets/screenshots/themes-3.webp"/>
-
- A choice between dark theme and light theme can be found in the settings menu `F4`, along with 12 accent colors to choose from. 
- 
-<br>
-<h2>Configure UI</h2>
-<img src="https://picview.org/assets/screenshots/themes-white01.webp"/>
-
-The interface can be toggled to just show the image by pressing `Alt + Z`. The hover buttons and the colored window border can be toggled on/off in the settings window.
-
-For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
-
-
-<br>
-<h2>Display Image Info</h2>
-
-<img src="https://picview.org/assets/screenshots/image-info-white.webp" width="918"/>
-The image info window will update values as you browse through images.
-
 
 <br>
 <h2>Fullscreen Image Gallery:</h2>
@@ -50,19 +28,29 @@ View all files in current folder as a fullscreen thumbnail gallery, where you ca
 
 <br>
 <h2>Horizontal Image Gallery:</h2>
-<img src="https://picview.org/assets/screenshots/horizontal-gallery-white.webp"/>
+<img src="https://picview.org/assets/images/Screenshot-2021-09-06-201303.webp"/>
 View all files in current folder as a thumbnail gallery, with custom animations.
+ 
+<br>
 
 
 ## Shader effects/Image filters
+<img align="center" src="https://picview.org/assets/screenshots/hlsl.gif" width="743" height="450" />
 Choose between 27 different shader effects (image filters), including negative colors, old movie effect, pencil sketch etc. The effects can be applied to the currently viewed image, allowing you to quickly see how each image would look with a certain effect applied to them. <br>
-The effect can be copied to clipholder `Ctrl + C` or you can save it on your file system. The effect will also be applied when setting image as a wallpaper or lock screen image.
+The effect can be copied to clipholder `Ctrl + C` or you can save it on your file system. The effect will also be applied when setting image as a wallpaper.
+<br>
+<h2>Display Image Info</h2>
+<img src="https://picview.org/assets/screenshots/image-info-white.webp" width="918"/>
+Quickly view image info, which will update values as you browse through images.
+
 
 ## Other features
 
 If you have 7-Zip or WinRAR installed, you can view images inside archives, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
 
-* Set image as wallpaper or lock screen image. (Image effect will be applied as well)
+* For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
+* Interface can be toggled to just show the image by pressing `Alt + Z`.
+* hover buttons and the colored window border can be toggled on/off in the settings window.
 * Basic editing: rotate, flip, crop, change file type
 * Drag & drop/paste from clipholder support for files, folders, URLs and archives
 * Scroll function (built with manga/comics in mind)
@@ -70,7 +58,7 @@ If you have 7-Zip or WinRAR installed, you can view images inside archives, such
 * Color picker
 
 <img src="https://i.imgur.com/MzMCVSG.png"/><br>
-Rename or move files in the titlebar by pressing `F2` 
+Rename or move files in the titlebar by pressing `F2` or right clicking it
 
 
 **File support** 
@@ -78,14 +66,23 @@ Rename or move files in the titlebar by pressing `F2`
    .psd  .psb .xcf .svg .heic .tga .dds<br>.3fr  .arw  .cr2  .crw  .dcr  .dng  .erf  .kdc  .mdc  .mef  .mos  .mrw  .nef  .nrw  .f  .pef .raf  .raw  .rw2  .srf  .x3f *<br>
    .pgm  .hdr  .cut  .exr  .dib  .emf  .wmf  .wpg  .pcx  .xbm  .xpm .wbmp *
    
-   _* Uncommon formats may be slower to load_
+   _* RAW camera formats may be slower to load_
+
+
+# Translators/Languages
+Chinese by <a href="https://github.com/Crystal-RainSlide">Crystal-RainSlide</a><br>
+Spanish by <a href="https://github.com/lk-KEVIN">lk.KEVIN</a><br>
+Korean by <a href="https://github.com/VenusGirl">VenusGirl</a><br>
+German by <a href="https://github.com/Brotbox">Brotbox</a><br>
+English and Danish by me<br>
+
+<a href="https://github.com/Ruben2776/PicView/issues/13">Looking for translators!</a><br>
+If you want to be help translate another language and be listed here. 
 
 ## Contributions
 ![Visual Studio 2019](https://img.shields.io/badge/IDE-Visual%20Studio%202019-964ad4.svg?maxAge=3600)
 ![.Net](https://img.shields.io/badge/.NET-5C2D91?style=badge&logo=.net&logoColor=white)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/bf0fd0f740f9486ba306bdec7fe8bde7)](https://www.codacy.com/manual/ruben_8/PicView?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Ruben2776/PicView&amp;utm_campaign=Badge_Grade)
-
-<a href="https://github.com/Ruben2776/PicView/issues/13">Looking for translators!</a>
 
 I am just a single developer working on this in my spare time. So if you like what I have created please star it to show your support, as it would motive me to keep working on it! <br>
 Feedback and questions are always appreciated. Create an issue or take a look at an existing one if you want to report a bug or request a feature, or have something on your mind! 😊
