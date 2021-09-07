@@ -59,7 +59,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="NegativeButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="NegativeButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -80,7 +80,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="GrayscaleButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="GrayscaleButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -101,7 +101,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="ColorToneButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="ColorToneButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -122,7 +122,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="OldMovieButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="OldMovieButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -143,7 +143,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="BloomButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="BloomButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -164,7 +164,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="GloomButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="GloomButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -185,7 +185,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="MonochromeButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="MonochromeButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -206,7 +206,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="WaveWarperButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="WaveWarperButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -227,7 +227,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="UnderwaterButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="UnderwaterButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -248,7 +248,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="BandedSwirlButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="BandedSwirlButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -269,7 +269,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="SwirlButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="SwirlButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -290,7 +290,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="RippleButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="RippleButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -311,7 +311,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="RippleAltButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="RippleAltButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -332,7 +332,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="BlurButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="BlurButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -353,7 +353,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="DirectionalBlurButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="DirectionalBlurButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -374,7 +374,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="TelescopicBlurButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="TelescopicBlurButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -395,7 +395,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="PixelateButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="PixelateButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -416,7 +416,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="EmbossedButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="EmbossedButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -437,7 +437,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="SmoothMagnifyButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="SmoothMagnifyButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -458,7 +458,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="PivotButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="PivotButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -479,7 +479,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="PaperfoldButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="PaperfoldButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -500,7 +500,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="PencilSketchButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="PencilSketchButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -521,7 +521,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="SketchButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="SketchButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -542,7 +542,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="ToneMappingButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="ToneMappingButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -563,7 +563,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="FrostyOutlineButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="FrostyOutlineButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -584,7 +584,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="BandsButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="BandsButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
@@ -605,7 +605,7 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
                     <CheckBox.Background>
-                        <SolidColorBrush x:Name="GlasTileButtonBrush" Color="{StaticResource BackgroundColorFade}" />
+                        <SolidColorBrush x:Name="GlasTileButtonBrush" Color="Transparent" />
                     </CheckBox.Background>
                     <TextBlock
                         Width="140"
