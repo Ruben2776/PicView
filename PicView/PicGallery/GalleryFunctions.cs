@@ -19,9 +19,9 @@ namespace PicView.PicGallery
             {
                 var selected = id == ChangeImage.Navigation.FolderIndex;
                 var item = new Views.UserControls.PicGalleryItem(pic, id, selected);
-                item.MouseLeftButtonDown += delegate
+                item.MouseLeftButtonDown += async delegate
                 {
-                    GalleryClick.Click(id);
+                    await GalleryClick.ClickAsync(id).ConfigureAwait(false);
                 };
                 GetPicGallery.Container.Children.Add(item);
             }));

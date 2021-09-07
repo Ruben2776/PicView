@@ -1,6 +1,7 @@
 ﻿using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -20,7 +21,7 @@ namespace PicView.PicGallery
     /// </summary>
     internal static class GalleryClick
     {
-        internal static void Click(int id)
+        internal static async Task ClickAsync(int id)
         {
             ConfigureWindows.GetMainWindow.Focus();
 
@@ -86,15 +87,18 @@ namespace PicView.PicGallery
                     FillBehavior = FillBehavior.Stop
                 };
 
-                da.Completed += delegate
+                da.Completed += async delegate
                 {
-                    ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
-                    ItemClick(id);
-                    border.Opacity = 0;
-                    GetPicGallery.grid.Children.Remove(border);
-                    img = null;
-                    IsOpen = false;
-                    GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
+                    await ItemClickAsync(id).ConfigureAwait(false);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                    {
+                        border.Opacity = 0;
+                        GetPicGallery.grid.Children.Remove(border);
+                        img = null;
+                        IsOpen = false;
+                        GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
+                        ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
+                    }));
                 };
 
                 border.BeginAnimation(FrameworkElement.WidthProperty, da);
@@ -102,11 +106,11 @@ namespace PicView.PicGallery
             }
             else
             {
-                ItemClick(id);
+                await ItemClickAsync(id).ConfigureAwait(false);
             }
         }
 
-        internal static async void ItemClick(int id)
+        internal static async Task ItemClickAsync(int id)
         {
             // Deselect current item
             GalleryNavigation.SetSelected(FolderIndex, false);

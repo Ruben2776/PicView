@@ -31,16 +31,16 @@ namespace PicView.UILogic.Animations
                 return;
             }
 
-            if (GetCropppingTool != null)
-            {
-                if (GetCropppingTool.IsVisible)
-                {
-                    return;
-                }
-            }
-
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
             {
+                if (GetCropppingTool != null)
+                {
+                    if (GetCropppingTool.IsVisible)
+                    {
+                        return;
+                    }
+                }
+
                 if (!Properties.Settings.Default.ShowAltInterfaceButtons)
                 {
                     HideInterfaceLogic.ShowNavigation(false);

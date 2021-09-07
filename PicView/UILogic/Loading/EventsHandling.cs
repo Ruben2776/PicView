@@ -22,7 +22,7 @@ namespace PicView.UILogic.Loading
         {
             // keyboard and Mouse_Keys Keys
             ConfigureWindows.GetMainWindow.KeyDown += async (sender, e) => await MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
-            ConfigureWindows.GetMainWindow.KeyUp += MainWindow_KeysUp;
+            ConfigureWindows.GetMainWindow.KeyUp += async (sender, e) => await MainWindow_KeysUpAsync(sender, e).ConfigureAwait(false);
             ConfigureWindows.GetMainWindow.MouseDown += async (sender, e) => await MainWindow_MouseDownAsync(sender, e).ConfigureAwait(false);
 
             // MinButton
@@ -39,12 +39,12 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.FileMenuButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(ConfigureWindows.GetMainWindow.FileMenuBg);
             ConfigureWindows.GetMainWindow.FileMenuButton.Click += Toggle_open_menu;
 
-            GetFileMenu.Open.Click += (_, _) => Open();
+            GetFileMenu.Open.Click += async (_, _) => await OpenAsync().ConfigureAwait(false);
             GetFileMenu.FileLocation.Click += (_, _) => Open_In_Explorer();
             GetFileMenu.Print.Click += (_, _) => Print(Pics[FolderIndex]);
             GetFileMenu.SaveButton.Click += async (sender, e) => await SaveFilesAsync();
 
-            GetFileMenu.OpenBorder.MouseLeftButtonUp += (_, _) => Open();
+            GetFileMenu.OpenBorder.MouseLeftButtonUp += async(_, _) => await OpenAsync().ConfigureAwait(false);
             GetFileMenu.FileLocationBorder.MouseLeftButtonUp += (_, _) => Open_In_Explorer();
             GetFileMenu.PrintBorder.MouseLeftButtonUp += (_, _) => Print(Pics[FolderIndex]);
             GetFileMenu.SaveBorder.MouseLeftButtonUp += async (sender, e) => await SaveFilesAsync();
@@ -59,15 +59,15 @@ namespace PicView.UILogic.Loading
 
             // imageSettingsMenu Buttons
 
-            GetImageSettingsMenu.Contained_Gallery.Click += delegate
+            GetImageSettingsMenu.Contained_Gallery.Click += async delegate
             {
                 Close_UserControls();
-                GalleryToggle.OpenHorizontalGallery();
+                await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
             };
-            GetImageSettingsMenu.Fullscreen_Gallery.Click += delegate
+            GetImageSettingsMenu.Fullscreen_Gallery.Click += async delegate
             {
                 Close_UserControls();
-                GalleryToggle.OpenFullscreenGallery();
+                await GalleryToggle.OpenFullscreenGalleryAsync().ConfigureAwait(false);
             };
 
             // SettingsButton
@@ -99,7 +99,7 @@ namespace PicView.UILogic.Loading
             GetMinus.MouseLeftButtonDown += (_, _) => SystemCommands.MinimizeWindow(ConfigureWindows.GetMainWindow);
 
             // GalleryShortcut
-            GetGalleryShortcut.MouseLeftButtonDown += (_, _) => GalleryToggle.OpenHorizontalGallery();
+            GetGalleryShortcut.MouseLeftButtonDown += async (_, _) => await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
 
             // TitleText
             ConfigureWindows.GetMainWindow.TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;

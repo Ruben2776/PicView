@@ -78,7 +78,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// Open a file dialog where user can select a supported file
         /// </summary>
-        internal static async void Open()
+        internal static async Task OpenAsync()
         {
             IsDialogOpen = true;
 

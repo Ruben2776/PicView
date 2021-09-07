@@ -251,7 +251,7 @@ namespace PicView.Shortcuts
                         {
                             if (GalleryFunctions.IsOpen)
                             {
-                                GalleryToggle.Toggle();
+                                await GalleryToggle.ToggleAsync().ConfigureAwait(false);
                             }
                             else
                             {
@@ -264,7 +264,7 @@ namespace PicView.Shortcuts
                         }
                         else if (GalleryFunctions.IsOpen)
                         {
-                            GalleryToggle.Toggle();
+                            await GalleryToggle.ToggleAsync().ConfigureAwait(false);
                         }
                         else if (IsDialogOpen)
                         {
@@ -310,7 +310,7 @@ namespace PicView.Shortcuts
 
                     // O, Ctrl + O
                     case Key.O:
-                        Open();
+                        await OpenAsync().ConfigureAwait(false);
                         break;
 
                     // X, Ctrl + X
@@ -367,7 +367,7 @@ namespace PicView.Shortcuts
                     case Key.V:
                         if (ctrlDown && !GalleryFunctions.IsOpen)
                         {
-                            Paste();
+                            await PasteAsync().ConfigureAwait(false);
                         }
                         break;
 
@@ -424,7 +424,7 @@ namespace PicView.Shortcuts
                           && !GetFileMenu.IsVisible
                           && !GetImageSettingsMenu.IsVisible)
                         {
-                            GalleryToggle.Toggle();
+                            await GalleryToggle.ToggleAsync().ConfigureAwait(false);
                         }
                         break;
 
@@ -567,7 +567,7 @@ namespace PicView.Shortcuts
             #endregion Alt + keys
         }
 
-        internal static void MainWindow_KeysUp(object sender, KeyEventArgs e)
+        internal static async Task MainWindow_KeysUpAsync(object sender, KeyEventArgs e)
         {
             // Don't allow keys when typing in text
             if (GetMainWindow.TitleText.IsKeyboardFocusWithin) { return; }
@@ -581,7 +581,7 @@ namespace PicView.Shortcuts
                     {
                         return;
                     }
-                    FastPicUpdate();
+                    await FastPicUpdateAsync().ConfigureAwait(false);
                     break;
 
                 default: break;

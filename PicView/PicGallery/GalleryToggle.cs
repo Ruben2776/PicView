@@ -3,6 +3,7 @@ using PicView.UILogic.Animations;
 using PicView.UILogic.Sizing;
 using PicView.Views.Windows;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Animation;
 using static PicView.ChangeImage.Navigation;
@@ -17,7 +18,7 @@ namespace PicView.PicGallery
     {
         #region Toggle
 
-        internal static void Toggle(bool change = false)
+        internal static async Task ToggleAsync(bool change = false)
         {
             if (Pics.Count < 1)
             {
@@ -31,7 +32,7 @@ namespace PicView.PicGallery
                 {
                     if (!IsOpen)
                     {
-                        OpenHorizontalGallery();
+                        await OpenHorizontalGalleryAsync().ConfigureAwait(false);
                     }
                     else
                     {
@@ -42,7 +43,7 @@ namespace PicView.PicGallery
                 {
                     if (!IsOpen)
                     {
-                        OpenFullscreenGallery();
+                        await OpenFullscreenGalleryAsync().ConfigureAwait(false);
                     }
                     else
                     {
@@ -68,7 +69,7 @@ namespace PicView.PicGallery
 
         #region Open
 
-        internal static async void OpenHorizontalGallery()
+        internal static async Task OpenHorizontalGalleryAsync()
         {
             if (Pics.Count < 1)
             {
@@ -76,28 +77,32 @@ namespace PicView.PicGallery
             }
 
             Properties.Settings.Default.FullscreenGallery = false;
-            GalleryLoad.LoadLayout();
 
-            AnimationHelper.Fade(GetPicGallery, TimeSpan.FromSeconds(.3), TimeSpan.Zero, 0, 1);
-
-            GetClickArrowLeft.Visibility =
-            GetClickArrowRight.Visibility =
-            Getx2.Visibility =
-            GetMinus.Visibility =
-            GetRestorebutton.Visibility =
-            GetGalleryShortcut.Visibility = Visibility.Hidden;
-
-            if (GetFakeWindow != null)
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
             {
-                if (GetFakeWindow.grid.Children.Contains(GetPicGallery))
-                {
-                    GetFakeWindow.grid.Children.Remove(GetPicGallery);
-                    GetMainWindow.ParentContainer.Children.Add(GetPicGallery);
-                }
-            }
+                GalleryLoad.LoadLayout();
 
-            GalleryNavigation.SetSelected(FolderIndex, true);
-            GalleryNavigation.ScrollTo();
+                AnimationHelper.Fade(GetPicGallery, TimeSpan.FromSeconds(.3), TimeSpan.Zero, 0, 1);
+
+                GetClickArrowLeft.Visibility =
+                GetClickArrowRight.Visibility =
+                Getx2.Visibility =
+                GetMinus.Visibility =
+                GetRestorebutton.Visibility =
+                GetGalleryShortcut.Visibility = Visibility.Hidden;
+
+                if (GetFakeWindow != null)
+                {
+                    if (GetFakeWindow.grid.Children.Contains(GetPicGallery))
+                    {
+                        GetFakeWindow.grid.Children.Remove(GetPicGallery);
+                        GetMainWindow.ParentContainer.Children.Add(GetPicGallery);
+                    }
+                }
+
+                GalleryNavigation.SetSelected(FolderIndex, true);
+                GalleryNavigation.ScrollTo();
+            }));
 
             if (GetPicGallery.Container.Children.Count == 0)
             {
@@ -112,7 +117,7 @@ namespace PicView.PicGallery
             }
         }
 
-        internal static async void OpenFullscreenGallery(bool startup = false)
+        internal static async Task OpenFullscreenGalleryAsync(bool startup = false)
         {
             if (Pics.Count < 1 && !startup)
             {

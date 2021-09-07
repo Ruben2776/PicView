@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using static PicView.ChangeImage.Error_Handling;
@@ -22,7 +23,7 @@ namespace PicView.UILogic.Loading
 {
     internal static class StartLoading
     {
-        internal static void LoadedEvemt()
+        internal static async Task LoadedEvemtAsync()
         {
 #if DEBUG
             Trace.Listeners.Add(new TextWriterTraceListener("Debug.log"));
@@ -114,7 +115,7 @@ namespace PicView.UILogic.Loading
                 }
                 else if (Properties.Settings.Default.FullscreenGallery)
                 {
-                    GalleryToggle.OpenFullscreenGallery(true);
+                    await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(true); // await needs to be true, or it won't load
                 }
                 else if (AutoFitWindow)
                 {
@@ -125,7 +126,7 @@ namespace PicView.UILogic.Loading
                     SetLastWindowSize();
                 }
 
-                _ = LoadPiFrom(args[1]);
+                await LoadPiFrom(args[1]).ConfigureAwait(false);
             }
         }
 

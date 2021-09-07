@@ -22,7 +22,7 @@ namespace PicView.Views.UserControls
                     AnimationHelper.LightThemeMouseEvent(this, IconBrush);
                 }
 
-                TheButton.Click += delegate { Copy_Paste.Paste(); };
+                TheButton.Click += async delegate { await Copy_Paste.PasteAsync().ConfigureAwait(false); };
             };
         }
     }

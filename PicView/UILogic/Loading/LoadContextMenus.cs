@@ -42,7 +42,7 @@ namespace PicView.UILogic.Loading
             opencmIcon.Width = opencmIcon.Height = 12;
             opencmIcon.Fill = scbf;
             opencm.Icon = opencmIcon;
-            opencm.Click += (s, x) => Open();
+            opencm.Click += async (_, _) => await OpenAsync().ConfigureAwait(false);
             cm.Items.Add(opencm);
 
             ///////////////////////////
@@ -594,7 +594,7 @@ namespace PicView.UILogic.Loading
                 Fill = scbf
             };
             pastecm.Icon = pastecmIcon;
-            pastecm.Click += (s, x) => Paste();
+            pastecm.Click += async (_, _) => await PasteAsync().ConfigureAwait(false);
             cm.Items.Add(pastecm);
 
             ///////////////////////////

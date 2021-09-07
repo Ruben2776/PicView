@@ -25,7 +25,7 @@ namespace PicView.Views.UserControls.Gallery
                 MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, RestoreBg, BorderBrushKey);
             };
 
-            RestoreButton.MouseLeftButtonDown += delegate { GalleryToggle.Toggle(); };
+            RestoreButton.MouseLeftButtonDown += async delegate { await GalleryToggle.ToggleAsync().ConfigureAwait(false); };
 
             RestoreButton.ToolTip = Application.Current.Resources["RestoreDown"];
 

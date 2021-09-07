@@ -88,7 +88,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// Retrieves the data from the clipboard and attemps to load image, if possible
         /// </summary>
-        internal static async void Paste()
+        internal static async Task PasteAsync()
         {
             // file
 
@@ -149,7 +149,7 @@ namespace PicView.FileHandling
 
             if (Base64.IsBase64String(s))
             {
-                Pic64(s);
+                await Pic64(s).ConfigureAwait(false);
                 return;
             }
 

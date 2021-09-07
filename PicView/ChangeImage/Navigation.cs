@@ -174,10 +174,11 @@ namespace PicView.ChangeImage
 
                 if (!GalleryFunctions.IsOpen)
                 {
-                    // Show a thumbnail while loading
-                    var thumb = GetThumb(index);
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
                     {
+                        // Show a thumbnail while loading
+                        var thumb = GetThumb(index); // Need to be in dispatcher to prevent crashing when changing folder while picgallery is loading items
+
                         // Set loading from translation service
                         SetLoadingString();
 
@@ -349,7 +350,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="pic"></param>
         /// <param name="imageName"></param>
-        internal static async void Pic64(string base64string)
+        internal static async Task Pic64(string base64string)
         {
             var pic = await Base64.Base64StringToBitmap(base64string).ConfigureAwait(false);
 
@@ -647,7 +648,7 @@ namespace PicView.ChangeImage
         /// <summary>
         /// Update after FastPic() was used
         /// </summary>
-        internal static async void FastPicUpdate()
+        internal static async Task FastPicUpdateAsync()
         {
             /// TODO optimize preloader usage here, to not cause delays
             /// when very quickly browsing images
