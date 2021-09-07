@@ -102,7 +102,7 @@ namespace PicView.ChangeImage
                 else if (Directory.Exists(path))
                 {
                     ChangeFolder(true);
-                    await GetValues(path).ConfigureAwait(true);
+                    await GetValues(path).ConfigureAwait(false);
                 }
                 else
                 {
@@ -114,14 +114,14 @@ namespace PicView.ChangeImage
             // If count not correct or just started, get values
             if (Pics.Count <= FolderIndex || FolderIndex < 0 || FreshStartup)
             {
-                await GetValues(path).ConfigureAwait(true);
+                await GetValues(path).ConfigureAwait(false);
             }
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
             else if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]) && Path.GetDirectoryName(path) != Path.GetDirectoryName(Pics[FolderIndex]))
             {
                 // Reset old values and get new
                 ChangeFolder(true);
-                await GetValues(path).ConfigureAwait(true);
+                await GetValues(path).ConfigureAwait(false);
             }
 
             FolderIndex = Pics.IndexOf(path);
@@ -197,13 +197,13 @@ namespace PicView.ChangeImage
 
                 if (preloadValue == null) // Error correctiom
                 {
-                    await Preloader.Add(Pics[index]).ConfigureAwait(true);
+                    await Preloader.Add(Pics[index]).ConfigureAwait(false);
                     preloadValue = Preloader.Get(Pics[index]);
                 }
                 while (preloadValue.isLoading)
                 {
                     // Wait for finnished result
-                    await Task.Delay(5).ConfigureAwait(true);
+                    await Task.Delay(5).ConfigureAwait(false);
                 }
             }
 
@@ -240,7 +240,7 @@ namespace PicView.ChangeImage
                 {
                     ConfigureWindows.GetMainWindow.MainImage.Source = preloadValue.bitmapSource;
                 }
-                
+
                 FitImage(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight);
                 SetTitleString(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight, index);
             }));
@@ -328,7 +328,7 @@ namespace PicView.ChangeImage
                 SetTitleString((int)imageSize.Value.Width, (int)imageSize.Value.Height, imageName);
             }
 
-            CloseToolTipMessage();       
+            CloseToolTipMessage();
             Taskbar.NoProgress();
             CanNavigate = false;
             FolderIndex = 0;
@@ -397,27 +397,29 @@ namespace PicView.ChangeImage
             await Task.Run(() =>
             {
                 Pics = FileList(folder);
-            }).ConfigureAwait(true);
+            }).ConfigureAwait(false);
 
             if (Pics.Count > 0)
             {
-                await LoadPicAt(0).ConfigureAwait(true);
+                await LoadPicAt(0).ConfigureAwait(false);
             }
             else
             {
                 await ReloadAsync(true).ConfigureAwait(false);
             }
-
-            GetImageSettingsMenu.GoToPic.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
-
-            // Load new gallery values, if changing folder
-            if (GetPicGallery != null && Properties.Settings.Default.FullscreenGallery)
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(async () =>
             {
-                if (GetPicGallery.Container.Children.Count == 0)
+                GetImageSettingsMenu.GoToPic.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
+
+                // Load new gallery values, if changing folder
+                if (GetPicGallery != null && Properties.Settings.Default.FullscreenGallery)
                 {
-                    await GalleryLoad.Load().ConfigureAwait(false);
+                    if (GetPicGallery.Container.Children.Count == 0)
+                    {
+                        await GalleryLoad.Load().ConfigureAwait(false);
+                    }
                 }
-            }
+            }));
         }
 
         #endregion Update Image values
@@ -430,7 +432,7 @@ namespace PicView.ChangeImage
         /// <param name="next">Whether it's forward or not</param>
         /// <param name="end">Whether to go to last or first,
         /// depending on the next value</param>
-        internal static async void Pic(bool next = true, bool end = false)
+        internal static async Task PicAsync(bool next = true, bool end = false)
         {
             // Exit if not intended to change picture
             if (!CanNavigate)
@@ -507,31 +509,34 @@ namespace PicView.ChangeImage
             }
 
             // Go to the image!
-            await LoadPicAt(FolderIndex).ConfigureAwait(true);
+            await LoadPicAt(FolderIndex).ConfigureAwait(false);
 
-            // Update PicGallery selected item, if needed
-            if (GalleryFunctions.IsOpen)
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(async () =>
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                // Update PicGallery selected item, if needed
+                if (GalleryFunctions.IsOpen)
                 {
-                    if (GetPicGallery.Container.Children.Count > FolderIndex && GetPicGallery.Container.Children.Count > indexBackup)
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
                     {
-                        if (indexBackup != FolderIndex)
+                        if (GetPicGallery.Container.Children.Count > FolderIndex && GetPicGallery.Container.Children.Count > indexBackup)
                         {
-                            GalleryNavigation.SetSelected(indexBackup, false);
-                        }
+                            if (indexBackup != FolderIndex)
+                            {
+                                GalleryNavigation.SetSelected(indexBackup, false);
+                            }
 
-                        GalleryNavigation.SetSelected(FolderIndex, true);
-                        GalleryNavigation.ScrollTo();
-                    }
-                    else
-                    {
+                            GalleryNavigation.SetSelected(FolderIndex, true);
+                            GalleryNavigation.ScrollTo();
+                        }
+                        else
+                        {
                         // TODO Find way to get PicGalleryItem an alternative way...
                     }
-                }));
-            }
+                    }));
+                }
 
-            CloseToolTipMessage();
+                CloseToolTipMessage();
+            }));
         }
 
         /// <summary>
@@ -540,7 +545,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="arrow"></param>
         /// <param name="right"></param>
-        internal static void PicButton(bool arrow, bool right)
+        internal static async Task PicButtonAsync(bool arrow, bool right)
         {
             if (!arrow) // Normal buttons
             {
@@ -558,12 +563,12 @@ namespace PicView.ChangeImage
                 if (right)
                 {
                     RightbuttonClicked = true;
-                    Pic();
+                    await PicAsync().ConfigureAwait(false);
                 }
                 else
                 {
                     LeftbuttonClicked = true;
-                    Pic(false, false);
+                    await PicAsync(false, false).ConfigureAwait(false);
                 }
             }
             else // Alternative interface buttons
@@ -576,12 +581,12 @@ namespace PicView.ChangeImage
                 if (right)
                 {
                     ClickArrowRightClicked = true;
-                    Pic();
+                    await PicAsync().ConfigureAwait(false);
                 }
                 else
                 {
                     ClickArrowLeftClicked = true;
-                    Pic(false, false);
+                    await PicAsync(false, false).ConfigureAwait(false);
                 }
             }
         }

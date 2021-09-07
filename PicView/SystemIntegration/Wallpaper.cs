@@ -82,7 +82,7 @@ namespace PicView.SystemIntegration
                 {
                     await Task.Run(async () =>
                      {
-                         var dataPath = await WebFunctions.DownloadData(wallpaper, false).ConfigureAwait(true); 
+                         var dataPath = await WebFunctions.DownloadData(wallpaper, false).ConfigureAwait(true); // Need to be true to avoid thread errors
                          SetDesktopWallpaper(dataPath, style);
 
                          // Clean up

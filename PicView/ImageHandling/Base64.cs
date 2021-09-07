@@ -73,7 +73,7 @@ namespace PicView.ImageHandling
 
         internal static async Task SendToClipboard()
         {
-            string path = await ConvertToBase64();
+            string path = await ConvertToBase64().ConfigureAwait(true); // Need to be true to avoid thread errors
 
             if (!string.IsNullOrWhiteSpace(path))
             {

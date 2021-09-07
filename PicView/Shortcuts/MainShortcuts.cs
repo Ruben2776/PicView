@@ -75,11 +75,11 @@ namespace PicView.Shortcuts
                         // Go to first if Ctrl held down
                         if (ctrlDown)
                         {
-                            Pic(true, true);
+                            await PicAsync(true, true).ConfigureAwait(false);
                         }
                         else
                         {
-                            Pic();
+                            await PicAsync().ConfigureAwait(false);
                         }
                     }
                     else if (CanNavigate)
@@ -103,11 +103,11 @@ namespace PicView.Shortcuts
                         // Go to last if Ctrl held down
                         if (ctrlDown)
                         {
-                            Pic(false, true);
+                            await PicAsync(false, true).ConfigureAwait(false);
                         }
                         else
                         {
-                            Pic(false);
+                            await PicAsync(false).ConfigureAwait(false);
                         }
                     }
                     else if (CanNavigate)
@@ -626,11 +626,11 @@ namespace PicView.Shortcuts
                     break;
 
                 case MouseButton.XButton1:
-                    Pic(false);
+                    await PicAsync(false).ConfigureAwait(false);
                     break;
 
                 case MouseButton.XButton2:
-                    Pic();
+                    await PicAsync().ConfigureAwait(false);
                     break;
 
                 default: break;
@@ -768,7 +768,7 @@ namespace PicView.Shortcuts
             {
                 if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
                 {
-                    Pic(e.Delta > 0);
+                    await PicAsync(e.Delta > 0).ConfigureAwait(false);
                 }
                 else
                 {
@@ -792,14 +792,14 @@ namespace PicView.Shortcuts
                 }
                 else
                 {
-                    Pic(e.Delta > 0);
+                    await PicAsync(e.Delta > 0).ConfigureAwait(false);
                 }
             }
             else
             {
                 if (Properties.Settings.Default.CtrlZoom)
                 {
-                    Pic(e.Delta > 0);
+                    await PicAsync(e.Delta > 0).ConfigureAwait(false);
                 }
                 else
                 {

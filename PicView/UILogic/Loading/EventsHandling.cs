@@ -88,9 +88,9 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.FunctionMenuButton.Click += Toggle_Functions_menu;
 
             // ClickArrows
-            GetClickArrowLeft.MouseLeftButtonDown += (_, _) => PicButton(true, false);
+            GetClickArrowLeft.MouseLeftButtonDown += async (_, _) => await PicButtonAsync(true, false).ConfigureAwait(false);
 
-            GetClickArrowRight.MouseLeftButtonDown += (_, _) => PicButton(true, true);
+            GetClickArrowRight.MouseLeftButtonDown += async (_, _) => await PicButtonAsync(true, true).ConfigureAwait(false);
 
             // x2
             Getx2.MouseLeftButtonDown += (_, _) => SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);

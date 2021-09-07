@@ -18,7 +18,7 @@ namespace PicView.Views.UserControls
                 TheButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(LeftButtonBrush);
                 TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(LeftArrowFill);
                 TheButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(LeftButtonBrush);
-                TheButton.Click += (s, x) => Navigation.PicButton(false, false);
+                TheButton.Click += async (s, x) => await Navigation.PicButtonAsync(false, false).ConfigureAwait(false);
             };
         }
     }

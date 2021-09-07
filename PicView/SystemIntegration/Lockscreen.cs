@@ -40,7 +40,7 @@ namespace PicView.SystemIntegration
                         File.Delete(tempPath + randomName);
                         using var timer = new Timer(2000);
                         timer.Elapsed += (s, x) => Directory.Delete(tempPath);
-                    }).ConfigureAwait(true);
+                    }).ConfigureAwait(true); // Need to be true to avoid thread errors
 
                     SaveImage.Dispose();
                 }

@@ -95,24 +95,31 @@ namespace PicView.FileHandling
                 return;
             }
 
-            // Sync with gallery
-            if (UC.GetPicGallery != null)
-            {
-                UC.GetPicGallery.Container.Children.RemoveAt(Pics.IndexOf(Pics[FolderIndex]));
-            }
-
             // Sync with preloader
             Preloader.Remove(Pics[FolderIndex]);
+
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            {
+                // Sync with gallery
+                if (UC.GetPicGallery != null)
+                {
+                    UC.GetPicGallery.Container.Children.RemoveAt(Pics.IndexOf(Pics[FolderIndex]));
+                }
+            }));
 
             Pics.Remove(Pics[FolderIndex]);
 
             if (Pics.Count <= 0)
             {
-                Unload();
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                {
+                    Unload();
+                }));
+                
                 return;
             }
 
-            Pic(false);
+            await PicAsync(false).ConfigureAwait(false);
 
             await ShowTooltipMessage(Recyclebin ? Application.Current.Resources["SentFileToRecycleBin"] : Application.Current.Resources["Deleted"]).ConfigureAwait(false);
         }

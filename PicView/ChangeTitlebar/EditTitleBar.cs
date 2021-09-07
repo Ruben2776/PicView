@@ -1,4 +1,5 @@
 ﻿using PicView.FileHandling;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -84,26 +85,36 @@ namespace PicView.UILogic
                     Pics.Remove(Pics[FolderIndex]);
                     if (Pics.Count > 0)
                     {
-                        Pic();
+                        await PicAsync().ConfigureAwait(false);
                     }
                     else
                     {
-                        _ = LoadPiFrom(ConfigureWindows.GetMainWindow.TitleText.Text);
+                        await LoadPiFrom(ConfigureWindows.GetMainWindow.TitleText.Text).ConfigureAwait(false);
                     }
                 }
                 else
                 {
-                    Pics[FolderIndex] = ConfigureWindows.GetMainWindow.TitleText.Text;
-                    ConfigureWindows.GetMainWindow.Title = ConfigureWindows.GetMainWindow.Title.Replace(Path.GetFileName(Pics[FolderIndex]), Pics[FolderIndex], System.StringComparison.InvariantCultureIgnoreCase);
-                    ConfigureWindows.GetMainWindow.TitleText.Text = ConfigureWindows.GetMainWindow.TitleText.Text.Replace(Path.GetFileName(Pics[FolderIndex]), Pics[FolderIndex], System.StringComparison.InvariantCultureIgnoreCase);
-                    ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.ToolTip.ToString().Replace(Path.GetFileName(Pics[FolderIndex]), Pics[FolderIndex], System.StringComparison.InvariantCultureIgnoreCase);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                    {
+                        Pics[FolderIndex] = ConfigureWindows.GetMainWindow.TitleText.Text;
+                        ConfigureWindows.GetMainWindow.Title = ConfigureWindows.GetMainWindow.Title.Replace(Path.GetFileName(Pics[FolderIndex]), Pics[FolderIndex], System.StringComparison.InvariantCultureIgnoreCase);
+                        ConfigureWindows.GetMainWindow.TitleText.Text = ConfigureWindows.GetMainWindow.TitleText.Text.Replace(Path.GetFileName(Pics[FolderIndex]), Pics[FolderIndex], System.StringComparison.InvariantCultureIgnoreCase);
+                        ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.ToolTip.ToString().Replace(Path.GetFileName(Pics[FolderIndex]), Pics[FolderIndex], System.StringComparison.InvariantCultureIgnoreCase);
+                    }));
                 }
-                Refocus(false);
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                {
+                    Refocus(false);
+                }));
+
             }
             else
             {
                 await Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]).ConfigureAwait(false);
-                Refocus();
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                {
+                    Refocus();
+                }));
             }
         }
 

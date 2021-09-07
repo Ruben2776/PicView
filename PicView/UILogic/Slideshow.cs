@@ -72,7 +72,7 @@ namespace PicView.UILogic
         private static void SlideTimer_Elapsed(object server, ElapsedEventArgs e)
         {
             AnimationHelper.Fade(ConfigureWindows.GetMainWindow.MainImage, TimeSpan.FromSeconds(0.8), TimeSpan.FromSeconds(0), 0, .5);
-            Pic();
+            _ = PicAsync();
             AnimationHelper.Fade(ConfigureWindows.GetMainWindow.MainImage, TimeSpan.FromSeconds(0.7), TimeSpan.FromSeconds(0), .5, 1);
         }
     }
