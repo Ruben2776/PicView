@@ -54,40 +54,26 @@ namespace PicView.ImageHandling
             return Convert.TryFromBase64String(base64, buffer, out _);
         }
 
-        internal static async Task<string> ConvertToBase64(string path)
+        internal static async Task<string> ConvertToBase64()
         {
-            var imageArray = await File.ReadAllBytesAsync(path).ConfigureAwait(true);
-            return Convert.ToBase64String(imageArray);
+            BitmapFrame frame = null;
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            {
+                frame = ImageDecoder.GetRenderedBitmapFrame();
+            }));
+
+            PngBitmapEncoder pngBitmapEncoder = new();
+            using var ms = new MemoryStream();
+            pngBitmapEncoder.Frames.Add(frame);
+            pngBitmapEncoder.Save(ms);
+            var bytes = ms.ToArray();
+            ms.Close();
+            return Convert.ToBase64String(bytes);
         }
 
         internal static async Task SendToClipboard()
         {
-            string path;
-            if (Navigation.FolderIndex == 0)
-            {
-                string url = FileFunctions.GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
-                if (Uri.IsWellFormedUriString(url, UriKind.Absolute)) // Check if from web
-                {
-                    using (var client = new HttpClient())
-                    {
-                        using (var response = await client.GetAsync(url))
-                        {
-                            byte[] imageBytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(true);
-                            path = Convert.ToBase64String(imageBytes);
-                        }
-                    }
-                    
-                }
-                else
-                {
-                    // TODO add method to convert images from clipholder to base64
-                    return;
-                }
-            }
-            else
-            {
-                path = await ConvertToBase64(Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(true);
-            }
+            string path = await ConvertToBase64();
 
             if (!string.IsNullOrWhiteSpace(path))
             {
