@@ -38,11 +38,6 @@ namespace PicView.Views.UserControls
                     var p = TheButton.PointToScreen(new System.Windows.Point(25, 25));
                     SystemIntegration.NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 };
-
-                if (!Properties.Settings.Default.DarkTheme)
-                {
-                    AnimationHelper.LightThemeMouseEvent(this, IconBrush);
-                }
             };
         }
     }

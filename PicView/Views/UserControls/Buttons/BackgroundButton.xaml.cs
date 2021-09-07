@@ -44,15 +44,6 @@ namespace PicView.Views.UserControls
                     AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
                 };
 
-                if (!Properties.Settings.Default.DarkTheme)
-                {
-                    AnimationHelper.LightThemeMouseEvent(this, IconBrush1);
-                    AnimationHelper.LightThemeMouseEvent(this, IconBrush2);
-                    AnimationHelper.LightThemeMouseEvent(this, IconBrush3);
-                    AnimationHelper.LightThemeMouseEvent(this, IconBrush4);
-                    AnimationHelper.LightThemeMouseEvent(this, IconBrush5);
-                }
-
                 TheButton.Click += ConfigureSettings.ConfigColors.ChangeBackground;
             };
         }
