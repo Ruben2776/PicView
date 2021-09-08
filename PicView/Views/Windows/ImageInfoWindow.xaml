@@ -23,7 +23,7 @@
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Logo Margin="2,-2,0,0" />
+            <uc:Logo Margin="7,-3,0,0" />
 
             <Rectangle
                 Width="1"
