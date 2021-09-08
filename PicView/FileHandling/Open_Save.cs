@@ -144,7 +144,10 @@ namespace PicView.FileHandling
 
             if (Pics.Count > 0)
             {
-                if (string.IsNullOrEmpty(Pics[FolderIndex])) return;
+                if (string.IsNullOrEmpty(Pics[FolderIndex]))
+                {
+                    return;
+                }
                 fileName = Path.GetFileName(Pics[FolderIndex]);
             }
             else

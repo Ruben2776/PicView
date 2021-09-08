@@ -24,14 +24,14 @@ namespace PicView.Views.Windows
 
         #region OnRenderSizeChanged override
 
-        protected override void OnRenderSizeChanged(SizeChangedInfo size)
+        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
-            if (size == null)
+            if (sizeInfo == null)
             {
                 return;
             }
 
-            if (!size.WidthChanged && !size.HeightChanged)
+            if (!sizeInfo.WidthChanged && !sizeInfo.HeightChanged)
             {
                 return;
             }
@@ -44,8 +44,8 @@ namespace PicView.Views.Windows
             }
 
             //Keep position when size has changed
-            Top += ((size.PreviousSize.Height / MonitorInfo.DpiScaling) - (size.NewSize.Height / MonitorInfo.DpiScaling)) / 2;
-            Left += ((size.PreviousSize.Width / MonitorInfo.DpiScaling) - (size.NewSize.Width / MonitorInfo.DpiScaling)) / 2;
+            Top += ((sizeInfo.PreviousSize.Height / MonitorInfo.DpiScaling) - (sizeInfo.NewSize.Height / MonitorInfo.DpiScaling)) / 2;
+            Left += ((sizeInfo.PreviousSize.Width / MonitorInfo.DpiScaling) - (sizeInfo.NewSize.Width / MonitorInfo.DpiScaling)) / 2;
 
             // Move cursor after resize when the button has been pressed
             if (Navigation.RightbuttonClicked)
@@ -66,7 +66,7 @@ namespace PicView.Views.Windows
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 Navigation.ClickArrowRightClicked = false;
 
-                FadeControls.FadeControlsAsync(true);
+                _= FadeControls.FadeControlsAsync(true);
             }
             else if (Navigation.ClickArrowLeftClicked)
             {
@@ -74,10 +74,10 @@ namespace PicView.Views.Windows
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 Navigation.ClickArrowLeftClicked = false;
 
-                FadeControls.FadeControlsAsync(true);
+                _ = FadeControls.FadeControlsAsync(true);
             }
 
-            base.OnRenderSizeChanged(size);
+            base.OnRenderSizeChanged(sizeInfo);
         }
 
         #endregion OnRenderSizeChanged override

@@ -1,4 +1,5 @@
 ﻿using PicView.PicGallery;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.UILogic.Animations.FadeControls;
@@ -125,9 +126,9 @@ namespace PicView.UILogic
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static void Interface_MouseMove(object sender, MouseEventArgs e)
+        internal static async Task Interface_MouseMoveAsync(object sender, MouseEventArgs e)
         {
-            FadeControlsAsync(true);
+            await FadeControlsAsync(true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -135,10 +136,10 @@ namespace PicView.UILogic
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static void Interface_MouseLeave(object sender, MouseEventArgs e)
+        internal static async Task Interface_MouseLeaveAsync(object sender, MouseEventArgs e)
         {
             // Fade controis when mouse leaves mainwindow
-            FadeControlsAsync(false);
+            await FadeControlsAsync(false).ConfigureAwait(false);
         }
     }
 }

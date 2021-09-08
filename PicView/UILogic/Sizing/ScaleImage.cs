@@ -57,7 +57,7 @@ namespace PicView.UILogic.Sizing
                             FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
                             return true;
                         }
-                        else if (XWidth != 0 && XHeight != 0)
+                        else if (XWidth > 0 && XHeight > 0)
                         {
                             FitImage(XWidth, XHeight);
                             return true;
@@ -70,7 +70,7 @@ namespace PicView.UILogic.Sizing
                 FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
                 return true;
             }
-            else if (XWidth != 0 && XHeight != 0)
+            else if (XWidth > 0 && XHeight > 0)
             {
                 FitImage(XWidth, XHeight);
                 return true;

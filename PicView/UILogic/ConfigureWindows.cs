@@ -29,7 +29,7 @@ namespace PicView.UILogic
         /// <summary>
         /// Primary ContextMenu
         /// </summary>
-        internal static System.Windows.Controls.ContextMenu cm;
+        internal static System.Windows.Controls.ContextMenu MainContextMenu { get; set; }
 
         internal static bool IsMainWindowTopMost
         {

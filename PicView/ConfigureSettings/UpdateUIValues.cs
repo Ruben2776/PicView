@@ -29,7 +29,7 @@ namespace PicView.ConfigureSettings
                 Pics = FileList(Path.GetDirectoryName(tmp));
                 _ = LoadPicAt(Pics.IndexOf(tmp));
             }
-            var sortcm = cm.Items[6] as MenuItem;
+            var sortcm = MainContextMenu.Items[6] as MenuItem;
 
             var sort0 = sortcm.Items[0] as MenuItem;
             var sort0Header = sort0.Header as RadioButton;
@@ -131,7 +131,7 @@ namespace PicView.ConfigureSettings
         {
             if (GalleryFunctions.IsOpen) { return; }
 
-            var settingscm = cm.Items[7] as MenuItem;
+            var settingscm = MainContextMenu.Items[7] as MenuItem;
             var scrollcm = settingscm.Items[1] as MenuItem;
             var scrollcmHeader = scrollcm.Header as CheckBox;
 
@@ -157,7 +157,7 @@ namespace PicView.ConfigureSettings
 
         internal static async Task SetLooping()
         {
-            var settingscm = cm.Items[7] as MenuItem;
+            var settingscm = MainContextMenu.Items[7] as MenuItem;
             var loopcm = settingscm.Items[0] as MenuItem;
             var loopcmHeader = loopcm.Header as CheckBox;
 

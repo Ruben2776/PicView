@@ -11,7 +11,7 @@ namespace PicView.PicGallery
 {
     internal static class GalleryFunctions
     {
-        internal static bool IsOpen;
+        internal static bool IsOpen { get; set; }
 
         internal static async Task Add(BitmapSource pic, int id)
         {

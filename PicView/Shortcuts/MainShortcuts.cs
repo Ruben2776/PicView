@@ -290,7 +290,7 @@ namespace PicView.Shortcuts
                         {
                             GetSettingsWindow.Hide();
                         }
-                        else if (!cm.IsVisible)
+                        else if (!MainContextMenu.IsVisible)
                         {
                             if (GetCropppingTool != null && GetCropppingTool.IsVisible)
                             {

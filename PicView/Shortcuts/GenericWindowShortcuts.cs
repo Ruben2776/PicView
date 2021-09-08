@@ -34,6 +34,8 @@ namespace PicView.Shortcuts
                         Environment.Exit(0);
                     }
                     break;
+
+                default: break;
             }
         }
 

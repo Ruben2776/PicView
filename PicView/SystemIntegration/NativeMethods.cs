@@ -3,6 +3,7 @@ using PicView.PicGallery;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -53,7 +54,7 @@ namespace PicView.SystemIntegration
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        internal struct SHELLEXECUTEINFO
+        internal struct SHELLEXECUTEINFO : IEquatable<SHELLEXECUTEINFO>
         {
             public int cbSize;
             public uint fMask;
@@ -82,6 +83,35 @@ namespace PicView.SystemIntegration
             public readonly uint dwHotKey;
             public IntPtr hIcon;
             public IntPtr hProcess;
+
+            public override bool Equals(object obj)
+            {
+                return obj is SHELLEXECUTEINFO sHELLEXECUTEINFO && Equals(sHELLEXECUTEINFO);
+            }
+
+            public bool Equals(SHELLEXECUTEINFO other)
+            {
+                return cbSize == other.cbSize &&
+                       fMask == other.fMask &&
+                       EqualityComparer<IntPtr>.Default.Equals(hwnd, other.hwnd) &&
+                       lpVerb == other.lpVerb &&
+                       lpFile == other.lpFile &&
+                       lpParameters == other.lpParameters &&
+                       lpDirectory == other.lpDirectory &&
+                       nShow == other.nShow &&
+                       EqualityComparer<IntPtr>.Default.Equals(hInstApp, other.hInstApp) &&
+                       EqualityComparer<IntPtr>.Default.Equals(lpIDList, other.lpIDList) &&
+                       lpClass == other.lpClass &&
+                       EqualityComparer<IntPtr>.Default.Equals(hkeyClass, other.hkeyClass) &&
+                       dwHotKey == other.dwHotKey &&
+                       EqualityComparer<IntPtr>.Default.Equals(hIcon, other.hIcon) &&
+                       EqualityComparer<IntPtr>.Default.Equals(hProcess, other.hProcess);
+            }
+
+            public override int GetHashCode()
+            {
+                throw new NotImplementedException();
+            }
         }
 
         #endregion File properties
@@ -159,12 +189,27 @@ namespace PicView.SystemIntegration
         #region Blur
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct Win32Point
+        internal struct Win32Point : IEquatable<Win32Point>
         {
             public int X;
             public int Y;
-        };
 
+            public override bool Equals(object obj)
+            {
+                return obj is Win32Point point && Equals(point);
+            }
+
+            public bool Equals(Win32Point other)
+            {
+                return X == other.X &&
+                       Y == other.Y;
+            }
+
+            public override int GetHashCode()
+            {
+                throw new NotImplementedException();
+            }
+        }
         private enum AccentState
         {
             ACCENT_DISABLED = 0,

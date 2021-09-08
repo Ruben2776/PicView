@@ -21,7 +21,7 @@ namespace PicView.UILogic.Loading
         internal static void AddContextMenus()
         {
             // Add main contextmenu
-            cm = new ContextMenu();
+            MainContextMenu = new ContextMenu();
             var scbf = (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"];
 
             ///////////////////////////
@@ -43,7 +43,7 @@ namespace PicView.UILogic.Loading
             opencmIcon.Fill = scbf;
             opencm.Icon = opencmIcon;
             opencm.Click += async (_, _) => await OpenAsync().ConfigureAwait(false);
-            cm.Items.Add(opencm);
+            MainContextMenu.Items.Add(opencm);
 
             ///////////////////////////
             ///////////////////////////
@@ -64,7 +64,7 @@ namespace PicView.UILogic.Loading
             savecmIcon.Fill = scbf;
             savecm.Icon = savecmIcon;
             savecm.Click += async (s, x) => await SaveFilesAsync().ConfigureAwait(false);
-            cm.Items.Add(savecm);
+            MainContextMenu.Items.Add(savecm);
 
             ///////////////////////////
             ///////////////////////////
@@ -85,7 +85,7 @@ namespace PicView.UILogic.Loading
             printcmIcon.Fill = scbf;
             printcm.Icon = printcmIcon;
             printcm.Click += (s, x) => Print(Pics[FolderIndex]);
-            cm.Items.Add(printcm);
+            MainContextMenu.Items.Add(printcm);
 
             ///////////////////////////
             ///////////////////////////
@@ -106,14 +106,14 @@ namespace PicView.UILogic.Loading
             openwIcon.Fill = scbf;
             openwcm.Icon = openwIcon;
             openwcm.Click += async (_, _) => await OpenWithAsync(Pics[FolderIndex]);
-            cm.Items.Add(openwcm);
+            MainContextMenu.Items.Add(openwcm);
 
             ///////////////////////////
             ///////////////////////////
             ///     Recent Files   \\\\
             ///////////////////////////
             ///////////////////////////
-            cm.Items.Add(new Separator());
+            MainContextMenu.Items.Add(new Separator());
             var recentcm = new MenuItem
             {
                 Header = Application.Current.Resources["RecentFiles"],
@@ -126,7 +126,7 @@ namespace PicView.UILogic.Loading
             recentcmIcon.Width = recentcmIcon.Height = 12;
             recentcmIcon.Fill = scbf;
             recentcm.Icon = recentcmIcon;
-            cm.Items.Add(recentcm);
+            MainContextMenu.Items.Add(recentcm);
 
             ///////////////////////////
             ///////////////////////////
@@ -157,8 +157,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 0
             };
-            sortcmChild0Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(0); cm.IsOpen = false; };
-            sortcmChild0.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(0); cm.IsOpen = false; };
+            sortcmChild0Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(0); MainContextMenu.IsOpen = false; };
+            sortcmChild0.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(0); MainContextMenu.IsOpen = false; };
             sortcmChild0.Header = sortcmChild0Header;
             sortcm.Items.Add(sortcmChild0);
 
@@ -173,8 +173,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 1
             };
-            sortcmChild1Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(1); cm.IsOpen = false; };
-            sortcmChild1.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(1); cm.IsOpen = false; };
+            sortcmChild1Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(1); MainContextMenu.IsOpen = false; };
+            sortcmChild1.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(1); MainContextMenu.IsOpen = false; };
             sortcmChild1.Header = sortcmChild1Header;
             sortcm.Items.Add(sortcmChild1);
 
@@ -189,8 +189,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 2
             };
-            sortcmChild2Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(2); cm.IsOpen = false; };
-            sortcmChild2.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(2); cm.IsOpen = false; };
+            sortcmChild2Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(2); MainContextMenu.IsOpen = false; };
+            sortcmChild2.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(2); MainContextMenu.IsOpen = false; };
             sortcmChild2.Header = sortcmChild2Header;
             sortcm.Items.Add(sortcmChild2);
 
@@ -205,8 +205,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 3
             };
-            sortcmChild3Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(3); cm.IsOpen = false; };
-            sortcmChild3.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(3); cm.IsOpen = false; };
+            sortcmChild3Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(3); MainContextMenu.IsOpen = false; };
+            sortcmChild3.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(3); MainContextMenu.IsOpen = false; };
             sortcmChild3.Header = sortcmChild3Header;
             sortcm.Items.Add(sortcmChild3);
 
@@ -221,8 +221,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 4
             };
-            sortcmChild4Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(4); cm.IsOpen = false; };
-            sortcmChild4.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(4); cm.IsOpen = false; };
+            sortcmChild4Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(4); MainContextMenu.IsOpen = false; };
+            sortcmChild4.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(4); MainContextMenu.IsOpen = false; };
             sortcmChild4.Header = sortcmChild4Header;
             sortcm.Items.Add(sortcmChild4);
 
@@ -237,8 +237,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 5
             };
-            sortcmChild5Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(5); cm.IsOpen = false; };
-            sortcmChild5.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(5); cm.IsOpen = false; };
+            sortcmChild5Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(5); MainContextMenu.IsOpen = false; };
+            sortcmChild5.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(5); MainContextMenu.IsOpen = false; };
             sortcmChild5.Header = sortcmChild5Header;
             sortcm.Items.Add(sortcmChild5);
 
@@ -253,11 +253,11 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 6
             };
-            sortcmChild6Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(6); cm.IsOpen = false; };
-            sortcmChild6.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(6); cm.IsOpen = false; };
+            sortcmChild6Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(6); MainContextMenu.IsOpen = false; };
+            sortcmChild6.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(6); MainContextMenu.IsOpen = false; };
             sortcmChild6.Header = sortcmChild6Header;
             sortcm.Items.Add(sortcmChild6);
-            cm.Items.Add(sortcm);
+            MainContextMenu.Items.Add(sortcm);
 
             ///////////////////////////
             ///////////////////////////
@@ -276,7 +276,7 @@ namespace PicView.UILogic.Loading
             settingscmIcon.Width = settingscmIcon.Height = 12;
             settingscmIcon.Fill = scbf;
             settingscm.Icon = settingscmIcon;
-            cm.Items.Add(settingscm);
+            MainContextMenu.Items.Add(settingscm);
 
             ///////////////////////////
             ///   Looping          \\\\
@@ -386,7 +386,7 @@ namespace PicView.UILogic.Loading
             settingscmShortcut.Click += (_, _) => AllSettingsWindow();
             settingscm.Items.Add(settingscmShortcut);
 
-            cm.Items.Add(new Separator());
+            MainContextMenu.Items.Add(new Separator());
 
             ///////////////////////////
             ///////////////////////////
@@ -442,7 +442,7 @@ namespace PicView.UILogic.Loading
 
             setAsCm.Items.Add(lockCm);
 
-            cm.Items.Add(setAsCm);
+            MainContextMenu.Items.Add(setAsCm);
 
             ///////////////////////////
             ///////////////////////////
@@ -463,7 +463,7 @@ namespace PicView.UILogic.Loading
             lcdcmIcon.Fill = scbf;
             lcdcm.Icon = lcdcmIcon;
             lcdcm.Click += (s, x) => Open_In_Explorer();
-            cm.Items.Add(lcdcm);
+            MainContextMenu.Items.Add(lcdcm);
 
             ///////////////////////////
             ///////////////////////////
@@ -483,8 +483,8 @@ namespace PicView.UILogic.Loading
             fildecmIcon.Fill = scbf;
             fildecm.Icon = fildecmIcon;
             fildecm.Click += (_, _) => ImageInfoWindow();
-            cm.Items.Add(fildecm);
-            cm.Items.Add(new Separator());
+            MainContextMenu.Items.Add(fildecm);
+            MainContextMenu.Items.Add(new Separator());
 
             ///////////////////////////
             ///////////////////////////
@@ -552,7 +552,7 @@ namespace PicView.UILogic.Loading
             cppfm.Click += async (_, _) => await CopyTextAsync();
             cpm.Items.Add(cppfm);
 
-            cm.Items.Add(cpm);
+            MainContextMenu.Items.Add(cpm);
 
             ///////////////////////////
             ///////////////////////////
@@ -573,7 +573,7 @@ namespace PicView.UILogic.Loading
             cpccmIcon.Fill = scbf;
             cpccm.Icon = cpccmIcon;
             cpccm.Click += async (_, _) => await CutAsync(Pics[FolderIndex]);
-            cm.Items.Add(cpccm);
+            MainContextMenu.Items.Add(cpccm);
 
             ///////////////////////////
             ///////////////////////////
@@ -595,7 +595,7 @@ namespace PicView.UILogic.Loading
             };
             pastecm.Icon = pastecmIcon;
             pastecm.Click += async (_, _) => await PasteAsync().ConfigureAwait(false);
-            cm.Items.Add(pastecm);
+            MainContextMenu.Items.Add(pastecm);
 
             ///////////////////////////
             ///////////////////////////
@@ -617,14 +617,14 @@ namespace PicView.UILogic.Loading
             };
             MovetoRecycleBin.Icon = MovetoRecycleBinIcon;
             MovetoRecycleBin.Click += async (_, _) => await DeleteFileAsync(true);
-            cm.Items.Add(MovetoRecycleBin);
+            MainContextMenu.Items.Add(MovetoRecycleBin);
 
             ///////////////////////////
             ///////////////////////////
             ///   Close            \\\\
             ///////////////////////////
             ///////////////////////////
-            cm.Items.Add(new Separator());
+            MainContextMenu.Items.Add(new Separator());
             var clcm = new MenuItem
             {
                 Header = Application.Current.Resources["Close"],
@@ -640,12 +640,12 @@ namespace PicView.UILogic.Loading
                 Fill = scbf
             };
             clcm.Icon = mclcmIcon;
-            clcm.Click += (s, x) => { cm.Visibility = Visibility.Collapsed; SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow); };
-            cm.Items.Add(clcm);
+            clcm.Click += (s, x) => { MainContextMenu.Visibility = Visibility.Collapsed; SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow); };
+            MainContextMenu.Items.Add(clcm);
 
             // Add to elements
-            ConfigureWindows.GetMainWindow.MainImage.ContextMenu = ConfigureWindows.GetMainWindow.ParentContainer.ContextMenu = cm;
-            cm.Opened += (tt, yy) => Recentcm_Opened(recentcm);
+            ConfigureWindows.GetMainWindow.MainImage.ContextMenu = ConfigureWindows.GetMainWindow.ParentContainer.ContextMenu = MainContextMenu;
+            MainContextMenu.Opened += (tt, yy) => Recentcm_Opened(recentcm);
 
 #if DEBUG
             Trace.WriteLine("Contextmenu loaded");

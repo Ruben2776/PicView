@@ -1,6 +1,7 @@
 ﻿using PicView.PicGallery;
 using PicView.UILogic.TransformImage;
 using System;
+using System.Threading.Tasks;
 using System.Timers;
 using static PicView.UILogic.UC;
 
@@ -17,7 +18,7 @@ namespace PicView.UILogic.Animations
         /// Hides/shows interface elements with a fade animation
         /// </summary>
         /// <param name="show"></param>
-        internal static async void FadeControlsAsync(bool show, double time = .5)
+        internal static async Task FadeControlsAsync(bool show, double time = .5)
         {
             if (Properties.Settings.Default.ShowInterface
                 || Properties.Settings.Default.Fullscreen

@@ -118,8 +118,8 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.ParentContainer.Drop += Image_Drop;
             ConfigureWindows.GetMainWindow.ParentContainer.DragEnter += Image_DragEnter;
             ConfigureWindows.GetMainWindow.ParentContainer.DragLeave += Image_DragLeave;
-            ConfigureWindows.GetMainWindow.ParentContainer.MouseMove += Interface_MouseMove;
-            ConfigureWindows.GetMainWindow.ParentContainer.MouseLeave += Interface_MouseLeave;
+            ConfigureWindows.GetMainWindow.ParentContainer.MouseMove += async (sender, e) => await Interface_MouseMoveAsync(sender, e).ConfigureAwait(false);
+            ConfigureWindows.GetMainWindow.ParentContainer.MouseLeave += async (sender, e) => await Interface_MouseLeaveAsync(sender, e).ConfigureAwait(false);
             ConfigureWindows.GetMainWindow.ParentContainer.PreviewMouseWheel += async (sender, e) => await MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);
 
             // TooltipStyle
