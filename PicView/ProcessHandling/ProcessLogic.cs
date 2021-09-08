@@ -1,18 +1,34 @@
 ﻿using PicView.ChangeImage;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Security.Permissions;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 
-namespace PicView.ConfigureSettings
+namespace PicView.ProcessHandling
 {
-    internal static class GeneralSettings
+    internal static class ProcessLogic
     {
+        internal static string GetPathToProcess()
+        {
+            var GetAppPath = System.Environment.ProcessPath;
+
+            if (Path.GetExtension(GetAppPath) == ".dll")
+            {
+                GetAppPath = GetAppPath.Replace(".dll", ".exe", System.StringComparison.InvariantCultureIgnoreCase);
+            }
+            return GetAppPath;
+        }
+
         internal static void RestartApp()
         {
             Properties.Settings.Default.Save();
 
-            var GetAppPath = GetPathToProcess();
+            var GetAppPath = ProcessLogic.GetPathToProcess();
 
             string args;
             if (Navigation.Pics.Count > Navigation.FolderIndex)
@@ -32,15 +48,24 @@ namespace PicView.ConfigureSettings
             Application.Current.Shutdown();
         }
 
-        internal static string GetPathToProcess()
+        internal static void StartProcessWithFileArgument(string argument)
         {
-            var GetAppPath = System.Environment.ProcessPath;
+            var pathToExe = ProcessLogic.GetPathToProcess();
 
-            if (Path.GetExtension(GetAppPath) == ".dll")
+            // Sanitize file name
+            var args = argument.Replace(@"\\", @"\");
+            args = args.Insert(0, @"""");
+            args = args.Insert(args.Length - 1, @"""");
+
+            Process process = new()
             {
-                GetAppPath = GetAppPath.Replace(".dll", ".exe", System.StringComparison.InvariantCultureIgnoreCase);
-            }
-            return GetAppPath;
+                StartInfo =
+                        {
+                            FileName = pathToExe,
+                            Arguments = args
+                        }
+            };
+            process.Start();
         }
 
 #pragma warning disable SYSLIB0003 // Type or member is obsolete

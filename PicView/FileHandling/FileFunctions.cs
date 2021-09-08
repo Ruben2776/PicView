@@ -9,6 +9,17 @@ namespace PicView.FileHandling
 {
     internal static class FileFunctions
     {
+        /// <summary>
+        /// Returns true if directory
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        internal static bool CheckIfDirectoryOrFile(string path)
+        {
+            var getAttributes = File.GetAttributes(path);
+            return getAttributes.HasFlag(FileAttributes.Directory);
+        }
+
         internal static bool RenameFile(string path, string newPath)
         {
             try

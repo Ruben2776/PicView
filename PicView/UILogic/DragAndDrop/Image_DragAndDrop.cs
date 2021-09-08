@@ -1,6 +1,7 @@
 ﻿using PicView.ChangeImage;
 using PicView.ConfigureSettings;
 using PicView.FileHandling;
+using PicView.ProcessHandling;
 using PicView.Views.UserControls;
 using PicView.Views.UserControls.Misc;
 using System;
@@ -168,7 +169,7 @@ namespace PicView.UILogic.DragAndDrop
                     string dataStr = Encoding.Unicode.GetString(data.ToArray());
                     string[] parts = dataStr.Split((char)10);
 
-                    await LoadPiFrom(parts[0]).ConfigureAwait(false);
+                    await LoadPiFromFileAsync(parts[0]).ConfigureAwait(false);
                     return;
                 }
             }
@@ -189,55 +190,29 @@ namespace PicView.UILogic.DragAndDrop
             {
                 if (Path.GetExtension(files[0]) == ".url")
                 {
-                    await LoadPiFrom(files[0]).ConfigureAwait(false);
+                    await LoadPiFromFileAsync(files[0]).ConfigureAwait(false);
                 }
                 else if (Directory.Exists(files[0]))
                 {
                     if (Properties.Settings.Default.IncludeSubDirectories || Directory.GetFiles(files[0]).Length > 0)
                     {
-                        await PicFolder(files[0]).ConfigureAwait(false);
+                        await LoadPicFromFolderAsync(files[0]).ConfigureAwait(false);
                     }
-                    return;
                 }
                 else if (SupportedFiles.IsSupportedArchives(Path.GetExtension(files[0])))
                 {
                     FreshStartup = true;
                     Error_Handling.ChangeFolder();
-                    await LoadPiFrom(files[0]).ConfigureAwait(false);
-                }
-                return;
-            }
-
-            // Check if same file
-            if (files.Length == 1 && Pics.Count > 0)
-            {
-                if (files[0] == Pics[FolderIndex])
-                {
-                    return;
+                    await LoadPiFromFileAsync(files[0]).ConfigureAwait(false);
                 }
             }
-
-            // Load it
-            await LoadPiFrom(files[0]).ConfigureAwait(false);
 
             // Open additional windows if multiple files dropped 
             if (files.Length > 0)
             {
-                var pathToExe = GeneralSettings.GetPathToProcess();
                 for (int i = 1; i < files.Length; i++)
                 {
-                    var args = files[i].Replace(@"\\", @"\");
-                    args = args.Insert(0, @"""");
-                    args = args.Insert(args.Length - 1, @"""");
-                    Process process = new()
-                    {
-                        StartInfo = 
-                        {
-                            FileName = pathToExe,
-                            Arguments = args
-                        }
-                    };
-                    process.Start();
+                    ProcessLogic.StartProcessWithFileArgument(files[i]);
                 }
             }
         }

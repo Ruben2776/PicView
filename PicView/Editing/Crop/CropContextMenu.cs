@@ -27,7 +27,7 @@ namespace PicView.Editing.Crop
                 InputGestureText = Application.Current.Resources["Enter"] as string,
                 Icon = cropIcon
             };
-            cropCm.Click += (_, _) => CropFunctions.PerformCrop();
+            cropCm.Click += async (_, _) => await CropFunctions.PerformCropAsync().ConfigureAwait(false);
 
             ContextMenu.Items.Add(cropCm);
 

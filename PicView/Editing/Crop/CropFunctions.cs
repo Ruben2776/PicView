@@ -42,18 +42,20 @@ namespace PicView.Editing.Crop
             CanNavigate = false;
         }
 
-        internal static async void PerformCrop()
+        internal static async Task PerformCropAsync()
         {
-            if (Pics.Count == 0)
-            {
-                SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height);
-            }
-            else
-            {
-                SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
-            }
-
             await SaveCrop().ConfigureAwait(false);
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            {
+                if (Pics.Count == 0)
+                {
+                    SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height);
+                }
+                else
+                {
+                    SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
+                }
+            }));           
             CanNavigate = true;
         }
 
@@ -134,7 +136,7 @@ namespace PicView.Editing.Crop
             }
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(async () =>
             {
-                if (!success)
+                if (success == false)
                 {
                     await Tooltip.ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]).ConfigureAwait(false);
                 }

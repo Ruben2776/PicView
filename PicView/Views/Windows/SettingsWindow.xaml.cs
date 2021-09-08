@@ -107,8 +107,8 @@ namespace PicView.Views.Windows
                 CtrlZoom.Checked += (_, _) => Properties.Settings.Default.CtrlZoom = true;
                 ScrollZoom.Checked += (_, _) => Properties.Settings.Default.CtrlZoom = false;
 
-                ThemeRestart.MouseLeftButtonDown += (_, _) => GeneralSettings.RestartApp();
-                LanguageRestart.MouseLeftButtonDown += (_, _) => GeneralSettings.RestartApp();
+                ThemeRestart.MouseLeftButtonDown += (_, _) => ProcessHandling.ProcessLogic.RestartApp();
+                LanguageRestart.MouseLeftButtonDown += (_, _) => ProcessHandling.ProcessLogic.RestartApp();
 
                 TopmostRadio.Checked += (_, _) => ConfigureWindows.IsMainWindowTopMost = !Properties.Settings.Default.TopMost;
                 TopmostRadio.Unchecked += (_, _) => ConfigureWindows.IsMainWindowTopMost = false;

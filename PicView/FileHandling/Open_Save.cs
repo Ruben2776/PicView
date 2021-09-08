@@ -92,7 +92,7 @@ namespace PicView.FileHandling
             };
             if (dlg.ShowDialog().Value)
             {
-                await LoadPiFrom(dlg.FileName).ConfigureAwait(false);
+                await LoadPiFromFileAsync(dlg.FileName).ConfigureAwait(false);
             }
             else
             {

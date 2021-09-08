@@ -89,7 +89,7 @@ namespace PicView.UILogic
                     }
                     else
                     {
-                        await LoadPiFrom(ConfigureWindows.GetMainWindow.TitleText.Text).ConfigureAwait(false);
+                        await LoadPiFromFileAsync(ConfigureWindows.GetMainWindow.TitleText.Text).ConfigureAwait(false);
                     }
                 }
                 else

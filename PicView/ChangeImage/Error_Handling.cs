@@ -74,7 +74,7 @@ namespace PicView.ChangeImage
                 // Need a sort method instead
                 GalleryFunctions.Clear();
 
-                _ = LoadPiFrom(s);
+                _ = LoadPiFromFileAsync(s);
 
                 // Reset
 

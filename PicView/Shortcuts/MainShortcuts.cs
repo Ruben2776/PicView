@@ -45,7 +45,7 @@ namespace PicView.Shortcuts
 
                     if (e.Key == Key.Enter)
                     {
-                        CropFunctions.PerformCrop();
+                        await CropFunctions.PerformCropAsync().ConfigureAwait(false);
                         e.Handled = true;
                         return;
                     }

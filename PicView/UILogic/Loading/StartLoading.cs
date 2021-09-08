@@ -126,7 +126,14 @@ namespace PicView.UILogic.Loading
                     SetLastWindowSize();
                 }
 
-                await LoadPiFrom(args[1]).ConfigureAwait(false);
+                if (FileHandling.FileFunctions.CheckIfDirectoryOrFile(args[1]))
+                {
+                    await LoadPicFromFolderAsync(args[1]);
+                }
+                else
+                {
+                    await LoadPiFromFileAsync(args[1]).ConfigureAwait(false);
+                }
             }
         }
 

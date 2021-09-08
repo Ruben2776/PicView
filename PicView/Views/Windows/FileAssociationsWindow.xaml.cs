@@ -159,7 +159,7 @@ namespace PicView.Views.Windows
                 }
 
                 var xx = sb.ToString();
-                ConfigureSettings.GeneralSettings.ElevateProcess(sb.ToString());
+                ProcessHandling.ProcessLogic.ElevateProcess(sb.ToString());
             };
 
             ApplyButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ApplyText); };
@@ -171,7 +171,7 @@ namespace PicView.Views.Windows
             var colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.1) };
 
             // RmFileAssoc
-            RmFileAssoc.MouseLeftButtonDown += (_, _) => ConfigureSettings.GeneralSettings.ElevateProcess(".remove");
+            RmFileAssoc.MouseLeftButtonDown += (_, _) => ProcessHandling.ProcessLogic.ElevateProcess(".remove");
             RmFileAssoc.MouseEnter += delegate
             {
                 colorAnimation.From = AnimationHelper.GetPrefferedColorOver();

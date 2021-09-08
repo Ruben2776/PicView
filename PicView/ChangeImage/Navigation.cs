@@ -86,10 +86,14 @@ namespace PicView.ChangeImage
         /// Loads a picture from a given file path and does extra error checking
         /// </summary>
         /// <param name="path"></param>
-        internal static async Task LoadPiFrom(string path)
+        internal static async Task LoadPiFromFileAsync(string path)
         {
-            // Set Loading
-            SetLoadingString();
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            {
+                // Set Loading
+                SetLoadingString();
+            }));
+
 
             // Handle if from web
             if (!File.Exists(path))
@@ -388,7 +392,7 @@ namespace PicView.ChangeImage
         /// Handle logic if user wants to load from a folder
         /// </summary>
         /// <param name="folder"></param>
-        internal static async Task PicFolder(string folder)
+        internal static async Task LoadPicFromFolderAsync(string folder)
         {
             // TODO add new function that can go to next/prev folder
 

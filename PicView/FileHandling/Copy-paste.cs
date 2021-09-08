@@ -98,33 +98,37 @@ namespace PicView.FileHandling
 
                 if (files != null)
                 {
-                    var x = files[0];
+                    var firstFile = files[0];
 
                     if (Pics.Count != 0)
                     {
                         // If from same folder
-                        if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]) && Path.GetDirectoryName(x) == Path.GetDirectoryName(Pics[FolderIndex]))
+                        if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]) && Path.GetDirectoryName(firstFile) == Path.GetDirectoryName(Pics[FolderIndex]))
                         {
-                            await LoadPicAt(Pics.IndexOf(x)).ConfigureAwait(false);
+                            await LoadPicAt(Pics.IndexOf(firstFile)).ConfigureAwait(false);
                         }
                         else
                         {
-                            await LoadPiFrom(x).ConfigureAwait(false);
+                            if (FileFunctions.CheckIfDirectoryOrFile(firstFile))
+                            {
+                                await LoadPicFromFolderAsync(firstFile).ConfigureAwait(false);
+                            }
+                            else
+                            {
+                                await LoadPiFromFileAsync(firstFile).ConfigureAwait(false);
+                            }
                         }
                     }
                     else
                     {
-                        await LoadPiFrom(x).ConfigureAwait(false);
+                        await LoadPiFromFileAsync(firstFile).ConfigureAwait(false);
                     }
 
                     if (files.Length > 1)
                     {
                         for (int i = 1; i < files.Length; i++)
                         {
-                            using var n = new Process();
-                            n.StartInfo.FileName = Assembly.GetExecutingAssembly().Location;
-                            n.StartInfo.Arguments = files[i];
-                            n.Start();
+                            ProcessHandling.ProcessLogic.StartProcessWithFileArgument(files[i]);
                         }
                     }
                     return;
@@ -163,7 +167,7 @@ namespace PicView.FileHandling
 
             if (File.Exists(s))
             {
-                await LoadPiFrom(s).ConfigureAwait(false);
+                await LoadPiFromFileAsync(s).ConfigureAwait(false);
             }
             else if (Directory.Exists(s))
             {
@@ -171,7 +175,7 @@ namespace PicView.FileHandling
                 Pics = FileList(s);
                 if (Pics.Count > 0)
                 {
-                    await LoadPiFrom(Pics[0]).ConfigureAwait(false);
+                    await LoadPiFromFileAsync(Pics[0]).ConfigureAwait(false);
                 }
                 else if (Pics.Count == 0)
                 {
@@ -179,7 +183,7 @@ namespace PicView.FileHandling
                 }
                 else if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]))
                 {
-                    await LoadPiFrom(Pics[FolderIndex]).ConfigureAwait(false);
+                    await LoadPiFromFileAsync(Pics[FolderIndex]).ConfigureAwait(false);
                 }
                 else
                 {
