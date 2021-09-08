@@ -650,11 +650,6 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static async Task FastPicUpdateAsync()
         {
-            /// TODO optimize preloader usage here, to not cause delays
-            /// when very quickly browsing images
-            /// Need a solution that will make sure no unused values
-            /// are in the preloader collection
-
             // Make sure it's only updated when the key is actually held down
             if (!FastPicRunning)
             {
