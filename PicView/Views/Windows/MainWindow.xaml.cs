@@ -18,7 +18,7 @@ namespace PicView.Views.Windows
             }
 
             InitializeComponent();
-            Loaded += delegate { StartLoading.LoadedEvemtAsync(); };
+            Loaded += async delegate { await StartLoading.LoadedEvemtAsync().ConfigureAwait(false); };
             ContentRendered += delegate { StartLoading.ContentRenderedEvent(); };
         }
 

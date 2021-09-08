@@ -20,7 +20,7 @@ namespace PicView.Editing.Crop.Tools
 
             Border = new Border
             {
-                Background = new SolidColorBrush(ConfigureSettings.ConfigColors.backgroundBorderColor),
+                Background = new SolidColorBrush(ConfigureSettings.ConfigColors.BackgroundBorderColor),
                 Padding = new Thickness(9),
                 BorderBrush = (SolidColorBrush)Application.Current.Resources["BorderBrush"],
                 BorderThickness = new Thickness(1),
@@ -31,7 +31,7 @@ namespace PicView.Editing.Crop.Tools
             {
                 FontFamily = new FontFamily("/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros"),
                 FontSize = 16,
-                Foreground = new SolidColorBrush(ConfigureSettings.ConfigColors.mainColor),
+                Foreground = new SolidColorBrush(ConfigureSettings.ConfigColors.MainColor),
             };
             Border.Child = TextBlock;
         }

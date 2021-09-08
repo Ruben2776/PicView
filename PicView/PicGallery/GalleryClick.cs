@@ -39,8 +39,8 @@ namespace PicView.PicGallery
 
                 if (WindowSizing.AutoFitWindow)
                 {
-                    GetPicGallery.Width = xWidth;
-                    GetPicGallery.Height = xHeight;
+                    GetPicGallery.Width = XWidth;
+                    GetPicGallery.Height = XHeight;
                 }
 
                 GetPicGallery.x2.Visibility = Visibility.Hidden;
@@ -61,8 +61,8 @@ namespace PicView.PicGallery
                 border.Child = img;
                 GetPicGallery.grid.Children.Add(border);
 
-                var from = GalleryNavigation.picGalleryItem_Size;
-                var to = new double[] { xWidth, xHeight };
+                var from = GalleryNavigation.PicGalleryItem_Size;
+                var to = new double[] { XWidth, XHeight };
                 var acceleration = 0.2;
                 var deceleration = 0.4;
                 var duration = TimeSpan.FromSeconds(.3);

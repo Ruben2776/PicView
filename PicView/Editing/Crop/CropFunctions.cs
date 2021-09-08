@@ -29,8 +29,8 @@ namespace PicView.Editing.Crop
                 LoadControls.LoadCroppingTool();
             }
 
-            GetCropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? xWidth : xHeight;
-            GetCropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? xHeight : xWidth;
+            GetCropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? XWidth : XHeight;
+            GetCropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? XHeight : XWidth;
 
             ConfigureWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["CropMessage"] as string;
 
@@ -73,8 +73,8 @@ namespace PicView.Editing.Crop
 
         internal static void InitilizeCrop()
         {
-            GetCropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? xWidth : xHeight;
-            GetCropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? xHeight : xWidth;
+            GetCropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? XWidth : XHeight;
+            GetCropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? XHeight : XWidth;
 
             CropService = new CropService(GetCropppingTool);
 

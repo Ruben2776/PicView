@@ -26,22 +26,22 @@ namespace PicView.PicGallery
         {
             if (WindowSizing.MonitorInfo.Width > 2100)
             {
-                GalleryNavigation.picGalleryItem_Size = 260;
+                GalleryNavigation.PicGalleryItem_Size = 260;
             }
             else if (WindowSizing.MonitorInfo.Width > 1700)
             {
-                GalleryNavigation.picGalleryItem_Size = 210;
+                GalleryNavigation.PicGalleryItem_Size = 210;
             }
             else if (WindowSizing.MonitorInfo.Width > 1200)
             {
-                GalleryNavigation.picGalleryItem_Size = 150;
+                GalleryNavigation.PicGalleryItem_Size = 150;
             }
             else
             {
-                GalleryNavigation.picGalleryItem_Size = 100;
+                GalleryNavigation.PicGalleryItem_Size = 100;
             }
 
-            GalleryNavigation.picGalleryItem_Size_s = GalleryNavigation.picGalleryItem_Size - 30;
+            GalleryNavigation.PicGalleryItem_Size_s = GalleryNavigation.PicGalleryItem_Size - 30;
         }
 
         internal static void LoadLayout()
@@ -58,7 +58,7 @@ namespace PicView.PicGallery
                 Panel.SetZIndex(UC.GetPicGallery, 999);
             }
 
-            if (GalleryNavigation.picGalleryItem_Size == 0)
+            if (GalleryNavigation.PicGalleryItem_Size == 0)
             {
                 SetSize();
             }
@@ -84,7 +84,7 @@ namespace PicView.PicGallery
             }
             else
             {
-                UC.GetPicGallery.Width = (GalleryNavigation.picGalleryItem_Size + 25) * WindowSizing.MonitorInfo.DpiScaling;
+                UC.GetPicGallery.Width = (GalleryNavigation.PicGalleryItem_Size + 25) * WindowSizing.MonitorInfo.DpiScaling;
                 UC.GetPicGallery.Height = WindowSizing.MonitorInfo.WorkArea.Height;
 
                 ConfigureWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;

@@ -11,8 +11,8 @@ namespace PicView.PicGallery
     {
         #region int calculations
 
-        internal static int picGalleryItem_Size;
-        internal static int picGalleryItem_Size_s;
+        internal static int PicGalleryItem_Size { get; set; }
+        internal static int PicGalleryItem_Size_s { get; set; }
 
         internal static int Horizontal_items
         {
@@ -20,7 +20,7 @@ namespace PicView.PicGallery
             {
                 if (GetPicGallery == null) { return 0; }
 
-                return (int)Math.Floor(GetPicGallery.Width / picGalleryItem_Size);
+                return (int)Math.Floor(GetPicGallery.Width / PicGalleryItem_Size);
             }
         }
 
@@ -31,7 +31,7 @@ namespace PicView.PicGallery
                 if (GetPicGallery == null) { return 0; }
 
                 return Properties.Settings.Default.FullscreenGallery == false ?
-                    (int)Math.Floor(GetPicGallery.Height / picGalleryItem_Size) : Pics.Count;
+                    (int)Math.Floor(GetPicGallery.Height / PicGalleryItem_Size) : Pics.Count;
             }
         }
 
@@ -43,7 +43,7 @@ namespace PicView.PicGallery
 
                 return Properties.Settings.Default.FullscreenGallery == false ?
                     Horizontal_items * Vertical_items :
-                    (int)Math.Floor(GetPicGallery.Height / picGalleryItem_Size);
+                    (int)Math.Floor(GetPicGallery.Height / PicGalleryItem_Size);
             }
         }
 
@@ -67,11 +67,11 @@ namespace PicView.PicGallery
         {
             if (Properties.Settings.Default.FullscreenGallery == false)
             {
-                GetPicGallery.Scroller.ScrollToHorizontalOffset(picGalleryItem_Size * Horizontal_items * Current_page);
+                GetPicGallery.Scroller.ScrollToHorizontalOffset(PicGalleryItem_Size * Horizontal_items * Current_page);
             }
             else
             {
-                GetPicGallery.Scroller.ScrollToVerticalOffset(picGalleryItem_Size * Items_per_page * Current_page);
+                GetPicGallery.Scroller.ScrollToVerticalOffset(PicGalleryItem_Size * Items_per_page * Current_page);
             }
         }
 
@@ -107,7 +107,7 @@ namespace PicView.PicGallery
             }
             else
             {
-                var speed = speedUp ? picGalleryItem_Size * 4.7 : picGalleryItem_Size;
+                var speed = speedUp ? PicGalleryItem_Size * 4.7 : PicGalleryItem_Size;
                 var direction = next ? GetPicGallery.Scroller.HorizontalOffset - speed : GetPicGallery.Scroller.HorizontalOffset + speed;
 
                 if (Properties.Settings.Default.FullscreenGallery == false)
@@ -142,12 +142,12 @@ namespace PicView.PicGallery
             if (selected)
             {
                 nextItem.innerborder.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
-                nextItem.innerborder.Width = nextItem.innerborder.Height = picGalleryItem_Size;
+                nextItem.innerborder.Width = nextItem.innerborder.Height = PicGalleryItem_Size;
             }
             else
             {
                 nextItem.innerborder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
-                nextItem.innerborder.Width = nextItem.innerborder.Height = picGalleryItem_Size_s;
+                nextItem.innerborder.Width = nextItem.innerborder.Height = PicGalleryItem_Size_s;
             }
         }
 

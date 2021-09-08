@@ -14,12 +14,12 @@ namespace PicView.UILogic.TransformImage
         /// <summary>
         /// Starting point of AutoScroll
         /// </summary>
-        internal static Point? AutoScrollOrigin;
+        internal static Point? AutoScrollOrigin { get; set; }
 
         /// <summary>
         /// Current point of AutoScroll
         /// </summary>
-        internal static Point? AutoScrollPos;
+        internal static Point? AutoScrollPos { get; set; }
 
         internal static readonly Timer AutoScrollTimer = new Timer()
         {

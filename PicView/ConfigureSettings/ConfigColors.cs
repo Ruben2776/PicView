@@ -18,12 +18,12 @@ namespace PicView.ConfigureSettings
         /// <summary>
         /// Helper for user color settings
         /// </summary>
-        internal static Color backgroundBorderColor;
+        internal static Color BackgroundBorderColor { get; set; }
 
         /// <summary>
         /// Helper for user color settings
         /// </summary>
-        internal static Color mainColor;
+        internal static Color MainColor { get; set; }
 
         /// <summary>
         /// Update color values for brushes and window border
@@ -60,8 +60,8 @@ namespace PicView.ConfigureSettings
 
         internal static void SetColors()
         {
-            mainColor = (Color)Application.Current.Resources["IconColor"];
-            backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
+            MainColor = (Color)Application.Current.Resources["IconColor"];
+            BackgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
 
             if (ConfigureWindows.GetMainWindow.MainImageBorder == null)
             {

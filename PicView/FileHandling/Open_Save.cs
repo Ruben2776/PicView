@@ -54,7 +54,10 @@ namespace PicView.FileHandling
                     return;
                 }
             }
-            else return;
+            else
+            {
+                return;
+            }
 
             if (!File.Exists(Pics[FolderIndex]) || ConfigureWindows.GetMainWindow.MainImage.Source == null)
             {

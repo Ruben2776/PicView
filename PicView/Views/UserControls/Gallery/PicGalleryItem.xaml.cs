@@ -24,27 +24,27 @@ namespace PicView.Views.UserControls
 
             Id = id;
 
-            outterborder.Width = outterborder.Height = picGalleryItem_Size;
-            innerborder.Width = innerborder.Height = picGalleryItem_Size_s;
+            outterborder.Width = outterborder.Height = PicGalleryItem_Size;
+            innerborder.Width = innerborder.Height = PicGalleryItem_Size_s;
 
             img.MouseEnter += (s, y) => AnimationHelper.HoverSizeAnim(
                 this,
                 false,
-                picGalleryItem_Size_s,
-                picGalleryItem_Size
+                PicGalleryItem_Size_s,
+                PicGalleryItem_Size
             );
 
             img.MouseLeave += (s, y) => AnimationHelper.HoverSizeAnim(
                 this,
                 true,
-                picGalleryItem_Size,
-                picGalleryItem_Size_s
+                PicGalleryItem_Size,
+                PicGalleryItem_Size_s
             );
 
             if (selected)
             {
                 innerborder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColorOverAlpha());
-                innerborder.Width = innerborder.Height = picGalleryItem_Size;
+                innerborder.Width = innerborder.Height = PicGalleryItem_Size;
             }
         }
     }

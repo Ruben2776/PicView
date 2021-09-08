@@ -12,7 +12,7 @@ namespace PicView.UILogic
         /// <summary>
         /// Timer used for slideshow
         /// </summary>
-        internal static Timer SlideTimer;
+        internal static Timer SlideTimer { get; set; }
 
         /// <summary>
         /// Maximize and removes Interface and start timer for slideshow.

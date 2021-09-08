@@ -183,7 +183,7 @@ namespace PicView.ChangeImage
                         SetLoadingString();
 
                         // Don't allow image size to stretch the whole screen
-                        if (xWidth == 0)
+                        if (XWidth == 0)
                         {
                             ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
                             ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;

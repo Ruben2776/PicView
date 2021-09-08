@@ -201,8 +201,8 @@ namespace PicView.ImageHandling
 
         internal static RenderTargetBitmap ImageErrorMessage()
         {
-            var w = ScaleImage.xWidth != 0 ? ScaleImage.xWidth : 300 * WindowSizing.MonitorInfo.DpiScaling;
-            var h = ScaleImage.xHeight != 0 ? ScaleImage.xHeight : 300 * WindowSizing.MonitorInfo.DpiScaling;
+            var w = ScaleImage.XWidth != 0 ? ScaleImage.XWidth : 300 * WindowSizing.MonitorInfo.DpiScaling;
+            var h = ScaleImage.XHeight != 0 ? ScaleImage.XHeight : 300 * WindowSizing.MonitorInfo.DpiScaling;
             var rect = new Rect(new Size(w, h));
             var visual = new DrawingVisual();
             using (var ctx = visual.RenderOpen())
