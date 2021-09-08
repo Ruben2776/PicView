@@ -63,7 +63,7 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it
 
 **File support** 
  > .jpg  .jpeg  .jpe  .png  .bmp  .tif  .tiff  .gif  .ico  .jfif  .webp <br>
-   .psd  .psb .xcf .svg .heic .tga .dds<br>.3fr  .arw  .cr2  .crw  .dcr  .dng  .erf  .kdc  .mdc  .mef  .mos  .mrw  .nef  .nrw  .f  .pef .raf  .raw  .rw2  .srf  .x3f *<br>
+   .psd  .psb .xcf .svg .heic .tga .dds<br>.3fr  .arw  .cr2  .crw  .dcr  .dng  .erf  .kdc  .mdc  .mef  .mos  .mrw  .nef  .nrw  .orf  .pef .raf  .raw  .rw2  .srf  .x3f *<br>
    .pgm  .hdr  .cut  .exr  .dib  .emf  .wmf  .wpg  .pcx  .xbm  .xpm .wbmp *
    
    _* RAW camera formats may be slower to load_
