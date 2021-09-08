@@ -12,12 +12,7 @@ namespace PicView.ConfigureSettings
         {
             Properties.Settings.Default.Save();
 
-            var GetAppPath = System.Environment.ProcessPath;
-
-            if (Path.GetExtension(GetAppPath) == ".dll")
-            {
-                GetAppPath = GetAppPath.Replace(".dll", ".exe", System.StringComparison.InvariantCultureIgnoreCase);
-            }
+            var GetAppPath = GetPathToProcess();
 
             string args;
             if (Navigation.Pics.Count > Navigation.FolderIndex)
@@ -35,6 +30,17 @@ namespace PicView.ConfigureSettings
 
             Process.Start(new ProcessStartInfo(GetAppPath, args));
             Application.Current.Shutdown();
+        }
+
+        internal static string GetPathToProcess()
+        {
+            var GetAppPath = System.Environment.ProcessPath;
+
+            if (Path.GetExtension(GetAppPath) == ".dll")
+            {
+                GetAppPath = GetAppPath.Replace(".dll", ".exe", System.StringComparison.InvariantCultureIgnoreCase);
+            }
+            return GetAppPath;
         }
 
 #pragma warning disable SYSLIB0003 // Type or member is obsolete

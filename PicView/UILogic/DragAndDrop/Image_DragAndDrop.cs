@@ -1,7 +1,9 @@
 ﻿using PicView.ChangeImage;
+using PicView.ConfigureSettings;
 using PicView.FileHandling;
 using PicView.Views.UserControls;
 using PicView.Views.UserControls.Misc;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -218,21 +220,25 @@ namespace PicView.UILogic.DragAndDrop
             // Load it
             await LoadPiFrom(files[0]).ConfigureAwait(false);
 
-            // Start multiple clients if user drags multiple files
-            // TODO no longer working after converting to .NET Core...
+            // Open additional windows if multiple files dropped 
             if (files.Length > 0)
             {
-                Parallel.For(1, files.Length, x =>
+                var pathToExe = GeneralSettings.GetPathToProcess();
+                for (int i = 1; i < files.Length; i++)
                 {
-                    var myProcess = new Process
+                    var args = files[i].Replace(@"\\", @"\");
+                    args = args.Insert(0, @"""");
+                    args = args.Insert(args.Length - 1, @"""");
+                    Process process = new()
                     {
-                        StartInfo = {
-                                    FileName = Assembly.GetExecutingAssembly().Location,
-                                    Arguments = files[x]
-                                }
+                        StartInfo = 
+                        {
+                            FileName = pathToExe,
+                            Arguments = args
+                        }
                     };
-                    myProcess.Start();
-                });
+                    process.Start();
+                }
             }
         }
 
