@@ -1,6 +1,7 @@
 ﻿using PicView.UILogic;
 using PicView.UILogic.Loading;
 using PicView.UILogic.TransformImage;
+using System;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows;
@@ -64,13 +65,14 @@ namespace PicView.Editing
                     Clipboard.SetText(x);
                     await Tooltip.ShowTooltipMessage(x + " " + Application.Current.Resources["AddedToClipboard"]).ConfigureAwait(false);
                 }
-
-                ConfigureWindows.GetMainWindow.topLayer.Children.Remove(UC.GetColorPicker);
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                {
+                    ConfigureWindows.GetMainWindow.topLayer.Children.Remove(UC.GetColorPicker);
+                    ConfigureWindows.GetMainWindow.Focus();
+                }));
             }
 
             IsRunning = false;
-
-            ConfigureWindows.GetMainWindow.Focus();
         }
 
         internal static string HexConverter(System.Drawing.Color c)
