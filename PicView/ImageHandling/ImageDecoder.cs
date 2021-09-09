@@ -34,8 +34,6 @@ namespace PicView.ImageHandling
                     case ".JPE":
                     case ".PNG":
                     case ".BMP":
-                    case ".TIF":
-                    case ".TIFF":
                     case ".ICO":
                     case ".JFIF":
                     case ".WEBP":
@@ -55,6 +53,8 @@ namespace PicView.ImageHandling
                         return skPic;
                     // ".GIF": empty since XamlAnimatedGif dynamically loads it
 
+                    case ".TIF":
+                    case ".TIFF":
                     case ".DDS":
                     case "TGA": // TODO some tga files are created upside down https://github.com/Ruben2776/PicView/issues/22
                     case ".PSD":
@@ -78,8 +78,6 @@ namespace PicView.ImageHandling
                     default: // some formats cause exceptions when using filestream, so defaulting to reading from file
                         var magick = new MagickImage();
                         magick.Read(file);
-
-                        // Set values for maximum quality
                         magick.Quality = 100;
 
                         var pic = magick.ToBitmapSource();
