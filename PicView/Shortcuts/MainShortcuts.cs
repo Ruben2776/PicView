@@ -70,21 +70,14 @@ namespace PicView.Shortcuts
                             return;
                         }
                     }
-                    if (!e.IsRepeat)
+                    // Go to first if Ctrl held down
+                    if (ctrlDown && !e.IsRepeat)
                     {
-                        // Go to first if Ctrl held down
-                        if (ctrlDown)
-                        {
-                            await PicAsync(true, true).ConfigureAwait(false);
-                        }
-                        else
-                        {
-                            await PicAsync().ConfigureAwait(false);
-                        }
+                        await PicAsync(true, true).ConfigureAwait(false);
                     }
-                    else if (CanNavigate)
+                    else
                     {
-                        FastPic(true);
+                        await PicAsync().ConfigureAwait(false);
                     }
                     return;
 
@@ -98,21 +91,14 @@ namespace PicView.Shortcuts
                             return;
                         }
                     }
-                    if (!e.IsRepeat)
+                    // Go to last if Ctrl held down
+                    if (ctrlDown && !e.IsRepeat)
                     {
-                        // Go to last if Ctrl held down
-                        if (ctrlDown)
-                        {
-                            await PicAsync(false, true).ConfigureAwait(false);
-                        }
-                        else
-                        {
-                            await PicAsync(false).ConfigureAwait(false);
-                        }
+                        await PicAsync(false, true).ConfigureAwait(false);
                     }
-                    else if (CanNavigate)
+                    else
                     {
-                        FastPic(false);
+                        await PicAsync(false).ConfigureAwait(false);
                     }
                     return;
 
@@ -336,7 +322,7 @@ namespace PicView.Shortcuts
                     case Key.Delete:
                         if (!GalleryFunctions.IsOpen)
                         {
-                           await DeleteFileAsync(!shiftDown).ConfigureAwait(false);
+                            await DeleteFileAsync(!shiftDown).ConfigureAwait(false);
                         }
                         break;
 
@@ -763,7 +749,6 @@ namespace PicView.Shortcuts
             {
                 GalleryNavigation.ScrollTo(sender, e);
             }
-
             else if (Properties.Settings.Default.ScrollEnabled && !IsAutoScrolling)
             {
                 if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)

@@ -174,23 +174,33 @@ namespace PicView.ChangeImage
             // Initate loading behavior, if needed
             if (preloadValue == null || preloadValue.isLoading)
             {
-                CanNavigate = false; // Dissallow changing image while loading
-
-                if (!GalleryFunctions.IsOpen)
+                if (GalleryFunctions.IsOpen == false)
                 {
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
                     {
                         // Show a thumbnail while loading
                         var thumb = GetThumb(index); // Need to be in dispatcher to prevent crashing when changing folder while picgallery is loading items
 
-                        // Set loading from translation service
-                        SetLoadingString();
-
-                        // Don't allow image size to stretch the whole screen
-                        if (XWidth == 0)
+                        if (FreshStartup)
                         {
-                            ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
-                            ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
+                            // Set loading from translation service
+                            SetLoadingString();
+
+                            // Don't allow image size to stretch the whole screen
+                            if (XWidth == 0)
+                            {
+                                ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+                                ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
+                            }
+                        }
+                        else
+                        {
+                            var image = Application.Current.Resources["Image"] as string;
+
+                            ConfigureWindows.GetMainWindow.TitleText.ToolTip =
+                            ConfigureWindows.GetMainWindow.Title =
+                            ConfigureWindows.GetMainWindow.TitleText.Text
+                            = $"{image} {(index + 1)} / {Pics.Count}";
                         }
 
                         if (thumb != null)
@@ -200,16 +210,31 @@ namespace PicView.ChangeImage
                     }));
                 }
 
+                // Make loading skippable
+                if (FolderIndex != index)
+                {
+                    return;
+                }
+
                 if (preloadValue == null) // Error correctiom
                 {
                     await Preloader.Add(Pics[index]).ConfigureAwait(false);
                     preloadValue = Preloader.Get(Pics[index]);
                 }
-                while (preloadValue.isLoading)
+                while (preloadValue != null && preloadValue.isLoading)
                 {
                     // Wait for finnished result
                     await Task.Delay(5).ConfigureAwait(false);
                 }
+            }
+            // Make loading skippable
+            if (FolderIndex != index)
+            {
+                if (Preloader.Count() > Preloader.LoadInfront + Preloader.LoadBehind)
+                {
+                    Preloader.Remove(Pics[index]);
+                }
+                return;
             }
 
             // Check if works, if not show error message
@@ -602,59 +627,6 @@ namespace PicView.ChangeImage
                     await PicAsync(false, false).ConfigureAwait(false);
                 }
             }
-        }
-
-        /// <summary>
-        /// Only load thumb without resizing
-        /// </summary>
-        /// <param name="forwards">The direction</param>
-        internal static void FastPic(bool forwards)
-        {
-            FastPicRunning = true;
-            /// TODO FastPic Changes...
-            /// Need solution for slowing down this thing to something useful
-            /// await task delay only works once, it seems
-            /// Timers doesn't deliver a proper result in my experience
-            ///
-
-            if (forwards)
-            {
-                if (FolderIndex == Pics.Count - 1)
-                {
-                    FolderIndex = 0;
-                }
-                else
-                {
-                    FolderIndex++;
-                }
-            }
-            else
-            {
-                if (FolderIndex == 0)
-                {
-                    FolderIndex = Pics.Count - 1;
-                }
-                else
-                {
-                    FolderIndex--;
-                }
-            }
-
-            var image = Application.Current.Resources["Image"] as string;
-
-            ConfigureWindows.GetMainWindow.TitleText.ToolTip =
-            ConfigureWindows.GetMainWindow.Title =
-            ConfigureWindows.GetMainWindow.TitleText.Text
-            = $"{image} {(FolderIndex + 1)} / {Pics.Count}";
-
-            var thumb = GetThumb(FolderIndex);
-
-            if (thumb != null)
-            {
-                ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
-            }
-
-            Taskbar.Progress(FolderIndex, Pics.Count);
         }
 
         /// <summary>

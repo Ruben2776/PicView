@@ -30,6 +30,10 @@ namespace PicView.ChangeImage
         private static readonly ConcurrentDictionary<
             string, PreloadValue> Sources = new ConcurrentDictionary<string, PreloadValue>();
 
+        internal const int LoadInfront = 4;
+        internal const int LoadBehind = 2;
+
+
         /// <summary>
         /// Add file to preloader
         /// </summary>
@@ -58,6 +62,15 @@ namespace PicView.ChangeImage
             }
 
             Add(Pics[i]);
+        }
+
+        /// <summary>
+        /// Get count of preload values
+        /// </summary>
+        /// <returns></returns>
+        internal static int Count()
+        {
+            return Sources.Count;
         }
 
         /// <summary>
@@ -162,14 +175,11 @@ namespace PicView.ChangeImage
         /// <param name="reverse"></param>
         internal static Task PreLoad(int index) => Task.Run(() =>
         {
-            var loadInfront = 2;
-            var loadBehind = 1;
-
             if (Reverse)
             {
                 // Add first elements behind
                 int y = 0;
-                for (int i = index - 1; i > index - 1 - loadInfront; i--)
+                for (int i = index - 1; i > index - 1 - LoadInfront; i--)
                 {
                     y++;
                     if (i < 0)
@@ -184,7 +194,7 @@ namespace PicView.ChangeImage
                 }
 
                 // Add second elements
-                for (int i = index + 1; i <= index + 1 + loadInfront; i++)
+                for (int i = index + 1; i <= index + 1 + LoadInfront; i++)
                 {
                     if (i != 0 || Pics.Count != 0)
                     {
@@ -193,9 +203,9 @@ namespace PicView.ChangeImage
                 }
 
                 //Clean up infront
-                if (Pics.Count > loadInfront + loadInfront && !FreshStartup)
+                if (Pics.Count > LoadInfront + LoadInfront && !FreshStartup)
                 {
-                    for (int i = index + 1 + loadInfront; i > index + 1 + loadInfront - loadBehind; i--)
+                    for (int i = index + 1 + LoadInfront; i > index + 1 + LoadInfront - LoadBehind; i--)
                     {
                         if (i != 0 || Pics.Count != 0)
                         {
@@ -207,7 +217,7 @@ namespace PicView.ChangeImage
             else
             {
                 // Add first elements
-                for (int i = index + 1; i < index + 1 + loadInfront; i++)
+                for (int i = index + 1; i < index + 1 + LoadInfront; i++)
                 {
                     if (i != 0 || Pics.Count != 0)
                     {
@@ -215,7 +225,7 @@ namespace PicView.ChangeImage
                     }
                 }
                 // Add second elements behind
-                for (int i = index - 1; i > index - 1 - loadBehind; i--)
+                for (int i = index - 1; i > index - 1 - LoadBehind; i--)
                 {
                     if (i != 0 || Pics.Count != 0)
                     {
@@ -224,9 +234,9 @@ namespace PicView.ChangeImage
                 }
 
                 //Clean up behind
-                if (Pics.Count > loadInfront * 2 && !FreshStartup)
+                if (Pics.Count > LoadInfront * 2 && !FreshStartup)
                 {
-                    for (int i = index - 1 - loadInfront; i < (index - 1 - loadBehind); i++)
+                    for (int i = index - 1 - LoadInfront; i < (index - 1 - LoadBehind); i++)
                     {
                         Remove(i % Pics.Count);
                     }
