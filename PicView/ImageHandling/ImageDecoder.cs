@@ -152,6 +152,12 @@ namespace PicView.ImageHandling
             try
             {
                 var sauce = UILogic.ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
+
+                if (sauce == null)
+                {
+                    return null;
+                }
+
                 var effect = UILogic.ConfigureWindows.GetMainWindow.MainImage.Effect;
 
                 var rectangle = new System.Windows.Shapes.Rectangle
@@ -167,7 +173,10 @@ namespace PicView.ImageHandling
                 var rtb = new RenderTargetBitmap(sauce.PixelWidth, sauce.PixelHeight, sauce.DpiX, sauce.DpiY, PixelFormats.Default);
                 rtb.Render(rectangle);
 
-                return BitmapFrame.Create(rtb);
+                BitmapFrame bitmapFrame = BitmapFrame.Create(rtb);
+                bitmapFrame.Freeze();
+
+                return bitmapFrame;
             }
             catch (Exception) { return null; }
         }

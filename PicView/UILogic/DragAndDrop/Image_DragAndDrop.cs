@@ -151,14 +151,18 @@ namespace PicView.UILogic.DragAndDrop
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static async void Image_Drop(object sender, DragEventArgs e)
+        internal static async Task Image_Drop(object sender, DragEventArgs e)
         {
             if (!Properties.Settings.Default.FullscreenGallery && PicGallery.GalleryFunctions.IsOpen)
             {
                 return;
             }
 
-            RemoveDragOverlay();
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            {
+                RemoveDragOverlay();
+            }));
+           
 
             // Load dropped URL
             if (e.Data.GetData(DataFormats.Html) != null)
@@ -180,13 +184,16 @@ namespace PicView.UILogic.DragAndDrop
                 return;
             }
 
-            // Don't show drop message any longer
-            CloseToolTipMessage();
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            {
+                // Don't show drop message any longer
+                CloseToolTipMessage();
 
-            ConfigureWindows.GetMainWindow.Activate();
+                ConfigureWindows.GetMainWindow.Activate();
+            }));
 
             // check if valid
-            if (!Drag_Drop_Check(files).HasValue)
+            if (Drag_Drop_Check(files).HasValue == false)
             {
                 if (Path.GetExtension(files[0]) == ".url")
                 {
@@ -205,6 +212,10 @@ namespace PicView.UILogic.DragAndDrop
                     Error_Handling.ChangeFolder();
                     await LoadPiFromFileAsync(files[0]).ConfigureAwait(false);
                 }
+            }
+            else
+            {
+                await LoadPiFromFileAsync(files[0]).ConfigureAwait(false);
             }
 
             // Open additional windows if multiple files dropped 

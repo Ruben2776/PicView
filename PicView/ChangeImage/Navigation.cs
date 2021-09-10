@@ -258,7 +258,7 @@ namespace PicView.ChangeImage
             {
                 if (ConfigureWindows.GetImageInfoWindow.IsVisible)
                 {
-                    ConfigureWindows.GetImageInfoWindow.UpdateValues();
+                    await ConfigureWindows.GetImageInfoWindow.UpdateValuesAsync(Pics[FolderIndex]).ConfigureAwait(false);
                 }
             }
 
@@ -282,7 +282,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="pic"></param>
         /// <param name="imageName"></param>
-        internal static void Pic(BitmapSource bitmap, string imageName, string path)
+        internal static void Pic(BitmapSource bitmap, string imageName)
         {
             if (IsScrollEnabled)
             {
@@ -292,9 +292,7 @@ namespace PicView.ChangeImage
             ConfigureWindows.GetMainWindow.MainImage.Source = bitmap;
 
             FitImage(bitmap.PixelWidth, bitmap.PixelHeight);
-            CloseToolTipMessage();
-
-            SetTitleString(bitmap.PixelWidth, bitmap.PixelHeight, imageName);
+            CloseToolTipMessage();          
 
             Taskbar.NoProgress();
 
@@ -305,7 +303,7 @@ namespace PicView.ChangeImage
             {
                 if (ConfigureWindows.GetImageInfoWindow.IsVisible)
                 {
-                    ConfigureWindows.GetImageInfoWindow.UpdateValues();
+                    _= ConfigureWindows.GetImageInfoWindow.UpdateValuesAsync(imageName);
                 }
             }
 
@@ -317,23 +315,36 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="pic"></param>
         /// <param name="imageName"></param>
-        internal static void Pic(string file, string imageName)
+        internal static async Task PicAsync(string file, string imageName, bool isGif)
         {
-            if (IsScrollEnabled)
+            BitmapSource bitmapSource = isGif ? null : await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(false);
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
             {
-                ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
-            }
+                if (IsScrollEnabled)
+                {
+                    ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
+                }
 
-            XamlAnimatedGif.AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(file));
+                if (isGif)
+                {
+                    Size? imageSize = ImageDecoder.ImageSize(file);
+                    if (imageSize.HasValue)
+                    {
+                        FitImage(imageSize.Value.Width, imageSize.Value.Height);
+                        SetTitleString((int)imageSize.Value.Width, (int)imageSize.Value.Height, imageName);
+                    }
+                    XamlAnimatedGif.AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(file));
+                }
+                else
+                {
+                    ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
+                    SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, imageName);
+                    FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+                }
 
-            var imageSize = ImageDecoder.ImageSize(file);
-            if (imageSize.HasValue)
-            {
-                FitImage(imageSize.Value.Width, imageSize.Value.Height);
-                SetTitleString((int)imageSize.Value.Width, (int)imageSize.Value.Height, imageName);
-            }
-
-            CloseToolTipMessage();
+                CloseToolTipMessage();
+            }));
+            
             Taskbar.NoProgress();
             CanNavigate = false;
             FolderIndex = 0;
@@ -342,7 +353,7 @@ namespace PicView.ChangeImage
             {
                 if (ConfigureWindows.GetImageInfoWindow.IsVisible)
                 {
-                    ConfigureWindows.GetImageInfoWindow.UpdateValues();
+                    await ConfigureWindows.GetImageInfoWindow.UpdateValuesAsync(file).ConfigureAwait(false);
                 }
             }
 
@@ -358,7 +369,7 @@ namespace PicView.ChangeImage
         {
             var pic = await Base64.Base64StringToBitmap(base64string).ConfigureAwait(false);
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(async () =>
             {
                 Unload();
 
@@ -378,7 +389,7 @@ namespace PicView.ChangeImage
                 {
                     if (ConfigureWindows.GetImageInfoWindow.IsVisible)
                     {
-                        ConfigureWindows.GetImageInfoWindow.UpdateValues();
+                        await ConfigureWindows.GetImageInfoWindow.UpdateValuesAsync(null).ConfigureAwait(false);
                     }
                 }
             }));
@@ -516,28 +527,25 @@ namespace PicView.ChangeImage
             // Go to the image!
             await LoadPicAt(FolderIndex).ConfigureAwait(false);
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(async () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
             {
                 // Update PicGallery selected item, if needed
                 if (GalleryFunctions.IsOpen)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                    if (GetPicGallery.Container.Children.Count > FolderIndex && GetPicGallery.Container.Children.Count > indexBackup)
                     {
-                        if (GetPicGallery.Container.Children.Count > FolderIndex && GetPicGallery.Container.Children.Count > indexBackup)
+                        if (indexBackup != FolderIndex)
                         {
-                            if (indexBackup != FolderIndex)
-                            {
-                                GalleryNavigation.SetSelected(indexBackup, false);
-                            }
-
-                            GalleryNavigation.SetSelected(FolderIndex, true);
-                            GalleryNavigation.ScrollTo();
+                            GalleryNavigation.SetSelected(indexBackup, false);
                         }
-                        else
-                        {
+
+                        GalleryNavigation.SetSelected(FolderIndex, true);
+                        GalleryNavigation.ScrollTo();
+                    }
+                    else
+                    {
                         // TODO Find way to get PicGalleryItem an alternative way...
                     }
-                    }));
                 }
 
                 CloseToolTipMessage();

@@ -115,7 +115,7 @@ namespace PicView.UILogic.Loading
 
             // ParentContainer
             ConfigureWindows.GetMainWindow.ParentContainer.MouseLeftButtonDown += async (sender, e) => await Bg_MouseLeftButtonDownAsync(sender, e).ConfigureAwait(false);
-            ConfigureWindows.GetMainWindow.ParentContainer.Drop += Image_Drop;
+            ConfigureWindows.GetMainWindow.ParentContainer.Drop += async (sender, e) => await Image_Drop(sender, e).ConfigureAwait(false);
             ConfigureWindows.GetMainWindow.ParentContainer.DragEnter += Image_DragEnter;
             ConfigureWindows.GetMainWindow.ParentContainer.DragLeave += Image_DragLeave;
             ConfigureWindows.GetMainWindow.ParentContainer.MouseMove += async (sender, e) => await Interface_MouseMoveAsync(sender, e).ConfigureAwait(false);
@@ -130,7 +130,7 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.TitleBar.MouseLeave += ConfigureWindows.Restore_From_Move;
 
             // Lower Bar
-            ConfigureWindows.GetMainWindow.LowerBar.Drop += Image_Drop;
+            ConfigureWindows.GetMainWindow.LowerBar.Drop += async (sender, e) => await Image_Drop(sender, e).ConfigureAwait(false);
             ConfigureWindows.GetMainWindow.LowerBar.MouseLeftButtonDown += ConfigureWindows.MoveAlt;
 
             // This

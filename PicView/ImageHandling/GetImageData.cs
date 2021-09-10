@@ -1,16 +1,19 @@
 ﻿using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using PicView.ChangeImage;
+using PicView.UILogic;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media.Imaging;
 
 namespace PicView.ImageHandling
 {
     internal static class GetImageData
     {
-        internal static string[] RetrieveData(string file)
+        internal static async Task<string[]> RetrieveDataAsync(string file)
         {
             string name, directoryname, fullname, creationtime, lastwritetime;
 
@@ -33,7 +36,24 @@ namespace PicView.ImageHandling
                 lastwritetime = string.Empty;
             }
 
-            var image = Preloader.Get(Navigation.Pics[Navigation.FolderIndex]).bitmapSource;
+            BitmapSource image = null;
+            var source = Preloader.Get(file);
+            if (source != null)
+            {
+                image = source.bitmapSource;
+            }
+            else
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                {
+                    image = ImageDecoder.GetRenderedBitmapFrame();
+                }));
+            }
+
+            if (image == null)
+            {
+                return null;
+            }
 
             var inchesWidth = image.PixelWidth / image.DpiX;
             var inchesHeight = image.PixelHeight / image.DpiY;
@@ -79,13 +99,13 @@ namespace PicView.ImageHandling
                 bitdepth = string.Empty;
             }
 
-            if (dpiX == null)
+            if (string.IsNullOrEmpty((string)dpiX) == false)
             {
-                dpi = string.Empty;
+                dpi = Math.Round((double)dpiX) + " x " + Math.Round((double)dpiY) + " " + Application.Current.Resources["Dpi"];
             }
             else
             {
-                dpi = Math.Round((double)dpiX) + " x " + Math.Round((double)dpiY) + " " + Application.Current.Resources["Dpi"];
+                dpi = string.Empty;
             }
 
             return new string[]

@@ -2,8 +2,10 @@
 using PicView.UILogic;
 using PicView.UILogic.Animations;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
@@ -15,7 +17,18 @@ namespace PicView.Views.Windows
         {
             InitializeComponent();
 
-            ContentRendered += Window_ContentRendered;
+            ContentRendered += async (sender, e) =>
+            {
+                Window_ContentRendered(sender, e);
+                if (Pics.Count > FolderIndex)
+                {
+                    await UpdateValuesAsync(Pics[FolderIndex]).ConfigureAwait(false);
+                }
+                else
+                {
+                    await UpdateValuesAsync(null).ConfigureAwait(false);
+                }
+            };
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)
@@ -137,40 +150,69 @@ namespace PicView.Views.Windows
             {
                 Clipboard.SetText(AspectRatioBox.Text);
             };
-
-            if (Pics.Count > 0)
-            {
-                UpdateValues();
-            }
         }
 
-        internal void UpdateValues()
+        internal async Task UpdateValuesAsync(string file)
         {
-            var data = GetImageData.RetrieveData(Pics[FolderIndex]);
+            var data = await Task.Run(async () => (await GetImageData.RetrieveDataAsync(file).ConfigureAwait(false)));
 
-            FilenameBox.Text = data[0];
+            await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+            {
+                if (data != null)
+                {
 
-            FolderBox.Text = data[1];
+                    FilenameBox.Text = data[0];
 
-            FullPathBox.Text = data[2];
+                    FolderBox.Text = data[1];
 
-            CreatedBox.Text = data[3];
+                    FullPathBox.Text = data[2];
 
-            ModifiedBox.Text = data[4];
+                    CreatedBox.Text = data[3];
 
-            SizePxBox.Text = data[5];
+                    ModifiedBox.Text = data[4];
 
-            ResolutionBox.Text = data[6];
+                    SizePxBox.Text = data[5];
 
-            BitDepthBox.Text = data[7];
+                    ResolutionBox.Text = data[6];
 
-            SizeMpBox.Text = data[8];
+                    BitDepthBox.Text = data[7];
 
-            PrintSizeCmBox.Text = data[9];
+                    SizeMpBox.Text = data[8];
 
-            PrintSizeInBox.Text = data[10];
+                    PrintSizeCmBox.Text = data[9];
 
-            AspectRatioBox.Text = data[11];
+                    PrintSizeInBox.Text = data[10];
+
+                    AspectRatioBox.Text = data[11];
+                }
+                else
+                {
+                    FilenameBox.Text = 
+
+                    FolderBox.Text = 
+
+                    FullPathBox.Text = 
+
+                    CreatedBox.Text = 
+
+                    ModifiedBox.Text = 
+
+                    SizePxBox.Text = 
+
+                    ResolutionBox.Text = 
+
+                    BitDepthBox.Text = 
+
+                    SizeMpBox.Text = 
+
+                    PrintSizeCmBox.Text = 
+
+                    PrintSizeInBox.Text = 
+
+                    AspectRatioBox.Text = string.Empty;
+                }
+
+            }));
         }
     }
 }

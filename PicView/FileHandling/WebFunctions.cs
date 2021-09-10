@@ -33,31 +33,9 @@ namespace PicView.FileHandling
             try
             {
                 var destination = await DownloadData(url, true).ConfigureAwait(false);
+                var isGif = Path.GetExtension(url).Contains(".gif", StringComparison.OrdinalIgnoreCase);
 
-                if (Path.GetExtension(url).Contains(".gif", StringComparison.OrdinalIgnoreCase))
-                {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
-                    {
-                        Pic(destination, url);
-                    }));
-                }
-                else
-                {
-                    BitmapSource pic = await RenderToBitmapSource(destination).ConfigureAwait(false);
-
-                    if (pic != null)
-                    {
-                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
-                        {
-                            Pic(pic, url, destination);
-                        }));
-                    }
-                    else
-                    {
-                        await ReloadAsync(true).ConfigureAwait(false);
-                        return;
-                    }
-                }
+                await PicAsync(destination, url, isGif).ConfigureAwait(false);
 
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
                 {
@@ -75,8 +53,8 @@ namespace PicView.FileHandling
 #endif
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(async () =>
                 {
-                    await ShowTooltipMessage(e.Message, true).ConfigureAwait(false);
                     await ReloadAsync(true).ConfigureAwait(false);
+                    await ShowTooltipMessage(e.Message, true).ConfigureAwait(false);                  
                 }));
 
                 return;

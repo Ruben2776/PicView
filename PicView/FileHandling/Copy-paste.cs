@@ -138,7 +138,7 @@ namespace PicView.FileHandling
             // Clipboard Image
             if (Clipboard.ContainsImage())
             {
-                Pic(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"], null);
+                Pic(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]);
                 return;
             }
 
