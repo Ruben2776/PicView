@@ -64,6 +64,15 @@ namespace PicView.UILogic
                     GetInfoWindow.Show();
                 }
             }
+            if (Properties.Settings.Default.Fullscreen)
+            {
+                GetSettingsWindow.Topmost = true;
+                GetSettingsWindow.BringIntoView();
+            }
+            else
+            {
+                GetSettingsWindow.Topmost = false;
+            }
         }
 
         /// <summary>
@@ -87,6 +96,15 @@ namespace PicView.UILogic
                 {
                     GetSettingsWindow.Show();
                 }
+            }
+            if (Properties.Settings.Default.Fullscreen)
+            {
+                GetSettingsWindow.Topmost = true;
+                GetSettingsWindow.BringIntoView();
+            }
+            else
+            {
+                GetSettingsWindow.Topmost = false;
             }
         }
 
@@ -112,6 +130,15 @@ namespace PicView.UILogic
                     GetEffectsWindow.Show();
                 }
             }
+            if (Properties.Settings.Default.Fullscreen)
+            {
+                GetEffectsWindow.Topmost = true;
+                GetEffectsWindow.BringIntoView();
+            }
+            else
+            {
+                GetEffectsWindow.Topmost = false;
+            }
         }
 
         /// <summary>
@@ -135,6 +162,15 @@ namespace PicView.UILogic
                 {
                     GetImageInfoWindow.Show();
                 }
+            }
+            if (Properties.Settings.Default.Fullscreen)
+            {
+                GetEffectsWindow.Topmost = true;
+                GetImageInfoWindow.BringIntoView();
+            }
+            else
+            {
+                GetImageInfoWindow.Topmost = false;
             }
         }
 
