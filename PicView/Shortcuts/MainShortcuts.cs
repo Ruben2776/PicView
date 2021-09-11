@@ -77,6 +77,7 @@ namespace PicView.Shortcuts
                     }
                     else
                     {
+                        FastPicRunning = e.IsRepeat; // Report if key held down
                         await PicAsync().ConfigureAwait(false);
                     }
                     return;
@@ -98,6 +99,7 @@ namespace PicView.Shortcuts
                     }
                     else
                     {
+                        FastPicRunning = e.IsRepeat; // Report if key held down
                         await PicAsync(false).ConfigureAwait(false);
                     }
                     return;
@@ -562,6 +564,7 @@ namespace PicView.Shortcuts
             {
                 case Key.A:
                 case Key.Right:
+                case Key.Left:
                 case Key.D:
                     if (FolderIndex <= 0 || Pics.Count < FolderIndex)
                     {

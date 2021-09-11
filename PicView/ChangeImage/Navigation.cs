@@ -76,7 +76,7 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static bool ClickArrowLeftClicked { get; set; }
 
-        internal static bool FastPicRunning { get; private set; }
+        internal static bool FastPicRunning { get; set; }
 
         #endregion Static fields
 
@@ -211,7 +211,7 @@ namespace PicView.ChangeImage
                 }
 
                 // Make loading skippable
-                if (FolderIndex != index)
+                if (FolderIndex != index || FastPicRunning)
                 {
                     return;
                 }
@@ -246,33 +246,7 @@ namespace PicView.ChangeImage
             // Need to put UI change in dispatcher to fix slideshow bug
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
             {
-                // Scroll to top if scroll enabled
-                if (IsScrollEnabled)
-                {
-                    ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
-                }
-
-                // Reset transforms if needed
-                if (UILogic.TransformImage.Rotation.Flipped || UILogic.TransformImage.Rotation.Rotateint != 0)
-                {
-                    UILogic.TransformImage.Rotation.Flipped = false;
-                    UILogic.TransformImage.Rotation.Rotateint = 0;
-                    GetQuickSettingsMenu.FlipButton.TheButton.IsChecked = false;
-
-                    ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
-                }
-
-                if (Path.GetExtension(Pics[index]).Equals(".gif", StringComparison.OrdinalIgnoreCase))
-                {
-                    XamlAnimatedGif.AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(Pics[index]));
-                }
-                else
-                {
-                    ConfigureWindows.GetMainWindow.MainImage.Source = preloadValue.bitmapSource;
-                }
-
-                FitImage(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight);
-                SetTitleString(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight, index);
+                UpdatePic(index, preloadValue.bitmapSource);
             }));
 
             // Update values
@@ -291,8 +265,11 @@ namespace PicView.ChangeImage
             {
                 Taskbar.Progress(index, Pics.Count);
 
-                // Preload images \\
-                await Preloader.PreLoad(index).ConfigureAwait(false);
+                if (FastPicRunning == false)
+                {
+                    // Preload images \\
+                    await Preloader.PreLoad(index).ConfigureAwait(false);
+                }
             }
 
             // Add recent files, except when browing archive
@@ -300,6 +277,40 @@ namespace PicView.ChangeImage
             {
                 RecentFiles.Add(Pics[index]);
             }
+        }
+
+        internal static void UpdatePic(int index, BitmapSource bitmapSource)
+        {
+            // Scroll to top if scroll enabled
+            if (IsScrollEnabled)
+            {
+                ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
+            }
+
+            // Reset transforms if needed
+            if (UILogic.TransformImage.Rotation.Flipped || UILogic.TransformImage.Rotation.Rotateint != 0)
+            {
+                UILogic.TransformImage.Rotation.Flipped = false;
+                UILogic.TransformImage.Rotation.Rotateint = 0;
+                GetQuickSettingsMenu.FlipButton.TheButton.IsChecked = false;
+
+                ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
+            }
+
+            if (Path.GetExtension(Pics[index]).Equals(".gif", StringComparison.OrdinalIgnoreCase))
+            {
+                XamlAnimatedGif.AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(Pics[index]));
+            }
+            else
+            {
+                ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
+            }
+
+            if (FastPicRunning == false) // Update size only when key is not held down
+            {
+                FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+            }
+            SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index);
         }
 
         /// <summary>
@@ -635,14 +646,39 @@ namespace PicView.ChangeImage
         internal static async Task FastPicUpdateAsync()
         {
             // Make sure it's only updated when the key is actually held down
-            if (!FastPicRunning)
+            if (FastPicRunning == false)
+            {
+                return;
+            }
+            
+            FastPicRunning = false;
+
+            var preloadValue = Preloader.Get(Pics[FolderIndex]);
+
+            if (preloadValue == null) // Error correctiom
+            {
+                await Preloader.Add(Pics[FolderIndex]).ConfigureAwait(false);
+                preloadValue = Preloader.Get(Pics[FolderIndex]);
+            }
+            while (preloadValue != null && preloadValue.isLoading)
+            {
+                // Wait for finnished result
+                await Task.Delay(5).ConfigureAwait(false);
+            }
+            if (preloadValue == null)
             {
                 return;
             }
 
-            Preloader.Clear();
-            await LoadPicAt(FolderIndex).ConfigureAwait(false);
-            FastPicRunning = false;
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            {
+                UpdatePic(FolderIndex, preloadValue.bitmapSource);
+            }));
+
+            if (Preloader.Count() > (Preloader.LoadBehind + Preloader.LoadInfront) + 2)
+            {
+                Preloader.Clear();
+            }
         }
 
         #endregion Change navigation values
