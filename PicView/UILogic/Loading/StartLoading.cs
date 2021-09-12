@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Interop;
 using static PicView.ChangeImage.Error_Handling;
@@ -59,7 +60,7 @@ namespace PicView.UILogic.Loading
             var args = Environment.GetCommandLineArgs();
             if (args.Length == 1)
             {
-                Unload();
+                Unload(); // Load clean setup when starting up without arguments
 
                 // Reset PicGallery and don't allow it to run,
                 // if only 1 image
@@ -116,16 +117,32 @@ namespace PicView.UILogic.Loading
                 else if (Properties.Settings.Default.FullscreenGallery)
                 {
                     await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(true); // await needs to be true, or it won't load
-                }
-                else if (AutoFitWindow)
-                {
-                    await ScaleImage.TryFitImageAsync(args[1]).ConfigureAwait(false);
+                    
+                    Timer timer = new() // Dirty code to make it scroll to selected item after start up
+                    {
+                        AutoReset = false,
+                        Enabled = true,
+                        Interval = 1700
+                    };
+                    timer.Elapsed += async delegate 
+                    {
+                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                        {
+                            GalleryNavigation.ScrollTo();
+                        }));
+                        
+                    };
+                    
                 }
                 else if (Properties.Settings.Default.Width != 0)
                 {
                     SetLastWindowSize();
                 }
 
+                // set up size so it feels better when starting application
+                await ScaleImage.TryFitImageAsync(args[1]).ConfigureAwait(false);
+
+                // Determine if to load from folder or file
                 if (FileHandling.FileFunctions.CheckIfDirectoryOrFile(args[1]))
                 {
                     await LoadPicFromFolderAsync(args[1]);

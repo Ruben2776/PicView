@@ -356,32 +356,26 @@ namespace PicView.UILogic
                 Properties.Settings.Default.Left = GetMainWindow.Left;
                 Properties.Settings.Default.Height = GetMainWindow.Height;
                 Properties.Settings.Default.Width = GetMainWindow.Width;
-                GetMainWindow.WindowState = WindowState.Maximized;
             }
 
-            if (GetMainWindow.WindowState != WindowState.Maximized)
-            {
-                GetMainWindow.WindowState = WindowState.Maximized;
-            }
+            
 
             ShowTopandBottom(false);
+            GetMainWindow.Topmost = true;
 
             GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
             GetMainWindow.SizeToContent = SizeToContent.Manual;
-            
+            GetMainWindow.WindowState = WindowState.Maximized;
             GetMainWindow.Width = MonitorInfo.Width;
             GetMainWindow.Height = MonitorInfo.Height;
 
             // Fix buttons appearing out of window
             GetMainWindow.ParentContainer.Margin = new Thickness(8);
 
-            // Set border to max to fix panning when zooming
-            GetMainWindow.MainImageBorder.Width = MonitorInfo.Width;
-            GetMainWindow.MainImageBorder.Height = MonitorInfo.Height;
-
             GetMainWindow.Top = MonitorInfo.WorkArea.Top;
             GetMainWindow.Left = MonitorInfo.WorkArea.Left;
 
+            GetMainWindow.WindowState = WindowState.Maximized;
             ConfigureSettings.ConfigColors.UpdateColor(true);
         }
 

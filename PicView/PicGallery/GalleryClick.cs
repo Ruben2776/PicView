@@ -37,11 +37,8 @@ namespace PicView.PicGallery
                     FitImage(size.Value.Width, size.Value.Height);
                 }
 
-                if (WindowSizing.AutoFitWindow)
-                {
                     GetPicGallery.Width = XWidth;
                     GetPicGallery.Height = XHeight;
-                }
 
                 GetPicGallery.x2.Visibility = Visibility.Hidden;
 
