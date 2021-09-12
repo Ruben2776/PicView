@@ -347,8 +347,7 @@
 
     <system:String x:Key="FillImageHeight">이미지 높이 채우기</system:String>
 
-    <system:String x:Key="OptimizeResize">최적화 &amp; 크기 조정</system:String>
-    <system:String x:Key="OptimizeResizeTooltip">일괄 크기 조정 &amp; 이미지 최적화</system:String>
+    <system:String x:Key="OptimizeImage">이미지 최적화</system:String>
 
     <system:String x:Key="ShaderEffects">셰이더 효과</system:String>
     <system:String x:Key="ShaderEffectsTooltip">이미지 효과 표시 창</system:String>

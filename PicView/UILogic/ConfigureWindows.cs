@@ -66,12 +66,12 @@ namespace PicView.UILogic
             }
             if (Properties.Settings.Default.Fullscreen)
             {
-                GetSettingsWindow.Topmost = true;
-                GetSettingsWindow.BringIntoView();
+                GetInfoWindow.Topmost = true;
+                GetInfoWindow.BringIntoView();
             }
             else
             {
-                GetSettingsWindow.Topmost = false;
+                GetInfoWindow.Topmost = false;
             }
         }
 
@@ -338,7 +338,7 @@ namespace PicView.UILogic
                 }
 
                 Properties.Settings.Default.Fullscreen = false;
-                TryFitImage();
+                _= TryFitImageAsync();
                 ConfigureSettings.ConfigColors.UpdateColor(); // Regain border
             }
         }
@@ -399,7 +399,7 @@ namespace PicView.UILogic
         {
             // Update size when screen resulution changes
             MonitorInfo = MonitorSize.GetMonitorSize();
-            TryFitImage();
+            _= TryFitImageAsync();
         }
 
         #endregion Changed Events

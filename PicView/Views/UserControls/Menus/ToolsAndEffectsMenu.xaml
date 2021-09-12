@@ -8,7 +8,7 @@
     <StackPanel>
         <Border
             Width="358"
-            Height="120"
+            Height="173"
             Background="{StaticResource NoisyBg}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1"
@@ -171,6 +171,76 @@
                                         <SolidColorBrush x:Name="ColorPickerFill" Color="{StaticResource IconColor}" />
                                     </Path.Fill>
                                 </Path>
+                            </StackPanel>
+                        </Button>
+                    </Border>
+
+                    <Border
+                        x:Name="OptimizeImageButtonBorder"
+                        Canvas.Left="6"
+                        Canvas.Top="113"
+                        Width="160"
+                        Height="51"
+                        Style="{StaticResource ButtonBorder}">
+                        <Button
+                            x:Name="OptimizeImageButton"
+                            Canvas.Left="196"
+                            Canvas.Top="59"
+                            Width="154"
+                            Height="51"
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold">
+                            <Button.Background>
+                                <SolidColorBrush x:Name="OptimizeImageBrush" Color="Transparent" />
+                            </Button.Background>
+                            <StackPanel MaxWidth="160" Orientation="Horizontal">
+                                <TextBlock
+                                    MaxWidth="135"
+                                    Margin="6,2,8,2"
+                                    FontSize="14"
+                                    Text="{StaticResource OptimizeImage}"
+                                    TextWrapping="Wrap">
+                                    <TextBlock.Foreground>
+                                        <SolidColorBrush x:Name="OptimizeImageText" Color="{StaticResource MainColor}" />
+                                    </TextBlock.Foreground>
+                                </TextBlock>
+                                <Image Width="17" Height="17">
+                                    <Image.Source>
+                                        <DrawingImage>
+                                            <DrawingImage.Drawing>
+                                                <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                                    <GeometryDrawing Geometry="F1 M512,512z M0,0z M448,256C448,150 362,64 256,64 150,64 64,150 64,256 64,362 150,448 256,448 362,448 448,362 448,256z">
+                                                        <GeometryDrawing.Pen>
+                                                            <Pen
+                                                                EndLineCap="Flat"
+                                                                LineJoin="Miter"
+                                                                MiterLimit="1"
+                                                                StartLineCap="Flat"
+                                                                Thickness="32">
+                                                                <Pen.Brush>
+                                                                    <SolidColorBrush x:Name="OptimizeImageFill1" Color="{StaticResource IconColor}" />
+                                                                </Pen.Brush>
+                                                            </Pen>
+                                                        </GeometryDrawing.Pen>
+                                                    </GeometryDrawing>
+                                                    <GeometryDrawing Geometry="F1 M512,512z M0,0z M360,94.59L360,296 M443.13,212.87L296,360 M417.41,360L216,360 M299.13,443.13L155.13,299.13 M152,416L152,216 M68.87,299.13L212.87,155.13 M94.59,152L288,152 M212.87,68.87L360,216">
+                                                        <GeometryDrawing.Pen>
+                                                            <Pen
+                                                                EndLineCap="Round"
+                                                                LineJoin="Round"
+                                                                MiterLimit="1"
+                                                                StartLineCap="Round"
+                                                                Thickness="32">
+                                                                <Pen.Brush>
+                                                                    <SolidColorBrush x:Name="OptimizeImageFill2" Color="{StaticResource IconColor}" />
+                                                                </Pen.Brush>
+                                                            </Pen>
+                                                        </GeometryDrawing.Pen>
+                                                    </GeometryDrawing>
+                                                </DrawingGroup>
+                                            </DrawingImage.Drawing>
+                                        </DrawingImage>
+                                    </Image.Source>
+                                </Image>
                             </StackPanel>
                         </Button>
                     </Border>

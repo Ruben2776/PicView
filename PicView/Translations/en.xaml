@@ -347,8 +347,7 @@
 
     <system:String x:Key="FillImageHeight">Fill image height</system:String>
 
-    <system:String x:Key="OptimizeResize">Optimize &amp; Resize</system:String>
-    <system:String x:Key="OptimizeResizeTooltip">Batch resize &amp; optimize images</system:String>
+    <system:String x:Key="OptimizeImage">Optimize Image</system:String>
 
     <system:String x:Key="ShaderEffects">Shader Effects</system:String>
     <system:String x:Key="ShaderEffectsTooltip">Show image effects window</system:String>

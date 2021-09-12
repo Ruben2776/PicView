@@ -347,8 +347,7 @@
 
     <system:String x:Key="FillImageHeight">Rellenar a la altura de imagen</system:String>
 
-    <system:String x:Key="OptimizeResize">Optimizar y Redimensionar</system:String>
-    <system:String x:Key="OptimizeResizeTooltip">Redimensionado en cantidad y optimizar imágenes</system:String>
+    <system:String x:Key="OptimizeImage">Optimizar la imagen</system:String>
 
     <system:String x:Key="ShaderEffects">Efectos de Sombra</system:String>
     <system:String x:Key="ShaderEffectsTooltip">Mostrar ventana de efectos</system:String>

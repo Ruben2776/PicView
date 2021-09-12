@@ -347,8 +347,7 @@
 
     <system:String x:Key="FillImageHeight">适应图片高度</system:String>
 
-    <system:String x:Key="OptimizeResize">优化 &amp; 调整</system:String>
-    <system:String x:Key="OptimizeResizeTooltip">批量优化 &amp; 调整图片大小</system:String>
+    <system:String x:Key="OptimizeImage">优化图像</system:String>
 
     <system:String x:Key="ShaderEffects">特效</system:String>
     <system:String x:Key="ShaderEffectsTooltip">显示图像特效窗口</system:String>

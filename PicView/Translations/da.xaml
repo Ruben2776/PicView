@@ -347,8 +347,7 @@
 
     <system:String x:Key="FillImageHeight">Fyld billedhøjde</system:String>
 
-    <system:String x:Key="OptimizeResize">Batch værktøj</system:String>
-    <system:String x:Key="OptimizeResizeTooltip">Batch funktion til størrelse og optimering af billeder</system:String>
+    <system:String x:Key="OptimizeImage">Optimer billede</system:String>
 
     <system:String x:Key="ShaderEffects">Shader Effekter</system:String>
     <system:String x:Key="ShaderEffectsTooltip">Vis billedeffektsvinduet</system:String>

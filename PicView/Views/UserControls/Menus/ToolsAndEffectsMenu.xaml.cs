@@ -1,7 +1,10 @@
-﻿using PicView.Editing;
+﻿using PicView.ChangeImage;
+using PicView.Editing;
 using PicView.Editing.Crop;
+using PicView.ImageHandling;
 using PicView.UILogic;
 using PicView.UILogic.Animations;
+using System.Windows;
 using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
@@ -88,6 +91,39 @@ namespace PicView.Views.UserControls
             {
                 UC.Close_UserControls();
                 ConfigureWindows.ImageInfoWindow();
+            };
+
+            // OptimizeImageButton
+            OptimizeImageButton.PreviewMouseLeftButtonDown += delegate
+            {
+                PreviewMouseButtonDownAnim(OptimizeImageBrush);
+            };
+            OptimizeImageButton.MouseEnter += delegate
+            {
+                ButtonMouseOverAnim(OptimizeImageText);
+                ButtonMouseOverAnim(OptimizeImageFill1);
+                ButtonMouseOverAnim(OptimizeImageFill2);
+                AnimationHelper.MouseEnterBgTexColor(OptimizeImageBrush);
+            };
+            OptimizeImageButton.MouseLeave += delegate
+            {
+                ButtonMouseLeaveAnim(OptimizeImageText);
+                ButtonMouseLeaveAnim(OptimizeImageFill1);
+                ButtonMouseLeaveAnim(OptimizeImageFill2);
+                AnimationHelper.MouseLeaveBgTexColor(OptimizeImageBrush);
+            };
+            OptimizeImageButton.Click += async delegate
+            {
+                await Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"] as string, true).ConfigureAwait(false);
+                var success = await ImageFunctions.OptimizeImageAsync(Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
+                if (success)
+                {
+                    await Error_Handling.ReloadAsync().ConfigureAwait(false);
+                }
+                else
+                {
+                    await Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"] as string, true).ConfigureAwait(false);
+                }
             };
         }
     }

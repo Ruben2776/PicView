@@ -347,8 +347,7 @@
 
     <system:String x:Key="FillImageHeight">Bildhöhe anpassen</system:String>
 
-    <system:String x:Key="OptimizeResize">Optimieren &amp; Größe anpassen</system:String>
-    <system:String x:Key="OptimizeResizeTooltip">Zumessungen anpassen &amp; Bilder optimieren</system:String>
+    <system:String x:Key="OptimizeImage">Bild optimieren</system:String>
 
     <system:String x:Key="ShaderEffects">Shader Effekte</system:String>
     <system:String x:Key="ShaderEffectsTooltip">Zeige Fenster mit Bildeffekten</system:String>
