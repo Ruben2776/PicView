@@ -211,7 +211,7 @@ namespace PicView.ConfigureSettings
                 UC.GetQuickSettingsMenu.ToggleFill.IsChecked = false;
             }
 
-            ScaleImage.TryFitImage();
+            _= ScaleImage.TryFitImageAsync();
         }
 
         internal static void SetBorderColorEnabled(object sender, RoutedEventArgs e)

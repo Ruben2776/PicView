@@ -26,7 +26,7 @@ namespace PicView.UILogic.TransformImage
 
             var rt = new RotateTransform { Angle = Rotateint = r };
 
-            ScaleImage.TryFitImage();
+            _ = ScaleImage.TryFitImageAsync();
 
             // If it's flipped, keep it flipped when rotating
             if (Flipped)

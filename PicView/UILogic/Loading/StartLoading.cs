@@ -119,7 +119,7 @@ namespace PicView.UILogic.Loading
                 }
                 else if (AutoFitWindow)
                 {
-                    ScaleImage.TryFitImage(args[1]);
+                    await ScaleImage.TryFitImageAsync(args[1]).ConfigureAwait(false);
                 }
                 else if (Properties.Settings.Default.Width != 0)
                 {

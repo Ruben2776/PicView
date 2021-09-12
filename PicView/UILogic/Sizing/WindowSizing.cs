@@ -51,7 +51,7 @@ namespace PicView.UILogic.Sizing
                 }
 
                 // Resize it
-                TryFitImage();
+                _ = TryFitImageAsync();
             }
         }
     }

@@ -159,11 +159,8 @@ namespace PicView.FileHandling
         /// <returns></returns>
         internal static Task GetValues(string path) => Task.Run(async () =>
         {
-            var extension = Path.GetExtension(path);
-            extension = extension.ToLower(CultureInfo.CurrentCulture);
-
             // Check if to load from archive
-            if (SupportedFiles.IsSupportedArchives(extension))
+            if (SupportedFiles.IsSupportedArchives(path))
             {
                 if (!Extract(path))
                 {

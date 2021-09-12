@@ -165,7 +165,7 @@ namespace PicView.SystemIntegration
                 if (WindowWasResized == true)
                 {
                     // your stuff to do
-                    ScaleImage.TryFitImage();
+                    _ = ScaleImage.TryFitImageAsync();
 
                     if (UC.GetPicGallery != null)
                     {

@@ -121,7 +121,7 @@ namespace PicView.PicGallery
 
                 if (pic == null)
                 {
-                    pic = ImageDecoder.ImageErrorMessage();
+                    pic = ImageFunctions.ImageErrorMessage();
                 }
                 else if (!pic.IsFrozen)
                 {

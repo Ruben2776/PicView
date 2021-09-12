@@ -31,7 +31,7 @@ namespace PicView.PicGallery
 
                 var z = GetPicGallery.Container.Children[id] as Views.UserControls.PicGalleryItem;
                 ConfigureWindows.GetMainWindow.MainImage.Source = z.img.Source;
-                var size = ImageSize(Pics[id]);
+                var size = await ImageHandling.ImageFunctions.ImageSizeAsync(Pics[id]).ConfigureAwait(true);
                 if (size.HasValue)
                 {
                     FitImage(size.Value.Width, size.Value.Height);

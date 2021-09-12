@@ -1,6 +1,7 @@
 ﻿using PicView.ImageHandling;
 using PicView.UILogic.TransformImage;
 using System;
+using System.Threading.Tasks;
 using static PicView.ChangeImage.Navigation;
 using static PicView.PicGallery.GalleryNavigation;
 using static PicView.UILogic.ConfigureWindows;
@@ -30,7 +31,7 @@ namespace PicView.UILogic.Sizing
         /// <summary>
         /// Tries to call Zoomfit with additional error checking
         /// </summary>
-        internal static bool TryFitImage()
+        internal static async System.Threading.Tasks.Task<bool> TryFitImageAsync()
         {
             if (FreshStartup) { return false; }
 
@@ -46,7 +47,7 @@ namespace PicView.UILogic.Sizing
                     }
                     else
                     {
-                        var size = ImageDecoder.ImageSize(Pics[FolderIndex]);
+                        var size = await ImageFunctions.ImageSizeAsync(Pics[FolderIndex]).ConfigureAwait(false);
                         if (size.HasValue)
                         {
                             FitImage(size.Value.Width, size.Value.Height);
@@ -82,14 +83,18 @@ namespace PicView.UILogic.Sizing
         /// <summary>
         /// Tries to call Zoomfit with specified path
         /// </summary>
-        internal static bool TryFitImage(string source)
+        internal static async Task<bool> TryFitImageAsync(string source)
         {
             if (string.IsNullOrWhiteSpace(source)) { return false; }
 
-            var size = ImageDecoder.ImageSize(source);
+            var size = await ImageFunctions.ImageSizeAsync(source).ConfigureAwait(false);
             if (size.HasValue)
             {
-                FitImage(size.Value.Width, size.Value.Height);
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                {
+                    FitImage(size.Value.Width, size.Value.Height);
+                }));
+
                 return true;
             }
 

@@ -240,7 +240,7 @@ namespace PicView.ChangeImage
             // Check if works, if not show error message
             if (preloadValue == null || preloadValue.bitmapSource == null)
             {
-                preloadValue = new Preloader.PreloadValue(ImageDecoder.ImageErrorMessage(), false);
+                preloadValue = new Preloader.PreloadValue(ImageFunctions.ImageErrorMessage(), false);
             }
 
             // Need to put UI change in dispatcher to fix slideshow bug
@@ -354,7 +354,7 @@ namespace PicView.ChangeImage
         internal static async Task PicAsync(string file, string imageName, bool isGif)
         {
             BitmapSource bitmapSource = isGif ? null : await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(false);
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(async () =>
             {
                 if (IsScrollEnabled)
                 {
@@ -363,7 +363,7 @@ namespace PicView.ChangeImage
 
                 if (isGif)
                 {
-                    Size? imageSize = ImageDecoder.ImageSize(file);
+                    Size? imageSize = await ImageFunctions.ImageSizeAsync(file).ConfigureAwait(true);
                     if (imageSize.HasValue)
                     {
                         FitImage(imageSize.Value.Width, imageSize.Value.Height);
