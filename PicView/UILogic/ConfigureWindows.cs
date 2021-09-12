@@ -301,8 +301,10 @@ namespace PicView.UILogic
                         GetQuickSettingsMenu.SetFit.IsChecked = true;
                     }
 
-                    GetMainWindow.Width = double.NaN;
-                    GetMainWindow.Height = double.NaN;
+                    GetMainWindow.Width = 
+                    GetMainWindow.Height =
+                    GetMainWindow.MainImageBorder.Width = 
+                    GetMainWindow.MainImageBorder.Height = double.NaN;
 
                     GetMainWindow.Top -= GetMainWindow.LowerBar.ActualHeight / 2; // It works...
                 }
@@ -321,8 +323,8 @@ namespace PicView.UILogic
                     GetMainWindow.Height = Properties.Settings.Default.Height;
                     GetMainWindow.Width = Properties.Settings.Default.Width;
 
-                    GetMainWindow.ParentContainer.Width = double.NaN;
-                    GetMainWindow.ParentContainer.Height = double.NaN;
+                    GetMainWindow.MainImageBorder.Width =
+                    GetMainWindow.MainImageBorder.Height = double.NaN;
                 }
 
                 if (GetMainWindow.WindowState == WindowState.Maximized)
@@ -345,27 +347,37 @@ namespace PicView.UILogic
 
         internal static void RenderFullscreen()
         {
+            GetMainWindow.Topmost = true;
+
             // Save size to get back to it when restoring
-            if (!Properties.Settings.Default.AutoFitWindow)
+            if (!Properties.Settings.Default.AutoFitWindow && GetMainWindow.WindowState != WindowState.Maximized)
             {
                 Properties.Settings.Default.Top = GetMainWindow.Top;
                 Properties.Settings.Default.Left = GetMainWindow.Left;
                 Properties.Settings.Default.Height = GetMainWindow.Height;
                 Properties.Settings.Default.Width = GetMainWindow.Width;
+                GetMainWindow.WindowState = WindowState.Maximized;
+            }
+
+            if (GetMainWindow.WindowState != WindowState.Maximized)
+            {
+                GetMainWindow.WindowState = WindowState.Maximized;
             }
 
             ShowTopandBottom(false);
 
-            GetMainWindow.Topmost = true;
-
             GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
             GetMainWindow.SizeToContent = SizeToContent.Manual;
-            GetMainWindow.WindowState = WindowState.Maximized;
+            
             GetMainWindow.Width = MonitorInfo.Width;
             GetMainWindow.Height = MonitorInfo.Height;
 
             // Fix buttons appearing out of window
             GetMainWindow.ParentContainer.Margin = new Thickness(8);
+
+            // Set border to max to fix panning when zooming
+            GetMainWindow.MainImageBorder.Width = MonitorInfo.Width;
+            GetMainWindow.MainImageBorder.Height = MonitorInfo.Height;
 
             GetMainWindow.Top = MonitorInfo.WorkArea.Top;
             GetMainWindow.Left = MonitorInfo.WorkArea.Left;
