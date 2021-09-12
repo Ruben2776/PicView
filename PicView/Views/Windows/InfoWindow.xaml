@@ -146,7 +146,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="12"
-                            Text="A" />
+                            Text="D" />
                     </Border>
 
                     <Border
@@ -160,7 +160,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="12"
-                            Text="{StaticResource ResourceKey=Left}" />
+                            Text="{StaticResource ResourceKey=Right}" />
                     </Border>
 
                     <Border
@@ -188,7 +188,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="12"
-                            Text="D" />
+                            Text="A" />
                     </Border>
 
                     <Border
@@ -203,7 +203,7 @@
                             VerticalAlignment="Center"
                             d:Text="Right"
                             FontSize="12"
-                            Text="{StaticResource ResourceKey=Right}" />
+                            Text="{StaticResource ResourceKey=Left}" />
                     </Border>
 
                     <Border
@@ -2021,9 +2021,7 @@
 
                 <StackPanel Margin="0,28,0,7">
 
-                    <Label
-                        HorizontalAlignment="Center"
-                        Content="{StaticResource ResourceKey=Credits}" />
+                    <Label HorizontalAlignment="Center" Content="{StaticResource ResourceKey=Credits}" />
 
                     <Label
                         Margin="0,0,0,3"
