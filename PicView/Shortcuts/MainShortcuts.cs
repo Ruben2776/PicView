@@ -434,7 +434,7 @@ namespace PicView.Shortcuts
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen
                         || Properties.Settings.Default.Fullscreen) { break; }
 
-                        await Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterImageInWindow"]).ConfigureAwait(false);
+                        await Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterImageInWindow"]).ConfigureAwait(true);
                         ConfigureSettings.UpdateUIValues.SetScalingBehaviour(false, false);
                         break;
 
@@ -443,7 +443,7 @@ namespace PicView.Shortcuts
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen
                         || Properties.Settings.Default.Fullscreen) { break; }
 
-                        await Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterImageInWindowFillHeight"]).ConfigureAwait(false);
+                        await Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterImageInWindowFillHeight"]).ConfigureAwait(true);
                         ConfigureSettings.UpdateUIValues.SetScalingBehaviour(false, true);
                         break;
 
@@ -452,7 +452,7 @@ namespace PicView.Shortcuts
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen
                         || Properties.Settings.Default.Fullscreen) { break; }
 
-                        await Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterApplicationToWindow"]).ConfigureAwait(false);
+                        await Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterApplicationToWindow"]).ConfigureAwait(true);
                         ConfigureSettings.UpdateUIValues.SetScalingBehaviour(true, false);
                         break;
 
@@ -461,7 +461,7 @@ namespace PicView.Shortcuts
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen
                         || Properties.Settings.Default.Fullscreen) { break; }
 
-                        await Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterApplicationToWindowFillHeight"]).ConfigureAwait(false);
+                        await Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterApplicationToWindowFillHeight"]).ConfigureAwait(true);
                         ConfigureSettings.UpdateUIValues.SetScalingBehaviour(true, true);
                         break;
 
