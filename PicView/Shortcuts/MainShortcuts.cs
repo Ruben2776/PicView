@@ -748,11 +748,17 @@ namespace PicView.Shortcuts
             // Disable normal scroll, so we can use our own values
             e.Handled = true;
 
+            // Make sure not to fire off events when autoscrolling
+            if (IsAutoScrolling)
+            {
+                return;
+            }
+
             if (GalleryFunctions.IsOpen)
             {
                 GalleryNavigation.ScrollTo(sender, e);
             }
-            else if (Properties.Settings.Default.ScrollEnabled && !IsAutoScrolling)
+            else if (Properties.Settings.Default.ScrollEnabled)
             {
                 if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
                 {
@@ -772,7 +778,7 @@ namespace PicView.Shortcuts
                     }
                 }
             }
-            else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && !IsAutoScrolling)
+            else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
                 if (Properties.Settings.Default.CtrlZoom)
                 {
