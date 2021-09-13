@@ -24,7 +24,8 @@ namespace PicView.FileHandling
         {
             try
             {
-                File.Move(path, newPath);
+                new FileInfo(newPath).Directory.Create(); // create directory if not exists
+                File.Move(path, newPath, true);
             }
             catch (Exception e)
             {
