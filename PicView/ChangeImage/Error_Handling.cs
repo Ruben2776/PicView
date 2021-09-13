@@ -19,6 +19,14 @@ namespace PicView.ChangeImage
 {
     internal static class Error_Handling
     {
+        internal static bool CheckOutOfRange()
+        {
+            if (Pics.Count < FolderIndex || Pics.Count < 1)
+            {
+                return true;
+            }
+            return false;
+        }
 
         /// <summary>
         /// Clears data, to free objects no longer necessary to store in memory and allow changing folder without error.
@@ -74,19 +82,22 @@ namespace PicView.ChangeImage
                 // Need a sort method instead
                 GalleryFunctions.Clear();
 
-                _ = LoadPiFromFileAsync(s);
+                await LoadPiFromFileAsync(s).ConfigureAwait(false);
 
                 // Reset
-
-                if (Flipped)
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
                 {
-                    Flip();
-                }
+                    if (Flipped)
+                    {
+                        Flip();
+                    }
 
-                if (Rotateint != 0)
-                {
-                    Rotate(0);
-                }
+                    if (Rotateint != 0)
+                    {
+                        Rotate(0);
+                    }
+                }));
+
             }
             else if (Clipboard.ContainsImage() || Base64.IsBase64String(s))
             {
@@ -98,7 +109,10 @@ namespace PicView.ChangeImage
             }
             else
             {
-                Unload();
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    Unload();
+                }));
             }
         }
 

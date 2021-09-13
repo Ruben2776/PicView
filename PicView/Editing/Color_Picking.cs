@@ -61,6 +61,11 @@ namespace PicView.Editing
             {
                 if (addValue)
                 {
+                    if (UC.GetColorPicker.HexCodePresenter.Content == null)
+                    {
+                        IsRunning = false;
+                        return;
+                    }
                     var x = UC.GetColorPicker.HexCodePresenter.Content.ToString();
                     Clipboard.SetText(x);
                     await Tooltip.ShowTooltipMessage(x + " " + Application.Current.Resources["AddedToClipboard"]).ConfigureAwait(false);

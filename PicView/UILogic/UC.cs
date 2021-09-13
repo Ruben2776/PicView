@@ -58,6 +58,16 @@ namespace PicView.UILogic
                 {
                     GetImageSettingsMenu.BeginAnimation(UIElement.OpacityProperty, da);
                 }
+
+                if (GetImageSettingsMenu != null)
+                {
+                    if (ConfigureWindows.GetMainWindow.MainImage.Source != null)
+                    {
+                        GetImageSettingsMenu.GoToPic.GoToPicBox.Text =
+                            (Navigation.FolderIndex + 1)
+                            .ToString(System.Globalization.CultureInfo.CurrentCulture);
+                    }
+                }
             }
         }
 
@@ -97,6 +107,11 @@ namespace PicView.UILogic
             get { return quickSettingsMenuOpen; }
             set
             {
+                if (GetQuickSettingsMenu == null)
+                {
+                    return;
+                }
+
                 quickSettingsMenuOpen = value;
                 GetQuickSettingsMenu.Visibility = Visibility.Visible;
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
@@ -112,18 +127,7 @@ namespace PicView.UILogic
                 {
                     da.To = 1;
                 }
-
-                if (GetQuickSettingsMenu != null)
-                {
-                    if (ConfigureWindows.GetMainWindow.MainImage.Source != null)
-                    {
-                        GetImageSettingsMenu.GoToPic.GoToPicBox.Text =
-                            (Navigation.FolderIndex + 1)
-                            .ToString(System.Globalization.CultureInfo.CurrentCulture);
-                    }
-
-                    GetQuickSettingsMenu.BeginAnimation(UIElement.OpacityProperty, da);
-                }
+                GetQuickSettingsMenu.BeginAnimation(UIElement.OpacityProperty, da);
             }
         }
 

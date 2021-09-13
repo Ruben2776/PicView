@@ -65,10 +65,11 @@ namespace PicView.Views.UserControls
             };
             ColorPickerButton.Click += delegate
             {
-                if (Navigation.FolderIndex < Navigation.Pics.Count || Navigation.Pics.Count == 0)
+                if (ChangeImage.Error_Handling.CheckOutOfRange())
                 {
                     return;
                 }
+                
                 UC.Close_UserControls();
                 Color_Picking.IsRunning = true;
                 Color_Picking.Start();

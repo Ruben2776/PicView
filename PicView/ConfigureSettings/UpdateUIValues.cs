@@ -17,18 +17,18 @@ namespace PicView.ConfigureSettings
     {
         internal static void ChangeSorting(short sorting)
         {
-            if (Properties.Settings.Default.SortPreference == sorting)
+            Properties.Settings.Default.SortPreference = sorting;
+
+            if (ChangeImage.Error_Handling.CheckOutOfRange() == false)
             {
-                return;
+                var tmp = Pics[FolderIndex];
+                if (!string.IsNullOrWhiteSpace(tmp))
+                {
+                    Pics = FileList(Path.GetDirectoryName(tmp));
+                    _ = LoadPicAt(Pics.IndexOf(tmp));
+                }
             }
 
-            Properties.Settings.Default.SortPreference = sorting;
-            var tmp = Pics[FolderIndex];
-            if (!string.IsNullOrWhiteSpace(tmp))
-            {
-                Pics = FileList(Path.GetDirectoryName(tmp));
-                _ = LoadPicAt(Pics.IndexOf(tmp));
-            }
             var sortcm = MainContextMenu.Items[6] as MenuItem;
 
             var sort0 = sortcm.Items[0] as MenuItem;

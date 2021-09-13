@@ -3,6 +3,7 @@ using PicView.Editing.Crop;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.UILogic;
+using PicView.Views.UserControls;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -29,6 +30,15 @@ namespace PicView.Shortcuts
             var ctrlDown = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
             var altDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
             var shiftDown = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
+
+            // Don't execute keys when entering in GoToPicBox
+            if (GetImageSettingsMenu.GoToPic != null)
+            {
+                if (GetImageSettingsMenu.GoToPic.GoToPicBox.IsKeyboardFocusWithin)
+                {
+                    return;
+                }
+            }
 
             #region CroppingKeys
 
@@ -766,6 +776,18 @@ namespace PicView.Shortcuts
                 }
                 else
                 {
+                    if (GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed)
+                    {
+                        if (Properties.Settings.Default.CtrlZoom == false)
+                        {
+                            return;
+                        }
+                        await PicAsync(e.Delta > 0).ConfigureAwait(false);
+                    }
+                    if (GetMainWindow.CheckAccess() == false)
+                    {
+                        return;
+                    }
                     // Scroll vertical when scroll enabled
                     var zoomSpeed = 45;
                     if (e.Delta > 0)

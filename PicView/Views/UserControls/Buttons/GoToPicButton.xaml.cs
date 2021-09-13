@@ -2,6 +2,7 @@
 using PicView.UILogic.Animations;
 using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -23,7 +24,7 @@ namespace PicView.Views.UserControls
                 TheButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(GoToPicBrush);
                 TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(GoToPicBrush, true);
                 TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(GoToPicBrush, false);
-                TheButton.Click += GoToPicEvent;
+                TheButton.Click += async (s, x) => await GoToPicEventAsync(s, x).ConfigureAwait(false);
 
                 if (!Properties.Settings.Default.DarkTheme)
                 {
@@ -35,12 +36,17 @@ namespace PicView.Views.UserControls
                 {
                     GoToPicBox.CaretBrush = new SolidColorBrush(ConfigureSettings.ConfigColors.MainColor);
                 };
-                GoToPicBox.PreviewKeyDown += GoToPicPreviewKeys;
+                GoToPicBox.PreviewKeyDown += async (s, x) => await GoToPicPreviewKeysAsync(s, x).ConfigureAwait(false);
             };
         }
 
-        internal static async void GoToPicEvent(object sender, RoutedEventArgs e)
+        internal static async Task GoToPicEventAsync(object sender, RoutedEventArgs e)
         {
+            if (ChangeImage.Error_Handling.CheckOutOfRange())
+            {
+                return;
+            }
+
             if (int.TryParse(GetImageSettingsMenu.GoToPic.GoToPicBox.Text.ToString(), out int x))
             {
                 x--;
@@ -67,7 +73,7 @@ namespace PicView.Views.UserControls
             ConfigureWindows.GetMainWindow.Focus();
         }
 
-        private void GoToPicPreviewKeys(object sender, KeyEventArgs e)
+        private async Task GoToPicPreviewKeysAsync(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
@@ -116,8 +122,12 @@ namespace PicView.Views.UserControls
                     break;
 
                 case Key.Enter: // Execute it!
-                    GoToPicEvent(sender, e);
-                    ClearGoTo();
+                    await GoToPicEventAsync(sender, e).ConfigureAwait(false);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+                    {
+                        ClearGoTo();
+                    }));
+                    
                     break;
 
                 default:
