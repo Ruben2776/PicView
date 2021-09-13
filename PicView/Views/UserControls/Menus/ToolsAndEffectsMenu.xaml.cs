@@ -65,6 +65,10 @@ namespace PicView.Views.UserControls
             };
             ColorPickerButton.Click += delegate
             {
+                if (Navigation.FolderIndex < Navigation.Pics.Count || Navigation.Pics.Count == 0)
+                {
+                    return;
+                }
                 UC.Close_UserControls();
                 Color_Picking.IsRunning = true;
                 Color_Picking.Start();
@@ -114,6 +118,10 @@ namespace PicView.Views.UserControls
             };
             OptimizeImageButton.Click += async delegate
             {
+                if (Navigation.FolderIndex < Navigation.Pics.Count || Navigation.Pics.Count == 0)
+                {
+                    return;
+                }
                 await Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"] as string, true).ConfigureAwait(false);
                 var success = await ImageFunctions.OptimizeImageAsync(Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
                 if (success)

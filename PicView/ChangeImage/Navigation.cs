@@ -186,7 +186,12 @@ namespace PicView.ChangeImage
                             // Set loading from translation service
                             SetLoadingString();
 
-
+                            // Don't allow image size to stretch the whole screen, fixes when opening new image from unloaded status
+                            if (XWidth < 1)
+                            {
+                                ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+                                ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
+                            }
                         }
                         else
                         {

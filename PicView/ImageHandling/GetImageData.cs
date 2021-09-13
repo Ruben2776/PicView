@@ -78,6 +78,7 @@ namespace PicView.ImageHandling
 
             object bitdepth, dpiX, dpiY;
             string dpi;
+            bool skip = false;
 
             try
             {
@@ -92,6 +93,7 @@ namespace PicView.ImageHandling
                 bitdepth = string.Empty;
                 dpiX = string.Empty;
                 dpiY = string.Empty;
+                skip = true;
             }
 
             if (bitdepth == null)
@@ -99,13 +101,13 @@ namespace PicView.ImageHandling
                 bitdepth = string.Empty;
             }
 
-            if (string.IsNullOrEmpty((string)dpiX) == false)
+            if (skip || dpiX == null)
             {
-                dpi = Math.Round((double)dpiX) + " x " + Math.Round((double)dpiY) + " " + Application.Current.Resources["Dpi"];
+                dpi = string.Empty;
             }
             else
             {
-                dpi = string.Empty;
+                dpi = Math.Round((double)dpiX) + " x " + Math.Round((double)dpiY) + " " + Application.Current.Resources["Dpi"];
             }
 
             return new string[]
