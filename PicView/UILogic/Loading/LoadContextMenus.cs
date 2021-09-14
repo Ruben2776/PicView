@@ -396,7 +396,7 @@ namespace PicView.UILogic.Loading
 
             var setAsCm = new MenuItem
             {
-                Header = Application.Current.Resources["SetAs"],
+                Header = Application.Current.Resources["SetAsWallpaper"],
             };
 
             var setAsCmIcon = new System.Windows.Shapes.Path
@@ -407,40 +407,7 @@ namespace PicView.UILogic.Loading
             setAsCmIcon.Width = setAsCmIcon.Height = 12;
             setAsCmIcon.Fill = scbf;
             setAsCm.Icon = setAsCmIcon;
-
-            var wallcm = new MenuItem
-            {
-                Header = Application.Current.Resources["SetAsWallpaper"],
-            };
-            wallcm.Click += async (_, _) => await SetWallpaperAsync(WallpaperStyle.Fill);
-            var wallcmIcon = new System.Windows.Shapes.Path
-            {
-                Data = Geometry.Parse(SVGiconCamera),
-                Stretch = Stretch.Fill
-            };
-            wallcmIcon.Width = wallcmIcon.Height = 12;
-            wallcmIcon.Fill = scbf;
-            wallcm.Icon = wallcmIcon;
-            setAsCm.Items.Add(wallcm);
-
-            var lockCm = new MenuItem
-            {
-                Header = Application.Current.Resources["SetAsLockScreenImage"],
-            };
-            lockCm.Click += async delegate { await Lockscreen.ChangeLockScreenBackground(Pics[FolderIndex]).ConfigureAwait(false); };
-            var lockCmIcon = new System.Windows.Shapes.Path
-            {
-                Data = Geometry.Parse(SVGiconCamera),
-                Stretch = Stretch.Fill
-            };
-            lockCmIcon.Width = lockCmIcon.Height = 12;
-            lockCmIcon.Fill = scbf;
-            lockCm.Icon = lockCmIcon;
-
-            lockCm.IsEnabled = false;
-            lockCm.Opacity = .5;
-
-            setAsCm.Items.Add(lockCm);
+            setAsCm.Click += async (_, _) => await SetWallpaperAsync(WallpaperStyle.Fill);
 
             MainContextMenu.Items.Add(setAsCm);
 
