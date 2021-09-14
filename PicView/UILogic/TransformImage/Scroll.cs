@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,21 +34,23 @@ namespace PicView.UILogic.TransformImage
         /// <summary>
         /// Toggles scroll and displays it with TooltipStle
         /// </summary>
-        internal static bool IsScrollEnabled
+        internal static async Task SetScrollBehaviour(bool scrolling)
         {
-            get { return Properties.Settings.Default.ScrollEnabled; }
-            set
+            Properties.Settings.Default.ScrollEnabled = scrolling;
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
             {
-                Properties.Settings.Default.ScrollEnabled = value;
                 ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility =
-                    value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+                    scrolling ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+            }));
 
-                // TODO fix error when image is from web
+            // TODO fix error when image is from web
 
-                if (ChangeImage.Navigation.Pics != null)
+            if (ChangeImage.Navigation.Pics != null)
+            {
+                await TryFitImageAsync().ConfigureAwait(false);
+                if (ChangeImage.Navigation.FreshStartup == false)
                 {
-                    _= TryFitImageAsync();
-                    _= ShowTooltipMessage(value ? Application.Current.Resources["ScrollingEnabled"] : Application.Current.Resources["ScrollingDisabled"]);
+                    await ShowTooltipMessage(scrolling ? Application.Current.Resources["ScrollingEnabled"] : Application.Current.Resources["ScrollingDisabled"]).ConfigureAwait(false);
                 }
             }
         }

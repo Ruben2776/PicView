@@ -32,7 +32,7 @@ namespace PicView.UILogic.Sizing
         /// <summary>
         /// Tries to call Zoomfit with additional error checking
         /// </summary>
-        internal static async System.Threading.Tasks.Task<bool> TryFitImageAsync()
+        internal static async Task<bool> TryFitImageAsync()
         {
             if (Error_Handling.CheckOutOfRange() == false)
             {
@@ -49,12 +49,19 @@ namespace PicView.UILogic.Sizing
                         var size = await ImageFunctions.ImageSizeAsync(Pics[FolderIndex]).ConfigureAwait(false);
                         if (size.HasValue)
                         {
-                            FitImage(size.Value.Width, size.Value.Height);
+                            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                            {
+                                FitImage(size.Value.Width, size.Value.Height);
+                            }));
+                            
                             return true;
                         }
                         else if (GetMainWindow.MainImage.Source != null)
                         {
-                            FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
+                            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() => 
+                            { 
+                                FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
+                            }));
                             return true;
                         }
                         else if (XWidth > 0 && XHeight > 0)
@@ -172,7 +179,7 @@ namespace PicView.UILogic.Sizing
                 AspectRatio = Math.Min(maxWidth / height, maxHeight / width);
             }
 
-            if (IsScrollEnabled)
+            if (Properties.Settings.Default.ScrollEnabled)
             {
                 /// Calculate height based on width
                 GetMainWindow.MainImage.Width = maxWidth;

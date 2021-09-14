@@ -157,8 +157,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 0
             };
-            sortcmChild0Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(0); MainContextMenu.IsOpen = false; };
-            sortcmChild0.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(0); MainContextMenu.IsOpen = false; };
+            sortcmChild0Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(0).ConfigureAwait(false);  };
+            sortcmChild0.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(0).ConfigureAwait(false);  };
             sortcmChild0.Header = sortcmChild0Header;
             sortcm.Items.Add(sortcmChild0);
 
@@ -173,8 +173,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 1
             };
-            sortcmChild1Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(1); MainContextMenu.IsOpen = false; };
-            sortcmChild1.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(1); MainContextMenu.IsOpen = false; };
+            sortcmChild1Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(1).ConfigureAwait(false);  };
+            sortcmChild1.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(1).ConfigureAwait(false); };
             sortcmChild1.Header = sortcmChild1Header;
             sortcm.Items.Add(sortcmChild1);
 
@@ -189,8 +189,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 2
             };
-            sortcmChild2Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(2); MainContextMenu.IsOpen = false; };
-            sortcmChild2.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(2); MainContextMenu.IsOpen = false; };
+            sortcmChild2Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(2).ConfigureAwait(false); };
+            sortcmChild2.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(2).ConfigureAwait(false); };
             sortcmChild2.Header = sortcmChild2Header;
             sortcm.Items.Add(sortcmChild2);
 
@@ -205,8 +205,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 3
             };
-            sortcmChild3Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(3); MainContextMenu.IsOpen = false; };
-            sortcmChild3.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(3); MainContextMenu.IsOpen = false; };
+            sortcmChild3Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(3).ConfigureAwait(false); };
+            sortcmChild3.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(3).ConfigureAwait(false); };
             sortcmChild3.Header = sortcmChild3Header;
             sortcm.Items.Add(sortcmChild3);
 
@@ -221,8 +221,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 4
             };
-            sortcmChild4Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(4); MainContextMenu.IsOpen = false; };
-            sortcmChild4.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(4); MainContextMenu.IsOpen = false; };
+            sortcmChild4Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(4).ConfigureAwait(false); };
+            sortcmChild4.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(4).ConfigureAwait(false); };
             sortcmChild4.Header = sortcmChild4Header;
             sortcm.Items.Add(sortcmChild4);
 
@@ -237,8 +237,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 5
             };
-            sortcmChild5Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(5); MainContextMenu.IsOpen = false; };
-            sortcmChild5.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(5); MainContextMenu.IsOpen = false; };
+            sortcmChild5Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(5).ConfigureAwait(false); };
+            sortcmChild5.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(5).ConfigureAwait(false); };
             sortcmChild5.Header = sortcmChild5Header;
             sortcm.Items.Add(sortcmChild5);
 
@@ -253,8 +253,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 6
             };
-            sortcmChild6Header.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(6); MainContextMenu.IsOpen = false; };
-            sortcmChild6.Click += delegate { ConfigureSettings.UpdateUIValues.ChangeSorting(6); MainContextMenu.IsOpen = false; };
+            sortcmChild6Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(6).ConfigureAwait(false); };
+            sortcmChild6.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(6).ConfigureAwait(false); };
             sortcmChild6.Header = sortcmChild6Header;
             sortcm.Items.Add(sortcmChild6);
             MainContextMenu.Items.Add(sortcm);

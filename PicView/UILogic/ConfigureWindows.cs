@@ -291,7 +291,7 @@ namespace PicView.UILogic
                     ShowShortcuts(true);
                 }
 
-                if (AutoFitWindow)
+                if (Properties.Settings.Default.AutoFitWindow)
                 {
                     GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
                     GetMainWindow.ResizeMode = ResizeMode.NoResize;

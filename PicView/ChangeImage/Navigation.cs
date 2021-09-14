@@ -138,7 +138,7 @@ namespace PicView.ChangeImage
             if (FolderIndex != -1) // if it is -1, it means it being extracted and need to wait for it instead
             {
                 // Navigate to picture using obtained index
-                await LoadPicAt(FolderIndex).ConfigureAwait(false);
+                await LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
             }
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(async () =>
@@ -158,7 +158,7 @@ namespace PicView.ChangeImage
         /// Loads image at specified index
         /// </summary>
         /// <param name="index">The index of file to load from Pics</param>
-        internal static async Task LoadPicAt(int index)
+        internal static async Task LoadPicAtIndexAsync(int index)
         {
             Preloader.PreloadValue preloadValue;
             // Error checking to fix rare cases of crashing
@@ -282,7 +282,7 @@ namespace PicView.ChangeImage
         internal static void UpdatePic(int index, BitmapSource bitmapSource)
         {
             // Scroll to top if scroll enabled
-            if (IsScrollEnabled)
+            if (Properties.Settings.Default.ScrollEnabled)
             {
                 ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
             }
@@ -313,22 +313,21 @@ namespace PicView.ChangeImage
             SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index);
         }
 
-        /// <summary>
-        /// Load a picture from a prepared bitmap
-        /// </summary>
-        /// <param name="pic"></param>
-        /// <param name="imageName"></param>
-        internal static void Pic(BitmapSource bitmap, string imageName)
+        internal static void UpdatePic(string imageName, BitmapSource bitmapSource)
         {
-            if (IsScrollEnabled)
+            Unload();
+
+            if (Properties.Settings.Default.ScrollEnabled)
             {
                 ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Source = bitmap;
+            ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
 
-            FitImage(bitmap.PixelWidth, bitmap.PixelHeight);
-            CloseToolTipMessage();          
+            FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+            SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, imageName);
+
+            CloseToolTipMessage();
 
             Taskbar.NoProgress();
 
@@ -339,9 +338,21 @@ namespace PicView.ChangeImage
             {
                 if (ConfigureWindows.GetImageInfoWindow.IsVisible)
                 {
-                    _= ConfigureWindows.GetImageInfoWindow.UpdateValuesAsync(imageName);
+                    _ = ConfigureWindows.GetImageInfoWindow.UpdateValuesAsync(imageName);
                 }
             }
+
+            CanNavigate = false;
+        }
+
+        /// <summary>
+        /// Load a picture from a prepared bitmap
+        /// </summary>
+        /// <param name="pic"></param>
+        /// <param name="imageName"></param>
+        internal static void Pic(BitmapSource bitmap, string imageName)
+        {
+            UpdatePic(imageName, bitmap);
 
             DeleteFiles.DeleteTempFiles();
         }
@@ -356,7 +367,7 @@ namespace PicView.ChangeImage
             BitmapSource bitmapSource = isGif ? null : await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(false);
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(async () =>
             {
-                if (IsScrollEnabled)
+                if (Properties.Settings.Default.ScrollEnabled)
                 {
                     ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
                 }
@@ -404,35 +415,10 @@ namespace PicView.ChangeImage
         internal static async Task Pic64(string base64string)
         {
             var pic = await Base64.Base64StringToBitmap(base64string).ConfigureAwait(false);
-
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(async () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
             {
-                Unload();
-
-                if (IsScrollEnabled)
-                {
-                    ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
-                }
-
-                ConfigureWindows.GetMainWindow.MainImage.Source = pic;
-
-                FitImage(pic.PixelWidth, pic.PixelHeight);
-                CloseToolTipMessage();
-
-                SetTitleString(pic.PixelWidth, pic.PixelHeight, Application.Current.Resources["Base64Image"] as string);
-
-                if (ConfigureWindows.GetImageInfoWindow != null)
-                {
-                    if (ConfigureWindows.GetImageInfoWindow.IsVisible)
-                    {
-                        await ConfigureWindows.GetImageInfoWindow.UpdateValuesAsync(null).ConfigureAwait(false);
-                    }
-                }
+                UpdatePic(Application.Current.Resources["Base64Image"] as string, pic);
             }));
-
-            Taskbar.NoProgress();
-
-            CanNavigate = false;
         }
 
         /// <summary>
@@ -453,7 +439,7 @@ namespace PicView.ChangeImage
 
             if (Pics.Count > 0)
             {
-                await LoadPicAt(0).ConfigureAwait(false);
+                await LoadPicAtIndexAsync(0).ConfigureAwait(false);
             }
             else
             {
@@ -561,7 +547,7 @@ namespace PicView.ChangeImage
             }
 
             // Go to the image!
-            await LoadPicAt(FolderIndex).ConfigureAwait(false);
+            await LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
             {

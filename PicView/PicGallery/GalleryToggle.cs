@@ -123,41 +123,45 @@ namespace PicView.PicGallery
             }
 
             Properties.Settings.Default.FullscreenGallery = true;
-            GalleryLoad.LoadLayout();
 
-            if (GetFakeWindow == null)
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(async() =>
             {
-                GetFakeWindow = new FakeWindow();
-                GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtons
+                GalleryLoad.LoadLayout();
+
+                if (GetFakeWindow == null)
                 {
-                    Margin = new Thickness(1, 12, 0, 0),
-                });
-            }
+                    GetFakeWindow = new FakeWindow();
+                    GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtons
+                    {
+                        Margin = new Thickness(1, 12, 0, 0),
+                    });
+                }
 
-            // Switch gallery container to the correct window
-            if (GetMainWindow.ParentContainer.Children.Contains(GetPicGallery))
-            {
-                GetMainWindow.ParentContainer.Children.Remove(GetPicGallery);
-                GetFakeWindow.grid.Children.Add(GetPicGallery);
-            }
-            else if (!GetFakeWindow.grid.Children.Contains(GetPicGallery))
-            {
-                GetFakeWindow.grid.Children.Add(GetPicGallery);
-            }
+                // Switch gallery container to the correct window
+                if (GetMainWindow.ParentContainer.Children.Contains(GetPicGallery))
+                {
+                    GetMainWindow.ParentContainer.Children.Remove(GetPicGallery);
+                    GetFakeWindow.grid.Children.Add(GetPicGallery);
+                }
+                else if (!GetFakeWindow.grid.Children.Contains(GetPicGallery))
+                {
+                    GetFakeWindow.grid.Children.Add(GetPicGallery);
+                }
 
-            GetFakeWindow.Show();
-            GalleryNavigation.ScrollTo();
-            GetMainWindow.Focus();
+                GetFakeWindow.Show();
+                GalleryNavigation.ScrollTo();
+                GetMainWindow.Focus();
 
-            // Fix not showing up opacity bug..
-            VisualStateManager.GoToElementState(GetPicGallery, "Opacity", false);
-            VisualStateManager.GoToElementState(GetPicGallery.Container, "Opacity", false);
-            GetPicGallery.Opacity = GetPicGallery.Container.Opacity = 1;
+                // Fix not showing up opacity bug..
+                VisualStateManager.GoToElementState(GetPicGallery, "Opacity", false);
+                VisualStateManager.GoToElementState(GetPicGallery.Container, "Opacity", false);
+                GetPicGallery.Opacity = GetPicGallery.Container.Opacity = 1;
 
-            if (GetPicGallery.Container.Children.Count == 0)
-            {
-                await GalleryLoad.Load().ConfigureAwait(false);
-            }
+                if (GetPicGallery.Container.Children.Count == 0)
+                {
+                    await GalleryLoad.Load().ConfigureAwait(false);
+                }
+            }));
         }
 
         #endregion Open
@@ -201,7 +205,7 @@ namespace PicView.PicGallery
             HideInterfaceLogic.ShowStandardInterface();
 
             // Restore settings
-            AutoFitWindow = Properties.Settings.Default.AutoFitWindow;
+            _ = AutoFitWindow();
         }
 
         #endregion Close

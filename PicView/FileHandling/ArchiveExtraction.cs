@@ -124,7 +124,7 @@ namespace PicView.FileHandling
             {
                 if (SetDirectory())
                 {
-                    await LoadPicAt(0).ConfigureAwait(false);
+                    await LoadPicAtIndexAsync(0).ConfigureAwait(false);
 
                     // Add zipped files as recent file
                     RecentFiles.Add(TempZipFile);

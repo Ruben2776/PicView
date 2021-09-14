@@ -105,7 +105,7 @@ namespace PicView.FileHandling
                         // If from same folder
                         if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]) && Path.GetDirectoryName(firstFile) == Path.GetDirectoryName(Pics[FolderIndex]))
                         {
-                            await LoadPicAt(Pics.IndexOf(firstFile)).ConfigureAwait(false);
+                            await LoadPicAtIndexAsync(Pics.IndexOf(firstFile)).ConfigureAwait(false);
                         }
                         else
                         {

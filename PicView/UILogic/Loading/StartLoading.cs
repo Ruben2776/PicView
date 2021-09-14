@@ -35,50 +35,61 @@ namespace PicView.UILogic.Loading
             HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle);
             source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
 
-            LoadLanguage.DetermineLanguage();
-
-            if (!Properties.Settings.Default.ShowInterface)
-            {
-                ConfigureWindows.GetMainWindow.TitleBar.Visibility =
-                ConfigureWindows.GetMainWindow.LowerBar.Visibility
-                = Visibility.Collapsed;
-            }
-
             FreshStartup = true;
             Pics = new List<string>();
 
             // Load sizing properties
             MonitorInfo = MonitorSize.GetMonitorSize();
-            AutoFitWindow = Properties.Settings.Default.AutoFitWindow;
-            IsScrollEnabled = Properties.Settings.Default.ScrollEnabled;
+            await AutoFitWindow().ConfigureAwait(false);
+            await SetScrollBehaviour(Properties.Settings.Default.ScrollEnabled).ConfigureAwait(false);
 
-            // Set min size to DPI scaling
-            ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
-            ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            {
+                // Set min size to DPI scaling
+                ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
+                ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
+            }));
+
+            LoadLanguage.DetermineLanguage();
+
+            if (!Properties.Settings.Default.ShowInterface)
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                {
+                    ConfigureWindows.GetMainWindow.TitleBar.Visibility =
+                       ConfigureWindows.GetMainWindow.LowerBar.Visibility
+                       = Visibility.Collapsed;
+                }));
+
+            }
 
             // Load image if possible
             var args = Environment.GetCommandLineArgs();
             if (args.Length == 1)
             {
-                Unload(); // Load clean setup when starting up without arguments
-
-                // Reset PicGallery and don't allow it to run,
-                // if only 1 image
-                Properties.Settings.Default.FullscreenGallery = false;
-
-                // Don't start it in fullscreen with no image
-                Properties.Settings.Default.Fullscreen = false;
-
-                // Determine proper startup size
-                if (Properties.Settings.Default.Width != 0)
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
                 {
-                    SetLastWindowSize();
-                }
-                else
-                {
-                    ConfigureWindows.GetMainWindow.Width = ConfigureWindows.GetMainWindow.MinWidth;
-                    ConfigureWindows.GetMainWindow.Height = ConfigureWindows.GetMainWindow.MinHeight;
-                }
+                    Unload(); // Load clean setup when starting up without arguments
+
+                    // Reset PicGallery and don't allow it to run,
+                    // if only 1 image
+                    Properties.Settings.Default.FullscreenGallery = false;
+
+                    // Don't start it in fullscreen with no image
+                    Properties.Settings.Default.Fullscreen = false;
+
+                    // Determine proper startup size
+                    if (Properties.Settings.Default.Width != 0)
+                    {
+                        SetLastWindowSize();
+                    }
+                    else
+                    {
+                        ConfigureWindows.GetMainWindow.Width = ConfigureWindows.GetMainWindow.MinWidth;
+                        ConfigureWindows.GetMainWindow.Height = ConfigureWindows.GetMainWindow.MinHeight;
+                    }
+                }));
+
             }
             else if (args[1].StartsWith('.'))
             {
@@ -112,11 +123,14 @@ namespace PicView.UILogic.Loading
                 // Determine prefered UI for startup
                 if (Properties.Settings.Default.Fullscreen)
                 {
-                    ConfigureWindows.Fullscreen_Restore(true);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                    {
+                        ConfigureWindows.Fullscreen_Restore(true);
+                    }));                   
                 }
                 else if (Properties.Settings.Default.FullscreenGallery)
                 {
-                    await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(true); // await needs to be true, or it won't load
+                    await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
                     
                     Timer timer = new() // Dirty code to make it scroll to selected item after start up
                     {
@@ -130,13 +144,15 @@ namespace PicView.UILogic.Loading
                         {
                             GalleryNavigation.ScrollTo();
                         }));
-                        
                     };
                     
                 }
                 else if (Properties.Settings.Default.Width != 0)
                 {
-                    SetLastWindowSize();
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                    {
+                        SetLastWindowSize();
+                    }));
                 }
 
                 // set up size so it feels better when starting application
@@ -145,7 +161,7 @@ namespace PicView.UILogic.Loading
                 // Determine if to load from folder or file
                 if (FileHandling.FileFunctions.CheckIfDirectoryOrFile(args[1]))
                 {
-                    await LoadPicFromFolderAsync(args[1]);
+                    await LoadPicFromFolderAsync(args[1]).ConfigureAwait(false);
                 }
                 else
                 {

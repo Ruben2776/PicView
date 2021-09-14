@@ -113,7 +113,7 @@ namespace PicView.PicGallery
             GalleryNavigation.SetSelected(FolderIndex, false);
 
             // Change image
-            await LoadPicAt(id).ConfigureAwait(false);
+            await LoadPicAtIndexAsync(id).ConfigureAwait(false);
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
             {

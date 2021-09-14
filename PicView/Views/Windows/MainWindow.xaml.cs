@@ -35,7 +35,7 @@ namespace PicView.Views.Windows
             {
                 return;
             }
-            else if (!AutoFitWindow)
+            else if (Properties.Settings.Default.AutoFitWindow == false)
             {
                 if (Properties.Settings.Default.FullscreenGallery == false)
                 {

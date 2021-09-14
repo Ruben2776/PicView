@@ -27,13 +27,13 @@ namespace PicView.Views.UserControls
             };
 
             ToggleFill.IsChecked = Properties.Settings.Default.FillImage;
-            ToggleFill.Click += ConfigureSettings.UpdateUIValues.SetAutoFill;
+            ToggleFill.Click += async (s, e) => await ConfigureSettings.UpdateUIValues.SetAutoFillAsync(s,e).ConfigureAwait(false);
 
             ToggleLooping.IsChecked = Properties.Settings.Default.Looping;
             ToggleLooping.Click += async (_,_) => await ConfigureSettings.UpdateUIValues.SetLooping().ConfigureAwait(false);
 
             SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
-            SetFit.Click += ConfigureSettings.UpdateUIValues.SetAutoFit;
+            SetFit.Click += async (s, e) => await ConfigureSettings.UpdateUIValues.SetAutoFitAsync(s,e).ConfigureAwait(false);
 
 
             // CropButton

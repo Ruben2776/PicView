@@ -1,6 +1,7 @@
 ﻿using PicView.PicGallery;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,7 +16,7 @@ namespace PicView.ConfigureSettings
 {
     internal static class UpdateUIValues
     {
-        internal static void ChangeSorting(short sorting)
+        internal static async Task ChangeSortingAsync(short sorting)
         {
             Properties.Settings.Default.SortPreference = sorting;
 
@@ -24,107 +25,113 @@ namespace PicView.ConfigureSettings
                 var tmp = Pics[FolderIndex];
                 if (!string.IsNullOrWhiteSpace(tmp))
                 {
-                    Pics = FileList(Path.GetDirectoryName(tmp));
-                    _ = LoadPicAt(Pics.IndexOf(tmp));
+                    await Task.Run(() =>
+                    {
+                        Pics = FileList(Path.GetDirectoryName(tmp));
+                    }).ConfigureAwait(false);
+                    await LoadPicAtIndexAsync(Pics.IndexOf(tmp)).ConfigureAwait(false);
                 }
             }
 
-            var sortcm = MainContextMenu.Items[6] as MenuItem;
-
-            var sort0 = sortcm.Items[0] as MenuItem;
-            var sort0Header = sort0.Header as RadioButton;
-
-            var sort1 = sortcm.Items[1] as MenuItem;
-            var sort1Header = sort1.Header as RadioButton;
-
-            var sort2 = sortcm.Items[2] as MenuItem;
-            var sort2Header = sort2.Header as RadioButton;
-
-            var sort3 = sortcm.Items[3] as MenuItem;
-            var sort3Header = sort3.Header as RadioButton;
-
-            var sort4 = sortcm.Items[4] as MenuItem;
-            var sort4Header = sort4.Header as RadioButton;
-
-            var sort5 = sortcm.Items[5] as MenuItem;
-            var sort5Header = sort5.Header as RadioButton;
-
-            var sort6 = sortcm.Items[6] as MenuItem;
-            var sort6Header = sort6.Header as RadioButton;
-
-            switch (sorting)
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
             {
-                default:
-                case 0:
-                    sort0Header.IsChecked = true;
-                    sort1Header.IsChecked = false;
-                    sort2Header.IsChecked = false;
-                    sort3Header.IsChecked = false;
-                    sort4Header.IsChecked = false;
-                    sort5Header.IsChecked = false;
-                    sort6Header.IsChecked = false;
-                    break;
+                var sortcm = MainContextMenu.Items[6] as MenuItem;
 
-                case 1:
-                    sort0Header.IsChecked = false;
-                    sort1Header.IsChecked = true;
-                    sort2Header.IsChecked = false;
-                    sort3Header.IsChecked = false;
-                    sort4Header.IsChecked = false;
-                    sort5Header.IsChecked = false;
-                    sort6Header.IsChecked = false;
-                    break;
+                var sort0 = sortcm.Items[0] as MenuItem;
+                var sort0Header = sort0.Header as RadioButton;
 
-                case 2:
-                    sort0Header.IsChecked = false;
-                    sort1Header.IsChecked = false;
-                    sort2Header.IsChecked = true;
-                    sort3Header.IsChecked = false;
-                    sort4Header.IsChecked = false;
-                    sort5Header.IsChecked = false;
-                    sort6Header.IsChecked = false;
-                    break;
+                var sort1 = sortcm.Items[1] as MenuItem;
+                var sort1Header = sort1.Header as RadioButton;
 
-                case 3:
-                    sort0Header.IsChecked = false;
-                    sort1Header.IsChecked = false;
-                    sort2Header.IsChecked = false;
-                    sort3Header.IsChecked = true;
-                    sort4Header.IsChecked = false;
-                    sort5Header.IsChecked = false;
-                    sort6Header.IsChecked = false;
-                    break;
+                var sort2 = sortcm.Items[2] as MenuItem;
+                var sort2Header = sort2.Header as RadioButton;
 
-                case 4:
-                    sort0Header.IsChecked = false;
-                    sort1Header.IsChecked = false;
-                    sort2Header.IsChecked = false;
-                    sort3Header.IsChecked = false;
-                    sort4Header.IsChecked = true;
-                    sort5Header.IsChecked = false;
-                    sort6Header.IsChecked = false;
-                    break;
+                var sort3 = sortcm.Items[3] as MenuItem;
+                var sort3Header = sort3.Header as RadioButton;
 
-                case 5:
-                    sort0Header.IsChecked = false;
-                    sort1Header.IsChecked = false;
-                    sort2Header.IsChecked = false;
-                    sort3Header.IsChecked = false;
-                    sort4Header.IsChecked = false;
-                    sort5Header.IsChecked = true;
-                    sort6Header.IsChecked = false;
-                    break;
+                var sort4 = sortcm.Items[4] as MenuItem;
+                var sort4Header = sort4.Header as RadioButton;
 
-                case 6:
-                    sort0Header.IsChecked = false;
-                    sort1Header.IsChecked = false;
-                    sort2Header.IsChecked = false;
-                    sort3Header.IsChecked = false;
-                    sort4Header.IsChecked = false;
-                    sort5Header.IsChecked = false;
-                    sort6Header.IsChecked = true;
-                    break;
-            }
+                var sort5 = sortcm.Items[5] as MenuItem;
+                var sort5Header = sort5.Header as RadioButton;
+
+                var sort6 = sortcm.Items[6] as MenuItem;
+                var sort6Header = sort6.Header as RadioButton;
+
+                switch (sorting)
+                {
+                    default:
+                    case 0:
+                        sort0Header.IsChecked = true;
+                        sort1Header.IsChecked = false;
+                        sort2Header.IsChecked = false;
+                        sort3Header.IsChecked = false;
+                        sort4Header.IsChecked = false;
+                        sort5Header.IsChecked = false;
+                        sort6Header.IsChecked = false;
+                        break;
+
+                    case 1:
+                        sort0Header.IsChecked = false;
+                        sort1Header.IsChecked = true;
+                        sort2Header.IsChecked = false;
+                        sort3Header.IsChecked = false;
+                        sort4Header.IsChecked = false;
+                        sort5Header.IsChecked = false;
+                        sort6Header.IsChecked = false;
+                        break;
+
+                    case 2:
+                        sort0Header.IsChecked = false;
+                        sort1Header.IsChecked = false;
+                        sort2Header.IsChecked = true;
+                        sort3Header.IsChecked = false;
+                        sort4Header.IsChecked = false;
+                        sort5Header.IsChecked = false;
+                        sort6Header.IsChecked = false;
+                        break;
+
+                    case 3:
+                        sort0Header.IsChecked = false;
+                        sort1Header.IsChecked = false;
+                        sort2Header.IsChecked = false;
+                        sort3Header.IsChecked = true;
+                        sort4Header.IsChecked = false;
+                        sort5Header.IsChecked = false;
+                        sort6Header.IsChecked = false;
+                        break;
+
+                    case 4:
+                        sort0Header.IsChecked = false;
+                        sort1Header.IsChecked = false;
+                        sort2Header.IsChecked = false;
+                        sort3Header.IsChecked = false;
+                        sort4Header.IsChecked = true;
+                        sort5Header.IsChecked = false;
+                        sort6Header.IsChecked = false;
+                        break;
+
+                    case 5:
+                        sort0Header.IsChecked = false;
+                        sort1Header.IsChecked = false;
+                        sort2Header.IsChecked = false;
+                        sort3Header.IsChecked = false;
+                        sort4Header.IsChecked = false;
+                        sort5Header.IsChecked = true;
+                        sort6Header.IsChecked = false;
+                        break;
+
+                    case 6:
+                        sort0Header.IsChecked = false;
+                        sort1Header.IsChecked = false;
+                        sort2Header.IsChecked = false;
+                        sort3Header.IsChecked = false;
+                        sort4Header.IsChecked = false;
+                        sort5Header.IsChecked = false;
+                        sort6Header.IsChecked = true;
+                        break;
+                }
+            }));
         }
 
         internal static void SetScrolling(object sender, RoutedEventArgs e)
@@ -137,13 +144,13 @@ namespace PicView.ConfigureSettings
 
             if (Properties.Settings.Default.ScrollEnabled)
             {
-                IsScrollEnabled = false;
+                _= SetScrollBehaviour(false);
                 scrollcmHeader.IsChecked = false;
                 UC.GetQuickSettingsMenu.ToggleScroll.IsChecked = false;
             }
             else
             {
-                IsScrollEnabled = true;
+                _ = SetScrollBehaviour(true);
                 scrollcmHeader.IsChecked = true;
                 UC.GetQuickSettingsMenu.ToggleScroll.IsChecked = true;
             }
@@ -175,28 +182,26 @@ namespace PicView.ConfigureSettings
             }
         }
 
-        internal static void SetAutoFit(object sender, RoutedEventArgs e)
+        internal static async Task SetAutoFitAsync(object sender, RoutedEventArgs e)
         {
             if (GalleryFunctions.IsOpen) { return; }
-            SetScalingBehaviour(!Properties.Settings.Default.AutoFitWindow, Properties.Settings.Default.FillImage);
+            await SetScalingBehaviourAsync(!Properties.Settings.Default.AutoFitWindow, Properties.Settings.Default.FillImage).ConfigureAwait(false);
         }
 
-        internal static void SetAutoFill(object sender, RoutedEventArgs e)
+        internal static async Task SetAutoFillAsync(object sender, RoutedEventArgs e)
         {
             if (GalleryFunctions.IsOpen) { return; }
-            SetScalingBehaviour(Properties.Settings.Default.AutoFitWindow, !Properties.Settings.Default.FillImage);
+            await SetScalingBehaviourAsync(Properties.Settings.Default.AutoFitWindow, !Properties.Settings.Default.FillImage).ConfigureAwait(false);
         }
 
-        internal static void SetScalingBehaviour(bool windowBehaviour, bool fill)
+        internal static async Task SetScalingBehaviourAsync(bool windowBehaviour, bool fill)
         {
             if (windowBehaviour)
             {
-                WindowSizing.AutoFitWindow = true;
                 UC.GetQuickSettingsMenu.SetFit.IsChecked = true;
             }
             else
             {
-                WindowSizing.AutoFitWindow = false;
                 UC.GetQuickSettingsMenu.SetFit.IsChecked = false;
             }
 
@@ -211,7 +216,9 @@ namespace PicView.ConfigureSettings
                 UC.GetQuickSettingsMenu.ToggleFill.IsChecked = false;
             }
 
-            _= ScaleImage.TryFitImageAsync();
+            await WindowSizing.AutoFitWindow().ConfigureAwait(false);
+
+            await ScaleImage.TryFitImageAsync().ConfigureAwait(false);
         }
 
         internal static void SetBorderColorEnabled(object sender, RoutedEventArgs e)

@@ -445,7 +445,7 @@ namespace PicView.Shortcuts
                         || Properties.Settings.Default.Fullscreen) { break; }
 
                         await Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterImageInWindow"]).ConfigureAwait(true);
-                        ConfigureSettings.UpdateUIValues.SetScalingBehaviour(false, false);
+                        await ConfigureSettings.UpdateUIValues.SetScalingBehaviourAsync(false, false).ConfigureAwait(false);
                         break;
 
                     // 2
@@ -454,7 +454,7 @@ namespace PicView.Shortcuts
                         || Properties.Settings.Default.Fullscreen) { break; }
 
                         await Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterImageInWindowFillHeight"]).ConfigureAwait(true);
-                        ConfigureSettings.UpdateUIValues.SetScalingBehaviour(false, true);
+                        await ConfigureSettings.UpdateUIValues.SetScalingBehaviourAsync(false, true).ConfigureAwait(false);
                         break;
 
                     // 3
@@ -463,7 +463,7 @@ namespace PicView.Shortcuts
                         || Properties.Settings.Default.Fullscreen) { break; }
 
                         await Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterApplicationToWindow"]).ConfigureAwait(true);
-                        ConfigureSettings.UpdateUIValues.SetScalingBehaviour(true, false);
+                        await ConfigureSettings.UpdateUIValues.SetScalingBehaviourAsync(true, false).ConfigureAwait(false);
                         break;
 
                     // 4
@@ -472,7 +472,7 @@ namespace PicView.Shortcuts
                         || Properties.Settings.Default.Fullscreen) { break; }
 
                         await Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterApplicationToWindowFillHeight"]).ConfigureAwait(true);
-                        ConfigureSettings.UpdateUIValues.SetScalingBehaviour(true, true);
+                        await ConfigureSettings.UpdateUIValues.SetScalingBehaviourAsync(true, true).ConfigureAwait(false);
                         break;
 
                     // F1
@@ -668,7 +668,7 @@ namespace PicView.Shortcuts
                 return;
             }
             // Drag logic
-            if (!IsScrollEnabled)
+            if (Properties.Settings.Default.ScrollEnabled == false)
             {
                 PreparePanImage(sender, e);
             }
