@@ -1,4 +1,5 @@
-﻿using PicView.ImageHandling;
+﻿using PicView.ChangeImage;
+using PicView.ImageHandling;
 using PicView.UILogic.TransformImage;
 using System;
 using System.Threading.Tasks;
@@ -33,9 +34,7 @@ namespace PicView.UILogic.Sizing
         /// </summary>
         internal static async System.Threading.Tasks.Task<bool> TryFitImageAsync()
         {
-            if (FreshStartup) { return false; }
-
-            if (Pics != null)
+            if (Error_Handling.CheckOutOfRange() == false)
             {
                 if (Pics.Count > FolderIndex)
                 {

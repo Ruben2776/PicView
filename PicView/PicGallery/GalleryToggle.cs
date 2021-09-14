@@ -108,8 +108,6 @@ namespace PicView.PicGallery
             {
                 await GalleryLoad.Load().ConfigureAwait(false);
             }
-            // Fix weird bug when changing folder and one item remains
-            // TODO investigate if selected gallery item does not get removed?
             else if (GetPicGallery.Container.Children.Count == 1 && Pics.Count > 1)
             {
                 GetPicGallery.Container.Children.Clear();

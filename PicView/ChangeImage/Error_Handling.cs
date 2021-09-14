@@ -67,7 +67,6 @@ namespace PicView.ChangeImage
             }
             else
             {
-                // TODO extract url from path or get alternative method
                 s = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
             }
 
