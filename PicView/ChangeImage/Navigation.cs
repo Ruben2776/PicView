@@ -105,8 +105,17 @@ namespace PicView.ChangeImage
                 }
                 else if (Directory.Exists(path))
                 {
-                    ChangeFolder(true);
-                    await GetValues(path).ConfigureAwait(false);
+                    try
+                    {
+                        await LoadPicFromFolderAsync(path).ConfigureAwait(false); // Might crash, untested code?
+                    }
+                    catch (Exception e)
+                    {
+                        Unload();
+                        await ShowTooltipMessage(e.Message).ConfigureAwait(true);
+                    }
+                    
+                    return;
                 }
                 else
                 {
@@ -279,6 +288,11 @@ namespace PicView.ChangeImage
             }
         }
 
+        /// <summary>
+        /// Update picture, size it and set the title from index
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="bitmapSource"></param>
         internal static void UpdatePic(int index, BitmapSource bitmapSource)
         {
             // Scroll to top if scroll enabled
@@ -297,6 +311,7 @@ namespace PicView.ChangeImage
                 ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
             }
 
+            // Loads gif from XamlAnimatedGif if neccesary
             if (Path.GetExtension(Pics[index]).Equals(".gif", StringComparison.OrdinalIgnoreCase))
             {
                 XamlAnimatedGif.AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(Pics[index]));
@@ -310,9 +325,15 @@ namespace PicView.ChangeImage
             {
                 FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
             }
+
             SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index);
         }
 
+        /// <summary>
+        /// Update picture, size it and set the title from string
+        /// </summary>
+        /// <param name="imageName"></param>
+        /// <param name="bitmapSource"></param>
         internal static void UpdatePic(string imageName, BitmapSource bitmapSource)
         {
             Unload();

@@ -1,4 +1,5 @@
-﻿using PicView.SystemIntegration;
+﻿using PicView.ChangeImage;
+using PicView.SystemIntegration;
 using System.Threading.Tasks;
 using System.Windows;
 using static PicView.UILogic.Sizing.ScaleImage;
@@ -43,8 +44,11 @@ namespace PicView.UILogic.Sizing
                 }
             }
 
-            // Resize it
-            await TryFitImageAsync().ConfigureAwait(false);
+            if (Navigation.FreshStartup == false)
+            {
+                // Resize it
+                await TryFitImageAsync().ConfigureAwait(false);
+            }
 
             return Properties.Settings.Default.AutoFitWindow;
         }
