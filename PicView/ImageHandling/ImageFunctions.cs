@@ -27,10 +27,6 @@ namespace PicView.ImageHandling
 
         internal static async Task<Size?> ImageSizeAsync(string file)
         {
-            var check = SupportedFiles.IsSupportedFile(file);
-            if (!check.HasValue) { return null; }
-            if (!check.Value) { return null; }
-
             using var magick = new MagickImage();
 
             try

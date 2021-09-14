@@ -1,6 +1,5 @@
 ﻿using PicView.ChangeImage;
 using PicView.Editing;
-using PicView.Editing.Crop;
 using PicView.ImageHandling;
 using PicView.UILogic;
 using PicView.UILogic.Animations;
@@ -38,7 +37,6 @@ namespace PicView.Views.UserControls
                 ConfigureWindows.EffectsWindow();
             };
 
-
             // InfoButton
             InfoButton.TheButton.Click += delegate
             {
@@ -69,7 +67,7 @@ namespace PicView.Views.UserControls
                 {
                     return;
                 }
-                
+
                 UC.Close_UserControls();
                 Color_Picking.IsRunning = true;
                 Color_Picking.Start();
@@ -119,7 +117,7 @@ namespace PicView.Views.UserControls
             };
             OptimizeImageButton.Click += async delegate
             {
-                if (Navigation.FolderIndex < Navigation.Pics.Count || Navigation.Pics.Count == 0)
+                if (Error_Handling.CheckOutOfRange())
                 {
                     return;
                 }
