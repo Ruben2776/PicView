@@ -91,33 +91,6 @@ namespace PicView.UILogic.Loading
                 }));
 
             }
-            else if (args[1].StartsWith('.'))
-            {
-                // Set file associations
-
-                var process = Process.GetCurrentProcess();
-
-                if (args[1] == ".remove")
-                {
-                    var removestring = ".jpeg,.jpe,.jpg,.png,.bmp,.ico,.gif,.webp,.jfif,.tiff,.wbmp,.psd,.psb,.svg,.3fr,.arw,.cr2,.crw,.dcr,.dng,.erf,.kdc,.mef,.mdc,.mos,.mrw,.nef,.nrw,.orf,.pef,.raf,.raw,.rw2,.srf,.x3f,.cut,.exr,.emf,.dds,.dib,.hdr,.heic,.tga,.pcx,.pgm,.wmf,.wpg,.xbm,.xcf.xpm";
-                    var rmArgs = removestring.Split(',');
-                    foreach (var item in rmArgs)
-                    {
-                        NativeMethods.DeleteAssociation(item, process.Id.ToString(CultureInfo.InvariantCulture), process.MainModule.FileName);
-                    }
-                }
-                else
-                {
-                    var exts = args[1].Split(',');
-
-                    foreach (var item in args)
-                    {
-                        NativeMethods.SetAssociation(item, process.Id.ToString(CultureInfo.InvariantCulture));
-                    }
-                }
-
-                Environment.Exit(0);
-            }
             else
             {
                 // Determine prefered UI for startup

@@ -51,6 +51,7 @@ namespace PicView.FileHandling
                 // Camera
                 case string when ext.Equals(".3fr", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".arw", StringComparison.OrdinalIgnoreCase):
+                case string when ext.Equals(".cr2", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".crw", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".dcr", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".dng", StringComparison.OrdinalIgnoreCase):
@@ -72,6 +73,7 @@ namespace PicView.FileHandling
 
                 // Others
                 case string when ext.Equals(".pgm", StringComparison.OrdinalIgnoreCase):
+                case string when ext.Equals(".ppm", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".cut", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".exr", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".dib", StringComparison.OrdinalIgnoreCase):

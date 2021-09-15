@@ -45,35 +45,33 @@ namespace PicView.FileHandling
         /// <summary>
         /// Opens image in File Explorer
         /// </summary>
-        internal static bool Open_In_Explorer()
+        internal static void Open_In_Explorer()
         {
             if (Pics.Count > 0)
             {
                 if (Pics.Count < FolderIndex)
                 {
-                    return false;
+                    return;
                 }
             }
             else
             {
-                return false;
+                return;
             }
 
             if (!File.Exists(Pics[FolderIndex]) || ConfigureWindows.GetMainWindow.MainImage.Source == null)
             {
-                return false;
+                return;
             }
             try
             {
                 Close_UserControls();
                 FileFunctions.OpenFolderAndSelectItem(Path.GetDirectoryName(Pics[FolderIndex]), Pics[FolderIndex]); // https://stackoverflow.com/a/39427395
-                return true;
             }
 #if DEBUG
             catch (InvalidCastException e)
             {
                 Trace.WriteLine("Open_In_Explorer exception \n" + e.Message);
-                return false;
             }
 #else
             catch (InvalidCastException) { }

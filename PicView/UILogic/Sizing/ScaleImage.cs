@@ -1,7 +1,9 @@
 ﻿using PicView.ChangeImage;
+using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.UILogic.TransformImage;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using static PicView.ChangeImage.Navigation;
 using static PicView.PicGallery.GalleryNavigation;
@@ -91,7 +93,17 @@ namespace PicView.UILogic.Sizing
         /// </summary>
         internal static async Task<bool> TryFitImageAsync(string source)
         {
-            if (string.IsNullOrWhiteSpace(source)) { return false; }
+            if (FileFunctions.CheckIfDirectoryOrFile(source)) 
+            {
+                if (Pics.Count > 0)
+                {
+                    source = Pics[0];
+                }
+                else
+                {
+                    return false;
+                }
+            }
 
             var size = await ImageFunctions.ImageSizeAsync(source).ConfigureAwait(false);
             if (size.HasValue)

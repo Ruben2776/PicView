@@ -340,65 +340,6 @@ namespace PicView.SystemIntegration
 
         #endregion GetPixelColor
 
-        #region Set Associations
-
-        // needed so that Explorer windows get refreshed after the registry is updated
-        [DllImport("Shell32.dll")]
-        private static extern int SHChangeNotify(int eventId, int flags, IntPtr item1, IntPtr item2);
-
-        internal static bool SetAssociation(string extension, string progId)
-        {
-            bool madeChanges = false;
-            madeChanges |= SetKeyDefaultValue(@"Software\Classes\" + extension, progId);
-            return madeChanges;
-        }
-
-        private static bool SetKeyDefaultValue(string keyPath, string value)
-        {
-            using (var key = Registry.CurrentUser.CreateSubKey(keyPath))
-            {
-                if (key.GetValue(null) as string != value)
-                {
-                    key.SetValue(null, value);
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public static void DeleteAssociation(string Extension, string progId, string applicationFilePath)
-        {
-            try
-            {
-                // Delete the key instead of trying to change it
-                var defaultApp = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\" + Extension, true);
-                if (defaultApp == null)
-                {
-                    return;
-                }
-                defaultApp.DeleteSubKey("UserChoice", false);
-                defaultApp.Close();
-
-                var openWithContextMenuItem = Registry.CurrentUser.OpenSubKey($@"Software\Classes\{progId}\shell\open\command", true);
-                if (openWithContextMenuItem == null)
-                {
-                    return;
-                }
-                openWithContextMenuItem.DeleteSubKey("\"" + applicationFilePath + "\" \"%1\"");
-                openWithContextMenuItem.Close();
-            }
-            catch (Exception)
-            {
-                return;
-            }
-
-            // Tell explorer the file association has been changed
-            _ = SHChangeNotify(0x08000000, 0x0000, IntPtr.Zero, IntPtr.Zero);
-        }
-
-        #endregion Set Associations
-
         #region Check if application exists
 
         internal static bool IsSoftwareInstalled(string softwareName)
