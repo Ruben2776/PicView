@@ -112,15 +112,6 @@
     <system:String x:Key="SecAbbreviation">Sec.</system:String>
     <system:String x:Key="RestartApp">Restart the application</system:String>
 
-    <!--  Set as Default  -->
-    <system:String x:Key="SetAsDefualt">Set as default image viewer</system:String>
-    <system:String x:Key="RemoveFileAssociations">Remove file associations</system:String>
-    <system:String x:Key="RasterFormats">Raster Formats</system:String>
-    <system:String x:Key="VectorGraphics">Vector Graphic</system:String>
-    <system:String x:Key="RawCamera">Raw Camera Formats</system:String>
-    <system:String x:Key="OtherFormats">Other formats</system:String>
-    <system:String x:Key="ComicFormats">Comic books</system:String>
-
     <!--  Effects Window  -->
     <system:String x:Key="HLSLPictureFX">HLSL Picture FX</system:String>
     <system:String x:Key="ClickToAddShaderEffectToImage">Click button to add specified shader effect to image</system:String>

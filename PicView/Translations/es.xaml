@@ -112,15 +112,6 @@
     <system:String x:Key="SecAbbreviation">Seg.</system:String>
     <system:String x:Key="RestartApp">Reiniciar la aplicación</system:String>
 
-    <!--  Set as Default  -->
-    <system:String x:Key="SetAsDefualt">Establecer como visor de imágenes predeterminado</system:String>
-    <system:String x:Key="RemoveFileAssociations">Quitar asociaciones de archivos</system:String>
-    <system:String x:Key="RasterFormats">Formatos Rasterizados</system:String>
-    <system:String x:Key="VectorGraphics">Gráfico Vectorizado</system:String>
-    <system:String x:Key="RawCamera">Formatos en Crudo</system:String>
-    <system:String x:Key="OtherFormats">Otros formatos</system:String>
-    <system:String x:Key="ComicFormats">Historietas</system:String>
-
     <!--  Effects Window  -->
     <system:String x:Key="HLSLPictureFX">Efectos de imagen HLSL</system:String>
     <system:String x:Key="ClickToAddShaderEffectToImage">Haz click al botón para agregar un efecto de sombra especificado a la imagen</system:String>

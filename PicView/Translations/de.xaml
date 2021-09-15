@@ -112,15 +112,6 @@
     <system:String x:Key="SecAbbreviation">Sek.</system:String>
     <system:String x:Key="RestartApp">Anwendung neustarten</system:String>
 
-    <!--  Set as Default  -->
-    <system:String x:Key="SetAsDefualt">Als Standart Foto-Applikation setzen</system:String>
-    <system:String x:Key="RemoveFileAssociations">Entfernen von Dateizuordnungen</system:String>
-    <system:String x:Key="RasterFormats">Rasterformate</system:String>
-    <system:String x:Key="VectorGraphics">Vektorgrafik</system:String>
-    <system:String x:Key="RawCamera">Kamera Rohdaten</system:String>
-    <system:String x:Key="OtherFormats">Andere Formate</system:String>
-    <system:String x:Key="ComicFormats">Comic books</system:String>
-
     <!--  Effects Window  -->
     <system:String x:Key="HLSLPictureFX">HLSL Bild FX</system:String>
     <system:String x:Key="ClickToAddShaderEffectToImage">Drücke den Knopf um einen spezifizierten Shader Effekt hinzuzufügen</system:String>

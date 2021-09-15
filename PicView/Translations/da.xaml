@@ -112,15 +112,6 @@
     <system:String x:Key="SecAbbreviation">Sek.</system:String>
     <system:String x:Key="RestartApp">Genstart programmet</system:String>
 
-    <!--  Set as Default  -->
-    <system:String x:Key="SetAsDefualt">Sæt som standard billedfremviser</system:String>
-    <system:String x:Key="RemoveFileAssociations">Fjern standard filtilknytninger</system:String>
-    <system:String x:Key="RasterFormats">Rasterformater</system:String>
-    <system:String x:Key="VectorGraphics">Vektorgrafik</system:String>
-    <system:String x:Key="RawCamera">Rå kameraformater</system:String>
-    <system:String x:Key="OtherFormats">Andre formater</system:String>
-    <system:String x:Key="ComicFormats">Comic books</system:String>
-
     <!--  Effects Window  -->
     <system:String x:Key="HLSLPictureFX">HLSL Billede effekter</system:String>
     <system:String x:Key="ClickToAddShaderEffectToImage">Klik på knappen for at tilføje den specificererede shader-effekt til billedet</system:String>

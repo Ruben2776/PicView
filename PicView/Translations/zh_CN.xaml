@@ -112,15 +112,6 @@
     <system:String x:Key="SecAbbreviation">秒</system:String>
     <system:String x:Key="RestartApp">重启本应用程序</system:String>
 
-    <!--  Set as Default  -->
-    <system:String x:Key="SetAsDefualt">设置为默认图像查看器</system:String>
-    <system:String x:Key="RemoveFileAssociations">移除文件关联</system:String>
-    <system:String x:Key="RasterFormats">点阵图像格式</system:String>
-    <system:String x:Key="VectorGraphics">矢量图像格式</system:String>
-    <system:String x:Key="RawCamera">RAW 图像格式</system:String>
-    <system:String x:Key="OtherFormats">其他格式</system:String>
-    <system:String x:Key="ComicFormats">漫画格式</system:String>
-
     <!--  Effects Window  -->
     <system:String x:Key="HLSLPictureFX">HLSL 图片特效</system:String>
     <system:String x:Key="ClickToAddShaderEffectToImage">点击以应用指定特效</system:String>

@@ -20,8 +20,6 @@ namespace PicView.Views.Windows
 {
     public partial class SettingsWindow : Window
     {
-        private static FileAssociationsWindow fileAssocWin;
-
         public SettingsWindow()
         {
             Title = Application.Current.Resources["SettingsWindow"] + " - PicView";
@@ -116,52 +114,7 @@ namespace PicView.Views.Windows
 
                 CenterRadio.Checked += (_, _) => Properties.Settings.Default.KeepCentered = true;
                 CenterRadio.Unchecked += (_, _) => Properties.Settings.Default.KeepCentered = false;
-                CenterRadio.IsChecked = Properties.Settings.Default.KeepCentered;
-
-                fileAssocWin = new FileAssociationsWindow
-                {
-                    Owner = this,
-                    Width = ActualWidth,
-                    Height = ActualHeight
-                };
-                SetAsDefaultTxt.MouseLeftButtonDown += delegate
-                {
-                    if (fileAssocWin.Visibility == Visibility.Visible)
-                    {
-                        fileAssocWin.Focus();
-                    }
-                    else
-                    {
-                        // Show it with animation
-                        Effect = new BlurEffect
-                        {
-                            RenderingBias = RenderingBias.Quality,
-                            KernelType = KernelType.Gaussian,
-                            Radius = 9
-                        };
-
-                        fileAssocWin.BeginAnimation(OpacityProperty, new DoubleAnimation
-                        {
-                            From = 0,
-                            To = 1,
-                            Duration = TimeSpan.FromSeconds(.3)
-                        });
-
-                        // Make it stay centered
-                        fileAssocWin.Left = Left + (Width - fileAssocWin.Width) / 2;
-                        fileAssocWin.Top = Top + (Height - fileAssocWin.Height) / 2;
-
-                        fileAssocWin.ShowDialog();
-                    }
-                };
-
-                IsVisibleChanged += (_, e) =>
-                {
-                    if (!(bool)e.NewValue && fileAssocWin.IsVisible)
-                    {
-                        fileAssocWin.HideLogic();
-                    }
-                };
+                CenterRadio.IsChecked = Properties.Settings.Default.KeepCentered;               
 
                 switch (Properties.Settings.Default.ColorTheme)
                 {
@@ -317,20 +270,6 @@ namespace PicView.Views.Windows
                 WallpaperApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
 
-            // SetAsDefaultTxt
-            SetAsDefaultTxt.MouseEnter += delegate
-            {
-                colorAnimation.From = AnimationHelper.GetPrefferedColorOver();
-                colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
-                SetAsDefaultTxtBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
-            };
-            SetAsDefaultTxt.MouseLeave += delegate
-            {
-                colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
-                colorAnimation.To = AnimationHelper.GetPrefferedColorOver();
-                SetAsDefaultTxtBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
-            };
-
             // RestartTheme
             ThemeRestart.MouseEnter += delegate
             {
@@ -398,15 +337,37 @@ namespace PicView.Views.Windows
             AltUIRadio.MouseEnter += delegate { ButtonMouseOverAnim(AltUIText); };
             AltUIRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(AltUIText); };
 
+
+
             // ScrollZoom
             ScrollZoom.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ScrollZoomText); };
-            ScrollZoom.MouseEnter += delegate { ButtonMouseOverAnim(ScrollZoomText); };
-            ScrollZoom.MouseLeave += delegate { ButtonMouseLeaveAnim(ScrollZoomText); };
+            ScrollZoom.MouseEnter += delegate
+            {
+                colorAnimation.From = MainColor;
+                colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
+                ScrollZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            };
+            ScrollZoom.MouseLeave += delegate
+            {
+                colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
+                colorAnimation.To = MainColor;
+                ScrollZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            };
 
             // CtrlZoom
             CtrlZoom.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(CtrlZoomText); };
-            CtrlZoom.MouseEnter += delegate { ButtonMouseOverAnim(CtrlZoomText); };
-            CtrlZoom.MouseLeave += delegate { ButtonMouseLeaveAnim(CtrlZoomText); };
+            CtrlZoom.MouseEnter += delegate 
+            {
+                colorAnimation.From = MainColor;
+                colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
+                CtrlZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            };
+            CtrlZoom.MouseLeave += delegate
+            {
+                colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
+                colorAnimation.To = MainColor;
+                CtrlZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            };
 
             if (!Properties.Settings.Default.DarkTheme)
             {

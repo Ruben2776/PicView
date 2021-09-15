@@ -112,15 +112,6 @@
     <system:String x:Key="SecAbbreviation">초</system:String>
     <system:String x:Key="RestartApp">응용 프로그램 다시 시작</system:String>
 
-    <!--  Set as Default  -->
-    <system:String x:Key="SetAsDefualt">기본 이미지 뷰어로 설정</system:String>
-    <system:String x:Key="RemoveFileAssociations">파일 연결 제거</system:String>
-    <system:String x:Key="RasterFormats">래스터 형식</system:String>
-    <system:String x:Key="VectorGraphics">벡터 그래픽</system:String>
-    <system:String x:Key="RawCamera">Raw 카메라 형식</system:String>
-    <system:String x:Key="OtherFormats">다른 형식</system:String>
-    <system:String x:Key="ComicFormats">만화책</system:String>
-
     <!--  Effects Window  -->
     <system:String x:Key="HLSLPictureFX">HLSL 그림 FX</system:String>
     <system:String x:Key="ClickToAddShaderEffectToImage">지정된 셰이더 효과를 이미지에 추가하려면 버튼을 클릭하십시오</system:String>

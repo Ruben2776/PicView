@@ -317,7 +317,7 @@
                         Content="{StaticResource AdjustTimingForZoom}" />
 
                     <StackPanel
-                        Margin="5,3,0,10"
+                        Margin="5,3,0,25"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         Orientation="Horizontal">
@@ -344,21 +344,6 @@
                             TextAlignment="Center" />
                     </StackPanel>
 
-                    <Rectangle
-                        Height="1"
-                        Margin="10,25,10,3"
-                        Fill="{StaticResource BorderBrush}" />
-
-                    <TextBlock
-                        x:Name="SetAsDefaultTxt"
-                        Margin="7,25,0,25"
-                        HorizontalAlignment="Center"
-                        Text="{StaticResource SetAsDefualt}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="SetAsDefaultTxtBrush" Color="{DynamicResource ChosenColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
                 </StackPanel>
             </TabItem>
 
