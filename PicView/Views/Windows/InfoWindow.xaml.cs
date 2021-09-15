@@ -1,4 +1,5 @@
-﻿using PicView.ConfigureSettings;
+﻿using AutoUpdaterDotNET;
+using PicView.ConfigureSettings;
 using PicView.UILogic.Animations;
 using PicView.UILogic.Sizing;
 using System;
@@ -73,7 +74,9 @@ namespace PicView.Views.Windows
 
             UpdateButton.MouseLeftButtonUp += delegate
             {
-                AutoUpdaterDotNET.AutoUpdater.Start("https://picview.org/update.xml");
+                AutoUpdater.ShowRemindLaterButton = false;
+                AutoUpdater.ReportErrors = true;
+                AutoUpdater.Start("https://picview.org/update.xml");
             };
 
             UpdateButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(UpdateText); };
