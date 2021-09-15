@@ -1,9 +1,12 @@
-﻿using PicView.UILogic.Animations;
+﻿using PicView.ConfigureSettings;
+using PicView.UILogic.Animations;
 using PicView.UILogic.Sizing;
 using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 
 namespace PicView.Views.Windows
@@ -17,7 +20,7 @@ namespace PicView.Views.Windows
             // Get version
             Assembly assembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            Update.Text += fvi.FileVersion;
+            appVersion.Text += " " + fvi.FileVersion;
 
             ContentRendered += Window_ContentRendered;
 
@@ -56,10 +59,6 @@ namespace PicView.Views.Windows
             License.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(LicenseBrush); };
             License.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(LicenseBrush); };
 
-            Update.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(UpdateBrush); };
-            Update.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(UpdateBrush); };
-            Update.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(UpdateBrush); };
-
             zondicons.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(zondiconsBrush); };
             zondicons.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(zondiconsBrush); };
             zondicons.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(zondiconsBrush); };
@@ -71,6 +70,16 @@ namespace PicView.Views.Windows
             PicViewSite.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(PicViewBrush); };
             PicViewSite.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(PicViewBrush); };
             PicViewSite.PreviewMouseLeftButtonDown += delegate { MouseOverAnimations.PreviewMouseButtonDownAnim(PicViewBrush); };
+
+            UpdateButton.MouseLeftButtonUp += delegate
+            {
+                AutoUpdaterDotNET.AutoUpdater.Start("https://picview.org/update.xml");
+            };
+
+            UpdateButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(UpdateText); };
+            UpdateButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(UpdateBrush); };
+            UpdateButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(UpdateText); };
+            UpdateButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(UpdateBrush); };
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)

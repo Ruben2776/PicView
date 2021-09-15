@@ -111,6 +111,7 @@
     <system:String x:Key="AdjustTimingForZoom">Ajustar velocidad de acercado/alejado</system:String>
     <system:String x:Key="SecAbbreviation">Seg.</system:String>
     <system:String x:Key="RestartApp">Reiniciar la aplicación</system:String>
+    <system:String x:Key="CheckForUpdates">Compruebe las actualizaciones</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="HLSLPictureFX">Efectos de imagen HLSL</system:String>

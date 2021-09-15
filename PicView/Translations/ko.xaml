@@ -111,6 +111,7 @@
     <system:String x:Key="AdjustTimingForZoom">확대/축소 속도 조정</system:String>
     <system:String x:Key="SecAbbreviation">초</system:String>
     <system:String x:Key="RestartApp">응용 프로그램 다시 시작</system:String>
+    <system:String x:Key="CheckForUpdates">업데이트 확인</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="HLSLPictureFX">HLSL 그림 FX</system:String>

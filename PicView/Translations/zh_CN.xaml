@@ -111,6 +111,7 @@
     <system:String x:Key="AdjustTimingForZoom">调整缩放动画速度</system:String>
     <system:String x:Key="SecAbbreviation">秒</system:String>
     <system:String x:Key="RestartApp">重启本应用程序</system:String>
+    <system:String x:Key="CheckForUpdates">检查更新</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="HLSLPictureFX">HLSL 图片特效</system:String>

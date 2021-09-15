@@ -111,6 +111,7 @@
     <system:String x:Key="AdjustTimingForZoom">Adjust zooming speed</system:String>
     <system:String x:Key="SecAbbreviation">Sec.</system:String>
     <system:String x:Key="RestartApp">Restart the application</system:String>
+    <system:String x:Key="CheckForUpdates">Check for updates</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="HLSLPictureFX">HLSL Picture FX</system:String>
