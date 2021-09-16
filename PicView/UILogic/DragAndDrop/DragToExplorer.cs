@@ -1,10 +1,7 @@
-﻿using PicView.ChangeImage;
-using PicView.FileHandling;
+﻿using PicView.FileHandling;
 using PicView.UILogic.TransformImage;
 using System;
 using System.Collections.Specialized;
-using System.IO;
-using System.Net.Http;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.ChangeImage.Navigation;

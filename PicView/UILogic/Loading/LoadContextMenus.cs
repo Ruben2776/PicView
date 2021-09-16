@@ -1,6 +1,5 @@
 ﻿using PicView.ImageHandling;
 using PicView.PicGallery;
-using PicView.SystemIntegration;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -157,8 +156,8 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 0
             };
-            sortcmChild0Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(0).ConfigureAwait(false);  };
-            sortcmChild0.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(0).ConfigureAwait(false);  };
+            sortcmChild0Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(0).ConfigureAwait(false); };
+            sortcmChild0.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(0).ConfigureAwait(false); };
             sortcmChild0.Header = sortcmChild0Header;
             sortcm.Items.Add(sortcmChild0);
 
@@ -173,7 +172,7 @@ namespace PicView.UILogic.Loading
                 MinWidth = 125,
                 IsChecked = Properties.Settings.Default.SortPreference == 1
             };
-            sortcmChild1Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(1).ConfigureAwait(false);  };
+            sortcmChild1Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(1).ConfigureAwait(false); };
             sortcmChild1.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(1).ConfigureAwait(false); };
             sortcmChild1.Header = sortcmChild1Header;
             sortcm.Items.Add(sortcmChild1);
@@ -297,7 +296,7 @@ namespace PicView.UILogic.Loading
             };
             settingscmLoop.Header = settingscmLoopHeader;
             settingscmLoop.Click += async (_, _) => await ConfigureSettings.UpdateUIValues.SetLooping().ConfigureAwait(false);
-            settingscmLoopHeader.Click += async(_, _) => await ConfigureSettings.UpdateUIValues.SetLooping().ConfigureAwait(false); ;
+            settingscmLoopHeader.Click += async (_, _) => await ConfigureSettings.UpdateUIValues.SetLooping().ConfigureAwait(false); ;
             settingscm.Items.Add(settingscmLoop);
 
             ///////////////////////////

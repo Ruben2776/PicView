@@ -187,27 +187,27 @@ namespace PicView.Views.Windows
                 }
                 else
                 {
-                    FilenameBox.Text = 
+                    FilenameBox.Text =
 
-                    FolderBox.Text = 
+                    FolderBox.Text =
 
-                    FullPathBox.Text = 
+                    FullPathBox.Text =
 
-                    CreatedBox.Text = 
+                    CreatedBox.Text =
 
-                    ModifiedBox.Text = 
+                    ModifiedBox.Text =
 
-                    SizePxBox.Text = 
+                    SizePxBox.Text =
 
-                    ResolutionBox.Text = 
+                    ResolutionBox.Text =
 
-                    BitDepthBox.Text = 
+                    BitDepthBox.Text =
 
-                    SizeMpBox.Text = 
+                    SizeMpBox.Text =
 
-                    PrintSizeCmBox.Text = 
+                    PrintSizeCmBox.Text =
 
-                    PrintSizeInBox.Text = 
+                    PrintSizeInBox.Text =
 
                     AspectRatioBox.Text = string.Empty;
                 }

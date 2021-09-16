@@ -1,7 +1,6 @@
 ﻿using PicView.ImageHandling;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -45,7 +44,7 @@ namespace PicView.ChangeImage
             {
                 i = Math.Abs(i);
             }
-           
+
             if (i >= Pics.Count)
             {
                 return;
@@ -83,7 +82,7 @@ namespace PicView.ChangeImage
             {
                 key = Math.Abs(key);
             }
-            
+
             if (key >= Pics.Count)
             {
 #if DEBUG
@@ -188,18 +187,6 @@ namespace PicView.ChangeImage
                 {
                     Remove(i % Pics.Count);
                 }
-
-                // Remove overflow from looping
-                if (Sources.Count > (LoadBehind + 1) + (LoadInfront + 1) + 1)
-                {
-                    if (Properties.Settings.Default.Looping)
-                    {
-
-                    }
-#if DEBUG
-                    Trace.WriteLine(Sources.Count);
-#endif
-                }
             }
             else
             {
@@ -219,21 +206,6 @@ namespace PicView.ChangeImage
                 for (int i = index - LoadInfront * 2; i <= endPoint; i++)
                 {
                     Remove(i % Pics.Count);
-                }
-
-                // Remove overflow from looping
-                if (Sources.Count > (LoadBehind + 1) + (LoadInfront + 1) + 1)
-                {
-                    //if (Properties.Settings.Default.Looping)
-                    //{
-                    //    for (int i = Pics.Count - (LoadInfront * 2); i < Pics.Count; i++)
-                    //    {
-                    //        Remove(i % Pics.Count);
-                    //    }
-                    //}
-#if DEBUG
-                    Trace.WriteLine(Sources.Count);
-#endif
                 }
             }
 

@@ -44,7 +44,7 @@ namespace PicView.UILogic.Loading
             GetFileMenu.Print.Click += (_, _) => Print(Pics[FolderIndex]);
             GetFileMenu.SaveButton.Click += async (sender, e) => await SaveFilesAsync();
 
-            GetFileMenu.OpenBorder.MouseLeftButtonUp += async(_, _) => await OpenAsync().ConfigureAwait(false);
+            GetFileMenu.OpenBorder.MouseLeftButtonUp += async (_, _) => await OpenAsync().ConfigureAwait(false);
             GetFileMenu.FileLocationBorder.MouseLeftButtonUp += (_, _) => Open_In_Explorer();
             GetFileMenu.PrintBorder.MouseLeftButtonUp += (_, _) => Print(Pics[FolderIndex]);
             GetFileMenu.SaveBorder.MouseLeftButtonUp += async (sender, e) => await SaveFilesAsync();

@@ -4,15 +4,11 @@ using PicView.PicGallery;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.DeleteFiles;
-using static PicView.FileHandling.FileLists;
-using static PicView.ImageHandling.ImageDecoder;
-using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.ChangeImage

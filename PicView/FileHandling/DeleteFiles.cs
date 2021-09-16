@@ -115,7 +115,7 @@ namespace PicView.FileHandling
                 {
                     Unload();
                 }));
-                
+
                 return;
             }
 

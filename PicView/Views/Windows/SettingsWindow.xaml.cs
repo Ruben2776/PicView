@@ -11,7 +11,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Effects;
 using static PicView.ConfigureSettings.ConfigColors;
 using static PicView.SystemIntegration.Wallpaper;
 using static PicView.UILogic.Animations.MouseOverAnimations;
@@ -114,7 +113,7 @@ namespace PicView.Views.Windows
 
                 CenterRadio.Checked += (_, _) => Properties.Settings.Default.KeepCentered = true;
                 CenterRadio.Unchecked += (_, _) => Properties.Settings.Default.KeepCentered = false;
-                CenterRadio.IsChecked = Properties.Settings.Default.KeepCentered;               
+                CenterRadio.IsChecked = Properties.Settings.Default.KeepCentered;
 
                 switch (Properties.Settings.Default.ColorTheme)
                 {
@@ -356,7 +355,7 @@ namespace PicView.Views.Windows
 
             // CtrlZoom
             CtrlZoom.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(CtrlZoomText); };
-            CtrlZoom.MouseEnter += delegate 
+            CtrlZoom.MouseEnter += delegate
             {
                 colorAnimation.From = MainColor;
                 colorAnimation.To = AnimationHelper.GetPrefferedColorDown();

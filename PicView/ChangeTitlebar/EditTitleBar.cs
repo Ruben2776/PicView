@@ -96,7 +96,7 @@ namespace PicView.UILogic
                 {
                     var text = ConfigureWindows.GetMainWindow.TitleText.Text;
                     var width = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
-                    var height = ConfigureWindows.GetMainWindow.MainImage.Source.Height; 
+                    var height = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
                     {
                         Pics[FolderIndex] = text;

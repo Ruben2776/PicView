@@ -1,13 +1,10 @@
 ﻿using PicView.ChangeImage;
-using PicView.ConfigureSettings;
 using PicView.FileHandling;
 using PicView.ProcessHandling;
 using PicView.Views.UserControls;
 using PicView.Views.UserControls.Misc;
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -162,7 +159,7 @@ namespace PicView.UILogic.DragAndDrop
             {
                 RemoveDragOverlay();
             }));
-           
+
 
             // Load dropped URL
             if (e.Data.GetData(DataFormats.Html) != null)

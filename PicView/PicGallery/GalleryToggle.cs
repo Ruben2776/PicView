@@ -1,6 +1,5 @@
 ﻿using PicView.UILogic;
 using PicView.UILogic.Animations;
-using PicView.UILogic.Sizing;
 using PicView.Views.Windows;
 using System;
 using System.Threading.Tasks;
@@ -124,7 +123,7 @@ namespace PicView.PicGallery
 
             Properties.Settings.Default.FullscreenGallery = true;
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(async() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(async () =>
             {
                 GalleryLoad.LoadLayout();
 

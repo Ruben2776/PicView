@@ -66,7 +66,7 @@ namespace PicView.Views.Windows
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 Navigation.ClickArrowRightClicked = false;
 
-                _= FadeControls.FadeControlsAsync(true);
+                _ = FadeControls.FadeControlsAsync(true);
             }
             else if (Navigation.ClickArrowLeftClicked)
             {

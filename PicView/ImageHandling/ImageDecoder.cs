@@ -1,11 +1,8 @@
 ﻿using ImageMagick;
-using PicView.FileHandling;
-using PicView.UILogic.Sizing;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
 using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;

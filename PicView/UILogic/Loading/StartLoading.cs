@@ -6,7 +6,6 @@ using PicView.UILogic.Sizing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -99,26 +98,26 @@ namespace PicView.UILogic.Loading
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
                     {
                         ConfigureWindows.Fullscreen_Restore(true);
-                    }));                   
+                    }));
                 }
                 else if (Properties.Settings.Default.FullscreenGallery)
                 {
                     await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
-                    
+
                     Timer timer = new() // Dirty code to make it scroll to selected item after start up
                     {
                         AutoReset = false,
                         Enabled = true,
                         Interval = 1700
                     };
-                    timer.Elapsed += async delegate 
+                    timer.Elapsed += async delegate
                     {
                         await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
                         {
                             GalleryNavigation.ScrollTo();
                         }));
                     };
-                    
+
                 }
                 else if (Properties.Settings.Default.Width != 0)
                 {

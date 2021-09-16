@@ -144,7 +144,7 @@ namespace PicView.ConfigureSettings
 
             if (Properties.Settings.Default.ScrollEnabled)
             {
-                _= SetScrollBehaviour(false);
+                _ = SetScrollBehaviour(false);
                 scrollcmHeader.IsChecked = false;
                 UC.GetQuickSettingsMenu.ToggleScroll.IsChecked = false;
             }

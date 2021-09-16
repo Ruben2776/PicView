@@ -181,7 +181,6 @@ namespace PicView.ChangeImage
             // Initate loading behavior, if needed
             if (preloadValue == null || preloadValue.isLoading)
             {
-                //CanNavigate = false;
                 if (GalleryFunctions.IsOpen == false)
                 {
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>

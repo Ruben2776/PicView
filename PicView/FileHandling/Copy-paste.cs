@@ -1,11 +1,8 @@
-﻿using PicView.ChangeImage;
-using PicView.ImageHandling;
+﻿using PicView.ImageHandling;
 using PicView.UILogic;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;

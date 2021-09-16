@@ -3,14 +3,12 @@ using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.UILogic.TransformImage;
 using System;
-using System.IO;
 using System.Threading.Tasks;
 using static PicView.ChangeImage.Navigation;
 using static PicView.PicGallery.GalleryNavigation;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.Sizing.WindowSizing;
 using static PicView.UILogic.TransformImage.Rotation;
-using static PicView.UILogic.TransformImage.Scroll;
 
 namespace PicView.UILogic.Sizing
 {
@@ -55,13 +53,13 @@ namespace PicView.UILogic.Sizing
                             {
                                 FitImage(size.Value.Width, size.Value.Height);
                             }));
-                            
+
                             return true;
                         }
                         else if (GetMainWindow.MainImage.Source != null)
                         {
-                            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() => 
-                            { 
+                            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                            {
                                 FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
                             }));
                             return true;
@@ -93,7 +91,7 @@ namespace PicView.UILogic.Sizing
         /// </summary>
         internal static async Task<bool> TryFitImageAsync(string source)
         {
-            if (FileFunctions.CheckIfDirectoryOrFile(source)) 
+            if (FileFunctions.CheckIfDirectoryOrFile(source))
             {
                 if (Pics.Count > 0)
                 {

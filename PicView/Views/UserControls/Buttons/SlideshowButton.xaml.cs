@@ -35,8 +35,8 @@ namespace PicView.Views.UserControls
                 };
 
 
-                TheButton.Click += delegate 
-                { 
+                TheButton.Click += delegate
+                {
                     UC.Close_UserControls();
                     Slideshow.StartSlideshow();
                 };

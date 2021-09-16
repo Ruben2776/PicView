@@ -127,7 +127,7 @@ namespace PicView.Views.UserControls
                     {
                         ClearGoTo();
                     }));
-                    
+
                     break;
 
                 default:

@@ -1,13 +1,10 @@
 ﻿using AutoUpdaterDotNET;
-using PicView.ConfigureSettings;
 using PicView.UILogic.Animations;
 using PicView.UILogic.Sizing;
 using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 
 namespace PicView.Views.Windows

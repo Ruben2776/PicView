@@ -1,5 +1,4 @@
 ﻿using PicView.UILogic;
-using PicView.UILogic.Sizing;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -7,7 +6,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using static PicView.ChangeImage.Navigation;
-using static PicView.ImageHandling.ImageDecoder;
 using static PicView.ImageHandling.Thumbnails;
 using static PicView.PicGallery.GalleryFunctions;
 using static PicView.UILogic.Sizing.ScaleImage;
@@ -37,8 +35,8 @@ namespace PicView.PicGallery
                     FitImage(size.Value.Width, size.Value.Height);
                 }
 
-                    GetPicGallery.Width = XWidth;
-                    GetPicGallery.Height = XHeight;
+                GetPicGallery.Width = XWidth;
+                GetPicGallery.Height = XHeight;
 
                 GetPicGallery.x2.Visibility = Visibility.Hidden;
 

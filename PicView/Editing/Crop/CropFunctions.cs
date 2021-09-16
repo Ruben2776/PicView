@@ -55,7 +55,7 @@ namespace PicView.Editing.Crop
                 {
                     SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
                 }
-            }));           
+            }));
             CanNavigate = true;
         }
 

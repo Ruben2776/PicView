@@ -3,7 +3,6 @@ using PicView.Editing.Crop;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.UILogic;
-using PicView.Views.UserControls;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;

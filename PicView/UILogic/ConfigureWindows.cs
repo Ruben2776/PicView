@@ -301,9 +301,9 @@ namespace PicView.UILogic
                         GetQuickSettingsMenu.SetFit.IsChecked = true;
                     }
 
-                    GetMainWindow.Width = 
+                    GetMainWindow.Width =
                     GetMainWindow.Height =
-                    GetMainWindow.MainImageBorder.Width = 
+                    GetMainWindow.MainImageBorder.Width =
                     GetMainWindow.MainImageBorder.Height = double.NaN;
 
                     GetMainWindow.Top -= GetMainWindow.LowerBar.ActualHeight / 2; // It works...
@@ -340,7 +340,7 @@ namespace PicView.UILogic
                 }
 
                 Properties.Settings.Default.Fullscreen = false;
-                _= TryFitImageAsync();
+                _ = TryFitImageAsync();
                 ConfigureSettings.ConfigColors.UpdateColor(); // Regain border
             }
         }
@@ -358,7 +358,7 @@ namespace PicView.UILogic
                 Properties.Settings.Default.Width = GetMainWindow.Width;
             }
 
-            
+
 
             ShowTopandBottom(false);
             GetMainWindow.Topmost = true;
@@ -405,7 +405,7 @@ namespace PicView.UILogic
         {
             // Update size when screen resulution changes
             MonitorInfo = MonitorSize.GetMonitorSize();
-            _= TryFitImageAsync();
+            _ = TryFitImageAsync();
         }
 
         #endregion Changed Events
