@@ -37,7 +37,7 @@ namespace PicView.ImageHandling
             }
 
             BitmapSource image = null;
-            var source = Preloader.Get(file);
+            var source = Preloader.Get(ChangeImage.Navigation.Pics.IndexOf(file));
             if (source != null)
             {
                 image = source.bitmapSource;

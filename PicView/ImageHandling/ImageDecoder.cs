@@ -68,12 +68,13 @@ namespace PicView.ImageHandling
                     case ".SVG":
                     case ".XCF":
                         filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
-                        MagickImage magickImage = new();
-                        magickImage.Read(filestream);
+                        MagickImage magickImage = new()
+                        {
+                            Quality = 100,
+                            ColorSpace = ColorSpace.Transparent
+                        };
+                        magickImage.Read(filestream); // Reading it async causes slowdown
                         await filestream.DisposeAsync().ConfigureAwait(false);
-
-                        magickImage.Quality = 100;
-                        magickImage.ColorSpace = ColorSpace.Transparent;
 
                         var bitmap = magickImage.ToBitmapSource();
                         magickImage.Dispose();

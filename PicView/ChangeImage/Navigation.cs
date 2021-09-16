@@ -16,7 +16,6 @@ using static PicView.ImageHandling.Thumbnails;
 using static PicView.UILogic.SetTitle;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.Tooltip;
-using static PicView.UILogic.TransformImage.Scroll;
 using static PicView.UILogic.UC;
 
 namespace PicView.ChangeImage
@@ -94,7 +93,6 @@ namespace PicView.ChangeImage
                 SetLoadingString();
             }));
 
-
             // Handle if from web
             if (!File.Exists(path))
             {
@@ -114,7 +112,7 @@ namespace PicView.ChangeImage
                         Unload();
                         await ShowTooltipMessage(e.Message).ConfigureAwait(true);
                     }
-                    
+
                     return;
                 }
                 else
@@ -178,11 +176,12 @@ namespace PicView.ChangeImage
             }
 
             FolderIndex = index;
-            preloadValue = Preloader.Get(Pics[index]);
+            preloadValue = Preloader.Get(index);
 
             // Initate loading behavior, if needed
             if (preloadValue == null || preloadValue.isLoading)
             {
+                //CanNavigate = false;
                 if (GalleryFunctions.IsOpen == false)
                 {
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
@@ -218,17 +217,15 @@ namespace PicView.ChangeImage
                         }
                     }));
                 }
-
-                // Make loading skippable
-                if (FolderIndex != index || FastPicRunning)
+                if (FastPicRunning)
                 {
                     return;
                 }
 
                 if (preloadValue == null) // Error correctiom
                 {
-                    await Preloader.Add(Pics[index]).ConfigureAwait(false);
-                    preloadValue = Preloader.Get(Pics[index]);
+                    await Preloader.AddAsync(index).ConfigureAwait(false);
+                    preloadValue = Preloader.Get(index);
                 }
                 while (preloadValue != null && preloadValue.isLoading)
                 {
@@ -237,12 +234,15 @@ namespace PicView.ChangeImage
                 }
             }
             // Make loading skippable
+            if (FastPicRunning)
+            {
+                return;
+            }
+
+            // Make loading skippable
             if (FolderIndex != index)
             {
-                if (Preloader.Count() > Preloader.LoadInfront + Preloader.LoadBehind)
-                {
-                    Preloader.Remove(Pics[index]);
-                }
+                await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
                 return;
             }
 
@@ -274,11 +274,7 @@ namespace PicView.ChangeImage
             {
                 Taskbar.Progress(index, Pics.Count);
 
-                if (FastPicRunning == false)
-                {
-                    // Preload images \\
-                    await Preloader.PreLoad(index).ConfigureAwait(false);
-                }
+                await Preloader.PreLoad(index).ConfigureAwait(false);
             }
 
             // Add recent files, except when browing archive
@@ -412,7 +408,7 @@ namespace PicView.ChangeImage
 
                 CloseToolTipMessage();
             }));
-            
+
             Taskbar.NoProgress();
             CanNavigate = false;
             FolderIndex = 0;
@@ -561,7 +557,7 @@ namespace PicView.ChangeImage
                 indexBackup = FolderIndex;
 
                 // Reset preloader values to prevent errors
-                if (Pics.Count > 20)
+                if (Pics.Count > Preloader.LoadBehind + Preloader.LoadInfront + 2)
                 {
                     Preloader.Clear();
                 }
@@ -570,10 +566,10 @@ namespace PicView.ChangeImage
             // Go to the image!
             await LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+            // Update PicGallery selected item, if needed
+            if (GalleryFunctions.IsOpen)
             {
-                // Update PicGallery selected item, if needed
-                if (GalleryFunctions.IsOpen)
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
                 {
                     if (GetPicGallery.Container.Children.Count > FolderIndex && GetPicGallery.Container.Children.Count > indexBackup)
                     {
@@ -589,10 +585,10 @@ namespace PicView.ChangeImage
                     {
                         // TODO Find way to get PicGalleryItem an alternative way...
                     }
-                }
 
-                CloseToolTipMessage();
-            }));
+                    CloseToolTipMessage();
+                }));
+            }
         }
 
         /// <summary>
@@ -657,35 +653,43 @@ namespace PicView.ChangeImage
             {
                 return;
             }
-            
+
             FastPicRunning = false;
 
-            var preloadValue = Preloader.Get(Pics[FolderIndex]);
+            Preloader.PreloadValue preloadValue;
 
-            if (preloadValue == null) // Error correctiom
+            // Reset preloader values to prevent errors
+            if (Pics.Count > Preloader.LoadBehind + Preloader.LoadInfront + 2)
             {
-                await Preloader.Add(Pics[FolderIndex]).ConfigureAwait(false);
-                preloadValue = Preloader.Get(Pics[FolderIndex]);
+                Preloader.Clear();
+                await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
+                preloadValue = Preloader.Get(FolderIndex);
             }
-            while (preloadValue != null && preloadValue.isLoading)
+            else
             {
-                // Wait for finnished result
-                await Task.Delay(5).ConfigureAwait(false);
+                preloadValue = Preloader.Get(FolderIndex);
+
+                if (preloadValue == null) // Error correctiom
+                {
+                    await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
+                    preloadValue = Preloader.Get(FolderIndex);
+                }
+                while (preloadValue != null && preloadValue.isLoading)
+                {
+                    // Wait for finnished result
+                    await Task.Delay(5).ConfigureAwait(false);
+                }
             }
+
             if (preloadValue == null)
             {
                 return;
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
             {
                 UpdatePic(FolderIndex, preloadValue.bitmapSource);
             }));
-
-            if (Preloader.Count() > (Preloader.LoadBehind + Preloader.LoadInfront) + 2)
-            {
-                Preloader.Clear();
-            }
         }
 
         #endregion Change navigation values

@@ -1,5 +1,7 @@
 ﻿using PicView.ImageHandling;
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -28,40 +30,38 @@ namespace PicView.ChangeImage
         /// Preloader list of BitmapSources
         /// </summary>
         private static readonly ConcurrentDictionary<
-            string, PreloadValue> Sources = new ConcurrentDictionary<string, PreloadValue>();
+            int, PreloadValue> Sources = new ConcurrentDictionary<int, PreloadValue>();
 
         internal const int LoadInfront = 4;
         internal const int LoadBehind = 2;
-
-
-        /// <summary>
-        /// Add file to preloader
-        /// </summary>
-        /// <param name="file">file path</param>
-        internal static Task Add(string file) => Task.Run(async () =>
-        {
-            // Add bitmapsource as null and set loading to true, to avoid consecutively adding value
-            var preloadValue = new PreloadValue(null, true);
-            if (Sources.TryAdd(file, preloadValue))
-            {
-                var x = await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(false);
-                preloadValue.bitmapSource = x;
-                preloadValue.isLoading = false;
-            }
-        });
 
         /// <summary>
         /// Add file to preloader from index
         /// </summary>
         /// <param name="i">Index of Pics</param>
-        internal static void Add(int i)
+        internal static async Task AddAsync(int i)
         {
-            if (i >= Pics.Count || i < 0)
+            if (i < 0)
+            {
+                i = Math.Abs(i);
+            }
+           
+            if (i >= Pics.Count)
             {
                 return;
             }
 
-            Add(Pics[i]);
+            var preloadValue = new PreloadValue(null, true);
+            if (Sources.TryAdd(i, preloadValue))
+            {
+                var x = await ImageDecoder.RenderToBitmapSource(Pics[i]).ConfigureAwait(false);
+                preloadValue.bitmapSource = x;
+                preloadValue.isLoading = false;
+
+#if DEBUG
+                Trace.WriteLine("Added " + i);
+#endif
+            }
         }
 
         /// <summary>
@@ -77,9 +77,14 @@ namespace PicView.ChangeImage
         /// Removes the key, after checking if it exists
         /// </summary>
         /// <param name="key"></param>
-        internal static void Remove(string key)
+        internal static void Remove(int key)
         {
-            if (key == null)
+            if (key < 0)
+            {
+                key = Math.Abs(key);
+            }
+            
+            if (key >= Pics.Count)
             {
 #if DEBUG
                 Trace.WriteLine("Preloader.Remove key null, " + key);
@@ -89,9 +94,6 @@ namespace PicView.ChangeImage
 
             if (!Contains(key))
             {
-#if DEBUG
-                Trace.WriteLine("Preloader.Remove does not contain " + key);
-#endif
                 return;
             }
 
@@ -99,25 +101,15 @@ namespace PicView.ChangeImage
 #if DEBUG
             if (!Sources.TryRemove(key, out _))
             {
-                Trace.WriteLine($"Failed to Remove {key} from Preloader, index {Pics.IndexOf(key)}");
+                Trace.WriteLine($"Failed to Remove {key} from Preloader, index {Pics[key]}");
+            }
+            else
+            {
+                Trace.WriteLine("Removed " + key);
             }
 #else
             Sources.TryRemove(key, out _);
 #endif
-        }
-
-        /// <summary>
-        /// Removes the key, after checking if it exists
-        /// </summary>
-        /// <param name="key"></param>
-        internal static void Remove(int i)
-        {
-            if (i >= Pics.Count || i < 0)
-            {
-                return;
-            }
-
-            Remove(Pics[i]);
         }
 
         /// <summary>
@@ -142,7 +134,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        internal static PreloadValue Get(string key)
+        internal static PreloadValue Get(int key)
         {
             if (!Contains(key))
             {
@@ -157,9 +149,9 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        internal static bool Contains(string key)
+        internal static bool Contains(int key)
         {
-            if (string.IsNullOrWhiteSpace(key) || Sources.IsEmpty)
+            if (Sources.IsEmpty)
             {
                 return false;
             }
@@ -173,75 +165,81 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="index"></param>
         /// <param name="reverse"></param>
-        internal static Task PreLoad(int index) => Task.Run(() =>
+        internal static Task PreLoad(int index) => Task.Run(async () =>
         {
+            int endPoint;
             if (Reverse)
             {
+                endPoint = index - 1 - LoadInfront;
                 // Add first elements behind
-                int y = 0;
-                for (int i = index - 1; i > index - 1 - LoadInfront; i--)
+                for (int i = index - 1; i > endPoint; i--)
                 {
-                    y++;
-                    if (i < 0)
-                    {
-                        for (int x = Pics.Count - 1; x >= Pics.Count - y; x--)
-                        {
-                            Add(x);
-                        }
-                        break;
-                    }
-                    Add(i);
+                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 // Add second elements
-                for (int i = index + 1; i <= index + 1 + LoadInfront; i++)
+                for (int i = index + 1; i < (index + 1) + LoadBehind; i++)
                 {
-                    if (i != 0 || Pics.Count != 0)
-                    {
-                        Add(i % Pics.Count);
-                    }
+                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 //Clean up infront
-                if (Pics.Count > LoadInfront + LoadInfront && !FreshStartup)
+                for (int i = (index + 1) + LoadBehind; i < ((index + 1) + LoadInfront * 2); i++)
                 {
-                    for (int i = index + 1 + LoadInfront; i > index + 1 + LoadInfront - LoadBehind; i--)
+                    Remove(i % Pics.Count);
+                }
+
+                // Remove overflow from looping
+                if (Sources.Count > (LoadBehind + 1) + (LoadInfront + 1) + 1)
+                {
+                    if (Properties.Settings.Default.Looping)
                     {
-                        if (i != 0 || Pics.Count != 0)
-                        {
-                            Remove(i % Pics.Count);
-                        }
+
                     }
+#if DEBUG
+                    Trace.WriteLine(Sources.Count);
+#endif
                 }
             }
             else
             {
+                endPoint = (index - 1) - LoadBehind;
                 // Add first elements
-                for (int i = index + 1; i < index + 1 + LoadInfront; i++)
+                for (int i = index + 1; i < (index + 1) + LoadInfront; i++)
                 {
-                    if (i != 0 || Pics.Count != 0)
-                    {
-                        Add(i % Pics.Count);
-                    }
+                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
                 // Add second elements behind
-                for (int i = index - 1; i > index - 1 - LoadBehind; i--)
+                for (int i = index - 1; i > endPoint; i--)
                 {
-                    if (i != 0 || Pics.Count != 0)
-                    {
-                        Add(i % Pics.Count);
-                    }
+                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 //Clean up behind
-                if (Pics.Count > LoadInfront * 2 && !FreshStartup)
+                for (int i = index - LoadInfront * 2; i <= endPoint; i++)
                 {
-                    for (int i = index - 1 - LoadInfront; i < (index - 1 - LoadBehind); i++)
-                    {
-                        Remove(i % Pics.Count);
-                    }
+                    Remove(i % Pics.Count);
+                }
+
+                // Remove overflow from looping
+                if (Sources.Count > (LoadBehind + 1) + (LoadInfront + 1) + 1)
+                {
+                    //if (Properties.Settings.Default.Looping)
+                    //{
+                    //    for (int i = Pics.Count - (LoadInfront * 2); i < Pics.Count; i++)
+                    //    {
+                    //        Remove(i % Pics.Count);
+                    //    }
+                    //}
+#if DEBUG
+                    Trace.WriteLine(Sources.Count);
+#endif
                 }
             }
+
+            Trace.WriteLine("");
+
+
         });
     }
 }

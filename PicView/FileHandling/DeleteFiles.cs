@@ -96,7 +96,7 @@ namespace PicView.FileHandling
             }
 
             // Sync with preloader
-            Preloader.Remove(Pics[FolderIndex]);
+            Preloader.Remove(FolderIndex);
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
             {
