@@ -219,18 +219,7 @@
     </Resource>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
+
   <ItemGroup>
     <Resource Include="Themes\Resources\fonts\Roboto-Black.ttf" />
     <Resource Include="Themes\Resources\fonts\Roboto-Bold.ttf" />
@@ -252,14 +241,14 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autoupdater.NET.Official" Version="1.7.0" />
-    <PackageReference Include="Magick.NET-Q16-x64" Version="8.3.0" />
-    <PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.5" />
-    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="4.0.5" />
+    <PackageReference Include="Magick.NET-Q16-x64" Version="8.3.1" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.6" />
+    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="4.0.6" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-ShellExtensions" Version="1.1.4" />
-    <PackageReference Include="SkiaSharp" Version="2.80.2" />
-    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.80.1" />
+    <PackageReference Include="SkiaSharp" Version="2.88.0-preview.140" />
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.0-preview.140" />
     <PackageReference Include="XamlAnimatedGif" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>
