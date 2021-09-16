@@ -39,18 +39,24 @@ namespace PicView.ImageHandling
                     case ".WEBP":
                     case ".WBMP":
                         filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
-                        var sKBitmap = SKBitmap.Decode(filestream);
-                        await filestream.DisposeAsync().ConfigureAwait(false);
-
-                        if (sKBitmap == null)
+                        using (var imgStream = new SKManagedStream(filestream))
                         {
-                            return null; 
+                            using var skData = SKData.Create(filestream);
+                            await filestream.DisposeAsync().ConfigureAwait(false);
+                            using var codec = SKCodec.Create(skData);
+                            var sKBitmap = SKBitmap.Decode(codec);
+
+                            if (sKBitmap == null)
+                            {
+                                return null;
+                            }
+
+                            var skPic = sKBitmap.ToWriteableBitmap();
+                            skPic.Freeze();
+                            sKBitmap.Dispose();
+                            return skPic;
                         }
 
-                        var skPic = sKBitmap.ToWriteableBitmap();
-                        skPic.Freeze();
-                        sKBitmap.Dispose();
-                        return skPic;
                     // ".GIF": empty since XamlAnimatedGif dynamically loads it
 
                     case ".TIF":
