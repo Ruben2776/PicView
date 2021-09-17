@@ -110,7 +110,7 @@ namespace PicView.FileHandling
         /// Start Windows "Open With" function
         /// </summary>
         /// <param name="file">The absolute path to the file</param>
-        internal static async Task OpenWithAsync(string file)
+        internal static void OpenWith(string file)
         {
             try
             {
@@ -127,7 +127,7 @@ namespace PicView.FileHandling
                 Trace.WriteLine("OpenWith exception \n" + e.Message);
 
 #endif
-                await ShowTooltipMessage(e.Message, true).ConfigureAwait(false);
+                ShowTooltipMessage(e.Message, true);
             }
         }
 
@@ -174,21 +174,21 @@ namespace PicView.FileHandling
             {
                 if (!SaveImages.TrySaveImageWithEffect(Savedlg.FileName))
                 {
-                    await ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]).ConfigureAwait(false);
+                    ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
                 }
             }
             else if (Pics.Count > 0)
             {
                 if (!SaveImages.TrySaveImage(Rotateint, Flipped, Pics[FolderIndex], Savedlg.FileName))
                 {
-                    await ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]).ConfigureAwait(false);
+                    ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
                 }
             }
             else
             {
                 if (!SaveImages.TrySaveImage(Rotateint, Flipped, ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource, Savedlg.FileName))
                 {
-                    await ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]).ConfigureAwait(false);
+                    ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
                 }
             }
 

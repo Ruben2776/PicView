@@ -45,10 +45,10 @@ namespace PicView.Views.UserControls
             FileLocationBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(FileLocationBrush); };
 
             // CopyButton
-            CopyButton.TheButton.Click += async delegate
+            CopyButton.TheButton.Click += delegate
             {
                 UC.Close_UserControls();
-                await FileHandling.Copy_Paste.CopyfileAsync().ConfigureAwait(false);
+                FileHandling.Copy_Paste.Copyfile();
             };
         }
     }

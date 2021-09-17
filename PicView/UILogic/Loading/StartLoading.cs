@@ -6,6 +6,7 @@ using PicView.UILogic.Sizing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -106,7 +107,7 @@ namespace PicView.UILogic.Loading
                     Timers.PicGalleryTimerHack();
 
                 }
-                else if (Properties.Settings.Default.Width != 0)
+                else if (Properties.Settings.Default.Width > 0 && Properties.Settings.Default.AutoFitWindow == false)
                 {
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
                     {
@@ -114,18 +115,7 @@ namespace PicView.UILogic.Loading
                     }));
                 }
 
-                // set up size so it feels better when starting application
-                await ScaleImage.TryFitImageAsync(args[1]).ConfigureAwait(false);
-
-                // Determine if to load from folder or file
-                if (FileHandling.FileFunctions.CheckIfDirectoryOrFile(args[1]))
-                {
-                    await LoadPicFromFolderAsync(args[1]).ConfigureAwait(false);
-                }
-                else
-                {
-                    await LoadPiFromFileAsync(args[1]).ConfigureAwait(false);
-                }
+                await LoadPicFromString(args[1]).ConfigureAwait(false);
             }
         }
 

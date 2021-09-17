@@ -2,6 +2,7 @@
 using PicView.UILogic.Sizing;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -13,6 +14,15 @@ namespace PicView.ImageHandling
     {
         internal static async Task<bool> OptimizeImageAsync(string file) => await Task.Run(() =>
         {
+            switch (Path.GetExtension(file).ToUpperInvariant()) 
+            {
+                case ".JPG":
+                case ".JPEG":
+                case ".PNG":
+                case ".ICO":
+                    break;
+                default: return false;
+            }
             ImageOptimizer imageOptimizer = new()
             {
                 OptimalCompression = true

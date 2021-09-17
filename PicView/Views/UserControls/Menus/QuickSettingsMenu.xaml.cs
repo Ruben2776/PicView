@@ -28,7 +28,7 @@ namespace PicView.Views.UserControls
             ToggleFill.Click += async (s, e) => await ConfigureSettings.UpdateUIValues.SetAutoFillAsync(s, e).ConfigureAwait(false);
 
             ToggleLooping.IsChecked = Properties.Settings.Default.Looping;
-            ToggleLooping.Click += async (_, _) => await ConfigureSettings.UpdateUIValues.SetLooping().ConfigureAwait(false);
+            ToggleLooping.Click += (_, _) => ConfigureSettings.UpdateUIValues.SetLooping();
 
             SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
             SetFit.Click += async (s, e) => await ConfigureSettings.UpdateUIValues.SetAutoFitAsync(s, e).ConfigureAwait(false);

@@ -38,11 +38,15 @@ namespace PicView.UILogic.Sizing
             {
                 if (Pics.Count > FolderIndex)
                 {
-                    var pic = ChangeImage.Preloader.Get(FolderIndex).bitmapSource;
-                    if (pic != null)
+                    var preloadValue = ChangeImage.Preloader.Get(FolderIndex);
+                    if (preloadValue != null)
                     {
-                        FitImage(pic.PixelWidth, pic.PixelHeight);
-                        return true;
+                        var pic = preloadValue.bitmapSource;
+                        if (pic != null)
+                        {
+                            FitImage(pic.PixelWidth, pic.PixelHeight);
+                            return true;
+                        }
                     }
                     else
                     {
@@ -91,18 +95,6 @@ namespace PicView.UILogic.Sizing
         /// </summary>
         internal static async Task<bool> TryFitImageAsync(string source)
         {
-            if (FileFunctions.CheckIfDirectoryOrFile(source))
-            {
-                if (Pics.Count > 0)
-                {
-                    source = Pics[0];
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
             var size = await ImageFunctions.ImageSizeAsync(source).ConfigureAwait(false);
             if (size.HasValue)
             {

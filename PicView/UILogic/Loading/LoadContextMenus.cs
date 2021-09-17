@@ -104,7 +104,7 @@ namespace PicView.UILogic.Loading
             openwIcon.Width = openwIcon.Height = 12;
             openwIcon.Fill = scbf;
             openwcm.Icon = openwIcon;
-            openwcm.Click += async (_, _) => await OpenWithAsync(Pics[FolderIndex]);
+            openwcm.Click += (_, _) => OpenWith(Pics[FolderIndex]);
             MainContextMenu.Items.Add(openwcm);
 
             ///////////////////////////
@@ -295,8 +295,8 @@ namespace PicView.UILogic.Loading
                 Height = double.NaN
             };
             settingscmLoop.Header = settingscmLoopHeader;
-            settingscmLoop.Click += async (_, _) => await ConfigureSettings.UpdateUIValues.SetLooping().ConfigureAwait(false);
-            settingscmLoopHeader.Click += async (_, _) => await ConfigureSettings.UpdateUIValues.SetLooping().ConfigureAwait(false); ;
+            settingscmLoop.Click += (_, _) => ConfigureSettings.UpdateUIValues.SetLooping();
+            settingscmLoopHeader.Click += (_, _) => ConfigureSettings.UpdateUIValues.SetLooping(); 
             settingscm.Items.Add(settingscmLoop);
 
             ///////////////////////////
@@ -480,7 +480,7 @@ namespace PicView.UILogic.Loading
                 ToolTip = Application.Current.Resources["CopyFile"] + $" [{Application.Current.Resources["Ctrl"]} + " +
                 $"{Application.Current.Resources["Shift"]}  + C]",
             };
-            cppcm.Click += async (_, _) => await CopyfileAsync();
+            cppcm.Click += (_, _) => Copyfile();
             cpm.Items.Add(cppcm);
 
             ///////////////////////////
@@ -505,7 +505,7 @@ namespace PicView.UILogic.Loading
                 ToolTip = Application.Current.Resources["CopyImageTooltip"]
                 + $" [{Application.Current.Resources["Ctrl"]}  + C]",
             };
-            cpxbm.Click += async (_, _) => await CopyBitmapAsync();
+            cpxbm.Click += (_, _) => CopyBitmap();
             cpm.Items.Add(cpxbm);
 
             ///////////////////////////
@@ -515,7 +515,7 @@ namespace PicView.UILogic.Loading
             {
                 Header = Application.Current.Resources["FileCopyPath"],
             };
-            cppfm.Click += async (_, _) => await CopyTextAsync();
+            cppfm.Click += (_, _) => CopyText();
             cpm.Items.Add(cppfm);
 
             MainContextMenu.Items.Add(cpm);
@@ -538,7 +538,7 @@ namespace PicView.UILogic.Loading
             cpccmIcon.Width = cpccmIcon.Height = 12;
             cpccmIcon.Fill = scbf;
             cpccm.Icon = cpccmIcon;
-            cpccm.Click += async (_, _) => await CutAsync(Pics[FolderIndex]);
+            cpccm.Click += (_, _) => Cut(Pics[FolderIndex]);
             MainContextMenu.Items.Add(cpccm);
 
             ///////////////////////////

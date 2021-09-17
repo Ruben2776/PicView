@@ -23,7 +23,11 @@ namespace PicView.FileHandling
         /// <param name="path"></param>
         internal static async Task PicWeb(string url)
         {
-            ConfigureWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+            {
+                ConfigureWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
+            }));
+
 
             CanNavigate = false;
             Error_Handling.ChangeFolder(true);
@@ -52,7 +56,7 @@ namespace PicView.FileHandling
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(async () =>
                 {
                     await ReloadAsync(true).ConfigureAwait(false);
-                    await ShowTooltipMessage(e.Message, true).ConfigureAwait(false);
+                    ShowTooltipMessage(e.Message, true);
                 }));
 
                 return;
@@ -81,10 +85,22 @@ namespace PicView.FileHandling
                     {
                         await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, (Action)(() =>
                         {
-                            ConfigureWindows.GetMainWindow.Title = ConfigureWindows.GetMainWindow.TitleText.Text =
-                            $"{totalBytesDownloaded} / {totalFileSize} {progressPercentage} {Application.Current.Resources["PercentComplete"]}";
+                            if (totalBytesDownloaded == totalFileSize)
+                            {
+                                if (ConfigureWindows.GetMainWindow.MainImage.Source != null)
+                                {
+                                    int w = (int)ConfigureWindows.GetMainWindow.MainImage.Source.Width;
+                                    int h = (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height;
+                                    SetTitle.SetTitleString(w, h, fileName);
+                                }
+                            }
+                            else
+                            {
+                                ConfigureWindows.GetMainWindow.Title = ConfigureWindows.GetMainWindow.TitleText.Text =
+                                    $"{totalBytesDownloaded} / {totalFileSize} {progressPercentage} {Application.Current.Resources["PercentComplete"]}";
 
-                            ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.Title;
+                                ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.Title;
+                            }
                         }));
                     };
                 }

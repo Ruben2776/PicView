@@ -162,7 +162,7 @@ namespace PicView.ConfigureSettings
             SetScrolling(null, null);
         }
 
-        internal static async Task SetLooping()
+        internal static void SetLooping()
         {
             var settingscm = MainContextMenu.Items[7] as MenuItem;
             var loopcm = settingscm.Items[0] as MenuItem;
@@ -172,13 +172,13 @@ namespace PicView.ConfigureSettings
             {
                 Properties.Settings.Default.Looping = false;
                 loopcmHeader.IsChecked = false;
-                await ShowTooltipMessage(Application.Current.Resources["LoopingDisabled"]).ConfigureAwait(false);
+                ShowTooltipMessage(Application.Current.Resources["LoopingDisabled"]);
             }
             else
             {
                 Properties.Settings.Default.Looping = true;
                 loopcmHeader.IsChecked = true;
-                await ShowTooltipMessage(Application.Current.Resources["LoopingEnabled"]).ConfigureAwait(false);
+                ShowTooltipMessage(Application.Current.Resources["LoopingEnabled"]);
             }
         }
 

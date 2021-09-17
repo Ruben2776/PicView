@@ -3,6 +3,7 @@ using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.SystemIntegration;
 using PicView.UILogic;
+using PicView.UILogic.Sizing;
 using System;
 using System.Globalization;
 using System.IO;
@@ -82,46 +83,83 @@ namespace PicView.ChangeImage
         #region Update Image values
 
         /// <summary>
-        /// Loads a picture from a given file path and does extra error checking
+        /// Determine proper path from given string value
         /// </summary>
         /// <param name="path"></param>
-        internal static async Task LoadPiFromFileAsync(string path)
+        /// <returns></returns>
+        internal static async Task LoadPicFromString(string path)
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
             {
                 // Set Loading
                 SetLoadingString();
-            }));
 
-            // Handle if from web
+                // Don't allow image size to stretch the whole screen, fixes when opening new image from unloaded status
+                if (XWidth < 1)
+                {
+                    ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+                    ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
+                }
+            }));
             if (!File.Exists(path))
             {
-                if (Uri.IsWellFormedUriString(path, UriKind.Absolute))
+                Uri uriResult;
+                bool result = Uri.TryCreate(path, UriKind.Absolute, out uriResult)
+                    && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+
+                if (result)
                 {
                     await WebFunctions.PicWeb(path).ConfigureAwait(false);
                     return;
                 }
+                else if (Base64.IsBase64String(path))
+                {
+                    await Pic64(path).ConfigureAwait(false);
+                    return;
+                }
+
+                if (FileFunctions.FilePathHasInvalidChars(path))
+                {
+                    FileFunctions.MakeValidFileName(path);
+                }
+
+                path = path.Replace("\"", "");
+                path = path.Trim();
+
+                if (File.Exists(path))
+                {
+                    await ScaleImage.TryFitImageAsync(path).ConfigureAwait(false);
+
+                    await LoadPiFromFileAsync(path).ConfigureAwait(false);
+                }
+
                 else if (Directory.Exists(path))
                 {
-                    try
-                    {
-                        await LoadPicFromFolderAsync(path).ConfigureAwait(false); // Might crash, untested code?
-                    }
-                    catch (Exception e)
-                    {
-                        Unload();
-                        await ShowTooltipMessage(e.Message).ConfigureAwait(true);
-                    }
-
-                    return;
+                    await LoadPicFromFolderAsync(path).ConfigureAwait(false);
                 }
                 else
                 {
-                    Unload();
-                    return;
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                    {
+                        Unload();
+                    }));
                 }
+
+                return;
             }
 
+            // set up size so it feels better when starting application
+            await ScaleImage.TryFitImageAsync(path).ConfigureAwait(false);
+
+            await LoadPiFromFileAsync(path).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Loads a picture from a given file path and does extra error checking
+        /// </summary>
+        /// <param name="path"></param>
+        internal static async Task LoadPiFromFileAsync(string path)
+        {
             // If count not correct or just started, get values
             if (Pics.Count <= FolderIndex || FolderIndex < 0 || FreshStartup)
             {
@@ -135,14 +173,17 @@ namespace PicView.ChangeImage
                 await GetValues(path).ConfigureAwait(false);
             }
 
-            FolderIndex = Pics.IndexOf(path);
+            if (Pics.Count > 0)
+            {
+                FolderIndex = Pics.IndexOf(path);
+            }
 
             if (!FreshStartup)
             {
                 Preloader.Clear();
             }
 
-            if (FolderIndex != -1) // if it is -1, it means it being extracted and need to wait for it instead
+            if (FolderIndex >= 0 && Pics.Count > 0) // check if being extracted and need to wait for it instead
             {
                 // Navigate to picture using obtained index
                 await LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
@@ -158,7 +199,10 @@ namespace PicView.ChangeImage
                     }
 
                     // Remove children before loading new
-                    GetPicGallery.Container.Children.Clear();
+                    if (GetPicGallery.Container.Children.Count > 0)
+                    {
+                        GetPicGallery.Container.Children.Clear();
+                    }
                 }));
 
                 // Load new gallery values, if changing folder
@@ -198,13 +242,6 @@ namespace PicView.ChangeImage
                         {
                             // Set loading from translation service
                             SetLoadingString();
-
-                            // Don't allow image size to stretch the whole screen, fixes when opening new image from unloaded status
-                            if (XWidth < 1)
-                            {
-                                ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
-                                ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
-                            }
                         }
                         else
                         {
@@ -450,8 +487,11 @@ namespace PicView.ChangeImage
         internal static async Task LoadPicFromFolderAsync(string folder)
         {
             // TODO add new function that can go to next/prev folder
-
-            ChangeFolder(true);
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            {
+                ChangeFolder(true);
+            }));
+            
 
             // If searching subdirectories, it might freeze UI, so wrap it in task
             await Task.Run(() =>

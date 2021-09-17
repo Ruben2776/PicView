@@ -121,7 +121,7 @@ namespace PicView.Views.UserControls
                 {
                     return;
                 }
-                await Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"] as string, true).ConfigureAwait(false);
+                Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"] as string, true);
                 var success = await ImageFunctions.OptimizeImageAsync(Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
                 if (success)
                 {
@@ -129,7 +129,7 @@ namespace PicView.Views.UserControls
                 }
                 else
                 {
-                    await Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"] as string, true).ConfigureAwait(false);
+                   Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"] as string, true);
                 }
             };
         }

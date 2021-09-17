@@ -270,7 +270,7 @@ namespace PicView.UILogic.TransformImage
             /// Displays zoompercentage in the center window
             if (!string.IsNullOrEmpty(ZoomPercentage))
             {
-                await Tooltip.ShowTooltipMessage(ZoomPercentage, true).ConfigureAwait(false);
+                Tooltip.ShowTooltipMessage(ZoomPercentage, true);
             }
             else
             {

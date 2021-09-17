@@ -68,7 +68,7 @@ namespace PicView.Editing
                     }
                     var x = UC.GetColorPicker.HexCodePresenter.Content.ToString();
                     Clipboard.SetText(x);
-                    await Tooltip.ShowTooltipMessage(x + " " + Application.Current.Resources["AddedToClipboard"]).ConfigureAwait(false);
+                    Tooltip.ShowTooltipMessage(x + " " + Application.Current.Resources["AddedToClipboard"]);
                 }
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
                 {

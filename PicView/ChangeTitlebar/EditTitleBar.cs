@@ -111,7 +111,7 @@ namespace PicView.UILogic
             }
             else
             {
-                await Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]).ConfigureAwait(false);
+                Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
                 {
                     Refocus();

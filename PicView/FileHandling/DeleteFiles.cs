@@ -91,7 +91,7 @@ namespace PicView.FileHandling
         {
             if (!TryDeleteFile(Pics[FolderIndex], Recyclebin))
             {
-                await ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredWhenDeleting"] + Environment.NewLine + Pics[FolderIndex]).ConfigureAwait(false);
+                ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredWhenDeleting"] + Environment.NewLine + Pics[FolderIndex]);
                 return;
             }
 
@@ -121,7 +121,7 @@ namespace PicView.FileHandling
 
             await PicAsync(false).ConfigureAwait(false);
 
-            await ShowTooltipMessage(Recyclebin ? Application.Current.Resources["SentFileToRecycleBin"] : Application.Current.Resources["Deleted"]).ConfigureAwait(false);
+            ShowTooltipMessage(Recyclebin ? Application.Current.Resources["SentFileToRecycleBin"] : Application.Current.Resources["Deleted"]);
         }
     }
 }

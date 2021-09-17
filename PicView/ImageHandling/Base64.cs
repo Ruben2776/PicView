@@ -74,7 +74,7 @@ namespace PicView.ImageHandling
             if (!string.IsNullOrWhiteSpace(path))
             {
                 Clipboard.SetText(path);
-                await Tooltip.ShowTooltipMessage(Application.Current.Resources["ConvertedToBase64"]).ConfigureAwait(false);
+                Tooltip.ShowTooltipMessage(Application.Current.Resources["ConvertedToBase64"]);
             }
         }
     }

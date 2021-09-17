@@ -134,11 +134,11 @@ namespace PicView.Editing.Crop
                         source,
                         Savedlg.FileName)).ConfigureAwait(false);
             }
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(async () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
             {
                 if (success == false)
                 {
-                    await Tooltip.ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]).ConfigureAwait(false);
+                    Tooltip.ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
                 }
 
                 ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(GetCropppingTool);
