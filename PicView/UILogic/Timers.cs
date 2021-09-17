@@ -1,4 +1,5 @@
-﻿using System.Timers;
+﻿using System;
+using System.Timers;
 using static PicView.UILogic.Animations.FadeControls;
 using static PicView.UILogic.TransformImage.Scroll;
 
@@ -20,6 +21,23 @@ namespace PicView.UILogic
             ActivityTimer.Elapsed += async delegate
             {
                 await FadeControlsAsync(false).ConfigureAwait(false);
+            };
+        }
+
+        internal static void PicGalleryTimerHack()
+        {
+            Timer timer = new() // Dirty code to make it scroll to selected item after start up
+            {
+                AutoReset = false,
+                Enabled = true,
+                Interval = 1700
+            };
+            timer.Elapsed += async delegate
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                {
+                    PicGallery.GalleryNavigation.ScrollTo();
+                }));
             };
         }
     }

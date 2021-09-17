@@ -29,32 +29,16 @@ namespace PicView.PicGallery
 
                 var z = GetPicGallery.Container.Children[id] as Views.UserControls.PicGalleryItem;
                 ConfigureWindows.GetMainWindow.MainImage.Source = z.img.Source;
+                Border border = null;
+                Image image = null;
                 var size = await ImageHandling.ImageFunctions.ImageSizeAsync(Pics[id]).ConfigureAwait(true);
                 if (size.HasValue)
                 {
-                    FitImage(size.Value.Width, size.Value.Height);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                    {
+                        FitImage(size.Value.Width, size.Value.Height);
+                    }));
                 }
-
-                GetPicGallery.Width = XWidth;
-                GetPicGallery.Height = XHeight;
-
-                GetPicGallery.x2.Visibility = Visibility.Hidden;
-
-                var img = new Image()
-                {
-                    Source = GetThumb(id),
-                    Stretch = Stretch.Fill,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-
-                // Need to add border for background to pictures with transparent background
-                var border = new Border()
-                {
-                    Background = ConfigureSettings.ConfigColors.BackgroundColorBrush
-                };
-                border.Child = img;
-                GetPicGallery.grid.Children.Add(border);
 
                 var from = GalleryNavigation.PicGalleryItem_Size;
                 var to = new double[] { XWidth, XHeight };
@@ -84,20 +68,44 @@ namespace PicView.PicGallery
 
                 da.Completed += async delegate
                 {
-                    await ItemClickAsync(id).ConfigureAwait(false);
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
                     {
                         border.Opacity = 0;
                         GetPicGallery.grid.Children.Remove(border);
-                        img = null;
+                        image = null;
                         IsOpen = false;
                         GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
                         ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
                     }));
+                    await ItemClickAsync(id).ConfigureAwait(false);
                 };
 
-                border.BeginAnimation(FrameworkElement.WidthProperty, da);
-                border.BeginAnimation(FrameworkElement.HeightProperty, da0);
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                {
+                    GetPicGallery.Width = XWidth;
+                    GetPicGallery.Height = XHeight;
+
+                    GetPicGallery.x2.Visibility = Visibility.Hidden;
+
+                    image = new Image()
+                    {
+                        Source = GetThumb(id),
+                        Stretch = Stretch.Fill,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center
+                    };
+
+                    // Need to add border for background to pictures with transparent background
+                    border = new Border()
+                    {
+                        Background = ConfigureSettings.ConfigColors.BackgroundColorBrush
+                    };
+                    border.Child = image;
+                    GetPicGallery.grid.Children.Add(border);
+
+                    border.BeginAnimation(FrameworkElement.WidthProperty, da);
+                    border.BeginAnimation(FrameworkElement.HeightProperty, da0);
+                }));
             }
             else
             {

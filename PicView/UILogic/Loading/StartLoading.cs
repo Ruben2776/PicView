@@ -103,20 +103,7 @@ namespace PicView.UILogic.Loading
                 else if (Properties.Settings.Default.FullscreenGallery)
                 {
                     await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
-
-                    Timer timer = new() // Dirty code to make it scroll to selected item after start up
-                    {
-                        AutoReset = false,
-                        Enabled = true,
-                        Interval = 1700
-                    };
-                    timer.Elapsed += async delegate
-                    {
-                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
-                        {
-                            GalleryNavigation.ScrollTo();
-                        }));
-                    };
+                    Timers.PicGalleryTimerHack();
 
                 }
                 else if (Properties.Settings.Default.Width != 0)

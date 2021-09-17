@@ -56,10 +56,6 @@ namespace PicView.ChangeImage
                 var x = await ImageDecoder.RenderToBitmapSource(Pics[i]).ConfigureAwait(false);
                 preloadValue.bitmapSource = x;
                 preloadValue.isLoading = false;
-
-#if DEBUG
-                Trace.WriteLine("Added " + i);
-#endif
             }
         }
 
@@ -101,10 +97,6 @@ namespace PicView.ChangeImage
             if (!Sources.TryRemove(key, out _))
             {
                 Trace.WriteLine($"Failed to Remove {key} from Preloader, index {Pics[key]}");
-            }
-            else
-            {
-                Trace.WriteLine("Removed " + key);
             }
 #else
             Sources.TryRemove(key, out _);
@@ -208,10 +200,6 @@ namespace PicView.ChangeImage
                     Remove(i % Pics.Count);
                 }
             }
-
-            Trace.WriteLine("");
-
-
         });
     }
 }

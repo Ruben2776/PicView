@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using PicView.ImageHandling;
+using PicView.PicGallery;
 using PicView.UILogic;
 using System;
 using System.Diagnostics;
@@ -99,7 +100,7 @@ namespace PicView.FileHandling
                 return;
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
             {
                 Close_UserControls();
             }));

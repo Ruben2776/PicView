@@ -148,17 +148,23 @@ namespace PicView.ChangeImage
                 await LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(async () =>
+            if (Properties.Settings.Default.FullscreenGallery)
             {
-                // Load new gallery values, if changing folder
-                if (GetPicGallery != null && Properties.Settings.Default.FullscreenGallery)
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
                 {
-                    if (GetPicGallery.Container.Children.Count == 0)
+                    if (GetPicGallery == null)
                     {
-                        await GalleryLoad.Load().ConfigureAwait(false);
+                        return;
                     }
-                }
-            }));
+
+                    // Remove children before loading new
+                    GetPicGallery.Container.Children.Clear();
+                }));
+
+                // Load new gallery values, if changing folder
+                await GalleryLoad.Load().ConfigureAwait(false);
+                Timers.PicGalleryTimerHack();
+            }
         }
 
         /// <summary>
