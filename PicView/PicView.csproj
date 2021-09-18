@@ -242,13 +242,19 @@
   <ItemGroup>
     <PackageReference Include="Autoupdater.NET.Official" Version="1.7.0" />
     <PackageReference Include="Magick.NET-Q16-x64" Version="8.3.1" />
-    <PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.6" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.6">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
     <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="4.0.6" />
-    <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4" />
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
-    <PackageReference Include="Microsoft-WindowsAPICodePack-ShellExtensions" Version="1.1.4" />
-    <PackageReference Include="SkiaSharp" Version="2.88.0-preview.140" />
+    <PackageReference Include="SkiaSharp" Version="2.88.0-preview.140">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
     <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.0-preview.140" />
+    <PackageReference Include="WpfScreenHelper" Version="1.0.0" />
     <PackageReference Include="XamlAnimatedGif" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>
@@ -417,6 +423,7 @@
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
+	
   <PropertyGroup>
     <FileVersion>1.3.5.0</FileVersion>
     <SignAssembly>true</SignAssembly>
