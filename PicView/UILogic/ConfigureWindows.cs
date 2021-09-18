@@ -369,6 +369,10 @@ namespace PicView.UILogic
             GetMainWindow.Width = MonitorInfo.Width;
             GetMainWindow.Height = MonitorInfo.Height;
 
+            // Set border to max to fix panning when zooming
+            GetMainWindow.MainImageBorder.Width = MonitorInfo.Width;
+            GetMainWindow.MainImageBorder.Height = MonitorInfo.Height;
+
             // Fix buttons appearing out of window
             GetMainWindow.ParentContainer.Margin = new Thickness(8);
 
