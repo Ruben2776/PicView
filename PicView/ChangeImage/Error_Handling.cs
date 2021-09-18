@@ -52,7 +52,11 @@ namespace PicView.ChangeImage
         {
             if (fromBackup && string.IsNullOrWhiteSpace(BackupPath))
             {
-                Unload();
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    Unload();
+                }));
+               
                 return;
             }
 
@@ -71,13 +75,22 @@ namespace PicView.ChangeImage
                 // Force reloading values by setting freshStartup to true
                 FreshStartup = true;
 
-                // Clear Preloader, to avoid errors by FolderIndex changing location because of re-sorting
-                Preloader.Clear();
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    // Clear Preloader, to avoid errors by FolderIndex changing location because of re-sorting
+                    Preloader.Clear();
+                }));
 
-                // Need a sort method instead
-                GalleryFunctions.Clear();
 
-                await LoadPiFromFileAsync(s).ConfigureAwait(false);
+                if (UC.GetPicGallery?.Container?.Children?.Count > 0)
+                {
+                    await GalleryFunctions.SortGallery().ConfigureAwait(false);
+                    await LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
+                }
+                else
+                {
+                    await LoadPiFromFileAsync(s).ConfigureAwait(false);
+                }
 
                 // Reset
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>

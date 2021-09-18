@@ -218,13 +218,6 @@ namespace PicView.ChangeImage
         internal static async Task LoadPicAtIndexAsync(int index)
         {
             Preloader.PreloadValue preloadValue;
-            // Error checking to fix rare cases of crashing
-            if (Pics.Count < index)
-            {
-                await ReloadAsync(false).ConfigureAwait(false);
-                return;
-            }
-
             FolderIndex = index;
             preloadValue = Preloader.Get(index);
 

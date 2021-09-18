@@ -11,9 +11,9 @@ namespace PicView.Views.UserControls
     /// </summary>
     public partial class PicGalleryItem : UserControl
     {
-        internal readonly int Id;
+        internal int Id { get; set; }
 
-        public PicGalleryItem(BitmapSource pic, int id, bool selected)
+        public PicGalleryItem(ImageSource pic, int id, bool selected)
         {
             InitializeComponent();
 

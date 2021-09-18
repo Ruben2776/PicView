@@ -25,6 +25,30 @@ namespace PicView.FileHandling
         /// <summary>
         /// Sort and return list of supported files
         /// </summary>
+        internal static List<string> FileList()
+        {
+            if (Properties.Settings.Default.IncludeSubDirectories)
+            {
+                var args = Environment.GetCommandLineArgs();
+
+                if (args.Length > 1)
+                {
+                    var originFolder = Path.GetDirectoryName(Path.GetDirectoryName(args[1]));
+                    var currentFolder = Path.GetDirectoryName(Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]));
+                    if (originFolder != currentFolder)
+                    {
+                        return FileList(currentFolder);
+                    }
+                    return FileList(originFolder);
+                }
+                return FileList(Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]));
+            }
+            return FileList(Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]));
+        }
+
+        /// <summary>
+        /// Sort and return list of supported files
+        /// </summary>
         internal static List<string> FileList(string path) => Properties.Settings.Default.SortPreference switch
         {
             0 => FileList(path, SortFilesBy.Name),

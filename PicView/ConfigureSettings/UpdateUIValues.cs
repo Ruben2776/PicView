@@ -1,4 +1,6 @@
-﻿using PicView.PicGallery;
+﻿using PicView.ChangeImage;
+using PicView.FileHandling;
+using PicView.PicGallery;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System;
@@ -20,21 +22,10 @@ namespace PicView.ConfigureSettings
         {
             Properties.Settings.Default.SortPreference = sorting;
 
-            if (ChangeImage.Error_Handling.CheckOutOfRange() == false)
-            {
-                var tmp = Pics[FolderIndex];
-                if (!string.IsNullOrWhiteSpace(tmp))
-                {
-                    await Task.Run(() =>
-                    {
-                        Pics = FileList(Path.GetDirectoryName(tmp));
-                    }).ConfigureAwait(false);
-                    await LoadPicAtIndexAsync(Pics.IndexOf(tmp)).ConfigureAwait(false);
-                }
-            }
+            await Error_Handling.ReloadAsync().ConfigureAwait(false);
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
-            {
+            {                
                 var sortcm = MainContextMenu.Items[6] as MenuItem;
 
                 var sort0 = sortcm.Items[0] as MenuItem;
