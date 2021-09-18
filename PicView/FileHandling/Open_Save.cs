@@ -1,7 +1,9 @@
 ﻿using Microsoft.Win32;
+using PicView.ChangeImage;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.UILogic;
+using PicView.UILogic.Sizing;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -102,6 +104,11 @@ namespace PicView.FileHandling
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
             {
+                if (ScaleImage.XWidth < 1)
+                {
+                    ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+                    ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
+                }
                 Close_UserControls();
             }));
         }

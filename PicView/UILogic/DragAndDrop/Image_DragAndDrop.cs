@@ -22,31 +22,6 @@ namespace PicView.UILogic.DragAndDrop
         private static DragDropOverlay DropOverlay;
 
         /// <summary>
-        /// Check if dragged file is valid,
-        /// returns false for valid file with no thumbnail,
-        /// true for valid file with thumbnail
-        /// and null for invalid file
-        /// </summary>
-        /// <param name="files"></param>
-        /// <returns></returns>
-        private static bool? Drag_Drop_Check(string[] files)
-        {
-            // Return if file strings are null
-            if (files == null)
-            {
-                return null;
-            }
-
-            if (files[0] == null)
-            {
-                return null;
-            }
-
-            // Return status of useable file
-            return SupportedFiles.IsSupportedFile(files[0]);
-        }
-
-        /// <summary>
         /// Show image or thumbnail preview on drag enter
         /// </summary>
         /// <param name="sender"></param>
@@ -170,7 +145,7 @@ namespace PicView.UILogic.DragAndDrop
                     string dataStr = Encoding.Unicode.GetString(data.ToArray());
                     string[] parts = dataStr.Split((char)10);
 
-                    await LoadPiFromFileAsync(parts[0]).ConfigureAwait(false);
+                    await WebFunctions.PicWeb(parts[0]).ConfigureAwait(false);
                     return;
                 }
             }
@@ -181,6 +156,13 @@ namespace PicView.UILogic.DragAndDrop
                 return;
             }
 
+            if (SupportedFiles.IsSupportedFile(files[0]) == false)
+            {
+                return;
+            }
+
+            await LoadPicFromString(files[0]).ConfigureAwait(false);
+
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
             {
                 // Don't show drop message any longer
@@ -188,32 +170,7 @@ namespace PicView.UILogic.DragAndDrop
 
                 ConfigureWindows.GetMainWindow.Activate();
             }));
-
-            // check if valid
-            if (Drag_Drop_Check(files).HasValue == false)
-            {
-                if (Path.GetExtension(files[0]) == ".url")
-                {
-                    await LoadPiFromFileAsync(files[0]).ConfigureAwait(false);
-                }
-                else if (Directory.Exists(files[0]))
-                {
-                    if (Properties.Settings.Default.IncludeSubDirectories || Directory.GetFiles(files[0]).Length > 0)
-                    {
-                        await LoadPicFromFolderAsync(files[0]).ConfigureAwait(false);
-                    }
-                }
-                else if (SupportedFiles.IsSupportedArchives(files[0]))
-                {
-                    FreshStartup = true;
-                    Error_Handling.ChangeFolder();
-                    await LoadPiFromFileAsync(files[0]).ConfigureAwait(false);
-                }
-            }
-            else
-            {
-                await LoadPiFromFileAsync(files[0]).ConfigureAwait(false);
-            }
+            
 
             // Open additional windows if multiple files dropped 
             if (files.Length > 0)
