@@ -67,7 +67,7 @@ namespace PicView.UILogic.Loading
             var args = Environment.GetCommandLineArgs();
             if (args.Length == 1)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
                 {
                     Unload(); // Load clean setup when starting up without arguments
 
@@ -79,7 +79,7 @@ namespace PicView.UILogic.Loading
                     Properties.Settings.Default.Fullscreen = false;
 
                     // Determine proper startup size
-                    if (Properties.Settings.Default.Width != 0)
+                    if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width > 0)
                     {
                         SetLastWindowSize();
                     }
@@ -87,6 +87,7 @@ namespace PicView.UILogic.Loading
                     {
                         ConfigureWindows.GetMainWindow.Width = ConfigureWindows.GetMainWindow.MinWidth;
                         ConfigureWindows.GetMainWindow.Height = ConfigureWindows.GetMainWindow.MinHeight;
+                        ConfigureWindows.CenterWindowOnScreen();
                     }
                 }));
 
