@@ -63,15 +63,26 @@ namespace PicView.PicGallery
                 for (int i = 0; i < Navigation.Pics.Count; i++)
                 {
                     var x = GetPicGallery.Container.Children[i] as PicGalleryItem;
-                    pics.Add(new tempPics((BitmapSource)x.img.Source, Navigation.Pics[i]));
+                    pics.Add(new tempPics((BitmapSource)x?.img?.Source, Navigation.Pics[i]));
                 }
 
-                GetPicGallery.Container.Children.Clear();
+                Clear();
             }));
 
             Navigation.Pics = FileLists.FileList();
 
-            pics = pics.OrderBySequence(Navigation.Pics, pic => pic.name).ToList();
+            try
+            {
+                pics = pics.OrderBySequence(Navigation.Pics, pic => pic.name).ToList();
+            }
+            catch (Exception)
+            {
+                await GalleryLoad.Load().ConfigureAwait(false);
+                pics.Clear();
+                pics = null;
+                return;
+            }
+            
 
             for (int i = 0; i < pics.Count; i++)
             {

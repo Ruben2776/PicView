@@ -39,7 +39,11 @@ namespace PicView.ChangeImage
             }
 
             Pics.Clear();
-            GalleryFunctions.Clear();
+            if (ConfigureWindows.GetMainWindow.CheckAccess())
+            {
+                GalleryFunctions.Clear();
+            }
+            
             Preloader.Clear();
             FreshStartup = true;
             DeleteTempFiles();
