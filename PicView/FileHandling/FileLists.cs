@@ -25,7 +25,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// Sort and return list of supported files
         /// </summary>
-        internal static List<string> FileList()
+        internal static List<string>? FileList()
         {
             if (Properties.Settings.Default.IncludeSubDirectories)
             {
@@ -34,7 +34,15 @@ namespace PicView.FileHandling
                 if (args.Length > 1)
                 {
                     var originFolder = Path.GetDirectoryName(Path.GetDirectoryName(args[1]));
+                    if (string.IsNullOrWhiteSpace(originFolder) == false || Directory.Exists(originFolder) == false)
+                    {
+                        return null;
+                    }
                     var currentFolder = Path.GetDirectoryName(Path.GetDirectoryName(Navigation.Pics?[Navigation.FolderIndex]));
+                    if (string.IsNullOrWhiteSpace(currentFolder) == false || Directory.Exists(currentFolder) == false)
+                    {
+                        return null;
+                    }
                     if (originFolder != currentFolder)
                     {
                         return FileList(currentFolder);
@@ -49,7 +57,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// Sort and return list of supported files
         /// </summary>
-        internal static List<string> FileList(string path) => Properties.Settings.Default.SortPreference switch
+        internal static List<string>? FileList(string path) => Properties.Settings.Default.SortPreference switch
         {
             0 => FileList(path, SortFilesBy.Name),
             1 => FileList(path, SortFilesBy.FileSize),
@@ -64,7 +72,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// Sort and return list of supported files
         /// </summary>
-        private static List<string> FileList(string path, SortFilesBy sortFilesBy)
+        private static List<string>? FileList(string path, SortFilesBy sortFilesBy)
         {
             if (!Directory.Exists(path)) { return null; }
 
@@ -182,6 +190,11 @@ namespace PicView.FileHandling
         /// <returns></returns>
         internal static Task GetValues(string path) => Task.Run(async () =>
         {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                await Error_Handling.ReloadAsync(true).ConfigureAwait(false);
+                return;
+            }
             // Check if to load from archive
             if (SupportedFiles.IsSupportedArchives(path))
             {
@@ -191,11 +204,18 @@ namespace PicView.FileHandling
                 }
                 return;
             }
+            var directoryName = Path.GetDirectoryName(path);
+            if (string.IsNullOrWhiteSpace(directoryName) || Directory.Exists(directoryName) == false)
+            {
+                await Error_Handling.ReloadAsync(true).ConfigureAwait(false);
+                return;
+            }
 
             // Set files to Pics and get index
-            Navigation.Pics = FileList(Path.GetDirectoryName(path));
+            Navigation.Pics = FileList(directoryName);
             if (Navigation.Pics == null)
             {
+                await Error_Handling.ReloadAsync(true).ConfigureAwait(false);
                 return;
             }
 #if DEBUG

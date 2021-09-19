@@ -24,7 +24,7 @@ namespace PicView.Views.Windows
             ContentRendered += Window_ContentRendered;
         }
 
-        private void Window_ContentRendered(object sender, EventArgs e)
+        private void Window_ContentRendered(object? sender, EventArgs? e)
         {
             KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(null, e, this);
 
@@ -186,91 +186,91 @@ namespace PicView.Views.Windows
 
         private void IntensitySlider_ValueChanged()
         {
-            if (PixelateButton.IsChecked.Value)
+            if (PixelateButton.IsChecked.HasValue && PixelateButton.IsChecked.Value)
             {
                 PixelateEffect(null, null);
             }
-            else if (ColorToneButton.IsChecked.Value)
+            else if (ColorToneButton.IsChecked.HasValue && ColorToneButton.IsChecked.Value)
             {
                 ColorToneEffect(null, null);
             }
-            else if (RippleAltButton.IsChecked.Value)
+            else if (RippleAltButton.IsChecked.HasValue && RippleAltButton.IsChecked.Value)
             {
                 RippleEffect2(null, null);
             }
-            else if (BandedSwirlButton.IsChecked.Value)
+            else if (BandedSwirlButton.IsChecked.HasValue && BandedSwirlButton.IsChecked.Value)
             {
                 BandedSwirlEffect(null, null);
             }
-            else if (DirectionalBlurButton.IsChecked.Value)
+            else if (DirectionalBlurButton.IsChecked.HasValue && DirectionalBlurButton.IsChecked.Value)
             {
                 Dir_blur(null, null);
             }
-            else if (BandsButton.IsChecked.Value)
+            else if (BandsButton.IsChecked.HasValue && BandsButton.IsChecked.Value)
             {
                 Bands(null, null);
             }
-            else if (EmbossedButton.IsChecked.Value)
+            else if (EmbossedButton.IsChecked.HasValue && EmbossedButton.IsChecked.Value)
             {
                 Embossed(null, null);
             }
-            else if (GlasTileButton.IsChecked.Value)
+            else if (GlasTileButton.IsChecked.HasValue && GlasTileButton.IsChecked.Value)
             {
                 GlasTileEffect(null, null);
             }
-            else if (SmoothMagnifyButton.IsChecked.Value)
+            else if (SmoothMagnifyButton.IsChecked.HasValue && SmoothMagnifyButton.IsChecked.Value)
             {
                 MagnifySmoothEffect(null, null);
             }
-            else if (PaperfoldButton.IsChecked.Value)
+            else if (PaperfoldButton.IsChecked.HasValue && PaperfoldButton.IsChecked.Value)
             {
                 PaperFoldEffect(null, null);
             }
-            else if (PivotButton.IsChecked.Value)
+            else if (PivotButton.IsChecked.HasValue && PivotButton.IsChecked.Value)
             {
                 PivotEffect(null, null);
             }
-            else if (UnderwaterButton.IsChecked.Value)
+            else if (UnderwaterButton.IsChecked.HasValue && UnderwaterButton.IsChecked.Value)
             {
                 UnderWaterEffect(null, null);
             }
-            else if (WavewarperButton.IsChecked.Value)
+            else if (WavewarperButton.IsChecked.HasValue && WavewarperButton.IsChecked.Value)
             {
                 WaveWarperEffect(null, null);
             }
-            else if (FrostyOutlineButton.IsChecked.Value)
+            else if (FrostyOutlineButton.IsChecked.HasValue && FrostyOutlineButton.IsChecked.Value)
             {
                 FrostyOutlineEffect(null, null);
             }
-            else if (OldMovieButton.IsChecked.Value)
+            else if (OldMovieButton.IsChecked.HasValue && OldMovieButton.IsChecked.Value)
             {
                 OldMovieEffect(null, null);
             }
-            else if (SketchButton.IsChecked.Value)
+            else if (SketchButton.IsChecked.HasValue && SketchButton.IsChecked.Value)
             {
                 Sketch(null, null);
             }
-            else if (SwirlButton.IsChecked.Value)
+            else if (SwirlButton.IsChecked.HasValue && SwirlButton.IsChecked.Value)
             {
                 SwirlEffect(null, null);
             }
-            else if (BloomButton.IsChecked.Value)
+            else if (BloomButton.IsChecked.HasValue && BloomButton.IsChecked.Value)
             {
                 Bloom(null, null);
             }
-            else if (GloomButton.IsChecked.Value)
+            else if (GloomButton.IsChecked.HasValue && GloomButton.IsChecked.Value)
             {
                 Gloom(null, null);
             }
-            else if (TonemappingButton.IsChecked.Value)
+            else if (TonemappingButton.IsChecked.HasValue && TonemappingButton.IsChecked.Value)
             {
                 ToneMapping(null, null);
             }
-            else if (TelescopicBlurButton.IsChecked.Value)
+            else if (TelescopicBlurButton.IsChecked.HasValue && TelescopicBlurButton.IsChecked.Value)
             {
                 Teleskopisk_blur(null, null);
             }
-            else if (PencilSketchButton.IsChecked.Value)
+            else if (PencilSketchButton.IsChecked.HasValue && PencilSketchButton.IsChecked.Value)
             {
                 SketchPencilStrokeEffect(null, null);
             }
@@ -301,7 +301,7 @@ namespace PicView.Views.Windows
             }
         }
 
-        private void Negative(object sender, RoutedEventArgs e)
+        private void Negative(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -315,7 +315,7 @@ namespace PicView.Views.Windows
             NegativeButton.IsChecked = true;
         }
 
-        private void GraySceale(object sender, RoutedEventArgs e)
+        private void GraySceale(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -329,7 +329,7 @@ namespace PicView.Views.Windows
             GrayscaleButton.IsChecked = true;
         }
 
-        private void ColorToneEffect(object sender, RoutedEventArgs e)
+        private void ColorToneEffect(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -343,7 +343,7 @@ namespace PicView.Views.Windows
             ColorToneButton.IsChecked = true;
         }
 
-        private void RippleEffect1(object sender, RoutedEventArgs e)
+        private void RippleEffect1(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -357,7 +357,7 @@ namespace PicView.Views.Windows
             RippleButton.IsChecked = true;
         }
 
-        private void RippleEffect2(object sender, RoutedEventArgs e)
+        private void RippleEffect2(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -371,7 +371,7 @@ namespace PicView.Views.Windows
             RippleAltButton.IsChecked = true;
         }
 
-        private void BandedSwirlEffect(object sender, RoutedEventArgs e)
+        private void BandedSwirlEffect(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -385,7 +385,7 @@ namespace PicView.Views.Windows
             BandedSwirlButton.IsChecked = true;
         }
 
-        private void Monochrome(object sender, RoutedEventArgs e)
+        private void Monochrome(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -399,7 +399,7 @@ namespace PicView.Views.Windows
             MonochromeButton.IsChecked = true;
         }
 
-        private void SwirlEffect(object sender, RoutedEventArgs e)
+        private void SwirlEffect(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -413,7 +413,7 @@ namespace PicView.Views.Windows
             SwirlButton.IsChecked = true;
         }
 
-        private void Bloom(object sender, RoutedEventArgs e)
+        private void Bloom(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -427,7 +427,7 @@ namespace PicView.Views.Windows
             BloomButton.IsChecked = true;
         }
 
-        private void Gloom(object sender, RoutedEventArgs e)
+        private void Gloom(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -441,7 +441,7 @@ namespace PicView.Views.Windows
             GloomButton.IsChecked = true;
         }
 
-        private void ToneMapping(object sender, RoutedEventArgs e)
+        private void ToneMapping(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -455,7 +455,7 @@ namespace PicView.Views.Windows
             TonemappingButton.IsChecked = true;
         }
 
-        private void Teleskopisk_blur(object sender, RoutedEventArgs e)
+        private void Teleskopisk_blur(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -469,7 +469,7 @@ namespace PicView.Views.Windows
             TelescopicBlurButton.IsChecked = true;
         }
 
-        private void BlurEffect(object sender, RoutedEventArgs e)
+        private void BlurEffect(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -483,7 +483,7 @@ namespace PicView.Views.Windows
             BlurButton.IsChecked = true;
         }
 
-        private void Dir_blur(object sender, RoutedEventArgs e)
+        private void Dir_blur(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -497,7 +497,7 @@ namespace PicView.Views.Windows
             DirectionalBlurButton.IsChecked = true;
         }
 
-        private void Bands(object sender, RoutedEventArgs e)
+        private void Bands(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -511,7 +511,7 @@ namespace PicView.Views.Windows
             BandsButton.IsChecked = true;
         }
 
-        private void Embossed(object sender, RoutedEventArgs e)
+        private void Embossed(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -525,7 +525,7 @@ namespace PicView.Views.Windows
             EmbossedButton.IsChecked = true;
         }
 
-        private void GlasTileEffect(object sender, RoutedEventArgs e)
+        private void GlasTileEffect(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -539,7 +539,7 @@ namespace PicView.Views.Windows
             GlasTileButton.IsChecked = true;
         }
 
-        private void MagnifySmoothEffect(object sender, RoutedEventArgs e)
+        private void MagnifySmoothEffect(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -553,7 +553,7 @@ namespace PicView.Views.Windows
             SmoothMagnifyButton.IsChecked = true;
         }
 
-        private void PaperFoldEffect(object sender, RoutedEventArgs e)
+        private void PaperFoldEffect(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -567,7 +567,7 @@ namespace PicView.Views.Windows
             PaperfoldButton.IsChecked = true;
         }
 
-        private void PivotEffect(object sender, RoutedEventArgs e)
+        private void PivotEffect(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -581,7 +581,7 @@ namespace PicView.Views.Windows
             PivotButton.IsChecked = true;
         }
 
-        private void UnderWaterEffect(object sender, RoutedEventArgs e)
+        private void UnderWaterEffect(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -595,7 +595,7 @@ namespace PicView.Views.Windows
             UnderwaterButton.IsChecked = true;
         }
 
-        private void WaveWarperEffect(object sender, RoutedEventArgs e)
+        private void WaveWarperEffect(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -609,7 +609,7 @@ namespace PicView.Views.Windows
             WavewarperButton.IsChecked = true;
         }
 
-        private void FrostyOutlineEffect(object sender, RoutedEventArgs e)
+        private void FrostyOutlineEffect(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -623,7 +623,7 @@ namespace PicView.Views.Windows
             FrostyOutlineButton.IsChecked = true;
         }
 
-        private void OldMovieEffect(object sender, RoutedEventArgs e)
+        private void OldMovieEffect(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -637,7 +637,7 @@ namespace PicView.Views.Windows
             OldMovieButton.IsChecked = true;
         }
 
-        private void PixelateEffect(object sender, RoutedEventArgs e)
+        private void PixelateEffect(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -651,7 +651,7 @@ namespace PicView.Views.Windows
             PixelateButton.IsChecked = true;
         }
 
-        private void Sketch(object sender, RoutedEventArgs e)
+        private void Sketch(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {
@@ -665,7 +665,7 @@ namespace PicView.Views.Windows
             SketchButton.IsChecked = true;
         }
 
-        private void SketchPencilStrokeEffect(object sender, RoutedEventArgs e)
+        private void SketchPencilStrokeEffect(object? sender, RoutedEventArgs? e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
             {

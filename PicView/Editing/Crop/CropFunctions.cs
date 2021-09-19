@@ -32,7 +32,7 @@ namespace PicView.Editing.Crop
             GetCropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? XWidth : XHeight;
             GetCropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? XHeight : XWidth;
 
-            ConfigureWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["CropMessage"] as string;
+            ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["CropMessage"];
 
             if (!ConfigureWindows.GetMainWindow.ParentContainer.Children.Contains(GetCropppingTool))
             {

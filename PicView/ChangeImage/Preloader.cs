@@ -40,14 +40,14 @@ namespace PicView.ChangeImage
         /// <param name="i">Index of Pics</param>
         internal static async Task AddAsync(int i)
         {
+            if (Pics == null || i >= Pics?.Count)
+            {
+                return;
+            }
+
             if (i < 0)
             {
                 i = Math.Abs(i);
-            }
-
-            if (i >= Pics?.Count)
-            {
-                return;
             }
 
             var preloadValue = new PreloadValue(null, true);

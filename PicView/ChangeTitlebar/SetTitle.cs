@@ -19,7 +19,7 @@ namespace PicView.UILogic
         /// <param name="height"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        private static string[] TitleString(int width, int height, int index)
+        private static string[]? TitleString(int width, int height, int index)
         {
             FileInfo fileInfo;
             try

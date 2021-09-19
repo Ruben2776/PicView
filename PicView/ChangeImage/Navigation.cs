@@ -103,7 +103,7 @@ namespace PicView.ChangeImage
             }));
             if (!File.Exists(path))
             {
-                Uri uriResult;
+                Uri? uriResult;
                 bool result = Uri.TryCreate(path, UriKind.Absolute, out uriResult)
                     && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
 
@@ -488,9 +488,14 @@ namespace PicView.ChangeImage
             {
                 return;
             }
+            var b64 = Application.Current.Resources["Base64Image"] as string;
+            if (b64 == null)
+            {
+                return;
+            }
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
             {
-                UpdatePic(Application.Current.Resources["Base64Image"] as string, pic);
+                UpdatePic(b64, pic);
             }));
         }
 

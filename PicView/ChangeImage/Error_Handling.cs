@@ -64,7 +64,7 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            string s;
+            string? s;
             if (Pics != null && Pics.Count > 0)
             {
                 s = fromBackup ? BackupPath : Pics[FolderIndex];

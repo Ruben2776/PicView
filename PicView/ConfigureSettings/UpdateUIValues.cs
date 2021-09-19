@@ -125,7 +125,7 @@ namespace PicView.ConfigureSettings
             }));
         }
 
-        internal static void SetScrolling(object sender, RoutedEventArgs e)
+        internal static void SetScrolling(object? sender, RoutedEventArgs? e)
         {
             if (GalleryFunctions.IsOpen) { return; }
 

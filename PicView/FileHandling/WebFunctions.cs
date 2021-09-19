@@ -123,7 +123,7 @@ namespace PicView.FileHandling
             private HttpClient _httpClient;
             private bool disposedValue;
 
-            public delegate void ProgressChangedHandler(long? totalFileSize, long totalBytesDownloaded, double? progressPercentage);
+            public delegate void ProgressChangedHandler(long? totalFileSize, long? totalBytesDownloaded, double? progressPercentage);
 
             public event ProgressChangedHandler ProgressChanged;
 
@@ -141,7 +141,7 @@ namespace PicView.FileHandling
                     await DownloadFileFromHttpResponseMessage(response).ConfigureAwait(false);
             }
 
-            public async Task DownloadFileFromHttpResponseMessage(HttpResponseMessage response)
+            public async Task DownloadFileFromHttpResponseMessage(HttpResponseMessage? response)
             {
                 response.EnsureSuccessStatusCode();
 
@@ -151,7 +151,7 @@ namespace PicView.FileHandling
                     await ProcessContentStream(totalBytes, contentStream).ConfigureAwait(false);
             }
 
-            public async Task ProcessContentStream(long? totalDownloadSize, Stream contentStream)
+            public async Task ProcessContentStream(long? totalDownloadSize, Stream? contentStream)
             {
                 var totalBytesRead = 0L;
                 var readCount = 0L;
