@@ -11,7 +11,7 @@ namespace PicView.ImageHandling
 {
     internal static class Base64
     {
-        internal static Task<BitmapSource> Base64StringToBitmap(string base64String) => Task.Run(() =>
+        internal static Task<BitmapSource?> Base64StringToBitmap(string base64String) => Task.Run(() =>
         {
             byte[] binaryData = Convert.FromBase64String(base64String);
 
@@ -52,7 +52,7 @@ namespace PicView.ImageHandling
 
         internal static async Task<string> ConvertToBase64()
         {
-            BitmapFrame frame = null;
+            BitmapFrame? frame = null;
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
             {
                 frame = ImageDecoder.GetRenderedBitmapFrame();

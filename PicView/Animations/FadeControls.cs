@@ -12,7 +12,7 @@ namespace PicView.UILogic.Animations
         /// <summary>
         /// Timer used to hide interface and/or scrollbar
         /// </summary>
-        internal static Timer ActivityTimer { get; set; }
+        internal static Timer? ActivityTimer { get; set; }
 
         /// <summary>
         /// Hides/shows interface elements with a fade animation
@@ -54,7 +54,7 @@ namespace PicView.UILogic.Animations
                     HideInterfaceLogic.ShowShortcuts(true);
                 }
 
-                if (Properties.Settings.Default.ScrollEnabled && ConfigureWindows.GetMainWindow.Scroller.ScrollableHeight > 0)
+                if (Properties.Settings.Default.ScrollEnabled && ConfigureWindows.GetMainWindow?.Scroller?.ScrollableHeight > 0)
                 {
                     ScrollbarFade(show);
                 }
@@ -102,7 +102,7 @@ namespace PicView.UILogic.Animations
         /// <param name="show"></param>
         internal static void ScrollbarFade(bool show)
         {
-            var s = ConfigureWindows.GetMainWindow.Scroller.Template.FindName("PART_VerticalScrollBar", ConfigureWindows.GetMainWindow.Scroller) as System.Windows.Controls.Primitives.ScrollBar;
+            var s = ConfigureWindows.GetMainWindow?.Scroller?.Template?.FindName("PART_VerticalScrollBar", ConfigureWindows.GetMainWindow?.Scroller) as System.Windows.Controls.Primitives.ScrollBar;
 
             if (show)
             {

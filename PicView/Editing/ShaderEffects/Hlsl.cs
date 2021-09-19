@@ -1641,7 +1641,18 @@ namespace PicView.Editing.HlslEffects
 
         public PixelateEffect(double intensity)
         {
-            PixelCounts = new Size(intensity + 10, intensity);
+            if (intensity > 60)
+            {
+                PixelCounts = new Size(intensity / 2, intensity);
+            }
+            else if (intensity > 10)
+            {
+                PixelCounts = new Size(intensity / .5, intensity);
+            }
+            else
+            {
+                PixelCounts = new Size(intensity / .3, intensity);
+            }
 
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/PixelateEffect.ps", UriKind.RelativeOrAbsolute);

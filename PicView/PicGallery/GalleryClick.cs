@@ -29,8 +29,8 @@ namespace PicView.PicGallery
 
                 var z = GetPicGallery.Container.Children[id] as Views.UserControls.PicGalleryItem;
                 ConfigureWindows.GetMainWindow.MainImage.Source = z.img.Source;
-                Border border = null;
-                Image image = null;
+                Border? border = null;
+                Image? image = null;
                 var size = await ImageHandling.ImageFunctions.ImageSizeAsync(Pics[id]).ConfigureAwait(true);
                 if (size.HasValue)
                 {

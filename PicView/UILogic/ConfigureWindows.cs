@@ -15,11 +15,11 @@ namespace PicView.UILogic
 {
     internal static class ConfigureWindows
     {
-        internal static FakeWindow GetFakeWindow { get; set; }
-        internal static SettingsWindow GetSettingsWindow { get; set; }
-        internal static InfoWindow GetInfoWindow { get; set; }
+        internal static FakeWindow? GetFakeWindow { get; set; }
+        internal static SettingsWindow? GetSettingsWindow { get; set; }
+        internal static InfoWindow? GetInfoWindow { get; set; }
         internal static EffectsWindow GetEffectsWindow { get; set; }
-        internal static ImageInfoWindow GetImageInfoWindow { get; set; }
+        internal static ImageInfoWindow? GetImageInfoWindow { get; set; }
 
         /// <summary>
         /// The Main Window?
@@ -29,7 +29,7 @@ namespace PicView.UILogic
         /// <summary>
         /// Primary ContextMenu
         /// </summary>
-        internal static System.Windows.Controls.ContextMenu MainContextMenu { get; set; }
+        internal static System.Windows.Controls.ContextMenu? MainContextMenu { get; set; }
 
         internal static bool IsMainWindowTopMost
         {

@@ -36,7 +36,7 @@ namespace PicView.UILogic.Sizing
         {
             if (Error_Handling.CheckOutOfRange() == false)
             {
-                if (Pics.Count > FolderIndex)
+                if (Pics?.Count > FolderIndex)
                 {
                     var preloadValue = ChangeImage.Preloader.Get(FolderIndex);
                     if (preloadValue != null)

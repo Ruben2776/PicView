@@ -1,6 +1,7 @@
 ﻿using PicView.SystemIntegration;
 using PicView.UILogic.Animations;
 using System;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using static PicView.ChangeImage.Navigation;
@@ -12,7 +13,7 @@ namespace PicView.UILogic
         /// <summary>
         /// Timer used for slideshow
         /// </summary>
-        internal static Timer SlideTimer { get; set; }
+        internal static Timer? SlideTimer { get; set; }
 
         /// <summary>
         /// Maximize and removes Interface and start timer for slideshow.
@@ -33,7 +34,7 @@ namespace PicView.UILogic
                     Interval = Properties.Settings.Default.SlideTimer,
                     Enabled = true
                 };
-                SlideTimer.Elapsed += SlideTimer_Elapsed;
+                SlideTimer.Elapsed += async delegate { await SlideTimer_Elapsed().ConfigureAwait(false); };
                 SlideTimer.Start();
             }
             else
@@ -54,7 +55,7 @@ namespace PicView.UILogic
 
         internal static void StopSlideshow()
         {
-            SlideTimer.Stop();
+            SlideTimer?.Stop();
 
             if (!Properties.Settings.Default.Fullscreen)
             {
@@ -69,10 +70,10 @@ namespace PicView.UILogic
         /// </summary>
         /// <param name="server"></param>
         /// <param name="e"></param>
-        private static void SlideTimer_Elapsed(object server, ElapsedEventArgs e)
+        private static async Task SlideTimer_Elapsed()
         {
             AnimationHelper.Fade(ConfigureWindows.GetMainWindow.MainImage, TimeSpan.FromSeconds(0.8), TimeSpan.FromSeconds(0), 0, .5);
-            _ = PicAsync();
+            await PicAsync().ConfigureAwait(false);
             AnimationHelper.Fade(ConfigureWindows.GetMainWindow.MainImage, TimeSpan.FromSeconds(0.7), TimeSpan.FromSeconds(0), .5, 1);
         }
     }

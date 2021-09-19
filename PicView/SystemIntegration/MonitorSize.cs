@@ -21,7 +21,9 @@ namespace PicView.SystemIntegration
             throw new NotImplementedException();
         }
 
+#pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
         public override bool Equals(object obj) => obj != null && obj is MonitorSize size && Equals(size);
+#pragma warning restore CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
 
         public static bool operator ==(MonitorSize e1, MonitorSize e2)
         {

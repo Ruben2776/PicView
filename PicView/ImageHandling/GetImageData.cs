@@ -36,7 +36,7 @@ namespace PicView.ImageHandling
                 lastwritetime = string.Empty;
             }
 
-            BitmapSource image = null;
+            BitmapSource? image = null;
             var source = Preloader.Get(ChangeImage.Navigation.Pics.IndexOf(file));
             if (source != null)
             {

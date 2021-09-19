@@ -34,16 +34,16 @@ namespace PicView.FileHandling
                 if (args.Length > 1)
                 {
                     var originFolder = Path.GetDirectoryName(Path.GetDirectoryName(args[1]));
-                    var currentFolder = Path.GetDirectoryName(Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]));
+                    var currentFolder = Path.GetDirectoryName(Path.GetDirectoryName(Navigation.Pics?[Navigation.FolderIndex]));
                     if (originFolder != currentFolder)
                     {
                         return FileList(currentFolder);
                     }
                     return FileList(originFolder);
                 }
-                return FileList(Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]));
+                return FileList(Path.GetDirectoryName(Navigation.Pics?[Navigation.FolderIndex]));
             }
-            return FileList(Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]));
+            return FileList(Path.GetDirectoryName(Navigation.Pics?[Navigation.FolderIndex]));
         }
 
         /// <summary>

@@ -18,7 +18,7 @@ namespace PicView.Editing.Crop
 {
     internal static class CropFunctions
     {
-        internal static CropService CropService { get; private set; }
+        internal static CropService? CropService { get; private set; }
 
         internal static void StartCrop()
         {

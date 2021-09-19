@@ -18,7 +18,7 @@ namespace PicView.ImageHandling
         /// </summary>
         /// <param name="file">Absolute path of the file</param>
         /// <returns></returns>
-        internal static async Task<BitmapSource> RenderToBitmapSource(string file)
+        internal static async Task<BitmapSource?> RenderToBitmapSource(string file)
         {
             try
             {
@@ -120,7 +120,7 @@ namespace PicView.ImageHandling
             return pic;
         }
 
-        internal static MagickImage GetRenderedMagickImage()
+        internal static MagickImage? GetRenderedMagickImage()
         {
             try
             {
@@ -151,7 +151,7 @@ namespace PicView.ImageHandling
             catch (Exception) { return null; }
         }
 
-        internal static BitmapFrame GetRenderedBitmapFrame()
+        internal static BitmapFrame? GetRenderedBitmapFrame()
         {
             try
             {

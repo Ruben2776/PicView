@@ -18,13 +18,13 @@ namespace PicView.Editing.Crop.Tools
 
         private static void ThumbCrop_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            ThumbCrop thumb = sender as ThumbCrop;
+            ThumbCrop? thumb = sender as ThumbCrop;
             thumb?.ReleaseMouseCapture();
         }
 
         private static void ThumbCrop_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ThumbCrop thumb = sender as ThumbCrop;
+            ThumbCrop? thumb = sender as ThumbCrop;
             thumb?.CaptureMouse();
         }
 
@@ -41,7 +41,7 @@ namespace PicView.Editing.Crop.Tools
             Canvas.SetLeft(this, x - ThumbSize / 2);
         }
 
-        protected override Visual GetVisualChild(int index) => null;
+        protected override Visual? GetVisualChild(int index) => null;
 
         /// <summary>
         ///     Custom visual style of thumb
@@ -101,7 +101,7 @@ namespace PicView.Editing.Crop.Tools
 
         private void BottomRight_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            ThumbCrop thumb = sender as ThumbCrop;
+            ThumbCrop? thumb = sender as ThumbCrop;
 
             double resultThumbLeft = Canvas.GetLeft(thumb) + e.HorizontalChange;
 
@@ -124,7 +124,7 @@ namespace PicView.Editing.Crop.Tools
 
         private void BottomLeft_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            ThumbCrop thumb = sender as ThumbCrop;
+            ThumbCrop? thumb = sender as ThumbCrop;
 
             double thumbResultTop = Canvas.GetTop(thumb) + e.VerticalChange;
             if (thumbResultTop + _thumbSize / 2 > canvas.ActualHeight)
@@ -148,7 +148,7 @@ namespace PicView.Editing.Crop.Tools
 
         private void TopRight_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            ThumbCrop thumb = sender as ThumbCrop;
+            ThumbCrop? thumb = sender as ThumbCrop;
             double newTop = Canvas.GetTop(thumb) + e.VerticalChange;
             double newLeft = Canvas.GetLeft(thumb) + e.HorizontalChange;
 
@@ -172,7 +172,7 @@ namespace PicView.Editing.Crop.Tools
 
         private void TopLeft_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            ThumbCrop thumb = sender as ThumbCrop;
+            ThumbCrop? thumb = sender as ThumbCrop;
             double newTop = Canvas.GetTop(thumb) + e.VerticalChange;
             double newLeft = Canvas.GetLeft(thumb) + e.HorizontalChange;
 
@@ -199,7 +199,7 @@ namespace PicView.Editing.Crop.Tools
 
         private void RightMiddle_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            ThumbCrop thumb = sender as ThumbCrop;
+            ThumbCrop? thumb = sender as ThumbCrop;
             double resultThumbLeft = Canvas.GetLeft(thumb) + e.HorizontalChange;
 
             if (resultThumbLeft > canvas.ActualWidth)
@@ -213,7 +213,7 @@ namespace PicView.Editing.Crop.Tools
 
         private void TopMiddle_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            ThumbCrop thumb = sender as ThumbCrop;
+            ThumbCrop? thumb = sender as ThumbCrop;
             double resultThumbTop = Canvas.GetTop(thumb) + e.VerticalChange;
 
             if (resultThumbTop < 0)
@@ -229,7 +229,7 @@ namespace PicView.Editing.Crop.Tools
 
         private void LeftMiddle_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            ThumbCrop thumb = sender as ThumbCrop;
+            ThumbCrop? thumb = sender as ThumbCrop;
             double resultThumbLeft = Canvas.GetLeft(thumb) + e.HorizontalChange;
 
             if (resultThumbLeft < 0)
@@ -245,7 +245,7 @@ namespace PicView.Editing.Crop.Tools
 
         private void BottomMiddle_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            ThumbCrop thumb = sender as ThumbCrop;
+            ThumbCrop? thumb = sender as ThumbCrop;
             double thumbResultTop = Canvas.GetTop(thumb) + e.VerticalChange;
 
             if (thumbResultTop > canvas.ActualHeight)

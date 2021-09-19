@@ -14,14 +14,14 @@ namespace PicView.ImageHandling
         /// or full image if preloaded.
         /// </summary>
         /// <returns></returns>
-        internal static BitmapSource GetThumb(int x)
+        internal static BitmapSource? GetThumb(int x)
         {
             if (Pics.Count == x)
             {
                 return null;
             }
 
-            BitmapSource pic;
+            BitmapSource? pic;
 
             if (GetPicGallery != null
                 && GetPicGallery.Container.Children.Count > 0
@@ -49,7 +49,7 @@ namespace PicView.ImageHandling
             return pic;
         }
 
-        internal static BitmapSource GetBitmapSourceThumb(string path) => (System.IO.Path.GetExtension(path).ToUpperInvariant()) switch
+        internal static BitmapSource? GetBitmapSourceThumb(string path) => (System.IO.Path.GetExtension(path).ToUpperInvariant()) switch
         {
             // Return windows thumbnails if applicable, else use imagemagick
             ".JPG" or ".JPEG" or ".JPE" or ".PNG" or ".BMP" or ".GIF" or ".ICO" or ".JFIF" => GetWindowsThumbnail(path),
@@ -63,7 +63,7 @@ namespace PicView.ImageHandling
         /// <param name="quality"></param>
         /// <param name="size"></param>
         /// <returns></returns>
-        private static BitmapSource GetMagickImageThumb(string file, byte quality = 100, short size = 500)
+        private static BitmapSource? GetMagickImageThumb(string file, byte quality = 100, short size = 500)
         {
             BitmapSource pic;
 
@@ -96,7 +96,7 @@ namespace PicView.ImageHandling
         /// </summary>
         /// <param name="path">The path to the file</param>
         /// <returns></returns>
-        private static BitmapSource GetWindowsThumbnail(string path)
+        private static BitmapSource? GetWindowsThumbnail(string path)
         {
             try
             {

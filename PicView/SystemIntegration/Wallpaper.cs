@@ -64,7 +64,7 @@ namespace PicView.SystemIntegration
                 }
                 catch { }
             }
-            else if (Pics.Count > 0)
+            else if (Pics?.Count > 0)
             {
                 if (FolderIndex < Pics.Count)
                 {

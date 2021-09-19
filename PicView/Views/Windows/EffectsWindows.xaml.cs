@@ -36,6 +36,10 @@ namespace PicView.Views.Windows
 
             TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
 
+            IntensitySlider.ValueChanged += (_, _) => IntensitySlider_ValueChanged();
+
+            #region button events
+
             NegativeButton.Click += Negative;
             NegativeButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(NegativeColorsText); };
             NegativeButton.MouseEnter += delegate { ButtonMouseOverAnim(NegativeColorsText); AnimationHelper.MouseEnterBgTexColor(NegativeButtonBrush); };
@@ -177,10 +181,10 @@ namespace PicView.Views.Windows
             SaveButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SaveText); };
             SaveButton.Click += async (sender, e) => await Open_Save.SaveFilesAsync();
 
-            IntensitySlider.ValueChanged += IntensitySlider_ValueChanged;
+            #endregion
         }
 
-        private void IntensitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void IntensitySlider_ValueChanged()
         {
             if (PixelateButton.IsChecked.Value)
             {
@@ -233,10 +237,6 @@ namespace PicView.Views.Windows
             else if (WavewarperButton.IsChecked.Value)
             {
                 WaveWarperEffect(null, null);
-            }
-            else if (FrostyOutlineButton.IsChecked.Value)
-            {
-                FrostyOutlineEffect(null, null);
             }
             else if (FrostyOutlineButton.IsChecked.Value)
             {

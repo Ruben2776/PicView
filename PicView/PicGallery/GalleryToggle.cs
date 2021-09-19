@@ -19,7 +19,7 @@ namespace PicView.PicGallery
 
         internal static async Task ToggleAsync(bool change = false)
         {
-            if (Pics.Count < 1)
+            if (Pics?.Count < 1)
             {
                 return;
             }
@@ -70,7 +70,7 @@ namespace PicView.PicGallery
 
         internal static async Task OpenHorizontalGalleryAsync()
         {
-            if (Pics.Count < 1)
+            if (Pics?.Count < 1)
             {
                 return;
             }
@@ -116,7 +116,7 @@ namespace PicView.PicGallery
 
         internal static async Task OpenFullscreenGalleryAsync(bool startup = false)
         {
-            if (Pics.Count < 1 && !startup)
+            if (Pics?.Count < 1 && !startup)
             {
                 return;
             }

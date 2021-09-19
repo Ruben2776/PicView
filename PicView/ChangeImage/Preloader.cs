@@ -15,10 +15,10 @@ namespace PicView.ChangeImage
     {
         internal class PreloadValue
         {
-            internal BitmapSource bitmapSource;
+            internal BitmapSource? bitmapSource;
             internal bool isLoading;
 
-            internal PreloadValue(BitmapSource bitmap, bool loading)
+            internal PreloadValue(BitmapSource? bitmap, bool loading)
             {
                 bitmapSource = bitmap;
                 isLoading = loading;
@@ -45,7 +45,7 @@ namespace PicView.ChangeImage
                 i = Math.Abs(i);
             }
 
-            if (i >= Pics.Count)
+            if (i >= Pics?.Count)
             {
                 return;
             }
@@ -53,7 +53,7 @@ namespace PicView.ChangeImage
             var preloadValue = new PreloadValue(null, true);
             if (Sources.TryAdd(i, preloadValue))
             {
-                var x = await ImageDecoder.RenderToBitmapSource(Pics[i]).ConfigureAwait(false);
+                var x = await ImageDecoder.RenderToBitmapSource(Pics?[i]).ConfigureAwait(false);
                 preloadValue.bitmapSource = x;
                 preloadValue.isLoading = false;
             }
@@ -79,7 +79,7 @@ namespace PicView.ChangeImage
                 key = Math.Abs(key);
             }
 
-            if (key >= Pics.Count)
+            if (key >= Pics?.Count)
             {
 #if DEBUG
                 Trace.WriteLine("Preloader.Remove key null, " + key);
@@ -96,7 +96,7 @@ namespace PicView.ChangeImage
 #if DEBUG
             if (!Sources.TryRemove(key, out _))
             {
-                Trace.WriteLine($"Failed to Remove {key} from Preloader, index {Pics[key]}");
+                Trace.WriteLine($"Failed to Remove {key} from Preloader, index {Pics?[key]}");
             }
 #else
             Sources.TryRemove(key, out _);
@@ -125,7 +125,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        internal static PreloadValue Get(int key)
+        internal static PreloadValue? Get(int key)
         {
             if (!Contains(key))
             {

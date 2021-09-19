@@ -45,7 +45,7 @@ namespace PicView.PicGallery
 
         private static IEnumerable<T> OrderBySequence<T, TId>(this IEnumerable<T> source, IEnumerable<TId> order, Func<T, TId> idSelector)
         {
-            var lookup = source.ToDictionary(idSelector, t => t);
+            var lookup = source?.ToDictionary(idSelector, t => t);
             foreach (var id in order)
             {
                 yield return lookup[id];
@@ -63,7 +63,7 @@ namespace PicView.PicGallery
                 for (int i = 0; i < Navigation.Pics.Count; i++)
                 {
                     var x = GetPicGallery.Container.Children[i] as PicGalleryItem;
-                    pics.Add(new tempPics((BitmapSource)x?.img?.Source, Navigation.Pics[i]));
+                    pics.Add(new tempPics(x?.img?.Source as BitmapSource, Navigation.Pics[i]));
                 }
 
                 Clear();

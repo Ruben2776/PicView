@@ -258,7 +258,9 @@ namespace PicView.SystemIntegration
             public IntPtr Data;
             public int SizeOfData;
 
+#pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
             public override bool Equals(object obj)
+#pragma warning restore CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
             {
                 return obj is WindowCompositionAttributeData data && Equals(data);
             }

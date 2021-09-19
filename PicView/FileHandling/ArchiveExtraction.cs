@@ -24,12 +24,12 @@ namespace PicView.FileHandling
         /// <summary>
         /// File path for the extracted folder
         /// </summary>
-        internal static string TempFilePath { get; set; }
+        internal static string? TempFilePath { get; set; }
 
         /// <summary>
         /// File path for the extracted zip file
         /// </summary>
-        internal static string TempZipFile { get; set; }
+        internal static string? TempZipFile { get; set; }
 
         /// <summary>
         /// Attemps to extract folder

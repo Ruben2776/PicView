@@ -50,7 +50,7 @@ namespace PicView.FileHandling
         /// </summary>
         internal static void Open_In_Explorer()
         {
-            if (Pics.Count > 0)
+            if (Pics?.Count > 0)
             {
                 if (Pics.Count < FolderIndex)
                 {
@@ -69,7 +69,7 @@ namespace PicView.FileHandling
             try
             {
                 Close_UserControls();
-                FileFunctions.OpenFolderAndSelectItem(Path.GetDirectoryName(Pics[FolderIndex]), Pics[FolderIndex]); // https://stackoverflow.com/a/39427395
+                FileFunctions.OpenFolderAndSelectItem(Path.GetDirectoryName(Pics?[FolderIndex]), Pics?[FolderIndex]); // https://stackoverflow.com/a/39427395
             }
 #if DEBUG
             catch (InvalidCastException e)
@@ -93,7 +93,7 @@ namespace PicView.FileHandling
                 Filter = FilterFiles,
                 Title = $"{Application.Current.Resources["OpenFileDialog"]} - {SetTitle.AppName}"
             };
-            if (dlg.ShowDialog().Value)
+            if (dlg.ShowDialog().HasValue)
             {
                 await LoadPiFromFileAsync(dlg.FileName).ConfigureAwait(false);
             }
@@ -150,7 +150,7 @@ namespace PicView.FileHandling
 
             string fileName;
 
-            if (Pics.Count > 0)
+            if (Pics?.Count > FolderIndex)
             {
                 if (string.IsNullOrEmpty(Pics[FolderIndex]))
                 {
@@ -170,7 +170,7 @@ namespace PicView.FileHandling
                 FileName = fileName
             };
 
-            if (!Savedlg.ShowDialog().Value)
+            if (!Savedlg.ShowDialog().HasValue)
             {
                 return;
             }
@@ -184,7 +184,7 @@ namespace PicView.FileHandling
                     ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
                 }
             }
-            else if (Pics.Count > 0)
+            else if (Pics?.Count > FolderIndex)
             {
                 if (!SaveImages.TrySaveImage(Rotateint, Flipped, Pics[FolderIndex], Savedlg.FileName))
                 {
@@ -193,6 +193,10 @@ namespace PicView.FileHandling
             }
             else
             {
+                if (ConfigureWindows.GetMainWindow.MainImage.Source == null)
+                {
+                    ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
+                }
                 if (!SaveImages.TrySaveImage(Rotateint, Flipped, ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource, Savedlg.FileName))
                 {
                     ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);

@@ -28,7 +28,7 @@ namespace PicView.ChangeImage
         /// <summary>
         /// List of file paths to supported files
         /// </summary>
-        internal static System.Collections.Generic.List<string> Pics { get; set; }
+        internal static System.Collections.Generic.List<string>? Pics { get; set; }
 
         /// <summary>
         /// Counter used to get current index
@@ -38,7 +38,7 @@ namespace PicView.ChangeImage
         /// <summary>
         /// Backup of Previous file, if changed folder etc.
         /// </summary>
-        internal static string BackupPath { get; set; }
+        internal static string? BackupPath { get; set; }
 
         /// <summary>
         /// Used for error handling to prevent navigating
@@ -161,19 +161,19 @@ namespace PicView.ChangeImage
         internal static async Task LoadPiFromFileAsync(string path)
         {
             // If count not correct or just started, get values
-            if (Pics.Count <= FolderIndex || FolderIndex < 0 || FreshStartup)
+            if (Pics?.Count <= FolderIndex || FolderIndex < 0 || FreshStartup)
             {
                 await GetValues(path).ConfigureAwait(false);
             }
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
-            else if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]) && Path.GetDirectoryName(path) != Path.GetDirectoryName(Pics[FolderIndex]))
+            else if (!string.IsNullOrWhiteSpace(Pics?[FolderIndex]) && Path.GetDirectoryName(path) != Path.GetDirectoryName(Pics[FolderIndex]))
             {
                 // Reset old values and get new
                 ChangeFolder(true);
                 await GetValues(path).ConfigureAwait(false);
             }
 
-            if (Pics.Count > 0)
+            if (Pics?.Count > 0)
             {
                 FolderIndex = Pics.IndexOf(path);
             }
@@ -183,7 +183,7 @@ namespace PicView.ChangeImage
                 Preloader.Clear();
             }
 
-            if (FolderIndex >= 0 && Pics.Count > 0) // check if being extracted and need to wait for it instead
+            if (FolderIndex >= 0 && Pics?.Count > 0) // check if being extracted and need to wait for it instead
             {
                 // Navigate to picture using obtained index
                 await LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
@@ -217,9 +217,8 @@ namespace PicView.ChangeImage
         /// <param name="index">The index of file to load from Pics</param>
         internal static async Task LoadPicAtIndexAsync(int index)
         {
-            Preloader.PreloadValue preloadValue;
             FolderIndex = index;
-            preloadValue = Preloader.Get(index);
+            var preloadValue = Preloader.Get(index);
 
             // Initate loading behavior, if needed
             if (preloadValue == null || preloadValue.isLoading)
@@ -243,7 +242,7 @@ namespace PicView.ChangeImage
                             ConfigureWindows.GetMainWindow.TitleText.ToolTip =
                             ConfigureWindows.GetMainWindow.Title =
                             ConfigureWindows.GetMainWindow.TitleText.Text
-                            = $"{image} {(index + 1)} / {Pics.Count}";
+                            = $"{image} {(index + 1)} / {Pics?.Count}";
                         }
 
                         if (thumb != null)
@@ -287,6 +286,14 @@ namespace PicView.ChangeImage
                 preloadValue = new Preloader.PreloadValue(ImageFunctions.ImageErrorMessage(), false);
             }
 
+            if (preloadValue == null || preloadValue.bitmapSource == null)
+            {
+                Error_Handling.Unload();
+                ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                return;
+            }
+
+
             // Need to put UI change in dispatcher to fix slideshow bug
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
             {
@@ -301,11 +308,11 @@ namespace PicView.ChangeImage
             {
                 if (ConfigureWindows.GetImageInfoWindow.IsVisible)
                 {
-                    await ConfigureWindows.GetImageInfoWindow.UpdateValuesAsync(Pics[FolderIndex]).ConfigureAwait(false);
+                    await ConfigureWindows.GetImageInfoWindow.UpdateValuesAsync(Pics?[FolderIndex]).ConfigureAwait(false);
                 }
             }
 
-            if (Pics.Count > 1)
+            if (Pics?.Count > 1)
             {
                 Taskbar.Progress(index, Pics.Count);
 
@@ -313,9 +320,9 @@ namespace PicView.ChangeImage
             }
 
             // Add recent files, except when browing archive
-            if (string.IsNullOrWhiteSpace(TempZipFile))
+            if (string.IsNullOrWhiteSpace(TempZipFile) && Pics?.Count > index)
             {
-                RecentFiles.Add(Pics[index]);
+                RecentFiles.Add(Pics?[index]);
             }
         }
 
@@ -343,9 +350,9 @@ namespace PicView.ChangeImage
             }
 
             // Loads gif from XamlAnimatedGif if neccesary
-            if (Path.GetExtension(Pics[index]).Equals(".gif", StringComparison.OrdinalIgnoreCase))
+            if (Path.GetExtension(Pics?[index]).Equals(".gif", StringComparison.OrdinalIgnoreCase))
             {
-                XamlAnimatedGif.AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(Pics[index]));
+                XamlAnimatedGif.AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(Pics?[index]));
             }
             else
             {
@@ -416,7 +423,7 @@ namespace PicView.ChangeImage
         /// <param name="imageName"></param>
         internal static async Task PicAsync(string file, string imageName, bool isGif)
         {
-            BitmapSource bitmapSource = isGif ? null : await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(false);
+            BitmapSource? bitmapSource = isGif ? null : await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(false);
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(async () =>
             {
                 if (Properties.Settings.Default.ScrollEnabled)
@@ -434,11 +441,17 @@ namespace PicView.ChangeImage
                     }
                     XamlAnimatedGif.AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(file));
                 }
-                else
+                else if (bitmapSource != null)
                 {
                     ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
                     SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, imageName);
                     FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+                }
+                else
+                {
+                    Error_Handling.Unload();
+                    ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                    return;
                 }
 
                 CloseToolTipMessage();
@@ -466,7 +479,15 @@ namespace PicView.ChangeImage
         /// <param name="imageName"></param>
         internal static async Task Pic64(string base64string)
         {
+            if (string.IsNullOrEmpty(base64string))
+            {
+                return;
+            }
             var pic = await Base64.Base64StringToBitmap(base64string).ConfigureAwait(false);
+            if (pic == null)
+            {
+                return;
+            }
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
             {
                 UpdatePic(Application.Current.Resources["Base64Image"] as string, pic);
@@ -492,7 +513,7 @@ namespace PicView.ChangeImage
                 Pics = FileList(folder);
             }).ConfigureAwait(false);
 
-            if (Pics.Count > 0)
+            if (Pics?.Count > 0)
             {
                 await LoadPicAtIndexAsync(0).ConfigureAwait(false);
             }
@@ -555,12 +576,12 @@ namespace PicView.ChangeImage
                     // loop next
                     if (Properties.Settings.Default.Looping || Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
                     {
-                        FolderIndex = FolderIndex == Pics.Count - 1 ? 0 : FolderIndex + 1;
+                        FolderIndex = FolderIndex == Pics?.Count - 1 ? 0 : FolderIndex + 1;
                     }
                     else
                     {
                         // Go to next if able
-                        if (FolderIndex + 1 == Pics.Count)
+                        if (FolderIndex + 1 == Pics?.Count)
                         {
                             return;
                         }
@@ -595,7 +616,7 @@ namespace PicView.ChangeImage
                 indexBackup = FolderIndex;
 
                 // Reset preloader values to prevent errors
-                if (Pics.Count > Preloader.LoadBehind + Preloader.LoadInfront + 2)
+                if (Pics?.Count > Preloader.LoadBehind + Preloader.LoadInfront + 2)
                 {
                     Preloader.Clear();
                 }
@@ -609,7 +630,7 @@ namespace PicView.ChangeImage
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
                 {
-                    if (GetPicGallery.Container.Children.Count > FolderIndex && GetPicGallery.Container.Children.Count > indexBackup)
+                    if (GetPicGallery?.Container.Children.Count > FolderIndex && GetPicGallery.Container.Children.Count > indexBackup)
                     {
                         if (indexBackup != FolderIndex)
                         {
@@ -694,10 +715,10 @@ namespace PicView.ChangeImage
 
             FastPicRunning = false;
 
-            Preloader.PreloadValue preloadValue;
+            Preloader.PreloadValue? preloadValue;
 
             // Reset preloader values to prevent errors
-            if (Pics.Count > Preloader.LoadBehind + Preloader.LoadInfront + 2)
+            if (Pics?.Count > Preloader.LoadBehind + Preloader.LoadInfront + 2)
             {
                 Preloader.Clear();
                 await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
@@ -719,8 +740,10 @@ namespace PicView.ChangeImage
                 }
             }
 
-            if (preloadValue == null)
+            if (preloadValue == null || preloadValue.bitmapSource == null)
             {
+                Error_Handling.Unload();
+                ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
                 return;
             }
 

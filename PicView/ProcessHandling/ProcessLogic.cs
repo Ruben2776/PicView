@@ -26,7 +26,7 @@ namespace PicView.ProcessHandling
             var GetAppPath = ProcessLogic.GetPathToProcess();
 
             string args;
-            if (Navigation.Pics.Count > Navigation.FolderIndex)
+            if (Navigation.Pics?.Count > Navigation.FolderIndex)
             {
                 args = Navigation.Pics[Navigation.FolderIndex];
 
@@ -61,30 +61,6 @@ namespace PicView.ProcessHandling
                         }
             };
             process.Start();
-        }
-
-#pragma warning disable SYSLIB0003 // Type or member is obsolete
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
-#pragma warning restore SYSLIB0003 // Type or member is obsolete
-        public static void ElevateProcess(string args)
-        {
-            var GetAppPath = System.Environment.ProcessPath;
-
-            if (Path.GetExtension(GetAppPath) == ".dll")
-            {
-                GetAppPath = GetAppPath.Replace(".dll", ".exe", System.StringComparison.InvariantCultureIgnoreCase);
-            }
-
-            using var target = new Process
-            {
-                StartInfo = new ProcessStartInfo(GetAppPath, args)
-            };
-
-            //Required for UAC to work
-            target.StartInfo.UseShellExecute = true;
-            target.StartInfo.Verb = "runas";
-
-            target.Start();
         }
     }
 }

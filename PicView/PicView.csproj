@@ -49,7 +49,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
     <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>True</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>
     </DefineConstants>
@@ -427,11 +427,10 @@
   <PropertyGroup>
     <FileVersion>1.3.5.0</FileVersion>
     <SignAssembly>true</SignAssembly>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
     <PackageProjectUrl>https://github.com/Ruben2776/PicView</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Ruben2776/PicView</RepositoryUrl>
-    <PackageLicenseExpression></PackageLicenseExpression>
+    <PackageLicenseExpression> GPL-3.0-only</PackageLicenseExpression>
     <AssemblyOriginatorKeyFile>PicViewSignFile.pfx</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
     <LangVersion>preview</LangVersion>
@@ -440,8 +439,9 @@
     <PackageIcon>icon-raster.128b.png</PackageIcon>
     <AssemblyVersion>1.3.5.0</AssemblyVersion>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

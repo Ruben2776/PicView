@@ -10,7 +10,7 @@ namespace PicView.UILogic
 {
     internal static class EditTitleBar
     {
-        private static string backupTitle;
+        private static string? backupTitle;
 
         internal static void Bar_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -77,6 +77,11 @@ namespace PicView.UILogic
 
         internal static async Task HandleRename()
         {
+            if (Pics == null)
+            {
+                return;
+            }
+
             if (FileFunctions.RenameFile(Pics[FolderIndex], ConfigureWindows.GetMainWindow.TitleText.Text))
             {
                 // Check if the file is not in the same folder
@@ -133,7 +138,7 @@ namespace PicView.UILogic
             Keyboard.ClearFocus();
             ConfigureWindows.GetMainWindow.Focus();
 
-            if (backup)
+            if (backup && backupTitle != null)
             {
                 ConfigureWindows.GetMainWindow.TitleText.Text = backupTitle;
                 backupTitle = string.Empty;

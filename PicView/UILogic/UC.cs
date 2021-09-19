@@ -10,21 +10,21 @@ namespace PicView.UILogic
 {
     internal static class UC
     {
-        internal static ImageSettings GetImageSettingsMenu { get; set; }
-        internal static FileMenu GetFileMenu { get; set; }
-        internal static QuickSettingsMenu GetQuickSettingsMenu { get; set; }
+        internal static ImageSettings? GetImageSettingsMenu { get; set; }
+        internal static FileMenu? GetFileMenu { get; set; }
+        internal static QuickSettingsMenu? GetQuickSettingsMenu { get; set; }
         internal static ToolsAndEffectsMenu GetToolsAndEffectsMenu { get; set; }
-        internal static ToolTipMessage GetToolTipMessage { get; set; }
-        internal static AutoScrollSign GetAutoScrollSign { get; set; }
-        internal static ClickArrow GetClickArrowLeft { get; set; }
-        internal static ClickArrow GetClickArrowRight { get; set; }
-        internal static X2 Getx2 { get; set; }
-        internal static Minus GetMinus { get; set; }
-        internal static Restorebutton GetRestorebutton { get; set; }
+        internal static ToolTipMessage? GetToolTipMessage { get; set; }
+        internal static AutoScrollSign? GetAutoScrollSign { get; set; }
+        internal static ClickArrow? GetClickArrowLeft { get; set; }
+        internal static ClickArrow? GetClickArrowRight { get; set; }
+        internal static X2? Getx2 { get; set; }
+        internal static Minus? GetMinus { get; set; }
+        internal static Restorebutton? GetRestorebutton { get; set; }
         internal static Views.UserControls.PicGallery GetPicGallery { get; set; }
-        internal static GalleryShortcut GetGalleryShortcut { get; set; }
-        internal static CroppingTool GetCropppingTool { get; set; }
-        internal static ColorPicker GetColorPicker { get; set; }
+        internal static GalleryShortcut? GetGalleryShortcut { get; set; }
+        internal static CroppingTool? GetCropppingTool { get; set; }
+        internal static ColorPicker? GetColorPicker { get; set; }
 
         private static bool imageSettingsMenuOpen;
         private static bool fileMenuOpen;

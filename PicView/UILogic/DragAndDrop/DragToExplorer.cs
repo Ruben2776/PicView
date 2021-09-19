@@ -63,7 +63,7 @@ namespace PicView.UILogic.DragAndDrop
                 return;
             }
 
-            FrameworkElement senderElement = sender as FrameworkElement;
+            FrameworkElement? senderElement = sender as FrameworkElement;
             DataObject dragObj = new DataObject();
             dragObj.SetFileDropList(new StringCollection() { file });
             DragDrop.DoDragDrop(senderElement, dragObj, DragDropEffects.Copy);
