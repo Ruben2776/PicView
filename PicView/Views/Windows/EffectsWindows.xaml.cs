@@ -1,4 +1,5 @@
-﻿using PicView.Editing.HlslEffects;
+﻿using Microsoft.Windows.Themes;
+using PicView.Editing.HlslEffects;
 using PicView.FileHandling;
 using PicView.UILogic;
 using PicView.UILogic.Animations;
@@ -175,9 +176,110 @@ namespace PicView.Views.Windows
             SaveButton.MouseEnter += delegate { ButtonMouseOverAnim(SaveText); };
             SaveButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SaveText); };
             SaveButton.Click += async (sender, e) => await Open_Save.SaveFilesAsync();
+
+            IntensitySlider.ValueChanged += IntensitySlider_ValueChanged;
+        }
+
+        private void IntensitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (PixelateButton.IsChecked.Value)
+            {
+                PixelateEffect(null, null);
+            }
+            else if (ColorToneButton.IsChecked.Value)
+            {
+                ColorToneEffect(null, null);
+            }
+            else if (RippleAltButton.IsChecked.Value)
+            {
+                RippleEffect2(null, null);
+            }
+            else if (BandedSwirlButton.IsChecked.Value)
+            {
+                BandedSwirlEffect(null, null);
+            }
+            else if (DirectionalBlurButton.IsChecked.Value)
+            {
+                Dir_blur(null, null);
+            }
+            else if (BandsButton.IsChecked.Value)
+            {
+                Bands(null, null);
+            }
+            else if (EmbossedButton.IsChecked.Value)
+            {
+                Embossed(null, null);
+            }
+            else if (GlasTileButton.IsChecked.Value)
+            {
+                GlasTileEffect(null, null);
+            }
+            else if (SmoothMagnifyButton.IsChecked.Value)
+            {
+                MagnifySmoothEffect(null, null);
+            }
+            else if (PaperfoldButton.IsChecked.Value)
+            {
+                PaperFoldEffect(null, null);
+            }
+            else if (PivotButton.IsChecked.Value)
+            {
+                PivotEffect(null, null);
+            }
+            else if (UnderwaterButton.IsChecked.Value)
+            {
+                UnderWaterEffect(null, null);
+            }
+            else if (WavewarperButton.IsChecked.Value)
+            {
+                WaveWarperEffect(null, null);
+            }
+            else if (FrostyOutlineButton.IsChecked.Value)
+            {
+                FrostyOutlineEffect(null, null);
+            }
+            else if (FrostyOutlineButton.IsChecked.Value)
+            {
+                FrostyOutlineEffect(null, null);
+            }
+            else if (OldMovieButton.IsChecked.Value)
+            {
+                OldMovieEffect(null, null);
+            }
+            else if (SketchButton.IsChecked.Value)
+            {
+                Sketch(null, null);
+            }
+            else if (SwirlButton.IsChecked.Value)
+            {
+                SwirlEffect(null, null);
+            }
+            else if (BloomButton.IsChecked.Value)
+            {
+                Bloom(null, null);
+            }
+            else if (GloomButton.IsChecked.Value)
+            {
+                Gloom(null, null);
+            }
+            else if (TonemappingButton.IsChecked.Value)
+            {
+                ToneMapping(null, null);
+            }
+            else if (TelescopicBlurButton.IsChecked.Value)
+            {
+                Teleskopisk_blur(null, null);
+            }
+            else if (PencilSketchButton.IsChecked.Value)
+            {
+                SketchPencilStrokeEffect(null, null);
+            }
+
         }
 
         #region HLSL Shader Effects
+
+
 
         private bool Remove_Effects()
         {
@@ -237,7 +339,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new ColorToneEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new ColorToneEffect(IntensitySlider.Value);
             ColorToneButton.IsChecked = true;
         }
 
@@ -265,7 +367,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new RippleEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new RippleEffect(IntensitySlider.Value);
             RippleAltButton.IsChecked = true;
         }
 
@@ -279,7 +381,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new BandedSwirlEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new BandedSwirlEffect(IntensitySlider.Value);
             BandedSwirlButton.IsChecked = true;
         }
 
@@ -307,7 +409,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new SwirlEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new SwirlEffect(IntensitySlider.Value);
             SwirlButton.IsChecked = true;
         }
 
@@ -321,7 +423,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new BloomEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new BloomEffect(IntensitySlider.Value);
             BloomButton.IsChecked = true;
         }
 
@@ -335,7 +437,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new GloomEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new GloomEffect(IntensitySlider.Value);
             GloomButton.IsChecked = true;
         }
 
@@ -349,7 +451,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new ToneMappingEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new ToneMappingEffect(IntensitySlider.Value);
             TonemappingButton.IsChecked = true;
         }
 
@@ -363,7 +465,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new TelescopicBlurPS3Effect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new TelescopicBlurPS3Effect(IntensitySlider.Value);
             TelescopicBlurButton.IsChecked = true;
         }
 
@@ -391,7 +493,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new DirectionalBlurEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new DirectionalBlurEffect(IntensitySlider.Value);
             DirectionalBlurButton.IsChecked = true;
         }
 
@@ -405,7 +507,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new BandsEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new BandsEffect(IntensitySlider.Value);
             BandsButton.IsChecked = true;
         }
 
@@ -419,7 +521,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new EmbossedEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new EmbossedEffect(IntensitySlider.Value);
             EmbossedButton.IsChecked = true;
         }
 
@@ -433,7 +535,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new GlassTilesEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new GlassTilesEffect(IntensitySlider.Value);
             GlasTileButton.IsChecked = true;
         }
 
@@ -447,7 +549,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new MagnifySmoothEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new MagnifySmoothEffect(IntensitySlider.Value);
             SmoothMagnifyButton.IsChecked = true;
         }
 
@@ -461,7 +563,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new PaperFoldEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new PaperFoldEffect(IntensitySlider.Value);
             PaperfoldButton.IsChecked = true;
         }
 
@@ -475,7 +577,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new PivotEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new PivotEffect(IntensitySlider.Value);
             PivotButton.IsChecked = true;
         }
 
@@ -489,7 +591,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new UnderwaterEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new UnderwaterEffect(IntensitySlider.Value);
             UnderwaterButton.IsChecked = true;
         }
 
@@ -503,7 +605,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new WaveWarperEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new WaveWarperEffect(IntensitySlider.Value);
             WavewarperButton.IsChecked = true;
         }
 
@@ -517,7 +619,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new FrostyOutlineEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new FrostyOutlineEffect(IntensitySlider.Value);
             FrostyOutlineButton.IsChecked = true;
         }
 
@@ -531,7 +633,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new OldMovieEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new OldMovieEffect(IntensitySlider.Value);
             OldMovieButton.IsChecked = true;
         }
 
@@ -544,8 +646,8 @@ namespace PicView.Views.Windows
                     return;
                 }
             }
-
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new PixelateEffect();
+            
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new PixelateEffect(IntensitySlider.Value);
             PixelateButton.IsChecked = true;
         }
 
@@ -559,7 +661,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new SketchGraniteEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new SketchGraniteEffect(IntensitySlider.Value);
             SketchButton.IsChecked = true;
         }
 
@@ -573,7 +675,7 @@ namespace PicView.Views.Windows
                 }
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Effect = new SketchPencilStrokeEffect();
+            ConfigureWindows.GetMainWindow.MainImage.Effect = new SketchPencilStrokeEffect(IntensitySlider.Value);
             PencilSketchButton.IsChecked = true;
         }
 

@@ -7,7 +7,7 @@
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
     Title="{StaticResource HLSLPictureFX}"
     Width="559"
-    Height="450"
+    Height="500"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros"
@@ -619,6 +619,18 @@
                     </TextBlock>
                 </CheckBox>
             </WrapPanel>
+
+            <Slider
+                x:Name="IntensitySlider"
+                Width="229"
+                Height="30"
+                Margin="0,8,0,0"
+                IsMoveToPointEnabled="True"
+                IsSnapToTickEnabled="True"
+                Maximum="200"
+                Minimum="0"
+                TickFrequency="1.5"
+                Value="100" />
 
             <TextBlock
                 Margin="0,8,0,4"
