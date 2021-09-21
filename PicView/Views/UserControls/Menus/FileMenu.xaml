@@ -84,7 +84,6 @@
                     Canvas.Top="59"
                     Width="120"
                     Height="50"
-                    Background="{StaticResource BackgroundColorBrushAlt}"
                     Style="{StaticResource ButtonBorder}">
                     <Button
                         x:Name="Open"

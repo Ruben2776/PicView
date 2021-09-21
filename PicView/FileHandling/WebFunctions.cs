@@ -77,7 +77,7 @@ namespace PicView.FileHandling
                 fileName = fileName.Substring(0, index);
             }
 
-            using (var client = new WebFunctions.HttpClientDownloadWithProgress(url, tempPath + fileName))
+            using (var client = new HttpClientDownloadWithProgress(url, tempPath + fileName))
             {
                 if (displayProgress)
                 {

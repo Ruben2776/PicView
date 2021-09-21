@@ -215,14 +215,6 @@ namespace PicView.UILogic
         }
 
         /// <summary>
-        /// Closes usercontrol menus
-        /// </summary>
-        internal static void Close_UserControls(object sender, RoutedEventArgs e)
-        {
-            Close_UserControls();
-        }
-
-        /// <summary>
         /// Toggles whether open menu is open or not
         /// </summary>
         /// <param name="sender"></param>
