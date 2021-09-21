@@ -61,5 +61,19 @@ namespace PicView.ProcessHandling
             };
             process.Start();
         }
+
+        internal static void StartNewProcess()
+        {
+            var pathToExe = GetPathToProcess();
+
+            Process process = new()
+            {
+                StartInfo =
+                        {
+                            FileName = pathToExe,
+                        }
+            };
+            process.Start();
+        }
     }
 }

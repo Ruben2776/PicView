@@ -413,6 +413,14 @@ namespace PicView.Shortcuts
                         }
                         break;
 
+                    // N
+                    case Key.N:
+                        if (ctrlDown)
+                        {
+                            ProcessHandling.ProcessLogic.StartNewProcess();
+                        }
+                        break;
+
                     // G
                     case Key.G:
                         if (Properties.Settings.Default.FullscreenGallery == false
@@ -575,7 +583,7 @@ namespace PicView.Shortcuts
                 case Key.Right:
                 case Key.Left:
                 case Key.D:
-                    if (FolderIndex <= 0 || Pics.Count < FolderIndex)
+                    if (FolderIndex <= 0 || Pics?.Count < FolderIndex)
                     {
                         return;
                     }

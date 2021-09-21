@@ -149,7 +149,7 @@ namespace PicView.Views.Windows
             };
         }
 
-        internal async Task UpdateValuesAsync(string file)
+        internal async Task UpdateValuesAsync(string? file)
         {
             var data = await Task.Run(async () => (await GetImageData.RetrieveDataAsync(file).ConfigureAwait(false)));
 

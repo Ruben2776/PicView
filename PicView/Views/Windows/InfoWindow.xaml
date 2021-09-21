@@ -1582,6 +1582,7 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
                     <Border
@@ -1840,6 +1841,53 @@
                         Grid.Column="2"
                         Padding="0,3,0,3"
                         Background="{StaticResource BackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,1,1,1" />
+
+
+
+                    <Border
+                        Grid.Row="6"
+                        Grid.Column="0"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1,1,1,1">
+                        <TextBlock
+                            Margin="10,3,0,3"
+                            FontSize="12"
+                            Text="{StaticResource ResourceKey=NewWindow}" />
+                    </Border>
+
+                    <Border
+                        Grid.Row="6"
+                        Grid.Column="1"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,1,1,1">
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                FontSize="12"
+                                Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text=" + " />
+                            <TextBlock
+                                FontSize="12"
+                                Text="N" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border
+                        Grid.Row="6"
+                        Grid.Column="2"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,1" />
                 </Grid>
