@@ -175,39 +175,35 @@ namespace PicView.FileHandling
 
             IsDialogOpen = true;
 
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
+            var success = false;
+            var source = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
+            var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
+
+            if (Pics?.Count > FolderIndex)
             {
-                if (!SaveImages.TrySaveImageWithEffect(Savedlg.FileName))
-                {
-                    ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
-                }
+                success = await SaveImages.TrySaveImage(Rotateint, Flipped, null, Pics[FolderIndex], Savedlg.FileName, null, effectApplied).ConfigureAwait(false);
             }
-            else if (Pics?.Count > FolderIndex)
+            else if (source != null)
             {
-                if (!SaveImages.TrySaveImage(Rotateint, Flipped, Pics[FolderIndex], Savedlg.FileName))
-                {
-                    ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
-                }
+                success = await SaveImages.TrySaveImage(Rotateint, Flipped, source, null, Savedlg.FileName, null, effectApplied).ConfigureAwait(false);
             }
-            else
+            
+            if (success == false)
             {
-                if (ConfigureWindows.GetMainWindow.MainImage.Source == null)
-                {
-                    ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
-                }
-                if (!SaveImages.TrySaveImage(Rotateint, Flipped, ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource, Savedlg.FileName))
-                {
-                    ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
-                }
+                ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
             }
 
-            if (Savedlg.FileName == fileName)
+            //Reload if same pic to show changes
+            else if (Savedlg.FileName == fileName)
             {
-                //Refresh the list of pictures.
                 await ReloadAsync().ConfigureAwait(false);
             }
 
-            Close_UserControls();
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            {
+                Close_UserControls();
+            });
+            
             IsDialogOpen = false;
         }
 

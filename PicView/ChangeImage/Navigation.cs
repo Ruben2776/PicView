@@ -266,7 +266,7 @@ namespace PicView.ChangeImage
                 }
             }
             // Make loading skippable
-            if (FastPicRunning)
+            if (FastPicRunning) // Holding down button is too fast and will be laggy when not just loading thumbnails
             {
                 return;
             }
@@ -274,6 +274,7 @@ namespace PicView.ChangeImage
             // Make loading skippable
             if (FolderIndex != index)
             {
+                // Start preloading when browsing very fast to catch up
                 await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
                 return;
             }

@@ -18,7 +18,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// File list for Most Recently Used files
         /// </summary>
-        private static Queue<string> MRUlist;
+        private static Queue<string>? MRUlist;
 
         /// <summary>
         /// How many max recent files

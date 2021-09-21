@@ -1,7 +1,9 @@
 ﻿using ImageMagick;
+using PicView.UILogic;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.UILogic.TransformImage.Rotation;
@@ -10,146 +12,65 @@ namespace PicView.ImageHandling
 {
     internal static class SaveImages
     {
-        internal static bool TrySaveImageWithEffect(string destination)
+        internal static async Task<bool> TrySaveImage(int rotate, bool flipped, BitmapSource? bitmapSource, string? path, string destination, Int32Rect? rect, bool hlsl)
         {
+            MagickImage? magickImage = new();
             try
             {
-                var SaveImage = ImageDecoder.GetRenderedMagickImage();
-                using var filestream = new FileStream(destination, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.SequentialScan);
-
-                SaveImage.Write(filestream);
-                SaveImage.Dispose();
-            }
-            catch (Exception) { return false; }
-            return true;
-        }
-
-        /// <summary>
-        /// Tries to save image to the specified destination,
-        /// returns false if unsuccesful
-        /// </summary>
-        /// <param name="rotate">Degrees image is rotated by</param>
-        /// <param name="flipped">Whether to flip image or not</param>
-        /// <param name="path">The path of the source file</param>
-        /// <param name="destination">Where to save image to</param>
-        /// <returns></returns>
-        internal static bool TrySaveImage(int rotate, bool flipped, string path, string destination)
-        {
-            try
-            {
-                using var SaveImage = new MagickImage();
-                // Set maximum quality
-                var mrs = new MagickReadSettings()
+                if (hlsl)
                 {
-                    Density = new Density(300, 300),
-                };
-                SaveImage.Quality = 100;
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                    {
+                        magickImage = ImageDecoder.GetRenderedMagickImage();
+                    });
+                    
+                }
+                else if (bitmapSource is not null)
+                {
+                    var encoder = new PngBitmapEncoder();
 
-                SaveImage.Read(path, mrs);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                    {
+                        encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+                    });
+
+                    using (var stream = new MemoryStream())
+                    {
+                        encoder.Save(stream);
+                        magickImage.Read(stream.ToArray());
+                    }
+                }
+                else if (string.IsNullOrEmpty(path) == false)
+                {
+                    await magickImage.ReadAsync(path).ConfigureAwait(false);
+                }
+                else
+                {
+                    return false;
+                }
+
+                magickImage.Quality = 100;
 
                 // Apply transformation values
-                if (flipped)
+                if (flipped && bitmapSource is not null && hlsl == false)
                 {
-                    SaveImage.Flop();
+                    magickImage.Flop();
                 }
 
-                SaveImage.Rotate(rotate);
-
-                SaveImage.Write(destination);
-            }
-            catch (Exception) { return false; }
-            return true;
-        }
-
-        internal static bool TrySaveImage(int rotate, bool flipped, BitmapSource bitmapSource, string destination)
-        {
-            try
-            {
-                using var SaveImage = new MagickImage();
-                var encoder = new PngBitmapEncoder(); // or any other BitmapEncoder
-
-                encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
-
-                using (var stream = new MemoryStream())
+                if (rect is not null && bitmapSource is not null && hlsl == false)
                 {
-                    encoder.Save(stream);
-                    SaveImage.Read(stream.ToArray());
+                    magickImage.Crop(new MagickGeometry(rect.Value.X, rect.Value.Y, rect.Value.Width, rect.Value.Height));
                 }
 
-                SaveImage.Quality = 100;
-
-                // Apply transformation values
-                if (flipped)
+                if (rotate != 0)
                 {
-                    SaveImage.Flop();
+                    magickImage.Rotate(rotate);
                 }
 
-                SaveImage.Rotate(rotate);
-
-                SaveImage.Write(destination);
-            }
-            catch (Exception) { return false; }
-            return true;
-        }
-
-        /// <summary>
-        /// Tries to save image to the specified destination,
-        /// returns false if unsuccesful
-        /// </summary>
-        /// <param name="croppedBitmap">The cropped bitmapy</param>
-        /// /// <param name="destination">Where to save image to</param>
-        /// <returns></returns>
-        internal static bool TrySaveImage(Int32Rect rect, string path, string destination)
-        {
-            try
-            {
-                using var SaveImage = new MagickImage
-                {
-                    Quality = 100
-                };
-
-                SaveImage.Read(path);
-
-                if (Rotateint != 0)
-                {
-                    SaveImage.Rotate(Rotateint);
-                }
-
-                SaveImage.Crop(new MagickGeometry(rect.X, rect.Y, rect.Width, rect.Height));
-
-                SaveImage.Write(destination);
-            }
-            catch (Exception) { return false; }
-            return true;
-        }
-
-        internal static bool TrySaveImage(Int32Rect rect, BitmapSource bitmapSource, string destination)
-        {
-            try
-            {
-                using var SaveImage = new MagickImage
-                {
-                    Quality = 100
-                };
-
-                var encoder = new PngBitmapEncoder(); // or any other BitmapEncoder
-
-                encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
-
-                using (var stream = new MemoryStream())
-                {
-                    encoder.Save(stream);
-                    SaveImage.Read(stream.ToArray());
-                }
-
-                if (Rotateint != 0)
-                {
-                    SaveImage.Rotate(Rotateint);
-                }
-
-                SaveImage.Crop(new MagickGeometry(rect.X, rect.Y, rect.Width, rect.Height));
-
-                SaveImage.Write(destination);
+                var filestream = new FileStream(destination, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.SequentialScan);
+                await magickImage.WriteAsync(filestream).ConfigureAwait(false);
+                magickImage.Dispose();
+                await filestream.DisposeAsync().ConfigureAwait(false);
             }
             catch (Exception) { return false; }
             return true;

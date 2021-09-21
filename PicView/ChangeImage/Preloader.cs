@@ -74,12 +74,12 @@ namespace PicView.ChangeImage
         /// <param name="key"></param>
         internal static void Remove(int key)
         {
-            if (key < 0)
+            if (key < 0) // Make it load at start of folder, when looping is on
             {
                 key = Math.Abs(key);
             }
 
-            if (key >= Pics?.Count)
+            else if (key >= Pics?.Count)
             {
 #if DEBUG
                 Trace.WriteLine("Preloader.Remove key null, " + key);

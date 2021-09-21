@@ -113,27 +113,11 @@ namespace PicView.Editing.Crop
             Open_Save.IsDialogOpen = true;
 
             var crop = GetCrop();
-            var success = false;
+            var source = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
+            var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
 
-            if (Pics.Count > 0)
-            {
-                await Task.Run(() =>
-                    success = SaveImages.TrySaveImage(
-                        crop,
-                        Pics[FolderIndex],
-                        Savedlg.FileName)).ConfigureAwait(false);
-            }
-            else
-            {
-                // Fixes saving if from web
-                // TODO add working method for copied images
-                var source = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
-                await Task.Run(() =>
-                    success = SaveImages.TrySaveImage(
-                        crop,
-                        source,
-                        Savedlg.FileName)).ConfigureAwait(false);
-            }
+            var success = await SaveImages.TrySaveImage(Rotateint, Flipped, source, null, Savedlg.FileName, crop, effectApplied).ConfigureAwait(false);
+
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
             {
                 if (success == false)

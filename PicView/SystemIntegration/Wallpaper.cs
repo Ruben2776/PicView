@@ -191,8 +191,13 @@ namespace PicView.SystemIntegration
                 var dest = string.Format(CultureInfo.CurrentCulture, @"{0}\Microsoft\Windows\Themes\{1}.jpg",
                         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                         Path.GetFileNameWithoutExtension(path));
-                SaveImages.TrySaveImage(Rotateint, Flipped, path, dest);
-                path = dest;
+                if (string.IsNullOrEmpty(dest))
+                {
+                    return;
+                }
+                
+                var effectApplied = UILogic.ConfigureWindows.GetMainWindow.MainImage.Effect != null;
+                SaveImages.TrySaveImage(Rotateint, Flipped, null, Pics[FolderIndex], path, null, effectApplied);
             }
 
             // Set the desktop wallpapaer by calling the Win32 API SystemParametersInfo
