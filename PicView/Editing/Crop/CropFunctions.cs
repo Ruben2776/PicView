@@ -105,7 +105,7 @@ namespace PicView.Editing.Crop
                 FileName = fileName
             };
 
-            if (!Savedlg.ShowDialog().Value)
+            if (!Savedlg.ShowDialog().HasValue)
             {
                 return;
             }

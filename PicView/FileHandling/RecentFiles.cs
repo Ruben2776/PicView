@@ -76,7 +76,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// Returns all values string[]
         /// </summary>
-        internal static string[] LoadValues()
+        internal static string[]? LoadValues()
         {
             if (MRUlist == null)
             {

@@ -25,7 +25,7 @@ namespace PicView.FileHandling
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
-                ConfigureWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
+                SetTitle.SetLoadingString();
             });
 
 

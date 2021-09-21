@@ -128,7 +128,7 @@ namespace PicView.UILogic
         /// <param name="height"></param>
         internal static void SetTitleString(int width, int height)
         {
-            string path = GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
+            string? path = GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
 
             path = string.IsNullOrWhiteSpace(path) ? Application.Current.Resources["Image"] as string : path;
 
@@ -140,9 +140,14 @@ namespace PicView.UILogic
 
         internal static void SetLoadingString()
         {
-            ConfigureWindows.GetMainWindow.Title = Application.Current.Resources["Loading"] as string;
-            ConfigureWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
-            ConfigureWindows.GetMainWindow.TitleText.ToolTip = Application.Current.Resources["Loading"] as string;
+            var s = Application.Current.Resources["Loading"] as string;
+            if (s == null || ConfigureWindows.GetMainWindow.Title == null || ConfigureWindows.GetMainWindow.TitleText == null)
+            {
+                return;
+            }
+            ConfigureWindows.GetMainWindow.Title = s;
+            ConfigureWindows.GetMainWindow.TitleText.Text = s;
+            ConfigureWindows.GetMainWindow.TitleText.ToolTip = s;
         }
     }
 }
