@@ -33,10 +33,17 @@ namespace PicView.ImageHandling
         internal static async Task<Size?> ImageSizeAsync(string file)
         {
             using var magick = new MagickImage();
-
+            FileInfo? fileInfo= new FileInfo(file);
+            if (fileInfo.Length > 2e+9)
+            {
+#if DEBUG
+                Trace.WriteLine("File size bigger than 2gb");
+#endif
+                return null;
+            }
             try
             {
-                await magick.ReadAsync(file).ConfigureAwait(false);
+                await magick.ReadAsync(fileInfo).ConfigureAwait(false);
             }
 #if DEBUG
             catch (MagickException e)

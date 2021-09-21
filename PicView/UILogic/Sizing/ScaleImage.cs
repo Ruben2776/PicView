@@ -2,7 +2,9 @@
 using PicView.ImageHandling;
 using PicView.UILogic.TransformImage;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Windows;
 using static PicView.ChangeImage.Navigation;
 using static PicView.PicGallery.GalleryNavigation;
 using static PicView.UILogic.ConfigureWindows;
@@ -94,8 +96,21 @@ namespace PicView.UILogic.Sizing
         /// </summary>
         internal static async Task<bool> TryFitImageAsync(string source)
         {
-            var size = await ImageFunctions.ImageSizeAsync(source).ConfigureAwait(false);
-            if (size.HasValue)
+            Size? size = null;
+            try
+            {
+                size = await ImageFunctions.ImageSizeAsync(source).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine(e.Message);
+#endif
+                Tooltip.ShowTooltipMessage(e.Message);
+                throw;
+            }
+            
+            if (size is not null && size.HasValue)
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                 {
