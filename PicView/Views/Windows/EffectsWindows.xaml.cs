@@ -39,10 +39,13 @@ namespace PicView.Views.Windows
 
             #region button events
 
+            // NegativeButton
             NegativeButton.Click += (_, _) => Negative();
             NegativeButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(NegativeColorsText); };
-            NegativeButton.MouseEnter += delegate { ButtonMouseOverAnim(NegativeColorsText); AnimationHelper.MouseEnterBgTexColor(NegativeButtonBrush); };
-            NegativeButton.MouseLeave += delegate { ButtonMouseLeaveAnim(NegativeColorsText); AnimationHelper.MouseLeaveBgTexColor(NegativeButtonBrush); };
+            NegativeButton.MouseEnter += delegate { ButtonMouseOverAnim(NegativeColorsText); };
+            NegativeButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(NegativeButtonBrush); };
+            NegativeButton.MouseLeave += delegate { ButtonMouseLeaveAnim(NegativeColorsText); };
+            NegativeButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(NegativeButtonBrush); };
 
             GrayscaleButton.Click += (_, _) => GraySceale();
             GrayscaleButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(GrayscaleText); };
@@ -175,10 +178,11 @@ namespace PicView.Views.Windows
             FrostyOutlineButton.MouseLeave += delegate { ButtonMouseLeaveAnim(FrostyOutlineText); AnimationHelper.MouseLeaveBgTexColor(FrostyOutlineButtonBrush); };
 
             // SaveButton
-            SaveButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(SaveText); };
-            SaveButton.MouseEnter += delegate { ButtonMouseOverAnim(SaveText); };
-            SaveButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SaveText); };
-            SaveButton.Click += async (sender, e) => await Open_Save.SaveFilesAsync();
+            SaveButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(SaveText); };
+            SaveButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SaveBrush); };
+            SaveButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(SaveText); };
+            SaveButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SaveBrush); };
+            SaveButton.MouseLeftButtonUp += async (sender, e) => await Open_Save.SaveFilesAsync();
 
             #endregion
         }
@@ -283,14 +287,20 @@ namespace PicView.Views.Windows
         private bool Remove_Effects()
         {
             ConfigureWindows.GetMainWindow.MainImage.Effect = null;
-
-            var list = EffectsContainer.Children.OfType<CheckBox>().Where(x => x.IsChecked == true);
+            var list = EffectsContainer.Children.OfType<Border>();
 
             if (list.Any())
             {
                 foreach (var item in list)
                 {
-                    item.IsChecked = false;
+                    if (item.Child is CheckBox)
+                    {
+                        var checkBox = item.Child as CheckBox;
+                        if (checkBox is not null)
+                        {
+                            checkBox.IsChecked = false;
+                        }
+                    }
                 }
                 return true;
             }
