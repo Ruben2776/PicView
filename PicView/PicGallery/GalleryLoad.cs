@@ -1,11 +1,9 @@
 ﻿using PicView.ImageHandling;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
 using static PicView.PicGallery.GalleryFunctions;
 using static PicView.UILogic.HideInterfaceLogic;
 
@@ -130,7 +128,7 @@ namespace PicView.PicGallery
                     pic.Freeze();
                 }
 
-                await Add(pic, i).ContinueWith(antecedent => 
+                await Add(pic, i).ContinueWith(antecedent =>
                 {
                     if (ConfigureWindows.GetMainWindow.CheckAccess())
                     {

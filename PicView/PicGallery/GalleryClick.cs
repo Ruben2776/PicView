@@ -34,10 +34,10 @@ namespace PicView.PicGallery
                 var size = await ImageHandling.ImageFunctions.ImageSizeAsync(Pics[id]).ConfigureAwait(true);
                 if (size.HasValue)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                     {
                         FitImage(size.Value.Width, size.Value.Height);
-                    }));
+                    });
                 }
 
                 var from = GalleryNavigation.PicGalleryItem_Size;
@@ -68,7 +68,7 @@ namespace PicView.PicGallery
 
                 da.Completed += async delegate
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
                     {
                         border.Opacity = 0;
                         GetPicGallery.grid.Children.Remove(border);
@@ -76,11 +76,11 @@ namespace PicView.PicGallery
                         IsOpen = false;
                         GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
                         ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
-                    }));
+                    });
                     await ItemClickAsync(id).ConfigureAwait(false);
                 };
 
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                 {
                     GetPicGallery.Width = XWidth;
                     GetPicGallery.Height = XHeight;
@@ -105,7 +105,7 @@ namespace PicView.PicGallery
 
                     border.BeginAnimation(FrameworkElement.WidthProperty, da);
                     border.BeginAnimation(FrameworkElement.HeightProperty, da0);
-                }));
+                });
             }
             else
             {
@@ -121,7 +121,7 @@ namespace PicView.PicGallery
             // Change image
             await LoadPicAtIndexAsync(id).ConfigureAwait(false);
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
                 if (Properties.Settings.Default.FullscreenGallery == false)
                 {
@@ -135,7 +135,7 @@ namespace PicView.PicGallery
 
                 // Select next item
                 GalleryNavigation.SetSelected(id, true);
-            }));
+            });
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using PicView.UILogic;
 using PicView.UILogic.Animations;
-using System;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows;
@@ -53,10 +52,10 @@ namespace PicView.Views.UserControls
                 x = x <= 0 ? 0 : x;
                 x = x >= Pics.Count ? Pics.Count - 1 : x;
                 await LoadPicAtIndexAsync(x).ConfigureAwait(false);
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
                 {
                     GetImageSettingsMenu.GoToPic.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture);
-                }));
+                });
             }
             else if (Pics.Count > 0 && Pics.Count > FolderIndex)
             {
@@ -123,10 +122,10 @@ namespace PicView.Views.UserControls
 
                 case Key.Enter: // Execute it!
                     await GoToPicEventAsync(sender, e).ConfigureAwait(false);
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
                     {
                         ClearGoTo();
-                    }));
+                    });
 
                     break;
 

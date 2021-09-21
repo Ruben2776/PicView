@@ -1,7 +1,6 @@
 ﻿using PicView.UILogic.Animations;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using static PicView.PicGallery.GalleryNavigation;
 
 namespace PicView.Views.UserControls

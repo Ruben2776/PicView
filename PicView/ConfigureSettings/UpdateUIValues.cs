@@ -1,15 +1,10 @@
 ﻿using PicView.ChangeImage;
-using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using System;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using static PicView.ChangeImage.Navigation;
-using static PicView.FileHandling.FileLists;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.TransformImage.Scroll;
@@ -24,8 +19,8 @@ namespace PicView.ConfigureSettings
 
             await Error_Handling.ReloadAsync().ConfigureAwait(false);
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
-            {                
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            {
                 var sortcm = MainContextMenu.Items[6] as MenuItem;
 
                 var sort0 = sortcm.Items[0] as MenuItem;
@@ -122,7 +117,7 @@ namespace PicView.ConfigureSettings
                         sort6Header.IsChecked = true;
                         break;
                 }
-            }));
+            });
         }
 
         internal static void SetScrolling(object? sender, RoutedEventArgs? e)
@@ -214,7 +209,7 @@ namespace PicView.ConfigureSettings
 
         internal static void SetBorderColorEnabled(object sender, RoutedEventArgs e)
         {
-            bool value = Properties.Settings.Default.WindowBorderColorEnabled ? false : true;
+            bool value = !Properties.Settings.Default.WindowBorderColorEnabled;
             Properties.Settings.Default.WindowBorderColorEnabled = value;
             ConfigColors.UpdateColor(!value);
         }

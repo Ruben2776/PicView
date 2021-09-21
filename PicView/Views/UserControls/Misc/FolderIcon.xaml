@@ -130,7 +130,7 @@
             Data="M0 108.665L179.006 108.665L179.836 0L163.103 31.8476L146.793 18.4836L127.016 67.5762L116.033 57.0758L102.924 67.5762L87.2431 25.7177L69.8974 63.9205L57.0857 57.1538L40.776 77.5022L16.3103 73.4292L0 108.665"
             Stretch="Fill">
             <Path.Fill>
-                <SolidColorBrush Opacity=".9" Color="{DynamicResource ChosenColor}" />
+                <SolidColorBrush Opacity=".9" Color="#FFFF802A" />
             </Path.Fill>
         </Path>
         <Path
@@ -140,7 +140,7 @@
             Height="108.67"
             Clip="{StaticResource Mask6}"
             Data="M0.654786 24.496L0 108.665L12.6941 108.665L13.5247 0L0.654786 24.496Z"
-            Fill="{DynamicResource ChosenColorBrush}"
+            Fill="#FF802A"
             Stretch="Fill" />
         <Path
             Canvas.Top="29.4"

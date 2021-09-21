@@ -1,5 +1,4 @@
-﻿using System;
-using System.Timers;
+﻿using System.Timers;
 using static PicView.UILogic.Animations.FadeControls;
 using static PicView.UILogic.TransformImage.Scroll;
 
@@ -34,10 +33,10 @@ namespace PicView.UILogic
             };
             timer.Elapsed += async delegate
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
                 {
                     PicGallery.GalleryNavigation.ScrollTo();
-                }));
+                });
             };
         }
     }

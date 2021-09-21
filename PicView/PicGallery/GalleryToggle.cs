@@ -77,7 +77,7 @@ namespace PicView.PicGallery
 
             Properties.Settings.Default.FullscreenGallery = false;
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
                 GalleryLoad.LoadLayout();
 
@@ -101,7 +101,7 @@ namespace PicView.PicGallery
 
                 GalleryNavigation.SetSelected(FolderIndex, true);
                 GalleryNavigation.ScrollTo();
-            }));
+            });
 
             if (GetPicGallery.Container.Children.Count == 0)
             {
@@ -123,7 +123,7 @@ namespace PicView.PicGallery
 
             Properties.Settings.Default.FullscreenGallery = true;
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(async () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, async () =>
             {
                 GalleryLoad.LoadLayout();
 
@@ -160,7 +160,7 @@ namespace PicView.PicGallery
                 {
                     await GalleryLoad.Load().ConfigureAwait(false);
                 }
-            }));
+            });
         }
 
         #endregion Open

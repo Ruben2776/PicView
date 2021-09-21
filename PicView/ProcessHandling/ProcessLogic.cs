@@ -1,20 +1,19 @@
 ﻿using PicView.ChangeImage;
 using System.Diagnostics;
 using System.IO;
-using System.Security.Permissions;
 using System.Windows;
 
 namespace PicView.ProcessHandling
 {
     internal static class ProcessLogic
     {
-        internal static string GetPathToProcess()
+        internal static string? GetPathToProcess()
         {
             var GetAppPath = System.Environment.ProcessPath;
 
             if (Path.GetExtension(GetAppPath) == ".dll")
             {
-                GetAppPath = GetAppPath.Replace(".dll", ".exe", System.StringComparison.InvariantCultureIgnoreCase);
+                GetAppPath = GetAppPath?.Replace(".dll", ".exe", System.StringComparison.InvariantCultureIgnoreCase);
             }
             return GetAppPath;
         }
@@ -23,7 +22,7 @@ namespace PicView.ProcessHandling
         {
             Properties.Settings.Default.Save();
 
-            var GetAppPath = ProcessLogic.GetPathToProcess();
+            var GetAppPath = GetPathToProcess();
 
             string args;
             if (Navigation.Pics?.Count > Navigation.FolderIndex)
@@ -45,7 +44,7 @@ namespace PicView.ProcessHandling
 
         internal static void StartProcessWithFileArgument(string argument)
         {
-            var pathToExe = ProcessLogic.GetPathToProcess();
+            var pathToExe = GetPathToProcess();
 
             // Sanitize file name
             var args = argument.Replace(@"\\", @"\");

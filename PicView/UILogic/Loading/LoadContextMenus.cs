@@ -296,7 +296,7 @@ namespace PicView.UILogic.Loading
             };
             settingscmLoop.Header = settingscmLoopHeader;
             settingscmLoop.Click += (_, _) => ConfigureSettings.UpdateUIValues.SetLooping();
-            settingscmLoopHeader.Click += (_, _) => ConfigureSettings.UpdateUIValues.SetLooping(); 
+            settingscmLoopHeader.Click += (_, _) => ConfigureSettings.UpdateUIValues.SetLooping();
             settingscm.Items.Add(settingscmLoop);
 
             ///////////////////////////

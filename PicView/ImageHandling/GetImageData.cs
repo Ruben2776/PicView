@@ -44,10 +44,10 @@ namespace PicView.ImageHandling
             }
             else
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                 {
                     image = ImageDecoder.GetRenderedBitmapFrame();
-                }));
+                });
             }
 
             if (image == null)

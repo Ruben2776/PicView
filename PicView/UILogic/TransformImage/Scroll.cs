@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,11 +36,11 @@ namespace PicView.UILogic.TransformImage
         internal static async Task SetScrollBehaviour(bool scrolling)
         {
             Properties.Settings.Default.ScrollEnabled = scrolling;
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
             {
                 ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility =
                     scrolling ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
-            }));
+            });
 
             // TODO fix error when image is from web
 
@@ -117,7 +116,7 @@ namespace PicView.UILogic.TransformImage
             }
 
             // Start in dispatcher because timer is threaded
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
             {
                 if (AutoScrollOrigin.HasValue && AutoScrollPos.HasValue)
                 {
@@ -131,7 +130,7 @@ namespace PicView.UILogic.TransformImage
                             ConfigureWindows.GetMainWindow.Scroller.VerticalOffset + offset);
                     }
                 }
-            }));
+            });
         }
     }
 }

@@ -113,10 +113,10 @@ namespace PicView.FileHandling
                 }
                 if (Pics.Count >= 2 && !x.HasExited)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, (Action)(() =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
                     {
                         ConfigureWindows.GetMainWindow.MainImage.Source = Thumbnails.GetBitmapSourceThumb(Pics[0]);
-                    }));
+                    });
                     await Preloader.PreLoad(0).ConfigureAwait(false);
                 }
             };

@@ -1,9 +1,7 @@
-﻿using PicView.ChangeImage;
-using PicView.FileHandling;
+﻿using PicView.FileHandling;
 using PicView.ProcessHandling;
 using PicView.Views.UserControls;
 using PicView.Views.UserControls.Misc;
-using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +17,7 @@ namespace PicView.UILogic.DragAndDrop
         /// <summary>
         /// Backup of image
         /// </summary>
-        private static DragDropOverlay DropOverlay;
+        private static DragDropOverlay? DropOverlay;
 
         /// <summary>
         /// Show image or thumbnail preview on drag enter
@@ -33,7 +31,7 @@ namespace PicView.UILogic.DragAndDrop
                 return;
             }
 
-            UIElement element = null;
+            UIElement? element = null;
 
             if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
             {
@@ -130,10 +128,10 @@ namespace PicView.UILogic.DragAndDrop
                 return;
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
             {
                 RemoveDragOverlay();
-            }));
+            });
 
 
             // Load dropped URL
@@ -163,14 +161,14 @@ namespace PicView.UILogic.DragAndDrop
 
             await LoadPicFromString(files[0]).ConfigureAwait(false);
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
             {
                 // Don't show drop message any longer
                 CloseToolTipMessage();
 
                 ConfigureWindows.GetMainWindow.Activate();
-            }));
-            
+            });
+
 
             // Open additional windows if multiple files dropped 
             if (files.Length > 0)

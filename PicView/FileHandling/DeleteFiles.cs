@@ -98,23 +98,23 @@ namespace PicView.FileHandling
             // Sync with preloader
             Preloader.Remove(FolderIndex);
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
             {
                 // Sync with gallery
                 if (UC.GetPicGallery != null)
                 {
                     UC.GetPicGallery.Container.Children.RemoveAt(Pics.IndexOf(Pics[FolderIndex]));
                 }
-            }));
+            });
 
             Pics.Remove(Pics[FolderIndex]);
 
             if (Pics.Count <= 0)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                 {
                     Unload();
-                }));
+                });
 
                 return;
             }

@@ -1,7 +1,5 @@
 ﻿using Microsoft.Win32;
-using PicView.ChangeImage;
 using PicView.ImageHandling;
-using PicView.PicGallery;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System;
@@ -102,7 +100,7 @@ namespace PicView.FileHandling
                 return;
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
             {
                 if (ScaleImage.XWidth < 1)
                 {
@@ -110,7 +108,7 @@ namespace PicView.FileHandling
                     ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
                 }
                 Close_UserControls();
-            }));
+            });
         }
 
         /// <summary>

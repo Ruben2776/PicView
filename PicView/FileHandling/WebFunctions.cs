@@ -23,10 +23,10 @@ namespace PicView.FileHandling
         /// <param name="path"></param>
         internal static async Task PicWeb(string url)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 ConfigureWindows.GetMainWindow.TitleText.Text = Application.Current.Resources["Loading"] as string;
-            }));
+            });
 
 
             CanNavigate = false;
@@ -39,25 +39,25 @@ namespace PicView.FileHandling
 
                 await PicAsync(destination, url, isGif).ConfigureAwait(false);
 
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 {
                     // Fix not having focus after drag and drop
                     if (!ConfigureWindows.GetMainWindow.IsFocused)
                     {
                         ConfigureWindows.GetMainWindow.Focus();
                     }
-                }));
+                });
             }
             catch (Exception e)
             {
 #if DEBUG
                 Trace.WriteLine("PicWeb caught exception, message = " + e.Message);
 #endif
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(async () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, async () =>
                 {
                     await ReloadAsync(true).ConfigureAwait(false);
                     ShowTooltipMessage(e.Message, true);
-                }));
+                });
 
                 return;
             }
@@ -83,7 +83,7 @@ namespace PicView.FileHandling
                 {
                     client.ProgressChanged += async (totalFileSize, totalBytesDownloaded, progressPercentage) =>
                     {
-                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, (Action)(() =>
+                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
                         {
                             if (totalBytesDownloaded == totalFileSize)
                             {
@@ -101,7 +101,7 @@ namespace PicView.FileHandling
 
                                 ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.Title;
                             }
-                        }));
+                        });
                     };
                 }
 

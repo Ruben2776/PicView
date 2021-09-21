@@ -20,7 +20,7 @@ namespace PicView.UILogic
         /// </summary>
         internal static void StartSlideshow()
         {
-            if (Pics.Count == 0)
+            if (Pics?.Count == 0)
             {
                 return;
             }

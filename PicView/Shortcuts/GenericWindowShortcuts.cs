@@ -7,7 +7,7 @@ namespace PicView.Shortcuts
 {
     internal static class GenericWindowShortcuts
     {
-        internal static void KeysDown(ScrollViewer scrollViewer, KeyEventArgs e, Window window)
+        internal static void KeysDown(ScrollViewer? scrollViewer, KeyEventArgs e, Window window)
         {
             switch (e.Key)
             {
@@ -39,8 +39,10 @@ namespace PicView.Shortcuts
             }
         }
 
-        internal static void Window_MouseWheel(ScrollViewer scrollViewer, MouseWheelEventArgs e)
+        internal static void Window_MouseWheel(ScrollViewer? scrollViewer, MouseWheelEventArgs e)
         {
+            if (scrollViewer == null) { return; }
+
             if (e.Delta > 0)
             {
                 scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - 10);

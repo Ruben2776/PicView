@@ -45,7 +45,7 @@ namespace PicView.Editing.Crop
         internal static async Task PerformCropAsync()
         {
             await SaveCrop().ConfigureAwait(false);
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
             {
                 if (Pics.Count == 0)
                 {
@@ -55,7 +55,7 @@ namespace PicView.Editing.Crop
                 {
                     SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
                 }
-            }));
+            });
             CanNavigate = true;
         }
 
@@ -134,7 +134,7 @@ namespace PicView.Editing.Crop
                         source,
                         Savedlg.FileName)).ConfigureAwait(false);
             }
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
             {
                 if (success == false)
                 {
@@ -142,7 +142,7 @@ namespace PicView.Editing.Crop
                 }
 
                 ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(GetCropppingTool);
-            }));
+            });
         }
 
         internal static Int32Rect GetCrop()

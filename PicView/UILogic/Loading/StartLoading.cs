@@ -2,13 +2,10 @@
 using PicView.PicGallery;
 using PicView.SystemIntegration;
 using PicView.Translations;
-using PicView.UILogic.Sizing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Interop;
 using static PicView.ChangeImage.Error_Handling;
@@ -43,23 +40,23 @@ namespace PicView.UILogic.Loading
             await AutoFitWindow().ConfigureAwait(false);
             await SetScrollBehaviour(Properties.Settings.Default.ScrollEnabled).ConfigureAwait(false);
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
             {
                 // Set min size to DPI scaling
                 ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
                 ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
-            }));
+            });
 
             LoadLanguage.DetermineLanguage();
 
             if (!Properties.Settings.Default.ShowInterface)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
                 {
                     ConfigureWindows.GetMainWindow.TitleBar.Visibility =
                        ConfigureWindows.GetMainWindow.LowerBar.Visibility
                        = Visibility.Collapsed;
-                }));
+                });
 
             }
 
@@ -67,7 +64,7 @@ namespace PicView.UILogic.Loading
             var args = Environment.GetCommandLineArgs();
             if (args.Length == 1)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                 {
                     Unload(); // Load clean setup when starting up without arguments
 
@@ -89,7 +86,7 @@ namespace PicView.UILogic.Loading
                         ConfigureWindows.GetMainWindow.Height = ConfigureWindows.GetMainWindow.MinHeight;
                         ConfigureWindows.CenterWindowOnScreen();
                     }
-                }));
+                });
 
             }
             else
@@ -97,10 +94,10 @@ namespace PicView.UILogic.Loading
                 // Determine prefered UI for startup
                 if (Properties.Settings.Default.Fullscreen)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                     {
                         ConfigureWindows.Fullscreen_Restore(true);
-                    }));
+                    });
                 }
                 else if (Properties.Settings.Default.FullscreenGallery)
                 {
@@ -110,10 +107,10 @@ namespace PicView.UILogic.Loading
                 }
                 else if (Properties.Settings.Default.Width > 0 && Properties.Settings.Default.AutoFitWindow == false)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                     {
                         SetLastWindowSize();
-                    }));
+                    });
                 }
 
                 await LoadPicFromString(args[1]).ConfigureAwait(false);

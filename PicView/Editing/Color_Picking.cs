@@ -1,7 +1,6 @@
 ﻿using PicView.UILogic;
 using PicView.UILogic.Loading;
 using PicView.UILogic.TransformImage;
-using System;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows;
@@ -70,11 +69,11 @@ namespace PicView.Editing
                     Clipboard.SetText(x);
                     Tooltip.ShowTooltipMessage(x + " " + Application.Current.Resources["AddedToClipboard"]);
                 }
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                 {
                     ConfigureWindows.GetMainWindow.topLayer.Children.Remove(UC.GetColorPicker);
                     ConfigureWindows.GetMainWindow.Focus();
-                }));
+                });
             }
 
             IsRunning = false;

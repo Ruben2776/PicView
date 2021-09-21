@@ -53,10 +53,10 @@ namespace PicView.ImageHandling
         internal static async Task<string> ConvertToBase64()
         {
             BitmapFrame? frame = null;
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
             {
                 frame = ImageDecoder.GetRenderedBitmapFrame();
-            }));
+            });
 
             PngBitmapEncoder pngBitmapEncoder = new();
             using var ms = new MemoryStream();

@@ -14,7 +14,7 @@ namespace PicView.ImageHandling
     {
         internal static async Task<bool> OptimizeImageAsync(string file) => await Task.Run(() =>
         {
-            switch (Path.GetExtension(file).ToUpperInvariant()) 
+            switch (Path.GetExtension(file).ToUpperInvariant())
             {
                 case ".JPG":
                 case ".JPEG":

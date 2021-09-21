@@ -17,7 +17,7 @@ namespace PicView.ChangeImage
     {
         internal static bool CheckOutOfRange()
         {
-            if (Pics.Count < FolderIndex || Pics.Count < 1)
+            if (Pics?.Count < FolderIndex || Pics?.Count < 1)
             {
                 return true;
             }
@@ -29,7 +29,7 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static void ChangeFolder(bool backup = false)
         {
-            if (Pics.Count > 0 && backup)
+            if (Pics?.Count > 0 && backup)
             {
                 // Make a backup of xPicPath and FolderIndex
                 if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]))
@@ -43,7 +43,7 @@ namespace PicView.ChangeImage
             {
                 GalleryFunctions.Clear();
             }
-            
+
             Preloader.Clear();
             FreshStartup = true;
             DeleteTempFiles();
@@ -56,11 +56,11 @@ namespace PicView.ChangeImage
         {
             if (fromBackup && string.IsNullOrWhiteSpace(BackupPath))
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
                 {
                     Unload();
-                }));
-               
+                });
+
                 return;
             }
 
@@ -79,11 +79,11 @@ namespace PicView.ChangeImage
                 // Force reloading values by setting freshStartup to true
                 FreshStartup = true;
 
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
                 {
                     // Clear Preloader, to avoid errors by FolderIndex changing location because of re-sorting
                     Preloader.Clear();
-                }));
+                });
 
 
                 if (UC.GetPicGallery?.Container?.Children?.Count > 0)
@@ -97,7 +97,7 @@ namespace PicView.ChangeImage
                 }
 
                 // Reset
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
                 {
                     if (Flipped)
                     {
@@ -108,7 +108,7 @@ namespace PicView.ChangeImage
                     {
                         Rotate(0);
                     }
-                }));
+                });
 
             }
             else if (Clipboard.ContainsImage() || Base64.IsBase64String(s))
@@ -121,10 +121,7 @@ namespace PicView.ChangeImage
             }
             else
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke((Action)(() =>
-                {
-                    Unload();
-                }));
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() => { Unload(); });
             }
         }
 
@@ -157,7 +154,7 @@ namespace PicView.ChangeImage
 
             try
             {
-                SystemIntegration.Taskbar.NoProgress();
+                _ = SystemIntegration.Taskbar.NoProgress();
             }
             catch { }
         }

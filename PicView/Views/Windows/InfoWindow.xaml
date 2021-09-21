@@ -68,7 +68,7 @@
             <TextBlock
                 x:Name="Bar"
                 Height="30"
-                Padding="0,8.4,0,0"
+                Padding="0,5,0,0"
                 VerticalAlignment="Center"
                 Background="{StaticResource BackgroundSubtleHighlightBrush}"
                 FontSize="16"
@@ -91,15 +91,15 @@
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
 
-            <StackPanel Margin="15,0,20,0">
+            <StackPanel Margin="7,0,7,0">
 
                 <Label
-                    Margin="1,22,0,11"
+                    Margin="0,12,0,4"
                     HorizontalAlignment="Center"
                     d:Content="Application Shortcuts"
                     Content="{StaticResource ResourceKey=ApplicationShortcuts}"
-                    FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
-                    FontSize="12" />
+                    FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Black"
+                    FontSize="16" />
 
                 <Label
                     Width="480"
@@ -110,7 +110,7 @@
                 <Grid Width="480" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="145" />
+                        <ColumnDefinition Width="130" />
                         <ColumnDefinition Width="170" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -383,7 +383,7 @@
                 <Grid Width="480" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="145" />
+                        <ColumnDefinition Width="130" />
                         <ColumnDefinition Width="170" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -510,7 +510,7 @@
                 <Grid Width="480" Margin="0,0,0,16">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="145" />
+                        <ColumnDefinition Width="130" />
                         <ColumnDefinition Width="170" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -735,7 +735,7 @@
                 <Grid Width="480" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="145" />
+                        <ColumnDefinition Width="130" />
                         <ColumnDefinition Width="170" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -923,7 +923,7 @@
                 <Grid Width="480" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="145" />
+                        <ColumnDefinition Width="130" />
                         <ColumnDefinition Width="170" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -1034,9 +1034,7 @@
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1,1,1,1">
                         <TextBlock
-                            MaxWidth="155"
                             Margin="10,3,0,3"
-                            d:Text="Toggle fullscreen"
                             FontSize="12"
                             Text="{StaticResource ResourceKey=ToggleFullscreen}"
                             TextWrapping="Wrap" />
@@ -1091,7 +1089,6 @@
                         BorderThickness="1,0,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
-                            d:Text="Slideshow"
                             FontSize="12"
                             Text="{StaticResource ResourceKey=Slideshow}" />
                     </Border>
@@ -1128,7 +1125,7 @@
                 <Grid Width="480" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="145" />
+                        <ColumnDefinition Width="130" />
                         <ColumnDefinition Width="170" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -1575,7 +1572,7 @@
                 <Grid Width="480" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="145" />
+                        <ColumnDefinition Width="130" />
                         <ColumnDefinition Width="170" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -1856,7 +1853,7 @@
                 <Grid Width="480" Margin="0,0,0,16">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="145" />
+                        <ColumnDefinition Width="130" />
                         <ColumnDefinition Width="170" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -2021,17 +2018,21 @@
 
                 <StackPanel Margin="0,28,0,7">
 
-                    <Label HorizontalAlignment="Center" Content="{StaticResource ResourceKey=Credits}" />
+                    <Label 
+                        FontSize="16"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Black"
+                        HorizontalAlignment="Center"
+                        Content="{StaticResource ResourceKey=Credits}" />
 
                     <Label
                         Margin="0,0,0,3"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Black"
                         HorizontalAlignment="Center"
-                        d:Content="Icons used:"
                         Content="{StaticResource ResourceKey=IconsUsed}" />
 
                     <TextBlock
                         Margin="0,0,0,2"
-                        FontSize="12"
+                        FontSize="14"
                         TextAlignment="Center"
                         ToolTip="https://useiconic.com/open/">
                         <Hyperlink
@@ -2049,11 +2050,11 @@
                     <TextBlock
                         x:Name="Ionic"
                         Margin="0,0,0,2"
-                        FontSize="12"
+                        FontSize="14"
                         TextAlignment="Center"
                         ToolTip="http://Ionicons.com/">
                         <Hyperlink NavigateUri="http://Ionicons.com/" RequestNavigate="Hyperlink_RequestNavigate">
-                            Ioinicons
+                                   Ioinicons
                             <Hyperlink.Foreground>
                                 <SolidColorBrush x:Name="IonicBrush" Color="{StaticResource MainColor}" />
                             </Hyperlink.Foreground>
@@ -2065,7 +2066,7 @@
                             <TextBlock
                                 x:Name="FontAwesome"
                                 Margin="0,0,0,2"
-                                FontSize="12"
+                                FontSize="14"
                                 Text="FontAwesome" />
                             <Hyperlink.Foreground>
                                 <SolidColorBrush x:Name="FontAwesomeBrush" Color="{StaticResource MainColor}" />
@@ -2078,7 +2079,7 @@
                             <TextBlock
                                 x:Name="zondicons"
                                 Margin="0,0,0,2"
-                                FontSize="12"
+                                FontSize="14"
                                 Text="Zondicons"
                                 ToolTip="http://www.zondicons.com/icons.html" />
                             <Hyperlink.Foreground>
@@ -2092,7 +2093,7 @@
                             <TextBlock
                                 x:Name="freepik"
                                 Margin="0,0,0,2"
-                                FontSize="12"
+                                FontSize="14"
                                 Text="Freepik"
                                 ToolTip="https://www.flaticon.com/authors/freepik" />
                             <Hyperlink.Foreground>
@@ -2153,7 +2154,7 @@
                         Margin="0,7,0,2"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Bottom"
-                        FontSize="12"
+                        FontSize="14"
                         Text="2017 - 2021 © Ruben Hyldgaard Negendahl" />
 
                     <TextBlock
@@ -2177,7 +2178,7 @@
                         Margin="0,17,0,15"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Bottom"
-                        FontSize="12"
+                        FontSize="14"
                         FontWeight="Bold"
                         Text="{StaticResource ResourceKey=Version}" />
 

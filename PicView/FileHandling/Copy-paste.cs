@@ -6,10 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
-using static PicView.FileHandling.FileFunctions;
-using static PicView.FileHandling.FileLists;
 using static PicView.UILogic.Tooltip;
 
 namespace PicView.FileHandling
@@ -64,7 +61,7 @@ namespace PicView.FileHandling
 
         internal static void CopyBitmap()
         {
-            BitmapSource pic;
+            BitmapSource? pic;
             if (ConfigureWindows.GetMainWindow.MainImage.Source != null)
             {
                 if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
@@ -74,6 +71,12 @@ namespace PicView.FileHandling
                 else
                 {
                     pic = (BitmapSource)ConfigureWindows.GetMainWindow.MainImage.Source;
+                }
+
+                if (pic == null)
+                {
+                    ShowTooltipMessage(Application.Current.Resources["UnknownError"]);
+                    return;
                 }
 
                 Clipboard.SetImage(pic);
@@ -142,7 +145,7 @@ namespace PicView.FileHandling
             {
                 dropEffect.Write(moveEffect, 0, moveEffect.Length);
 
-                DataObject data = new DataObject();
+                DataObject data = new();
                 data.SetFileDropList(x);
                 data.SetData("Preferred DropEffect", dropEffect);
 

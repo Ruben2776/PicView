@@ -153,7 +153,7 @@ namespace PicView.Views.Windows
         {
             var data = await Task.Run(async () => (await GetImageData.RetrieveDataAsync(file).ConfigureAwait(false)));
 
-            await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+            await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 if (data != null)
                 {
@@ -209,7 +209,7 @@ namespace PicView.Views.Windows
                     AspectRatioBox.Text = string.Empty;
                 }
 
-            }));
+            });
         }
     }
 }

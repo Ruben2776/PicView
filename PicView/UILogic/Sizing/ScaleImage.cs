@@ -1,5 +1,4 @@
 ﻿using PicView.ChangeImage;
-using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.UILogic.TransformImage;
 using System;
@@ -53,19 +52,19 @@ namespace PicView.UILogic.Sizing
                         var size = await ImageFunctions.ImageSizeAsync(Pics[FolderIndex]).ConfigureAwait(false);
                         if (size.HasValue)
                         {
-                            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                             {
                                 FitImage(size.Value.Width, size.Value.Height);
-                            }));
+                            });
 
                             return true;
                         }
                         else if (GetMainWindow.MainImage.Source != null)
                         {
-                            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                             {
                                 FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
-                            }));
+                            });
                             return true;
                         }
                         else if (XWidth > 0 && XHeight > 0)
@@ -98,10 +97,10 @@ namespace PicView.UILogic.Sizing
             var size = await ImageFunctions.ImageSizeAsync(source).ConfigureAwait(false);
             if (size.HasValue)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                 {
                     FitImage(size.Value.Width, size.Value.Height);
-                }));
+                });
 
                 return true;
             }

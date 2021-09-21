@@ -1,6 +1,5 @@
 ﻿using PicView.UILogic.Animations;
 using System;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Animation;
 using static PicView.UILogic.UC;
@@ -59,6 +58,10 @@ namespace PicView.UILogic
         /// </summary>
         internal static void CloseToolTipMessage()
         {
+            if (GetToolTipMessage == null)
+            {
+                return;
+            }
             if (GetToolTipMessage.CheckAccess())
             {
                 GetToolTipMessage.Visibility = Visibility.Hidden;

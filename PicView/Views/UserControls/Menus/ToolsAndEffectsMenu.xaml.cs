@@ -129,7 +129,7 @@ namespace PicView.Views.UserControls
                 }
                 else
                 {
-                   Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"] as string, true);
+                    Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"] as string, true);
                 }
             };
         }

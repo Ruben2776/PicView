@@ -12,8 +12,8 @@ namespace PicView.UILogic.TransformImage
 {
     internal static class ZoomLogic
     {
-        private static ScaleTransform scaleTransform;
-        private static TranslateTransform translateTransform;
+        private static ScaleTransform? scaleTransform;
+        private static TranslateTransform? translateTransform;
         private static Point origin;
         private static Point start;
 
@@ -276,7 +276,7 @@ namespace PicView.UILogic.TransformImage
             {
                 Tooltip.CloseToolTipMessage();
             }
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
                 /// Display updated values
                 if (Pics.Count == 0)
@@ -288,7 +288,7 @@ namespace PicView.UILogic.TransformImage
                 {
                     SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
                 }
-            }));
+            });
         }
 
         private static void BeginZoomAnimation(double zoomValue)

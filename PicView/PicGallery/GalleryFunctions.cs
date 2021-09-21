@@ -82,7 +82,7 @@ namespace PicView.PicGallery
                 pics = null;
                 return;
             }
-            
+
 
             for (int i = 0; i < pics.Count; i++)
             {

@@ -1,5 +1,4 @@
 ﻿using PicView.FileHandling;
-using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -102,25 +101,25 @@ namespace PicView.UILogic
                     var text = ConfigureWindows.GetMainWindow.TitleText.Text;
                     var width = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
                     var height = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
                     {
                         Pics[FolderIndex] = text;
                         SetTitle.SetTitleString((int)width, (int)height, FolderIndex);
-                    }));
+                    });
                 }
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
                 {
                     Refocus(false);
-                }));
+                });
 
             }
             else
             {
                 Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
                 {
                     Refocus();
-                }));
+                });
             }
         }
 
