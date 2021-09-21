@@ -35,8 +35,6 @@ namespace PicView.Views.UserControls
                     ButtonMouseLeaveAnim(txtBrush);
                     AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
                 };
-
-                TheButton.Click += async (_, _) => await Error_Handling.ReloadAsync();
             };
         }
     }
