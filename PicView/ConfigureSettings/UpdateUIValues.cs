@@ -171,7 +171,7 @@ namespace PicView.ConfigureSettings
         internal static async Task SetAutoFitAsync(object sender, RoutedEventArgs e)
         {
             if (GalleryFunctions.IsOpen) { return; }
-            await SetScalingBehaviourAsync(!Properties.Settings.Default.AutoFitWindow, Properties.Settings.Default.FillImage).ConfigureAwait(false);
+            await SetScalingBehaviourAsync(Properties.Settings.Default.AutoFitWindow = !Properties.Settings.Default.AutoFitWindow, Properties.Settings.Default.FillImage).ConfigureAwait(false);
         }
 
         internal static async Task SetAutoFillAsync(object sender, RoutedEventArgs e)
@@ -180,9 +180,9 @@ namespace PicView.ConfigureSettings
             await SetScalingBehaviourAsync(Properties.Settings.Default.AutoFitWindow, !Properties.Settings.Default.FillImage).ConfigureAwait(false);
         }
 
-        internal static async Task SetScalingBehaviourAsync(bool windowBehaviour, bool fill)
+        internal static async Task SetScalingBehaviourAsync(bool autoFit, bool fill)
         {
-            if (windowBehaviour)
+            if (autoFit)
             {
                 UC.GetQuickSettingsMenu.SetFit.IsChecked = true;
             }
