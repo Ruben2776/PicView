@@ -291,18 +291,21 @@ namespace PicView.Views.Windows
 
             if (list.Any())
             {
+                int checkboxes = 0;
                 foreach (var item in list)
                 {
-                    if (item.Child is CheckBox)
+                    var checkbox = item.Child as CheckBox;
+                    if (checkbox is not null && checkbox.IsChecked.HasValue && checkbox.IsChecked.Value)
                     {
-                        var checkBox = item.Child as CheckBox;
-                        if (checkBox is not null)
-                        {
-                            checkBox.IsChecked = false;
-                        }
+                        checkboxes++;
+                        checkbox.IsChecked = false;
                     }
                 }
-                return true;
+                if (checkboxes > 0)
+                {
+                    return true;
+                }
+                return false;
             }
             else
             {
