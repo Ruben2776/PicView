@@ -2,24 +2,24 @@
     x:Class="PicView.Views.UserControls.RightButton"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Button
+    <Canvas
         x:Name="TheButton"
         Width="90"
         Height="30"
         FocusVisualStyle="{x:Null}"
         Focusable="False">
-        <Button.Background>
+        <Canvas.Background>
             <SolidColorBrush x:Name="RightButtonBrush" Color="Transparent" />
-        </Button.Background>
+        </Canvas.Background>
         <Path
             x:Name="RightArrow"
             Width="19.669"
-            Height="22.619"
+            Height="23"
             Data="F1M0.002,31.062L0,0 27.01,15.534z"
-            Stretch="Fill">
+            Stretch="Fill" Canvas.Left="35.166" Canvas.Top="3.69">
             <Path.Fill>
                 <SolidColorBrush x:Name="RightArrowFill" Color="{StaticResource IconColor}" />
             </Path.Fill>
         </Path>
-    </Button>
+    </Canvas>
 </UserControl>
