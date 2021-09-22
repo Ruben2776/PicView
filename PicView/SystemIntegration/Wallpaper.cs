@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using PicView.FileHandling;
 using PicView.ImageHandling;
+using PicView.UILogic;
 using System;
 using System.ComponentModel;
 using System.Globalization;
@@ -8,6 +9,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.TransformImage.Rotation;
 
@@ -30,69 +32,27 @@ namespace PicView.SystemIntegration
         /// <param name="style"></param>
         internal static async Task SetWallpaperAsync(WallpaperStyle style)
         {
-            if (UILogic.ConfigureWindows.GetMainWindow.MainImage.Effect != null || Clipboard.ContainsImage())
+            // Create temp directory
+            var tempPath = Path.GetTempPath();
+            var randomName = Path.GetRandomFileName();
+            var destination = tempPath + randomName;
+
+            var source = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
+            var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
+
+            if (effectApplied || ChangeImage.Error_Handling.CheckOutOfRange())
             {
-                try
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, async () =>
                 {
-                    var SaveImage = ImageDecoder.GetRenderedMagickImage();
-                    if (SaveImage == null) { return; }
-
-                    UILogic.Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"]);
-
-                    await Task.Run(() =>
-                    {
-                        // Create temp directory
-                        var tempPath = Path.GetTempPath();
-                        var randomName = Path.GetRandomFileName();
-
-                        // Write temp file to it
-                        using var filestream = new FileStream(tempPath + randomName, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.SequentialScan);
-                        SaveImage.Write(filestream);
-                        SaveImage.Dispose();
-                        filestream.Close();
-
-                        // Use it
-                        SetDesktopWallpaper(tempPath + randomName, style);
-
-                        // Clean up
-                        File.Delete(tempPath + randomName);
-                        using var timer = new Timer(2000);
-                        timer.Elapsed += (s, x) => Directory.Delete(tempPath);
-                    }).ConfigureAwait(false);
-
-                    SaveImage.Dispose(); // Make visual studio happy
-                }
-                catch { }
+                    await SaveImages.TrySaveImage(Rotateint, Flipped, source, null, destination, null, effectApplied).ConfigureAwait(false);
+                });
             }
-            else if (Pics?.Count > 0)
+            else if (ChangeImage.Error_Handling.CheckOutOfRange() == false)
             {
-                if (FolderIndex < Pics.Count)
-                {
-                    await Task.Run(() =>
-                     {
-                         SetDesktopWallpaper(Pics[FolderIndex], style);
-                     }).ConfigureAwait(false);
-                }
+                await SaveImages.TrySaveImage(Rotateint, Flipped, null, Pics[FolderIndex], destination, null, effectApplied).ConfigureAwait(false);
             }
-            else
-            {
-                string wallpaper = FileFunctions.GetURL(UILogic.ConfigureWindows.GetMainWindow.TitleText.Text);
-
-                if (Uri.IsWellFormedUriString(wallpaper, UriKind.Absolute)) // Check if from web
-                {
-                    await Task.Run(async () =>
-                     {
-                         var dataPath = await WebFunctions.DownloadData(wallpaper, false).ConfigureAwait(true); // Need to be true to avoid thread errors
-                         SetDesktopWallpaper(dataPath, style);
-
-                         // Clean up
-                         //File.Delete(dataPath);
-                     }).ConfigureAwait(false);
-
-                    return;
-                }
-                // TODO add Base64 support
-            }
+            
+           SetDesktopWallpaper(destination, style);
         }
 
         /// <summary>
@@ -140,7 +100,9 @@ namespace PicView.SystemIntegration
             //      ratio. (Windows 7 and later)
             //  10: The image is resized and cropped to fill the screen while
             //      maintaining the aspect ratio. (Windows 7 and later)
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
             RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
             switch (style)
             {
@@ -195,9 +157,6 @@ namespace PicView.SystemIntegration
                 {
                     return;
                 }
-                
-                var effectApplied = UILogic.ConfigureWindows.GetMainWindow.MainImage.Effect != null;
-                SaveImages.TrySaveImage(Rotateint, Flipped, null, Pics[FolderIndex], path, null, effectApplied);
             }
 
             // Set the desktop wallpapaer by calling the Win32 API SystemParametersInfo
