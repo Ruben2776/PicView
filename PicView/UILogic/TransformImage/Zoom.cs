@@ -40,6 +40,8 @@ namespace PicView.UILogic.TransformImage
             }
         }
 
+        internal static bool IsZoomed { get { return scaleTransform != null && scaleTransform.ScaleX > 1; } }
+
         /// <summary>
         /// Returns aspect ratio as a formatted string
         /// </summary>

@@ -159,6 +159,17 @@ namespace PicView.UILogic.DragAndDrop
                 return;
             }
 
+            // Check if same file
+            if (files.Length == 1 && Pics.Count > 0)
+            {
+                if (files[0] == Pics[FolderIndex])
+                {
+                    e.Effects = DragDropEffects.None;
+                    e.Handled = true;
+                    return;
+                }
+            }
+
             await LoadPicFromString(files[0]).ConfigureAwait(false);
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>

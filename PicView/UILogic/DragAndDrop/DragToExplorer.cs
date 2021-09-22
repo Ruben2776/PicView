@@ -18,7 +18,8 @@ namespace PicView.UILogic.DragAndDrop
                 || Keyboard.Modifiers == ModifierKeys.Alt
                 || Properties.Settings.Default.FullscreenGallery
                 || Properties.Settings.Default.Fullscreen
-                || Scroll.IsAutoScrolling)
+                || Scroll.IsAutoScrolling
+                || ZoomLogic.IsZoomed)
             {
                 return;
             }
