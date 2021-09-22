@@ -1706,7 +1706,7 @@ namespace PicView.Editing.HlslEffects
         public SketchGraniteEffect(double intensity)
         {
             intensity = intensity == 0 ? 1 : intensity;
-            BrushSize = intensity / 3000;
+            BrushSize = intensity / 30000;
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/SketchGraniteEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
