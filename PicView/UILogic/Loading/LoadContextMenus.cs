@@ -406,7 +406,7 @@ namespace PicView.UILogic.Loading
             setAsCmIcon.Width = setAsCmIcon.Height = 12;
             setAsCmIcon.Fill = scbf;
             setAsCm.Icon = setAsCmIcon;
-            setAsCm.Click += async (_, _) => await SetWallpaperAsync(WallpaperStyle.Fill);
+            setAsCm.Click += async (_, _) => await SetWallpaperAsync(WallpaperStyle.Fill).ConfigureAwait(false);
 
             MainContextMenu.Items.Add(setAsCm);
 
