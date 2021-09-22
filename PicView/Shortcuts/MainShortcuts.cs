@@ -384,11 +384,15 @@ namespace PicView.Shortcuts
                         }
                         break;
 
-                    // Ctrl + R
+                    //  R
                     case Key.R:
                         if (ctrlDown && !GalleryFunctions.IsOpen)
                         {
                             await ReloadAsync().ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            ResetZoom();
                         }
                         break;
 
