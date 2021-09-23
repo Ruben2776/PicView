@@ -49,7 +49,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
     <DebugType>none</DebugType>
-    <Optimize>True</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>
     </DefineConstants>
@@ -178,11 +178,11 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autoupdater.NET.Official" Version="1.7.0" />
-    <PackageReference Include="Magick.NET-Q16-x64" Version="8.3.1" />
-    <PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.6">
+    <PackageReference Include="Magick.NET-Q16-x64" Version="8.3.2" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.7">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="4.0.6" />
+    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="4.0.7" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
@@ -362,19 +362,19 @@
   </ItemGroup>
 	
   <PropertyGroup>
-    <FileVersion>1.3.5.0</FileVersion>
+    <FileVersion>1.4.0.0</FileVersion>
     <SignAssembly>true</SignAssembly>
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
     <PackageProjectUrl>https://github.com/Ruben2776/PicView</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Ruben2776/PicView</RepositoryUrl>
     <PackageLicenseExpression> GPL-3.0-only</PackageLicenseExpression>
     <AssemblyOriginatorKeyFile>PicViewSignFile.pfx</AssemblyOriginatorKeyFile>
-    <DelaySign>false</DelaySign>
+    <DelaySign>True</DelaySign>
     <LangVersion>preview</LangVersion>
     <Authors>Ruben2776</Authors>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageIcon>icon-raster.128b.png</PackageIcon>
-    <AssemblyVersion>1.3.5.0</AssemblyVersion>
+    <AssemblyVersion>1.4.0.0</AssemblyVersion>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <TargetFramework>net6.0-windows</TargetFramework>

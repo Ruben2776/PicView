@@ -73,6 +73,7 @@ namespace PicView.Views.Windows
             {
                 AutoUpdater.ShowRemindLaterButton = false;
                 AutoUpdater.ReportErrors = true;
+                AutoUpdater.ShowSkipButton = false;
                 AutoUpdater.Start("https://picview.org/update.xml");
             };
 
