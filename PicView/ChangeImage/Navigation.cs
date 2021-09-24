@@ -170,6 +170,10 @@ namespace PicView.ChangeImage
                 ChangeFolder(true);
                 await GetValues(path).ConfigureAwait(false);
             }
+            else if (Pics.Contains(path) == false)
+            {
+                await GetValues(path).ConfigureAwait(false);
+            }
 
             if (Pics?.Count > 0)
             {
