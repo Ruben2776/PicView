@@ -129,10 +129,15 @@ namespace PicView.Editing.Crop
             });
         }
 
+        /// <summary>
+        /// Get crop and calculate it via AspectRatio
+        /// </summary>
+        /// <returns></returns>
         internal static Int32Rect GetCrop()
         {
             var cropArea = CropService.GetCroppedArea();
 
+            // TODO add support for zooming in
             int x, y, width, height;
 
             if (AspectRatio != 0)

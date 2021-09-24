@@ -35,10 +35,19 @@ namespace PicView.UILogic
                 Application.Current.Resources["File"] : Application.Current.Resources["Files"];
 
             var s1 = new StringBuilder(90);
-            s1.Append(fileInfo.Name).Append(' ').Append(index + 1).Append('/').Append(Pics.Count).Append(' ')
-                .Append(files).Append(" (").Append(width).Append(" x ").Append(height)
-                .Append(StringAspect(width, height))
-                .Append(GetSizeReadable(fileInfo.Length));
+            try
+            {
+                s1.Append(fileInfo.Name).Append(' ').Append(index + 1).Append('/').Append(Pics.Count).Append(' ')
+                    .Append(files).Append(" (").Append(width).Append(" x ").Append(height)
+                    .Append(StringAspect(width, height))
+                    .Append(GetSizeReadable(fileInfo.Length));
+            }
+            catch (System.IO.FileNotFoundException)
+            {
+                _= ChangeImage.Error_Handling.ReloadAsync();
+                return null;
+            }
+
 
             if (!string.IsNullOrEmpty(ZoomPercentage))
             {
@@ -69,6 +78,7 @@ namespace PicView.UILogic
             var titleString = TitleString(width, height, index);
             if (titleString == null)
             {
+                _= ChangeImage.Error_Handling.ReloadAsync();
                 return;
             }
 

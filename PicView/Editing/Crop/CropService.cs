@@ -25,8 +25,8 @@ namespace PicView.Editing.Crop
     public class CropService
     {
         private readonly CropAdorner cropAdorner;
-        private readonly Canvas canvas;
-        private readonly CropTool cropTool;
+        private readonly Canvas? canvas;
+        private readonly CropTool? cropTool;
 
         private IToolState currentToolState;
         private readonly IToolState createState;
@@ -41,7 +41,7 @@ namespace PicView.Editing.Crop
             InsideRectangle
         }
 
-        public CropService(FrameworkElement adornedElement)
+        public CropService(FrameworkElement? adornedElement)
         {
             if (adornedElement == null)
             {
