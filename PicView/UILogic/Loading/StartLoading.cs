@@ -32,6 +32,8 @@ namespace PicView.UILogic.Loading
             HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle);
             source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
 
+            LoadLanguage.DetermineLanguage();
+
             FreshStartup = true;
             Pics = new List<string>();
 
@@ -47,7 +49,7 @@ namespace PicView.UILogic.Loading
                 ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
             });
 
-            LoadLanguage.DetermineLanguage();
+            
 
             if (!Properties.Settings.Default.ShowInterface)
             {
