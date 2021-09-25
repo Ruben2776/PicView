@@ -18,7 +18,42 @@ PicView is a fast Picture Viewer with compact UI, that can be hidden. Features i
     <img alt="Windows OS" src="https://img.shields.io/badge/OS-Windows%2064%20bit-00adef.svg?maxAge=3600&style=flat-square">
 </p>
 
+# Downloads
+Latest releases at https://github.com/Ruben2776/PicView/releases
 
+**Mirrors**
+
+[FossHub](https://www.fosshub.com/PicView.html) <br>
+[MajorGeeks](https://www.majorgeeks.com/files/details/picview.html)
+
+# Translators/Languages
+Chinese by <a href="https://github.com/Crystal-RainSlide">Crystal-RainSlide</a><br>
+Spanish by <a href="https://github.com/lk-KEVIN">lk.KEVIN</a><br>
+Korean by <a href="https://github.com/VenusGirl">VenusGirl</a><br>
+German by <a href="https://github.com/Brotbox">Brotbox</a><br>
+English and Danish by me<br>
+
+**Looking for translators!**
+If you want to help translate another language or improve a current one and be listed here, please take a look at
+https://github.com/Ruben2776/PicView/issues/13
+
+## Contributions
+![Visual Studio 2019](https://img.shields.io/badge/IDE-Visual%20Studio%202019-964ad4.svg?maxAge=3600)
+![.Net](https://img.shields.io/badge/.NET-5C2D91?style=badge&logo=.net&logoColor=white)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/bf0fd0f740f9486ba306bdec7fe8bde7)](https://www.codacy.com/manual/ruben_8/PicView?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Ruben2776/PicView&amp;utm_campaign=Badge_Grade)
+
+Pull requests are welcome. Check current issues and asign yourself or create your own issue. 
+
+Improvements to the current code or bug fixes are also welcome!
+
+Built with the latest SDK of .NET and Visual Studio
+
+## Upcoming features
+Take a look at https://github.com/Ruben2776/PicView/projects/1
+
+<h1>Features</h1>
+For a full list of features, check my website at https://picview.org
+    <br><b>Shortcuts:</b> Press <code>F1</code> to view list of shortcuts
 
 <br>
 <h2>Fullscreen Image Gallery:</h2>
@@ -40,7 +75,7 @@ Choose between 27 different shader effects (image filters), including negative c
 The effect can be copied to clipholder `Ctrl + C` or you can save it on your file system. The effect will also be applied when setting image as a wallpaper.
 <br>
 <h2>Display Image Info</h2>
-<img src="https://picview.org/assets/screenshots/image-info-white.webp" width="918"/>
+<img src="https://d33wubrfki0l68.cloudfront.net/f54dc2fd0422815fba4846196c3a799391e23087/e1461/assets/screenshots/image-info-dark.webp" width="918"/>
 Quickly view image info, which will update values as you browse through images.
 
 
@@ -60,7 +95,6 @@ If you have 7-Zip or WinRAR installed, you can view images inside archives, such
 <img src="https://i.imgur.com/MzMCVSG.png"/><br>
 Rename or move files in the titlebar by pressing `F2` or right clicking it
 
-
 **File support** 
  > .jpg  .jpeg  .jpe  .png  .bmp  .tif  .tiff  .gif  .ico  .jfif  .webp <br>
    .psd  .psb .xcf .svg .heic .tga .dds<br>.3fr  .arw  .cr2  .crw  .dcr  .dng  .erf  .kdc  .mdc  .mef  .mos  .mrw  .nef  .nrw  .orf  .pef .raf  .raw  .rw2  .srf  .x3f *<br>
@@ -68,21 +102,3 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it
    
    _* RAW camera formats may be slower to load_
 
-
-# Translators/Languages
-Chinese by <a href="https://github.com/Crystal-RainSlide">Crystal-RainSlide</a><br>
-Spanish by <a href="https://github.com/lk-KEVIN">lk.KEVIN</a><br>
-Korean by <a href="https://github.com/VenusGirl">VenusGirl</a><br>
-German by <a href="https://github.com/Brotbox">Brotbox</a><br>
-English and Danish by me<br>
-
-<a href="https://github.com/Ruben2776/PicView/issues/13">Looking for translators!</a><br>
-If you want to be help translate another language and be listed here. 
-
-## Contributions
-![Visual Studio 2019](https://img.shields.io/badge/IDE-Visual%20Studio%202019-964ad4.svg?maxAge=3600)
-![.Net](https://img.shields.io/badge/.NET-5C2D91?style=badge&logo=.net&logoColor=white)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/bf0fd0f740f9486ba306bdec7fe8bde7)](https://www.codacy.com/manual/ruben_8/PicView?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Ruben2776/PicView&amp;utm_campaign=Badge_Grade)
-
-I am just a single developer working on this in my spare time. So if you like what I have created please star it to show your support, as it would motive me to keep working on it! <br>
-Feedback and questions are always appreciated. Create an issue or take a look at an existing one if you want to report a bug or request a feature, or have something on your mind! 😊
