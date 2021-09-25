@@ -305,10 +305,10 @@
     <system:String x:Key="AnErrorOccuredWhenDeleting">삭제하는 동안 오류 발생</system:String>
 
     <!--  Scaling messages  -->
-    <system:String x:Key="CenterImageInWindow">창의 가운데 이미지로 설정</system:String>
-    <system:String x:Key="CenterImageInWindowFillHeight">창의 가운데 이미지, 채우기 높이로 설정</system:String>
-    <system:String x:Key="CenterApplicationToWindow">응용 프로그램을 창으로 가운데로 설정</system:String>
-    <system:String x:Key="CenterApplicationToWindowFillHeight">응용 프로그램을 창, 채우기 높이로 가운데로 설정</system:String>
+    <system:String x:Key="AutoFitWindowMessage">창의 가운데 이미지로 설정</system:String>
+    <system:String x:Key="AutoFitWindowFillHeight">창의 가운데 이미지, 채우기 높이로 설정</system:String>
+    <system:String x:Key="NormalWindowBehavior">응용 프로그램을 창으로 가운데로 설정</system:String>
+    <system:String x:Key="NormalWindowBehaviorFillHeight">응용 프로그램을 창, 채우기 높이로 가운데로 설정</system:String>
 
     <system:String x:Key="ScrollingEnabled">스크롤 사용 가능</system:String>
     <system:String x:Key="ScrollingDisabled">스크롤 사용 안 함</system:String>

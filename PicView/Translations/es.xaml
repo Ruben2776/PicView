@@ -305,10 +305,10 @@
     <system:String x:Key="AnErrorOccuredWhenDeleting">Ha ocurrido un error al eliminar</system:String>
 
     <!--  Scaling messages  -->
-    <system:String x:Key="CenterImageInWindow">Centrar imagen en la ventana</system:String>
-    <system:String x:Key="CenterImageInWindowFillHeight">Centrar imagen en la ventana, rellenar altura</system:String>
-    <system:String x:Key="CenterApplicationToWindow">Centrar aplicación a ventana</system:String>
-    <system:String x:Key="CenterApplicationToWindowFillHeight">Centrar aplicación a ventana, rellenar altura</system:String>
+    <system:String x:Key="AutoFitWindowMessage">Centrar imagen en la ventana</system:String>
+    <system:String x:Key="AutoFitWindowFillHeight">Centrar imagen en la ventana, rellenar altura</system:String>
+    <system:String x:Key="NormalWindowBehavior">Centrar aplicación a ventana</system:String>
+    <system:String x:Key="NormalWindowBehaviorFillHeight">Centrar aplicación a ventana, rellenar altura</system:String>
 
     <system:String x:Key="ScrollingEnabled">Rueda del mouse activada</system:String>
     <system:String x:Key="ScrollingDisabled">Rueda del mouse desactivada</system:String>

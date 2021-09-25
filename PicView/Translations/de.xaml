@@ -305,10 +305,10 @@
     <system:String x:Key="AnErrorOccuredWhenDeleting">Es ist ein Fehler beim Löschen aufgetreten</system:String>
 
     <!--  Scaling messages  -->
-    <system:String x:Key="CenterImageInWindow">Bild im Fenster zentrieren</system:String>
-    <system:String x:Key="CenterImageInWindowFillHeight">Bild im Fenster zentrieren, Höhe auffüllen</system:String>
-    <system:String x:Key="CenterApplicationToWindow">Applikation im Fenster zentrieren</system:String>
-    <system:String x:Key="CenterApplicationToWindowFillHeight">Applikation im Fenster zentrieren, Höhe füllen</system:String>
+    <system:String x:Key="AutoFitWindowMessage">Bild im Fenster zentrieren</system:String>
+    <system:String x:Key="AutoFitWindowFillHeight">Bild im Fenster zentrieren, Höhe auffüllen</system:String>
+    <system:String x:Key="NormalWindowBehavior">Applikation im Fenster zentrieren</system:String>
+    <system:String x:Key="NormalWindowBehaviorFillHeight">Applikation im Fenster zentrieren, Höhe füllen</system:String>
 
     <system:String x:Key="ScrollingEnabled">Scrolling aktiviert</system:String>
     <system:String x:Key="ScrollingDisabled">Scrolling deaktiviert</system:String>

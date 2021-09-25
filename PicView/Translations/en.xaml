@@ -305,10 +305,10 @@
     <system:String x:Key="AnErrorOccuredWhenDeleting">An error occured when deleting</system:String>
 
     <!--  Scaling messages  -->
-    <system:String x:Key="CenterImageInWindow">Set to center image in window</system:String>
-    <system:String x:Key="CenterImageInWindowFillHeight">Set to center image in window, fill height</system:String>
-    <system:String x:Key="CenterApplicationToWindow">Set to center application to window</system:String>
-    <system:String x:Key="CenterApplicationToWindowFillHeight">Set to center application to window, fill height</system:String>
+    <system:String x:Key="AutoFitWindowMessage">Auto fitting window</system:String>
+    <system:String x:Key="AutoFitWindowFillHeight">Auto fitting window, stretching to height</system:String>
+    <system:String x:Key="NormalWindowBehavior">Normal window behavior</system:String>
+    <system:String x:Key="NormalWindowBehaviorFillHeight">Normal window behavior, stretching to height</system:String>
 
     <system:String x:Key="ScrollingEnabled">Scrolling enabled</system:String>
     <system:String x:Key="ScrollingDisabled">Scrolling disabled</system:String>
@@ -334,7 +334,7 @@
     <system:String x:Key="CloseGallery">Close gallery</system:String>
 
     <!--  Menu buttons text  -->
-    <system:String x:Key="ShowFullscreenGallery">Show fullscreen gallery</system:String>
+    <system:String x:Key="ShowFullscreenGcallery">Show fullscreen gallery</system:String>
     <system:String x:Key="ShowHorizontalGallery">Show horizontal gallery</system:String>
 
     <system:String x:Key="FillImageHeight">Fill image height</system:String>

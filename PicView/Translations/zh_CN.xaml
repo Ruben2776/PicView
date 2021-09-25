@@ -305,10 +305,10 @@
     <system:String x:Key="AnErrorOccuredWhenDeleting">删除时发生错误</system:String>
 
     <!--  Scaling messages  -->
-    <system:String x:Key="CenterImageInWindow">Set to center image in window</system:String>
-    <system:String x:Key="CenterImageInWindowFillHeight">Set to center image in window, fill height</system:String>
-    <system:String x:Key="CenterApplicationToWindow">Set to center application to window</system:String>
-    <system:String x:Key="CenterApplicationToWindowFillHeight">Set to center application to window, fill height</system:String>
+    <system:String x:Key="AutoFitWindowMessage">Set to center image in window</system:String>
+    <system:String x:Key="AutoFitWindowFillHeight">Set to center image in window, fill height</system:String>
+    <system:String x:Key="NormalWindowBehavior">Set to center application to window</system:String>
+    <system:String x:Key="NormalWindowBehaviorFillHeight">Set to center application to window, fill height</system:String>
 
     <system:String x:Key="ScrollingEnabled">已启用滚动</system:String>
     <system:String x:Key="ScrollingDisabled">已禁用滚动</system:String>
