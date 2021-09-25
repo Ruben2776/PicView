@@ -54,27 +54,33 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static async Task ReloadAsync(bool fromBackup = false)
         {
-            if (fromBackup && string.IsNullOrWhiteSpace(BackupPath))
+            string? path = null;
+            if (fromBackup)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
+                if (string.IsNullOrWhiteSpace(BackupPath))
                 {
-                    Unload();
-                });
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
+                    {
+                        Unload();
+                    });
 
-                return;
+                    return;
+                }
+                path = BackupPath;
             }
-
-            string? s;
-            if (Pics != null && Pics.Count > 0)
+            else if (CheckOutOfRange() == false)
             {
-                s = fromBackup ? BackupPath : Pics[FolderIndex];
+                path = Pics[FolderIndex];
             }
             else
             {
-                s = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
+                {
+                    path = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
+                });
             }
 
-            if (File.Exists(s))
+            if (path is not null && File.Exists(path))
             {
                 // Force reloading values by setting freshStartup to true
                 FreshStartup = true;
@@ -93,7 +99,7 @@ namespace PicView.ChangeImage
                 }
                 else
                 {
-                    await LoadPiFromFileAsync(s).ConfigureAwait(false);
+                    await LoadPiFromFileAsync(path).ConfigureAwait(false);
                 }
 
                 // Reset
@@ -111,13 +117,13 @@ namespace PicView.ChangeImage
                 });
 
             }
-            else if (Clipboard.ContainsImage() || Base64.IsBase64String(s))
+            else if (Clipboard.ContainsImage() || Base64.IsBase64String(path))
             {
                 return;
             }
-            else if (Uri.IsWellFormedUriString(s, UriKind.Absolute)) // Check if from web
+            else if (Uri.IsWellFormedUriString(path, UriKind.Absolute)) // Check if from web
             {
-                await WebFunctions.PicWeb(s).ConfigureAwait(false);
+                await WebFunctions.PicWeb(path).ConfigureAwait(false);
             }
             else
             {

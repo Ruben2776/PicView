@@ -344,21 +344,17 @@ namespace PicView.SystemIntegration
 
         #region Check if application exists
 
-        internal static bool IsSoftwareInstalled(string softwareName)
+        internal static string? GetPathForExe(string fileName)
         {
-            using var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall") ??
-                      Registry.LocalMachine.OpenSubKey(
-                          @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
+            RegistryKey localMachine = Registry.LocalMachine;
+            RegistryKey? fileKey = localMachine.OpenSubKey(string.Format(@"{0}\{1}", @"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths", fileName));
+            if (fileKey == null) { return null; }
+            object? result = fileKey.GetValue(string.Empty);
+            if (result == null) {  return null;}
+            fileKey.Close();
 
-            if (key == null)
-            {
-                return false;
-            }
 
-            return key.GetSubKeyNames()
-                .Select(keyName => key.OpenSubKey(keyName))
-                .Select(subkey => subkey.GetValue("DisplayName") as string)
-                .Any(displayName => displayName != null && displayName.Contains(softwareName, StringComparison.InvariantCultureIgnoreCase));
+            return (string)result;
         }
 
         #endregion Check if application exists

@@ -16,7 +16,7 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         internal static BitmapSource? GetThumb(int x)
         {
-            if (Pics.Count == x)
+            if (ChangeImage.Error_Handling.CheckOutOfRange())
             {
                 return null;
             }

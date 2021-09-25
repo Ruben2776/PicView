@@ -200,6 +200,11 @@ namespace PicView.FileHandling
             {
                 if (!Extract(path))
                 {
+                    if (Error_Handling.CheckOutOfRange() == false)
+                    {
+                        Navigation.BackupPath = Navigation.Pics[Navigation.FolderIndex];
+                    }
+                    
                     await Error_Handling.ReloadAsync(true).ConfigureAwait(false);
                 }
                 return;

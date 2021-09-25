@@ -219,6 +219,11 @@ namespace PicView.ChangeImage
         /// <param name="index">The index of file to load from Pics</param>
         internal static async Task LoadPicAtIndexAsync(int index)
         {
+            if (ChangeImage.Error_Handling.CheckOutOfRange())
+            {
+                return;
+            }
+
             FolderIndex = index;
             var preloadValue = Preloader.Get(index);
 

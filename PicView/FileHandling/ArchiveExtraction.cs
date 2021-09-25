@@ -12,6 +12,7 @@ namespace PicView.FileHandling
 {
     internal static class ArchiveExtraction
     {
+        // TODO needs improvement to be dynamic
         private const string SupportedFilesFilter =
             " *.jpg *.jpeg *.jpe *.png *.bmp *.tif *.tiff *.gif *.ico *.jfif *.webp *.wbmp "
             + "*.psd *.psb "
@@ -38,29 +39,50 @@ namespace PicView.FileHandling
         /// <returns></returns>
         internal static bool Extract(string path)
         {
-            var Winrar = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\WinRAR\\WinRAR.exe";
-            if (!File.Exists(Winrar))
+            string winRar = "WinRAR.exe";
+            string winRarPath = "\\WinRAR\\WinRAR.exe";
+
+            string sevenzip = "7z.exe";
+            string sevenzipPath = "\\7-Zip\\7z.exe";
+
+            var appNames = new string[] { winRar, sevenzip };
+            var appPathNames = new string[] { winRarPath, sevenzipPath };
+
+            string? getextractPath = GetExtractApp(appPathNames, appNames);
+
+            if (getextractPath == null) { return false; }
+
+            return Extract(path, getextractPath, getextractPath.Contains("WinRAR", StringComparison.OrdinalIgnoreCase));
+        }
+
+        internal static string? GetExtractApp(string[] commonPath, string[] appName)
+        {
+            if (appName == null || commonPath == null) { return null; }
+
+            for (int i = 0; i < commonPath.Length; i++)
             {
-                Winrar = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\WinRAR\\WinRAR.exe";
+                string x86path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + commonPath[i];
+                if (File.Exists(x86path))
+                {
+                    return x86path;
+                }
+                string x64path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + commonPath[i];
+                if (File.Exists(x64path))
+                {
+                    return x64path;
+                }
             }
 
-            if (File.Exists(Winrar) || NativeMethods.IsSoftwareInstalled("WinRAR"))  // TODO test if works
+            for (int i = 0; i < appName.Length; i++)
             {
-                return Extract(path, Winrar, true);
+                string? registryPath = NativeMethods.GetPathForExe(appName[i]);
+                if (registryPath == null) {  return null; }
+                if (File.Exists(registryPath))
+                {
+                    return registryPath;
+                }
             }
-
-            var sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\7-Zip\\7z.exe";
-            if (!File.Exists(sevenZip))
-            {
-                sevenZip = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\7-Zip\\7z.exe";
-            }
-
-            if (File.Exists(sevenZip) || NativeMethods.IsSoftwareInstalled("7-Zip")) // TODO test if works
-            {
-                return Extract(path, sevenZip, false);
-            }
-
-            return false;
+            return null;
         }
 
         /// <summary>
@@ -78,6 +100,12 @@ namespace PicView.FileHandling
 #endif
             }
             else { return false; }
+
+            // Create backup
+            if (Error_Handling.CheckOutOfRange() == false)
+            {
+                Navigation.BackupPath = Navigation.Pics[Navigation.FolderIndex];
+            }
 
             var arguments = winrar ?
                 // Add WinRAR specifics
@@ -107,24 +135,23 @@ namespace PicView.FileHandling
             x.BeginOutputReadLine();
             x.OutputDataReceived += async delegate
             {
-                while (Pics.Count < 2)
+                while (Pics.Count < 2 && x.HasExited == false)
                 {
                     SetDirectory();
                 }
                 if (Pics.Count >= 2 && !x.HasExited)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
-                    {
-                        ConfigureWindows.GetMainWindow.MainImage.Source = Thumbnails.GetBitmapSourceThumb(Pics[0]);
-                    });
-                    await Preloader.PreLoad(0).ConfigureAwait(false);
+                    await LoadPicAtIndexAsync(0).ConfigureAwait(false);
                 }
             };
             x.Exited += async delegate
             {
                 if (SetDirectory())
                 {
-                    await LoadPicAtIndexAsync(0).ConfigureAwait(false);
+                    if (Navigation.FolderIndex > 0)
+                    {
+                        await LoadPicAtIndexAsync(0).ConfigureAwait(false);
+                    }
 
                     // Add zipped files as recent file
                     RecentFiles.Add(TempZipFile);
@@ -134,6 +161,10 @@ namespace PicView.FileHandling
                         await PicGallery.GalleryLoad.Load().ConfigureAwait(false);
                         Timers.PicGalleryTimerHack();
                     }
+                }
+                else
+                {
+                    await ChangeImage.Error_Handling.ReloadAsync(true).ConfigureAwait(false);
                 }
             };
 
