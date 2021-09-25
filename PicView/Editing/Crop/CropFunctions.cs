@@ -133,46 +133,27 @@ namespace PicView.Editing.Crop
         /// Get crop and calculate it via AspectRatio
         /// </summary>
         /// <returns></returns>
-        internal static Int32Rect GetCrop()
+        internal static Int32Rect? GetCrop()
         {
             var cropArea = CropService.GetCroppedArea();
+
+            if (cropArea == null) { return null; }
 
             // TODO add support for zooming in
             int x, y, width, height;
 
-            if (AspectRatio != 0)
+            x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / AspectRatio);
+            y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / AspectRatio);
+
+            if (Rotateint == 0 || Rotateint == 180)
             {
-                if (Rotateint == 0 || Rotateint == 180)
-                {
-                    x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / AspectRatio);
-                    y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / AspectRatio);
-                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
-                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
-                }
-                else
-                {
-                    x = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / AspectRatio);
-                    y = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / AspectRatio);
-                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
-                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
-                }
+                width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
+                height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
             }
             else
             {
-                if (Rotateint == 0 || Rotateint == 180)
-                {
-                    x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X);
-                    y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y);
-                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width);
-                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height);
-                }
-                else
-                {
-                    x = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y);
-                    y = Convert.ToInt32(cropArea.CroppedRectAbsolute.X);
-                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height);
-                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width);
-                }
+                width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
+                height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
             }
 
             return new Int32Rect(x, y, width, height);
