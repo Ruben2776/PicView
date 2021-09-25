@@ -455,8 +455,8 @@ namespace PicView.Shortcuts
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen
                         || Properties.Settings.Default.Fullscreen) { break; }
 
-                        Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterImageInWindow"]);
-                        await ConfigureSettings.UpdateUIValues.SetScalingBehaviourAsync(false, false).ConfigureAwait(false);
+                        Tooltip.ShowTooltipMessage(Application.Current.Resources["AutoFitWindowMessage"]);
+                        await ConfigureSettings.UpdateUIValues.SetScalingBehaviourAsync(true, false).ConfigureAwait(false);
                         break;
 
                     // 2
@@ -464,8 +464,8 @@ namespace PicView.Shortcuts
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen
                         || Properties.Settings.Default.Fullscreen) { break; }
 
-                        Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterImageInWindowFillHeight"]);
-                        await ConfigureSettings.UpdateUIValues.SetScalingBehaviourAsync(false, true).ConfigureAwait(false);
+                        Tooltip.ShowTooltipMessage(Application.Current.Resources["AutoFitWindowFillHeight"]);
+                        await ConfigureSettings.UpdateUIValues.SetScalingBehaviourAsync(true, true).ConfigureAwait(false);
                         break;
 
                     // 3
@@ -473,8 +473,8 @@ namespace PicView.Shortcuts
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen
                         || Properties.Settings.Default.Fullscreen) { break; }
 
-                        Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterApplicationToWindow"]);
-                        await ConfigureSettings.UpdateUIValues.SetScalingBehaviourAsync(true, false).ConfigureAwait(false);
+                        Tooltip.ShowTooltipMessage(Application.Current.Resources["NormalWindowBehavior"]);
+                        await ConfigureSettings.UpdateUIValues.SetScalingBehaviourAsync(false, false).ConfigureAwait(false);
                         break;
 
                     // 4
@@ -482,8 +482,8 @@ namespace PicView.Shortcuts
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsOpen
                         || Properties.Settings.Default.Fullscreen) { break; }
 
-                        Tooltip.ShowTooltipMessage(Application.Current.Resources["CenterApplicationToWindowFillHeight"]);
-                        await ConfigureSettings.UpdateUIValues.SetScalingBehaviourAsync(true, true).ConfigureAwait(false);
+                        Tooltip.ShowTooltipMessage(Application.Current.Resources["NormalWindowBehaviorFillHeight"]);
+                        await ConfigureSettings.UpdateUIValues.SetScalingBehaviourAsync(false, true).ConfigureAwait(false);
                         break;
 
                     // F1

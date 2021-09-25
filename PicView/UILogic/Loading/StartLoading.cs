@@ -39,7 +39,7 @@ namespace PicView.UILogic.Loading
 
             // Load sizing properties
             MonitorInfo = MonitorSize.GetMonitorSize();
-            await AutoFitWindow().ConfigureAwait(false);
+            AutoFitWindow();
             await SetScrollBehaviour(Properties.Settings.Default.ScrollEnabled).ConfigureAwait(false);
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>

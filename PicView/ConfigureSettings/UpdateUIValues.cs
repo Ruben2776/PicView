@@ -182,6 +182,9 @@ namespace PicView.ConfigureSettings
 
         internal static async Task SetScalingBehaviourAsync(bool autoFit, bool fill)
         {
+            Properties.Settings.Default.FillImage = fill;
+            Properties.Settings.Default.AutoFitWindow = autoFit;
+
             if (autoFit)
             {
                 UC.GetQuickSettingsMenu.SetFit.IsChecked = true;
@@ -202,7 +205,7 @@ namespace PicView.ConfigureSettings
                 UC.GetQuickSettingsMenu.ToggleFill.IsChecked = false;
             }
 
-            await WindowSizing.AutoFitWindow().ConfigureAwait(false);
+            WindowSizing.AutoFitWindow();
 
             await ScaleImage.TryFitImageAsync().ConfigureAwait(false);
         }

@@ -76,7 +76,7 @@
                                 MaxWidth="175"
                                 Margin="0,0,10,0"
                                 FontSize="14"
-                                Text="{StaticResource ShowFullscreenGallery}"
+                                Text="{StaticResource ShowFullscreenGcallery}"
                                 TextWrapping="Wrap">
                                 <TextBlock.Foreground>
                                     <SolidColorBrush x:Name="FullscreenTextBrush" Color="{StaticResource MainColor}" />

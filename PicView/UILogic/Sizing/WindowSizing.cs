@@ -17,7 +17,7 @@ namespace PicView.UILogic.Sizing
         /// <summary>
         /// Set whether to fit window to image or image to window
         /// </summary>
-        internal static async Task<bool> AutoFitWindow()
+        internal static bool AutoFitWindow()
         {
             if (Properties.Settings.Default.AutoFitWindow)
             {
@@ -42,12 +42,6 @@ namespace PicView.UILogic.Sizing
                 {
                     GetQuickSettingsMenu.SetFit.IsChecked = false;
                 }
-            }
-
-            if (Navigation.FreshStartup == false)
-            {
-                // Resize it
-                await TryFitImageAsync().ConfigureAwait(false);
             }
 
             return Properties.Settings.Default.AutoFitWindow;

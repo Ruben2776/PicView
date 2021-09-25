@@ -819,9 +819,8 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
-                            d:Text="Normal window"
                             FontSize="12"
-                            Text="{StaticResource ResourceKey=NormalWindow}" />
+                            Text="{StaticResource ResourceKey=AutoFitWindow}" />
                     </Border>
 
                     <Border
@@ -903,9 +902,8 @@
                         BorderThickness="1,1,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
-                            d:Text="Auto fit window"
                             FontSize="12"
-                            Text="{StaticResource ResourceKey=AutoFitWindow}" />
+                            Text="{StaticResource ResourceKey=NormalWindow}" />
                     </Border>
 
                     <Border
