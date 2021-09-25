@@ -107,6 +107,179 @@
                 Height="30"
                 Fill="{StaticResource BorderBrush}" />
 
+            <Button
+                x:Name="Rating1"
+                Height="30"
+                Padding="12,1,5,1"
+                Background="{StaticResource AltInterfaceWBrush}"
+                Style="{StaticResource MetroFlatButton}">
+                <Button.Content>
+                    <Image Width="20" Height="20">
+                        <Image.Source>
+                            <DrawingImage>
+                                <DrawingImage.Drawing>
+                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M480,208L308,208 256,48 204,208 32,208 172,304 118,464 256,364 394,464 340,304z">
+                                            <GeometryDrawing.Pen>
+                                                <Pen
+                                                    EndLineCap="Flat"
+                                                    LineJoin="Round"
+                                                    StartLineCap="Flat"
+                                                    Thickness="32">
+                                                    <Pen.Brush>
+                                                        <SolidColorBrush x:Name="rating1Brush" Color="{StaticResource IconColor}" />
+                                                    </Pen.Brush>
+                                                </Pen>
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                    </DrawingGroup>
+                                </DrawingImage.Drawing>
+                            </DrawingImage>
+                        </Image.Source>
+                    </Image>
+                </Button.Content>
+                <Button.Foreground>
+                    <SolidColorBrush x:Name="RatingFill" Color="{StaticResource MainColor}" />
+                </Button.Foreground>
+            </Button>
+
+            <Button
+                x:Name="Rating2"
+                Height="30"
+                Padding="0,1,5,1"
+                Background="{StaticResource AltInterfaceWBrush}"
+                Style="{StaticResource MetroFlatButton}">
+                <Button.Content>
+                    <Image Width="20" Height="20">
+                        <Image.Source>
+                            <DrawingImage>
+                                <DrawingImage.Drawing>
+                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M480,208L308,208 256,48 204,208 32,208 172,304 118,464 256,364 394,464 340,304z">
+                                            <GeometryDrawing.Pen>
+                                                <Pen
+                                                    EndLineCap="Flat"
+                                                    LineJoin="Round"
+                                                    StartLineCap="Flat"
+                                                    Thickness="32">
+                                                    <Pen.Brush>
+                                                        <SolidColorBrush x:Name="rating2Brush" Color="{StaticResource IconColor}" />
+                                                    </Pen.Brush>
+                                                </Pen>
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                    </DrawingGroup>
+                                </DrawingImage.Drawing>
+                            </DrawingImage>
+                        </Image.Source>
+                    </Image>
+                </Button.Content>
+            </Button>
+
+            <Button
+                x:Name="Rating3"
+                Height="30"
+                Padding="0,1,5,1"
+                Background="{StaticResource AltInterfaceWBrush}"
+                Style="{StaticResource MetroFlatButton}">
+                <Button.Content>
+                    <Image Width="20" Height="20">
+                        <Image.Source>
+                            <DrawingImage>
+                                <DrawingImage.Drawing>
+                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M480,208L308,208 256,48 204,208 32,208 172,304 118,464 256,364 394,464 340,304z">
+                                            <GeometryDrawing.Pen>
+                                                <Pen
+                                                    EndLineCap="Flat"
+                                                    LineJoin="Round"
+                                                    StartLineCap="Flat"
+                                                    Thickness="32">
+                                                    <Pen.Brush>
+                                                        <SolidColorBrush x:Name="rating3Brush" Color="{StaticResource IconColor}" />
+                                                    </Pen.Brush>
+                                                </Pen>
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                    </DrawingGroup>
+                                </DrawingImage.Drawing>
+                            </DrawingImage>
+                        </Image.Source>
+                    </Image>
+                </Button.Content>
+            </Button>
+
+            <Button
+                x:Name="Rating4"
+                Height="30"
+                Padding="0,1,5,1"
+                Background="{StaticResource AltInterfaceWBrush}"
+                Style="{StaticResource MetroFlatButton}">
+                <Button.Content>
+                    <Image Width="20" Height="20">
+                        <Image.Source>
+                            <DrawingImage>
+                                <DrawingImage.Drawing>
+                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M480,208L308,208 256,48 204,208 32,208 172,304 118,464 256,364 394,464 340,304z">
+                                            <GeometryDrawing.Pen>
+                                                <Pen
+                                                    EndLineCap="Flat"
+                                                    LineJoin="Round"
+                                                    StartLineCap="Flat"
+                                                    Thickness="32">
+                                                    <Pen.Brush>
+                                                        <SolidColorBrush x:Name="rating4Brush" Color="{StaticResource IconColor}" />
+                                                    </Pen.Brush>
+                                                </Pen>
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                    </DrawingGroup>
+                                </DrawingImage.Drawing>
+                            </DrawingImage>
+                        </Image.Source>
+                    </Image>
+                </Button.Content>
+            </Button>
+
+            <Button
+                x:Name="Rating5"
+                Height="30"
+                Padding="0,1,12,1"
+                Background="{StaticResource AltInterfaceWBrush}"
+                Style="{StaticResource MetroFlatButton}">
+                <Button.Content>
+                    <Image Width="20" Height="20">
+                        <Image.Source>
+                            <DrawingImage>
+                                <DrawingImage.Drawing>
+                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M480,208L308,208 256,48 204,208 32,208 172,304 118,464 256,364 394,464 340,304z">
+                                            <GeometryDrawing.Pen>
+                                                <Pen
+                                                    EndLineCap="Flat"
+                                                    LineJoin="Round"
+                                                    StartLineCap="Flat"
+                                                    Thickness="32">
+                                                    <Pen.Brush>
+                                                        <SolidColorBrush x:Name="rating5Brush" Color="{StaticResource IconColor}" />
+                                                    </Pen.Brush>
+                                                </Pen>
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                    </DrawingGroup>
+                                </DrawingImage.Drawing>
+                            </DrawingImage>
+                        </Image.Source>
+                    </Image>
+                </Button.Content>
+            </Button>
+
+            <Rectangle
+                Width="1"
+                Height="30"
+                Fill="{StaticResource BorderBrush}" />
+
             <uc:CloseButton
                 x:Name="CloseButton"
                 Width="30"

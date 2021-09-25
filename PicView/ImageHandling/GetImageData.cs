@@ -76,7 +76,7 @@ namespace PicView.ImageHandling
                 ratioText = $"{firstRatio}:{secondRatio} ({Application.Current.Resources["Portrait"]})";
             }
 
-            object bitdepth, dpiX, dpiY;
+            object bitdepth, dpiX, dpiY, stars;
             string dpi;
             bool skip = false;
 
@@ -86,6 +86,7 @@ namespace PicView.ImageHandling
                 bitdepth = so.Properties.GetProperty(SystemProperties.System.Image.BitDepth).ValueAsObject;
                 dpiX = so.Properties.GetProperty(SystemProperties.System.Image.HorizontalResolution).ValueAsObject;
                 dpiY = so.Properties.GetProperty(SystemProperties.System.Image.VerticalResolution).ValueAsObject;
+                stars = so.Properties.GetProperty(SystemProperties.System.Rating).ValueAsObject;
                 so.Dispose();
             }
             catch (Exception)
@@ -94,6 +95,7 @@ namespace PicView.ImageHandling
                 dpiX = string.Empty;
                 dpiY = string.Empty;
                 skip = true;
+                stars = string.Empty;
             }
 
             if (bitdepth == null)
@@ -108,6 +110,11 @@ namespace PicView.ImageHandling
             else
             {
                 dpi = Math.Round((double)dpiX) + " x " + Math.Round((double)dpiY) + " " + Application.Current.Resources["Dpi"];
+            }
+
+            if (stars is null)
+            {
+                stars = string.Empty;
             }
 
             return new string[]
@@ -141,7 +148,9 @@ namespace PicView.ImageHandling
                     + " " + Application.Current.Resources["Inches"],
 
                 // Aspect ratio
-                ratioText
+                ratioText,
+
+                stars.ToString()
             };
         }
     }
