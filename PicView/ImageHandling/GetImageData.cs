@@ -13,7 +13,7 @@ namespace PicView.ImageHandling
 {
     internal static class GetImageData
     {
-        internal static async Task<string[]> RetrieveDataAsync(string file)
+        internal static async Task<string[]>? RetrieveDataAsync(string file)
         {
             string name, directoryname, fullname, creationtime, lastwritetime;
 

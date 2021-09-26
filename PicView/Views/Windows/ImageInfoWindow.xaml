@@ -14,6 +14,7 @@
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="CanMinimize"
     Style="{DynamicResource MyWindowStyle}"
+    WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
 
     <DockPanel>
@@ -23,7 +24,11 @@
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Logo Margin="7,-3,0,0" />
+            <Image
+                Width="20"
+                Height="20"
+                Margin="8,0,0,0"
+                Source="pack://application:,,,/Themes/Resources/img/icon__Q6k_icon.ico" />
 
             <Rectangle
                 Width="1"
@@ -33,10 +38,12 @@
 
             <Button
                 x:Name="FileProperties"
+                Width="128"
                 Height="30"
-                Padding="15,1,15,1"
-                Content="{StaticResource FileProperties}"
-                Style="{StaticResource MetroFlatButton}">
+                Padding="0"
+                Style="{StaticResource MetroFlatButton}"
+                ToolTip="{StaticResource FileProperties}">
+                <TextBlock Text="{StaticResource FileProperties}" TextTrimming="CharacterEllipsis" />
                 <Button.Foreground>
                     <SolidColorBrush x:Name="FilePropertiesFill" Color="{StaticResource MainColor}" />
                 </Button.Foreground>
@@ -52,10 +59,12 @@
 
             <Button
                 x:Name="Print"
+                Width="80"
                 Height="30"
-                Padding="15,1,15,1"
-                Content="{StaticResource Print}"
-                Style="{StaticResource MetroFlatButton}">
+                Padding="0"
+                Style="{StaticResource MetroFlatButton}"
+                ToolTip="{StaticResource Print}">
+                <TextBlock Text="{StaticResource Print}" TextTrimming="CharacterEllipsis" />
                 <Button.Foreground>
                     <SolidColorBrush x:Name="PrintFill" Color="{StaticResource MainColor}" />
                 </Button.Foreground>
@@ -71,10 +80,12 @@
 
             <Button
                 x:Name="OpenWith"
+                Width="115"
                 Height="30"
-                Padding="15,1,15,1"
-                Content="{StaticResource OpenWith}"
-                Style="{StaticResource MetroFlatButton}">
+                Padding="0"
+                Style="{StaticResource MetroFlatButton}"
+                ToolTip="{StaticResource OpenWith}">
+                <TextBlock Text="{StaticResource OpenWith}" TextTrimming="CharacterEllipsis" />
                 <Button.Foreground>
                     <SolidColorBrush x:Name="OpenWithFill" Color="{StaticResource MainColor}" />
                 </Button.Foreground>
@@ -89,16 +100,18 @@
                 Fill="{StaticResource BorderBrush}" />
 
             <Button
-                x:Name="ShowInFoler"
+                x:Name="ShowInFolder"
+                Width="128"
                 Height="30"
-                Padding="15,1,15,1"
-                Content="{StaticResource ShowInFolder}"
-                Style="{StaticResource MetroFlatButton}">
+                Padding="0"
+                Style="{StaticResource MetroFlatButton}"
+                ToolTip="{StaticResource ShowInFolder}">
+                <TextBlock Text="{StaticResource ShowInFolder}" TextTrimming="CharacterEllipsis" />
                 <Button.Foreground>
-                    <SolidColorBrush x:Name="ShowInFolerFill" Color="{StaticResource MainColor}" />
+                    <SolidColorBrush x:Name="ShowInFolderFill" Color="{StaticResource MainColor}" />
                 </Button.Foreground>
                 <Button.Background>
-                    <SolidColorBrush x:Name="ShowInFolerBrush" Color="Transparent" />
+                    <SolidColorBrush x:Name="ShowInFolderBrush" Color="Transparent" />
                 </Button.Background>
             </Button>
 
@@ -108,172 +121,31 @@
                 Fill="{StaticResource BorderBrush}" />
 
             <Button
-                x:Name="Rating1"
+                x:Name="OptimizeImageButton"
+                Width="121"
                 Height="30"
-                Padding="12,1,5,1"
-                Background="{StaticResource AltInterfaceWBrush}"
-                Style="{StaticResource MetroFlatButton}">
-                <Button.Content>
-                    <Image Width="20" Height="20">
-                        <Image.Source>
-                            <DrawingImage>
-                                <DrawingImage.Drawing>
-                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M480,208L308,208 256,48 204,208 32,208 172,304 118,464 256,364 394,464 340,304z">
-                                            <GeometryDrawing.Pen>
-                                                <Pen
-                                                    EndLineCap="Flat"
-                                                    LineJoin="Round"
-                                                    StartLineCap="Flat"
-                                                    Thickness="32">
-                                                    <Pen.Brush>
-                                                        <SolidColorBrush x:Name="rating1Brush" Color="{StaticResource IconColor}" />
-                                                    </Pen.Brush>
-                                                </Pen>
-                                            </GeometryDrawing.Pen>
-                                        </GeometryDrawing>
-                                    </DrawingGroup>
-                                </DrawingImage.Drawing>
-                            </DrawingImage>
-                        </Image.Source>
-                    </Image>
-                </Button.Content>
+                Padding="0"
+                Style="{StaticResource MetroFlatButton}"
+                ToolTip="{StaticResource OptimizeImage}">
+                <TextBlock Text="{StaticResource OptimizeImage}" TextTrimming="CharacterEllipsis" />
                 <Button.Foreground>
-                    <SolidColorBrush x:Name="RatingFill" Color="{StaticResource MainColor}" />
+                    <SolidColorBrush x:Name="OptimizeImageFill" Color="{StaticResource MainColor}" />
                 </Button.Foreground>
+                <Button.Background>
+                    <SolidColorBrush x:Name="OptimizeImageBrush" Color="Transparent" />
+                </Button.Background>
             </Button>
 
-            <Button
-                x:Name="Rating2"
+            <Rectangle
+                Width="1"
                 Height="30"
-                Padding="0,1,5,1"
-                Background="{StaticResource AltInterfaceWBrush}"
-                Style="{StaticResource MetroFlatButton}">
-                <Button.Content>
-                    <Image Width="20" Height="20">
-                        <Image.Source>
-                            <DrawingImage>
-                                <DrawingImage.Drawing>
-                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M480,208L308,208 256,48 204,208 32,208 172,304 118,464 256,364 394,464 340,304z">
-                                            <GeometryDrawing.Pen>
-                                                <Pen
-                                                    EndLineCap="Flat"
-                                                    LineJoin="Round"
-                                                    StartLineCap="Flat"
-                                                    Thickness="32">
-                                                    <Pen.Brush>
-                                                        <SolidColorBrush x:Name="rating2Brush" Color="{StaticResource IconColor}" />
-                                                    </Pen.Brush>
-                                                </Pen>
-                                            </GeometryDrawing.Pen>
-                                        </GeometryDrawing>
-                                    </DrawingGroup>
-                                </DrawingImage.Drawing>
-                            </DrawingImage>
-                        </Image.Source>
-                    </Image>
-                </Button.Content>
-            </Button>
+                Fill="{StaticResource BorderBrush}" />
 
-            <Button
-                x:Name="Rating3"
-                Height="30"
-                Padding="0,1,5,1"
-                Background="{StaticResource AltInterfaceWBrush}"
-                Style="{StaticResource MetroFlatButton}">
-                <Button.Content>
-                    <Image Width="20" Height="20">
-                        <Image.Source>
-                            <DrawingImage>
-                                <DrawingImage.Drawing>
-                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M480,208L308,208 256,48 204,208 32,208 172,304 118,464 256,364 394,464 340,304z">
-                                            <GeometryDrawing.Pen>
-                                                <Pen
-                                                    EndLineCap="Flat"
-                                                    LineJoin="Round"
-                                                    StartLineCap="Flat"
-                                                    Thickness="32">
-                                                    <Pen.Brush>
-                                                        <SolidColorBrush x:Name="rating3Brush" Color="{StaticResource IconColor}" />
-                                                    </Pen.Brush>
-                                                </Pen>
-                                            </GeometryDrawing.Pen>
-                                        </GeometryDrawing>
-                                    </DrawingGroup>
-                                </DrawingImage.Drawing>
-                            </DrawingImage>
-                        </Image.Source>
-                    </Image>
-                </Button.Content>
-            </Button>
-
-            <Button
-                x:Name="Rating4"
-                Height="30"
-                Padding="0,1,5,1"
-                Background="{StaticResource AltInterfaceWBrush}"
-                Style="{StaticResource MetroFlatButton}">
-                <Button.Content>
-                    <Image Width="20" Height="20">
-                        <Image.Source>
-                            <DrawingImage>
-                                <DrawingImage.Drawing>
-                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M480,208L308,208 256,48 204,208 32,208 172,304 118,464 256,364 394,464 340,304z">
-                                            <GeometryDrawing.Pen>
-                                                <Pen
-                                                    EndLineCap="Flat"
-                                                    LineJoin="Round"
-                                                    StartLineCap="Flat"
-                                                    Thickness="32">
-                                                    <Pen.Brush>
-                                                        <SolidColorBrush x:Name="rating4Brush" Color="{StaticResource IconColor}" />
-                                                    </Pen.Brush>
-                                                </Pen>
-                                            </GeometryDrawing.Pen>
-                                        </GeometryDrawing>
-                                    </DrawingGroup>
-                                </DrawingImage.Drawing>
-                            </DrawingImage>
-                        </Image.Source>
-                    </Image>
-                </Button.Content>
-            </Button>
-
-            <Button
-                x:Name="Rating5"
-                Height="30"
-                Padding="0,1,12,1"
-                Background="{StaticResource AltInterfaceWBrush}"
-                Style="{StaticResource MetroFlatButton}">
-                <Button.Content>
-                    <Image Width="20" Height="20">
-                        <Image.Source>
-                            <DrawingImage>
-                                <DrawingImage.Drawing>
-                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M480,208L308,208 256,48 204,208 32,208 172,304 118,464 256,364 394,464 340,304z">
-                                            <GeometryDrawing.Pen>
-                                                <Pen
-                                                    EndLineCap="Flat"
-                                                    LineJoin="Round"
-                                                    StartLineCap="Flat"
-                                                    Thickness="32">
-                                                    <Pen.Brush>
-                                                        <SolidColorBrush x:Name="rating5Brush" Color="{StaticResource IconColor}" />
-                                                    </Pen.Brush>
-                                                </Pen>
-                                            </GeometryDrawing.Pen>
-                                        </GeometryDrawing>
-                                    </DrawingGroup>
-                                </DrawingImage.Drawing>
-                            </DrawingImage>
-                        </Image.Source>
-                    </Image>
-                </Button.Content>
-            </Button>
+            <uc:StarOutlineButton x:Name="Star1" />
+            <uc:StarOutlineButton x:Name="Star2" />
+            <uc:StarOutlineButton x:Name="Star3" />
+            <uc:StarOutlineButton x:Name="Star4" />
+            <uc:StarOutlineButton x:Name="Star5" />
 
             <Rectangle
                 Width="1"
@@ -306,20 +178,6 @@
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
-            <TextBlock
-                x:Name="Bar"
-                Height="30"
-                Padding="0,8.4,0,0"
-                VerticalAlignment="Center"
-                d:Text="Image Info"
-                Background="{StaticResource AltInterfaceWBrush}"
-                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                FontSize="15"
-                FontWeight="Bold"
-                Foreground="{StaticResource MainColorBrush}"
-                Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                TextAlignment="Center"
-                TextTrimming="CharacterEllipsis" />
         </DockPanel>
 
         <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
@@ -331,19 +189,19 @@
                 <StackPanel Margin="0,5,10,0" Orientation="Vertical">
 
                     <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                        <Label
+                        <TextBlock
                             Width="130"
                             Margin="0,0,10,0"
                             VerticalAlignment="Center"
-                            Content="{StaticResource FileName}" />
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                            FontSize="14"
+                            Text="{StaticResource FileName}"
+                            TextTrimming="CharacterEllipsis"
+                            ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                         <TextBox
                             x:Name="FilenameBox"
                             Width="180"
-                            Padding="10,8,0,8"
-                            VerticalAlignment="Center"
-                            d:Text="404.jpg"
-                            Foreground="{StaticResource MainColorFadedBrush}"
-                            IsReadOnly="True" />
+                            d:Text="404.jpg" />
                         <Border
                             Width="37"
                             Height="35"
@@ -355,19 +213,19 @@
                     </StackPanel>
 
                     <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                        <Label
+                        <TextBlock
                             Width="130"
                             Margin="0,0,10,0"
                             VerticalAlignment="Center"
-                            Content="{StaticResource Folder}" />
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                            FontSize="14"
+                            Text="{StaticResource Folder}"
+                            TextTrimming="CharacterEllipsis"
+                            ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                         <TextBox
                             x:Name="FolderBox"
                             Width="180"
-                            Padding="10,8,0,8"
-                            VerticalAlignment="Center"
-                            d:Text="D:\Pictures"
-                            Foreground="{StaticResource MainColorFadedBrush}"
-                            IsReadOnly="True" />
+                            d:Text="D:\Pictures" />
                         <Border
                             Width="37"
                             Height="35"
@@ -379,19 +237,18 @@
                     </StackPanel>
 
                     <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                        <Label
+                        <TextBlock
                             Width="130"
                             Margin="0,0,10,0"
                             VerticalAlignment="Center"
-                            Content="{StaticResource FullPath}" />
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                            FontSize="14"
+                            Text="{StaticResource FullPath}"
+                            ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                         <TextBox
                             x:Name="FullPathBox"
                             Width="180"
-                            Padding="10,8,0,8"
-                            VerticalAlignment="Center"
-                            d:Text="D:\Pictures\404.jpg"
-                            Foreground="{StaticResource MainColorFadedBrush}"
-                            IsReadOnly="True" />
+                            d:Text="D:\Pictures\404.jpg" />
                         <Border
                             Width="37"
                             Height="35"
@@ -403,19 +260,18 @@
                     </StackPanel>
 
                     <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                        <Label
+                        <TextBlock
                             Width="130"
                             Margin="0,0,10,0"
                             VerticalAlignment="Center"
-                            Content="{StaticResource Created}" />
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                            FontSize="14"
+                            Text="{StaticResource Created}"
+                            ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                         <TextBox
                             x:Name="CreatedBox"
                             Width="180"
-                            Padding="10,8,0,8"
-                            VerticalAlignment="Center"
-                            d:Text="8/9/2019 - 10:37:42 PM"
-                            Foreground="{StaticResource MainColorFadedBrush}"
-                            IsReadOnly="True" />
+                            d:Text="8/9/2019 - 10:37:42 PM" />
                         <Border
                             Width="37"
                             Height="35"
@@ -427,19 +283,18 @@
                     </StackPanel>
 
                     <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                        <Label
+                        <TextBlock
                             Width="130"
                             Margin="0,0,10,0"
                             VerticalAlignment="Center"
-                            Content="{StaticResource Modified}" />
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                            FontSize="14"
+                            Text="{StaticResource Modified}"
+                            ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                         <TextBox
                             x:Name="ModifiedBox"
                             Width="180"
-                            Padding="10,8,0,8"
-                            VerticalAlignment="Center"
-                            d:Text="12/10/2018 - 7:41:14 PM"
-                            Foreground="{StaticResource MainColorFadedBrush}"
-                            IsReadOnly="True" />
+                            d:Text="12/10/2018 - 7:41:14 PM" />
                         <Border
                             Width="37"
                             Height="35"
@@ -451,19 +306,18 @@
                     </StackPanel>
 
                     <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                        <Label
+                        <TextBlock
                             Width="130"
                             Margin="0,0,10,0"
                             VerticalAlignment="Center"
-                            Content="{StaticResource BitDepth}" />
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                            FontSize="14"
+                            Text="{StaticResource BitDepth}"
+                            ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                         <TextBox
                             x:Name="BitDepthBox"
                             Width="180"
-                            Padding="10,8,0,8"
-                            VerticalAlignment="Center"
-                            d:Text="24"
-                            Foreground="{StaticResource MainColorFadedBrush}"
-                            IsReadOnly="True" />
+                            d:Text="24" />
                         <Border
                             Width="37"
                             Height="35"
@@ -478,19 +332,18 @@
                 <StackPanel Margin="0,5,0,0" Orientation="Vertical">
 
                     <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                        <Label
+                        <TextBlock
                             Width="130"
                             Margin="0,0,10,0"
                             VerticalAlignment="Center"
-                            Content="{StaticResource SizePx}" />
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                            FontSize="14"
+                            Text="{StaticResource SizePx}"
+                            ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                         <TextBox
                             x:Name="SizePxBox"
                             Width="180"
-                            Padding="10,8,0,8"
-                            VerticalAlignment="Center"
-                            d:Text="1920 x 1080 pixels"
-                            Foreground="{StaticResource MainColorFadedBrush}"
-                            IsReadOnly="True" />
+                            d:Text="1920 x 1080 pixels" />
                         <Border
                             Width="37"
                             Height="35"
@@ -502,19 +355,18 @@
                     </StackPanel>
 
                     <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                        <Label
+                        <TextBlock
                             Width="130"
                             Margin="0,0,10,0"
                             VerticalAlignment="Center"
-                            Content="{StaticResource SizeMp}" />
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                            FontSize="14"
+                            Text="{StaticResource SizeMp}"
+                            ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                         <TextBox
                             x:Name="SizeMpBox"
                             Width="180"
-                            Padding="10,8,0,8"
-                            VerticalAlignment="Center"
-                            d:Text="2.1 Megapixels"
-                            Foreground="{StaticResource MainColorFadedBrush}"
-                            IsReadOnly="True" />
+                            d:Text="2.1 Megapixels" />
                         <Border
                             Width="37"
                             Height="35"
@@ -526,19 +378,18 @@
                     </StackPanel>
 
                     <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                        <Label
+                        <TextBlock
                             Width="130"
                             Margin="0,0,10,0"
                             VerticalAlignment="Center"
-                            Content="{StaticResource Resolution}" />
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                            FontSize="14"
+                            Text="{StaticResource Resolution}"
+                            ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                         <TextBox
                             x:Name="ResolutionBox"
                             Width="180"
-                            Padding="10,8,0,8"
-                            VerticalAlignment="Center"
-                            d:Text="96 x 96 DPI"
-                            Foreground="{StaticResource MainColorFadedBrush}"
-                            IsReadOnly="True" />
+                            d:Text="96 x 96 DPI" />
                         <Border
                             Width="37"
                             Height="35"
@@ -550,19 +401,18 @@
                     </StackPanel>
 
                     <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                        <Label
+                        <TextBlock
                             Width="130"
                             Margin="0,0,10,0"
                             VerticalAlignment="Center"
-                            Content="{StaticResource PrintSizeCm}" />
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                            FontSize="14"
+                            Text="{StaticResource PrintSizeCm}"
+                            ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                         <TextBox
                             x:Name="PrintSizeCmBox"
                             Width="180"
-                            Padding="10,8,0,8"
-                            VerticalAlignment="Center"
-                            d:Text="50.8 x 28.58 centimeters"
-                            Foreground="{StaticResource MainColorFadedBrush}"
-                            IsReadOnly="True" />
+                            d:Text="50.8 x 28.58 centimeters" />
                         <Border
                             Width="37"
                             Height="35"
@@ -574,19 +424,18 @@
                     </StackPanel>
 
                     <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                        <Label
+                        <TextBlock
                             Width="130"
                             Margin="0,0,10,0"
                             VerticalAlignment="Center"
-                            Content="{StaticResource PrintSizeIn}" />
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                            FontSize="14"
+                            Text="{StaticResource PrintSizeIn}"
+                            ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                         <TextBox
                             x:Name="PrintSizeInBox"
                             Width="180"
-                            Padding="10,8,0,8"
-                            VerticalAlignment="Center"
-                            d:Text="20 x 11.25 inches"
-                            Foreground="{StaticResource MainColorFadedBrush}"
-                            IsReadOnly="True" />
+                            d:Text="20 x 11.25 inches" />
                         <Border
                             Width="37"
                             Height="35"
@@ -598,19 +447,18 @@
                     </StackPanel>
 
                     <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
-                        <Label
+                        <TextBlock
                             Width="130"
                             Margin="0,0,10,0"
                             VerticalAlignment="Center"
-                            Content="{StaticResource AspectRatio}" />
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                            FontSize="14"
+                            Text="{StaticResource AspectRatio}"
+                            ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                         <TextBox
                             x:Name="AspectRatioBox"
                             Width="180"
-                            Padding="10,8,0,8"
-                            VerticalAlignment="Center"
-                            d:Text="16:9 (Landscape)"
-                            Foreground="{StaticResource MainColorFadedBrush}"
-                            IsReadOnly="True" />
+                            d:Text="16:9 (Landscape)" />
                         <Border
                             Width="37"
                             Height="35"

@@ -1,4 +1,5 @@
-﻿using PicView.ImageHandling;
+﻿using PicView.ChangeImage;
+using PicView.ImageHandling;
 using PicView.UILogic;
 using PicView.UILogic.Animations;
 using System;
@@ -13,6 +14,8 @@ namespace PicView.Views.Windows
 {
     public partial class ImageInfoWindow : Window
     {
+        static object rating;
+
         public ImageInfoWindow()
         {
             InitializeComponent();
@@ -82,16 +85,67 @@ namespace PicView.Views.Windows
             OpenWith.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(OpenWithBrush); };
             OpenWith.Click += delegate { FileHandling.Open_Save.OpenWith(Pics[FolderIndex]); };
 
-            // ShowInFoler
-            ShowInFoler.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ShowInFolerFill); };
-            ShowInFoler.MouseEnter += delegate { ButtonMouseOverAnim(ShowInFolerFill); };
-            ShowInFoler.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ShowInFolerBrush); };
-            ShowInFoler.MouseLeave += delegate { ButtonMouseLeaveAnim(ShowInFolerFill); };
-            ShowInFoler.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ShowInFolerBrush); };
-            ShowInFoler.Click += delegate
+            // ShowInFolder
+            ShowInFolder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ShowInFolderFill); };
+            ShowInFolder.MouseEnter += delegate { ButtonMouseOverAnim(ShowInFolderFill); };
+            ShowInFolder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ShowInFolderBrush); };
+            ShowInFolder.MouseLeave += delegate { ButtonMouseLeaveAnim(ShowInFolderFill); };
+            ShowInFolder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ShowInFolderBrush); };
+            ShowInFolder.Click += delegate
             {
                 FileHandling.Open_Save.Open_In_Explorer();
             };
+
+            // Optimize Image
+            OptimizeImageButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(OptimizeImageFill); };
+            OptimizeImageButton.MouseEnter += delegate { ButtonMouseOverAnim(OptimizeImageFill); };
+            OptimizeImageButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(OptimizeImageBrush); };
+            OptimizeImageButton.MouseLeave += delegate { ButtonMouseLeaveAnim(OptimizeImageFill); };
+            OptimizeImageButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(OptimizeImageBrush); };
+            OptimizeImageButton.Click += async (_, _) => await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
+
+            TitleBar.MouseLeave += delegate { UpdateStars(); };
+
+            // Stars
+            Star1.MouseLeftButtonDown += async delegate 
+            { 
+                await ImageFunctions.SetRating(1).ConfigureAwait(false);
+                await UpdateValuesAsync(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]).ConfigureAwait(false);
+            };
+            Star1.MouseEnter += delegate { UpdateStars(1); };
+            Star1.MouseLeave += delegate { UpdateStars(); };
+
+            Star2.MouseLeftButtonDown += async delegate
+            {
+                await ImageFunctions.SetRating(2).ConfigureAwait(false);
+                await UpdateValuesAsync(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]).ConfigureAwait(false);
+            };
+            Star2.MouseEnter += delegate { UpdateStars(2); };
+            Star2.MouseLeave += delegate { UpdateStars(); };
+
+            Star3.MouseLeftButtonDown += async delegate
+            {
+                await ImageFunctions.SetRating(3).ConfigureAwait(false);
+                await UpdateValuesAsync(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]).ConfigureAwait(false);
+            };
+            Star3.MouseEnter += delegate { UpdateStars(3); };
+            Star3.MouseLeave += delegate { UpdateStars(); };
+
+            Star4.MouseLeftButtonDown += async delegate
+            {
+                await ImageFunctions.SetRating(4).ConfigureAwait(false);
+                await UpdateValuesAsync(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]).ConfigureAwait(false);
+            };
+            Star4.MouseEnter += delegate { UpdateStars(4); };
+            Star4.MouseLeave += delegate { UpdateStars(); };
+
+            Star5.MouseLeftButtonDown += async delegate
+            {
+                await ImageFunctions.SetRating(5).ConfigureAwait(false);
+                await UpdateValuesAsync(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]).ConfigureAwait(false);
+            };
+            Star5.MouseEnter += delegate{ UpdateStars(5); };
+            Star5.MouseLeave += delegate { UpdateStars(); };
 
             FilenameCopy.TheButton.Click += delegate
             {
@@ -181,6 +235,8 @@ namespace PicView.Views.Windows
                     PrintSizeInBox.Text = data[10];
 
                     AspectRatioBox.Text = data[11];
+
+                    rating = data[12];
                 }
                 else
                 {
@@ -207,9 +263,76 @@ namespace PicView.Views.Windows
                     PrintSizeInBox.Text =
 
                     AspectRatioBox.Text = string.Empty;
+
+                    rating = 0;
                 }
 
+                UpdateStars();
             });
+        }
+
+        private void UpdateStars()
+        {
+            if (rating is null || (string)rating == string.Empty || (string)rating == "0")
+            {
+                UpdateStars(0);
+                return;
+            }
+
+            int percent = Convert.ToInt32(rating.ToString());
+            var stars = Math.Ceiling(percent / 20d);
+
+            UpdateStars((int)stars);
+        }
+
+        private void UpdateStars(int stars)
+        {
+            switch (stars)
+            {
+                default:
+                case 0:
+                    Star1.OutlineStar();
+                    Star2.OutlineStar();
+                    Star3.OutlineStar();
+                    Star4.OutlineStar();
+                    Star5.OutlineStar();
+                return;
+                case 1:
+                    Star1.FillStar();
+                    Star2.OutlineStar();
+                    Star3.OutlineStar();
+                    Star4.OutlineStar();
+                    Star5.OutlineStar();
+                return;
+                case 2:
+                    Star1.FillStar();
+                    Star2.FillStar();
+                    Star3.OutlineStar();
+                    Star4.OutlineStar();
+                    Star5.OutlineStar();
+                return;
+                case 3:
+                    Star1.FillStar();
+                    Star2.FillStar();
+                    Star3.FillStar();
+                    Star4.OutlineStar();
+                    Star5.OutlineStar();
+                return;
+                case 4:
+                    Star1.FillStar();
+                    Star2.FillStar();
+                    Star3.FillStar();
+                    Star4.FillStar();
+                    Star5.OutlineStar();
+                return;
+                case 5:
+                    Star1.FillStar();
+                    Star2.FillStar();
+                    Star3.FillStar();
+                    Star4.FillStar();
+                    Star5.FillStar();
+                return;
+            }
         }
     }
 }

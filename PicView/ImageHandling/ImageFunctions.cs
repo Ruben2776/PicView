@@ -1,4 +1,6 @@
 ﻿using ImageMagick;
+using PicView.ChangeImage;
+using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System.Diagnostics;
 using System.Globalization;
@@ -12,6 +14,51 @@ namespace PicView.ImageHandling
 {
     internal static class ImageFunctions
     {
+        internal static async Task<bool> SetRating(ushort rating) => await Task.Run(() =>
+        {
+            if (Error_Handling.CheckOutOfRange())
+            {
+                return false;
+            }
+
+            try
+            {
+                using (MagickImage image = new MagickImage(Navigation.Pics[Navigation.FolderIndex]))
+                {
+                    var profile = new ExifProfile();
+                    profile.SetValue(ExifTag.Rating, rating);
+
+                    image.SetProfile(profile);
+
+                    image.Write(Navigation.Pics[Navigation.FolderIndex]);
+                }
+                return true;
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
+        });
+
+
+        internal static async Task OptimizeImageAsyncWithErrorChecking()
+        {
+            if (Error_Handling.CheckOutOfRange())
+            {
+                return;
+            }
+            Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"] as string, true);
+            var success = await OptimizeImageAsync(Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
+            if (success)
+            {
+                await Error_Handling.ReloadAsync().ConfigureAwait(false);
+            }
+            else
+            {
+                Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"] as string, true);
+            }
+        }
+
         internal static async Task<bool> OptimizeImageAsync(string file) => await Task.Run(() =>
         {
             switch (Path.GetExtension(file).ToUpperInvariant())
