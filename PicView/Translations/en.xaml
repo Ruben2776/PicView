@@ -334,7 +334,7 @@
     <system:String x:Key="CloseGallery">Close gallery</system:String>
 
     <!--  Menu buttons text  -->
-    <system:String x:Key="ShowFullscreenGcallery">Show fullscreen gallery</system:String>
+    <system:String x:Key="ShowFullscreenGallery">Show fullscreen gallery</system:String>
     <system:String x:Key="ShowHorizontalGallery">Show horizontal gallery</system:String>
 
     <system:String x:Key="FillImageHeight">Fill image height</system:String>
