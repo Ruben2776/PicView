@@ -41,11 +41,14 @@
                 </Image.Source>
             </Image>
             <TextBlock
+                Width="80"
                 Margin="5,0,5,0"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                 FontSize="14"
                 FontWeight="Normal"
-                Text="{StaticResource InfoWindow}">
+                Text="{StaticResource InfoWindow}"
+                TextAlignment="Center"
+                TextWrapping="Wrap">
                 <TextBlock.Foreground>
                     <SolidColorBrush x:Name="txtBrush" Color="{StaticResource MainColor}" />
                 </TextBlock.Foreground>

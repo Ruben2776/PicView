@@ -96,8 +96,8 @@
                                     <Rectangle
                                         Width="1"
                                         Height="35"
-                                        Fill="{StaticResource BorderBrush}"
-                                        HorizontalAlignment="Left" />
+                                        HorizontalAlignment="Left"
+                                        Fill="{StaticResource BorderBrush}" />
                                     <Rectangle
                                         Name="Border"
                                         Height="2"

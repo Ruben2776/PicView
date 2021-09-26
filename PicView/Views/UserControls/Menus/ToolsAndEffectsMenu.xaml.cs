@@ -115,23 +115,7 @@ namespace PicView.Views.UserControls
                 ButtonMouseLeaveAnim(OptimizeImageFill2);
                 AnimationHelper.MouseLeaveBgTexColor(OptimizeImageBrush);
             };
-            OptimizeImageButton.Click += async delegate
-            {
-                if (Error_Handling.CheckOutOfRange())
-                {
-                    return;
-                }
-                Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"] as string, true);
-                var success = await ImageFunctions.OptimizeImageAsync(Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
-                if (success)
-                {
-                    await Error_Handling.ReloadAsync().ConfigureAwait(false);
-                }
-                else
-                {
-                    Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"] as string, true);
-                }
-            };
+            OptimizeImageButton.Click += async (_,_) => await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
         }
     }
 }
