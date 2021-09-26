@@ -19,7 +19,7 @@ PicView is a fast Picture Viewer with compact UI, that can be hidden. Features i
 </p>
 
 # Downloads
-Latest releases at https://github.com/Ruben2776/PicView/releases
+Latest releases at https://picview.org/download
 
 **Mirrors**
 
