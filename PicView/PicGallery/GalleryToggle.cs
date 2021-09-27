@@ -204,7 +204,14 @@ namespace PicView.PicGallery
             HideInterfaceLogic.ShowStandardInterface();
 
             // Restore settings
-            _ = AutoFitWindow();
+            if (AutoFitWindow())
+            {
+                ConfigureWindows.CenterWindowOnScreen();
+            }
+            else
+            {
+                ConfigureWindows.SetLastWindowSize();
+            }
         }
 
         #endregion Close
