@@ -201,7 +201,8 @@
                         <TextBox
                             x:Name="FilenameBox"
                             Width="180"
-                            d:Text="404.jpg" />
+                            d:Text="404.jpg"
+                            IsReadOnly="False"/>
                         <Border
                             Width="37"
                             Height="35"
@@ -225,7 +226,8 @@
                         <TextBox
                             x:Name="FolderBox"
                             Width="180"
-                            d:Text="D:\Pictures" />
+                            d:Text="D:\Pictures"
+                            IsReadOnly="False" />
                         <Border
                             Width="37"
                             Height="35"
@@ -248,7 +250,8 @@
                         <TextBox
                             x:Name="FullPathBox"
                             Width="180"
-                            d:Text="D:\Pictures\404.jpg" />
+                            d:Text="D:\Pictures\404.jpg"
+                            IsReadOnly="False" />
                         <Border
                             Width="37"
                             Height="35"

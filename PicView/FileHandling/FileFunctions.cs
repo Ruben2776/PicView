@@ -1,10 +1,12 @@
-﻿using System;
+﻿using PicView.UILogic;
+using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace PicView.FileHandling
 {
@@ -68,6 +70,15 @@ namespace PicView.FileHandling
             try
             {
                 new FileInfo(newPath).Directory.Create(); // create directory if not exists
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine(e.Message);
+#endif
+            }
+            try
+            {
                 File.Move(path, newPath, true);
             }
             catch (Exception e)
@@ -79,6 +90,34 @@ namespace PicView.FileHandling
             }
             return true;
         }
+
+
+        internal static async Task<bool> RenameFileWithErrorChecking(string newPath)
+        {
+            if (!FileFunctions.RenameFile(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex], newPath))
+            {
+                return false;
+            }
+
+            ChangeImage.Preloader.Remove(ChangeImage.Navigation.FolderIndex);
+            ChangeImage.Navigation.Pics.Remove(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
+
+            // Check if the file is not in the same folder
+            if (Path.GetDirectoryName(newPath) != Path.GetDirectoryName(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]))
+            {
+                if (ChangeImage.Navigation.Pics.Count < 1)
+                {
+                    await ChangeImage.Navigation.LoadPiFromFileAsync(newPath).ConfigureAwait(false);
+                }
+                await ChangeImage.Navigation.PicAsync().ConfigureAwait(false);
+                return true;
+            }
+            
+            ChangeImage.Navigation.Pics.Add(newPath);
+            await ChangeImage.Navigation.LoadPiFromFileAsync(newPath).ConfigureAwait(false);
+            return true;
+        }
+
 
         /// <summary>
         /// Returns the human-readable file size for an arbitrary, 64-bit file size

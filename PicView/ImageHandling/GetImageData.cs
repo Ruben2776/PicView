@@ -21,7 +21,7 @@ namespace PicView.ImageHandling
             try
             {
                 fileInfo = new FileInfo(file);
-                name = fileInfo.Name;
+                name = Path.GetFileNameWithoutExtension(fileInfo.Name);
                 directoryname = fileInfo.DirectoryName;
                 fullname = fileInfo.FullName;
                 creationtime = fileInfo.CreationTime.ToString(CultureInfo.CurrentCulture);
@@ -52,7 +52,9 @@ namespace PicView.ImageHandling
 
             if (image == null)
             {
+#pragma warning disable CS8603 // Possible null reference return.
                 return null;
+#pragma warning restore CS8603 // Possible null reference return.
             }
 
             var inchesWidth = image.PixelWidth / image.DpiX;

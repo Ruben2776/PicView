@@ -393,6 +393,14 @@ namespace PicView.UILogic
             GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - GetMainWindow.ActualHeight) / 2 + MonitorInfo.WorkArea.Top;
         }
 
+        internal static void SetLastWindowSize()
+        {
+            ConfigureWindows.GetMainWindow.Top = Properties.Settings.Default.Top;
+            ConfigureWindows.GetMainWindow.Left = Properties.Settings.Default.Left;
+            ConfigureWindows.GetMainWindow.Width = Properties.Settings.Default.Width;
+            ConfigureWindows.GetMainWindow.Height = Properties.Settings.Default.Height;
+        }
+
         #endregion Window Functions
 
         #region Changed Events

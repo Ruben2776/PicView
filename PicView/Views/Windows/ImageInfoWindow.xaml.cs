@@ -1,8 +1,9 @@
-﻿using PicView.ChangeImage;
+﻿using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.UILogic;
 using PicView.UILogic.Animations;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -14,7 +15,7 @@ namespace PicView.Views.Windows
 {
     public partial class ImageInfoWindow : Window
     {
-        static object rating;
+        static object? rating;
 
         public ImageInfoWindow()
         {
@@ -36,6 +37,8 @@ namespace PicView.Views.Windows
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
+            Top = ConfigureWindows.GetMainWindow.LeftButton.PointToScreen(new Point(0, 0)).X - Height;
+
             KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(null, e, this);
 
             // Hack to deselect border on mouse click
@@ -146,6 +149,71 @@ namespace PicView.Views.Windows
             };
             Star5.MouseEnter += delegate{ UpdateStars(5); };
             Star5.MouseLeave += delegate { UpdateStars(); };
+
+            // FilenameBox
+            FilenameBox.AcceptsReturn = false;
+            FilenameBox.KeyUp += async (_, e) => 
+            {
+                if (e.Key != System.Windows.Input.Key.Enter) { return; }
+
+                e.Handled = true;
+                var file = (Path.GetDirectoryName(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex])) + "/" + FilenameBox.Text;
+                var rename = await FileFunctions.RenameFileWithErrorChecking(file).ConfigureAwait(false);
+                if (rename == false)
+                {
+                    Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
+                }
+                else
+                {
+                    await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+                    {
+                        Keyboard.ClearFocus();
+                    });
+                }
+            };
+
+            // FolderBox
+            FolderBox.AcceptsReturn = false;
+            FolderBox.KeyUp += async (_, e) =>
+            {
+                if (e.Key != System.Windows.Input.Key.Enter) { return; }
+
+                e.Handled = true;
+                var file =  FolderBox.Text + "/" + Path.GetFileName(FullPathBox.Text);
+                var rename = await FileFunctions.RenameFileWithErrorChecking(file).ConfigureAwait(false);
+                if (rename == false)
+                {
+                    Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
+                }
+                else
+                {
+                    await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+                    {
+                        Keyboard.ClearFocus();
+                    });
+                }
+            };
+
+            // FullPathBox
+            FullPathBox.AcceptsReturn = false;
+            FullPathBox.KeyUp += async (_, e) =>
+            {
+                if (e.Key != System.Windows.Input.Key.Enter) { return; }
+
+                e.Handled = true;
+                var rename = await FileFunctions.RenameFileWithErrorChecking(FullPathBox.Text).ConfigureAwait(false);
+                if (rename == false)
+                {
+                    Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
+                }
+                else
+                {
+                    await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+                    {
+                        Keyboard.ClearFocus();
+                    });
+                }
+            };
 
             FilenameCopy.TheButton.Click += delegate
             {
