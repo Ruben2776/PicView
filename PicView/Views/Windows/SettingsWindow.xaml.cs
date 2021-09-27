@@ -62,7 +62,8 @@ namespace PicView.Views.Windows
                 SlideshowSlider.ValueChanged += (_, e) => Properties.Settings.Default.SlideTimer = e.NewValue * 1000;
 
                 ZoomSlider.Value = Properties.Settings.Default.ZoomSpeed;
-                ZoomSlider.ValueChanged += (_, e) => Properties.Settings.Default.ZoomSpeed = e.NewValue;
+                txtZoomSlide.Text = Math.Round(ZoomSlider.Value * 100).ToString();
+                ZoomSlider.ValueChanged += (_, e) => { Properties.Settings.Default.ZoomSpeed = e.NewValue; txtZoomSlide.Text = Math.Round(e.NewValue * 100).ToString(); };
 
                 LightThemeRadio.IsChecked = !Properties.Settings.Default.DarkTheme;
                 DarkThemeRadio.IsChecked = Properties.Settings.Default.DarkTheme;

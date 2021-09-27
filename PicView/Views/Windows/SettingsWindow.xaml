@@ -302,8 +302,10 @@
                             x:Name="txtSlide"
                             Width="30"
                             Margin="5,3"
+                            Padding="1,4,1,4"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
+                            d:Text="3"
                             IsReadOnly="True"
                             Text="{Binding ElementName=SlideshowSlider, Path=Value}"
                             TextAlignment="Center" />
@@ -343,9 +345,12 @@
                             x:Name="txtZoomSlide"
                             Width="50"
                             Margin="5,3"
+                            Padding="0,4,0,4"
                             VerticalAlignment="Center"
+                            d:Text="2"
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                            FontSize="12"
                             IsReadOnly="True"
-                            Text="{Binding ElementName=ZoomSlider, Path=Value}"
                             TextAlignment="Center" />
                     </StackPanel>
 
