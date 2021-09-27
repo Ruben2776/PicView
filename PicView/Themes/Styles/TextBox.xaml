@@ -8,7 +8,7 @@
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
         <Setter Property="Foreground" Value="{StaticResource MainColorFadedBrush}" />
         <Setter Property="CaretBrush" Value="{StaticResource MainColorBrush}" />
-        <Setter Property="Padding" Value="10,8,0,8" />
+        <Setter Property="Padding" Value="10,9.2,0,9.2" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
         <Setter Property="IsReadOnly" Value="True" />
