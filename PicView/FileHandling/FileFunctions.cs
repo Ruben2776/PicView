@@ -99,8 +99,9 @@ namespace PicView.FileHandling
                 return false;
             }
 
-            ChangeImage.Preloader.Remove(ChangeImage.Navigation.FolderIndex);
-            ChangeImage.Navigation.Pics.Remove(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
+            // Clear Preloader and files to prevent errors
+            // TODO Optimize Renaming procedure
+            //ChangeImage.Preloader.Clear();
 
             // Check if the file is not in the same folder
             if (Path.GetDirectoryName(newPath) != Path.GetDirectoryName(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]))
@@ -108,12 +109,16 @@ namespace PicView.FileHandling
                 if (ChangeImage.Navigation.Pics.Count < 1)
                 {
                     await ChangeImage.Navigation.LoadPiFromFileAsync(newPath).ConfigureAwait(false);
+                    return true;
                 }
+                ChangeImage.Preloader.Remove(ChangeImage.Navigation.FolderIndex);
+                ChangeImage.Navigation.Pics.Remove(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
                 await ChangeImage.Navigation.PicAsync().ConfigureAwait(false);
                 return true;
             }
-            
-            ChangeImage.Navigation.Pics.Add(newPath);
+
+            ChangeImage.Preloader.Remove(ChangeImage.Navigation.FolderIndex);
+            ChangeImage.Navigation.Pics.Remove(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
             await ChangeImage.Navigation.LoadPiFromFileAsync(newPath).ConfigureAwait(false);
             return true;
         }

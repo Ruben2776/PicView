@@ -28,8 +28,6 @@ namespace PicView.FileHandling
                 SetTitle.SetLoadingString();
             });
 
-
-            CanNavigate = false;
             Error_Handling.ChangeFolder(true);
 
             try

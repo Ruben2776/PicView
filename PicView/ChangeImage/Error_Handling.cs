@@ -17,7 +17,7 @@ namespace PicView.ChangeImage
     {
         internal static bool CheckOutOfRange()
         {
-            if (Pics?.Count < FolderIndex || Pics?.Count < 1)
+            if (Pics?.Count < FolderIndex || Pics?.Count < 1 || UILogic.UC.GetCropppingTool != null && UILogic.UC.GetCropppingTool.IsVisible)
             {
                 return true;
             }
@@ -138,8 +138,10 @@ namespace PicView.ChangeImage
         {
             ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["NoImage"];
             ConfigureWindows.GetMainWindow.Title = Application.Current.Resources["NoImage"] + " - " + SetTitle.AppName;
-            CanNavigate = false;
-            ConfigureWindows.GetMainWindow.MainImage.Source = null;
+
+            Uri uri = new Uri($"pack://application:,,,/PicView;component/Themes/Resources/img/icon__Q6k_icon.ico", UriKind.Absolute);
+            UILogic.Sizing.ScaleImage.FitImage(48,48);
+            ConfigureWindows.GetMainWindow.MainImage.Source = new System.Windows.Media.Imaging.BitmapImage(uri);
             FreshStartup = true;
             if (Pics != null)
             {
@@ -148,8 +150,8 @@ namespace PicView.ChangeImage
 
             Preloader.Clear();
             GalleryFunctions.Clear();
-            ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.Scroller.Width = ConfigureWindows.GetMainWindow.Scroller.Height =
-            ConfigureWindows.GetMainWindow.MainImage.Height = double.NaN;
+            //ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.Scroller.Width = ConfigureWindows.GetMainWindow.Scroller.Height =
+            //ConfigureWindows.GetMainWindow.MainImage.Height = double.NaN;
             ScaleImage.XWidth = ScaleImage.XHeight = 0;
 
             if (!string.IsNullOrWhiteSpace(ArchiveExtraction.TempFilePath))

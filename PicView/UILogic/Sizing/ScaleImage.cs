@@ -39,7 +39,7 @@ namespace PicView.UILogic.Sizing
             {
                 if (Pics?.Count > FolderIndex)
                 {
-                    var preloadValue = ChangeImage.Preloader.Get(FolderIndex);
+                    var preloadValue = ChangeImage.Preloader.Get(Navigation.Pics[Navigation.FolderIndex]);
                     if (preloadValue != null)
                     {
                         var pic = preloadValue.bitmapSource;

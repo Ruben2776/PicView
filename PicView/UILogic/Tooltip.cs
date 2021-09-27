@@ -16,7 +16,7 @@ namespace PicView.UILogic
         /// <param name="time">How long until it fades away</param>
         private static void ShowTooltipMessage(object message, bool center, TimeSpan time)
         {
-            if (GetToolTipMessage == null)
+            if (GetToolTipMessage == null || message == null)
             {
                 return;
             }

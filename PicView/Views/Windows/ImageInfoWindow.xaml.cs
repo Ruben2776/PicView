@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
@@ -37,8 +38,6 @@ namespace PicView.Views.Windows
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            Top = ConfigureWindows.GetMainWindow.LeftButton.PointToScreen(new Point(0, 0)).X - Height;
-
             KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(null, e, this);
 
             // Hack to deselect border on mouse click
@@ -69,15 +68,15 @@ namespace PicView.Views.Windows
                 SystemIntegration.NativeMethods.ShowFileProperties(Pics[FolderIndex]);
             };
 
-            // Print
-            Print.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(PrintFill); };
-            Print.MouseEnter += delegate { ButtonMouseOverAnim(PrintFill); };
-            Print.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(PrintBrush); };
-            Print.MouseLeave += delegate { ButtonMouseLeaveAnim(PrintFill); };
-            Print.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(PrintBrush); };
-            Print.Click += delegate
+            // Delete
+            Delete.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(DeleteFill); };
+            Delete.MouseEnter += delegate { ButtonMouseOverAnim(DeleteFill); };
+            Delete.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(DeleteBrush); };
+            Delete.MouseLeave += delegate { ButtonMouseLeaveAnim(DeleteFill); };
+            Delete.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(DeleteBrush); };
+            Delete.Click += async delegate
             {
-                FileHandling.Open_Save.Print(Pics[FolderIndex]);
+                await FileHandling.DeleteFiles.DeleteFileAsync(Keyboard.IsKeyDown(Key.LeftShift)).ConfigureAwait(false);
             };
 
             // OpenWith
@@ -165,9 +164,9 @@ namespace PicView.Views.Windows
                 }
                 else
                 {
-                    await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+                    await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                     {
-                        Keyboard.ClearFocus();
+                        FilenameBox.CaretIndex = FilenameBox.Text.Length;
                     });
                 }
             };
@@ -187,9 +186,9 @@ namespace PicView.Views.Windows
                 }
                 else
                 {
-                    await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+                    await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                     {
-                        Keyboard.ClearFocus();
+                        FolderBox.CaretIndex = FolderBox.Text.Length;
                     });
                 }
             };
@@ -205,13 +204,6 @@ namespace PicView.Views.Windows
                 if (rename == false)
                 {
                     Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
-                }
-                else
-                {
-                    await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
-                    {
-                        Keyboard.ClearFocus();
-                    });
                 }
             };
 

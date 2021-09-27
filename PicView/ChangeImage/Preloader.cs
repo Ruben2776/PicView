@@ -29,7 +29,7 @@ namespace PicView.ChangeImage
         /// Preloader list of BitmapSources
         /// </summary>
         private static readonly ConcurrentDictionary<
-            int, PreloadValue> Sources = new ConcurrentDictionary<int, PreloadValue>();
+            string, PreloadValue> Sources = new ConcurrentDictionary<string, PreloadValue>();
 
         internal const int LoadInfront = 4;
         internal const int LoadBehind = 2;
@@ -53,21 +53,12 @@ namespace PicView.ChangeImage
             var preloadValue = new PreloadValue(null, true);
             if (preloadValue is null) { return; }
 
-            if (Sources.TryAdd(i, preloadValue))
+            if (Sources.TryAdd(Navigation.Pics[i], preloadValue))
             {
                 var x = await ImageDecoder.RenderToBitmapSource(Pics?[i]).ConfigureAwait(false);
                 preloadValue.bitmapSource = x;
                 preloadValue.isLoading = false;
             }
-        }
-
-        /// <summary>
-        /// Get count of preload values
-        /// </summary>
-        /// <returns></returns>
-        internal static int Count()
-        {
-            return Sources.Count;
         }
 
         /// <summary>
@@ -89,16 +80,16 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            if (!Contains(key))
+            if (!Contains(Navigation.Pics[key]))
             {
                 return;
             }
 
             try
             {
-                _ = Sources[key];
+                _ = Sources[Navigation.Pics[key]];
 #if DEBUG
-                if (!Sources.TryRemove(key, out _))
+                if (!Sources.TryRemove(Navigation.Pics[key], out _))
                 {
                     Trace.WriteLine($"Failed to Remove {key} from Preloader, index {Pics?[key]}");
                 }
@@ -143,7 +134,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        internal static PreloadValue? Get(int key)
+        internal static PreloadValue? Get(string key)
         {
             if (!Contains(key))
             {
@@ -158,7 +149,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        internal static bool Contains(int key)
+        internal static bool Contains(string key)
         {
             if (Sources.IsEmpty)
             {
@@ -177,35 +168,25 @@ namespace PicView.ChangeImage
         internal static Task PreLoad(int index) => Task.Run(async () =>
         {
             int endPoint;
-            int x = 0;
             if (Reverse)
             {
                 endPoint = index - 1 - LoadInfront;
                 // Add first elements behind
                 for (int i = index - 1; i > endPoint; i--)
                 {
-                    try { x = x % Pics.Count; } // Catch divide by zero
-                    catch (ArithmeticException) { return; }
-
-                    await AddAsync(x).ConfigureAwait(false);
+                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 // Add second elements
                 for (int i = index + 1; i < (index + 1) + LoadBehind; i++)
                 {
-                    try { x = x % Pics.Count; } // Catch divide by zero
-                    catch (ArithmeticException) { return; }
-
-                    await AddAsync(x).ConfigureAwait(false);
+                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 //Clean up infront
                 for (int i = (index + 1) + LoadBehind; i < ((index + 1) + LoadInfront * 2); i++)
                 {
-                    try { x = x % Pics.Count; } // Catch divide by zero
-                    catch (ArithmeticException) { return; }
-
-                    Remove(x);
+                    Remove(i % Pics.Count);
                 }
             }
             else
@@ -214,28 +195,18 @@ namespace PicView.ChangeImage
                 // Add first elements
                 for (int i = index + 1; i < (index + 1) + LoadInfront; i++)
                 {
-                    // Catch divide by zero
-                    try { x = x % Pics.Count; }
-                    catch (ArithmeticException) { return; }
-
-                    await AddAsync(x % Pics.Count).ConfigureAwait(false);
+                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
                 // Add second elements behind
                 for (int i = index - 1; i > endPoint; i--)
                 {
-                    try { x = x % Pics.Count; } // Catch divide by zero
-                    catch (ArithmeticException) { return; }
-
-                    await AddAsync(x).ConfigureAwait(false);
+                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 //Clean up behind
                 for (int i = index - LoadInfront * 2; i <= endPoint; i++)
                 {
-                    try { x = x % Pics.Count; } // Catch divide by zero
-                    catch (ArithmeticException) { return; }
-
-                    Remove(x);
+                    Remove(i % Pics.Count);
                 }
             }
         });

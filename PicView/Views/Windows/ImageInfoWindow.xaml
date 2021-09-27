@@ -14,7 +14,6 @@
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="CanMinimize"
     Style="{DynamicResource MyWindowStyle}"
-    WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
 
     <DockPanel>
@@ -58,18 +57,18 @@
                 Fill="{StaticResource BorderBrush}" />
 
             <Button
-                x:Name="Print"
+                x:Name="Delete"
                 Width="80"
                 Height="30"
                 Padding="0"
                 Style="{StaticResource MetroFlatButton}"
-                ToolTip="{StaticResource Print}">
-                <TextBlock Text="{StaticResource Print}" TextTrimming="CharacterEllipsis" />
+                ToolTip="{StaticResource SendCurrentImageToRecycleBin}">
+                <TextBlock Text="{StaticResource DeleteFile}" TextTrimming="CharacterEllipsis" />
                 <Button.Foreground>
-                    <SolidColorBrush x:Name="PrintFill" Color="{StaticResource MainColor}" />
+                    <SolidColorBrush x:Name="DeleteFill" Color="{StaticResource MainColor}" />
                 </Button.Foreground>
                 <Button.Background>
-                    <SolidColorBrush x:Name="PrintBrush" Color="Transparent" />
+                    <SolidColorBrush x:Name="DeleteBrush" Color="Transparent" />
                 </Button.Background>
             </Button>
 
@@ -77,6 +76,29 @@
                 Width="1"
                 Height="30"
                 Fill="{StaticResource BorderBrush}" />
+
+            <Button
+                x:Name="OptimizeImageButton"
+                Width="121"
+                Height="30"
+                Padding="0"
+                Style="{StaticResource MetroFlatButton}"
+                ToolTip="{StaticResource OptimizeImage}">
+                <TextBlock Text="{StaticResource OptimizeImage}" TextTrimming="CharacterEllipsis" />
+                <Button.Foreground>
+                    <SolidColorBrush x:Name="OptimizeImageFill" Color="{StaticResource MainColor}" />
+                </Button.Foreground>
+                <Button.Background>
+                    <SolidColorBrush x:Name="OptimizeImageBrush" Color="Transparent" />
+                </Button.Background>
+            </Button>
+
+
+            <Rectangle
+                Width="1"
+                Height="30"
+                Fill="{StaticResource BorderBrush}" />
+
 
             <Button
                 x:Name="OpenWith"
@@ -112,27 +134,6 @@
                 </Button.Foreground>
                 <Button.Background>
                     <SolidColorBrush x:Name="ShowInFolderBrush" Color="Transparent" />
-                </Button.Background>
-            </Button>
-
-            <Rectangle
-                Width="1"
-                Height="30"
-                Fill="{StaticResource BorderBrush}" />
-
-            <Button
-                x:Name="OptimizeImageButton"
-                Width="121"
-                Height="30"
-                Padding="0"
-                Style="{StaticResource MetroFlatButton}"
-                ToolTip="{StaticResource OptimizeImage}">
-                <TextBlock Text="{StaticResource OptimizeImage}" TextTrimming="CharacterEllipsis" />
-                <Button.Foreground>
-                    <SolidColorBrush x:Name="OptimizeImageFill" Color="{StaticResource MainColor}" />
-                </Button.Foreground>
-                <Button.Background>
-                    <SolidColorBrush x:Name="OptimizeImageBrush" Color="Transparent" />
                 </Button.Background>
             </Button>
 
@@ -202,7 +203,7 @@
                             x:Name="FilenameBox"
                             Width="180"
                             d:Text="404.jpg"
-                            IsReadOnly="False"/>
+                            IsReadOnly="False" />
                         <Border
                             Width="37"
                             Height="35"

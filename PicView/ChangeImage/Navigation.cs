@@ -40,12 +40,6 @@ namespace PicView.ChangeImage
         internal static string? BackupPath { get; set; }
 
         /// <summary>
-        /// Used for error handling to prevent navigating
-        /// when not possibe
-        /// </summary>
-        internal static bool CanNavigate { get; set; }
-
-        /// <summary>
         /// Used to determine if values need to get retrieved (again)
         /// </summary>
         internal static bool FreshStartup { get; set; }
@@ -118,7 +112,6 @@ namespace PicView.ChangeImage
                 await LoadPiFromFileAsync(path).ConfigureAwait(false);
 
                 FreshStartup = false;
-                CanNavigate = true;
             }
             else
             {
@@ -151,7 +144,6 @@ namespace PicView.ChangeImage
                     await LoadPiFromFileAsync(path).ConfigureAwait(false);
 
                     FreshStartup = false;
-                    CanNavigate = true;
                 }
 
                 else if (Directory.Exists(path))
@@ -159,7 +151,6 @@ namespace PicView.ChangeImage
                     await LoadPicFromFolderAsync(path).ConfigureAwait(false);
 
                     FreshStartup = false;
-                    CanNavigate = true;
                 }
                 else
                 {
@@ -245,7 +236,7 @@ namespace PicView.ChangeImage
             }
 
             FolderIndex = index;
-            var preloadValue = Preloader.Get(index);
+            var preloadValue = Preloader.Get(Navigation.Pics[index]);
 
             // Initate loading behavior, if needed
             if (preloadValue == null || preloadValue.isLoading)
@@ -308,7 +299,7 @@ namespace PicView.ChangeImage
                 if (preloadValue == null) // Error correctiom
                 {
                     await Preloader.AddAsync(index).ConfigureAwait(false);
-                    preloadValue = Preloader.Get(index);
+                    preloadValue = Preloader.Get(Navigation.Pics[index]);
                 }
             }
 
@@ -430,8 +421,6 @@ namespace PicView.ChangeImage
             CloseToolTipMessage();
 
             await Taskbar.NoProgress().ConfigureAwait(false);
-
-            CanNavigate = false;
             FolderIndex = 0;
 
             if (ConfigureWindows.GetImageInfoWindow != null)
@@ -441,8 +430,6 @@ namespace PicView.ChangeImage
                     await ConfigureWindows.GetImageInfoWindow.UpdateValuesAsync(imageName).ConfigureAwait(false);
                 }
             }
-
-            CanNavigate = false;
         }
 
         /// <summary>
@@ -499,7 +486,6 @@ namespace PicView.ChangeImage
             });
 
             await Taskbar.NoProgress().ConfigureAwait(false);
-            CanNavigate = false;
             FolderIndex = 0;
 
             if (ConfigureWindows.GetImageInfoWindow != null)
@@ -597,7 +583,7 @@ namespace PicView.ChangeImage
         internal static async Task PicAsync(bool next = true, bool end = false)
         {
             // Exit if not intended to change picture
-            if (!CanNavigate)
+            if (Error_Handling.CheckOutOfRange())
             {
                 return;
             }
@@ -715,7 +701,7 @@ namespace PicView.ChangeImage
                     return;
                 }
 
-                if (!CanNavigate)
+                if (Error_Handling.CheckOutOfRange())
                 {
                     return;
                 }
@@ -733,7 +719,7 @@ namespace PicView.ChangeImage
             }
             else // Alternative interface buttons
             {
-                if (!CanNavigate)
+                if (Error_Handling.CheckOutOfRange())
                 {
                     return;
                 }
@@ -771,16 +757,16 @@ namespace PicView.ChangeImage
             {
                 Preloader.Clear();
                 await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
-                preloadValue = Preloader.Get(FolderIndex);
+                preloadValue = Preloader.Get(Navigation.Pics[FolderIndex]);
             }
             else
             {
-                preloadValue = Preloader.Get(FolderIndex);
+                preloadValue = Preloader.Get(Navigation.Pics[FolderIndex]);
 
                 if (preloadValue == null) // Error correctiom
                 {
                     await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
-                    preloadValue = Preloader.Get(FolderIndex);
+                    preloadValue = Preloader.Get(Navigation.Pics[FolderIndex]);
                 }
                 while (preloadValue != null && preloadValue.isLoading)
                 {
