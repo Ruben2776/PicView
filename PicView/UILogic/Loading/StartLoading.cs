@@ -80,7 +80,7 @@ namespace PicView.UILogic.Loading
                     // Determine proper startup size
                     if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width > 0)
                     {
-                        SetLastWindowSize();
+                        ConfigureWindows.SetLastWindowSize();
                     }
                     else
                     {
@@ -111,7 +111,7 @@ namespace PicView.UILogic.Loading
                 {
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                     {
-                        SetLastWindowSize();
+                        ConfigureWindows.SetLastWindowSize();
                     });
                 }
 
@@ -165,14 +165,6 @@ namespace PicView.UILogic.Loading
 #if DEBUG
             Trace.WriteLine("Start Completed ");
 #endif
-        }
-
-        private static void SetLastWindowSize()
-        {
-            ConfigureWindows.GetMainWindow.Top = Properties.Settings.Default.Top;
-            ConfigureWindows.GetMainWindow.Left = Properties.Settings.Default.Left;
-            ConfigureWindows.GetMainWindow.Width = Properties.Settings.Default.Width;
-            ConfigureWindows.GetMainWindow.Height = Properties.Settings.Default.Height;
         }
 
         private static void AddUIElementsAndUpdateValues()

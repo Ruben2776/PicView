@@ -204,6 +204,7 @@ namespace PicView.UILogic.TransformImage
             if (increment)
             {
                 // Increase speed determined by how much is zoomed in
+                // TODO improve it when zoomed greatly in
                 if (ZoomValue >= 1.2)
                 {
                     zoomSpeed += .2;
