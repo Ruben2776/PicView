@@ -94,7 +94,7 @@ namespace PicView.ChangeImage
                     Trace.WriteLine($"Failed to Remove {key} from Preloader, index {Pics?[key]}");
                 }
 #else
-            Sources.TryRemove(key, out _);
+            Sources.TryRemove(Navigation.Pics[key], out _);
 #endif
             }
 #if DEBUG

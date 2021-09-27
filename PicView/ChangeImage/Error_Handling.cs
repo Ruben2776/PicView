@@ -150,8 +150,6 @@ namespace PicView.ChangeImage
 
             Preloader.Clear();
             GalleryFunctions.Clear();
-            //ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.Scroller.Width = ConfigureWindows.GetMainWindow.Scroller.Height =
-            //ConfigureWindows.GetMainWindow.MainImage.Height = double.NaN;
             ScaleImage.XWidth = ScaleImage.XHeight = 0;
 
             if (!string.IsNullOrWhiteSpace(ArchiveExtraction.TempFilePath))
