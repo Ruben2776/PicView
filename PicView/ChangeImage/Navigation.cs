@@ -88,10 +88,19 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static async Task LoadPicFromString(string path)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
                 // Set Loading
                 SetLoadingString();
+
+                if (ConfigureWindows.GetMainWindow.MainImage.Source == null)
+                {
+                    BitmapSource? bitmapSource = GetBitmapSourceThumb(path);
+                    if (bitmapSource != null)
+                    {
+                        ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
+                    }
+                }
 
                 // Don't allow image size to stretch the whole screen, fixes when opening new image from unloaded status
                 if (XWidth < 1)
@@ -100,7 +109,18 @@ namespace PicView.ChangeImage
                     ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
                 }
             });
-            if (!File.Exists(path))
+
+            if (File.Exists(path))
+            {
+                // set up size so it feels better when starting application
+                await TryFitImageAsync(path).ConfigureAwait(false);
+
+                await LoadPiFromFileAsync(path).ConfigureAwait(false);
+
+                FreshStartup = false;
+                CanNavigate = true;
+            }
+            else
             {
                 bool result = Uri.TryCreate(path, UriKind.Absolute, out Uri? uriResult)
                     && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
@@ -129,11 +149,17 @@ namespace PicView.ChangeImage
                     await TryFitImageAsync(path).ConfigureAwait(false);
 
                     await LoadPiFromFileAsync(path).ConfigureAwait(false);
+
+                    FreshStartup = false;
+                    CanNavigate = true;
                 }
 
                 else if (Directory.Exists(path))
                 {
                     await LoadPicFromFolderAsync(path).ConfigureAwait(false);
+
+                    FreshStartup = false;
+                    CanNavigate = true;
                 }
                 else
                 {
@@ -142,14 +168,7 @@ namespace PicView.ChangeImage
                         Unload();
                     });
                 }
-
-                return;
             }
-
-            // set up size so it feels better when starting application
-            await TryFitImageAsync(path).ConfigureAwait(false);
-
-            await LoadPiFromFileAsync(path).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -211,6 +230,7 @@ namespace PicView.ChangeImage
                 await GalleryLoad.Load().ConfigureAwait(false);
                 Timers.PicGalleryTimerHack();
             }
+            FreshStartup = false;
         }
 
         /// <summary>
@@ -219,7 +239,7 @@ namespace PicView.ChangeImage
         /// <param name="index">The index of file to load from Pics</param>
         internal static async Task LoadPicAtIndexAsync(int index)
         {
-            if (ChangeImage.Error_Handling.CheckOutOfRange())
+            if (Pics?.Count < index || Pics?.Count < 1)
             {
                 return;
             }
@@ -230,54 +250,66 @@ namespace PicView.ChangeImage
             // Initate loading behavior, if needed
             if (preloadValue == null || preloadValue.isLoading)
             {
-                if (GalleryFunctions.IsOpen == false)
+                // Show a thumbnail while loading
+                BitmapSource? thumb = null;
+                
+                if (FreshStartup == false && GalleryFunctions.IsOpen == false)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
-                    {
-                        // Show a thumbnail while loading
-                        var thumb = GetThumb(index); // Need to be in dispatcher to prevent crashing when changing folder while picgallery is loading items
-
-                        if (FreshStartup)
-                        {
-                            // Set loading from translation service
-                            SetLoadingString();
-                        }
-                        else
-                        {
-                            var image = Application.Current.Resources["Image"] as string;
-
-                            ConfigureWindows.GetMainWindow.TitleText.ToolTip =
-                            ConfigureWindows.GetMainWindow.Title =
-                            ConfigureWindows.GetMainWindow.TitleText.Text
-                            = $"{image} {(index + 1)} / {Pics?.Count}";
-                        }
-
-                        if (thumb != null)
-                        {
-                            ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
-                        }
-                    });
+                    thumb = GetBitmapSourceThumb(Pics[FolderIndex]);
                 }
-                if (FastPicRunning)
+
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                {
+                    if (GalleryFunctions.IsOpen)
+                    {
+                        thumb = GetThumb(index);
+                    }
+
+                    if (FreshStartup)
+                    {
+                        // Set loading from translation service
+                        SetLoadingString();
+                        FreshStartup = false;
+                    }
+                    else
+                    {
+                        var image = Application.Current.Resources["Image"] as string;
+
+                        ConfigureWindows.GetMainWindow.TitleText.ToolTip =
+                        ConfigureWindows.GetMainWindow.Title =
+                        ConfigureWindows.GetMainWindow.TitleText.Text
+                        = $"{image} {index + 1} / {Pics?.Count}";
+                    }
+
+                    if (thumb != null)
+                    {
+                        ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
+                    }
+                });
+
+                if (FastPicRunning) // Holding down button is too fast and will be laggy when not just loading thumbnails
                 {
                     return;
                 }
 
+                while (preloadValue != null && preloadValue.isLoading)
+                {
+                    // Wait for finnished result
+                    await Task.Delay(5).ConfigureAwait(false);
+
+                    // Make loading skippable
+                    if (FolderIndex != index)
+                    {
+                        // Start preloading when browsing very fast to catch up
+                        await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
+                        return;
+                    }
+                }
                 if (preloadValue == null) // Error correctiom
                 {
                     await Preloader.AddAsync(index).ConfigureAwait(false);
                     preloadValue = Preloader.Get(index);
                 }
-                while (preloadValue != null && preloadValue.isLoading)
-                {
-                    // Wait for finnished result
-                    await Task.Delay(5).ConfigureAwait(false);
-                }
-            }
-            // Make loading skippable
-            if (FastPicRunning) // Holding down button is too fast and will be laggy when not just loading thumbnails
-            {
-                return;
             }
 
             // Make loading skippable
@@ -292,25 +324,19 @@ namespace PicView.ChangeImage
             if (preloadValue == null || preloadValue.bitmapSource == null)
             {
                 preloadValue = new Preloader.PreloadValue(ImageFunctions.ImageErrorMessage(), false);
+
+                if (preloadValue == null || preloadValue.bitmapSource == null)
+                {
+                    Error_Handling.Unload();
+                    ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                    return;
+                }
             }
 
-            if (preloadValue == null || preloadValue.bitmapSource == null)
-            {
-                Error_Handling.Unload();
-                ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
-                return;
-            }
-
-
-            // Need to put UI change in dispatcher to fix slideshow bug
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
             {
                 UpdatePic(index, preloadValue.bitmapSource);
             });
-
-            // Update values
-            CanNavigate = true;
-            FreshStartup = false;
 
             if (ConfigureWindows.GetImageInfoWindow != null)
             {
@@ -410,7 +436,7 @@ namespace PicView.ChangeImage
 
             if (ConfigureWindows.GetImageInfoWindow != null)
             {
-                if (ConfigureWindows.GetImageInfoWindow.IsVisible)
+                if (ConfigureWindows.GetImageInfoWindow.CheckAccess() && ConfigureWindows.GetImageInfoWindow.IsVisible)
                 {
                     await ConfigureWindows.GetImageInfoWindow.UpdateValuesAsync(imageName).ConfigureAwait(false);
                 }
@@ -589,16 +615,28 @@ namespace PicView.ChangeImage
             }
 
             // Make backup
-            var indexBackup = FolderIndex;
+            int indexBackup = FolderIndex;
+            int startingpoint = FolderIndex;
 
-            if (!end) // Go to next or previous
+            if (end) // Go to first or last
+            {
+                startingpoint = next ? Pics.Count - 1 : 0;
+                indexBackup = FolderIndex;
+
+                // Reset preloader values to prevent errors
+                if (Pics?.Count > Preloader.LoadBehind + Preloader.LoadInfront + 2)
+                {
+                    Preloader.Clear();
+                }
+            }
+            else // Go to next or previous
             {
                 if (next)
                 {
                     // loop next
                     if (Properties.Settings.Default.Looping || Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
                     {
-                        FolderIndex = FolderIndex == Pics?.Count - 1 ? 0 : FolderIndex + 1;
+                        startingpoint = FolderIndex == Pics?.Count - 1 ? 0 : FolderIndex + 1;
                     }
                     else
                     {
@@ -608,7 +646,7 @@ namespace PicView.ChangeImage
                             return;
                         }
 
-                        FolderIndex++;
+                        startingpoint++;
                     }
                     Reverse = false;
                 }
@@ -617,35 +655,24 @@ namespace PicView.ChangeImage
                     // Loop prev
                     if (Properties.Settings.Default.Looping || Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
                     {
-                        FolderIndex = FolderIndex == 0 ? Pics.Count - 1 : FolderIndex - 1;
+                        startingpoint = FolderIndex == 0 ? Pics.Count - 1 : FolderIndex - 1;
                     }
                     else
                     {
                         // Go to prev if able
-                        if (FolderIndex - 1 < 0)
+                        if (startingpoint - 1 < 0)
                         {
                             return;
                         }
 
-                        FolderIndex--;
+                        startingpoint--;
                     }
                     Reverse = true;
                 }
             }
-            else // Go to first or last
-            {
-                FolderIndex = next ? Pics.Count - 1 : 0;
-                indexBackup = FolderIndex;
-
-                // Reset preloader values to prevent errors
-                if (Pics?.Count > Preloader.LoadBehind + Preloader.LoadInfront + 2)
-                {
-                    Preloader.Clear();
-                }
-            }
 
             // Go to the image!
-            await LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
+            await LoadPicAtIndexAsync(startingpoint).ConfigureAwait(false);
 
             // Update PicGallery selected item, if needed
             if (GalleryFunctions.IsOpen)

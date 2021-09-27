@@ -168,6 +168,12 @@ namespace PicView.FileHandling
                 };
 
                 var header = Path.GetFileNameWithoutExtension(item);
+
+                if (header == null)
+                {
+                    continue;
+                }
+
                 header = header.Length > 30 ? Shorten(header, 30) : header;
                 // Add items
                 var menuItem = new MenuItem()

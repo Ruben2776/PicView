@@ -51,6 +51,8 @@ namespace PicView.ChangeImage
             }
 
             var preloadValue = new PreloadValue(null, true);
+            if (preloadValue is null) { return; }
+
             if (Sources.TryAdd(i, preloadValue))
             {
                 var x = await ImageDecoder.RenderToBitmapSource(Pics?[i]).ConfigureAwait(false);
@@ -82,7 +84,7 @@ namespace PicView.ChangeImage
             else if (key >= Pics?.Count)
             {
 #if DEBUG
-                Trace.WriteLine("Preloader.Remove key null, " + key);
+                Trace.WriteLine("Preloader " + nameof(Remove) + " key null, " + key);
 #endif
                 return;
             }
@@ -92,15 +94,31 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            _ = Sources[key];
-#if DEBUG
-            if (!Sources.TryRemove(key, out _))
+            try
             {
-                Trace.WriteLine($"Failed to Remove {key} from Preloader, index {Pics?[key]}");
-            }
+                _ = Sources[key];
+#if DEBUG
+                if (!Sources.TryRemove(key, out _))
+                {
+                    Trace.WriteLine($"Failed to Remove {key} from Preloader, index {Pics?[key]}");
+                }
 #else
             Sources.TryRemove(key, out _);
 #endif
+            }
+#if DEBUG
+            catch (Exception e)
+            {
+                Trace.WriteLine("Preloader " + nameof(Remove) + "exception" + Environment.NewLine + e.Message);
+                return;
+            }
+#else
+            catch (Exception)
+            {
+                return;
+            }
+#endif
+
         }
 
         /// <summary>
@@ -159,25 +177,35 @@ namespace PicView.ChangeImage
         internal static Task PreLoad(int index) => Task.Run(async () =>
         {
             int endPoint;
+            int x = 0;
             if (Reverse)
             {
                 endPoint = index - 1 - LoadInfront;
                 // Add first elements behind
                 for (int i = index - 1; i > endPoint; i--)
                 {
-                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
+                    try { x = x % Pics.Count; } // Catch divide by zero
+                    catch (ArithmeticException) { return; }
+
+                    await AddAsync(x).ConfigureAwait(false);
                 }
 
                 // Add second elements
                 for (int i = index + 1; i < (index + 1) + LoadBehind; i++)
                 {
-                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
+                    try { x = x % Pics.Count; } // Catch divide by zero
+                    catch (ArithmeticException) { return; }
+
+                    await AddAsync(x).ConfigureAwait(false);
                 }
 
                 //Clean up infront
                 for (int i = (index + 1) + LoadBehind; i < ((index + 1) + LoadInfront * 2); i++)
                 {
-                    Remove(i % Pics.Count);
+                    try { x = x % Pics.Count; } // Catch divide by zero
+                    catch (ArithmeticException) { return; }
+
+                    Remove(x);
                 }
             }
             else
@@ -186,18 +214,28 @@ namespace PicView.ChangeImage
                 // Add first elements
                 for (int i = index + 1; i < (index + 1) + LoadInfront; i++)
                 {
-                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
+                    // Catch divide by zero
+                    try { x = x % Pics.Count; }
+                    catch (ArithmeticException) { return; }
+
+                    await AddAsync(x % Pics.Count).ConfigureAwait(false);
                 }
                 // Add second elements behind
                 for (int i = index - 1; i > endPoint; i--)
                 {
-                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
+                    try { x = x % Pics.Count; } // Catch divide by zero
+                    catch (ArithmeticException) { return; }
+
+                    await AddAsync(x).ConfigureAwait(false);
                 }
 
                 //Clean up behind
                 for (int i = index - LoadInfront * 2; i <= endPoint; i++)
                 {
-                    Remove(i % Pics.Count);
+                    try { x = x % Pics.Count; } // Catch divide by zero
+                    catch (ArithmeticException) { return; }
+
+                    Remove(x);
                 }
             }
         });
