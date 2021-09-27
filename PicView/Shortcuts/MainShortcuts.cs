@@ -777,7 +777,14 @@ namespace PicView.Shortcuts
 
             if (GalleryFunctions.IsOpen)
             {
-                GalleryNavigation.ScrollTo(sender, e);
+                if (Properties.Settings.Default.FullscreenGallery && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                {
+                    await PicAsync(e.Delta > 0).ConfigureAwait(false);
+                }
+                else
+                {
+                    GalleryNavigation.ScrollTo(sender, e);
+                }
             }
             else if (Properties.Settings.Default.ScrollEnabled)
             {
