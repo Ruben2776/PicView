@@ -44,7 +44,12 @@ namespace PicView.Editing.Crop
 
         internal static async Task PerformCropAsync()
         {
-            await SaveCrop().ConfigureAwait(false);
+            var saveCrop = await SaveCrop().ConfigureAwait(false);
+            if (saveCrop == false)
+            {
+                return;
+            }
+
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
             {
                 if (Pics.Count == 0)
@@ -55,8 +60,10 @@ namespace PicView.Editing.Crop
                 {
                     SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
                 }
+                CloseCrop();
             });
-            CanNavigate = true;
+
+            CanNavigate = true;           
         }
 
         internal static void CloseCrop()
@@ -93,7 +100,7 @@ namespace PicView.Editing.Crop
             GetCropppingTool.RootGrid.PreviewMouseLeftButtonUp += (s, e) => CropService.Adorner.RaiseEvent(e);
         }
 
-        internal static async Task SaveCrop()
+        internal static async Task<bool> SaveCrop()
         {
             var fileName = Pics.Count == 0 ? Path.GetRandomFileName()
                 : Path.GetFileName(Pics[FolderIndex]);
@@ -107,7 +114,7 @@ namespace PicView.Editing.Crop
 
             if (!Savedlg.ShowDialog().HasValue)
             {
-                return;
+                return false;
             }
 
             Open_Save.IsDialogOpen = true;
@@ -117,16 +124,7 @@ namespace PicView.Editing.Crop
             var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
 
             var success = await SaveImages.TrySaveImage(Rotateint, Flipped, source, null, Savedlg.FileName, crop, effectApplied).ConfigureAwait(false);
-
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
-            {
-                if (success == false)
-                {
-                    Tooltip.ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
-                }
-
-                ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(GetCropppingTool);
-            });
+            return success;
         }
 
         /// <summary>
