@@ -28,10 +28,10 @@
                     Height="49"
                     Fill="{StaticResource BackgroundColorBrushAlt}" />
 
-                <uc:SettingsButton x:Name="SettingsButton" Width="118" />
+                <uc:SettingsButton x:Name="SettingsButton" Width="131" />
 
                 <Rectangle
-                    Canvas.Left="118"
+                    Canvas.Left="132"
                     Canvas.Top="-1"
                     Width="1"
                     Height="51"
@@ -41,8 +41,8 @@
 
                 <uc:BackGroundButton
                     x:Name="BackgroundButton"
-                    Canvas.Left="119"
-                    Width="185"
+                    Canvas.Left="134"
+                    Width="168"
                     Height="51" />
 
                 <uc:MenuCloseButton
