@@ -99,10 +99,6 @@ namespace PicView.FileHandling
                 return false;
             }
 
-            // Clear Preloader and files to prevent errors
-            // TODO Optimize Renaming procedure
-            //ChangeImage.Preloader.Clear();
-
             // Check if the file is not in the same folder
             if (Path.GetDirectoryName(newPath) != Path.GetDirectoryName(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]))
             {

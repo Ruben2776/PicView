@@ -82,10 +82,21 @@ namespace PicView.FileHandling
                 case string when ext.Equals(".pcx", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".xbm", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".xpm", StringComparison.OrdinalIgnoreCase):
+                case string when ext.Equals(".jxl", StringComparison.OrdinalIgnoreCase):
                     return false;
 
                 default: return null;
             }
+        }
+
+        internal static bool IsSupportedExt(string file)
+        {
+            var supported = IsSupportedFile(file);
+            if (supported is null)
+            {
+                return false;
+            }
+            return true;
         }
 
         /// <summary>

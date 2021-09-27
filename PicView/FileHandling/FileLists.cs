@@ -89,69 +89,7 @@ namespace PicView.FileHandling
 
             var items = Directory.EnumerateFiles(path, "*.*", searchOption)
                 .AsParallel()
-                .Where(file =>
-
-                        // Standards
-                        file.EndsWith("jpg", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("jpeg", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("jpe", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("png", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("bmp", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("tif", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("tiff", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("gif", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("ico", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("jfif", StringComparison.OrdinalIgnoreCase)
-
-                    // Photoshop
-                    || file.EndsWith("psd", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("psb", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("xcf", StringComparison.OrdinalIgnoreCase)
-
-                    // Web
-                    || file.EndsWith("svg", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("webp", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("wbmp", StringComparison.OrdinalIgnoreCase)
-
-                    // Pfim
-                    || file.EndsWith("dds", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("tga", StringComparison.OrdinalIgnoreCase)
-
-                    // Raw Camera
-                    || file.EndsWith("3fr", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("arw", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("cr2", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("crw", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("dcr", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("dng", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("erf", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("kdc", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("mdc", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("mef", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("mos", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("mrw", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("nef", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("pgm", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("ppm", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("raf", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("raw", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("rw2", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("srf", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("x3f", StringComparison.OrdinalIgnoreCase)
-
-                    // Obscure
-                    || file.EndsWith("bpg", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("cut", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("dib", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("emf", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("exr", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("hdr", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("heic", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("pcx", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("wmf", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("wpg", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("xbm", StringComparison.OrdinalIgnoreCase)
-                    || file.EndsWith("xpm", StringComparison.OrdinalIgnoreCase)
+                .Where(file => SupportedFiles.IsSupportedExt(file)
 
             );
 
