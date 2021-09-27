@@ -1,8 +1,8 @@
 <img align="center" style="box-shadow: 48px 16px 48px rgba(24,37,56,0.12);transform: perspective(1000px) rotateY(5deg) translateY(4%);"
-src="https://picview.org/assets/screenshots/configure-ui01.webp" width="958" height="488" />
+src="https://d33wubrfki0l68.cloudfront.net/bd46748571d9f714f4c19d5d824786b675d6b58f/e6d87/assets/screenshots/configure-ui02.webp" width="958" height="488" />
 </img>
 <h1 align="center">
-<img src="https://picview.org/assets/images/PicView-logo-dark.png" height="100" />
+<img src="https://d33wubrfki0l68.cloudfront.net/327934f4ff80060e07c17935683ecad27cda8080/ee2bc/assets/images/photoshop_1.png" alt="PicView Logo" height="90">
 </h1>
 
 PicView is a fast Picture Viewer with compact UI, that can be hidden. Features image effects, galleries, light & dark theme, image info and more. The app can automatically adjusts itself to your screen.
@@ -19,7 +19,7 @@ PicView is a fast Picture Viewer with compact UI, that can be hidden. Features i
 </p>
 
 # Downloads
-Latest releases at https://github.com/Ruben2776/PicView/releases
+Latest releases at https://picview.org/download
 
 **Mirrors**
 
