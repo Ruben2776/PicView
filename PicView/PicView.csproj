@@ -49,7 +49,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
     <DebugType>none</DebugType>
-    <Optimize>True</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>
     </DefineConstants>
@@ -191,7 +191,7 @@
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.0-preview.140" />
-    <PackageReference Include="WpfScreenHelper" Version="1.0.0" />
+    <PackageReference Include="WpfScreenHelper" Version="1.1.0" />
     <PackageReference Include="XamlAnimatedGif" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>
