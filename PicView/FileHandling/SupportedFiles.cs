@@ -42,10 +42,13 @@ namespace PicView.FileHandling
                 case string when ext.Equals(".tga", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".heic", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".hdr", StringComparison.OrdinalIgnoreCase):
+                case string when ext.Equals(".xcf", StringComparison.OrdinalIgnoreCase):
+                case string when ext.Equals(".jxl", StringComparison.OrdinalIgnoreCase):
 
                 // Vector
-                case string when ext.Equals(".svg", StringComparison.OrdinalIgnoreCase): // Maybe add svgz at some point
-                case string when ext.Equals(".xcf", StringComparison.OrdinalIgnoreCase):
+                case string when ext.Equals(".svg", StringComparison.OrdinalIgnoreCase):
+                case string when ext.Equals(".svgz", StringComparison.OrdinalIgnoreCase):
+                
 
                 // Camera
                 case string when ext.Equals(".3fr", StringComparison.OrdinalIgnoreCase):
@@ -82,7 +85,7 @@ namespace PicView.FileHandling
                 case string when ext.Equals(".pcx", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".xbm", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".xpm", StringComparison.OrdinalIgnoreCase):
-                case string when ext.Equals(".jxl", StringComparison.OrdinalIgnoreCase):
+                
                     return false;
 
                 default: return null;

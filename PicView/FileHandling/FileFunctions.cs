@@ -99,6 +99,9 @@ namespace PicView.FileHandling
                 return false;
             }
 
+            ChangeImage.Preloader.Remove(ChangeImage.Navigation.FolderIndex);
+            ChangeImage.Navigation.Pics.Remove(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
+
             // Check if the file is not in the same folder
             if (Path.GetDirectoryName(newPath) != Path.GetDirectoryName(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]))
             {
@@ -107,15 +110,12 @@ namespace PicView.FileHandling
                     await ChangeImage.Navigation.LoadPiFromFileAsync(newPath).ConfigureAwait(false);
                     return true;
                 }
-                ChangeImage.Preloader.Remove(ChangeImage.Navigation.FolderIndex);
-                ChangeImage.Navigation.Pics.Remove(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
-                await ChangeImage.Navigation.PicAsync().ConfigureAwait(false);
+
+                await ChangeImage.Navigation.PicAsync(false).ConfigureAwait(false);
                 return true;
             }
 
-            ChangeImage.Preloader.Remove(ChangeImage.Navigation.FolderIndex);
-            ChangeImage.Navigation.Pics.Remove(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
-            await ChangeImage.Navigation.LoadPiFromFileAsync(newPath).ConfigureAwait(false);
+            await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);
             return true;
         }
 
