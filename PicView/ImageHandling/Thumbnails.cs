@@ -96,16 +96,12 @@ namespace PicView.ImageHandling
         /// </summary>
         /// <param name="path">The path to the file</param>
         /// <returns></returns>
-        private static BitmapSource? GetWindowsThumbnail(string path)
+        private static BitmapSource GetWindowsThumbnail(string path)
         {
-            try
-            {
-                return Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
-            }
-            catch (System.Exception)
-            {
-                return null;
-            }
+            BitmapSource pic;
+            pic = Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
+            pic.Freeze();
+            return pic;
         }
     }
 }

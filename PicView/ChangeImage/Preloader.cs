@@ -34,6 +34,8 @@ namespace PicView.ChangeImage
         internal const int LoadInfront = 4;
         internal const int LoadBehind = 2;
 
+        internal static bool IsRunning { get; private set; }
+
         /// <summary>
         /// Add file to preloader from index
         /// </summary>
@@ -167,6 +169,8 @@ namespace PicView.ChangeImage
         /// <param name="reverse"></param>
         internal static Task PreLoad(int index) => Task.Run(async () =>
         {
+            IsRunning = true;
+
             int endPoint;
             if (Reverse)
             {
@@ -209,6 +213,8 @@ namespace PicView.ChangeImage
                     Remove(i % Pics.Count);
                 }
             }
+
+            IsRunning = false;
         });
     }
 }

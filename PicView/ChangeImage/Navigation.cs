@@ -307,7 +307,10 @@ namespace PicView.ChangeImage
             if (FolderIndex != index)
             {
                 // Start preloading when browsing very fast to catch up
-                await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
+                if (Preloader.IsRunning == false)
+                {
+                    await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
+                }
                 return;
             }
 
@@ -339,9 +342,11 @@ namespace PicView.ChangeImage
 
             if (Pics?.Count > 1)
             {
+                if (Preloader.IsRunning == false)
+                {
+                    await Preloader.PreLoad(index).ConfigureAwait(false);
+                }
                 await Taskbar.Progress((double)index / Pics.Count).ConfigureAwait(false);
-
-                await Preloader.PreLoad(index).ConfigureAwait(false);
             }
 
             // Add recent files, except when browing archive
