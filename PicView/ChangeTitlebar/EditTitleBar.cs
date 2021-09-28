@@ -81,52 +81,19 @@ namespace PicView.UILogic
                 return;
             }
 
-            if (FileFunctions.RenameFile(Pics[FolderIndex], ConfigureWindows.GetMainWindow.TitleText.Text))
-            {
-                // Check if the file is not in the same folder
-                if (Path.GetDirectoryName(ConfigureWindows.GetMainWindow.TitleText.Text) != Path.GetDirectoryName(Pics[FolderIndex]))
-                {
-                    Pics.Remove(Pics[FolderIndex]);
-                    if (Pics.Count > 0)
-                    {
-                        await PicAsync().ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        await LoadPiFromFileAsync(ConfigureWindows.GetMainWindow.TitleText.Text).ConfigureAwait(false);
-                    }
-                }
-                else
-                {
-                    var text = ConfigureWindows.GetMainWindow.TitleText.Text;
-                    var width = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
-                    var height = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
-                    {
-                        Pics[FolderIndex] = text;
-                        SetTitle.SetTitleString((int)width, (int)height, FolderIndex);
-                    });
-                    if (ConfigureWindows.GetImageInfoWindow != null)
-                    {
-                        if (ConfigureWindows.GetImageInfoWindow.IsVisible)
-                        {
-                            await ConfigureWindows.GetImageInfoWindow.UpdateValuesAsync(text).ConfigureAwait(false);
-                        }
-                    }
-                }
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
-                {
-                    Refocus(false);
-                });
-
-            }
-            else
+            var success = await FileFunctions.RenameFileWithErrorChecking(ConfigureWindows.GetMainWindow.TitleText.Text).ConfigureAwait(false);
+            if (success.HasValue == false)
             {
                 Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
-                {
-                    Refocus();
-                });
+            }
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            {
+                Refocus(false);
+            });
+
+            if (success.HasValue && success.Value && ConfigureWindows.GetImageInfoWindow != null && ConfigureWindows.GetImageInfoWindow.IsVisible)
+            {
+                await ConfigureWindows.GetImageInfoWindow.UpdateValuesAsync(Pics?[FolderIndex]).ConfigureAwait(false);
             }
         }
 

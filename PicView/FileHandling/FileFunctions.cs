@@ -91,16 +91,17 @@ namespace PicView.FileHandling
             return true;
         }
 
-
-        internal static async Task<bool> RenameFileWithErrorChecking(string newPath)
+        /// <summary>
+        /// True if renamed same folder, null if error, false if moved to other dir
+        /// </summary>
+        /// <param name="newPath"></param>
+        /// <returns></returns>
+        internal static async Task<bool?> RenameFileWithErrorChecking(string newPath)
         {
             if (!FileFunctions.RenameFile(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex], newPath))
             {
-                return false;
+                return null;
             }
-
-            ChangeImage.Preloader.Remove(ChangeImage.Navigation.FolderIndex);
-            ChangeImage.Navigation.Pics.Remove(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
 
             // Check if the file is not in the same folder
             if (Path.GetDirectoryName(newPath) != Path.GetDirectoryName(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]))
@@ -108,14 +109,25 @@ namespace PicView.FileHandling
                 if (ChangeImage.Navigation.Pics.Count < 1)
                 {
                     await ChangeImage.Navigation.LoadPiFromFileAsync(newPath).ConfigureAwait(false);
-                    return true;
+                    return false;
                 }
 
+                ChangeImage.Preloader.Remove(ChangeImage.Navigation.FolderIndex);
+                ChangeImage.Navigation.Pics.Remove(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
                 await ChangeImage.Navigation.PicAsync(false).ConfigureAwait(false);
-                return true;
+                return false;
             }
+            ChangeImage.Preloader.Remove(ChangeImage.Navigation.FolderIndex);
+            ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex] = newPath;
 
-            await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            {
+                var width = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
+                var height = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
+
+                SetTitle.SetTitleString((int)width, (int)height, ChangeImage.Navigation.FolderIndex);
+            });
+
             return true;
         }
 

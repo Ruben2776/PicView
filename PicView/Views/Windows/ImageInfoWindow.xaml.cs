@@ -158,11 +158,11 @@ namespace PicView.Views.Windows
                 e.Handled = true;
                 var file = (Path.GetDirectoryName(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex])) + "/" + FilenameBox.Text;
                 var rename = await FileFunctions.RenameFileWithErrorChecking(file).ConfigureAwait(false);
-                if (rename == false)
+                if (rename.HasValue == false)
                 {
                     Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
                 }
-                else
+                if (rename.Value)
                 {
                     await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                     {
@@ -180,11 +180,11 @@ namespace PicView.Views.Windows
                 e.Handled = true;
                 var file =  FolderBox.Text + "/" + Path.GetFileName(FullPathBox.Text);
                 var rename = await FileFunctions.RenameFileWithErrorChecking(file).ConfigureAwait(false);
-                if (rename == false)
+                if (rename.HasValue == false)
                 {
                     Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
                 }
-                else
+                if (rename.Value)
                 {
                     await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                     {
@@ -201,9 +201,16 @@ namespace PicView.Views.Windows
 
                 e.Handled = true;
                 var rename = await FileFunctions.RenameFileWithErrorChecking(FullPathBox.Text).ConfigureAwait(false);
-                if (rename == false)
+                if (rename.HasValue == false)
                 {
                     Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
+                }
+                if (rename.Value)
+                {
+                    await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                    {
+                        FullPathBox.CaretIndex = FullPathBox.Text.Length;
+                    });
                 }
             };
 

@@ -187,10 +187,10 @@
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
-    <PackageReference Include="SkiaSharp" Version="2.88.0-preview.140">
+    <PackageReference Include="SkiaSharp" Version="2.88.0-preview.145">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.0-preview.140" />
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.0-preview.145" />
     <PackageReference Include="WpfScreenHelper" Version="1.1.0" />
     <PackageReference Include="XamlAnimatedGif" Version="2.0.1" />
   </ItemGroup>
