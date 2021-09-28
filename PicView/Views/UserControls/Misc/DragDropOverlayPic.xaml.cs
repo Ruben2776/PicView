@@ -9,6 +9,11 @@ namespace PicView.Views.UserControls
         {
             InitializeComponent();
 
+            UpdateSource(source);
+        }
+
+        public void UpdateSource(ImageSource source)
+        {
             if (source == null) { return; }
 
             ContentHolderSource.ImageSource = source;

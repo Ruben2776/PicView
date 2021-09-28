@@ -123,7 +123,7 @@ namespace PicView.UILogic.DragAndDrop
         /// <param name="e"></param>
         internal static async Task Image_Drop(object sender, DragEventArgs e)
         {
-            if (!Properties.Settings.Default.FullscreenGallery && PicGallery.GalleryFunctions.IsOpen)
+            if (!Properties.Settings.Default.FullscreenGallery && PicGallery.GalleryFunctions.IsOpen) // If horizontal gallery is open
             {
                 return;
             }
@@ -154,7 +154,7 @@ namespace PicView.UILogic.DragAndDrop
                 return;
             }
 
-            if (SupportedFiles.IsSupportedFile(files[0]) == false)
+            if (SupportedFiles.IsSupportedExt(files[0]) == false)
             {
                 return;
             }
