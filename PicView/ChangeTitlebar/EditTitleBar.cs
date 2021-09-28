@@ -106,6 +106,13 @@ namespace PicView.UILogic
                         Pics[FolderIndex] = text;
                         SetTitle.SetTitleString((int)width, (int)height, FolderIndex);
                     });
+                    if (ConfigureWindows.GetImageInfoWindow != null)
+                    {
+                        if (ConfigureWindows.GetImageInfoWindow.IsVisible)
+                        {
+                            await ConfigureWindows.GetImageInfoWindow.UpdateValuesAsync(text).ConfigureAwait(false);
+                        }
+                    }
                 }
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
                 {
