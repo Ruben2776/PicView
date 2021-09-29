@@ -91,10 +91,7 @@ namespace PicView.UILogic
                 Refocus(false);
             });
 
-            if (success.HasValue && success.Value && ConfigureWindows.GetImageInfoWindow != null && ConfigureWindows.GetImageInfoWindow.IsVisible)
-            {
-                await ConfigureWindows.GetImageInfoWindow.UpdateValuesAsync(Pics?[FolderIndex]).ConfigureAwait(false);
-            }
+            await ImageInfo.UpdateValuesAsync(Pics?[FolderIndex]).ConfigureAwait(false);
         }
 
         /// <summary>

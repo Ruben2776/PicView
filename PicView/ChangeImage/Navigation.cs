@@ -235,6 +235,14 @@ namespace PicView.ChangeImage
                 return;
             }
 
+            if (GetToolTipMessage is not null && GetToolTipMessage.IsVisible)
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                {
+                    GetToolTipMessage.Visibility = Visibility.Hidden;
+                });
+            }
+
             FolderIndex = index;
             var preloadValue = Preloader.Get(Navigation.Pics[index]);
 
@@ -332,13 +340,7 @@ namespace PicView.ChangeImage
                 UpdatePic(index, preloadValue.bitmapSource);
             });
 
-            if (ConfigureWindows.GetImageInfoWindow != null)
-            {
-                if (ConfigureWindows.GetImageInfoWindow.IsVisible)
-                {
-                    await ConfigureWindows.GetImageInfoWindow.UpdateValuesAsync(Pics?[FolderIndex]).ConfigureAwait(false);
-                }
-            }
+            await ImageInfo.UpdateValuesAsync(Pics?[FolderIndex]).ConfigureAwait(false);
 
             if (Pics?.Count > 1)
             {
@@ -428,13 +430,7 @@ namespace PicView.ChangeImage
             await Taskbar.NoProgress().ConfigureAwait(false);
             FolderIndex = 0;
 
-            if (ConfigureWindows.GetImageInfoWindow != null)
-            {
-                if (ConfigureWindows.GetImageInfoWindow.CheckAccess() && ConfigureWindows.GetImageInfoWindow.IsVisible)
-                {
-                    await ConfigureWindows.GetImageInfoWindow.UpdateValuesAsync(imageName).ConfigureAwait(false);
-                }
-            }
+            await ImageInfo.UpdateValuesAsync(imageName).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -493,13 +489,7 @@ namespace PicView.ChangeImage
             await Taskbar.NoProgress().ConfigureAwait(false);
             FolderIndex = 0;
 
-            if (ConfigureWindows.GetImageInfoWindow != null)
-            {
-                if (ConfigureWindows.GetImageInfoWindow.IsVisible)
-                {
-                    await ConfigureWindows.GetImageInfoWindow.UpdateValuesAsync(file).ConfigureAwait(false);
-                }
-            }
+            await ImageInfo.UpdateValuesAsync(file).ConfigureAwait(false);
 
             DeleteFiles.DeleteTempFiles();
         }

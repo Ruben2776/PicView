@@ -4,19 +4,18 @@ using PicView.UILogic;
 using PicView.UILogic.Animations;
 using System;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Animations.MouseOverAnimations;
+using static PicView.UILogic.ImageInfo;
 
 namespace PicView.Views.Windows
 {
     public partial class ImageInfoWindow : Window
     {
-        static object? rating;
+        
 
         public ImageInfoWindow()
         {
@@ -152,67 +151,15 @@ namespace PicView.Views.Windows
             // FilenameBox
             FilenameBox.AcceptsReturn = false;
             FilenameBox.KeyUp += async (_, e) => 
-            {
-                if (e.Key != System.Windows.Input.Key.Enter) { return; }
-
-                e.Handled = true;
-                var file = (Path.GetDirectoryName(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex])) + "/" + FilenameBox.Text;
-                var rename = await FileFunctions.RenameFileWithErrorChecking(file).ConfigureAwait(false);
-                if (rename.HasValue == false)
-                {
-                    Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
-                }
-                if (rename.Value)
-                {
-                    await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                    {
-                        FilenameBox.CaretIndex = FilenameBox.Text.Length;
-                    });
-                }
-            };
+            await ImageInfo.RenameTask(e, FilenameBox, (Path.GetDirectoryName(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex])) + "/" + FilenameBox.Text).ConfigureAwait(false);
 
             // FolderBox
             FolderBox.AcceptsReturn = false;
-            FolderBox.KeyUp += async (_, e) =>
-            {
-                if (e.Key != System.Windows.Input.Key.Enter) { return; }
-
-                e.Handled = true;
-                var file =  FolderBox.Text + "/" + Path.GetFileName(FullPathBox.Text);
-                var rename = await FileFunctions.RenameFileWithErrorChecking(file).ConfigureAwait(false);
-                if (rename.HasValue == false)
-                {
-                    Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
-                }
-                if (rename.Value)
-                {
-                    await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                    {
-                        FolderBox.CaretIndex = FolderBox.Text.Length;
-                    });
-                }
-            };
+            FolderBox.KeyUp += async (_, e) => await ImageInfo.RenameTask(e, FolderBox, FolderBox.Text + "/" + Path.GetFileName(FullPathBox.Text)).ConfigureAwait(false);
 
             // FullPathBox
             FullPathBox.AcceptsReturn = false;
-            FullPathBox.KeyUp += async (_, e) =>
-            {
-                if (e.Key != System.Windows.Input.Key.Enter) { return; }
-
-                e.Handled = true;
-                var rename = await FileFunctions.RenameFileWithErrorChecking(FullPathBox.Text).ConfigureAwait(false);
-                if (rename.HasValue == false)
-                {
-                    Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
-                }
-                if (rename.Value)
-                {
-                    await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                    {
-                        FullPathBox.CaretIndex = FullPathBox.Text.Length;
-                    });
-                }
-            };
+            FullPathBox.KeyUp += async (_, e) => await ImageInfo.RenameTask(e, FullPathBox, FullPathBox.Text).ConfigureAwait(false);
 
             FilenameCopy.TheButton.Click += delegate
             {
@@ -268,138 +215,6 @@ namespace PicView.Views.Windows
             {
                 Clipboard.SetText(AspectRatioBox.Text);
             };
-        }
-
-        internal async Task UpdateValuesAsync(string? file)
-        {
-            var data = await Task.Run(async () => (await GetImageData.RetrieveDataAsync(file).ConfigureAwait(false)));
-
-            await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-            {
-                if (data != null)
-                {
-
-                    FilenameBox.Text = data[0];
-
-                    FolderBox.Text = data[1];
-
-                    FullPathBox.Text = data[2];
-
-                    CreatedBox.Text = data[3];
-
-                    ModifiedBox.Text = data[4];
-
-                    SizePxBox.Text = data[5];
-
-                    ResolutionBox.Text = data[6];
-
-                    BitDepthBox.Text = data[7];
-
-                    SizeMpBox.Text = data[8];
-
-                    PrintSizeCmBox.Text = data[9];
-
-                    PrintSizeInBox.Text = data[10];
-
-                    AspectRatioBox.Text = data[11];
-
-                    rating = data[12];
-                }
-                else
-                {
-                    FilenameBox.Text =
-
-                    FolderBox.Text =
-
-                    FullPathBox.Text =
-
-                    CreatedBox.Text =
-
-                    ModifiedBox.Text =
-
-                    SizePxBox.Text =
-
-                    ResolutionBox.Text =
-
-                    BitDepthBox.Text =
-
-                    SizeMpBox.Text =
-
-                    PrintSizeCmBox.Text =
-
-                    PrintSizeInBox.Text =
-
-                    AspectRatioBox.Text = string.Empty;
-
-                    rating = 0;
-                }
-
-                UpdateStars();
-            });
-        }
-
-        private void UpdateStars()
-        {
-            if (rating is null || (string)rating == string.Empty || (string)rating == "0")
-            {
-                UpdateStars(0);
-                return;
-            }
-
-            int percent = Convert.ToInt32(rating.ToString());
-            var stars = Math.Ceiling(percent / 20d);
-
-            UpdateStars((int)stars);
-        }
-
-        private void UpdateStars(int stars)
-        {
-            switch (stars)
-            {
-                default:
-                case 0:
-                    Star1.OutlineStar();
-                    Star2.OutlineStar();
-                    Star3.OutlineStar();
-                    Star4.OutlineStar();
-                    Star5.OutlineStar();
-                return;
-                case 1:
-                    Star1.FillStar();
-                    Star2.OutlineStar();
-                    Star3.OutlineStar();
-                    Star4.OutlineStar();
-                    Star5.OutlineStar();
-                return;
-                case 2:
-                    Star1.FillStar();
-                    Star2.FillStar();
-                    Star3.OutlineStar();
-                    Star4.OutlineStar();
-                    Star5.OutlineStar();
-                return;
-                case 3:
-                    Star1.FillStar();
-                    Star2.FillStar();
-                    Star3.FillStar();
-                    Star4.OutlineStar();
-                    Star5.OutlineStar();
-                return;
-                case 4:
-                    Star1.FillStar();
-                    Star2.FillStar();
-                    Star3.FillStar();
-                    Star4.FillStar();
-                    Star5.OutlineStar();
-                return;
-                case 5:
-                    Star1.FillStar();
-                    Star2.FillStar();
-                    Star3.FillStar();
-                    Star4.FillStar();
-                    Star5.FillStar();
-                return;
-            }
         }
     }
 }
