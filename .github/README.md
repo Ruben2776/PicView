@@ -48,43 +48,40 @@ Improvements to the current code or bug fixes are also welcome!
 
 Built with the latest SDK of .NET and Visual Studio
 
+## Features
+**For a full list of features, check my website at https://picview.org**
+
 ## Upcoming features
 Take a look at https://github.com/Ruben2776/PicView/projects/1
 
-<h1>Features</h1>
-For a full list of features, check my website at https://picview.org
-    <br><b>Shortcuts:</b> Press <code>F1</code> to view list of shortcuts
+___
 
-<br>
-<h2>Fullscreen Image Gallery:</h2>
-<img src="https://i.imgur.com/aIEzJOa.png"/>
-View all files in current folder as a fullscreen thumbnail gallery, where you can quickly scroll to desired image.
+<h1 align="center">
+    <img src="https://picview.org/assets/screenshots/effects-window-dark.webp" />
+</h1>
 
-
-<br>
-<h2>Horizontal Image Gallery:</h2>
-<img src="https://picview.org/assets/images/Screenshot-2021-09-06-201303.webp"/>
-View all files in current folder as a thumbnail gallery, with custom animations.
- 
+Chose between 27 image effects. Change slider value to adjust intensity. Save effects to image by copying it, saving it or setting it as wallpaper. Effect will be applied when changing images.
 <br>
 
+<h1 align="center">
+    <img src="https://d33wubrfki0l68.cloudfront.net/c001d6d4a0b15bb654846648d862b18464c4ccd9/6dc3d/assets/screenshots/image-info-dark.webp" />
+</h1>
 
-## Shader effects/Image filters
-<img align="center" src="https://picview.org/assets/screenshots/hlsl.gif" width="743" height="450" />
-Choose between 27 different shader effects (image filters), including negative colors, old movie effect, pencil sketch etc. The effects can be applied to the currently viewed image, allowing you to quickly see how each image would look with a certain effect applied to them. <br>
-The effect can be copied to clipholder `Ctrl + C` or you can save it on your file system. The effect will also be applied when setting image as a wallpaper.
+Press the <code>Optimize Image</code> button to losslessly compress image <br>
+Click stars to set EXIF rating<br>
+Edit textbox values to rename or move current file
 <br>
-<h2>Display Image Info</h2>
-<img src="https://d33wubrfki0l68.cloudfront.net/f54dc2fd0422815fba4846196c3a799391e23087/e1461/assets/screenshots/image-info-dark.webp" width="918"/>
-Quickly view image info, which will update values as you browse through images.
 
-
-## Other features
-
+___
 If you have 7-Zip or WinRAR installed, you can view images inside archives, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
 
+* Quick startup time and built-in preloader to instantly view next image
 * For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
 * Interface can be toggled to just show the image by pressing `Alt + Z`.
+* Image EXIF rating
+* Preview between 27 different image filters that will be applied when copying image or setting it as wallpaper or saving file locally
+* Image Galleries
+* Sort files by: `name`, `file size`, `date created`, `last accessed`, `latest edit`, `file extension` and `randomized`
 * hover buttons and the colored window border can be toggled on/off in the settings window.
 * Basic editing: rotate, flip, crop, change file type
 * Drag & drop/paste from clipholder support for files, folders, URLs and archives
@@ -96,9 +93,12 @@ If you have 7-Zip or WinRAR installed, you can view images inside archives, such
 Rename or move files in the titlebar by pressing `F2` or right clicking it
 
 **File support** 
- > .jpg  .jpeg  .jpe  .png  .bmp  .tif  .tiff  .gif  .ico  .jfif  .webp <br>
+ > .jpg  .jpeg  .jpe  .png  .bmp  .tif  .tiff  .gif  .ico  .jfif  .webp .svgz .jxl <br>
    .psd  .psb .xcf .svg .heic .tga .dds<br>.3fr  .arw  .cr2  .crw  .dcr  .dng  .erf  .kdc  .mdc  .mef  .mos  .mrw  .nef  .nrw  .orf  .pef .raf  .raw  .rw2  .srf  .x3f *<br>
    .pgm  .hdr  .cut  .exr  .dib  .emf  .wmf  .wpg  .pcx  .xbm  .xpm .wbmp *
    
    _* RAW camera formats may be slower to load_
 
+
+
+<img src="https://d33wubrfki0l68.cloudfront.net/bcc20ae9223923eb15cc96a7b83f00af4a9a6101/f90e0/assets/screenshots/picview-settings-window-dark-theme.webp" />
