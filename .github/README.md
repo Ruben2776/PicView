@@ -56,6 +56,23 @@ Take a look at https://github.com/Ruben2776/PicView/projects/1
 
 ___
 
+<h1 align="center">
+    <img src="https://picview.org/assets/screenshots/effects-window-dark.webp" />
+</h1>
+
+Chose between 27 image effects. Change slider value to adjust intensity. Save effects to image by copying it, saving it or setting it as wallpaper. Effect will be applied when changing images.
+<br>
+
+<h1 align="center">
+    <img src="https://d33wubrfki0l68.cloudfront.net/c001d6d4a0b15bb654846648d862b18464c4ccd9/6dc3d/assets/screenshots/image-info-dark.webp" />
+</h1>
+
+Press the <code>Optimize Image</code> button to losslessly compress image <br>
+Click stars to set EXIF rating<br>
+Edit textbox values to rename or move current file
+<br>
+
+___
 If you have 7-Zip or WinRAR installed, you can view images inside archives, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
 
 * Quick startup time and built-in preloader to instantly view next image
@@ -82,3 +99,6 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it
    
    _* RAW camera formats may be slower to load_
 
+
+
+<img src="https://d33wubrfki0l68.cloudfront.net/bcc20ae9223923eb15cc96a7b83f00af4a9a6101/f90e0/assets/screenshots/picview-settings-window-dark-theme.webp" />
