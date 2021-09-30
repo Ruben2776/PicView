@@ -389,8 +389,8 @@ namespace PicView.UILogic
         internal static void CenterWindowOnScreen()
         {
             //move to the centre
-            GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth) / 2 + MonitorInfo.WorkArea.Left;
-            GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - GetMainWindow.ActualHeight) / 2 + MonitorInfo.WorkArea.Top;
+            GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth) / 2 + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
+            GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - GetMainWindow.ActualHeight) / 2 + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
         }
 
         internal static void SetLastWindowSize()
