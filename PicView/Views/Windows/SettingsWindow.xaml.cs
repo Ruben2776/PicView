@@ -32,6 +32,32 @@ namespace PicView.Views.Windows
 
                 AddGenericEvents(colorAnimation);
 
+                // GalleryBox
+                if (Properties.Settings.Default.FullscreenGalleryVertical == false && Properties.Settings.Default.FullscreenGalleryHorizontal == false)
+                { 
+                    Properties.Settings.Default.FullscreenGalleryVertical = true;
+                    GalleryVertical.IsSelected = Properties.Settings.Default.FullscreenGalleryVertical;
+                }
+                else
+                {
+                    GalleryVertical.IsSelected = Properties.Settings.Default.FullscreenGalleryVertical;
+                    GalleryHorizontal.IsSelected = Properties.Settings.Default.FullscreenGalleryHorizontal;
+                }
+
+                GalleryBox.SelectionChanged += delegate 
+                {
+                    if (GalleryVertical.IsSelected)
+                    {
+                        Properties.Settings.Default.FullscreenGalleryVertical = true;
+                        Properties.Settings.Default.FullscreenGalleryHorizontal = false;
+                    }
+                    else
+                    {
+                        Properties.Settings.Default.FullscreenGalleryHorizontal = true;
+                        Properties.Settings.Default.FullscreenGalleryVertical = false;
+                    }
+                };
+
                 // SubDirRadio
                 SubDirRadio.IsChecked = Properties.Settings.Default.IncludeSubDirectories;
                 SubDirRadio.Click += async delegate

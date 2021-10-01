@@ -1,4 +1,6 @@
-﻿using PicView.UILogic;
+﻿using PicView.ChangeImage;
+using PicView.FileHandling;
+using PicView.UILogic;
 using PicView.UILogic.Animations;
 using System.Windows.Controls;
 using static PicView.UILogic.Animations.MouseOverAnimations;
@@ -50,6 +52,16 @@ namespace PicView.Views.UserControls
                 UC.Close_UserControls();
                 FileHandling.Copy_Paste.Copyfile();
             };
+
+            Open.Click += async (_, _) => await Open_Save.OpenAsync().ConfigureAwait(false);
+            FileLocation.Click += (_, _) => Open_Save.Open_In_Explorer();
+            Print.Click += (_, _) => Open_Save.Print(Navigation.Pics?[Navigation.FolderIndex]);
+            SaveButton.Click += async (sender, e) => await Open_Save.SaveFilesAsync();
+            
+            OpenBorder.MouseLeftButtonUp += async (_, _) => await Open_Save.OpenAsync().ConfigureAwait(false);
+            FileLocationBorder.MouseLeftButtonUp += (_, _) => Open_Save.Open_In_Explorer();
+            PrintBorder.MouseLeftButtonUp += (_, _) => Open_Save.Print(Navigation.Pics?[Navigation.FolderIndex]);
+            SaveBorder.MouseLeftButtonUp += async (sender, e) => await Open_Save.SaveFilesAsync();
         }
     }
 }

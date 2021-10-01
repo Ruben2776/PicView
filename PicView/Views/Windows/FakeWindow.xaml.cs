@@ -30,7 +30,7 @@ namespace PicView.Views.Windows
             Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
             StateChanged += FakeWindow_StateChanged;
             MouseWheel += FakeWindow_MouseWheel;
-            Application.Current.MainWindow.Focus();
+            ConfigureWindows.GetMainWindow.Focus();
             LostFocus += FakeWindow_LostFocus;
             GotFocus += FakeWindow_LostFocus;
 
@@ -72,7 +72,7 @@ namespace PicView.Views.Windows
         {
             if (ConfigureWindows.GetMainWindow.WindowState == WindowState.Normal)
             {
-                if (Properties.Settings.Default.FullscreenGallery == false) { return; }
+                //if (Properties.Settings.Default.FullscreenGallery == false) { return; }
 
                 Show();
                 ConfigureWindows.GetMainWindow.BringIntoView();

@@ -101,9 +101,9 @@ namespace PicView.FileHandling
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
             {
                 // Sync with gallery
-                if (UC.GetPicGallery != null)
+                if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > ChangeImage.Navigation.FolderIndex)
                 {
-                    UC.GetPicGallery.Container.Children.RemoveAt(Pics.IndexOf(Pics[FolderIndex]));
+                    UC.GetPicGallery.Container.Children.RemoveAt(ChangeImage.Navigation.FolderIndex);
                 }
             });
 

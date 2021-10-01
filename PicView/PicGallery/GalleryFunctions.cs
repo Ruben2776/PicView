@@ -19,6 +19,8 @@ namespace PicView.PicGallery
 
         internal static async Task Add(BitmapSource pic, int id)
         {
+            if (GetPicGallery == null) { return; }
+
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
                 var selected = id == Navigation.FolderIndex;

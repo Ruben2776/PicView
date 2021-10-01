@@ -201,7 +201,7 @@ namespace PicView.ChangeImage
                 await LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
             }
 
-            if (Properties.Settings.Default.FullscreenGallery)
+            if (Properties.Settings.Default.FullscreenGalleryHorizontal || Properties.Settings.Default.FullscreenGalleryVertical)
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
                 {
@@ -228,7 +228,7 @@ namespace PicView.ChangeImage
         /// Loads image at specified index
         /// </summary>
         /// <param name="index">The index of file to load from Pics</param>
-        internal static async Task LoadPicAtIndexAsync(int index)
+        internal static async Task LoadPicAtIndexAsync(int index, bool resize = true)
         {
             if (Pics?.Count < index || Pics?.Count < 1)
             {
@@ -337,7 +337,7 @@ namespace PicView.ChangeImage
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
             {
-                UpdatePic(index, preloadValue.bitmapSource);
+                UpdatePic(index, preloadValue.bitmapSource, resize);
             });
 
             await ImageInfo.UpdateValuesAsync(Pics?[FolderIndex]).ConfigureAwait(false);
@@ -363,7 +363,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="index"></param>
         /// <param name="bitmapSource"></param>
-        internal static void UpdatePic(int index, BitmapSource bitmapSource)
+        internal static void UpdatePic(int index, BitmapSource bitmapSource, bool resise = true)
         {
             // Scroll to top if scroll enabled
             if (Properties.Settings.Default.ScrollEnabled)
@@ -395,7 +395,7 @@ namespace PicView.ChangeImage
                 ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
             }
 
-            if (FastPicRunning == false) // Update size only when key is not held down
+            if (FastPicRunning || resise) // Update size only when key is not held down
             {
                 FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
             }
@@ -555,7 +555,7 @@ namespace PicView.ChangeImage
                 }
 
                 // Load new gallery values, if changing folder
-                if (GetPicGallery != null && Properties.Settings.Default.FullscreenGallery)
+                if (GetPicGallery != null && Properties.Settings.Default.FullscreenGalleryHorizontal || GetPicGallery != null && Properties.Settings.Default.FullscreenGalleryVertical)
                 {
                     if (GetPicGallery.Container.Children.Count == 0)
                     {
@@ -581,18 +581,6 @@ namespace PicView.ChangeImage
             if (Error_Handling.CheckOutOfRange())
             {
                 return;
-            }
-
-            // exit if browsing PicGallery
-            if (GetPicGallery != null)
-            {
-                if (Properties.Settings.Default.FullscreenGallery == false)
-                {
-                    if (GalleryFunctions.IsOpen)
-                    {
-                        return;
-                    }
-                }
             }
 
             // Make backup

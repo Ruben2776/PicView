@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PicView.UILogic;
+using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -30,7 +31,7 @@ namespace PicView.PicGallery
             {
                 if (GetPicGallery == null) { return 0; }
 
-                return Properties.Settings.Default.FullscreenGallery == false ?
+                return Properties.Settings.Default.FullscreenGalleryHorizontal == false ?
                     (int)Math.Floor(GetPicGallery.Height / PicGalleryItem_Size) : Pics.Count;
             }
         }
@@ -41,7 +42,12 @@ namespace PicView.PicGallery
             {
                 if (GetPicGallery == null) { return 0; }
 
-                return Properties.Settings.Default.FullscreenGallery == false ?
+                if (Properties.Settings.Default.FullscreenGalleryVertical)
+                {
+                    return (int)Math.Floor(GetPicGallery.Width / PicGalleryItem_Size);
+                }
+
+                return Properties.Settings.Default.FullscreenGalleryHorizontal == false ?
                     Horizontal_items * Vertical_items :
                     (int)Math.Floor(GetPicGallery.Height / PicGalleryItem_Size);
             }
@@ -65,7 +71,9 @@ namespace PicView.PicGallery
         /// <param name="item">The index of picGalleryItem</param>
         internal static void ScrollTo()
         {
-            if (Properties.Settings.Default.FullscreenGallery == false)
+            if (GetPicGallery == null) { return; }
+
+            if (Properties.Settings.Default.FullscreenGalleryHorizontal == false)
             {
                 GetPicGallery.Scroller.ScrollToHorizontalOffset(PicGalleryItem_Size * Horizontal_items * Current_page);
             }
@@ -110,7 +118,7 @@ namespace PicView.PicGallery
                 var speed = speedUp ? PicGalleryItem_Size * 4.7 : PicGalleryItem_Size;
                 var direction = next ? GetPicGallery.Scroller.HorizontalOffset - speed : GetPicGallery.Scroller.HorizontalOffset + speed;
 
-                if (Properties.Settings.Default.FullscreenGallery == false)
+                if (Properties.Settings.Default.FullscreenGalleryHorizontal == false)
                 {
                     GetPicGallery.Scroller.ScrollToHorizontalOffset(direction);
                 }
@@ -152,5 +160,23 @@ namespace PicView.PicGallery
         }
 
         #endregion Select and deselect behaviour
+
+        internal static void HorizontalNavigation()
+        {
+            // TODO add navigation to horizontal gallery
+        }
+
+        internal static bool ShouldHorizontalNavigate()
+        {
+            if (GetPicGallery != null && GalleryFunctions.IsOpen)
+            {
+                if (ConfigureWindows.GetFakeWindow is null || ConfigureWindows.GetFakeWindow is not null && ConfigureWindows.GetFakeWindow.IsVisible == false)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

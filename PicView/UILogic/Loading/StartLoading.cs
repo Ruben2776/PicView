@@ -72,7 +72,7 @@ namespace PicView.UILogic.Loading
 
                     // Reset PicGallery and don't allow it to run,
                     // if only 1 image
-                    Properties.Settings.Default.FullscreenGallery = false;
+                    Properties.Settings.Default.FullscreenGalleryHorizontal = false;
 
                     // Don't start it in fullscreen with no image
                     Properties.Settings.Default.Fullscreen = false;
@@ -101,9 +101,9 @@ namespace PicView.UILogic.Loading
                         ConfigureWindows.Fullscreen_Restore(true);
                     });
                 }
-                else if (Properties.Settings.Default.FullscreenGallery)
+                else if (Properties.Settings.Default.StartInFullscreenGallery)
                 {
-                    await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
+                    await GalleryToggle.OpenFullscreenGalleryAsync(Properties.Settings.Default.FullscreenGalleryVertical, true).ConfigureAwait(false);
                     Timers.PicGalleryTimerHack();
 
                 }
@@ -226,7 +226,7 @@ namespace PicView.UILogic.Loading
             LoadToolsAndEffectsMenu();
             LoadAutoScrollSign();
 
-            Eventshandling.Go();
+            Eventshandling.SetMainWindowEvents();
 
             // Initilize Things!
             RecentFiles.Initialize();

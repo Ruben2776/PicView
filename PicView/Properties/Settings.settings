@@ -50,7 +50,7 @@
     <Setting Name="SortPreference" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="FullscreenGallery" Type="System.Boolean" Scope="User">
+    <Setting Name="FullscreenGalleryHorizontal" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="SlideTimer" Type="System.Double" Scope="User">
@@ -148,6 +148,12 @@
     </Setting>
     <Setting Name="CtrlZoom" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="FullscreenGalleryVertical" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="StartInFullscreenGallery" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -72,12 +72,11 @@ namespace PicView.Shortcuts
                 case Key.BrowserForward:
                 case Key.Right:
                 case Key.D:
-                    if (GetPicGallery != null)
+                    // exit if browsing horizontal PicGallery
+                    if (GalleryNavigation.ShouldHorizontalNavigate())
                     {
-                        if (GalleryFunctions.IsOpen && !Properties.Settings.Default.FullscreenGallery)
-                        {
-                            return;
-                        }
+                        GalleryNavigation.HorizontalNavigation();
+                        return;
                     }
                     // Go to first if Ctrl held down
                     if (ctrlDown && !e.IsRepeat)
@@ -94,12 +93,10 @@ namespace PicView.Shortcuts
                 case Key.BrowserBack:
                 case Key.Left:
                 case Key.A:
-                    if (GetPicGallery != null)
+                    if (GalleryNavigation.ShouldHorizontalNavigate())
                     {
-                        if (GalleryFunctions.IsOpen && !Properties.Settings.Default.FullscreenGallery)
-                        {
-                            return;
-                        }
+                        GalleryNavigation.HorizontalNavigation();
+                        return;
                     }
                     // Go to last if Ctrl held down
                     if (ctrlDown && !e.IsRepeat)
@@ -427,7 +424,7 @@ namespace PicView.Shortcuts
 
                     // G
                     case Key.G:
-                        if (Properties.Settings.Default.FullscreenGallery == false
+                        if (Properties.Settings.Default.FullscreenGalleryHorizontal == false
                           && !GetQuickSettingsMenu.IsVisible
                           && !GetToolsAndEffectsMenu.IsVisible
                           && !GetFileMenu.IsVisible
@@ -566,7 +563,7 @@ namespace PicView.Shortcuts
                 // Alt + Enter
                 else if ((e.SystemKey == Key.Enter))
                 {
-                    if (Properties.Settings.Default.FullscreenGallery == false)
+                    if (Properties.Settings.Default.FullscreenGalleryHorizontal == false)
                     {
                         Fullscreen_Restore();
                     }
@@ -777,7 +774,7 @@ namespace PicView.Shortcuts
 
             if (GalleryFunctions.IsOpen)
             {
-                if (Properties.Settings.Default.FullscreenGallery && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                if (Properties.Settings.Default.FullscreenGalleryHorizontal && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                 {
                     await PicAsync(e.Delta > 0).ConfigureAwait(false);
                 }

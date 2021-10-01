@@ -13,7 +13,7 @@ namespace PicView.UILogic
         /// </summary>
         internal static void ToggleInterface()
         {
-            if (Properties.Settings.Default.FullscreenGallery && GalleryFunctions.IsOpen)
+            if (Properties.Settings.Default.FullscreenGalleryHorizontal && GalleryFunctions.IsOpen)
             {
                 return;
             }

@@ -113,11 +113,19 @@ namespace PicView.FileHandling
                 }
 
                 ChangeImage.Preloader.Remove(ChangeImage.Navigation.FolderIndex);
+                if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > ChangeImage.Navigation.FolderIndex)
+                {
+                    UC.GetPicGallery.Container.Children.RemoveAt(ChangeImage.Navigation.FolderIndex);
+                }
                 ChangeImage.Navigation.Pics.Remove(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
                 await ChangeImage.Navigation.PicAsync(false).ConfigureAwait(false);
                 return false;
             }
             ChangeImage.Preloader.Remove(ChangeImage.Navigation.FolderIndex);
+            if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > ChangeImage.Navigation.FolderIndex)
+            {
+                UC.GetPicGallery.Container.Children.RemoveAt(ChangeImage.Navigation.FolderIndex);
+            }
             ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex] = newPath;
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>

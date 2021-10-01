@@ -45,7 +45,10 @@ namespace PicView.UILogic.Sizing
                         var pic = preloadValue.bitmapSource;
                         if (pic != null)
                         {
-                            FitImage(pic.PixelWidth, pic.PixelHeight);
+                            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                            {
+                                FitImage(pic.PixelWidth, pic.PixelHeight);
+                            });
                             return true;
                         }
                     }
@@ -71,21 +74,34 @@ namespace PicView.UILogic.Sizing
                         }
                         else if (XWidth > 0 && XHeight > 0)
                         {
-                            FitImage(XWidth, XHeight);
+                            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                            {
+                                FitImage(XWidth, XHeight);
+                            });
                             return true;
                         }
                     }
                 }
             }
-            else if (GetMainWindow.MainImage.Source != null)
-            {
-                FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
-                return true;
-            }
             else if (XWidth > 0 && XHeight > 0)
             {
-                FitImage(XWidth, XHeight);
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                {
+                    FitImage(XWidth, XHeight);
+                });
                 return true;
+            }
+            else
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                {
+                    if (GetMainWindow.MainImage.Source != null)
+                    {
+                        FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
+                        return true;
+                    }
+                    return false;
+                });
             }
 
             return false;
@@ -141,22 +157,29 @@ namespace PicView.UILogic.Sizing
             var monitorHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
 
             double padding;// Padding to make it feel more comfortable
-            if (MonitorInfo.DpiScaling >= 1)
+            if (MonitorInfo.DpiScaling <= 1)
             {
-                padding = MonitorInfo.Height - monitorHeight;
-                padding = padding < 0 ? 0 : padding;
+                padding = 20 * MonitorInfo.DpiScaling;
             }
             else
             {
                 padding = 0;
             }
 
-            if (Properties.Settings.Default.FullscreenGallery)
+            if (PicGallery.GalleryFunctions.IsOpen)
             {
-                /// Extra padding for picgallery required
-                padding += PicGalleryItem_Size - 50;
-                maxWidth = Math.Min(monitorWidth - padding, width);
-                maxHeight = Math.Min(monitorHeight, height);
+                if (Properties.Settings.Default.FullscreenGalleryHorizontal)
+                {
+                    /// Extra padding for picgallery required
+                    padding += PicGalleryItem_Size - 50;
+                    maxWidth = Math.Min(monitorWidth - padding, width);
+                    maxHeight = Math.Min(monitorHeight, height);
+                }
+                else
+                {
+                    maxWidth = Math.Min(monitorWidth - padding, width);
+                    maxHeight = Math.Min(monitorHeight - PicGalleryItem_Size_s, height);
+                }
             }
             else if (Properties.Settings.Default.AutoFitWindow) // If non resizeable behaviour
             {
@@ -224,13 +247,25 @@ namespace PicView.UILogic.Sizing
                 /// Update TitleBar
                 var interfaceSize = 192 * MonitorInfo.DpiScaling; // logo and buttons width
 
-                if (Properties.Settings.Default.FullscreenGallery)
+                if (PicGallery.GalleryFunctions.IsOpen)
                 {
-                    // Offset window to not overlap gallery
-                    GetMainWindow.Left = ((MonitorInfo.WorkArea.Width - (UC.GetPicGallery.ActualWidth + 5) - (GetMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
-                                      + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
-                    GetMainWindow.Top = ((MonitorInfo.WorkArea.Height
-                                       - (GetMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
+                    if (Properties.Settings.Default.FullscreenGalleryHorizontal)
+                    {
+                        // Offset window to not overlap gallery
+                        GetMainWindow.Left = ((MonitorInfo.WorkArea.Width - (UC.GetPicGallery.ActualWidth + 5) - (GetMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
+                                          + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
+
+                        GetMainWindow.Top = ((MonitorInfo.WorkArea.Height
+                                           - (GetMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
+                    }
+                    else
+                    {
+                        GetMainWindow.Top = ((MonitorInfo.WorkArea.Height - PicGallery.GalleryNavigation.PicGalleryItem_Size * MonitorInfo.DpiScaling)
+                            - GetMainWindow.ActualHeight) / 2 + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
+
+                        GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth)
+                            / 2 + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
+                    }
                 }
                 else if (Properties.Settings.Default.AutoFitWindow)
                 {

@@ -1,4 +1,6 @@
-﻿using PicView.UILogic.Animations;
+﻿using PicView.PicGallery;
+using PicView.UILogic;
+using PicView.UILogic.Animations;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
@@ -38,6 +40,23 @@ namespace PicView.Views.UserControls
             ContainedGalleryBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(ContainedFill); };
             ContainedGalleryBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(ContainedTextBrush); };
             ContainedGalleryBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ContainedButtonBrush); };
+
+            Contained_Gallery.Click += async delegate
+            {
+                UC.Close_UserControls();
+                await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
+            };
+            Fullscreen_Gallery.Click += async delegate
+            {
+                UC.Close_UserControls();
+
+                if (Properties.Settings.Default.FullscreenGalleryVertical == false && Properties.Settings.Default.FullscreenGalleryHorizontal == false)
+                {
+                    Properties.Settings.Default.FullscreenGalleryVertical = true;
+                }
+
+                await GalleryToggle.OpenFullscreenGalleryAsync(Properties.Settings.Default.FullscreenGalleryVertical, false).ConfigureAwait(false);
+            };
 
         }
     }

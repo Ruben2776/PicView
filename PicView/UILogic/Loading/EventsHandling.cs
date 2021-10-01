@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using static PicView.ChangeImage.Navigation;
-using static PicView.FileHandling.Open_Save;
 using static PicView.Shortcuts.MainShortcuts;
 using static PicView.UILogic.Animations.MouseOverAnimations;
 using static PicView.UILogic.DragAndDrop.Image_DragAndDrop;
@@ -18,7 +17,7 @@ namespace PicView.UILogic.Loading
         /// <summary>
         /// Start adding events
         /// </summary>
-        internal static void Go()
+        internal static void SetMainWindowEvents()
         {
             // keyboard and Mouse_Keys Keys
             ConfigureWindows.GetMainWindow.KeyDown += async (sender, e) => await MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
@@ -39,16 +38,6 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.FileMenuButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(ConfigureWindows.GetMainWindow.FileMenuBg);
             ConfigureWindows.GetMainWindow.FileMenuButton.Click += Toggle_open_menu;
 
-            GetFileMenu.Open.Click += async (_, _) => await OpenAsync().ConfigureAwait(false);
-            GetFileMenu.FileLocation.Click += (_, _) => Open_In_Explorer();
-            GetFileMenu.Print.Click += (_, _) => Print(Pics?[FolderIndex]);
-            GetFileMenu.SaveButton.Click += async (sender, e) => await SaveFilesAsync();
-
-            GetFileMenu.OpenBorder.MouseLeftButtonUp += async (_, _) => await OpenAsync().ConfigureAwait(false);
-            GetFileMenu.FileLocationBorder.MouseLeftButtonUp += (_, _) => Open_In_Explorer();
-            GetFileMenu.PrintBorder.MouseLeftButtonUp += (_, _) => Print(Pics?[FolderIndex]);
-            GetFileMenu.SaveBorder.MouseLeftButtonUp += async (sender, e) => await SaveFilesAsync();
-
             // image_button
             ConfigureWindows.GetMainWindow.image_button.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(ConfigureWindows.GetMainWindow.ImagePath1Fill, ConfigureWindows.GetMainWindow.ImagePath2Fill, ConfigureWindows.GetMainWindow.ImagePath3Fill);
             ConfigureWindows.GetMainWindow.image_button.MouseEnter += (_, _) => ButtonMouseOverAnim(ConfigureWindows.GetMainWindow.ImagePath1Fill, ConfigureWindows.GetMainWindow.ImagePath2Fill, ConfigureWindows.GetMainWindow.ImagePath3Fill);
@@ -56,19 +45,6 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.image_button.MouseLeave += (_, _) => ButtonMouseLeaveAnim(ConfigureWindows.GetMainWindow.ImagePath1Fill, ConfigureWindows.GetMainWindow.ImagePath2Fill, ConfigureWindows.GetMainWindow.ImagePath3Fill);
             ConfigureWindows.GetMainWindow.image_button.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(ConfigureWindows.GetMainWindow.ImageMenuBg);
             ConfigureWindows.GetMainWindow.image_button.Click += Toggle_image_menu;
-
-            // imageSettingsMenu Buttons
-
-            GetImageSettingsMenu.Contained_Gallery.Click += async delegate
-            {
-                Close_UserControls();
-                await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
-            };
-            GetImageSettingsMenu.Fullscreen_Gallery.Click += async delegate
-            {
-                Close_UserControls();
-                await GalleryToggle.OpenFullscreenGalleryAsync().ConfigureAwait(false);
-            };
 
             // SettingsButton
             ConfigureWindows.GetMainWindow.SettingsButton.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(ConfigureWindows.GetMainWindow.SettingsButtonFill);
@@ -137,7 +113,6 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.Closing += ConfigureWindows.Window_Closing;
             ConfigureWindows.GetMainWindow.StateChanged += ConfigureWindows.MainWindow_StateChanged;
 
-            //LocationChanged += MainWindow_LocationChanged;
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged += ConfigureWindows.SystemEvents_DisplaySettingsChanged;
 
 #if DEBUG

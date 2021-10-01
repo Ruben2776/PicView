@@ -360,6 +360,26 @@
             <TabItem FontSize="14" Header="{StaticResource UISettings}">
                 <StackPanel Margin="10">
 
+                    <StackPanel Margin="0,0,0,4" Orientation="Horizontal">
+                        <TextBlock
+                            Width="164"
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            Foreground="{StaticResource MainColorBrush}"
+                            Text="Fullscreen Gallery Layout"
+                            TextWrapping="Wrap" />
+                        <ComboBox
+                            x:Name="GalleryBox"
+                            Width="138"
+                            HorizontalAlignment="Stretch">
+                            <ComboBoxItem
+                                x:Name="GalleryVertical"
+                                Content="Vertical"
+                                IsSelected="True" />
+                            <ComboBoxItem x:Name="GalleryHorizontal" Content="Horizontal" />
+                        </ComboBox>
+                    </StackPanel>
+
                     <Label
                         Margin="0,0,0,5"
                         VerticalAlignment="Center"

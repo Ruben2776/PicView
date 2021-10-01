@@ -265,7 +265,7 @@ namespace PicView.UILogic
                 // Handle if browsing gallery
                 if (GalleryFunctions.IsOpen)
                 {
-                    GalleryLoad.LoadLayout();
+                    GalleryLoad.LoadLayout(false);
                     GalleryNavigation.ScrollTo();
                 }
 
@@ -388,9 +388,8 @@ namespace PicView.UILogic
         /// </summary>
         internal static void CenterWindowOnScreen()
         {
-            //move to the centre
-            GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth) / 2 + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
             GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - GetMainWindow.ActualHeight) / 2 + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
+            GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth) / 2 + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
         }
 
         internal static void SetLastWindowSize()
@@ -433,6 +432,22 @@ namespace PicView.UILogic
             if (GetFakeWindow != null)
             {
                 GetFakeWindow.Close();
+            }
+
+            if (GalleryFunctions.IsOpen)
+            {
+                if (Properties.Settings.Default.FullscreenGalleryHorizontal || Properties.Settings.Default.FullscreenGalleryVertical)
+                {
+                    Properties.Settings.Default.StartInFullscreenGallery = true;
+                }
+                else
+                {
+                    Properties.Settings.Default.StartInFullscreenGallery = false;
+                }
+            }
+            else
+            {
+                Properties.Settings.Default.StartInFullscreenGallery = false;
             }
 
             GetMainWindow.Hide(); // Make it feel faster

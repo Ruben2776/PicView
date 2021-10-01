@@ -254,6 +254,9 @@
     <Compile Update="Views\UserControls\Buttons\CloseButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\UserControls\Gallery\PicGalleryTopButtonsV2.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\UserControls\Misc\DragDropOverlayPic.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -339,6 +342,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\UserControls\Buttons\CloseButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserControls\Gallery\PicGalleryTopButtonsV2.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\UserControls\Misc\DragDropOverlayPic.xaml">

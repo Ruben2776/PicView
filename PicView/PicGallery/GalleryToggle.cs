@@ -25,11 +25,11 @@ namespace PicView.PicGallery
             }
 
             /// Toggle PicGallery, when not changed
-            if (!change)
+            if (change == false)
             {
-                if (Properties.Settings.Default.FullscreenGallery == false)
+                if (Properties.Settings.Default.FullscreenGalleryHorizontal == false && Properties.Settings.Default.FullscreenGalleryVertical == false)
                 {
-                    if (!IsOpen)
+                    if (IsOpen == false)
                     {
                         await OpenHorizontalGalleryAsync().ConfigureAwait(false);
                     }
@@ -40,20 +40,27 @@ namespace PicView.PicGallery
                 }
                 else
                 {
-                    if (!IsOpen)
+                    if (IsOpen == false)
                     {
-                        await OpenFullscreenGalleryAsync().ConfigureAwait(false);
+                        await OpenFullscreenGalleryAsync(Properties.Settings.Default.FullscreenGalleryVertical, false).ConfigureAwait(false);
                     }
                     else
                     {
-                        CloseFullscreenGallery();
+                        if (ConfigureWindows.GetFakeWindow is null || ConfigureWindows.GetFakeWindow is not null && ConfigureWindows.GetFakeWindow.IsVisible == false)
+                        {
+                            CloseHorizontalGallery();
+                        }
+                        else
+                        {
+                            CloseFullscreenGallery();
+                        }
                     }
                 }
             }
             /// Toggle PicGallery, when changed
             else
             {
-                if (Properties.Settings.Default.FullscreenGallery)
+                if (Properties.Settings.Default.FullscreenGalleryHorizontal || Properties.Settings.Default.FullscreenGalleryVertical)
                 {
                     ChangeToFullscreenGallery();
                 }
@@ -75,11 +82,9 @@ namespace PicView.PicGallery
                 return;
             }
 
-            Properties.Settings.Default.FullscreenGallery = false;
-
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
-                GalleryLoad.LoadLayout();
+                GalleryLoad.LoadLayout(false);
 
                 AnimationHelper.Fade(GetPicGallery, TimeSpan.FromSeconds(.3), TimeSpan.Zero, 0, 1);
 
@@ -114,26 +119,66 @@ namespace PicView.PicGallery
             }
         }
 
-        internal static async Task OpenFullscreenGalleryAsync(bool startup = false)
+        internal static async Task OpenFullscreenGalleryAsync(bool vertical, bool startup)
         {
             if (Pics?.Count < 1 && !startup)
             {
                 return;
             }
 
-            Properties.Settings.Default.FullscreenGallery = true;
-
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, async () =>
+            if (vertical)
             {
-                GalleryLoad.LoadLayout();
+                Properties.Settings.Default.FullscreenGalleryHorizontal = false;
+                Properties.Settings.Default.FullscreenGalleryVertical = true;
+            }
+            else
+            {
+                Properties.Settings.Default.FullscreenGalleryHorizontal = true;
+                Properties.Settings.Default.FullscreenGalleryVertical = false;
+            }
+
+            int count = -1;
+
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            {
+                GalleryLoad.LoadLayout(true);
 
                 if (GetFakeWindow == null)
                 {
                     GetFakeWindow = new FakeWindow();
-                    GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtons
+
+                    if (vertical)
                     {
-                        Margin = new Thickness(1, 12, 0, 0),
-                    });
+                        GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtonsV2
+                        {
+                            Margin = new Thickness(1, 12, 0, 0),
+                        });
+                    }
+                    else
+                    {
+                        GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtons
+                        {
+                            Margin = new Thickness(1, 12, 0, 0),
+                        });
+                    }
+                }
+                else
+                {
+                    GetFakeWindow.grid.Children.RemoveAt(0);
+                    if (vertical)
+                    {
+                        GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtonsV2
+                        {
+                            Margin = new Thickness(1, 12, 0, 0),
+                        });
+                    }
+                    else
+                    {
+                        GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtons
+                        {
+                            Margin = new Thickness(1, 12, 0, 0),
+                        });
+                    }
                 }
 
                 // Switch gallery container to the correct window
@@ -158,9 +203,19 @@ namespace PicView.PicGallery
 
                 if (GetPicGallery.Container.Children.Count == 0)
                 {
-                    await GalleryLoad.Load().ConfigureAwait(false);
+                    count = 0;
                 }
             });
+
+            if (vertical)
+            {
+                await UILogic.Sizing.ScaleImage.TryFitImageAsync().ConfigureAwait(false);
+            }
+
+            if (count == 0)
+            {
+                await GalleryLoad.Load().ConfigureAwait(false);
+            }
         }
 
         #endregion Open
@@ -195,7 +250,7 @@ namespace PicView.PicGallery
 
         internal static void CloseFullscreenGallery()
         {
-            Properties.Settings.Default.FullscreenGallery = false;
+            if (ConfigureWindows.GetFakeWindow is null) { return; }
             IsOpen = false;
             GetFakeWindow.Hide();
 
@@ -220,8 +275,7 @@ namespace PicView.PicGallery
 
         internal static void ChangeToHorizontalGallery()
         {
-            Properties.Settings.Default.FullscreenGallery = false;
-            GalleryLoad.LoadLayout();
+            GalleryLoad.LoadLayout(false);
 
             if (GetFakeWindow.grid.Children.Contains(GetPicGallery))
             {
@@ -234,8 +288,7 @@ namespace PicView.PicGallery
 
         internal static void ChangeToFullscreenGallery()
         {
-            Properties.Settings.Default.FullscreenGallery = true;
-            GalleryLoad.LoadLayout();
+            GalleryLoad.LoadLayout(true);
 
             if (GetFakeWindow != null)
             {

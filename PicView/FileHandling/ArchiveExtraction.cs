@@ -156,7 +156,7 @@ namespace PicView.FileHandling
                     // Add zipped files as recent file
                     RecentFiles.Add(TempZipFile);
 
-                    if (Properties.Settings.Default.FullscreenGallery)
+                    if (Properties.Settings.Default.FullscreenGalleryHorizontal)
                     {
                         await PicGallery.GalleryLoad.Load().ConfigureAwait(false);
                         Timers.PicGalleryTimerHack();
