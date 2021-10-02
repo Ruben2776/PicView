@@ -70,7 +70,7 @@ namespace PicView.ImageHandling
                             Quality = 100,
                             ColorSpace = ColorSpace.Transparent
                         };
-                        magickImage.Read(filestream); // Reading it async causes slowdown
+                        await magickImage.ReadAsync(filestream).ConfigureAwait(false);
                         await filestream.DisposeAsync().ConfigureAwait(false);
 
                         var bitmap = magickImage.ToBitmapSource();

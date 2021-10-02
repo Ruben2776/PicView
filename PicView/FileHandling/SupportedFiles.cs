@@ -103,10 +103,7 @@ namespace PicView.FileHandling
         }
 
         /// <summary>
-        /// Check if supported:
-        /// Returns true if common files,
-        /// False if uncommon,
-        /// Null if unsupported
+        /// Returns true if supported archive
         /// </summary>
         /// <param name="ext"></param>
         /// <returns></returns>

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interop;
 using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
@@ -40,20 +41,18 @@ namespace PicView.UILogic.Loading
             // Load sizing properties
             MonitorInfo = MonitorSize.GetMonitorSize();
             AutoFitWindow();
-            await SetScrollBehaviour(Properties.Settings.Default.ScrollEnabled).ConfigureAwait(false);
+            ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Properties.Settings.Default.ScrollEnabled ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
                 // Set min size to DPI scaling
                 ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
                 ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
             });
 
-            
-
             if (!Properties.Settings.Default.ShowInterface)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                 {
                     ConfigureWindows.GetMainWindow.TitleBar.Visibility =
                        ConfigureWindows.GetMainWindow.LowerBar.Visibility
@@ -115,7 +114,7 @@ namespace PicView.UILogic.Loading
                     });
                 }
 
-                await LoadPicFromString(args[1]).ConfigureAwait(false);
+                await QuickLoad(args[1]).ConfigureAwait(false);
             }
         }
 

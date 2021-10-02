@@ -73,14 +73,117 @@ namespace PicView.ChangeImage
 
         #endregion Static fields
 
-        #region Update Image values
+        #region Load Pic from value
+
+        /// <summary>
+        /// Quickly load image and then update values
+        /// Only to be used from startup
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        internal static async Task QuickLoad(string file)
+        {
+            if (File.Exists(file) == false)
+            {
+                await LoadPicFromString(file, false).ConfigureAwait(false);
+                return;
+            }
+
+            BitmapSource? pic = null, thumb;
+            thumb = await Task.FromResult(GetBitmapSourceThumb(file)).ConfigureAwait(false);
+            bool archive = false;
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
+            {
+                // Set Loading
+                SetLoadingString();
+
+                if (thumb is  not null && ConfigureWindows.GetMainWindow.MainImage.Source is null)
+                {
+                    ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
+
+                    if (Properties.Settings.Default.Fullscreen)
+                    {
+                        ConfigureWindows.GetMainWindow.MainImage.Width = thumb.PixelWidth;
+                        ConfigureWindows.GetMainWindow.MainImage.Height = thumb.PixelHeight;
+                    }
+                    else
+                    {
+                        ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ActualWidth;
+                        ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ActualHeight;
+                    }
+                }
+            });
+
+            pic = await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(false);
+            if (pic is null)
+            {
+                archive = SupportedFiles.IsSupportedArchives(file);
+                if (archive == false)
+                {
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
+                    {
+                        Unload();
+                    });
+                    return;
+                }
+            }
+            else
+            {
+                await TryFitImageAsync(file).ConfigureAwait(false);
+
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
+                {
+                    ConfigureWindows.GetMainWindow.MainImage.Source = pic;
+                });
+            }
+
+            await GetValues(file).ConfigureAwait(false);
+
+            if (Pics.Count > 0)
+            {
+                FolderIndex = Pics.IndexOf(file);
+            }
+            else
+            {
+                FolderIndex = 0;
+            }
+
+            if (archive == false)
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
+                {
+                    UpdatePic(FolderIndex, pic, false);
+                });
+
+                await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
+                await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
+            }
+
+            if (FolderIndex > 0)
+            {
+                await Taskbar.Progress((double)FolderIndex / Pics.Count).ConfigureAwait(false);
+            }
+
+            if (Properties.Settings.Default.FullscreenGalleryHorizontal || Properties.Settings.Default.FullscreenGalleryVertical)
+            {
+                await GalleryLoad.Load().ConfigureAwait(false);
+            }
+
+            FreshStartup = false;
+
+            // Add recent files, except when browing archive
+            if (string.IsNullOrWhiteSpace(TempZipFile) && Pics?.Count > FolderIndex)
+            {
+                RecentFiles.Add(Pics?[FolderIndex]);
+            }
+        }
 
         /// <summary>
         /// Determine proper path from given string value
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        internal static async Task LoadPicFromString(string path)
+        internal static async Task LoadPicFromString(string path, bool checkExists = true)
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
@@ -104,7 +207,7 @@ namespace PicView.ChangeImage
                 }
             });
 
-            if (File.Exists(path))
+            if (checkExists && File.Exists(path))
             {
                 // set up size so it feels better when starting application
                 await TryFitImageAsync(path).ConfigureAwait(false);
@@ -395,7 +498,7 @@ namespace PicView.ChangeImage
                 ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
             }
 
-            if (FastPicRunning || resise) // Update size only when key is not held down
+            if (resise)
             {
                 FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
             }
