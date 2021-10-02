@@ -99,7 +99,7 @@ namespace PicView.UILogic.TransformImage
         {
             // Report position for image drag
             ConfigureWindows.GetMainWindow.MainImage.CaptureMouse();
-            start = e.GetPosition(ConfigureWindows.GetMainWindow.MainImageBorder);
+            start = e.GetPosition(ConfigureWindows.GetMainWindow.Scroller);
             origin = new Point(translateTransform.X, translateTransform.Y);
         }
 
@@ -121,8 +121,8 @@ namespace PicView.UILogic.TransformImage
             // Keep panning it in bounds if in normal window
             if (Properties.Settings.Default.Fullscreen == false)
             {
-                var isXOutOfBorder = ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth < (ConfigureWindows.GetMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
-                var isYOutOfBorder = ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight < (ConfigureWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
+                var isXOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualWidth < (ConfigureWindows.GetMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
+                var isYOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualHeight < (ConfigureWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
                 if ((isXOutOfBorder && newXproperty > 0) || (!isXOutOfBorder && newXproperty < 0))
                 {
                     newXproperty = 0;
@@ -131,12 +131,12 @@ namespace PicView.UILogic.TransformImage
                 {
                     newYproperty = 0;
                 }
-                var maxX = ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth - (ConfigureWindows.GetMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
+                var maxX = ConfigureWindows.GetMainWindow.Scroller.ActualWidth - (ConfigureWindows.GetMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
                 if ((isXOutOfBorder && newXproperty < maxX) || (!isXOutOfBorder && newXproperty > maxX))
                 {
                     newXproperty = maxX;
                 }
-                var maxY = ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight - (ConfigureWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
+                var maxY = ConfigureWindows.GetMainWindow.Scroller.ActualHeight - (ConfigureWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
                 if ((isXOutOfBorder && newYproperty < maxY) || (!isXOutOfBorder && newYproperty > maxY))
                 {
                     newYproperty = maxY;
@@ -201,52 +201,48 @@ namespace PicView.UILogic.TransformImage
             /// Determine zoom speed
             var zoomSpeed = Properties.Settings.Default.ZoomSpeed;
 
-            if (increment)
+            // Increase speed determined by how much is zoomed in
+            // TODO improve it when zoomed greatly in
+
+            if (ZoomValue > 15 && increment)
             {
-                // Increase speed determined by how much is zoomed in
-                // TODO improve it when zoomed greatly in
-                if (ZoomValue >= 1.2)
+                return;
+            }
+
+            if (ZoomValue > 6)
+            {
+                if (increment)
                 {
-                    zoomSpeed += .2;
+                    zoomSpeed += 2;
                 }
-                if (ZoomValue >= 1.4)
+                else
                 {
-                    zoomSpeed += .25;
-                }
-                if (ZoomValue >= 1.8)
-                {
-                    zoomSpeed += .3;
-                }
-                if (ZoomValue >= 2)
-                {
-                    zoomSpeed += .4;
-                }
-                if (ZoomValue >= 2.2)
-                {
-                    zoomSpeed += .6;
+                    zoomSpeed += 2.5;
                 }
             }
-            else
+            if (ZoomValue > 3)
             {
-                if (ZoomValue >= 1.2)
+                if (increment)
                 {
-                    zoomSpeed += .3;
+                    zoomSpeed += 1.5;
                 }
-                if (ZoomValue >= 1.4)
+                else
                 {
-                    zoomSpeed += .4;
+                    zoomSpeed += 2;
                 }
-                if (ZoomValue >= 1.8)
-                {
-                    zoomSpeed += .5;
-                }
-                if (ZoomValue >= 2)
-                {
-                    zoomSpeed += .55;
-                }
+            }
+
+            Tooltip.ShowTooltipMessage(scaleTransform.ScaleX);
+
+
+            if (increment == false)
+            {
                 // Make it go negative
                 zoomSpeed = -zoomSpeed;
             }
+
+
+
 
             // Set speed
             ZoomValue += zoomSpeed;

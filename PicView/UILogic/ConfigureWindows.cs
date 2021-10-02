@@ -303,8 +303,8 @@ namespace PicView.UILogic
 
                     GetMainWindow.Width =
                     GetMainWindow.Height =
-                    GetMainWindow.MainImageBorder.Width =
-                    GetMainWindow.MainImageBorder.Height = double.NaN;
+                    GetMainWindow.Scroller.Width =
+                    GetMainWindow.Scroller.Height = double.NaN;
 
                     GetMainWindow.Top -= GetMainWindow.LowerBar.ActualHeight / 2; // It works...
                 }
@@ -323,8 +323,8 @@ namespace PicView.UILogic
                     GetMainWindow.Height = Properties.Settings.Default.Height;
                     GetMainWindow.Width = Properties.Settings.Default.Width;
 
-                    GetMainWindow.MainImageBorder.Width =
-                    GetMainWindow.MainImageBorder.Height = double.NaN;
+                    GetMainWindow.Scroller.Width =
+                    GetMainWindow.Scroller.Height = double.NaN;
                 }
 
                 if (GetMainWindow.WindowState == WindowState.Maximized)
@@ -370,8 +370,8 @@ namespace PicView.UILogic
             GetMainWindow.Height = MonitorInfo.Height;
 
             // Set border to max to fix panning when zooming
-            GetMainWindow.MainImageBorder.Width = MonitorInfo.Width;
-            GetMainWindow.MainImageBorder.Height = MonitorInfo.Height;
+            GetMainWindow.Scroller.Width = MonitorInfo.Width;
+            GetMainWindow.Scroller.Height = MonitorInfo.Height;
 
             // Fix buttons appearing out of window
             GetMainWindow.ParentContainer.Margin = new Thickness(8);
