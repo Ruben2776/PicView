@@ -14,7 +14,6 @@ using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Loading.LoadContextMenus;
 using static PicView.UILogic.Loading.LoadControls;
 using static PicView.UILogic.Sizing.WindowSizing;
-using static PicView.UILogic.TransformImage.Scroll;
 using static PicView.UILogic.TransformImage.ZoomLogic;
 using static PicView.UILogic.UC;
 
@@ -43,21 +42,15 @@ namespace PicView.UILogic.Loading
             AutoFitWindow();
             ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Properties.Settings.Default.ScrollEnabled ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
-            {
-                // Set min size to DPI scaling
-                ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
-                ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
-            });
+            // Set min size to DPI scaling
+            ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
+            ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
             if (!Properties.Settings.Default.ShowInterface)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
-                {
-                    ConfigureWindows.GetMainWindow.TitleBar.Visibility =
-                       ConfigureWindows.GetMainWindow.LowerBar.Visibility
-                       = Visibility.Collapsed;
-                });
+                ConfigureWindows.GetMainWindow.TitleBar.Visibility =
+                   ConfigureWindows.GetMainWindow.LowerBar.Visibility
+                   = Visibility.Collapsed;
 
             }
 
@@ -65,53 +58,43 @@ namespace PicView.UILogic.Loading
             var args = Environment.GetCommandLineArgs();
             if (args.Length == 1)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                Unload(); // Load clean setup when starting up without arguments
+
+                // Reset PicGallery and don't allow it to run,
+                // if only 1 image
+                Properties.Settings.Default.FullscreenGalleryHorizontal = false;
+
+                // Don't start it in fullscreen with no image
+                Properties.Settings.Default.Fullscreen = false;
+
+                // Determine proper startup size
+                if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width > 0)
                 {
-                    Unload(); // Load clean setup when starting up without arguments
-
-                    // Reset PicGallery and don't allow it to run,
-                    // if only 1 image
-                    Properties.Settings.Default.FullscreenGalleryHorizontal = false;
-
-                    // Don't start it in fullscreen with no image
-                    Properties.Settings.Default.Fullscreen = false;
-
-                    // Determine proper startup size
-                    if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width > 0)
-                    {
-                        ConfigureWindows.SetLastWindowSize();
-                    }
-                    else
-                    {
-                        ConfigureWindows.GetMainWindow.Width = ConfigureWindows.GetMainWindow.MinWidth;
-                        ConfigureWindows.GetMainWindow.Height = ConfigureWindows.GetMainWindow.MinHeight;
-                        ConfigureWindows.CenterWindowOnScreen();
-                    }
-                });
-
+                    ConfigureWindows.SetLastWindowSize();
+                }
+                else
+                {
+                    ConfigureWindows.GetMainWindow.Width = ConfigureWindows.GetMainWindow.MinWidth;
+                    ConfigureWindows.GetMainWindow.Height = ConfigureWindows.GetMainWindow.MinHeight;
+                    ConfigureWindows.CenterWindowOnScreen();
+                }
+                return;
             }
             else
             {
                 // Determine prefered UI for startup
                 if (Properties.Settings.Default.Fullscreen)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
-                    {
-                        ConfigureWindows.Fullscreen_Restore(true);
-                    });
+                    ConfigureWindows.Fullscreen_Restore(true);
                 }
                 else if (Properties.Settings.Default.StartInFullscreenGallery)
                 {
                     await GalleryToggle.OpenFullscreenGalleryAsync(Properties.Settings.Default.FullscreenGalleryVertical, true).ConfigureAwait(false);
                     Timers.PicGalleryTimerHack();
-
                 }
-                else if (Properties.Settings.Default.Width > 0 && Properties.Settings.Default.AutoFitWindow == false)
+                else if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width > 0)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
-                    {
-                        ConfigureWindows.SetLastWindowSize();
-                    });
+                    ConfigureWindows.SetLastWindowSize();
                 }
 
                 await QuickLoad(args[1]).ConfigureAwait(false);
@@ -123,7 +106,6 @@ namespace PicView.UILogic.Loading
 #if DEBUG
             Trace.WriteLine("ContentRendered started");
 #endif
-
             #region Add dictionaries
 
             Application.Current.Resources.MergedDictionaries.Add(

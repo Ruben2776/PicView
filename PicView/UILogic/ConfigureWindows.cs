@@ -213,6 +213,7 @@ namespace PicView.UILogic
                 // Update info for possible new screen, needs more engineering
                 // Seems to work
                 MonitorInfo = MonitorSize.GetMonitorSize();
+                SetWindowSize();
             }
         }
 
@@ -352,13 +353,8 @@ namespace PicView.UILogic
             // Save size to get back to it when restoring
             if (!Properties.Settings.Default.AutoFitWindow && GetMainWindow.WindowState != WindowState.Maximized)
             {
-                Properties.Settings.Default.Top = GetMainWindow.Top;
-                Properties.Settings.Default.Left = GetMainWindow.Left;
-                Properties.Settings.Default.Height = GetMainWindow.Height;
-                Properties.Settings.Default.Width = GetMainWindow.Width;
+                SetWindowSize();
             }
-
-
 
             ShowTopandBottom(false);
             GetMainWindow.Topmost = true;
@@ -390,6 +386,11 @@ namespace PicView.UILogic
         {
             GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - GetMainWindow.ActualHeight) / 2 + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
             GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth) / 2 + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
+
+            if (Properties.Settings.Default.AutoFitWindow == false)
+            {
+                SetWindowSize();
+            }
         }
 
         internal static void SetLastWindowSize()
@@ -398,6 +399,16 @@ namespace PicView.UILogic
             ConfigureWindows.GetMainWindow.Left = Properties.Settings.Default.Left;
             ConfigureWindows.GetMainWindow.Width = Properties.Settings.Default.Width;
             ConfigureWindows.GetMainWindow.Height = Properties.Settings.Default.Height;
+        }
+
+        internal static void SetWindowSize()
+        {
+            Properties.Settings.Default.Top = GetMainWindow.Top;
+            Properties.Settings.Default.Left = GetMainWindow.Left;
+            Properties.Settings.Default.Height = GetMainWindow.Height;
+            Properties.Settings.Default.Width = GetMainWindow.Width;
+
+            Properties.Settings.Default.Save();
         }
 
         #endregion Window Functions

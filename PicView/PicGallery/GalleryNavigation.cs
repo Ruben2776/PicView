@@ -31,7 +31,7 @@ namespace PicView.PicGallery
             {
                 if (GetPicGallery == null) { return 0; }
 
-                return Properties.Settings.Default.FullscreenGalleryHorizontal == false ?
+                return Properties.Settings.Default.FullscreenGalleryVertical == false ?
                     (int)Math.Floor(GetPicGallery.Height / PicGalleryItem_Size) : Pics.Count;
             }
         }
@@ -42,14 +42,12 @@ namespace PicView.PicGallery
             {
                 if (GetPicGallery == null) { return 0; }
 
-                if (Properties.Settings.Default.FullscreenGalleryVertical)
+                if (ShouldHorizontalNavigate())
                 {
-                    return (int)Math.Floor(GetPicGallery.Width / PicGalleryItem_Size);
+                    return (int)Math.Floor(GetPicGallery.Height / PicGalleryItem_Size);
                 }
 
-                return Properties.Settings.Default.FullscreenGalleryHorizontal == false ?
-                    Horizontal_items * Vertical_items :
-                    (int)Math.Floor(GetPicGallery.Height / PicGalleryItem_Size);
+                return Horizontal_items * Vertical_items;
             }
         }
 
@@ -63,6 +61,7 @@ namespace PicView.PicGallery
 
         #endregion int calculations
 
+
         #region ScrollTo
 
         /// <summary>
@@ -73,9 +72,9 @@ namespace PicView.PicGallery
         {
             if (GetPicGallery == null) { return; }
 
-            if (Properties.Settings.Default.FullscreenGalleryHorizontal == false)
+            if (ShouldHorizontalNavigate())
             {
-                GetPicGallery.Scroller.ScrollToHorizontalOffset(PicGalleryItem_Size * Horizontal_items * Current_page);
+                GetPicGallery.Scroller.ScrollToHorizontalOffset(PicGalleryItem_Size * Items_per_page * Current_page);
             }
             else
             {
@@ -118,7 +117,7 @@ namespace PicView.PicGallery
                 var speed = speedUp ? PicGalleryItem_Size * 4.7 : PicGalleryItem_Size;
                 var direction = next ? GetPicGallery.Scroller.HorizontalOffset - speed : GetPicGallery.Scroller.HorizontalOffset + speed;
 
-                if (Properties.Settings.Default.FullscreenGalleryHorizontal == false)
+                if (ShouldHorizontalNavigate())
                 {
                     GetPicGallery.Scroller.ScrollToHorizontalOffset(direction);
                 }
@@ -140,6 +139,11 @@ namespace PicView.PicGallery
 
         #region Select and deselect behaviour
 
+        /// <summary>
+        /// Select and deselect PicGalleryItem
+        /// </summary>
+        /// <param name="x">location</param>
+        /// <param name="selected">selected or deselected</param>
         internal static void SetSelected(int x, bool selected)
         {
             if (x > GetPicGallery.Container.Children.Count || x < 0) { return; }
@@ -161,9 +165,48 @@ namespace PicView.PicGallery
 
         #endregion Select and deselect behaviour
 
-        internal static void HorizontalNavigation()
+        #region Horizontal Gallery Navigation
+
+        internal enum Direction
         {
-            // TODO add navigation to horizontal gallery
+            Up,
+            Down,
+            Left,
+            Right
+        }
+
+        internal static int SelectedGalleryItem { get; set; }
+        internal static void HorizontalNavigation(Direction direction)
+        {
+            SetSelected(SelectedGalleryItem, false); // deselect
+
+            switch (direction)
+            {
+                case Direction.Up:
+                    SelectedGalleryItem--;
+                    break;
+                case Direction.Down:
+                    SelectedGalleryItem++;
+                    break;
+                case Direction.Left:
+                    SelectedGalleryItem = SelectedGalleryItem - Items_per_page;
+                    break;
+                case Direction.Right:
+                    SelectedGalleryItem = SelectedGalleryItem + Items_per_page;
+                    break;
+                default:
+                    break;
+            }
+
+            SelectedGalleryItem = SelectedGalleryItem > Pics.Count ? Pics.Count : SelectedGalleryItem;
+            SelectedGalleryItem = SelectedGalleryItem < 0 ? 0 : SelectedGalleryItem;
+            SetSelected(SelectedGalleryItem, true);
+
+            //if (false) // Figure out how to calculate when to change page
+            //{
+            //    var offset = direction == Direction.Left ? GetPicGallery.Scroller.HorizontalOffset - PicGalleryItem_Size : GetPicGallery.Scroller.HorizontalOffset + PicGalleryItem_Size;
+            //    GetPicGallery.Scroller.ScrollToHorizontalOffset(offset);
+            //}
         }
 
         internal static bool ShouldHorizontalNavigate()
@@ -178,5 +221,7 @@ namespace PicView.PicGallery
 
             return false;
         }
+
+        #endregion
     }
 }

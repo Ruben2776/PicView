@@ -75,7 +75,7 @@ namespace PicView.Shortcuts
                     // exit if browsing horizontal PicGallery
                     if (GalleryNavigation.ShouldHorizontalNavigate())
                     {
-                        GalleryNavigation.HorizontalNavigation();
+                        GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Right);
                         return;
                     }
                     // Go to first if Ctrl held down
@@ -100,7 +100,7 @@ namespace PicView.Shortcuts
                     }
                     if (GalleryNavigation.ShouldHorizontalNavigate())
                     {
-                        GalleryNavigation.HorizontalNavigation();
+                        GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Left);
                         return;
                     }
                     // Go to last if Ctrl held down
@@ -150,6 +150,11 @@ namespace PicView.Shortcuts
                     }
                     else if (GetPicGallery != null)
                     {
+                        if (GalleryNavigation.ShouldHorizontalNavigate())
+                        {
+                            GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Up);
+                            return;
+                        }
                         if (GalleryFunctions.IsOpen)
                         {
                             GalleryNavigation.ScrollTo(true, ctrlDown);
@@ -172,6 +177,11 @@ namespace PicView.Shortcuts
                     }
                     else if (GetPicGallery != null)
                     {
+                        if (GalleryNavigation.ShouldHorizontalNavigate())
+                        {
+                            GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Down);
+                            return;
+                        }
                         if (GalleryFunctions.IsOpen)
                         {
                             GalleryNavigation.ScrollTo(false, ctrlDown);
@@ -191,6 +201,11 @@ namespace PicView.Shortcuts
                     if (ctrlDown && !GalleryFunctions.IsOpen)
                     {
                         await SaveFilesAsync().ConfigureAwait(false);
+                    }
+                    else if (GalleryNavigation.ShouldHorizontalNavigate())
+                    {
+                        GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Down);
+                        return;
                     }
                     if (Properties.Settings.Default.ScrollEnabled && ConfigureWindows.GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
                     {
@@ -404,6 +419,10 @@ namespace PicView.Shortcuts
                         {
                             OpenWith(Pics[FolderIndex]);
                         }
+                        else
+                        {
+                            await GalleryClick.ClickAsync(GalleryNavigation.SelectedGalleryItem).ConfigureAwait(false);
+                        }
                         break;
 
                     // T
@@ -424,13 +443,20 @@ namespace PicView.Shortcuts
 
                     // G
                     case Key.G:
-                        if (Properties.Settings.Default.FullscreenGalleryHorizontal == false
-                          && !GetQuickSettingsMenu.IsVisible
-                          && !GetToolsAndEffectsMenu.IsVisible
-                          && !GetFileMenu.IsVisible
-                          && !GetImageSettingsMenu.IsVisible)
+                        if (GalleryFunctions.IsOpen)
                         {
-                            await GalleryToggle.ToggleAsync().ConfigureAwait(false);
+                            if (GetFakeWindow is not null && GetFakeWindow.IsVisible)
+                            {
+                                await GalleryToggle.ToggleAsync().ConfigureAwait(false);
+                            }
+                            else
+                            {
+                                GalleryToggle.CloseHorizontalGallery();
+                            }
+                        }
+                        else
+                        {
+                            await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
                         }
                         break;
 
@@ -540,6 +566,11 @@ namespace PicView.Shortcuts
                     // End
                     case Key.End:
                         GetMainWindow.Scroller.ScrollToEnd();
+                        break;
+
+                    //
+                    case Key.Enter:
+                        await GalleryClick.ClickAsync(GalleryNavigation.SelectedGalleryItem).ConfigureAwait(false);
                         break;
 
                     default: break;

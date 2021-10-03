@@ -64,6 +64,10 @@ namespace PicView.UILogic.TransformImage
 
         internal static void ShowAutoScrollSign()
         {
+            if (AutoScrollOrigin.HasValue == false)
+            {
+                return;
+            }
             Canvas.SetTop(GetAutoScrollSign, AutoScrollOrigin.Value.Y);
             Canvas.SetLeft(GetAutoScrollSign, AutoScrollOrigin.Value.X);
             GetAutoScrollSign.Visibility = Visibility.Visible;

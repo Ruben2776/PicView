@@ -119,7 +119,7 @@ namespace PicView.PicGallery
                 UC.GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
                 UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
                 UC.GetPicGallery.x2.Visibility = Visibility.Visible;
-                UC.GetPicGallery.Container.Margin = new Thickness(0, 65, 0, 0);
+                UC.GetPicGallery.Container.Margin = new Thickness(0, 65 * WindowSizing.MonitorInfo.DpiScaling, 0, 0);
 
                 UC.GetPicGallery.Container.Orientation = Orientation.Vertical;
             }

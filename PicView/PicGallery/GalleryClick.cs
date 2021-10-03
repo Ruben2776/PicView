@@ -87,8 +87,24 @@ namespace PicView.PicGallery
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
-                GetPicGallery.Width = XWidth;
-                GetPicGallery.Height = XHeight;
+                if (Properties.Settings.Default.AutoFitWindow)
+                {
+                    GetPicGallery.Width = XWidth;
+                    GetPicGallery.Height = XHeight;
+                }
+                else
+                {
+                    var da3 = new DoubleAnimation
+                    {
+                        From = 1,
+                        To = 0,
+                        Duration = duration,
+                        AccelerationRatio = acceleration,
+                        DecelerationRatio = deceleration,
+                        FillBehavior = FillBehavior.Stop
+                    };
+                    GetPicGallery.Container.BeginAnimation(FrameworkElement.OpacityProperty, da3);
+                }
 
                 GetPicGallery.x2.Visibility = Visibility.Hidden;
 
@@ -118,6 +134,7 @@ namespace PicView.PicGallery
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
                 // Deselect current item
+                GalleryNavigation.SetSelected(GalleryNavigation.SelectedGalleryItem, false);
                 GalleryNavigation.SetSelected(FolderIndex, false);
 
                 if (Properties.Settings.Default.FullscreenGalleryHorizontal == false && Properties.Settings.Default.FullscreenGalleryVertical == false)
@@ -132,6 +149,7 @@ namespace PicView.PicGallery
 
                 // Select next item
                 GalleryNavigation.SetSelected(id, true);
+                GalleryNavigation.SelectedGalleryItem = id;
             });
             // Change image
             await LoadPicAtIndexAsync(id, resize).ConfigureAwait(false);

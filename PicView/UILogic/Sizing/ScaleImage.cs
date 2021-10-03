@@ -251,20 +251,19 @@ namespace PicView.UILogic.Sizing
                 {
                     if (Properties.Settings.Default.FullscreenGalleryHorizontal)
                     {
+                        GetMainWindow.Top = ((MonitorInfo.WorkArea.Height - (GetMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
+
                         // Offset window to not overlap gallery
                         GetMainWindow.Left = ((MonitorInfo.WorkArea.Width - (UC.GetPicGallery.ActualWidth + 5) - (GetMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
                                           + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
-
-                        GetMainWindow.Top = ((MonitorInfo.WorkArea.Height
-                                           - (GetMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
                     }
                     else
                     {
                         GetMainWindow.Top = ((MonitorInfo.WorkArea.Height - PicGallery.GalleryNavigation.PicGalleryItem_Size * MonitorInfo.DpiScaling)
                             - GetMainWindow.ActualHeight) / 2 + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
 
-                        GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth)
-                            / 2 + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
+                        GetMainWindow.Left = ((MonitorInfo.WorkArea.Width - (UC.GetPicGallery.ActualWidth + 5) - (GetMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
+                  + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
                     }
                 }
                 else if (Properties.Settings.Default.AutoFitWindow)

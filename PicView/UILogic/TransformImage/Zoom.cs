@@ -232,16 +232,11 @@ namespace PicView.UILogic.TransformImage
                 }
             }
 
-            Tooltip.ShowTooltipMessage(scaleTransform.ScaleX);
-
-
             if (increment == false)
             {
                 // Make it go negative
                 zoomSpeed = -zoomSpeed;
             }
-
-
 
 
             // Set speed

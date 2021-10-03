@@ -95,6 +95,8 @@ namespace PicView.PicGallery
                 GetRestorebutton.Visibility =
                 GetGalleryShortcut.Visibility = Visibility.Hidden;
 
+                GetPicGallery.Container.Opacity = 1;
+
                 if (GetFakeWindow != null)
                 {
                     if (GetFakeWindow.grid.Children.Contains(GetPicGallery))
@@ -117,6 +119,8 @@ namespace PicView.PicGallery
                 GetPicGallery.Container.Children.Clear();
                 await GalleryLoad.Load().ConfigureAwait(false);
             }
+
+            GalleryNavigation.SelectedGalleryItem = FolderIndex;
         }
 
         internal static async Task OpenFullscreenGalleryAsync(bool vertical, bool startup)
@@ -207,10 +211,7 @@ namespace PicView.PicGallery
                 }
             });
 
-            if (vertical)
-            {
-                await UILogic.Sizing.ScaleImage.TryFitImageAsync().ConfigureAwait(false);
-            }
+            await UILogic.Sizing.ScaleImage.TryFitImageAsync().ConfigureAwait(false);
 
             if (count == 0)
             {

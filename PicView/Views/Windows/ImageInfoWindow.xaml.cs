@@ -151,7 +151,7 @@ namespace PicView.Views.Windows
             // FilenameBox
             FilenameBox.AcceptsReturn = false;
             FilenameBox.KeyUp += async (_, e) => 
-            await ImageInfo.RenameTask(e, FilenameBox, (Path.GetDirectoryName(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex])) + "/" + FilenameBox.Text).ConfigureAwait(false);
+            await ImageInfo.RenameTask(e, FilenameBox, (Path.GetDirectoryName(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex])) + "/" + FilenameBox.Text + Path.GetExtension(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex])).ConfigureAwait(false);
 
             // FolderBox
             FolderBox.AcceptsReturn = false;
