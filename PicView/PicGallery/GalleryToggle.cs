@@ -122,6 +122,7 @@ namespace PicView.PicGallery
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
                 GalleryNavigation.SetSelected(FolderIndex, true);
+                GalleryNavigation.ScrollTo();
             });
 
         }

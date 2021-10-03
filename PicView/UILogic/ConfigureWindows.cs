@@ -18,7 +18,7 @@ namespace PicView.UILogic
         internal static FakeWindow? GetFakeWindow { get; set; }
         internal static SettingsWindow? GetSettingsWindow { get; set; }
         internal static InfoWindow? GetInfoWindow { get; set; }
-        internal static EffectsWindow GetEffectsWindow { get; set; }
+        internal static EffectsWindow? GetEffectsWindow { get; set; }
         internal static ImageInfoWindow? GetImageInfoWindow { get; set; }
 
         /// <summary>
