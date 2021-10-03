@@ -213,7 +213,6 @@ namespace PicView.UILogic
                 // Update info for possible new screen, needs more engineering
                 // Seems to work
                 MonitorInfo = MonitorSize.GetMonitorSize();
-                SetWindowSize();
             }
         }
 
@@ -350,12 +349,6 @@ namespace PicView.UILogic
         {
             GetMainWindow.Topmost = true;
 
-            // Save size to get back to it when restoring
-            if (!Properties.Settings.Default.AutoFitWindow && GetMainWindow.WindowState != WindowState.Maximized)
-            {
-                SetWindowSize();
-            }
-
             ShowTopandBottom(false);
             GetMainWindow.Topmost = true;
 
@@ -386,11 +379,6 @@ namespace PicView.UILogic
         {
             GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - GetMainWindow.ActualHeight) / 2 + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
             GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth) / 2 + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
-
-            if (Properties.Settings.Default.AutoFitWindow == false)
-            {
-                SetWindowSize();
-            }
         }
 
         internal static void SetLastWindowSize()

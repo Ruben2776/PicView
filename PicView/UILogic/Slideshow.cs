@@ -1,5 +1,5 @@
-﻿using PicView.SystemIntegration;
-using PicView.UILogic.Animations;
+﻿using PicView.Animations;
+using PicView.SystemIntegration;
 using System;
 using System.Threading.Tasks;
 using System.Timers;

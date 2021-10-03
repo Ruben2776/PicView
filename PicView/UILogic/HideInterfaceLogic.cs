@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using static PicView.UILogic.Animations.FadeControls;
+using static PicView.Animations.FadeControls;
 
 namespace PicView.UILogic
 {

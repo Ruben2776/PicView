@@ -178,7 +178,6 @@ namespace PicView.SystemIntegration
 
                     // 'set it back to false for the next resize/move
                     WindowWasResized = false;
-                    ConfigureWindows.SetWindowSize();
                 }
             }
 

@@ -1,6 +1,7 @@
 ﻿using PicView.ImageHandling;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -136,6 +137,20 @@ namespace PicView.PicGallery
             /// TODO Maybe make this start at at folder index
             /// and get it work with a real sorting method?
 
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            {
+                if (UC.GetPicGallery == null)
+                {
+                    return;
+                }
+
+                else if (UC.GetPicGallery.Container.Children.Count > 0)
+                {
+                    return;
+                }
+            }));
+
+
             for (int i = 0; i < ChangeImage.Navigation.Pics.Count; i++)
             {
                 var pic = Thumbnails.GetBitmapSourceThumb(ChangeImage.Navigation.Pics[i]);
@@ -149,13 +164,7 @@ namespace PicView.PicGallery
                     pic.Freeze();
                 }
 
-                await Add(pic, i).ContinueWith(antecedent =>
-                {
-                    if (ConfigureWindows.GetMainWindow.CheckAccess())
-                    {
-                        GalleryNavigation.ScrollTo();
-                    }
-                });
+                await Add(pic, i).ConfigureAwait(false);
             }
         });
     }

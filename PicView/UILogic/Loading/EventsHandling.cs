@@ -1,11 +1,11 @@
-﻿using PicView.PicGallery;
-using PicView.UILogic.Animations;
+﻿using PicView.Animations;
+using PicView.PicGallery;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
+using static PicView.Animations.MouseOverAnimations;
 using static PicView.ChangeImage.Navigation;
 using static PicView.Shortcuts.MainShortcuts;
-using static PicView.UILogic.Animations.MouseOverAnimations;
 using static PicView.UILogic.DragAndDrop.Image_DragAndDrop;
 using static PicView.UILogic.HideInterfaceLogic;
 using static PicView.UILogic.UC;

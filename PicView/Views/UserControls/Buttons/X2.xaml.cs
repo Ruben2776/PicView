@@ -1,4 +1,4 @@
-﻿using PicView.UILogic.Animations;
+﻿using PicView.Animations;
 using System.Windows.Controls;
 
 namespace PicView.Views.UserControls

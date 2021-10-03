@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace PicView.UILogic.Animations
+namespace PicView.Animations
 {
     internal static class AnimationHelper
     {
@@ -441,6 +441,11 @@ namespace PicView.UILogic.Animations
         {
             if (item.Id == Navigation.FolderIndex)
             {
+                return;
+            }
+            if (item.innerborder.Width > PicGallery.GalleryNavigation.PicGalleryItem_Size_s && unHover == false)
+            {
+                // Make sure it is not run consecutively
                 return;
             }
 

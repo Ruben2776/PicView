@@ -32,7 +32,7 @@ namespace PicView.PicGallery
                 if (GetPicGallery == null) { return 0; }
 
                 return Properties.Settings.Default.FullscreenGalleryVertical == false ?
-                    (int)Math.Floor(GetPicGallery.Height / PicGalleryItem_Size) : Pics.Count;
+                    (int)Math.Round((GetPicGallery.Height - (GetPicGallery.Margin.Top - GetPicGallery.Margin.Bottom)) / PicGalleryItem_Size) : Pics.Count;
             }
         }
 
@@ -161,6 +161,10 @@ namespace PicView.PicGallery
                 nextItem.innerborder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
                 nextItem.innerborder.Width = nextItem.innerborder.Height = PicGalleryItem_Size_s;
             }
+
+#if DEBUG
+            System.Diagnostics.Trace.WriteLine(nameof(SetSelected) + " " + x.ToString() + " = " + nameof(selected) + " " + selected.ToString());
+#endif
         }
 
         #endregion Select and deselect behaviour
@@ -189,10 +193,10 @@ namespace PicView.PicGallery
                     SelectedGalleryItem++;
                     break;
                 case Direction.Left:
-                    SelectedGalleryItem = SelectedGalleryItem - Items_per_page;
+                    SelectedGalleryItem = SelectedGalleryItem - Vertical_items;
                     break;
                 case Direction.Right:
-                    SelectedGalleryItem = SelectedGalleryItem + Items_per_page;
+                    SelectedGalleryItem = SelectedGalleryItem + Vertical_items;
                     break;
                 default:
                     break;

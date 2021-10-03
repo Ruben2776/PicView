@@ -1,14 +1,14 @@
 ﻿using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.UILogic;
-using PicView.UILogic.Animations;
+using PicView.Animations;
 using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
-using static PicView.UILogic.Animations.MouseOverAnimations;
+using static PicView.Animations.MouseOverAnimations;
 using static PicView.UILogic.ImageInfo;
 
 namespace PicView.Views.Windows

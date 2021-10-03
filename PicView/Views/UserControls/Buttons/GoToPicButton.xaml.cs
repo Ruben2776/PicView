@@ -1,13 +1,13 @@
-﻿using PicView.UILogic;
-using PicView.UILogic.Animations;
+﻿using PicView.Animations;
+using PicView.UILogic;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using static PicView.Animations.MouseOverAnimations;
 using static PicView.ChangeImage.Navigation;
-using static PicView.UILogic.Animations.MouseOverAnimations;
 using static PicView.UILogic.UC;
 
 namespace PicView.Views.UserControls

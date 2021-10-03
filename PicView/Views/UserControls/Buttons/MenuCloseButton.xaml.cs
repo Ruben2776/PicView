@@ -1,7 +1,7 @@
 ﻿using PicView.UILogic;
-using PicView.UILogic.Animations;
+using PicView.Animations;
 using System.Windows.Controls;
-using static PicView.UILogic.Animations.MouseOverAnimations;
+using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
 {

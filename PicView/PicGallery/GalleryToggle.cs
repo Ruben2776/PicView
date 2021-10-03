@@ -1,5 +1,5 @@
-﻿using PicView.UILogic;
-using PicView.UILogic.Animations;
+﻿using PicView.Animations;
+using PicView.UILogic;
 using PicView.Views.Windows;
 using System;
 using System.Threading.Tasks;
@@ -105,9 +105,6 @@ namespace PicView.PicGallery
                         GetMainWindow.ParentContainer.Children.Add(GetPicGallery);
                     }
                 }
-
-                GalleryNavigation.SetSelected(FolderIndex, true);
-                GalleryNavigation.ScrollTo();
             });
 
             if (GetPicGallery.Container.Children.Count == 0)
@@ -121,6 +118,12 @@ namespace PicView.PicGallery
             }
 
             GalleryNavigation.SelectedGalleryItem = FolderIndex;
+
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            {
+                GalleryNavigation.SetSelected(FolderIndex, true);
+            });
+
         }
 
         internal static async Task OpenFullscreenGalleryAsync(bool vertical, bool startup)

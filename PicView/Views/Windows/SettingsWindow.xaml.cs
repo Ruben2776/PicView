@@ -2,7 +2,7 @@
 using PicView.ConfigureSettings;
 using PicView.Translations;
 using PicView.UILogic;
-using PicView.UILogic.Animations;
+using PicView.Animations;
 using PicView.UILogic.Sizing;
 using System;
 using System.Globalization;
@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using static PicView.ConfigureSettings.ConfigColors;
 using static PicView.SystemIntegration.Wallpaper;
-using static PicView.UILogic.Animations.MouseOverAnimations;
+using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.Windows
 {

@@ -1,5 +1,5 @@
 ﻿using System.Timers;
-using static PicView.UILogic.Animations.FadeControls;
+using static PicView.Animations.FadeControls;
 using static PicView.UILogic.TransformImage.Scroll;
 
 namespace PicView.UILogic

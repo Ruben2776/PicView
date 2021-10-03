@@ -759,7 +759,6 @@ namespace PicView.ChangeImage
                         }
 
                         GalleryNavigation.SetSelected(FolderIndex, true);
-                        GalleryNavigation.ScrollTo();
                     }
                     else
                     {

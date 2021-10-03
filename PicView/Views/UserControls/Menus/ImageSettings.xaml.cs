@@ -1,7 +1,7 @@
 ﻿using PicView.PicGallery;
 using PicView.UILogic;
-using PicView.UILogic.Animations;
-using static PicView.UILogic.Animations.MouseOverAnimations;
+using PicView.Animations;
+using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
 {

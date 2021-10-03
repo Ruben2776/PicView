@@ -1,5 +1,5 @@
 ﻿using AutoUpdaterDotNET;
-using PicView.UILogic.Animations;
+using PicView.Animations;
 using PicView.UILogic.Sizing;
 using System;
 using System.Diagnostics;

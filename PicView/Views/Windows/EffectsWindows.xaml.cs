@@ -1,13 +1,13 @@
 ﻿using PicView.Editing.HlslEffects;
 using PicView.FileHandling;
 using PicView.UILogic;
-using PicView.UILogic.Animations;
+using PicView.Animations;
 using PicView.UILogic.Sizing;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using static PicView.UILogic.Animations.MouseOverAnimations;
+using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.Windows
 {

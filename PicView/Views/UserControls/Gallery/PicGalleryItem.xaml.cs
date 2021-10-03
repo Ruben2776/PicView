@@ -1,4 +1,4 @@
-﻿using PicView.UILogic.Animations;
+﻿using PicView.Animations;
 using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.PicGallery.GalleryNavigation;
@@ -12,7 +12,7 @@ namespace PicView.Views.UserControls
     {
         internal int Id { get; set; }
 
-        public PicGalleryItem(ImageSource pic, int id, bool selected)
+        public PicGalleryItem(ImageSource pic, int id)
         {
             InitializeComponent();
 
@@ -39,12 +39,6 @@ namespace PicView.Views.UserControls
                 PicGalleryItem_Size,
                 PicGalleryItem_Size_s
             );
-
-            if (selected)
-            {
-                innerborder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColorOverAlpha());
-                innerborder.Width = innerborder.Height = PicGalleryItem_Size;
-            }
         }
     }
 }

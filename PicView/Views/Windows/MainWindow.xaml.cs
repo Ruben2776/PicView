@@ -1,6 +1,6 @@
-﻿using PicView.ChangeImage;
+﻿using PicView.Animations;
+using PicView.ChangeImage;
 using PicView.SystemIntegration;
-using PicView.UILogic.Animations;
 using PicView.UILogic.Loading;
 using System.Windows;
 using static PicView.UILogic.Sizing.WindowSizing;

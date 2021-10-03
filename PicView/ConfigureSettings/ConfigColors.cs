@@ -1,6 +1,6 @@
-﻿using PicView.Library.Resources;
+﻿using PicView.Animations;
+using PicView.Library.Resources;
 using PicView.UILogic;
-using PicView.UILogic.Animations;
 using System;
 using System.Diagnostics;
 using System.Windows;

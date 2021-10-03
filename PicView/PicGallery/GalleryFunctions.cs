@@ -23,8 +23,7 @@ namespace PicView.PicGallery
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
-                var selected = id == Navigation.FolderIndex;
-                var item = new PicGalleryItem(pic, id, selected);
+                var item = new PicGalleryItem(pic, id);
                 item.MouseLeftButtonDown += async delegate
                 {
                     await GalleryClick.ClickAsync(id).ConfigureAwait(false);
@@ -60,8 +59,6 @@ namespace PicView.PicGallery
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
-                GalleryNavigation.SetSelected(Navigation.FolderIndex, false);
-
                 for (int i = 0; i < Navigation.Pics.Count; i++)
                 {
                     var x = GetPicGallery.Container.Children[i] as PicGalleryItem;
