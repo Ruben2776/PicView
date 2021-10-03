@@ -64,7 +64,7 @@
     <StartupObject>PicView.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Themes\Resources\img\icon__Q6k_icon.ico</ApplicationIcon>
