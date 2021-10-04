@@ -182,8 +182,6 @@ namespace PicView.PicGallery
         internal static void HorizontalNavigation(Direction direction)
         {
             var backup = SelectedGalleryItem;
-            SetSelected(backup, false); // deselect
-            SetSelected(FolderIndex, false); // deselect
 
             switch (direction)
             {
@@ -203,9 +201,25 @@ namespace PicView.PicGallery
                     break;
             }
 
-            SelectedGalleryItem = SelectedGalleryItem > Pics.Count ? Pics.Count : SelectedGalleryItem;
-            SelectedGalleryItem = SelectedGalleryItem < 0 ? 0 : SelectedGalleryItem;
+            if (SelectedGalleryItem >= Pics.Count -1)
+            {
+                SelectedGalleryItem = Pics.Count -1;
+            }
+
+            if (SelectedGalleryItem < 0)
+            {
+                SelectedGalleryItem = 0;
+            }
+
             SetSelected(SelectedGalleryItem, true);
+            if (backup != SelectedGalleryItem)
+            {
+                SetSelected(backup, false); // deselect
+            }
+            if (SelectedGalleryItem != FolderIndex)
+            {
+                SetSelected(FolderIndex, false); // deselect
+            }            
 
             if (direction == Direction.Up || direction == Direction.Down)
             {

@@ -12,7 +12,7 @@ namespace PicView.Views.UserControls
     {
         internal int Id { get; set; }
 
-        public PicGalleryItem(ImageSource pic, int id)
+        public PicGalleryItem(ImageSource pic, int id, bool selected)
         {
             InitializeComponent();
 
@@ -39,6 +39,12 @@ namespace PicView.Views.UserControls
                 PicGalleryItem_Size,
                 PicGalleryItem_Size_s
             );
+
+            if (selected)
+            {
+                innerborder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColorOverAlpha());
+                innerborder.Width = innerborder.Height = PicGalleryItem_Size;
+            }
         }
     }
 }
