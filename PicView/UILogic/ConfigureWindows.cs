@@ -294,6 +294,13 @@ namespace PicView.UILogic
                     ShowShortcuts(true);
                 }
 
+                if (GetMainWindow.WindowState == WindowState.Maximized)
+                {
+                    GetMainWindow.WindowState = WindowState.Normal;
+                    // Reset margin from fullscreen
+                    GetMainWindow.ParentContainer.Margin = new Thickness(0);
+                }
+
                 if (Properties.Settings.Default.AutoFitWindow)
                 {
                     GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
@@ -321,20 +328,9 @@ namespace PicView.UILogic
                         GetQuickSettingsMenu.SetFit.IsChecked = false;
                     }
 
-                    GetMainWindow.Top = Properties.Settings.Default.Top;
-                    GetMainWindow.Left = Properties.Settings.Default.Left;
-                    GetMainWindow.Height = Properties.Settings.Default.Height;
-                    GetMainWindow.Width = Properties.Settings.Default.Width;
-
                     GetMainWindow.Scroller.Width =
                     GetMainWindow.Scroller.Height = double.NaN;
-                }
-
-                if (GetMainWindow.WindowState == WindowState.Maximized)
-                {
-                    GetMainWindow.WindowState = WindowState.Normal;
-                    // Reset margin from fullscreen
-                    GetMainWindow.ParentContainer.Margin = new Thickness(0);
+                    SetLastWindowSize();
                 }
 
                 if (Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
@@ -343,15 +339,23 @@ namespace PicView.UILogic
                 }
 
                 Properties.Settings.Default.Fullscreen = false;
-                _ = TryFitImageAsync();
                 ConfigureSettings.ConfigColors.UpdateColor(); // Regain border
+
+                if (ConfigureWindows.GetFakeWindow is not null)
+                {
+                    ConfigureWindows.GetFakeWindow.Hide();
+                }
+
+                if (Properties.Settings.Default.AutoFitWindow == false)
+                {
+                    SetLastWindowSize(); // Calling it again fixed incorrect placement
+                }
+                
             }
         }
 
         internal static void RenderFullscreen()
         {
-            GetMainWindow.Topmost = true;
-
             ShowTopandBottom(false);
             GetMainWindow.Topmost = true;
 

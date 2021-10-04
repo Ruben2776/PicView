@@ -362,7 +362,7 @@
 
                     <StackPanel Margin="0,0,0,4" Orientation="Horizontal">
                         <TextBlock
-                            Width="164"
+                            Width="167"
                             VerticalAlignment="Center"
                             FontSize="12"
                             Foreground="{StaticResource MainColorBrush}"
@@ -370,7 +370,7 @@
                             TextWrapping="Wrap" />
                         <ComboBox
                             x:Name="GalleryBox"
-                            Width="138"
+                            Width="135"
                             HorizontalAlignment="Stretch">
                             <ComboBoxItem
                                 x:Name="GalleryVertical"

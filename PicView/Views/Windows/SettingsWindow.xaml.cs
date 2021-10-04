@@ -35,8 +35,8 @@ namespace PicView.Views.Windows
                 // GalleryBox
                 if (Properties.Settings.Default.FullscreenGalleryVertical == false && Properties.Settings.Default.FullscreenGalleryHorizontal == false)
                 { 
-                    Properties.Settings.Default.FullscreenGalleryVertical = true;
-                    GalleryVertical.IsSelected = Properties.Settings.Default.FullscreenGalleryVertical;
+                    Properties.Settings.Default.FullscreenGalleryHorizontal = true;
+                    GalleryVertical.IsSelected = Properties.Settings.Default.FullscreenGalleryHorizontal;
                 }
                 else
                 {

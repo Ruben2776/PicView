@@ -51,7 +51,6 @@ namespace PicView.UILogic.Loading
                 ConfigureWindows.GetMainWindow.TitleBar.Visibility =
                    ConfigureWindows.GetMainWindow.LowerBar.Visibility
                    = Visibility.Collapsed;
-
             }
 
             // Load image if possible
@@ -89,7 +88,7 @@ namespace PicView.UILogic.Loading
                 }
                 else if (Properties.Settings.Default.StartInFullscreenGallery)
                 {
-                    await GalleryToggle.OpenFullscreenGalleryAsync(Properties.Settings.Default.FullscreenGalleryVertical, true).ConfigureAwait(false);
+                    await GalleryToggle.OpenFullscreenGalleryAsync(Properties.Settings.Default.FullscreenGalleryHorizontal, true).ConfigureAwait(false);
                     Timers.PicGalleryTimerHack();
                 }
                 else if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width > 0)
@@ -136,12 +135,6 @@ namespace PicView.UILogic.Loading
 
             // Load UI and events
             AddUIElementsAndUpdateValues();
-
-            if (Properties.Settings.Default.AutoFitWindow && !Properties.Settings.Default.Fullscreen)
-            {
-                ConfigureWindows.CenterWindowOnScreen();
-                ConfigureWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
-            }
 
 #if DEBUG
             Trace.WriteLine("Start Completed ");
@@ -200,12 +193,12 @@ namespace PicView.UILogic.Loading
             }
 
             // Add UserControls :)
-            LoadTooltipStyle();
             LoadFileMenu();
             LoadImageSettingsMenu();
             LoadQuickSettingsMenu();
             LoadToolsAndEffectsMenu();
             LoadAutoScrollSign();
+            LoadTooltipStyle();
 
             Eventshandling.SetMainWindowEvents();
 

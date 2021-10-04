@@ -52,10 +52,10 @@ namespace PicView.Views.UserControls
 
                 if (Properties.Settings.Default.FullscreenGalleryVertical == false && Properties.Settings.Default.FullscreenGalleryHorizontal == false)
                 {
-                    Properties.Settings.Default.FullscreenGalleryVertical = true;
+                    Properties.Settings.Default.FullscreenGalleryHorizontal = true;
                 }
 
-                await GalleryToggle.OpenFullscreenGalleryAsync(Properties.Settings.Default.FullscreenGalleryVertical, false).ConfigureAwait(false);
+                await GalleryToggle.OpenFullscreenGalleryAsync(Properties.Settings.Default.FullscreenGalleryHorizontal, false).ConfigureAwait(false);
             };
 
         }

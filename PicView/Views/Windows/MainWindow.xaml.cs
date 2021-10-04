@@ -17,11 +17,17 @@ namespace PicView.Views.Windows
                 ConfigureSettings.ConfigColors.ChangeToLightTheme();
             }
 
-            InitializeComponent();
-            if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width > 0)
+            if (Properties.Settings.Default.AutoFitWindow == false)
             {
-                UILogic.ConfigureWindows.SetLastWindowSize();
+                WindowStartupLocation = WindowStartupLocation.Manual;
+                if (Properties.Settings.Default.Width > 0)
+                {
+                    UILogic.ConfigureWindows.SetLastWindowSize();
+                }
             }
+
+            InitializeComponent();
+
             Loaded += async delegate { await StartLoading.LoadedEventsAsync().ConfigureAwait(false); };
             ContentRendered += delegate { StartLoading.ContentRenderedEvent(); };
         }

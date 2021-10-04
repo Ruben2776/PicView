@@ -68,12 +68,6 @@ namespace PicView.UILogic.Loading
 
             GetClickArrowRight.MouseLeftButtonDown += async (_, _) => await PicButtonAsync(true, true).ConfigureAwait(false);
 
-            // x2
-            Getx2.MouseLeftButtonDown += (_, _) => SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
-
-            // Minus
-            GetMinus.MouseLeftButtonDown += (_, _) => SystemCommands.MinimizeWindow(ConfigureWindows.GetMainWindow);
-
             // GalleryShortcut
             GetGalleryShortcut.MouseLeftButtonDown += async (_, _) => await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
 

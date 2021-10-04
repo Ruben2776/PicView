@@ -91,8 +91,18 @@ namespace PicView.ChangeImage
                     Preloader.Clear();
                 });
 
+                bool containerCheck = false;
 
-                if (UC.GetPicGallery?.Container?.Children?.Count > 0)
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
+                {
+                    if (UC.GetPicGallery?.Container?.Children?.Count > 0)
+                    {
+                        containerCheck = true;
+                    }
+                });
+
+
+                if (containerCheck)
                 {
                     await GalleryFunctions.SortGallery().ConfigureAwait(false);
                     await LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
