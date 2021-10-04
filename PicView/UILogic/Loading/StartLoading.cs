@@ -21,7 +21,7 @@ namespace PicView.UILogic.Loading
 {
     internal static class StartLoading
     {
-        internal static async Task LoadedEvemtAsync()
+        internal static async Task LoadedEventsAsync()
         {
 #if DEBUG
             Trace.Listeners.Add(new TextWriterTraceListener("Debug.log"));

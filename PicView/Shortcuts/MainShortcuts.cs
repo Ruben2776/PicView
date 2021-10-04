@@ -675,13 +675,21 @@ namespace PicView.Shortcuts
             }
         }
 
-        /// <summary>
-        /// Pan and Zoom, reset zoom and double click to reset
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        internal static void MainImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        internal static async Task MouseLeftButtonDownAsync(object sender, MouseButtonEventArgs e)
         {
+            if (GetMainWindow.TitleText.InnerTextBox.IsKeyboardFocusWithin)
+            {
+                // Fix focus
+                EditTitleBar.Refocus();
+                return;
+            }
+
+            if (Color_Picking.IsRunning)
+            {
+                await Color_Picking.StopRunningAsync(true).ConfigureAwait(false);
+                return;
+            }
+
             // Move window when Shift is being held down
             if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift || !Properties.Settings.Default.ShowInterface)
             {
@@ -710,35 +718,6 @@ namespace PicView.Shortcuts
             if (Properties.Settings.Default.ScrollEnabled == false)
             {
                 PreparePanImage(sender, e);
-            }
-        }
-
-        internal static async Task Bg_MouseLeftButtonDownAsync(object sender, MouseButtonEventArgs e)
-        {
-            if (GetMainWindow.TitleText.InnerTextBox.IsKeyboardFocusWithin)
-            {
-                // Fix focus
-                EditTitleBar.Refocus();
-                return;
-            }
-
-            // Move window when Shift is being held down
-            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
-            {
-                Move(sender, e);
-                return;
-            }
-
-            if (Color_Picking.IsRunning)
-            {
-                await Color_Picking.StopRunningAsync(true).ConfigureAwait(false);
-            }
-
-            // Reset zoom on double click
-            if (e.ClickCount == 2)
-            {
-                ResetZoom();
-                return;
             }
         }
 

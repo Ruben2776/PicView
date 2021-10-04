@@ -85,12 +85,10 @@ namespace PicView.UILogic.Loading
 
             // MainImage
             ConfigureWindows.GetMainWindow.MainImage.PreviewMouseLeftButtonDown += DragAndDrop.DragToExplorer.DragFile;
-            ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonDown += MainImage_MouseLeftButtonDown;
             ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonUp += MainImage_MouseLeftButtonUp;
             ConfigureWindows.GetMainWindow.MainImage.MouseMove += MainImage_MouseMove;
 
             // ParentContainer
-            ConfigureWindows.GetMainWindow.ParentContainer.MouseLeftButtonDown += async (sender, e) => await Bg_MouseLeftButtonDownAsync(sender, e).ConfigureAwait(false);
             ConfigureWindows.GetMainWindow.ParentContainer.Drop += async (sender, e) => await Image_Drop(sender, e).ConfigureAwait(false);
             ConfigureWindows.GetMainWindow.ParentContainer.DragEnter += Image_DragEnter;
             ConfigureWindows.GetMainWindow.ParentContainer.DragLeave += Image_DragLeave;
@@ -112,6 +110,7 @@ namespace PicView.UILogic.Loading
             // This
             ConfigureWindows.GetMainWindow.Closing += ConfigureWindows.Window_Closing;
             ConfigureWindows.GetMainWindow.StateChanged += ConfigureWindows.MainWindow_StateChanged;
+            ConfigureWindows.GetMainWindow.MouseLeftButtonDown += async (sender, e) => await MouseLeftButtonDownAsync(sender, e).ConfigureAwait(false);
 
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged += ConfigureWindows.SystemEvents_DisplaySettingsChanged;
 

@@ -226,6 +226,12 @@ namespace PicView.UILogic
                 return;
             }
 
+            if (ConfigureWindows.GetMainWindow.TitleText.InnerTextBox.IsKeyboardFocusWithin)
+            {
+                // Fix focus
+                EditTitleBar.Refocus();
+            }
+
             FileMenuOpen = !FileMenuOpen;
 
             if (ImageSettingsMenuOpen)
@@ -254,6 +260,12 @@ namespace PicView.UILogic
             if (GalleryFunctions.IsOpen)
             {
                 return;
+            }
+
+            if (ConfigureWindows.GetMainWindow.TitleText.InnerTextBox.IsKeyboardFocusWithin)
+            {
+                // Fix focus
+                EditTitleBar.Refocus();
             }
 
             ImageSettingsMenuOpen = !ImageSettingsMenuOpen;
@@ -286,6 +298,12 @@ namespace PicView.UILogic
                 return;
             }
 
+            if (ConfigureWindows.GetMainWindow.TitleText.InnerTextBox.IsKeyboardFocusWithin)
+            {
+                // Fix focus
+                EditTitleBar.Refocus();
+            }
+
             QuickSettingsMenuOpen = !QuickSettingsMenuOpen;
 
             if (FileMenuOpen)
@@ -314,6 +332,12 @@ namespace PicView.UILogic
             if (GalleryFunctions.IsOpen)
             {
                 return;
+            }
+
+            if (ConfigureWindows.GetMainWindow.TitleText.InnerTextBox.IsKeyboardFocusWithin)
+            {
+                // Fix focus
+                EditTitleBar.Refocus();
             }
 
             ToolsAndEffectsMenuOpen = !ToolsAndEffectsMenuOpen;

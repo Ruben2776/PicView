@@ -213,6 +213,7 @@ namespace PicView.UILogic
                 // Update info for possible new screen, needs more engineering
                 // Seems to work
                 MonitorInfo = MonitorSize.GetMonitorSize();
+                SetWindowSize();
             }
         }
 
@@ -229,6 +230,7 @@ namespace PicView.UILogic
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 GetMainWindow.DragMove();
+                SetWindowSize();
             }
         }
 
@@ -244,6 +246,7 @@ namespace PicView.UILogic
                 try
                 {
                     GetMainWindow.DragMove();
+                    SetWindowSize();
                 }
                 catch (InvalidOperationException)
                 {
@@ -379,6 +382,8 @@ namespace PicView.UILogic
         {
             GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - GetMainWindow.ActualHeight) / 2 + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
             GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth) / 2 + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
+
+            SetWindowSize();
         }
 
         internal static void SetLastWindowSize()

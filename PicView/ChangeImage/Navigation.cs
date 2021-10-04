@@ -164,7 +164,7 @@ namespace PicView.ChangeImage
                 await Taskbar.Progress((double)FolderIndex / Pics.Count).ConfigureAwait(false);
             }
 
-            if (Properties.Settings.Default.FullscreenGalleryHorizontal || Properties.Settings.Default.FullscreenGalleryVertical)
+            if (GalleryFunctions.IsOpen && Properties.Settings.Default.FullscreenGalleryHorizontal || GalleryFunctions.IsOpen && Properties.Settings.Default.FullscreenGalleryVertical)
             {
                 await GalleryLoad.Load().ConfigureAwait(false);
             }

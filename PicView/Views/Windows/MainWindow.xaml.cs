@@ -18,7 +18,11 @@ namespace PicView.Views.Windows
             }
 
             InitializeComponent();
-            Loaded += async delegate { await StartLoading.LoadedEvemtAsync().ConfigureAwait(false); };
+            if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width > 0)
+            {
+                UILogic.ConfigureWindows.SetLastWindowSize();
+            }
+            Loaded += async delegate { await StartLoading.LoadedEventsAsync().ConfigureAwait(false); };
             ContentRendered += delegate { StartLoading.ContentRenderedEvent(); };
         }
 
