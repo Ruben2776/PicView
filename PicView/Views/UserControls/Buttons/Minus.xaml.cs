@@ -1,4 +1,5 @@
 ﻿using PicView.Animations;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace PicView.Views.UserControls
@@ -26,6 +27,8 @@ namespace PicView.Views.UserControls
             {
                 MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
             };
+
+            TheButton.Click += (_, _) => SystemCommands.MinimizeWindow(UILogic.ConfigureWindows.GetMainWindow);
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using PicView.Animations;
+using PicView.UILogic;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace PicView.Views.UserControls
@@ -20,6 +22,19 @@ namespace PicView.Views.UserControls
             MouseLeave += (sender, e) =>
             {
                 MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
+            };
+
+            TheButton.Click += (_, _) =>
+            {
+                if (ConfigureWindows.GetFakeWindow is not null && ConfigureWindows.GetFakeWindow.IsVisible)
+                {
+                    SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
+                }
+                else
+                {
+                    PicView.PicGallery.GalleryToggle.CloseHorizontalGallery();
+                }
+
             };
         }
     }

@@ -64,8 +64,10 @@
                     Panel.ZIndex="1"
                     AcceptsTab="False"
                     BorderBrush="{StaticResource IconColorBrush}"
+                    IsEnabled="True"
+                    IsReadOnly="False"
                     IsTabStop="False"
-                    Text="1"
+                    IsUndoEnabled="True"
                     TextAlignment="Center" />
             </Canvas>
         </Button.Content>

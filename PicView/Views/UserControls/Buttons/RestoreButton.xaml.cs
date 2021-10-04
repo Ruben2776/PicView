@@ -17,8 +17,8 @@ namespace PicView.Views.UserControls
             {
                 MouseOverAnimations.AltInterfacePreviewMouseOver(PolyFill, BorderBrushKey);
             };
-
-            MouseLeftButtonUp += delegate { UILogic.ConfigureWindows.Fullscreen_Restore(); };
+            
+            TheButton.Click += delegate { UILogic.ConfigureWindows.Fullscreen_Restore(); };
 
             MouseEnter += delegate
             {
