@@ -51,7 +51,14 @@ namespace PicView.ImageHandling
             var success = await OptimizeImageAsync(Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
             if (success)
             {
-                await Error_Handling.ReloadAsync().ConfigureAwait(false);
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+                {
+                    var width = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
+                    var height = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
+
+                    SetTitle.SetTitleString((int)width, (int)height, ChangeImage.Navigation.FolderIndex);
+                    Tooltip.CloseToolTipMessage();
+                });
             }
             else
             {
