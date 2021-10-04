@@ -72,7 +72,10 @@ namespace PicView.Views.Windows
         {
             if (ConfigureWindows.GetMainWindow.WindowState == WindowState.Normal)
             {
-                //if (Properties.Settings.Default.FullscreenGallery == false) { return; }
+                if (UC.GetPicGallery.x2.Visibility == Visibility.Visible) // x2 only visible on horizontal gallery
+                {
+                    return;
+                }
 
                 Show();
                 ConfigureWindows.GetMainWindow.BringIntoView();
