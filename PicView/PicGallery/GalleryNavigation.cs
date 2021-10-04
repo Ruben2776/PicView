@@ -36,7 +36,7 @@ namespace PicView.PicGallery
                     return (int)Math.Floor((GetPicGallery.Height - (GetPicGallery.Container.Margin.Top - GetPicGallery.Container.Margin.Bottom)) / PicGalleryItem_Size);
                 }
 
-                return Pics.Count;
+                return GetPicGallery.Container.Children.Count;
             }
         }
 
@@ -46,7 +46,14 @@ namespace PicView.PicGallery
             {
                 if (GetPicGallery == null) { return 0; }
 
-                return Horizontal_items * Vertical_items;
+                if (ShouldHorizontalNavigate())
+                {
+                    return Horizontal_items * Vertical_items;
+                }
+                else
+                {
+                    return (int)Math.Floor(GetPicGallery.Height / PicGalleryItem_Size);
+                }
             }
         }
 
@@ -54,7 +61,15 @@ namespace PicView.PicGallery
         {
             get
             {
-                return (int)Math.Floor((double)SelectedGalleryItem / Items_per_page);
+                if (ShouldHorizontalNavigate())
+                {
+                    return (int)Math.Floor((double)SelectedGalleryItem / Items_per_page);
+                }
+                else
+                {
+                    return (int)Math.Floor((double)FolderIndex / Items_per_page);
+                }
+                
             }
         }
 

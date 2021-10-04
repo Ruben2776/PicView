@@ -28,6 +28,8 @@
                 <WrapPanel
                     x:Name="Container"
                     Background="Transparent"
+                    FocusVisualStyle="{x:Null}"
+                    Focusable="False"
                     Orientation="Vertical"
                     VirtualizingPanel.VirtualizationMode="Recycling" />
             </ScrollViewer>

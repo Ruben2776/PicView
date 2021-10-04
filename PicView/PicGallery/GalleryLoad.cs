@@ -66,7 +66,7 @@ namespace PicView.PicGallery
 
             if (fullscreen)
             {
-                if (Properties.Settings.Default.FullscreenGalleryVertical)
+                if (Properties.Settings.Default.FullscreenGalleryHorizontal)
                 {
                     UC.GetPicGallery.Width = WindowSizing.MonitorInfo.WorkArea.Width;
                     UC.GetPicGallery.Height = (GalleryNavigation.PicGalleryItem_Size + 15) * WindowSizing.MonitorInfo.DpiScaling;

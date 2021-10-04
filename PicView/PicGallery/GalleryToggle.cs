@@ -42,7 +42,7 @@ namespace PicView.PicGallery
                 {
                     if (IsOpen == false)
                     {
-                        await OpenFullscreenGalleryAsync(Properties.Settings.Default.FullscreenGalleryVertical, false).ConfigureAwait(false);
+                        await OpenFullscreenGalleryAsync(Properties.Settings.Default.FullscreenGalleryHorizontal, false).ConfigureAwait(false);
                     }
                     else
                     {
@@ -127,22 +127,22 @@ namespace PicView.PicGallery
 
         }
 
-        internal static async Task OpenFullscreenGalleryAsync(bool vertical, bool startup)
+        internal static async Task OpenFullscreenGalleryAsync(bool horizontal, bool startup)
         {
             if (Pics?.Count < 1 && !startup)
             {
                 return;
             }
 
-            if (vertical)
-            {
-                Properties.Settings.Default.FullscreenGalleryHorizontal = false;
-                Properties.Settings.Default.FullscreenGalleryVertical = true;
-            }
-            else
+            if (horizontal)
             {
                 Properties.Settings.Default.FullscreenGalleryHorizontal = true;
                 Properties.Settings.Default.FullscreenGalleryVertical = false;
+            }
+            else
+            {
+                Properties.Settings.Default.FullscreenGalleryHorizontal = false;
+                Properties.Settings.Default.FullscreenGalleryVertical = true;
             }
 
             int count = -1;
@@ -155,7 +155,7 @@ namespace PicView.PicGallery
                 {
                     GetFakeWindow = new FakeWindow();
 
-                    if (vertical)
+                    if (horizontal)
                     {
                         GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtonsV2
                         {
@@ -173,7 +173,7 @@ namespace PicView.PicGallery
                 else
                 {
                     GetFakeWindow.grid.Children.RemoveAt(0);
-                    if (vertical)
+                    if (horizontal)
                     {
                         GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtonsV2
                         {
@@ -215,7 +215,10 @@ namespace PicView.PicGallery
                 }
             });
 
-            await UILogic.Sizing.ScaleImage.TryFitImageAsync().ConfigureAwait(false);
+            if (startup == false)
+            {
+                await UILogic.Sizing.ScaleImage.TryFitImageAsync().ConfigureAwait(false);
+            }
 
             if (count == 0)
             {

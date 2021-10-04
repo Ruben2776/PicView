@@ -157,18 +157,19 @@ namespace PicView.UILogic.Sizing
             var monitorHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
 
             double padding;// Padding to make it feel more comfortable
-            if (MonitorInfo.DpiScaling <= 1)
+            switch (MonitorInfo.DpiScaling)
             {
-                padding = 20 * MonitorInfo.DpiScaling;
-            }
-            else
-            {
-                padding = 0;
+                case <= 1:
+                    padding = 20 * MonitorInfo.DpiScaling;
+                    break;
+                default:
+                    padding = 0;
+                    break;
             }
 
             if (PicGallery.GalleryFunctions.IsOpen)
             {
-                if (Properties.Settings.Default.FullscreenGalleryHorizontal)
+                if (Properties.Settings.Default.FullscreenGalleryVertical)
                 {
                     /// Extra padding for picgallery required
                     padding += PicGalleryItem_Size - 50;
@@ -209,13 +210,15 @@ namespace PicView.UILogic.Sizing
                 }
             }
 
-            if (Rotateint == 0 || Rotateint == 180) // Standard aspect ratio calculation
+            switch (Rotateint) // Standard aspect ratio calculation
             {
-                AspectRatio = Math.Min(maxWidth / width, maxHeight / height);
-            }
-            else // Rotated aspect ratio calculation
-            {
-                AspectRatio = Math.Min(maxWidth / height, maxHeight / width);
+                case 0:
+                case 180:
+                    AspectRatio = Math.Min(maxWidth / width, maxHeight / height);
+                    break;
+                default:
+                    AspectRatio = Math.Min(maxWidth / height, maxHeight / width);
+                    break;
             }
 
             if (Properties.Settings.Default.ScrollEnabled)
@@ -251,19 +254,14 @@ namespace PicView.UILogic.Sizing
                 {
                     if (Properties.Settings.Default.FullscreenGalleryHorizontal)
                     {
-                        GetMainWindow.Top = ((MonitorInfo.WorkArea.Height - (GetMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
+                        GetMainWindow.Top = ((MonitorInfo.WorkArea.Height - PicGalleryItem_Size * MonitorInfo.DpiScaling) - GetMainWindow.ActualHeight) / 2 + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
 
-                        // Offset window to not overlap gallery
-                        GetMainWindow.Left = ((MonitorInfo.WorkArea.Width - (UC.GetPicGallery.ActualWidth + 5) - (GetMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
-                                          + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
+                        GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth) / 2 + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
                     }
                     else
                     {
-                        GetMainWindow.Top = ((MonitorInfo.WorkArea.Height - PicGallery.GalleryNavigation.PicGalleryItem_Size * MonitorInfo.DpiScaling)
-                            - GetMainWindow.ActualHeight) / 2 + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
-
-                        GetMainWindow.Left = ((MonitorInfo.WorkArea.Width - (UC.GetPicGallery.ActualWidth + 5) - (GetMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
-                  + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
+                        GetMainWindow.Left = (((MonitorInfo.WorkArea.Height - ((GetMainWindow.ActualHeight - UC.GetPicGallery.ActualWidth) * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling));
+                        GetMainWindow.Top = (((MonitorInfo.WorkArea.Height - (GetMainWindow.ActualHeight * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling));
                     }
                 }
                 else if (Properties.Settings.Default.AutoFitWindow)

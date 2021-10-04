@@ -101,12 +101,12 @@ namespace PicView.ChangeImage
                 {
                     ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
 
-                    if (Properties.Settings.Default.Fullscreen)
+                    if (Properties.Settings.Default.Fullscreen || Properties.Settings.Default.AutoFitWindow == false)
                     {
                         ConfigureWindows.GetMainWindow.MainImage.Width = thumb.PixelWidth;
                         ConfigureWindows.GetMainWindow.MainImage.Height = thumb.PixelHeight;
                     }
-                    else if (Properties.Settings.Default.AutoFitWindow)
+                    else 
                     {
                         ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ActualWidth;
                         ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ActualHeight;
