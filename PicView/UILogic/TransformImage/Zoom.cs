@@ -13,7 +13,7 @@ namespace PicView.UILogic.TransformImage
     internal static class ZoomLogic
     {
         private static ScaleTransform? scaleTransform;
-        private static TranslateTransform? translateTransform;
+        internal static TranslateTransform? translateTransform;
         private static Point origin;
         private static Point start;
 
@@ -88,7 +88,7 @@ namespace PicView.UILogic.TransformImage
                         }
             };
 
-            ConfigureWindows.GetMainWindow.Scroller.ClipToBounds = ConfigureWindows.GetMainWindow.MainImage.ClipToBounds = true;
+            ConfigureWindows.GetMainWindow.ParentContainer.ClipToBounds = ConfigureWindows.GetMainWindow.MainImage.ClipToBounds = true;
 
             // Set transforms to UI elements
             scaleTransform = (ScaleTransform)((TransformGroup)ConfigureWindows.GetMainWindow.MainImage.RenderTransform).Children.First(tr => tr is ScaleTransform);
@@ -99,7 +99,7 @@ namespace PicView.UILogic.TransformImage
         {
             // Report position for image drag
             ConfigureWindows.GetMainWindow.MainImage.CaptureMouse();
-            start = e.GetPosition(ConfigureWindows.GetMainWindow.Scroller);
+            start = e.GetPosition(ConfigureWindows.GetMainWindow.ParentContainer);
             origin = new Point(translateTransform.X, translateTransform.Y);
         }
 
@@ -107,7 +107,7 @@ namespace PicView.UILogic.TransformImage
         {
             // Don't drag when full scale
             // and don't drag it if mouse not held down on image
-            if (!ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured || scaleTransform.ScaleX == 1)
+            if (!ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured)
             {
                 return;
             }
@@ -118,28 +118,31 @@ namespace PicView.UILogic.TransformImage
             var newXproperty = origin.X - dragMousePosition.X;
             var newYproperty = origin.Y - dragMousePosition.Y;
 
-            // Keep panning it in bounds if in normal window
-            if (Properties.Settings.Default.Fullscreen == false)
+            // Keep panning it in bounds 
+            if (Properties.Settings.Default.AutoFitWindow && Properties.Settings.Default.Fullscreen == false) // TODO develop solution where you can keep window in bounds when using normal window behavior and fullscreen
             {
                 var isXOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualWidth < (ConfigureWindows.GetMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
                 var isYOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualHeight < (ConfigureWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
-                if ((isXOutOfBorder && newXproperty > 0) || (!isXOutOfBorder && newXproperty < 0))
-                {
-                    newXproperty = 0;
-                }
-                if ((isYOutOfBorder && newYproperty > 0) || (!isYOutOfBorder && newYproperty < 0))
-                {
-                    newYproperty = 0;
-                }
                 var maxX = ConfigureWindows.GetMainWindow.Scroller.ActualWidth - (ConfigureWindows.GetMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
-                if ((isXOutOfBorder && newXproperty < maxX) || (!isXOutOfBorder && newXproperty > maxX))
+                var maxY = ConfigureWindows.GetMainWindow.Scroller.ActualHeight - (ConfigureWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
+
+                if (isXOutOfBorder && newXproperty < maxX || isXOutOfBorder == false && newXproperty > maxX)
                 {
                     newXproperty = maxX;
                 }
-                var maxY = ConfigureWindows.GetMainWindow.Scroller.ActualHeight - (ConfigureWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
-                if ((isXOutOfBorder && newYproperty < maxY) || (!isXOutOfBorder && newYproperty > maxY))
+                
+                if (isXOutOfBorder && newYproperty < maxY || isXOutOfBorder == false && newYproperty > maxY)
                 {
                     newYproperty = maxY;
+                }
+
+                if (isXOutOfBorder && newXproperty > 0 || isXOutOfBorder == false && newXproperty < 0)
+                {
+                    newXproperty = 0;
+                }
+                if (isYOutOfBorder && newYproperty > 0 || isYOutOfBorder == false && newYproperty < 0)
+                {
+                    newYproperty = 0;
                 }
             }
 

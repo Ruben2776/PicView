@@ -22,7 +22,7 @@ namespace PicView.Views.Windows
                 WindowStartupLocation = WindowStartupLocation.Manual;
                 if (Properties.Settings.Default.Width > 0)
                 {
-                    UILogic.ConfigureWindows.SetLastWindowSize();
+                    UILogic.Sizing.WindowSizing.SetLastWindowSize();
                 }
             }
 

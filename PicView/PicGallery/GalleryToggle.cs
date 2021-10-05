@@ -271,11 +271,11 @@ namespace PicView.PicGallery
             // Restore settings
             if (SetWindowBehavior())
             {
-                ConfigureWindows.CenterWindowOnScreen();
+                UILogic.Sizing.WindowSizing.CenterWindowOnScreen();
             }
             else
             {
-                ConfigureWindows.SetLastWindowSize();
+                UILogic.Sizing.WindowSizing.SetLastWindowSize();
             }
         }
 

@@ -18,7 +18,7 @@ namespace PicView.UILogic
                 return;
             }
 
-            ConfigureWindows.Move(sender, e);
+            UILogic.Sizing.WindowSizing.Move(sender, e);
             Refocus();
             e.Handled = true; // Disable text clicking
         }

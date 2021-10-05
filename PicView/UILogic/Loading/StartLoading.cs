@@ -28,7 +28,7 @@ namespace PicView.UILogic.Loading
             Trace.Unindent();
             Trace.WriteLine(SetTitle.AppName + " started at " + DateTime.Now);
 #endif
-            // theese two line have to be exactly onload
+            // Subscribe to Windows resized event || Need to be exactly on load
             HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle);
             source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
 
@@ -69,13 +69,13 @@ namespace PicView.UILogic.Loading
                 // Determine proper startup size
                 if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width > 0)
                 {
-                    ConfigureWindows.SetLastWindowSize();
+                    UILogic.Sizing.WindowSizing.SetLastWindowSize();
                 }
                 else
                 {
                     ConfigureWindows.GetMainWindow.Width = ConfigureWindows.GetMainWindow.MinWidth;
                     ConfigureWindows.GetMainWindow.Height = ConfigureWindows.GetMainWindow.MinHeight;
-                    ConfigureWindows.CenterWindowOnScreen();
+                    UILogic.Sizing.WindowSizing.CenterWindowOnScreen();
                 }
                 return;
             }
@@ -84,7 +84,7 @@ namespace PicView.UILogic.Loading
                 // Determine prefered UI for startup
                 if (Properties.Settings.Default.Fullscreen)
                 {
-                    ConfigureWindows.Fullscreen_Restore(true);
+                    UILogic.Sizing.WindowSizing.Fullscreen_Restore(true);
                 }
                 else if (Properties.Settings.Default.StartInFullscreenGallery)
                 {
@@ -93,7 +93,7 @@ namespace PicView.UILogic.Loading
                 }
                 else if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width > 0)
                 {
-                    ConfigureWindows.SetLastWindowSize();
+                    UILogic.Sizing.WindowSizing.SetLastWindowSize();
                 }
 
                 await QuickLoad(args[1]).ConfigureAwait(false);

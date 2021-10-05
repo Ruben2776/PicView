@@ -93,18 +93,18 @@ namespace PicView.UILogic.Loading
             GetToolTipMessage.MouseWheel += async (sender, e) => await MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);
 
             // TitleBar
-            ConfigureWindows.GetMainWindow.TitleBar.MouseLeave += ConfigureWindows.Restore_From_Move;
+            ConfigureWindows.GetMainWindow.TitleBar.MouseLeave += UILogic.Sizing.WindowSizing.Restore_From_Move;
 
             // Lower Bar
             ConfigureWindows.GetMainWindow.LowerBar.Drop += async (sender, e) => await Image_Drop(sender, e).ConfigureAwait(false);
-            ConfigureWindows.GetMainWindow.LowerBar.MouseLeftButtonDown += ConfigureWindows.MoveAlt;
+            ConfigureWindows.GetMainWindow.LowerBar.MouseLeftButtonDown += UILogic.Sizing.WindowSizing.MoveAlt;
 
             // This
-            ConfigureWindows.GetMainWindow.Closing += ConfigureWindows.Window_Closing;
-            ConfigureWindows.GetMainWindow.StateChanged += ConfigureWindows.MainWindow_StateChanged;
+            ConfigureWindows.GetMainWindow.Closing += UILogic.Sizing.WindowSizing.Window_Closing;
+            ConfigureWindows.GetMainWindow.StateChanged += UILogic.Sizing.WindowSizing.MainWindow_StateChanged;
             ConfigureWindows.GetMainWindow.MouseLeftButtonDown += async (sender, e) => await MouseLeftButtonDownAsync(sender, e).ConfigureAwait(false);
 
-            Microsoft.Win32.SystemEvents.DisplaySettingsChanged += ConfigureWindows.SystemEvents_DisplaySettingsChanged;
+            Microsoft.Win32.SystemEvents.DisplaySettingsChanged += UILogic.Sizing.WindowSizing.SystemEvents_DisplaySettingsChanged;
 
 #if DEBUG
             Trace.WriteLine("Events loaded");

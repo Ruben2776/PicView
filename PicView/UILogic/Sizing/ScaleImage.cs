@@ -297,7 +297,7 @@ namespace PicView.UILogic.Sizing
                 }
             }
 
-            if (ZoomLogic.ZoomValue == 1.0)
+            if (ZoomLogic.ZoomValue > 0 || ZoomLogic.ZoomValue < 0 || ZoomLogic.translateTransform is not null && ZoomLogic.translateTransform?.X != 1.0)
             {
                 ZoomLogic.ResetZoom(false);
             }

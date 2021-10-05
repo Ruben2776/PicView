@@ -34,7 +34,7 @@ namespace PicView.Views.UserControls
 
             TheButton.Click += delegate
             {
-                ConfigureWindows.Fullscreen_Restore();
+                UILogic.Sizing.WindowSizing.Fullscreen_Restore();
             };
 
             if (!Properties.Settings.Default.DarkTheme)

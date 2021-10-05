@@ -142,42 +142,23 @@ namespace PicView.SystemIntegration
 
         // https://stackoverflow.com/a/60938929/13646636
         private const int WM_SIZING = 0x214;
-
-        private const int WM_EXITSIZEMOVE = 0x232;
-        private static bool WindowWasResized;
+        // Message list = https://wiki.winehq.org/List_Of_Windows_Messages
 
         /// Supress warnings about unused parameters, because they are required by OS.
         /// Executes when user manually resized window
         public static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            if (msg == WM_SIZING)
+            if (msg == WM_SIZING || msg == 5)
             {
-                if (WindowWasResized == false)
-                {
-                    // 'indicate the the user is resizing and not moving the window
-                    WindowWasResized = true;
-                }
-            }
+                _ = ScaleImage.TryFitImageAsync();
 
-            if (msg == WM_EXITSIZEMOVE)
-            {
-                // 'check that this is the end of resize and not move operation
-                if (WindowWasResized == true)
+                if (UC.GetPicGallery != null)
                 {
-                    // your stuff to do
-                    _ = ScaleImage.TryFitImageAsync();
-
-                    if (UC.GetPicGallery != null)
+                    if (GalleryFunctions.IsOpen)
                     {
-                        if (GalleryFunctions.IsOpen)
-                        {
-                            UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.Width;
-                            UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.Height;
-                        }
+                        UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.Width;
+                        UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.Height;
                     }
-
-                    // 'set it back to false for the next resize/move
-                    WindowWasResized = false;
                 }
             }
 

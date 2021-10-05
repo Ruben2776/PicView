@@ -196,6 +196,7 @@ namespace PicView.Shortcuts
                     if (ctrlDown && !GalleryFunctions.IsOpen)
                     {
                         await SaveFilesAsync().ConfigureAwait(false);
+                        return; // Fix saving file
                     }
                     else if (GalleryNavigation.ShouldHorizontalNavigate())
                     {
@@ -259,7 +260,7 @@ namespace PicView.Shortcuts
                             }
                             else
                             {
-                                Fullscreen_Restore();
+                                UILogic.Sizing.WindowSizing.Fullscreen_Restore();
                             }
                         }
                         else if (Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
@@ -465,7 +466,7 @@ namespace PicView.Shortcuts
                                 return;
                             }
                         }
-                        CenterWindowOnScreen();
+                        UILogic.Sizing.WindowSizing.CenterWindowOnScreen();
                         break;
 
                     // 1
@@ -550,7 +551,7 @@ namespace PicView.Shortcuts
 #endif
                     // F11
                     case Key.F11:
-                        Fullscreen_Restore();
+                        UILogic.Sizing.WindowSizing.Fullscreen_Restore();
                         break;
 
                     // Home
@@ -591,7 +592,7 @@ namespace PicView.Shortcuts
                 {
                     if (Properties.Settings.Default.FullscreenGalleryHorizontal == false)
                     {
-                        Fullscreen_Restore();
+                        UILogic.Sizing.WindowSizing.Fullscreen_Restore();
                     }
                 }
             }
@@ -692,7 +693,7 @@ namespace PicView.Shortcuts
             // Move window when Shift is being held down
             if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift || !Properties.Settings.Default.ShowInterface)
             {
-                Move(sender, e);
+                UILogic.Sizing.WindowSizing.Move(sender, e);
                 return;
             }
 
