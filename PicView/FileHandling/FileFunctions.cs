@@ -121,7 +121,8 @@ namespace PicView.FileHandling
                 await ChangeImage.Navigation.PicAsync(false).ConfigureAwait(false);
                 return false;
             }
-            ChangeImage.Preloader.Remove(ChangeImage.Navigation.FolderIndex);
+
+            ChangeImage.Preloader.Rename(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex], newPath);
             if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > ChangeImage.Navigation.FolderIndex)
             {
                 UC.GetPicGallery.Container.Children.RemoveAt(ChangeImage.Navigation.FolderIndex);
@@ -213,7 +214,7 @@ namespace PicView.FileHandling
             }
         }
 
-        internal static string GetWritingPath()
+        internal static string? GetWritingPath()
         {
             return Path.GetDirectoryName(GetDefaultExeConfigPath(ConfigurationUserLevel.PerUserRoamingAndLocal));
         }

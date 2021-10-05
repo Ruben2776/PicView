@@ -114,6 +114,21 @@ namespace PicView.ChangeImage
 
         }
 
+        internal static bool Rename(string file, string name)
+        {
+            if (file == null || name == null) {  return false; }
+
+            if (Sources.TryRemove(file, out var preloadValue) == false)
+            {
+                return false;
+            }
+            if (Sources.TryAdd(name, preloadValue))
+            {
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// Removes all keys
         /// </summary>
