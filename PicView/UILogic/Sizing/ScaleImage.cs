@@ -223,26 +223,41 @@ namespace PicView.UILogic.Sizing
 
             if (Properties.Settings.Default.ScrollEnabled)
             {
-                /// Calculate height based on width
-                GetMainWindow.MainImage.Width = maxWidth;
-                GetMainWindow.MainImage.Height = maxWidth * height / width;
+                if (Properties.Settings.Default.FillImage)
+                {
+                    GetMainWindow.MainImage.Width = maxWidth;
+                    GetMainWindow.MainImage.Height = maxWidth * height / width;
 
-                /// Set mainWindow.Scroller height to aspect ratio calculation
-                GetMainWindow.Scroller.Height = height * AspectRatio;
+                    GetMainWindow.ParentContainer.Width = maxWidth;
+                    GetMainWindow.ParentContainer.Height = XHeight = height * AspectRatio;
+                }
+                else
+                {
+                    /// Calculate height based on width
+                    GetMainWindow.MainImage.Height = maxWidth * height / width;
 
-                /// Update values
-                XWidth = GetMainWindow.MainImage.Width;
-                XHeight = GetMainWindow.Scroller.Height;
+                    GetMainWindow.ParentContainer.Width = GetMainWindow.MainImage.Width = XWidth = Math.Min(monitorWidth - padding, width);
+                    GetMainWindow.ParentContainer.Height = XHeight = height * AspectRatio;
+                }
+
             }
             else
             {
-                /// Reset mainWindow.Scroller's height to auto
-                GetMainWindow.Scroller.Height = double.NaN;
-
                 /// Fit image by aspect ratio calculation
                 /// and update values
                 GetMainWindow.MainImage.Width = XWidth = width * AspectRatio;
                 GetMainWindow.MainImage.Height = XHeight = height * AspectRatio;
+
+                if (Properties.Settings.Default.Fullscreen)
+                {
+                    GetMainWindow.ParentContainer.Width = MonitorInfo.Width * MonitorInfo.DpiScaling;
+                    GetMainWindow.ParentContainer.Height = MonitorInfo.Height * MonitorInfo.DpiScaling;
+                }
+                else if (Properties.Settings.Default.AutoFitWindow)
+                {
+                    GetMainWindow.ParentContainer.Width = XWidth;
+                    GetMainWindow.ParentContainer.Height = XHeight;
+                }
             }
 
             if (GetMainWindow.WindowState == System.Windows.WindowState.Normal)

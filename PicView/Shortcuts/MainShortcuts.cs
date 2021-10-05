@@ -93,11 +93,6 @@ namespace PicView.Shortcuts
                 case Key.BrowserBack:
                 case Key.Left:
                 case Key.A:
-                    if (Properties.Settings.Default.ScrollEnabled && ConfigureWindows.GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
-                    {
-                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + 30);
-                        return;
-                    }
                     if (GalleryNavigation.ShouldHorizontalNavigate())
                     {
                         GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Left);
@@ -644,6 +639,10 @@ namespace PicView.Shortcuts
                     break;
 
                 case MouseButton.Left:
+                    if (Keyboard.Modifiers == ModifierKeys.Control)
+                    {
+                        UILogic.DragAndDrop.DragToExplorer.DragFile(sender, e);
+                    }
                     if (IsAutoScrolling)
                     {
                         StopAutoScroll();
@@ -715,7 +714,7 @@ namespace PicView.Shortcuts
                 return;
             }
             // Drag logic
-            if (Properties.Settings.Default.ScrollEnabled == false)
+            if (Properties.Settings.Default.ScrollEnabled == false && GetMainWindow.MainImage.IsMouseDirectlyOver) // Only send it when mouse over to not disturb other mouse events
             {
                 PreparePanImage(sender, e);
             }
@@ -727,14 +726,14 @@ namespace PicView.Shortcuts
         /// <param name="e"></param>
         internal static void MainImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (Mouse.Captured != null)
+            {
+                GetMainWindow.MainImage.ReleaseMouseCapture();
+            }
             // Stop autoscrolling or dragging image
             if (IsAutoScrolling)
             {
                 StopAutoScroll();
-            }
-            else
-            {
-                GetMainWindow.MainImage.ReleaseMouseCapture();
             }
         }
 

@@ -232,6 +232,8 @@ namespace PicView.PicGallery
 
         internal static void CloseHorizontalGallery()
         {
+            if (UC.GetPicGallery is null) { return; }
+
             IsOpen = false;
 
             // Restore interface elements if needed
@@ -267,7 +269,7 @@ namespace PicView.PicGallery
             HideInterfaceLogic.ShowStandardInterface();
 
             // Restore settings
-            if (AutoFitWindow())
+            if (SetWindowBehavior())
             {
                 ConfigureWindows.CenterWindowOnScreen();
             }

@@ -417,6 +417,8 @@
 
                 <ScrollViewer
                     x:Name="Scroller"
+                    Width="{Binding Path=ActualWidth, ElementName=ParentContainer}"
+                    Height="{Binding Path=ActualHeight, ElementName=ParentContainer}"
                     CanContentScroll="False"
                     FocusVisualStyle="{x:Null}"
                     Focusable="False"

@@ -205,7 +205,7 @@ namespace PicView.ConfigureSettings
                 UC.GetQuickSettingsMenu.ToggleFill.IsChecked = false;
             }
 
-            WindowSizing.AutoFitWindow();
+            WindowSizing.SetWindowBehavior();
 
             await ScaleImage.TryFitImageAsync().ConfigureAwait(false);
         }

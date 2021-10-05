@@ -17,7 +17,7 @@ namespace PicView.UILogic.Sizing
         /// <summary>
         /// Set whether to fit window to image or image to window
         /// </summary>
-        internal static bool AutoFitWindow()
+        internal static bool SetWindowBehavior()
         {
             if (Properties.Settings.Default.AutoFitWindow)
             {

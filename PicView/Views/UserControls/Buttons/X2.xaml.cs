@@ -13,29 +13,48 @@ namespace PicView.Views.UserControls
         public X2()
         {
             InitializeComponent();
-
-            MouseEnter += (sender, e) =>
-            {
-                MouseOverAnimations.AltInterfaceMouseOver(PolyFill, CanvasBGcolor, BorderBrushKey);
-            };
-
-            MouseLeave += (sender, e) =>
-            {
-                MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
-            };
-
-            TheButton.Click += (_, _) =>
+            MouseLeftButtonUp += (_, _) =>
             {
                 if (ConfigureWindows.GetFakeWindow is not null && ConfigureWindows.GetFakeWindow.IsVisible)
                 {
                     SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
                 }
-                else
+                else if (Properties.Settings.Default.Fullscreen == false)
                 {
                     PicView.PicGallery.GalleryToggle.CloseHorizontalGallery();
                 }
-
+                else
+                {
+                    SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
+                }
             };
+            border.MouseLeftButtonUp += (_, _) =>
+            {
+                if (ConfigureWindows.GetFakeWindow is not null && ConfigureWindows.GetFakeWindow.IsVisible)
+                {
+                    SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
+                }
+                else if (Properties.Settings.Default.Fullscreen == false)
+                {
+                    PicView.PicGallery.GalleryToggle.CloseHorizontalGallery();
+                }
+                else
+                {
+                    SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
+                }
+            };
+
+            MouseEnter += (_, _) =>
+            {
+                MouseOverAnimations.AltInterfaceMouseOver(PolyFill, CanvasBGcolor, BorderBrushKey);
+            };
+
+            MouseLeave += (_, _) =>
+            {
+                MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
+            };
+
+
         }
     }
 }

@@ -280,6 +280,7 @@ namespace PicView.UILogic
             else
             {
                 GetMainWindow.Topmost = Properties.Settings.Default.TopMost;
+                Properties.Settings.Default.Fullscreen = false;
 
                 if (Properties.Settings.Default.ShowInterface)
                 {
@@ -294,51 +295,28 @@ namespace PicView.UILogic
                     ShowShortcuts(true);
                 }
 
-                if (GetMainWindow.WindowState == WindowState.Maximized)
-                {
-                    GetMainWindow.WindowState = WindowState.Normal;
-                    // Reset margin from fullscreen
-                    GetMainWindow.ParentContainer.Margin = new Thickness(0);
-                }
+                GetMainWindow.WindowState = WindowState.Normal;
+                // Reset margin from fullscreen
+                GetMainWindow.ParentContainer.Margin = new Thickness(0);
 
+                SetWindowBehavior();
+                
                 if (Properties.Settings.Default.AutoFitWindow)
                 {
-                    GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
-                    GetMainWindow.ResizeMode = ResizeMode.NoResize;
-
-                    if (GetQuickSettingsMenu != null)
-                    {
-                        GetQuickSettingsMenu.SetFit.IsChecked = true;
-                    }
-
                     GetMainWindow.Width =
-                    GetMainWindow.Height =
-                    GetMainWindow.Scroller.Width =
-                    GetMainWindow.Scroller.Height = double.NaN;
-
-                    GetMainWindow.Top -= GetMainWindow.LowerBar.ActualHeight / 2; // It works...
+                    GetMainWindow.Height = double.NaN;
                 }
                 else
                 {
-                    GetMainWindow.SizeToContent = SizeToContent.Manual;
-                    GetMainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
-
-                    if (GetQuickSettingsMenu != null)
-                    {
-                        GetQuickSettingsMenu.SetFit.IsChecked = false;
-                    }
-
-                    GetMainWindow.Scroller.Width =
-                    GetMainWindow.Scroller.Height = double.NaN;
                     SetLastWindowSize();
+                    ConfigureWindows.GetMainWindow.ParentContainer.Width = ConfigureWindows.GetMainWindow.Width;
+                    ConfigureWindows.GetMainWindow.ParentContainer.Height = ConfigureWindows.GetMainWindow.Height;
                 }
 
                 if (Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
                 {
                     Slideshow.SlideTimer.Enabled = false;
                 }
-
-                Properties.Settings.Default.Fullscreen = false;
                 ConfigureSettings.ConfigColors.UpdateColor(); // Regain border
 
                 if (ConfigureWindows.GetFakeWindow is not null)
@@ -346,11 +324,7 @@ namespace PicView.UILogic
                     ConfigureWindows.GetFakeWindow.Hide();
                 }
 
-                if (Properties.Settings.Default.AutoFitWindow == false)
-                {
-                    SetLastWindowSize(); // Calling it again fixed incorrect placement
-                }
-                
+                _ = TryFitImageAsync();
             }
         }
 
@@ -365,10 +339,6 @@ namespace PicView.UILogic
             GetMainWindow.Width = MonitorInfo.Width;
             GetMainWindow.Height = MonitorInfo.Height;
 
-            // Set border to max to fix panning when zooming
-            GetMainWindow.Scroller.Width = MonitorInfo.Width;
-            GetMainWindow.Scroller.Height = MonitorInfo.Height;
-
             // Fix buttons appearing out of window
             GetMainWindow.ParentContainer.Margin = new Thickness(8);
 
@@ -377,6 +347,8 @@ namespace PicView.UILogic
 
             GetMainWindow.WindowState = WindowState.Maximized;
             ConfigureSettings.ConfigColors.UpdateColor(true);
+
+            _ = TryFitImageAsync();
         }
 
         /// <summary>
