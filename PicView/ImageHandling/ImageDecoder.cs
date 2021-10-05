@@ -20,104 +20,116 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         internal static async Task<BitmapSource?> RenderToBitmapSource(string file)
         {
-            try
+            var ext = Path.GetExtension(file).ToUpperInvariant();
+            FileStream? filestream = null;
+            switch (ext)
             {
-                var ext = Path.GetExtension(file).ToUpperInvariant();
-                FileStream filestream;
-                switch (ext)
-                {
-                    case ".JPG":
-                    case ".JPEG":
-                    case ".JPE":
-                    case ".PNG":
-                    case ".BMP":
-                    case ".ICO":
-                    case ".JFIF":
-                    case ".WEBP":
-                    case ".WBMP":
+                case ".JPG":
+                case ".JPEG":
+                case ".JPE":
+                case ".PNG":
+                case ".BMP":
+                case ".GIF":
+                case ".ICO":
+                case ".JFIF":
+                case ".WEBP":
+                case ".WBMP":
+                    try
+                    {
                         filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
-                        using (var imgStream = new SKManagedStream(filestream))
+                    }
+                    catch (Exception e)
+                    {
+#if DEBUG
+                        Trace.WriteLine("RenderToBitmapSource Skia returned " + file + " null, \n" + e.Message);
+#endif
+                        return null;
+                    }
+                    using (var imgStream = new SKManagedStream(filestream))
+                    {
+                        using var skData = SKData.Create(filestream);
+                        await filestream.DisposeAsync().ConfigureAwait(false);
+                        using var codec = SKCodec.Create(skData);
+                        var sKBitmap = SKBitmap.Decode(codec);
+
+                        if (sKBitmap == null)
                         {
-                            using var skData = SKData.Create(filestream);
-                            await filestream.DisposeAsync().ConfigureAwait(false);
-                            using var codec = SKCodec.Create(skData);
-                            var sKBitmap = SKBitmap.Decode(codec);
-
-                            if (sKBitmap == null)
-                            {
-                                return null;
-                            }
-
-                            var skPic = sKBitmap.ToWriteableBitmap();
-                            skPic.Freeze();
-                            sKBitmap.Dispose();
-                            return skPic;
+                            return null;
                         }
 
-                    // ".GIF": empty since XamlAnimatedGif dynamically loads it
-
-                    case ".TIF":
-                    case ".TIFF":
-                    case ".DDS":
-                    case "TGA": // TODO some tga files are created upside down https://github.com/Ruben2776/PicView/issues/22
-                    case ".PSD":
-                    case ".PSB":
-                    case ".SVG":
-                    case ".XCF":
-                        filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
-                        MagickImage magickImage = new()
+                        var skPic = sKBitmap.ToWriteableBitmap();
+                        skPic.Freeze();
+                        sKBitmap.Dispose();
+                        return skPic;
+                    }
+                case ".TIF":
+                case ".TIFF":
+                case ".DDS":
+                case "TGA": // TODO some tga files are created upside down https://github.com/Ruben2776/PicView/issues/22
+                case ".PSD":
+                case ".PSB":
+                case ".SVG":
+                case ".XCF":
+                    var fileInfo = new FileInfo(file);
+                    if (fileInfo == null)
+                    {
+                        return null;
+                    }
+                    MagickImage magickImage = new()
+                    {
+                        Quality = 100,
+                        ColorSpace = ColorSpace.Transparent
+                    };
+                    if (fileInfo.Length >= 2147483647) // Streams with a length larger than 2147483647 are not supported, read from file instead
+                    {
+                        magickImage.Read(fileInfo);
+                    }
+                    else
+                    {
+                        try
                         {
-                            Quality = 100,
-                            ColorSpace = ColorSpace.Transparent
-                        };
-                        await magickImage.ReadAsync(filestream).ConfigureAwait(false);
-                        await filestream.DisposeAsync().ConfigureAwait(false);
-
-                        var bitmap = magickImage.ToBitmapSource();
-                        magickImage.Dispose();
-                        bitmap.Freeze();
-
-                        return bitmap;
-
-                    default: // some formats cause exceptions when using filestream, so defaulting to reading from file
-                        var magick = new MagickImage();
-                        magick.Read(file);
-                        magick.Quality = 100;
-
-                        var pic = magick.ToBitmapSource();
-                        magick.Dispose();
-                        pic.Freeze();
-
-                        return pic;
-                }
-            }
-            catch (Exception e)
-            {
+                            filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
+                            await magickImage.ReadAsync(filestream).ConfigureAwait(false);
+                        }
+                        catch (Exception e)
+                        {
 #if DEBUG
-                Trace.WriteLine("RenderToBitmapSource returned " + file + " null, \n" + e.Message);
+                            Trace.WriteLine("RenderToBitmapSource MagickImage returned " + file + " null, \n" + e.Message);
 #endif
-                return null;
+                            return null;
+                        }
+
+                        await filestream.DisposeAsync().ConfigureAwait(false);
+                    }
+
+                    var bitmap = magickImage.ToBitmapSource();
+                    magickImage.Dispose();
+                    bitmap.Freeze();
+
+                    return bitmap;
+
+                default: // some formats cause exceptions when using filestream, so defaulting to reading from file
+                    var magick = new MagickImage();
+                    try
+                    {
+                        magick.Read(file);
+                    }
+                    catch (Exception e)
+                    {
+#if DEBUG
+                        Trace.WriteLine("RenderToBitmapSource MagickImage returned " + file + " null, \n" + e.Message);
+#endif
+                        return null;
+                    }
+
+                    magick.Quality = 100;
+
+                    var pic = magick.ToBitmapSource();
+                    magick.Dispose();
+                    pic.Freeze();
+
+                    return pic;
             }
-        }
-
-        /// <summary>Gets the magick image.</summary>
-        /// <param name="s">The stream</param>
-        /// <returns></returns>
-        internal static BitmapSource GetMagickImage(byte[] bytes)
-        {
-            BitmapSource pic;
-
-            using MagickImage magick = new()
-            {
-                Quality = 100
-            };
-
-            magick.Read(bytes);
-            magick.ColorSpace = ColorSpace.Transparent;
-            pic = magick.ToBitmapSource();
-
-            pic.Freeze();
-            return pic;
         }
 
         internal static MagickImage? GetRenderedMagickImage()
@@ -184,7 +196,5 @@ namespace PicView.ImageHandling
             }
             catch (Exception) { return null; }
         }
-
-
     }
 }
