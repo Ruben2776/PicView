@@ -73,6 +73,24 @@ namespace PicView.ConfigureSettings
 
         #endregion Update and set colors
 
+        #region Window LostFocus style change
+        
+        internal static void MainWindowUnfocus()
+        {
+            var w = ConfigureWindows.GetMainWindow;
+            var faded = (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"];
+            w.TitleText.InnerTextBox.Foreground = faded;
+        }
+
+        internal static void MainWindowFocus()
+        {
+            var w = ConfigureWindows.GetMainWindow;
+            var main = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
+            w.TitleText.InnerTextBox.Foreground = main;
+        }
+
+        #endregion
+
         #region Change background
 
         internal static void ChangeBackground(object sender, RoutedEventArgs e)

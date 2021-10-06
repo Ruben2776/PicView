@@ -8,26 +8,48 @@ namespace PicView.Translations
     {
         internal static void DetermineLanguage()
         {
-            if (Properties.Settings.Default.CallUpgrade)
-            {
-                if (CultureInfo.CurrentUICulture.TwoLetterISOLanguageName != "en")
-                {
-                    Load();
-                }
-            }
-            else if (Properties.Settings.Default.UserLanguage != "en")
-            {
-                Load();
-            }
-        }
-
-        internal static void Load()
-        {
-            try
+            if (Properties.Settings.Default.UserLanguage != "en" && CultureInfo.CurrentUICulture.TwoLetterISOLanguageName != "en")
             {
                 Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
                 {
                     Source = new Uri(@"/PicView;component/Translations/" + Properties.Settings.Default.UserLanguage + ".xaml", UriKind.Relative)
+                };
+                return;
+            }
+
+            Uri source;
+            switch (CultureInfo.CurrentUICulture.TwoLetterISOLanguageName)
+            {
+                case "da":
+                    source = new Uri(@"/PicView;component/Translations/de.xaml", UriKind.Relative);
+                    break;
+
+                case "de":
+                    source = new Uri(@"/PicView;component/Translations/de.xaml", UriKind.Relative);
+                    break;
+
+                case "es":
+                    source = new Uri(@"/PicView;component/Translations/es.xaml", UriKind.Relative);
+                    break;
+
+                case "ko":
+                    source = new Uri(@"/PicView;component/Translations/es.xaml", UriKind.Relative);
+                    break;
+
+                case "zh":
+                    source = new Uri(@"/PicView;component/Translations/zh.xaml", UriKind.Relative);
+                    break;
+
+                default:
+                case "en":
+                    source = new Uri(@"/PicView;component/Translations/en.xaml", UriKind.Relative);
+                    break;
+            }
+            try
+            {
+                Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
+                {
+                    Source = source
                 };
             }
             catch (Exception)

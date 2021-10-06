@@ -1,5 +1,6 @@
 ﻿using PicView.ChangeImage;
 using PicView.ImageHandling;
+using PicView.PicGallery;
 using PicView.UILogic.TransformImage;
 using System;
 using System.Diagnostics;
@@ -167,20 +168,17 @@ namespace PicView.UILogic.Sizing
                     break;
             }
 
-            if (PicGallery.GalleryFunctions.IsOpen)
+            if (GalleryFunctions.IsVerticalFullscreenOpen)
             {
-                if (Properties.Settings.Default.FullscreenGalleryVertical)
-                {
-                    /// Extra padding for picgallery required
-                    padding += PicGalleryItem_Size - 50;
-                    maxWidth = Math.Min(monitorWidth - padding, width);
-                    maxHeight = Math.Min(monitorHeight, height);
-                }
-                else
-                {
-                    maxWidth = Math.Min(monitorWidth - padding, width);
-                    maxHeight = Math.Min(monitorHeight - PicGalleryItem_Size_s, height);
-                }
+                /// Extra padding for picgallery required
+                padding += PicGalleryItem_Size - 50;
+                maxWidth = Math.Min(monitorWidth - padding, width);
+                maxHeight = Math.Min(monitorHeight, height);
+            }
+            else if (GalleryFunctions.IsHorizontalFullscreenOpen)
+            {
+                maxWidth = Math.Min(monitorWidth - padding, width);
+                maxHeight = Math.Min(monitorHeight - PicGalleryItem_Size_s, height);
             }
             else if (Properties.Settings.Default.AutoFitWindow) // If non resizeable behaviour
             {
@@ -253,10 +251,17 @@ namespace PicView.UILogic.Sizing
                     GetMainWindow.ParentContainer.Width = MonitorInfo.Width * MonitorInfo.DpiScaling;
                     GetMainWindow.ParentContainer.Height = MonitorInfo.Height * MonitorInfo.DpiScaling;
                 }
-                else if (Properties.Settings.Default.AutoFitWindow)
+                else if (Properties.Settings.Default.AutoFitWindow || GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
                 {
                     GetMainWindow.ParentContainer.Width = XWidth;
                     GetMainWindow.ParentContainer.Height = XHeight;
+                }
+                else
+                {
+                    GetMainWindow.ParentContainer.Width = double.NaN;
+                    GetMainWindow.ParentContainer.Height = double.NaN;
+                    GetMainWindow.ParentContainer.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    GetMainWindow.ParentContainer.VerticalAlignment = VerticalAlignment.Stretch;
                 }
             }
 
@@ -265,19 +270,17 @@ namespace PicView.UILogic.Sizing
                 /// Update TitleBar
                 var interfaceSize = 192 * MonitorInfo.DpiScaling; // logo and buttons width
 
-                if (PicGallery.GalleryFunctions.IsOpen)
+                if (GalleryFunctions.IsVerticalFullscreenOpen)
                 {
-                    if (Properties.Settings.Default.FullscreenGalleryHorizontal)
-                    {
-                        GetMainWindow.Top = ((MonitorInfo.WorkArea.Height - PicGalleryItem_Size * MonitorInfo.DpiScaling) - GetMainWindow.ActualHeight) / 2 + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
-
-                        GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth) / 2 + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
-                    }
-                    else
-                    {
-                        GetMainWindow.Left = (((MonitorInfo.WorkArea.Height - ((GetMainWindow.ActualHeight - UC.GetPicGallery.ActualWidth) * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling));
-                        GetMainWindow.Top = (((MonitorInfo.WorkArea.Height - (GetMainWindow.ActualHeight * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling));
-                    }
+                    GetMainWindow.Left = ((MonitorInfo.WorkArea.Width - (UC.GetPicGallery.ActualWidth + 5) - (GetMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
+                                      + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
+                    GetMainWindow.Top = ((MonitorInfo.WorkArea.Height
+                                       - (GetMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
+                }
+                else if (GalleryFunctions.IsHorizontalFullscreenOpen)
+                {
+                    GetMainWindow.Left = (((MonitorInfo.WorkArea.Height - ((GetMainWindow.ActualHeight - UC.GetPicGallery.ActualWidth) * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling));
+                    GetMainWindow.Top = (((MonitorInfo.WorkArea.Height - (GetMainWindow.ActualHeight * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling));
                 }
                 else if (Properties.Settings.Default.AutoFitWindow)
                 {
@@ -297,7 +300,7 @@ namespace PicView.UILogic.Sizing
                 }
             }
 
-            if (ZoomLogic.ZoomValue > 0 || ZoomLogic.ZoomValue < 0 || ZoomLogic.translateTransform is not null && ZoomLogic.translateTransform?.X != 1.0)
+            if (ZoomLogic.translateTransform is not null && ZoomLogic.translateTransform?.X != 0d)
             {
                 ZoomLogic.ResetZoom(false);
             }

@@ -122,7 +122,9 @@ namespace PicView.ConfigureSettings
 
         internal static void SetScrolling(object? sender, RoutedEventArgs? e)
         {
-            if (GalleryFunctions.IsOpen) { return; }
+            if (GalleryFunctions.IsHorizontalFullscreenOpen 
+                || GalleryFunctions.IsVerticalFullscreenOpen
+                || GalleryFunctions.IsHorizontalOpen) { return; }
 
             var settingscm = MainContextMenu.Items[7] as MenuItem;
             var scrollcm = settingscm.Items[1] as MenuItem;
@@ -170,13 +172,13 @@ namespace PicView.ConfigureSettings
 
         internal static async Task SetAutoFitAsync(object sender, RoutedEventArgs e)
         {
-            if (GalleryFunctions.IsOpen) { return; }
+            if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen) { return; }
             await SetScalingBehaviourAsync(Properties.Settings.Default.AutoFitWindow = !Properties.Settings.Default.AutoFitWindow, Properties.Settings.Default.FillImage).ConfigureAwait(false);
         }
 
         internal static async Task SetAutoFillAsync(object sender, RoutedEventArgs e)
         {
-            if (GalleryFunctions.IsOpen) { return; }
+            if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen) { return; }
             await SetScalingBehaviourAsync(Properties.Settings.Default.AutoFitWindow, !Properties.Settings.Default.FillImage).ConfigureAwait(false);
         }
 
@@ -196,12 +198,10 @@ namespace PicView.ConfigureSettings
 
             if (fill)
             {
-                Properties.Settings.Default.FillImage = true;
                 UC.GetQuickSettingsMenu.ToggleFill.IsChecked = true;
             }
             else
             {
-                Properties.Settings.Default.FillImage = false;
                 UC.GetQuickSettingsMenu.ToggleFill.IsChecked = false;
             }
 

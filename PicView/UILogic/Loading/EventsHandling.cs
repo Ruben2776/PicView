@@ -92,9 +92,6 @@ namespace PicView.UILogic.Loading
             // TooltipStyle
             GetToolTipMessage.MouseWheel += async (sender, e) => await MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);
 
-            // TitleBar
-            ConfigureWindows.GetMainWindow.TitleBar.MouseLeave += UILogic.Sizing.WindowSizing.Restore_From_Move;
-
             // Lower Bar
             ConfigureWindows.GetMainWindow.LowerBar.Drop += async (sender, e) => await Image_Drop(sender, e).ConfigureAwait(false);
             ConfigureWindows.GetMainWindow.LowerBar.MouseLeftButtonDown += UILogic.Sizing.WindowSizing.MoveAlt;
@@ -103,6 +100,8 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.Closing += UILogic.Sizing.WindowSizing.Window_Closing;
             ConfigureWindows.GetMainWindow.StateChanged += UILogic.Sizing.WindowSizing.MainWindow_StateChanged;
             ConfigureWindows.GetMainWindow.MouseLeftButtonDown += async (sender, e) => await MouseLeftButtonDownAsync(sender, e).ConfigureAwait(false);
+            ConfigureWindows.GetMainWindow.Deactivated += (_,_) => ConfigureSettings.ConfigColors.MainWindowUnfocus();
+            ConfigureWindows.GetMainWindow.Activated += (_, _) => ConfigureSettings.ConfigColors.MainWindowFocus();
 
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged += UILogic.Sizing.WindowSizing.SystemEvents_DisplaySettingsChanged;
 

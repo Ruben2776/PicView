@@ -89,7 +89,7 @@ namespace PicView.ImageHandling
                         try
                         {
                             filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
-                            await magickImage.ReadAsync(filestream).ConfigureAwait(false);
+                            magickImage.Read(filestream);
                         }
                         catch (Exception e)
                         {

@@ -32,6 +32,7 @@ namespace PicView.UILogic.Loading
             HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle);
             source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
 
+            Properties.Settings.Default.CallUpgrade = true;
             LoadLanguage.DetermineLanguage();
 
             FreshStartup = true;
@@ -90,6 +91,10 @@ namespace PicView.UILogic.Loading
                 {
                     await GalleryToggle.OpenFullscreenGalleryAsync(Properties.Settings.Default.FullscreenGalleryHorizontal, true).ConfigureAwait(false);
                     Timers.PicGalleryTimerHack();
+                }
+                else if (Properties.Settings.Default.Maximized)
+                {
+                    UILogic.Sizing.WindowSizing.SetMaximized();
                 }
                 else if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width > 0)
                 {

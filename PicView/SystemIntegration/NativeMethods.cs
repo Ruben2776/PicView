@@ -148,17 +148,26 @@ namespace PicView.SystemIntegration
         /// Executes when user manually resized window
         public static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            if (msg == WM_SIZING || msg == 5)
+            if (ChangeImage.Navigation.FreshStartup || Properties.Settings.Default.AutoFitWindow || GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
             {
-                _ = ScaleImage.TryFitImageAsync();
-
-                if (UC.GetPicGallery != null)
+                return IntPtr.Zero;
+            }
+            if (msg == WM_SIZING || msg == 0x0005)
+            {
+                if (UILogic.ConfigureWindows.GetMainWindow.WindowState == WindowState.Maximized)
                 {
-                    if (GalleryFunctions.IsOpen)
-                    {
-                        UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.Width;
-                        UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.Height;
-                    }
+                    UILogic.Sizing.WindowSizing.Restore_From_Move();
+                }
+
+                var w = UILogic.ConfigureWindows.GetMainWindow;
+                if (w == null || w.MainImage.Source == null) {  return IntPtr.Zero; }
+                ScaleImage.FitImage(w.MainImage.Source.Width, w.MainImage.Source.Height);
+
+                // Resize gallery
+                if (UC.GetPicGallery != null && GalleryFunctions.IsHorizontalOpen)
+                {
+                    UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.Width;
+                    UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.Height;
                 }
             }
 

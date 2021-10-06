@@ -70,13 +70,9 @@ namespace PicView.Views.Windows
 
         private void MainWindow_StateChanged(object sender, EventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.WindowState == WindowState.Normal)
+            if (ConfigureWindows.GetMainWindow.WindowState == WindowState.Normal && GalleryFunctions.IsVerticalFullscreenOpen 
+                || ConfigureWindows.GetMainWindow.WindowState == WindowState.Normal && GalleryFunctions.IsHorizontalFullscreenOpen)
             {
-                if (UC.GetPicGallery.x2.Visibility == Visibility.Visible) // x2 only visible on horizontal gallery
-                {
-                    return;
-                }
-
                 Show();
                 ConfigureWindows.GetMainWindow.BringIntoView();
             }

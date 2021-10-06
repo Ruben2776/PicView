@@ -20,8 +20,6 @@ namespace PicView.ProcessHandling
 
         internal static void RestartApp()
         {
-            Properties.Settings.Default.Save();
-
             var GetAppPath = GetPathToProcess();
 
             string args;

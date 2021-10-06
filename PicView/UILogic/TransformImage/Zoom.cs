@@ -97,6 +97,10 @@ namespace PicView.UILogic.TransformImage
 
         internal static void PreparePanImage(object sender, MouseButtonEventArgs e)
         {
+            if (ConfigureWindows.GetMainWindow.IsActive == false)
+            {
+                return;
+            }
             // Report position for image drag
             ConfigureWindows.GetMainWindow.MainImage.CaptureMouse();
             start = e.GetPosition(ConfigureWindows.GetMainWindow.ParentContainer);
@@ -105,9 +109,8 @@ namespace PicView.UILogic.TransformImage
 
         internal static void PanImage(object sender, MouseEventArgs e)
         {
-            // Don't drag when full scale
-            // and don't drag it if mouse not held down on image
-            if (!ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured)
+            // Don't drag on't drag it if unintended
+            if (ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured == false || ConfigureWindows.GetMainWindow.IsActive == false || scaleTransform.ScaleX == 1)
             {
                 return;
             }
@@ -157,7 +160,9 @@ namespace PicView.UILogic.TransformImage
         /// </summary>
         internal static void ResetZoom(bool animate = true)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Source == null) { return; }
+            if (ConfigureWindows.GetMainWindow.MainImage.Source == null 
+                || scaleTransform == null
+                || translateTransform == null) { return; }
 
             if (animate)
             {
@@ -193,7 +198,7 @@ namespace PicView.UILogic.TransformImage
             /// Don't zoom when gallery is open
             if (UC.GetPicGallery != null)
             {
-                if (GalleryFunctions.IsOpen)
+                if (GalleryFunctions.IsHorizontalOpen)
                 {
                     return;
                 }

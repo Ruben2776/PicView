@@ -23,7 +23,7 @@ namespace PicView.PicGallery
         {
             ConfigureWindows.GetMainWindow.Focus();
 
-            if (GalleryNavigation.ShouldHorizontalNavigate() == false)
+            if (GalleryFunctions.IsHorizontalOpen == false)
             {
                 await ItemClickAsync(id).ConfigureAwait(false);
                 return;
@@ -38,7 +38,7 @@ namespace PicView.PicGallery
             var size = await ImageHandling.ImageFunctions.ImageSizeAsync(Pics[id]).ConfigureAwait(true);
             if (size.HasValue)
             {
-                GalleryFunctions.IsOpen = false;
+                GalleryFunctions.IsHorizontalOpen = false;
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
                 {
                     FitImage(size.Value.Width, size.Value.Height);
@@ -78,7 +78,7 @@ namespace PicView.PicGallery
                     border.Opacity = 0;
                     GetPicGallery.grid.Children.Remove(border);
                     image = null;
-                    IsOpen = false;
+                    GalleryFunctions.IsHorizontalOpen = false;
                     GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
                     ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
                 });

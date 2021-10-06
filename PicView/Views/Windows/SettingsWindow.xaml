@@ -244,6 +244,7 @@
 
                     <RadioButton
                         x:Name="CtrlZoom"
+                        Margin="0,0,0,5"
                         Padding="5,0,0,0"
                         d:IsChecked="True"
                         BorderThickness="0"
@@ -255,14 +256,13 @@
                         <TextBlock
                             Width="270"
                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                            Text="{StaticResource CtrlToZoom}" />
+                            Text="{StaticResource CtrlToZoom}"
+                            TextWrapping="Wrap" />
                     </RadioButton>
 
                     <RadioButton
                         x:Name="ScrollZoom"
-                        Margin="0,3,0,0"
                         Padding="5,0,0,0"
-                        BorderThickness="0"
                         Focusable="False"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto">
                         <RadioButton.Foreground>
@@ -271,7 +271,8 @@
                         <TextBlock
                             Width="270"
                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                            Text="{StaticResource ScrollToZoom}" />
+                            Text="{StaticResource ScrollToZoom}"
+                            TextWrapping="Wrap" />
                     </RadioButton>
 
                     <Label
@@ -398,7 +399,8 @@
                             <TextBlock
                                 Width="279"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                                Text="{StaticResource ColoredWindowBorder}" />
+                                Text="{StaticResource ColoredWindowBorder}"
+                                TextWrapping="Wrap" />
                         </CheckBox.Content>
                     </CheckBox>
 
@@ -414,7 +416,8 @@
                             <TextBlock
                                 Width="279"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                                Text="{StaticResource ShowButtonsInHiddenUI}" />
+                                Text="{StaticResource ShowButtonsInHiddenUI}"
+                                TextWrapping="Wrap" />
                         </CheckBox.Content>
                     </CheckBox>
 

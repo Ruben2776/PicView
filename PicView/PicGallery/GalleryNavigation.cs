@@ -31,7 +31,7 @@ namespace PicView.PicGallery
             {
                 if (GetPicGallery == null) { return 0; }
 
-                if (ShouldHorizontalNavigate())
+                if (GalleryFunctions.IsHorizontalOpen)
                 {
                     return (int)Math.Floor((GetPicGallery.Height - (GetPicGallery.Container.Margin.Top - GetPicGallery.Container.Margin.Bottom)) / PicGalleryItem_Size);
                 }
@@ -46,7 +46,7 @@ namespace PicView.PicGallery
             {
                 if (GetPicGallery == null) { return 0; }
 
-                if (ShouldHorizontalNavigate())
+                if (GalleryFunctions.IsHorizontalOpen)
                 {
                     return Horizontal_items * Vertical_items;
                 }
@@ -61,7 +61,7 @@ namespace PicView.PicGallery
         {
             get
             {
-                if (ShouldHorizontalNavigate())
+                if (GalleryFunctions.IsHorizontalOpen)
                 {
                     return (int)Math.Floor((double)SelectedGalleryItem / Items_per_page);
                 }
@@ -86,7 +86,7 @@ namespace PicView.PicGallery
         {
             if (GetPicGallery == null) { return; }
 
-            if (ShouldHorizontalNavigate())
+            if (GalleryFunctions.IsHorizontalOpen)
             {
                 GetPicGallery.Scroller.ScrollToHorizontalOffset(PicGalleryItem_Size * Horizontal_items * Current_page);
             }
@@ -131,7 +131,7 @@ namespace PicView.PicGallery
                 var speed = speedUp ? PicGalleryItem_Size * 4.7 : PicGalleryItem_Size;
                 var direction = next ? GetPicGallery.Scroller.HorizontalOffset - speed : GetPicGallery.Scroller.HorizontalOffset + speed;
 
-                if (ShouldHorizontalNavigate())
+                if (GalleryFunctions.IsHorizontalOpen)
                 {
                     GetPicGallery.Scroller.ScrollToHorizontalOffset(direction);
                 }
@@ -139,11 +139,25 @@ namespace PicView.PicGallery
                 {
                     if (next)
                     {
-                        GetPicGallery.Scroller.ScrollToVerticalOffset(GetPicGallery.Scroller.VerticalOffset - speed);
+                        if (Properties.Settings.Default.FullscreenGalleryVertical)
+                        {
+                            GetPicGallery.Scroller.ScrollToVerticalOffset(GetPicGallery.Scroller.VerticalOffset - speed);
+                        }
+                        else
+                        {
+                            GetPicGallery.Scroller.ScrollToHorizontalOffset(GetPicGallery.Scroller.HorizontalOffset - speed);
+                        }
                     }
                     else
                     {
-                        GetPicGallery.Scroller.ScrollToVerticalOffset(GetPicGallery.Scroller.VerticalOffset + speed);
+                        if (Properties.Settings.Default.FullscreenGalleryVertical)
+                        {
+                            GetPicGallery.Scroller.ScrollToVerticalOffset(GetPicGallery.Scroller.VerticalOffset + speed);
+                        }
+                        else
+                        {
+                            GetPicGallery.Scroller.ScrollToHorizontalOffset(GetPicGallery.Scroller.VerticalOffset - speed);
+                        }
                     }
                 }
             }
@@ -247,19 +261,6 @@ namespace PicView.PicGallery
                 var offset = direction == Direction.Left ? GetPicGallery.Scroller.HorizontalOffset - PicGalleryItem_Size : GetPicGallery.Scroller.HorizontalOffset + PicGalleryItem_Size;
                 GetPicGallery.Scroller.ScrollToHorizontalOffset(offset);
             }
-        }
-
-        internal static bool ShouldHorizontalNavigate()
-        {
-            if (GetPicGallery != null && GalleryFunctions.IsOpen)
-            {
-                if (ConfigureWindows.GetFakeWindow is null || ConfigureWindows.GetFakeWindow is not null && ConfigureWindows.GetFakeWindow.IsVisible == false)
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         #endregion

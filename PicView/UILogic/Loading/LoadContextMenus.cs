@@ -340,7 +340,7 @@ namespace PicView.UILogic.Loading
             };
             altcmHeader.Click += delegate
             {
-                if (GalleryFunctions.IsOpen)
+                if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
                 {
                     altcmHeader.IsChecked = Properties.Settings.Default.ShowInterface;
                     return;

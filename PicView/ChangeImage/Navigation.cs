@@ -89,32 +89,8 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            BitmapSource? pic = null, thumb;
-            thumb = await Task.FromResult(GetBitmapSourceThumb(file)).ConfigureAwait(false);
             bool archive = false;
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
-            {
-                // Set Loading
-                SetLoadingString();
-
-                if (thumb is  not null && ConfigureWindows.GetMainWindow.MainImage.Source is null)
-                {
-                    ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
-
-                    if (Properties.Settings.Default.Fullscreen || Properties.Settings.Default.AutoFitWindow == false)
-                    {
-                        ConfigureWindows.GetMainWindow.MainImage.Width = thumb.PixelWidth;
-                        ConfigureWindows.GetMainWindow.MainImage.Height = thumb.PixelHeight;
-                    }
-                    else 
-                    {
-                        ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ActualWidth;
-                        ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ActualHeight;
-                    }
-                }
-            });
-
-            pic = await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(false);
+            var pic = await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(false);
             if (pic is null)
             {
                 archive = SupportedFiles.IsSupportedArchives(file);
@@ -129,8 +105,6 @@ namespace PicView.ChangeImage
             }
             else
             {
-                await TryFitImageAsync(file).ConfigureAwait(false);
-
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
                 {
                     ConfigureWindows.GetMainWindow.MainImage.Source = pic;
@@ -152,7 +126,7 @@ namespace PicView.ChangeImage
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
                 {
-                    UpdatePic(FolderIndex, pic, false);
+                    UpdatePic(FolderIndex, pic);
                 });
 
                 await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
@@ -164,7 +138,7 @@ namespace PicView.ChangeImage
                 await Taskbar.Progress((double)FolderIndex / Pics.Count).ConfigureAwait(false);
             }
 
-            if (GalleryFunctions.IsOpen && Properties.Settings.Default.FullscreenGalleryHorizontal || GalleryFunctions.IsOpen && Properties.Settings.Default.FullscreenGalleryVertical)
+            if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 await GalleryLoad.Load().ConfigureAwait(false);
             }
@@ -355,14 +329,14 @@ namespace PicView.ChangeImage
                 // Show a thumbnail while loading
                 BitmapSource? thumb = null;
                 
-                if (FreshStartup == false && GalleryFunctions.IsOpen == false)
+                if (GalleryFunctions.IsHorizontalFullscreenOpen == false || GalleryFunctions.IsVerticalFullscreenOpen == false)
                 {
                     thumb = GetBitmapSourceThumb(Pics[FolderIndex]);
                 }
 
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                 {
-                    if (GalleryFunctions.IsOpen)
+                    if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
                     {
                         thumb = GetThumb(index);
                     }
@@ -747,7 +721,7 @@ namespace PicView.ChangeImage
             await LoadPicAtIndexAsync(startingpoint).ConfigureAwait(false);
 
             // Update PicGallery selected item, if needed
-            if (GalleryFunctions.IsOpen)
+            if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                 {
@@ -780,7 +754,7 @@ namespace PicView.ChangeImage
         {
             if (!arrow) // Normal buttons
             {
-                if (GalleryFunctions.IsOpen)
+                if (GalleryFunctions.IsHorizontalOpen)
                 {
                     GalleryNavigation.ScrollTo(!right);
                     return;

@@ -4,6 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
     Title="{StaticResource Loading}"
+    Width="700"
+    Height="700"
     MinWidth="475"
     MinHeight="435"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
@@ -417,8 +419,6 @@
 
                 <ScrollViewer
                     x:Name="Scroller"
-                    Width="{Binding Path=ActualWidth, ElementName=ParentContainer}"
-                    Height="{Binding Path=ActualHeight, ElementName=ParentContainer}"
                     CanContentScroll="False"
                     FocusVisualStyle="{x:Null}"
                     Focusable="False"

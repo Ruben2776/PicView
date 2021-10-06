@@ -77,6 +77,10 @@ namespace PicView.PicGallery
                     UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
 
                     UC.GetPicGallery.Container.Orientation = Orientation.Horizontal;
+
+                    GalleryFunctions.IsHorizontalOpen = false;
+                    GalleryFunctions.IsHorizontalFullscreenOpen = true;
+                    GalleryFunctions.IsVerticalFullscreenOpen = false;
                 }
                 else
                 {
@@ -88,8 +92,11 @@ namespace PicView.PicGallery
                     UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
 
                     UC.GetPicGallery.Container.Orientation = Orientation.Vertical;
-                }
 
+                    GalleryFunctions.IsHorizontalOpen = false;
+                    GalleryFunctions.IsHorizontalFullscreenOpen = false;
+                    GalleryFunctions.IsVerticalFullscreenOpen = true;
+                }
 
                 ConfigureWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
                 ConfigureWindows.GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
@@ -123,13 +130,14 @@ namespace PicView.PicGallery
                 UC.GetPicGallery.Container.Margin = new Thickness(0, 65 * WindowSizing.MonitorInfo.DpiScaling, 0, 0);
 
                 UC.GetPicGallery.Container.Orientation = Orientation.Vertical;
+
+                GalleryFunctions.IsHorizontalOpen = true;
+                GalleryFunctions.IsHorizontalFullscreenOpen = false;
+                GalleryFunctions.IsVerticalFullscreenOpen = false;
             }
 
             UC.GetPicGallery.Visibility = Visibility.Visible;
             UC.GetPicGallery.Opacity = 1;
-            
-
-            IsOpen = true;
         }
 
         internal static Task Load() => Task.Run(async () =>

@@ -45,12 +45,10 @@ namespace PicView.Views.Windows
             {
                 return;
             }
-            else if (Properties.Settings.Default.AutoFitWindow == false)
+
+            if (Properties.Settings.Default.AutoFitWindow == false)
             {
-                if (Properties.Settings.Default.FullscreenGalleryHorizontal == false)
-                {
-                    return;
-                }
+                return;
             }
 
             //Keep position when size has changed

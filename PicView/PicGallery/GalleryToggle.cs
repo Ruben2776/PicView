@@ -29,7 +29,7 @@ namespace PicView.PicGallery
             {
                 if (Properties.Settings.Default.FullscreenGalleryHorizontal == false && Properties.Settings.Default.FullscreenGalleryVertical == false)
                 {
-                    if (IsOpen == false)
+                    if (IsHorizontalOpen == false)
                     {
                         await OpenHorizontalGalleryAsync().ConfigureAwait(false);
                     }
@@ -40,7 +40,7 @@ namespace PicView.PicGallery
                 }
                 else
                 {
-                    if (IsOpen == false)
+                    if (IsHorizontalOpen == false)
                     {
                         await OpenFullscreenGalleryAsync(Properties.Settings.Default.FullscreenGalleryHorizontal, false).ConfigureAwait(false);
                     }
@@ -145,7 +145,7 @@ namespace PicView.PicGallery
                 Properties.Settings.Default.FullscreenGalleryVertical = true;
             }
 
-            int count = -1;
+            bool loadItems = false;
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
@@ -211,7 +211,7 @@ namespace PicView.PicGallery
 
                 if (GetPicGallery.Container.Children.Count == 0)
                 {
-                    count = 0;
+                    loadItems = true;
                 }
             });
 
@@ -220,7 +220,7 @@ namespace PicView.PicGallery
                 await UILogic.Sizing.ScaleImage.TryFitImageAsync().ConfigureAwait(false);
             }
 
-            if (count == 0)
+            if (loadItems)
             {
                 await GalleryLoad.Load().ConfigureAwait(false);
             }
@@ -234,7 +234,7 @@ namespace PicView.PicGallery
         {
             if (UC.GetPicGallery is null) { return; }
 
-            IsOpen = false;
+            IsHorizontalOpen = false;
 
             // Restore interface elements if needed
             if (!Properties.Settings.Default.ShowInterface || Properties.Settings.Default.Fullscreen)
@@ -261,15 +261,16 @@ namespace PicView.PicGallery
         internal static void CloseFullscreenGallery()
         {
             if (ConfigureWindows.GetFakeWindow is null) { return; }
-            IsOpen = false;
+            IsVerticalFullscreenOpen = IsHorizontalFullscreenOpen = false;
             GetFakeWindow.Hide();
 
             ConfigureSettings.ConfigColors.UpdateColor();
 
             HideInterfaceLogic.ShowStandardInterface();
+            GetPicGallery.x2.Visibility = Visibility.Collapsed;
 
             // Restore settings
-            if (SetWindowBehavior())
+            if (Properties.Settings.Default.AutoFitWindow)
             {
                 UILogic.Sizing.WindowSizing.CenterWindowOnScreen();
             }

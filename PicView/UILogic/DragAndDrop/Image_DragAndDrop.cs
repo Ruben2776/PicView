@@ -26,8 +26,7 @@ namespace PicView.UILogic.DragAndDrop
         /// <param name="e"></param>
         internal static void Image_DragEnter(object sender, DragEventArgs e)
         {
-            if (Properties.Settings.Default.FullscreenGalleryHorizontal == false && PicGallery.GalleryFunctions.IsOpen ||
-                Properties.Settings.Default.FullscreenGalleryVertical == false && PicGallery.GalleryFunctions.IsOpen)
+            if (PicGallery.GalleryFunctions.IsHorizontalOpen)
             {
                 return;
             }
@@ -124,7 +123,7 @@ namespace PicView.UILogic.DragAndDrop
         /// <param name="e"></param>
         internal static async Task Image_Drop(object sender, DragEventArgs e)
         {
-            if (!Properties.Settings.Default.FullscreenGalleryHorizontal && PicGallery.GalleryFunctions.IsOpen) // If horizontal gallery is open
+            if (PicGallery.GalleryFunctions.IsHorizontalOpen)
             {
                 return;
             }
@@ -157,6 +156,10 @@ namespace PicView.UILogic.DragAndDrop
 
             if (SupportedFiles.IsSupportedExt(files[0]) == false)
             {
+                if (Directory.Exists(files[0]))
+                {
+                    await LoadPicFromFolderAsync(files[0]).ConfigureAwait(false);
+                }
                 return;
             }
 

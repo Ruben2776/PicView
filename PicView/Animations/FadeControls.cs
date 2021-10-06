@@ -28,7 +28,9 @@ namespace PicView.Animations
                 || Getx2 == null
                 || GetGalleryShortcut == null
                 || Scroll.IsAutoScrolling
-                || Properties.Settings.Default.FullscreenGalleryHorizontal == false && GalleryFunctions.IsOpen)
+                || GalleryFunctions.IsVerticalFullscreenOpen
+                || GalleryFunctions.IsHorizontalFullscreenOpen
+                || GalleryFunctions.IsHorizontalOpen)
             {
                 return;
             }
