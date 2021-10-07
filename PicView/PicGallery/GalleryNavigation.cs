@@ -1,5 +1,6 @@
 ﻿using PicView.UILogic;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -189,10 +190,6 @@ namespace PicView.PicGallery
                 nextItem.innerborder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
                 nextItem.innerborder.Width = nextItem.innerborder.Height = PicGalleryItem_Size_s;
             }
-
-#if DEBUG
-            System.Diagnostics.Trace.WriteLine(nameof(SetSelected) + " " + x.ToString() + " = " + nameof(selected) + " " + selected.ToString());
-#endif
         }
 
         #endregion Select and deselect behaviour
@@ -261,6 +258,91 @@ namespace PicView.PicGallery
                 var offset = direction == Direction.Left ? GetPicGallery.Scroller.HorizontalOffset - PicGalleryItem_Size : GetPicGallery.Scroller.HorizontalOffset + PicGalleryItem_Size;
                 GetPicGallery.Scroller.ScrollToHorizontalOffset(offset);
             }
+        }
+
+        internal static void FullscreenGalleryNavigation(int lastItem)
+        {
+            if (!GalleryFunctions.IsHorizontalFullscreenOpen && !GalleryFunctions.IsVerticalFullscreenOpen)
+            {
+                return;
+            }
+
+            if (GetPicGallery?.Container.Children.Count > FolderIndex && GetPicGallery.Container.Children.Count > lastItem)
+            {
+                if (lastItem != FolderIndex)
+                {
+                    SetSelected(lastItem, false);
+                }
+
+                SetSelected(FolderIndex, true);
+            }
+            else
+            {
+                // TODO Find way to get PicGalleryItem an alternative way...
+            }
+
+            if (Properties.Settings.Default.FullscreenGalleryHorizontal)
+            {
+                if (GetPicGallery.Scroller.HorizontalOffset > PicGalleryItem_Size * Horizontal_items * Current_page
+                    || GetPicGallery.Scroller.HorizontalOffset < PicGalleryItem_Size * Horizontal_items * Current_page)
+                {
+                    var offset = ChangeImage.Navigation.Reverse ? GetPicGallery.Scroller.HorizontalOffset - PicGalleryItem_Size : GetPicGallery.Scroller.HorizontalOffset + PicGalleryItem_Size;
+                    GetPicGallery.Scroller.ScrollToHorizontalOffset(offset);
+                }
+            }
+            else
+            {
+                if (GetPicGallery.Scroller.VerticalOffset > PicGalleryItem_Size * Vertical_items * Current_page
+                    || GetPicGallery.Scroller.VerticalOffset < PicGalleryItem_Size * Vertical_items * Current_page)
+                {
+                    var offset = ChangeImage.Navigation.Reverse ? GetPicGallery.Scroller.VerticalOffset - PicGalleryItem_Size : GetPicGallery.Scroller.VerticalOffset + PicGalleryItem_Size;
+                    GetPicGallery.Scroller.ScrollToVerticalOffset(offset);
+                }
+            }
+
+            Tooltip.CloseToolTipMessage();
+        }
+
+        internal static void FullscreenGallerySelection(Direction direction)
+        {
+            var backup = SelectedGalleryItem;
+            if (direction == Direction.Up)
+            {
+                SelectedGalleryItem--;
+            }
+            else
+            {
+                SelectedGalleryItem++;
+            }
+
+            if (SelectedGalleryItem >= Pics.Count - 1)
+            {
+                SelectedGalleryItem = Pics.Count - 1;
+            }
+
+            if (SelectedGalleryItem < 0)
+            {
+                SelectedGalleryItem = 0;
+            }
+
+            SetSelected(SelectedGalleryItem, true);
+            if (backup != SelectedGalleryItem)
+            {
+                SetSelected(backup, false); // deselect
+            }
+            if (SelectedGalleryItem != FolderIndex)
+            {
+                SetSelected(FolderIndex, false); // deselect
+            }
+
+            if (Reverse)
+            {
+                GetPicGallery.Scroller.ScrollToVerticalOffset(GetPicGallery.Scroller.VerticalOffset + PicGalleryItem_Size);
+            }
+            else
+            {
+                GetPicGallery.Scroller.ScrollToVerticalOffset(GetPicGallery.Scroller.VerticalOffset - PicGalleryItem_Size);
+            }            
         }
 
         #endregion

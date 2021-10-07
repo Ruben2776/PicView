@@ -42,7 +42,7 @@ namespace PicView.PicGallery
                 {
                     if (IsHorizontalOpen == false)
                     {
-                        await OpenFullscreenGalleryAsync(Properties.Settings.Default.FullscreenGalleryHorizontal, false).ConfigureAwait(false);
+                        await OpenFullscreenGalleryAsync(false).ConfigureAwait(false);
                     }
                     else
                     {
@@ -127,22 +127,11 @@ namespace PicView.PicGallery
 
         }
 
-        internal static async Task OpenFullscreenGalleryAsync(bool horizontal, bool startup)
+        internal static async Task OpenFullscreenGalleryAsync(bool startup)
         {
             if (Pics?.Count < 1 && !startup)
             {
                 return;
-            }
-
-            if (horizontal)
-            {
-                Properties.Settings.Default.FullscreenGalleryHorizontal = true;
-                Properties.Settings.Default.FullscreenGalleryVertical = false;
-            }
-            else
-            {
-                Properties.Settings.Default.FullscreenGalleryHorizontal = false;
-                Properties.Settings.Default.FullscreenGalleryVertical = true;
             }
 
             bool loadItems = false;
@@ -155,7 +144,7 @@ namespace PicView.PicGallery
                 {
                     GetFakeWindow = new FakeWindow();
 
-                    if (horizontal)
+                    if (Properties.Settings.Default.FullscreenGalleryHorizontal)
                     {
                         GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtonsV2
                         {
@@ -173,7 +162,7 @@ namespace PicView.PicGallery
                 else
                 {
                     GetFakeWindow.grid.Children.RemoveAt(0);
-                    if (horizontal)
+                    if (Properties.Settings.Default.FullscreenGalleryHorizontal)
                     {
                         GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtonsV2
                         {

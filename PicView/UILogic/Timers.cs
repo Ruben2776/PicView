@@ -22,22 +22,5 @@ namespace PicView.UILogic
                 await FadeControlsAsync(false).ConfigureAwait(false);
             };
         }
-
-        internal static void PicGalleryTimerHack()
-        {
-            Timer timer = new() // Dirty code to make it scroll to selected item after start up
-            {
-                AutoReset = false,
-                Enabled = true,
-                Interval = 650
-            };
-            timer.Elapsed += async delegate
-            {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
-                {
-                    PicGallery.GalleryNavigation.ScrollTo();
-                });
-            };
-        }
     }
 }

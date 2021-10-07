@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using static PicView.PicGallery.GalleryFunctions;
 using static PicView.UILogic.HideInterfaceLogic;
 
@@ -27,15 +28,15 @@ namespace PicView.PicGallery
         {
             if (WindowSizing.MonitorInfo.Width > 2100)
             {
-                GalleryNavigation.PicGalleryItem_Size = 170;
+                GalleryNavigation.PicGalleryItem_Size = 150;
             }
             else if (WindowSizing.MonitorInfo.Width > 1700)
             {
-                GalleryNavigation.PicGalleryItem_Size = 140;
+                GalleryNavigation.PicGalleryItem_Size = 130;
             }
             else if (WindowSizing.MonitorInfo.Width > 1200)
             {
-                GalleryNavigation.PicGalleryItem_Size = 110;
+                GalleryNavigation.PicGalleryItem_Size = 100;
             }
             else
             {
@@ -51,8 +52,7 @@ namespace PicView.PicGallery
             {
                 UC.GetPicGallery = new Views.UserControls.PicGallery
                 {
-                    Opacity = 0,
-                    Visibility = Visibility.Collapsed
+                    Opacity = 0
                 };
 
                 ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(UC.GetPicGallery);
@@ -69,7 +69,7 @@ namespace PicView.PicGallery
                 if (Properties.Settings.Default.FullscreenGalleryHorizontal)
                 {
                     UC.GetPicGallery.Width = WindowSizing.MonitorInfo.WorkArea.Width;
-                    UC.GetPicGallery.Height = (GalleryNavigation.PicGalleryItem_Size + 15) * WindowSizing.MonitorInfo.DpiScaling;
+                    UC.GetPicGallery.Height = (GalleryNavigation.PicGalleryItem_Size + 25) * WindowSizing.MonitorInfo.DpiScaling;
 
                     UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Center;
                     UC.GetPicGallery.VerticalAlignment = VerticalAlignment.Bottom;
@@ -77,6 +77,11 @@ namespace PicView.PicGallery
                     UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
 
                     UC.GetPicGallery.Container.Orientation = Orientation.Horizontal;
+                    UC.GetPicGallery.Margin = new Thickness(0, 0, 0, 10);
+                    UC.GetPicGallery.border.BorderThickness = new Thickness(0, 0, 0, 0);
+                    UC.GetPicGallery.border.Background = new SolidColorBrush(Colors.Transparent);
+
+                    UC.GetPicGallery.Scroller.CanContentScroll = true;
 
                     GalleryFunctions.IsHorizontalOpen = false;
                     GalleryFunctions.IsHorizontalFullscreenOpen = true;
@@ -136,7 +141,6 @@ namespace PicView.PicGallery
                 GalleryFunctions.IsVerticalFullscreenOpen = false;
             }
 
-            UC.GetPicGallery.Visibility = Visibility.Visible;
             UC.GetPicGallery.Opacity = 1;
         }
 

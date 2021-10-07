@@ -55,7 +55,7 @@ namespace PicView.Views.UserControls
                     Properties.Settings.Default.FullscreenGalleryHorizontal = true;
                 }
 
-                await GalleryToggle.OpenFullscreenGalleryAsync(Properties.Settings.Default.FullscreenGalleryHorizontal, false).ConfigureAwait(false);
+                await GalleryToggle.OpenFullscreenGalleryAsync(false).ConfigureAwait(false);
             };
 
         }

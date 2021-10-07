@@ -265,6 +265,7 @@ namespace PicView.UILogic.Sizing
                 }
             }
 
+            // Calculate window position
             if (GetMainWindow.WindowState == System.Windows.WindowState.Normal)
             {
                 /// Update TitleBar
@@ -272,15 +273,14 @@ namespace PicView.UILogic.Sizing
 
                 if (GalleryFunctions.IsVerticalFullscreenOpen)
                 {
-                    GetMainWindow.Left = ((MonitorInfo.WorkArea.Width - (UC.GetPicGallery.ActualWidth + 5) - (GetMainWindow.ActualWidth * MonitorInfo.DpiScaling)) / 2)
-                                      + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
-                    GetMainWindow.Top = ((MonitorInfo.WorkArea.Height
-                                       - (GetMainWindow.Height * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
+                    GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - XHeight) / 2 + MonitorInfo.WorkArea.Top;
+                    GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - (XWidth + UC.GetPicGallery.Width)) / 2 + MonitorInfo.WorkArea.Left;
                 }
                 else if (GalleryFunctions.IsHorizontalFullscreenOpen)
                 {
-                    GetMainWindow.Left = (((MonitorInfo.WorkArea.Height - ((GetMainWindow.ActualHeight - UC.GetPicGallery.ActualWidth) * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling));
-                    GetMainWindow.Top = (((MonitorInfo.WorkArea.Height - (GetMainWindow.ActualHeight * MonitorInfo.DpiScaling)) / 2) + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling));
+                    GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - (XHeight + GalleryNavigation.PicGalleryItem_Size + UC.GetPicGallery.Margin.Bottom + 4 * MonitorInfo.DpiScaling)) / 2 + MonitorInfo.WorkArea.Top;
+                    GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - XWidth) / 2 + MonitorInfo.WorkArea.Left;
+
                 }
                 else if (Properties.Settings.Default.AutoFitWindow)
                 {
@@ -290,7 +290,8 @@ namespace PicView.UILogic.Sizing
 
                     if (Properties.Settings.Default.KeepCentered)
                     {
-                        CenterWindowOnScreen();
+                        GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - XHeight) / 2 + MonitorInfo.WorkArea.Top;
+                        GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - XWidth) / 2 + MonitorInfo.WorkArea.Left;
                     }
                 }
                 else

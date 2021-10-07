@@ -159,7 +159,6 @@ namespace PicView.FileHandling
                     if (Properties.Settings.Default.FullscreenGalleryHorizontal)
                     {
                         await PicGallery.GalleryLoad.Load().ConfigureAwait(false);
-                        Timers.PicGalleryTimerHack();
                     }
                 }
                 else

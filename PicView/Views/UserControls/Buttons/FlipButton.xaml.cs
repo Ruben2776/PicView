@@ -24,6 +24,7 @@ namespace PicView.Views.UserControls
                     ButtonMouseOverAnim(IconBrush);
                     AnimationHelper.MouseEnterBgTexColor(TheButtonBrush);
 
+                    if (TheButton.IsChecked.HasValue == false) { return; }
                     ToolTip = TheButton.IsChecked.Value ?
                         Application.Current.Resources["Unflip"] :
                         Application.Current.Resources["Flip"];

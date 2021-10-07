@@ -15,32 +15,13 @@ namespace PicView.Views.UserControls
             InitializeComponent();
             MouseLeftButtonUp += (_, _) =>
             {
-                if (ConfigureWindows.GetFakeWindow is not null && ConfigureWindows.GetFakeWindow.IsVisible)
+                if (PicView.PicGallery.GalleryFunctions.IsVerticalFullscreenOpen || PicView.PicGallery.GalleryFunctions.IsHorizontalFullscreenOpen)
                 {
                     SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
-                }
-                else if (Properties.Settings.Default.Fullscreen == false)
-                {
-                    PicView.PicGallery.GalleryToggle.CloseHorizontalGallery();
                 }
                 else
                 {
-                    SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
-                }
-            };
-            border.MouseLeftButtonUp += (_, _) =>
-            {
-                if (ConfigureWindows.GetFakeWindow is not null && ConfigureWindows.GetFakeWindow.IsVisible)
-                {
-                    SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
-                }
-                else if (Properties.Settings.Default.Fullscreen == false)
-                {
                     PicView.PicGallery.GalleryToggle.CloseHorizontalGallery();
-                }
-                else
-                {
-                    SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
                 }
             };
 

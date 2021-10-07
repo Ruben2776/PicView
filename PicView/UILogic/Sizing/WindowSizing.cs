@@ -249,10 +249,8 @@ namespace PicView.UILogic.Sizing
         /// </summary>
         internal static void CenterWindowOnScreen()
         {
-            GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - GetMainWindow.ActualHeight) / 2 + (MonitorInfo.WorkArea.Top * MonitorInfo.DpiScaling);
-            GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth) / 2 + (MonitorInfo.WorkArea.Left * MonitorInfo.DpiScaling);
-
-            SetWindowSize();
+            GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - GetMainWindow.ActualHeight) / 2 + MonitorInfo.WorkArea.Top;
+            GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth) / 2 + MonitorInfo.WorkArea.Left;
         }
 
         internal static void SetLastWindowSize()
@@ -269,6 +267,8 @@ namespace PicView.UILogic.Sizing
             Properties.Settings.Default.Left = GetMainWindow.Left;
             Properties.Settings.Default.Height = GetMainWindow.Height;
             Properties.Settings.Default.Width = GetMainWindow.Width;
+
+            Properties.Settings.Default.Save();
         }
 
         #endregion Window Functions

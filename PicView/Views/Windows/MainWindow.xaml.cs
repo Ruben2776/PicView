@@ -16,17 +16,17 @@ namespace PicView.Views.Windows
             {
                 ConfigureSettings.ConfigColors.ChangeToLightTheme();
             }
+            InitializeComponent();
 
             if (Properties.Settings.Default.AutoFitWindow == false)
             {
+                // Need to change startup location after initialize component
                 WindowStartupLocation = WindowStartupLocation.Manual;
                 if (Properties.Settings.Default.Width > 0)
                 {
-                    UILogic.Sizing.WindowSizing.SetLastWindowSize();
+                    SetLastWindowSize();
                 }
             }
-
-            InitializeComponent();
 
             Loaded += async delegate { await StartLoading.LoadedEventsAsync().ConfigureAwait(false); };
             ContentRendered += delegate { StartLoading.ContentRenderedEvent(); };
@@ -36,17 +36,7 @@ namespace PicView.Views.Windows
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
-            if (sizeInfo == null)
-            {
-                return;
-            }
-
-            if (!sizeInfo.WidthChanged && !sizeInfo.HeightChanged)
-            {
-                return;
-            }
-
-            if (Properties.Settings.Default.AutoFitWindow == false)
+            if (sizeInfo == null || !sizeInfo.WidthChanged && !sizeInfo.HeightChanged || Properties.Settings.Default.AutoFitWindow == false)
             {
                 return;
             }

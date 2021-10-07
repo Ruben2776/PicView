@@ -32,6 +32,13 @@ namespace PicView.PicGallery
                     await GalleryClick.ClickAsync(id).ConfigureAwait(false);
                 };
                 GetPicGallery.Container.Children.Add(item);
+
+                if (selected)
+                {
+                    GalleryNavigation.ScrollTo();
+                    GalleryNavigation.SelectedGalleryItem = Navigation.FolderIndex;
+                }
+
             }));
         }
 

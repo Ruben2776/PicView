@@ -23,82 +23,96 @@ namespace PicView.UILogic.Loading
     {
         internal static async Task LoadedEventsAsync()
         {
+            // Subscribe to Windows resized event || Need to be exactly on load
+            HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle);
+            source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
+
 #if DEBUG
             Trace.Listeners.Add(new TextWriterTraceListener("Debug.log"));
             Trace.Unindent();
             Trace.WriteLine(SetTitle.AppName + " started at " + DateTime.Now);
 #endif
-            // Subscribe to Windows resized event || Need to be exactly on load
-            HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle);
-            source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
-
-            Properties.Settings.Default.CallUpgrade = true;
-            LoadLanguage.DetermineLanguage();
-
             FreshStartup = true;
             Pics = new List<string>();
 
             // Load sizing properties
             MonitorInfo = MonitorSize.GetMonitorSize();
-            SetWindowBehavior();
-            ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Properties.Settings.Default.ScrollEnabled ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
 
             // Set min size to DPI scaling
             ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
             ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            {
+                SetWindowBehavior();
+                ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Properties.Settings.Default.ScrollEnabled ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+
+                // Set min size to DPI scaling
+                ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
+                ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
+            }));
+
+            LoadLanguage.DetermineLanguage();
+
             if (!Properties.Settings.Default.ShowInterface)
             {
-                ConfigureWindows.GetMainWindow.TitleBar.Visibility =
-                   ConfigureWindows.GetMainWindow.LowerBar.Visibility
-                   = Visibility.Collapsed;
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                {
+                    ConfigureWindows.GetMainWindow.TitleBar.Visibility =
+                       ConfigureWindows.GetMainWindow.LowerBar.Visibility
+                       = Visibility.Collapsed;
+                }));
+
             }
 
             // Load image if possible
             var args = Environment.GetCommandLineArgs();
             if (args.Length == 1)
             {
-                Unload(); // Load clean setup when starting up without arguments
-
-                // Reset PicGallery and don't allow it to run,
-                // if only 1 image
-                Properties.Settings.Default.FullscreenGalleryHorizontal = false;
-
-                // Don't start it in fullscreen with no image
-                Properties.Settings.Default.Fullscreen = false;
-
-                // Determine proper startup size
-                if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width > 0)
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
                 {
-                    UILogic.Sizing.WindowSizing.SetLastWindowSize();
-                }
-                else
-                {
-                    ConfigureWindows.GetMainWindow.Width = ConfigureWindows.GetMainWindow.MinWidth;
-                    ConfigureWindows.GetMainWindow.Height = ConfigureWindows.GetMainWindow.MinHeight;
-                    UILogic.Sizing.WindowSizing.CenterWindowOnScreen();
-                }
-                return;
+                    Unload(); // Load clean setup when starting up without arguments
+
+                    // Reset PicGallery and don't allow it to run,
+                    // if only 1 image
+                    Properties.Settings.Default.FullscreenGalleryHorizontal = Properties.Settings.Default.FullscreenGalleryVertical = false;
+
+                    // Don't start it in fullscreen with no image
+                    Properties.Settings.Default.Fullscreen = false;
+
+                    // Determine proper startup size
+                    if (Properties.Settings.Default.Width != 0)
+                    {
+                        SetLastWindowSize();
+                    }
+                    else
+                    {
+                        ConfigureWindows.GetMainWindow.Width = ConfigureWindows.GetMainWindow.MinWidth;
+                        ConfigureWindows.GetMainWindow.Height = ConfigureWindows.GetMainWindow.MinHeight;
+                    }
+                }));
             }
             else
             {
                 // Determine prefered UI for startup
                 if (Properties.Settings.Default.Fullscreen)
                 {
-                    UILogic.Sizing.WindowSizing.Fullscreen_Restore(true);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                    {
+                        Sizing.WindowSizing.Fullscreen_Restore(true);
+                    }));
                 }
                 else if (Properties.Settings.Default.StartInFullscreenGallery)
                 {
-                    await GalleryToggle.OpenFullscreenGalleryAsync(Properties.Settings.Default.FullscreenGalleryHorizontal, true).ConfigureAwait(false);
-                    Timers.PicGalleryTimerHack();
+                    await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
+
                 }
-                else if (Properties.Settings.Default.Maximized)
+                else if (Properties.Settings.Default.Width > 0 && Properties.Settings.Default.AutoFitWindow == false)
                 {
-                    UILogic.Sizing.WindowSizing.SetMaximized();
-                }
-                else if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width > 0)
-                {
-                    UILogic.Sizing.WindowSizing.SetLastWindowSize();
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                    {
+                        SetLastWindowSize();
+                    }));
                 }
 
                 await QuickLoad(args[1]).ConfigureAwait(false);
