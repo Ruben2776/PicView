@@ -217,27 +217,17 @@ namespace PicView.UILogic.TransformImage
                 return;
             }
 
-            if (ZoomValue > 6)
+            switch (ZoomValue)
             {
-                if (increment)
-                {
-                    zoomSpeed += 2;
-                }
-                else
-                {
-                    zoomSpeed += 2.5;
-                }
-            }
-            if (ZoomValue > 3)
-            {
-                if (increment)
-                {
-                    zoomSpeed += 1.5;
-                }
-                else
-                {
-                    zoomSpeed += 2;
-                }
+                case > 4:
+                    zoomSpeed = increment ? zoomSpeed+= 1.5 : zoomSpeed += 2;
+                    break;
+                case > 3.2:
+                    zoomSpeed = increment ? zoomSpeed += 1 : zoomSpeed += 1.5;
+                    break;
+                case > 1.6:
+                    zoomSpeed = increment ? zoomSpeed += .5 : zoomSpeed += 1;
+                    break;
             }
 
             if (increment == false)
