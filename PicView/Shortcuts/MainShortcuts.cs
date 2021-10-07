@@ -574,9 +574,12 @@ namespace PicView.Shortcuts
                         GetMainWindow.Scroller.ScrollToEnd();
                         break;
 
-                    //
+                    // Enter
                     case Key.Enter:
-                        await GalleryClick.ClickAsync(GalleryNavigation.SelectedGalleryItem).ConfigureAwait(false);
+                        if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalOpen)
+                        {
+                            await GalleryClick.ClickAsync(GalleryNavigation.SelectedGalleryItem).ConfigureAwait(false);
+                        }
                         break;
 
                     default: break;
