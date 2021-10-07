@@ -17,21 +17,13 @@ namespace PicView.Views.UserControls.Gallery
 
             RestoreButton.MouseLeftButtonUp += delegate { PicView.PicGallery.GalleryToggle.CloseFullscreenGallery(); };
 
-            MouseEnter += delegate
+            RestoreButton.MouseEnter += delegate
             {
-                if (!Properties.Settings.Default.Fullscreen)
-                {
-                    ToolTip = Application.Current.Resources["Fullscreen"];
-                }
-                else
-                {
-                    ToolTip = Application.Current.Resources["RestoreDown"];
-                }
-
+                ToolTip = Application.Current.Resources["RestoreDown"];
                 MouseOverAnimations.AltInterfaceMouseOver(PolyFill, RestoreBg, BorderBrushKey);
             };
 
-            MouseLeave += delegate
+            RestoreButton.MouseLeave += delegate
             {
                 MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, RestoreBg, BorderBrushKey);
             };

@@ -51,6 +51,10 @@ namespace PicView.PicGallery
                 {
                     return Horizontal_items * Vertical_items;
                 }
+                else if (GalleryFunctions.IsHorizontalFullscreenOpen)
+                {
+                    return (int)Math.Floor(GetPicGallery.Width / PicGalleryItem_Size);
+                }
                 else
                 {
                     return (int)Math.Floor(GetPicGallery.Height / PicGalleryItem_Size);
@@ -87,7 +91,7 @@ namespace PicView.PicGallery
         {
             if (GetPicGallery == null) { return; }
 
-            if (GalleryFunctions.IsHorizontalOpen)
+            if (GalleryFunctions.IsHorizontalOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 GetPicGallery.Scroller.ScrollToHorizontalOffset(PicGalleryItem_Size * Horizontal_items * Current_page);
             }
@@ -157,7 +161,7 @@ namespace PicView.PicGallery
                         }
                         else
                         {
-                            GetPicGallery.Scroller.ScrollToHorizontalOffset(GetPicGallery.Scroller.VerticalOffset - speed);
+                            GetPicGallery.Scroller.ScrollToHorizontalOffset(GetPicGallery.Scroller.HorizontalOffset + speed);
                         }
                     }
                 }

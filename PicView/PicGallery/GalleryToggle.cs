@@ -258,6 +258,7 @@ namespace PicView.PicGallery
             HideInterfaceLogic.ShowStandardInterface();
             GetPicGallery.x2.Visibility = Visibility.Collapsed;
 
+            
             // Restore settings
             if (Properties.Settings.Default.AutoFitWindow)
             {
@@ -267,6 +268,7 @@ namespace PicView.PicGallery
             {
                 UILogic.Sizing.WindowSizing.SetLastWindowSize();
             }
+            UILogic.Sizing.WindowSizing.SetWindowBehavior();
         }
 
         #endregion Close
