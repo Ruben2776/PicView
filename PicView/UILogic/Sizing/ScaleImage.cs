@@ -290,8 +290,7 @@ namespace PicView.UILogic.Sizing
 
                     if (Properties.Settings.Default.KeepCentered)
                     {
-                        GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - XHeight) / 2 + MonitorInfo.WorkArea.Top;
-                        GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - XWidth) / 2 + MonitorInfo.WorkArea.Left;
+                        CenterWindowOnScreen();
                     }
                 }
                 else
