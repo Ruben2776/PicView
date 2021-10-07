@@ -14,6 +14,27 @@ namespace PicView.Views.UserControls.Gallery
         public PicGalleryTopButtons()
         {
             InitializeComponent();
+
+            RestoreButton.MouseLeftButtonUp += delegate { PicView.PicGallery.GalleryToggle.CloseFullscreenGallery(); };
+
+            MouseEnter += delegate
+            {
+                if (!Properties.Settings.Default.Fullscreen)
+                {
+                    ToolTip = Application.Current.Resources["Fullscreen"];
+                }
+                else
+                {
+                    ToolTip = Application.Current.Resources["RestoreDown"];
+                }
+
+                MouseOverAnimations.AltInterfaceMouseOver(PolyFill, RestoreBg, BorderBrushKey);
+            };
+
+            MouseLeave += delegate
+            {
+                MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, RestoreBg, BorderBrushKey);
+            };
         }
     }
 }
