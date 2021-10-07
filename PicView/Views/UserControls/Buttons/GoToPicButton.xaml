@@ -64,6 +64,7 @@
                     Panel.ZIndex="1"
                     AcceptsTab="False"
                     BorderBrush="{StaticResource IconColorBrush}"
+                    Foreground="{StaticResource MainColorBrush}"
                     IsEnabled="True"
                     IsReadOnly="False"
                     IsTabStop="False"

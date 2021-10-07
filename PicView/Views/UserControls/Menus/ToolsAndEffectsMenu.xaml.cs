@@ -45,10 +45,6 @@ namespace PicView.Views.UserControls
             };
 
             // ColorPickerButton
-            ColorPickerButton.PreviewMouseLeftButtonDown += delegate
-            {
-                PreviewMouseButtonDownAnim(ColorPickerBrush);
-            };
             ColorPickerButton.MouseEnter += delegate
             {
                 ButtonMouseOverAnim(ColorPickerText);
@@ -74,10 +70,6 @@ namespace PicView.Views.UserControls
             };
 
             // ImageInfoButton
-            ImageInfoButton.PreviewMouseLeftButtonDown += delegate
-            {
-                PreviewMouseButtonDownAnim(ImageInfoBrush);
-            };
             ImageInfoButton.MouseEnter += delegate
             {
                 ButtonMouseOverAnim(ImageInfoText);
@@ -97,10 +89,6 @@ namespace PicView.Views.UserControls
             };
 
             // OptimizeImageButton
-            OptimizeImageButton.PreviewMouseLeftButtonDown += delegate
-            {
-                PreviewMouseButtonDownAnim(OptimizeImageBrush);
-            };
             OptimizeImageButton.MouseEnter += delegate
             {
                 ButtonMouseOverAnim(OptimizeImageText);

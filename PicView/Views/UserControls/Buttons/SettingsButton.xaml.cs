@@ -14,7 +14,10 @@ namespace PicView.Views.UserControls
             {
                 TheButton.PreviewMouseLeftButtonDown += delegate
                 {
-                    PreviewMouseButtonDownAnim(TheButtonBrush);
+                    ButtonMouseOverAnim(IconBrush1, false, true);
+                    ButtonMouseOverAnim(IconBrush2, false, true);
+                    ButtonMouseOverAnim(txtBrush, false, true);
+                    AnimationHelper.MouseEnterBgTexColor(TheButtonBrush);
                 };
 
                 TheButton.MouseEnter += delegate

@@ -26,7 +26,7 @@
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Logo Margin="7,-3,0,0" />
+            <uc:Logo x:Name="Logo" Margin="7,-3,0,0" />
 
             <Rectangle
                 Width="1"
@@ -72,7 +72,7 @@
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
-            <uc:CustomTextBox x:Name="TitleText" Background="{StaticResource BackgroundSubtleHighlightBrush}" />
+            <uc:CustomTextBox x:Name="TitleText" Background="{StaticResource BackgroundColorBrushAlt}" />
         </DockPanel>
 
         <Grid

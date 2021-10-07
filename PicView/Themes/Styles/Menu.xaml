@@ -90,7 +90,7 @@
             <Trigger Property="IsHighlighted" Value="true">
                 <Setter TargetName="Border" Property="Background" Value="transparent" />
             </Trigger>
-            <Trigger Property="IsEnabled" Value="False">
+            <Trigger Property="IsHighlighted" Value="true">
                 <Setter Property="Foreground">
                     <Setter.Value>
                         <SolidColorBrush Color="#FFDADADA" />
@@ -170,6 +170,13 @@
                 <Setter TargetName="Border" Property="Background" Value="{DynamicResource ChosenColorBrush}" />
                 <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ChosenColorBrush}" />
             </Trigger>
+            <Trigger Property="IsHighlighted" Value="True">
+                <Setter Property="Foreground">
+                    <Setter.Value>
+                        <SolidColorBrush Color="#fff" />
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
             <Trigger Property="IsEnabled" Value="false">
                 <Setter Property="Foreground">
                     <Setter.Value>
@@ -246,6 +253,13 @@
             </Trigger>
             <Trigger Property="IsHighlighted" Value="true">
                 <Setter TargetName="Border" Property="Background" Value="{DynamicResource ChosenColorBrush}" />
+            </Trigger>
+            <Trigger Property="IsHighlighted" Value="True">
+                <Setter Property="Foreground">
+                    <Setter.Value>
+                        <SolidColorBrush Color="#fff" />
+                    </Setter.Value>
+                </Setter>
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
                 <Setter Property="Foreground" Value="{StaticResource MainColorFaded}" />

@@ -138,11 +138,24 @@ namespace PicView.FileHandling
                     var menuItem = (MenuItem)RecentFilesMenuItem.Items[i];
                     var header = Path.GetFileNameWithoutExtension(item);
                     header = header.Length > 30 ? Shorten(header, 30) : header;
-                    menuItem.Header = header;
+                    var button = new Button
+                    {
+                        Content = header,
+                        FontSize = 13,
+                        Width = double.NaN,
+                        Height = double.NaN,
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                    };
+                    button.Click += async delegate { await LoadPiFromFileAsync(menuItem.ToolTip.ToString()).ConfigureAwait(false); };
+                    menuItem.MouseEnter += (_, _) => button.Foreground = new SolidColorBrush(Colors.White);
+                    var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
+                    menuItem.MouseLeave += (_, _) => button.Foreground = txt;
+                    menuItem.Header = button;
                     menuItem.ToolTip = item;
                     var ext = Path.GetExtension(item);
                     var ext5 = !string.IsNullOrWhiteSpace(ext) && ext.Length >= 5 ? ext.Substring(0, 5) : ext;
                     menuItem.InputGestureText = ext5;
+                    menuItem.Click += async delegate { await LoadPiFromFileAsync(menuItem.ToolTip.ToString()).ConfigureAwait(false); };
                 }
                 return;
             }
@@ -175,13 +188,24 @@ namespace PicView.FileHandling
                 }
 
                 header = header.Length > 30 ? Shorten(header, 30) : header;
+                var button = new Button
+                {
+                    Content = header,
+                    FontSize = 13,
+                    Width = double.NaN,
+                    Height = double.NaN,
+                    HorizontalAlignment = HorizontalAlignment.Left
+                };
                 // Add items
                 var menuItem = new MenuItem()
                 {
-                    Header = header,
+                    Header = button,
                     ToolTip = item,
                     Icon = cmIcon
                 };
+                menuItem.MouseEnter += (_, _) => button.Foreground = new SolidColorBrush(Colors.White);
+                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
+                menuItem.MouseLeave += (_, _) => button.Foreground = txt;
                 // Set tooltip as argument to avoid subscribing and unsubscribing to events
                 menuItem.Click += async delegate { await LoadPiFromFileAsync(menuItem.ToolTip.ToString()).ConfigureAwait(false); };
                 var ext = Path.GetExtension(item);

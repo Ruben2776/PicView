@@ -196,12 +196,16 @@ namespace PicView.UILogic.TransformImage
         internal static async Task ZoomAsync(bool increment)
         {
             /// Don't zoom when gallery is open
-            if (UC.GetPicGallery != null)
+            if (GalleryFunctions.IsHorizontalOpen || GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
             {
-                if (GalleryFunctions.IsHorizontalOpen)
-                {
-                    return;
-                }
+                return;
+            }
+
+            // Disable zoom for crop
+            // TODO integrate zoom for crop
+            if (UC.GetCropppingTool != null && UC.GetCropppingTool.IsVisible)
+            {
+                return;
             }
 
             ZoomValue = scaleTransform.ScaleX;
@@ -212,7 +216,7 @@ namespace PicView.UILogic.TransformImage
             // Increase speed determined by how much is zoomed in
             // TODO improve it when zoomed greatly in
 
-            if (ZoomValue > 15 && increment)
+            if (ZoomValue > 14 && increment)
             {
                 return;
             }
@@ -228,6 +232,7 @@ namespace PicView.UILogic.TransformImage
                 case > 1.6:
                     zoomSpeed = increment ? zoomSpeed += .5 : zoomSpeed += 1;
                     break;
+                    default: break;
             }
 
             if (increment == false)
@@ -235,7 +240,6 @@ namespace PicView.UILogic.TransformImage
                 // Make it go negative
                 zoomSpeed = -zoomSpeed;
             }
-
 
             // Set speed
             ZoomValue += zoomSpeed;

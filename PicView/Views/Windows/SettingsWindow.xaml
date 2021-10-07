@@ -32,7 +32,7 @@
                 x:Name="MinButton"
                 Width="30"
                 Height="30"
-                Margin="0,0,35,0"
+                Margin="0,0,30,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center" />
 
@@ -149,6 +149,7 @@
                         <CheckBox.Content>
                             <TextBlock
                                 Width="279"
+                                Focusable="False"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                 Text="{StaticResource SearchSubdirectory}" />
                         </CheckBox.Content>
@@ -164,6 +165,7 @@
                         <CheckBox.Content>
                             <TextBlock
                                 Width="279"
+                                Focusable="False"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                 Text="{StaticResource StayTopMost}" />
                         </CheckBox.Content>
@@ -180,6 +182,7 @@
                         <CheckBox.Content>
                             <TextBlock
                                 Width="279"
+                                Focusable="False"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                 Text="{StaticResource StayCentered}" />
                         </CheckBox.Content>
@@ -255,6 +258,7 @@
                         </RadioButton.Foreground>
                         <TextBlock
                             Width="270"
+                            Focusable="False"
                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                             Text="{StaticResource CtrlToZoom}"
                             TextWrapping="Wrap" />
@@ -270,6 +274,7 @@
                         </RadioButton.Foreground>
                         <TextBlock
                             Width="270"
+                            Focusable="False"
                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                             Text="{StaticResource ScrollToZoom}"
                             TextWrapping="Wrap" />
@@ -398,6 +403,7 @@
                         <CheckBox.Content>
                             <TextBlock
                                 Width="279"
+                                Focusable="False"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                 Text="{StaticResource ColoredWindowBorder}"
                                 TextWrapping="Wrap" />
@@ -415,6 +421,7 @@
                         <CheckBox.Content>
                             <TextBlock
                                 Width="279"
+                                Focusable="False"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                 Text="{StaticResource ShowButtonsInHiddenUI}"
                                 TextWrapping="Wrap" />

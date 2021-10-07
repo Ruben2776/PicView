@@ -37,7 +37,7 @@ namespace PicView.Views.UserControls
             // CropButton
             CropButton.PreviewMouseLeftButtonDown += delegate
             {
-                PreviewMouseButtonDownAnim(CropButtonBrush);
+                ButtonMouseOverAnim(CropFill, false, true);
             };
 
             CropButton.Click += delegate

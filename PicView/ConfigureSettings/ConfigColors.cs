@@ -78,15 +78,30 @@ namespace PicView.ConfigureSettings
         internal static void MainWindowUnfocus()
         {
             var w = ConfigureWindows.GetMainWindow;
-            var faded = (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"];
-            w.TitleText.InnerTextBox.Foreground = faded;
+            var fadeColor1 = (SolidColorBrush)Application.Current.Resources["IconColorBrush"];
+            var fadeColor2 = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"];
+
+            w.TitleText.InnerTextBox.Foreground = fadeColor1;
+            w.TitleText.Background = fadeColor2;
+            w.LowerBar.Background = fadeColor2;
+
+            var x = (SolidColorBrush)w.Logo.TryFindResource("LogoBrush");
+            x.Color = fadeColor1.Color;
         }
 
         internal static void MainWindowFocus()
         {
             var w = ConfigureWindows.GetMainWindow;
-            var main = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-            w.TitleText.InnerTextBox.Foreground = main;
+            var main1 = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
+            var main2 = (SolidColorBrush)Application.Current.Resources["BorderBrushAlt"];
+
+
+            w.TitleText.InnerTextBox.Foreground = main1;
+            w.TitleText.Background = main2;
+            w.LowerBar.Background = main2;
+
+            var x = (SolidColorBrush)w.Logo.TryFindResource("LogoBrush");
+            x.Color = main1.Color;
         }
 
         #endregion
