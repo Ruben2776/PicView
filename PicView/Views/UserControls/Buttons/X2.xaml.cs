@@ -1,4 +1,5 @@
 ﻿using PicView.Animations;
+using PicView.PicGallery;
 using PicView.UILogic;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,13 +16,17 @@ namespace PicView.Views.UserControls
             InitializeComponent();
             MouseLeftButtonUp += (_, _) =>
             {
-                if (PicView.PicGallery.GalleryFunctions.IsVerticalFullscreenOpen || PicView.PicGallery.GalleryFunctions.IsHorizontalFullscreenOpen)
+                if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
                 {
                     SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
                 }
-                else
+                else if (GalleryFunctions.IsHorizontalOpen)
                 {
                     PicView.PicGallery.GalleryToggle.CloseHorizontalGallery();
+                }
+                else
+                {
+                    SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
                 }
             };
 
