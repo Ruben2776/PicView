@@ -19,7 +19,7 @@ namespace PicView.FileHandling
         internal static void CopyText()
         {
             Clipboard.SetText(Pics[FolderIndex]);
-            ShowTooltipMessage(Application.Current.Resources["FileCopyPath"] as string);
+            ShowTooltipMessage(Application.Current.Resources["FileCopyPathMessage"] as string);
         }
 
         /// <summary>
