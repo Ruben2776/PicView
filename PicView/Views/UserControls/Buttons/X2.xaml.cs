@@ -24,7 +24,7 @@ namespace PicView.Views.UserControls
                 {
                     PicView.PicGallery.GalleryToggle.CloseHorizontalGallery();
                 }
-                else
+                else if (Properties.Settings.Default.ShowInterface == false)
                 {
                     SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
                 }

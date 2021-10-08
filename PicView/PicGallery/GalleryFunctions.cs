@@ -38,7 +38,6 @@ namespace PicView.PicGallery
                     GalleryNavigation.ScrollTo();
                     GalleryNavigation.SelectedGalleryItem = Navigation.FolderIndex;
                 }
-
             }));
         }
 

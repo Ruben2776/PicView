@@ -451,14 +451,7 @@ namespace PicView.Shortcuts
                     case Key.G:
                         if (GalleryFunctions.IsHorizontalOpen)
                         {
-                            if (GetFakeWindow is not null && GetFakeWindow.IsVisible)
-                            {
-                                await GalleryToggle.ToggleAsync().ConfigureAwait(false);
-                            }
-                            else
-                            {
-                                GalleryToggle.CloseHorizontalGallery();
-                            }
+                            GalleryToggle.CloseHorizontalGallery();
                         }
                         else
                         {
@@ -587,30 +580,6 @@ namespace PicView.Shortcuts
             }
 
             #endregion Key is not held down
-
-            #region Alt + keys
-
-            // Alt doesn't work in switch? Waiting for key up is confusing in this case
-
-            if (altDown && !e.IsRepeat)
-            {
-                // Alt + Z
-                if ((e.SystemKey == Key.Z) && !GalleryFunctions.IsHorizontalOpen || !GalleryFunctions.IsVerticalFullscreenOpen || !GalleryFunctions.IsHorizontalFullscreenOpen)
-                {
-                    HideInterfaceLogic.ToggleInterface();
-                }
-
-                // Alt + Enter
-                else if ((e.SystemKey == Key.Enter))
-                {
-                    if (Properties.Settings.Default.FullscreenGalleryHorizontal == false)
-                    {
-                        UILogic.Sizing.WindowSizing.Fullscreen_Restore();
-                    }
-                }
-            }
-
-            #endregion Alt + keys
         }
 
         internal static async Task MainWindow_KeysUpAsync(object sender, KeyEventArgs e)
@@ -629,9 +598,28 @@ namespace PicView.Shortcuts
                         return;
                     }
                     await FastPicUpdateAsync().ConfigureAwait(false);
-                    break;
+                    return;
 
                 default: break;
+            }
+
+            var altDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
+            if (altDown && !e.IsRepeat)
+            {
+                // Alt + Z
+                if ((e.SystemKey == Key.Z) && !GalleryFunctions.IsHorizontalOpen || !GalleryFunctions.IsVerticalFullscreenOpen || !GalleryFunctions.IsHorizontalFullscreenOpen)
+                {
+                    HideInterfaceLogic.ToggleInterface();
+                }
+
+                // Alt + Enter
+                else if ((e.SystemKey == Key.Enter))
+                {
+                    if (Properties.Settings.Default.FullscreenGalleryHorizontal == false)
+                    {
+                        UILogic.Sizing.WindowSizing.Fullscreen_Restore();
+                    }
+                }
             }
         }
 

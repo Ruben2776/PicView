@@ -31,7 +31,7 @@ namespace PicView.Animations
             }
         }
 
-        internal static void Fade(UIElement element, Duration duration, TimeSpan begintime, double from, double to)
+        internal static bool Fade(UIElement element, Duration duration, TimeSpan begintime, double from, double to)
         {
             var da = new DoubleAnimation
             {
@@ -47,8 +47,9 @@ namespace PicView.Animations
             }
             catch (Exception)
             {
-                return;
+                return false;
             }
+            return true;
         }
 
         #endregion Fade

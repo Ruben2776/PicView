@@ -140,8 +140,6 @@ namespace PicView.PicGallery
                 GalleryFunctions.IsHorizontalFullscreenOpen = false;
                 GalleryFunctions.IsVerticalFullscreenOpen = false;
             }
-
-            UC.GetPicGallery.Opacity = 1;
         }
 
         internal static Task Load() => Task.Run(async () =>

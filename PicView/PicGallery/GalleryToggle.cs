@@ -8,7 +8,6 @@ using System.Windows.Media.Animation;
 using static PicView.ChangeImage.Navigation;
 using static PicView.PicGallery.GalleryFunctions;
 using static PicView.UILogic.ConfigureWindows;
-using static PicView.UILogic.Sizing.WindowSizing;
 using static PicView.UILogic.UC;
 
 namespace PicView.PicGallery
@@ -82,11 +81,19 @@ namespace PicView.PicGallery
                 return;
             }
 
+            IsHorizontalOpen = true;
+            IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
+
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
                 GalleryLoad.LoadLayout(false);
+                GetPicGallery.Visibility = Visibility.Visible;
 
-                AnimationHelper.Fade(GetPicGallery, TimeSpan.FromSeconds(.3), TimeSpan.Zero, 0, 1);
+                bool fade = AnimationHelper.Fade(GetPicGallery, TimeSpan.FromSeconds(.3), TimeSpan.Zero, 0, 1);
+                if (fade == false)
+                {
+                    GetPicGallery.Opacity = 1;
+                }
 
                 GetClickArrowLeft.Visibility =
                 GetClickArrowRight.Visibility =
@@ -94,8 +101,6 @@ namespace PicView.PicGallery
                 GetMinus.Visibility =
                 GetRestorebutton.Visibility =
                 GetGalleryShortcut.Visibility = Visibility.Hidden;
-
-                GetPicGallery.Container.Opacity = 1;
 
                 if (GetFakeWindow != null)
                 {
@@ -124,7 +129,6 @@ namespace PicView.PicGallery
                 GalleryNavigation.SetSelected(FolderIndex, true);
                 GalleryNavigation.ScrollTo();
             });
-
         }
 
         internal static async Task OpenFullscreenGalleryAsync(bool startup)
@@ -139,6 +143,18 @@ namespace PicView.PicGallery
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
                 GalleryLoad.LoadLayout(true);
+                GetPicGallery.Visibility = Visibility.Visible;
+
+                if (Properties.Settings.Default.FullscreenGalleryHorizontal)
+                {
+                    IsHorizontalFullscreenOpen = true;
+                    IsVerticalFullscreenOpen = IsHorizontalOpen = false;
+                }
+                else
+                {
+                    IsVerticalFullscreenOpen = true;
+                    IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
+                }
 
                 if (GetFakeWindow == null)
                 {
@@ -223,7 +239,7 @@ namespace PicView.PicGallery
         {
             if (UC.GetPicGallery is null) { return; }
 
-            IsHorizontalOpen = false;
+            IsVerticalFullscreenOpen = IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
 
             // Restore interface elements if needed
             if (!Properties.Settings.Default.ShowInterface || Properties.Settings.Default.Fullscreen)
@@ -250,7 +266,7 @@ namespace PicView.PicGallery
         internal static void CloseFullscreenGallery()
         {
             if (ConfigureWindows.GetFakeWindow is null) { return; }
-            IsVerticalFullscreenOpen = IsHorizontalFullscreenOpen = false;
+            IsVerticalFullscreenOpen = IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
             GetFakeWindow.Hide();
 
             ConfigureSettings.ConfigColors.UpdateColor();
@@ -286,6 +302,9 @@ namespace PicView.PicGallery
             }
 
             GetFakeWindow.Hide();
+
+            IsVerticalFullscreenOpen = IsHorizontalFullscreenOpen = false;
+            IsHorizontalOpen = true;
         }
 
         internal static void ChangeToFullscreenGallery()

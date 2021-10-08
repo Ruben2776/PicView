@@ -96,7 +96,7 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.LowerBar.Drop += async (sender, e) => await Image_Drop(sender, e).ConfigureAwait(false);
             ConfigureWindows.GetMainWindow.LowerBar.MouseLeftButtonDown += UILogic.Sizing.WindowSizing.MoveAlt;
 
-            // This
+            // MainWindow
             ConfigureWindows.GetMainWindow.Closing += UILogic.Sizing.WindowSizing.Window_Closing;
             ConfigureWindows.GetMainWindow.StateChanged += UILogic.Sizing.WindowSizing.MainWindow_StateChanged;
             ConfigureWindows.GetMainWindow.MouseLeftButtonDown += async (sender, e) => await MouseLeftButtonDownAsync(sender, e).ConfigureAwait(false);
