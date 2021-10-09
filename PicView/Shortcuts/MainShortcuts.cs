@@ -264,14 +264,7 @@ namespace PicView.Shortcuts
                         }
                         else if (Properties.Settings.Default.Fullscreen)
                         {
-                            if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalOpen)
-                            {
-                                await GalleryToggle.ToggleAsync().ConfigureAwait(false);
-                            }
-                            else
-                            {
-                                UILogic.Sizing.WindowSizing.Fullscreen_Restore();
-                            }
+                            UILogic.Sizing.WindowSizing.Fullscreen_Restore();
                         }
                         else if (Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
                         {
@@ -279,7 +272,7 @@ namespace PicView.Shortcuts
                         }
                         else if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalOpen)
                         {
-                            await GalleryToggle.ToggleAsync().ConfigureAwait(false);
+                            GalleryToggle.CloseCurrentGallery();
                         }
                         else if (IsDialogOpen)
                         {
@@ -453,7 +446,7 @@ namespace PicView.Shortcuts
                         {
                             GalleryToggle.CloseHorizontalGallery();
                         }
-                        else
+                        else if (GalleryFunctions.IsVerticalFullscreenOpen == false && GalleryFunctions.IsHorizontalFullscreenOpen == false)
                         {
                             await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
                         }

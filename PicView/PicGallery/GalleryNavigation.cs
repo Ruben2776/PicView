@@ -1,6 +1,5 @@
 ﻿using PicView.UILogic;
 using System;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -13,14 +12,21 @@ namespace PicView.PicGallery
     {
         #region int calculations
 
-        internal static int PicGalleryItem_Size { get; set; }
-        internal static int PicGalleryItem_Size_s { get; set; }
+        internal static void SetSize(int numberOfItems)
+        {
+            GalleryNavigation.PicGalleryItem_Size = UILogic.Sizing.WindowSizing.MonitorInfo.WorkArea.Width / numberOfItems;
+
+            GalleryNavigation.PicGalleryItem_Size_s = GalleryNavigation.PicGalleryItem_Size - 30;
+        }
+
+        internal static double PicGalleryItem_Size { get; private set; }
+        internal static double PicGalleryItem_Size_s { get; private set; }
 
         internal static int Horizontal_items
         {
             get
             {
-                if (GetPicGallery == null) { return 0; }
+                if (GetPicGallery == null || PicGalleryItem_Size == 0) { return 0; }
 
                 return (int)Math.Floor(GetPicGallery.Width / PicGalleryItem_Size);
             }
@@ -30,7 +36,7 @@ namespace PicView.PicGallery
         {
             get
             {
-                if (GetPicGallery == null) { return 0; }
+                if (GetPicGallery == null || PicGalleryItem_Size == 0) { return 0; }
 
                 return (int)Math.Floor((GetPicGallery.Height - (GetPicGallery.Container.Margin.Top - GetPicGallery.Container.Margin.Bottom)) / PicGalleryItem_Size);
             }
@@ -40,7 +46,7 @@ namespace PicView.PicGallery
         {
             get
             {
-                if (GetPicGallery == null) { return 0; }
+                if (GetPicGallery == null || PicGalleryItem_Size == 0) { return 0; }
 
                 if (GalleryFunctions.IsHorizontalOpen)
                 {
@@ -57,28 +63,12 @@ namespace PicView.PicGallery
             }
         }
 
-        internal static int Current_page
-        {
-            get
-            {
-                if (GalleryFunctions.IsHorizontalOpen)
-                {
-                    return (int)Math.Floor((double)SelectedGalleryItem / Items_per_page);
-                }
-                else
-                {
-                    return (int)Math.Floor((double)FolderIndex / Items_per_page);
-                }
-                
-            }
-        }
-
         internal static double CenterScrollPosition
         {
             get
             {
-                if (GetPicGallery == null) {  return 0; }
-                if (GetPicGallery.Container.Children.Count == 0) { return 0; }
+                if (GetPicGallery == null || PicGalleryItem_Size == 0) {  return 0; }
+                if (GetPicGallery.Container.Children.Count <= SelectedGalleryItem) { return 0; }
 
                 var selectedScrollTo = GetPicGallery.Container.Children[SelectedGalleryItem].TranslatePoint(new Point(), GetPicGallery.Container);
 
@@ -87,7 +77,7 @@ namespace PicView.PicGallery
                     return selectedScrollTo.Y - (Vertical_items / 2) * PicGalleryItem_Size;
                 }
                 
-                return selectedScrollTo.X - (Horizontal_items / 2) * PicGalleryItem_Size;
+                return selectedScrollTo.X - (Horizontal_items / 2) * PicGalleryItem_Size + (PicGalleryItem_Size_s / 2); // Scroll to overlap half of item
             }
         }
 
@@ -102,15 +92,22 @@ namespace PicView.PicGallery
         /// <param name="item">The index of picGalleryItem</param>
         internal static void ScrollTo()
         {
-            if (GetPicGallery == null) { return; }
+            if (GetPicGallery == null || PicGalleryItem_Size == 0) { return; }
+
+            var selectedScrollTo = GetPicGallery.Container.Children[FolderIndex].TranslatePoint(new Point(), GetPicGallery.Container);
 
             if (GalleryFunctions.IsHorizontalOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
             {
-                GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
+                GetPicGallery.Scroller.ScrollToHorizontalOffset(selectedScrollTo.X - (Horizontal_items / 2) * PicGalleryItem_Size + (PicGalleryItem_Size_s / 2));
             }
             else
             {
                 GetPicGallery.Scroller.ScrollToVerticalOffset(CenterScrollPosition);
+            }
+            if (SelectedGalleryItem != FolderIndex)
+            {
+                SetSelected(SelectedGalleryItem, false);
+                SelectedGalleryItem = FolderIndex;
             }
         }
 
@@ -146,7 +143,7 @@ namespace PicView.PicGallery
             }
             else
             {
-                var speed = speedUp ? PicGalleryItem_Size * 4.7 : PicGalleryItem_Size;
+                var speed = speedUp ? PicGalleryItem_Size * 4.7 : PicGalleryItem_Size / 2;
                 var direction = next ? GetPicGallery.Scroller.HorizontalOffset - speed : GetPicGallery.Scroller.HorizontalOffset + speed;
 
                 if (GalleryFunctions.IsHorizontalOpen)
@@ -192,7 +189,7 @@ namespace PicView.PicGallery
         /// <param name="selected">selected or deselected</param>
         internal static void SetSelected(int x, bool selected)
         {
-            if (x > GetPicGallery.Container.Children.Count - 1 || x < 0) { return; }
+            if (GetPicGallery is not null && x > GetPicGallery.Container.Children.Count - 1 || x < 0) { return; }
 
             // Select next item
             var nextItem = GetPicGallery.Container.Children[x] as Views.UserControls.PicGalleryItem;
@@ -255,14 +252,10 @@ namespace PicView.PicGallery
             }
 
             SetSelected(SelectedGalleryItem, true);
-            if (backup != SelectedGalleryItem)
+            if (backup != SelectedGalleryItem && backup != FolderIndex)
             {
                 SetSelected(backup, false); // deselect
-            }
-            if (SelectedGalleryItem != FolderIndex)
-            {
-                SetSelected(FolderIndex, false); // deselect
-            }            
+            }       
 
             if (direction == Direction.Up || direction == Direction.Down)
             {
@@ -273,28 +266,10 @@ namespace PicView.PicGallery
             GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
         }
 
-        internal static void FullscreenGalleryNavigation(int lastItem)
+        internal static void FullscreenGalleryNavigation()
         {
-            if (!GalleryFunctions.IsHorizontalFullscreenOpen && !GalleryFunctions.IsVerticalFullscreenOpen)
-            {
-                return;
-            }
-
-            if ((GetPicGallery?.Container.Children.Count) <= FolderIndex || GetPicGallery.Container.Children.Count <= lastItem)
-            {
-                // TODO Find way to get PicGalleryItem an alternative way...
-                return;
-            }
-            else
-            {
-                if (lastItem != FolderIndex)
-                {
-                    SetSelected(lastItem, false);
-                }
-
-                SetSelected(FolderIndex, true);
-                SelectedGalleryItem = FolderIndex;
-            }
+            SetSelected(FolderIndex, true);
+            SelectedGalleryItem = FolderIndex;
 
             if (Properties.Settings.Default.FullscreenGalleryHorizontal)
             {

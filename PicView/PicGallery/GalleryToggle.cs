@@ -14,64 +14,6 @@ namespace PicView.PicGallery
 {
     internal static class GalleryToggle
     {
-        #region Toggle
-
-        internal static async Task ToggleAsync(bool change = false)
-        {
-            if (Pics?.Count < 1)
-            {
-                return;
-            }
-
-            /// Toggle PicGallery, when not changed
-            if (change == false)
-            {
-                if (Properties.Settings.Default.FullscreenGalleryHorizontal == false && Properties.Settings.Default.FullscreenGalleryVertical == false)
-                {
-                    if (IsHorizontalOpen == false)
-                    {
-                        await OpenHorizontalGalleryAsync().ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        CloseHorizontalGallery();
-                    }
-                }
-                else
-                {
-                    if (IsHorizontalOpen == false)
-                    {
-                        await OpenFullscreenGalleryAsync(false).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        if (ConfigureWindows.GetFakeWindow is null || ConfigureWindows.GetFakeWindow is not null && ConfigureWindows.GetFakeWindow.IsVisible == false)
-                        {
-                            CloseHorizontalGallery();
-                        }
-                        else
-                        {
-                            CloseFullscreenGallery();
-                        }
-                    }
-                }
-            }
-            /// Toggle PicGallery, when changed
-            else
-            {
-                if (Properties.Settings.Default.FullscreenGalleryHorizontal || Properties.Settings.Default.FullscreenGalleryVertical)
-                {
-                    ChangeToFullscreenGallery();
-                }
-                else
-                {
-                    ChangeToHorizontalGallery();
-                }
-            }
-        }
-
-        #endregion Toggle
-
         #region Open
 
         internal static async Task OpenHorizontalGalleryAsync()
@@ -127,8 +69,8 @@ namespace PicView.PicGallery
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
                 GalleryNavigation.SetSelected(FolderIndex, true);
-                GalleryNavigation.ScrollTo();
             });
+            Timers.PicGalleryTimerHack();
         }
 
         internal static async Task OpenFullscreenGalleryAsync(bool startup)
@@ -235,6 +177,18 @@ namespace PicView.PicGallery
 
         #region Close
 
+        internal static void CloseCurrentGallery()
+        {
+            if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
+            {
+                CloseFullscreenGallery();
+            }
+            else if (GalleryFunctions.IsHorizontalOpen)
+            {
+                CloseHorizontalGallery();
+            }
+        }
+
         internal static void CloseHorizontalGallery()
         {
             if (UC.GetPicGallery is null) { return; }
@@ -266,6 +220,7 @@ namespace PicView.PicGallery
         internal static void CloseFullscreenGallery()
         {
             if (ConfigureWindows.GetFakeWindow is null) { return; }
+
             IsVerticalFullscreenOpen = IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
             GetFakeWindow.Hide();
 
@@ -274,8 +229,9 @@ namespace PicView.PicGallery
             HideInterfaceLogic.ShowStandardInterface();
             GetPicGallery.x2.Visibility = Visibility.Collapsed;
 
-            
             // Restore settings
+            UILogic.Sizing.WindowSizing.SetWindowBehavior();
+
             if (Properties.Settings.Default.AutoFitWindow)
             {
                 UILogic.Sizing.WindowSizing.CenterWindowOnScreen();
@@ -284,54 +240,10 @@ namespace PicView.PicGallery
             {
                 UILogic.Sizing.WindowSizing.SetLastWindowSize();
             }
-            UILogic.Sizing.WindowSizing.SetWindowBehavior();
+
             UILogic.Sizing.ScaleImage.FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
         }
 
         #endregion Close
-
-        #region Change
-
-        internal static void ChangeToHorizontalGallery()
-        {
-            GalleryLoad.LoadLayout(false);
-
-            if (GetFakeWindow.grid.Children.Contains(GetPicGallery))
-            {
-                GetFakeWindow.grid.Children.Remove(GetPicGallery);
-                GetMainWindow.ParentContainer.Children.Add(GetPicGallery);
-            }
-
-            GetFakeWindow.Hide();
-
-            IsVerticalFullscreenOpen = IsHorizontalFullscreenOpen = false;
-            IsHorizontalOpen = true;
-        }
-
-        internal static void ChangeToFullscreenGallery()
-        {
-            GalleryLoad.LoadLayout(true);
-
-            if (GetFakeWindow != null)
-            {
-                if (!GetFakeWindow.grid.Children.Contains(GetPicGallery))
-                {
-                    GetMainWindow.ParentContainer.Children.Remove(GetPicGallery);
-                    GetFakeWindow.grid.Children.Add(GetPicGallery);
-                }
-            }
-            else
-            {
-                GetMainWindow.ParentContainer.Children.Remove(GetPicGallery);
-                GetFakeWindow = new FakeWindow();
-                GetFakeWindow.grid.Children.Add(GetPicGallery);
-            }
-
-            GetFakeWindow.Show();
-            GalleryNavigation.ScrollTo();
-            GetMainWindow.Focus();
-        }
-
-        #endregion Change
     }
 }

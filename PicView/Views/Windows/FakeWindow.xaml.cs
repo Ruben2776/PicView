@@ -29,7 +29,6 @@ namespace PicView.Views.Windows
             PreviewMouseRightButtonDown += FakeWindow_MouseLeftButtonDown;
             Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
             StateChanged += FakeWindow_StateChanged;
-            MouseWheel += FakeWindow_MouseWheel;
             ConfigureWindows.GetMainWindow.Focus();
             LostFocus += FakeWindow_LostFocus;
             GotFocus += FakeWindow_LostFocus;
@@ -53,18 +52,6 @@ namespace PicView.Views.Windows
             if (WindowState == WindowState.Normal)
             {
                 ConfigureWindows.GetMainWindow.Focus();
-            }
-        }
-
-        private void FakeWindow_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-            {
-                GalleryNavigation.ScrollTo(e.Delta > 0, true);
-            }
-            else
-            {
-                GalleryNavigation.ScrollTo(e.Delta > 0, false, true);
             }
         }
 

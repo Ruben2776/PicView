@@ -402,6 +402,14 @@ namespace PicView.ChangeImage
                 {
                     await Task.Run(() => Preloader.PreLoad(FolderIndex)).ConfigureAwait(false);
                 }
+
+                if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
+                {
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                    {
+                        GalleryNavigation.FullscreenGalleryNavigation();
+                    });
+                }
                 return;
             }
 
@@ -422,6 +430,15 @@ namespace PicView.ChangeImage
             {
                 UpdatePic(index, preloadValue.bitmapSource, resize);
             });
+
+            // Update PicGallery selected item, if needed
+            if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                {
+                    GalleryNavigation.FullscreenGalleryNavigation();
+                });
+            }
 
             await ImageInfo.UpdateValuesAsync(Pics?[FolderIndex]).ConfigureAwait(false);
 
@@ -724,14 +741,13 @@ namespace PicView.ChangeImage
                 }
             }
 
+            if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
+            {
+                GalleryNavigation.SetSelected(indexBackup, false);
+            }
+
             // Go to the image!
             await LoadPicAtIndexAsync(startingpoint).ConfigureAwait(false);
-
-            // Update PicGallery selected item, if needed
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-            {
-                GalleryNavigation.FullscreenGalleryNavigation(indexBackup);
-            });
         }
 
         /// <summary>
