@@ -21,7 +21,7 @@ namespace PicView.ImageHandling
         internal static async Task<BitmapSource?> RenderToBitmapSource(string file)
         {
             var ext = Path.GetExtension(file).ToUpperInvariant();
-            FileStream? filestream = null;
+            FileStream? filestream = null; // https://devblogs.microsoft.com/dotnet/file-io-improvements-in-dotnet-6/
             switch (ext)
             {
                 case ".JPG":
@@ -36,7 +36,7 @@ namespace PicView.ImageHandling
                 case ".WBMP":
                     try
                     {
-                        filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
+                        filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
                     }
                     catch (Exception e)
                     {
@@ -88,7 +88,7 @@ namespace PicView.ImageHandling
                     {
                         try
                         {
-                            filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
+                            filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
                             magickImage.Read(filestream);
                         }
                         catch (Exception e)
