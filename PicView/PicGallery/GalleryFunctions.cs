@@ -19,28 +19,6 @@ namespace PicView.PicGallery
         internal static bool IsVerticalFullscreenOpen {  get; set; }
         internal static bool IsHorizontalFullscreenOpen { get; set; }
 
-        internal static async Task Add(BitmapSource pic, int id)
-        {
-            if (GetPicGallery == null) { return; }
-
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-            {
-                var selected = id == Navigation.FolderIndex;
-                var item = new PicGalleryItem(pic, id, selected);
-                item.MouseLeftButtonDown += async delegate
-                {
-                    await GalleryClick.ClickAsync(id).ConfigureAwait(false);
-                };
-                GetPicGallery.Container.Children.Add(item);
-
-                if (selected)
-                {
-                    GalleryNavigation.ScrollTo();
-                    GalleryNavigation.SelectedGalleryItem = Navigation.FolderIndex;
-                }
-            }));
-        }
-
         public class tempPics
         {
             internal BitmapSource pic;
@@ -94,7 +72,7 @@ namespace PicView.PicGallery
 
             for (int i = 0; i < pics.Count; i++)
             {
-                await Add(pics[i].pic, i).ConfigureAwait(false);
+                await GalleryLoad.Add(pics[i].pic, i).ConfigureAwait(false);
             }
             pics.Clear();
             pics = null;

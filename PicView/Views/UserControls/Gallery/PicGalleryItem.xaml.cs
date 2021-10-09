@@ -12,7 +12,7 @@ namespace PicView.Views.UserControls
     {
         internal int Id { get; set; }
 
-        public PicGalleryItem(ImageSource pic, int id, bool selected)
+        public PicGalleryItem(ImageSource? pic, int id, bool selected)
         {
             InitializeComponent();
 

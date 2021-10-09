@@ -137,14 +137,11 @@ namespace PicView.PicGallery
                 GalleryNavigation.SetSelected(GalleryNavigation.SelectedGalleryItem, false);
                 GalleryNavigation.SetSelected(FolderIndex, false);
 
-                if (Properties.Settings.Default.FullscreenGalleryHorizontal == false && Properties.Settings.Default.FullscreenGalleryVertical == false)
+                // Restore interface elements if needed
+                if (!Properties.Settings.Default.ShowInterface || Properties.Settings.Default.Fullscreen && Properties.Settings.Default.ShowAltInterfaceButtons)
                 {
-                    // Restore interface elements if needed
-                    if (!Properties.Settings.Default.ShowInterface || Properties.Settings.Default.Fullscreen)
-                    {
-                        HideInterfaceLogic.ShowNavigation(true);
-                        HideInterfaceLogic.ShowShortcuts(true);
-                    }
+                    HideInterfaceLogic.ShowNavigation(true);
+                    HideInterfaceLogic.ShowShortcuts(true);
                 }
 
                 // Select next item

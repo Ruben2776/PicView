@@ -1,11 +1,16 @@
-﻿using PicView.ImageHandling;
+﻿using PicView.ChangeImage;
+using PicView.ImageHandling;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
+using PicView.Views.UserControls;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using static PicView.PicGallery.GalleryFunctions;
 using static PicView.UILogic.HideInterfaceLogic;
 
@@ -160,22 +165,104 @@ namespace PicView.PicGallery
                 }
             }));
 
+            var count = Navigation.Pics.Count;
+            var index = Navigation.FolderIndex;
 
-            for (int i = 0; i < ChangeImage.Navigation.Pics.Count; i++)
+            if (count >= 250)
             {
-                var pic = Thumbnails.GetBitmapSourceThumb(ChangeImage.Navigation.Pics[i]);
-
-                if (pic == null)
+                for (int i = 0; i < count; i++)
                 {
-                    pic = ImageFunctions.ImageErrorMessage();
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                    {
+                        bool selected = i == index;
+                        UC.GetPicGallery.Container.Children.Add(new PicGalleryItem(null, i, selected));
+                        if (selected)
+                        {
+                            GalleryNavigation.ScrollTo();
+                        }
+                    }));
                 }
-                else if (!pic.IsFrozen)
+                Parallel.For(0, count, async i =>
                 {
-                    pic.Freeze();
+                    await UpdatePic(i).ConfigureAwait(true);
+                });
+            }
+            else
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    await Add(i).ConfigureAwait(false);
                 }
-
-                await Add(pic, i).ConfigureAwait(false);
             }
         });
+
+        internal static async Task Add(int i)
+        {
+            var pic = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i]);
+
+            if (pic == null)
+            {
+                pic = ImageFunctions.ImageErrorMessage();
+            }
+
+            await AddUI(pic, i).ConfigureAwait(false);
+        }
+
+        internal static async Task Add(BitmapSource? pic, int i)
+        {
+            pic = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i]);
+
+            if (pic == null)
+            {
+                pic = ImageFunctions.ImageErrorMessage();
+            }
+
+            await AddUI(pic, i).ConfigureAwait(false);
+        }
+
+        internal static async Task AddUI(BitmapSource? pic, int i)
+        {
+            pic = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i]);
+
+            if (pic == null)
+            {
+                pic = ImageFunctions.ImageErrorMessage();
+            }
+
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            {
+                var selected = i == Navigation.FolderIndex;
+                var item = new PicGalleryItem(pic, i, selected);
+                item.MouseLeftButtonDown += async delegate
+                {
+                    await GalleryClick.ClickAsync(i).ConfigureAwait(false);
+                };
+                UC.GetPicGallery.Container.Children.Add(item);
+
+                if (selected)
+                {
+                    GalleryNavigation.ScrollTo();
+                    GalleryNavigation.SelectedGalleryItem = Navigation.FolderIndex;
+                }
+            }));
+        }
+
+        internal static async Task UpdatePic(int i)
+        {
+            var pic = Thumbnails.GetBitmapSourceThumb(ChangeImage.Navigation.Pics[i]);
+            if (pic == null)
+            {
+                pic = ImageFunctions.ImageErrorMessage();
+            }
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            {
+                var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
+                item.img.Source = pic;
+                item.MouseLeftButtonDown += async delegate
+                {
+                    await GalleryClick.ClickAsync(i).ConfigureAwait(false);
+                };
+            }));
+        }
     }
 }
