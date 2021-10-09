@@ -10,6 +10,7 @@ namespace PicView.Views.UserControls
         public ToolTipMessage()
         {
             InitializeComponent();
+            MouseWheel += async (sender, e) => await Shortcuts.MainShortcuts.MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);
         }
 
         public ToolTipMessage(string message)

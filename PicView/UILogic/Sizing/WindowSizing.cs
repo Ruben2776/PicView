@@ -275,7 +275,7 @@ namespace PicView.UILogic.Sizing
 
         #region Changed Events
 
-        internal static void MainWindow_StateChanged(object sender, EventArgs e)
+        internal static void MainWindow_StateChanged()
         {
             switch (ConfigureWindows.GetMainWindow.WindowState)
             {
@@ -293,7 +293,7 @@ namespace PicView.UILogic.Sizing
             }
         }
 
-        internal static void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
+        internal static void SystemEvents_DisplaySettingsChanged()
         {
             // Update size when screen resulution changes
             MonitorInfo = MonitorSize.GetMonitorSize();
@@ -307,7 +307,7 @@ namespace PicView.UILogic.Sizing
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static void Window_Closing(object sender, CancelEventArgs e)
+        internal static void Window_Closing()
         {
             // Close Extra windows when closing
             if (GetFakeWindow != null)

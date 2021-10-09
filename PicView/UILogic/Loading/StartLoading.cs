@@ -23,9 +23,12 @@ namespace PicView.UILogic.Loading
     {
         internal static async Task LoadedEventsAsync()
         {
-            // Subscribe to Windows resized event || Need to be exactly on load
-            HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle);
-            source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            {
+                // Subscribe to Windows resized event || Need to be exactly on load
+                HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle);
+                source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
+            }));
 
 #if DEBUG
             Trace.Listeners.Add(new TextWriterTraceListener("Debug.log"));
@@ -35,15 +38,15 @@ namespace PicView.UILogic.Loading
             FreshStartup = true;
             Pics = new List<string>();
 
-            // Load sizing properties
-            MonitorInfo = MonitorSize.GetMonitorSize();
-
-            // Set min size to DPI scaling
-            ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
-            ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
-
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
             {
+                // Load sizing properties
+                MonitorInfo = MonitorSize.GetMonitorSize();
+
+                // Set min size to DPI scaling
+                ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
+                ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
+
                 SetWindowBehavior();
                 ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Properties.Settings.Default.ScrollEnabled ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
 
@@ -129,6 +132,13 @@ namespace PicView.UILogic.Loading
             Application.Current.Resources.MergedDictionaries.Add(
                 new ResourceDictionary
                 {
+                    Source = new Uri(@"/PicView;component/Themes/Styles/Separator.xaml", UriKind.Relative)
+                }
+            );
+
+            Application.Current.Resources.MergedDictionaries.Add(
+                new ResourceDictionary
+                {
                     Source = new Uri(@"/PicView;component/Themes/Styles/Menu.xaml", UriKind.Relative)
                 }
             );
@@ -150,7 +160,7 @@ namespace PicView.UILogic.Loading
             #endregion Add dictionaries
 
             ConfigureSettings.ConfigColors.UpdateColor();
-            ConfigureWindows.GetMainWindow.Topmost = Properties.Settings.Default.TopMost;
+            
 
             // Load UI and events
             AddUIElementsAndUpdateValues();
@@ -218,8 +228,6 @@ namespace PicView.UILogic.Loading
             LoadToolsAndEffectsMenu();
             LoadAutoScrollSign();
             LoadTooltipStyle();
-
-            Eventshandling.SetMainWindowEvents();
 
             // Initilize Things!
             RecentFiles.Initialize();

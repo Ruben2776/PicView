@@ -151,7 +151,7 @@ namespace PicView.Shortcuts
                         }
                         else if (GalleryFunctions.IsVerticalFullscreenOpen)
                         {
-                            GalleryNavigation.FullscreenGallerySelection(GalleryNavigation.Direction.Up);
+                            await PicAsync(false).ConfigureAwait(false);
                         }
                         else if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalOpen)
                         {
@@ -181,7 +181,7 @@ namespace PicView.Shortcuts
                         }
                         else if (GalleryFunctions.IsVerticalFullscreenOpen)
                         {
-                            GalleryNavigation.FullscreenGallerySelection(GalleryNavigation.Direction.Down);
+                            await PicAsync().ConfigureAwait(false);
                         }
                         else if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsHorizontalOpen)
                         {
@@ -221,7 +221,7 @@ namespace PicView.Shortcuts
                         }
                         else if (GalleryFunctions.IsVerticalFullscreenOpen)
                         {
-                            GalleryNavigation.FullscreenGallerySelection(GalleryNavigation.Direction.Down);
+                            await PicAsync().ConfigureAwait(false);
                         }
                         else
                         {
@@ -623,8 +623,51 @@ namespace PicView.Shortcuts
             }
         }
 
-        internal static async Task MainWindow_MouseDownAsync(object sender, MouseButtonEventArgs e)
+        internal static async Task MouseLeftButtonDownAsync(object sender, MouseButtonEventArgs e)
         {
+            if (GetMainWindow.TitleText.InnerTextBox.IsKeyboardFocusWithin)
+            {
+                // Fix focus
+                EditTitleBar.Refocus();
+                return;
+            }
+
+            if (Color_Picking.IsRunning)
+            {
+                await Color_Picking.StopRunningAsync(true).ConfigureAwait(false);
+                return;
+            }
+
+            // Move window when Shift is being held down
+            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            {
+                UILogic.Sizing.WindowSizing.Move(sender, e);
+                return;
+            }
+
+            // Fix focus
+            EditTitleBar.Refocus();
+
+            // Logic for auto scrolling
+            if (IsAutoScrolling)
+            {
+                // Report position and enable autoscrolltimer
+                AutoScrollOrigin = e.GetPosition(GetMainWindow);
+                AutoScrollTimer.Enabled = true;
+                return;
+            }
+            // Reset zoom on double click
+            if (e.ClickCount == 2)
+            {
+                ResetZoom();
+                return;
+            }
+            // Drag logic
+            if (Properties.Settings.Default.ScrollEnabled == false && GetMainWindow.MainImage.IsMouseDirectlyOver) // Only send it when mouse over to not disturb other mouse events
+            {
+                PreparePanImage(sender, e);
+            }
+
             switch (e.ChangedButton)
             {
                 case MouseButton.Right:
@@ -673,52 +716,6 @@ namespace PicView.Shortcuts
                     break;
 
                 default: break;
-            }
-        }
-
-        internal static async Task MouseLeftButtonDownAsync(object sender, MouseButtonEventArgs e)
-        {
-            if (GetMainWindow.TitleText.InnerTextBox.IsKeyboardFocusWithin)
-            {
-                // Fix focus
-                EditTitleBar.Refocus();
-                return;
-            }
-
-            if (Color_Picking.IsRunning)
-            {
-                await Color_Picking.StopRunningAsync(true).ConfigureAwait(false);
-                return;
-            }
-
-            // Move window when Shift is being held down
-            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
-            {
-                UILogic.Sizing.WindowSizing.Move(sender, e);
-                return;
-            }
-
-            // Fix focus
-            EditTitleBar.Refocus();
-
-            // Logic for auto scrolling
-            if (IsAutoScrolling)
-            {
-                // Report position and enable autoscrolltimer
-                AutoScrollOrigin = e.GetPosition(GetMainWindow);
-                AutoScrollTimer.Enabled = true;
-                return;
-            }
-            // Reset zoom on double click
-            if (e.ClickCount == 2)
-            {
-                ResetZoom();
-                return;
-            }
-            // Drag logic
-            if (Properties.Settings.Default.ScrollEnabled == false && GetMainWindow.MainImage.IsMouseDirectlyOver) // Only send it when mouse over to not disturb other mouse events
-            {
-                PreparePanImage(sender, e);
             }
         }
 
