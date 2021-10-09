@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Error_Handling;
 using static PicView.FileHandling.ArchiveExtraction;
 using static PicView.FileHandling.FileLists;
@@ -96,7 +97,7 @@ namespace PicView.ChangeImage
                 archive = SupportedFiles.IsSupportedArchives(file);
                 if (archive == false)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
                     {
                         Unload();
                     });
@@ -105,7 +106,7 @@ namespace PicView.ChangeImage
             }
             else
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
                 {
                     ConfigureWindows.GetMainWindow.MainImage.Source = pic;
 
@@ -130,12 +131,12 @@ namespace PicView.ChangeImage
 
             if (archive == false)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
                 {
                     UpdatePic(FolderIndex, pic);
                 });
 
-                await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
+                await Task.Run(() => Preloader.PreLoad(FolderIndex)).ConfigureAwait(false);
                 await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
             }
 
@@ -165,7 +166,7 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static async Task LoadPicFromString(string path, bool checkExists = true)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 // Set Loading
                 SetLoadingString();
@@ -237,7 +238,7 @@ namespace PicView.ChangeImage
                 }
                 else
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
                     {
                         Unload();
                     });
@@ -286,7 +287,7 @@ namespace PicView.ChangeImage
 
             if (Properties.Settings.Default.FullscreenGalleryHorizontal || Properties.Settings.Default.FullscreenGalleryVertical)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, (Action)(() =>
                 {
                     if (GetPicGallery == null)
                     {
@@ -319,7 +320,7 @@ namespace PicView.ChangeImage
 
             if (GetToolTipMessage is not null && GetToolTipMessage.IsVisible)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 {
                     GetToolTipMessage.Visibility = Visibility.Hidden;
                 });
@@ -339,7 +340,7 @@ namespace PicView.ChangeImage
                     thumb = GetBitmapSourceThumb(Pics[FolderIndex]);
                 }
 
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 {
                     if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
                     {
@@ -382,7 +383,7 @@ namespace PicView.ChangeImage
                     if (FolderIndex != index)
                     {
                         // Start preloading when browsing very fast to catch up
-                        await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
+                        await Task.Run(() => Preloader.PreLoad(FolderIndex)).ConfigureAwait(false);
                         return;
                     }
                 }
@@ -399,7 +400,7 @@ namespace PicView.ChangeImage
                 // Start preloading when browsing very fast to catch up
                 if (Preloader.IsRunning == false)
                 {
-                    await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
+                    await Task.Run(() => Preloader.PreLoad(FolderIndex)).ConfigureAwait(false);
                 }
                 return;
             }
@@ -417,7 +418,7 @@ namespace PicView.ChangeImage
                 }
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
             {
                 UpdatePic(index, preloadValue.bitmapSource, resize);
             });
@@ -428,10 +429,13 @@ namespace PicView.ChangeImage
             {
                 if (Preloader.IsRunning == false)
                 {
-                    await Preloader.PreLoad(index).ConfigureAwait(false);
+                    await Task.Run(() => Preloader.PreLoad(index)).ConfigureAwait(false);
                 }
 
-                await Taskbar.Progress((double)index / Pics.Count).ConfigureAwait(false);
+                if (FolderIndex == index)
+                {
+                    await Taskbar.Progress((double)index / Pics.Count).ConfigureAwait(false);
+                }
             }
 
             // Add recent files, except when browing archive
@@ -493,7 +497,7 @@ namespace PicView.ChangeImage
         /// <param name="bitmapSource"></param>
         internal static async Task UpdatePic(string imageName, BitmapSource bitmapSource)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
             {
                 Unload();
 
@@ -506,9 +510,9 @@ namespace PicView.ChangeImage
 
                 FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
                 SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, imageName);
-            });
 
-            CloseToolTipMessage();
+                CloseToolTipMessage();
+            });
 
             await Taskbar.NoProgress().ConfigureAwait(false);
             FolderIndex = 0;
@@ -536,7 +540,7 @@ namespace PicView.ChangeImage
         internal static async Task PicAsync(string file, string imageName, bool isGif)
         {
             BitmapSource? bitmapSource = isGif ? null : await ImageDecoder.RenderToBitmapSource(file).ConfigureAwait(false);
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, async () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, async () =>
             {
                 if (Properties.Settings.Default.ScrollEnabled)
                 {
@@ -597,10 +601,7 @@ namespace PicView.ChangeImage
             {
                 return;
             }
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, async () =>
-            {
-                await UpdatePic(b64, pic).ConfigureAwait(false);
-            });
+            await UpdatePic(b64, pic).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -610,7 +611,7 @@ namespace PicView.ChangeImage
         internal static async Task LoadPicFromFolderAsync(string folder)
         {
             // TODO add new function that can go to next/prev folder
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 ChangeFolder(true);
             });
@@ -630,7 +631,7 @@ namespace PicView.ChangeImage
             {
                 await ReloadAsync(true).ConfigureAwait(false);
             }
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, async () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, async () =>
             {
                 if (GetImageSettingsMenu is not null)
                 {
@@ -727,7 +728,7 @@ namespace PicView.ChangeImage
             await LoadPicAtIndexAsync(startingpoint).ConfigureAwait(false);
 
             // Update PicGallery selected item, if needed
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 GalleryNavigation.FullscreenGalleryNavigation(indexBackup);
             });
@@ -830,7 +831,7 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
             {
                 UpdatePic(FolderIndex, preloadValue.bitmapSource);
             });
