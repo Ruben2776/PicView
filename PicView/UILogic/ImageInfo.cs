@@ -108,7 +108,22 @@ namespace PicView.UILogic
 
         internal static void UpdateStars()
         {
-            if (rating is null || (string)rating == string.Empty || (string)rating == "0")
+            if (rating is null)
+            {
+                UpdateStars(0);
+                return;
+            }
+
+            var castRating = rating.GetType();
+            if (castRating.Equals(typeof(int))) // Try and convert to int to avoid exception
+            {
+                int intRating = (int)rating;
+                intRating = intRating >= 0 && intRating <= 5 ? intRating : 0;
+                UpdateStars((intRating));
+                return;
+            }
+
+            if ((string)rating == string.Empty || (string)rating == "0")
             {
                 UpdateStars(0);
                 return;
