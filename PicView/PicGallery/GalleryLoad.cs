@@ -145,6 +145,8 @@ namespace PicView.PicGallery
                 // Set style
                 UC.GetPicGallery.x2.Visibility = Visibility.Visible;
                 UC.GetPicGallery.Container.Margin = new Thickness(0, 65 * WindowSizing.MonitorInfo.DpiScaling, 0, 0);
+                UC.GetPicGallery.border.BorderThickness = new Thickness(1, 0, 0, 1);
+                UC.GetPicGallery.border.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
 
 
                 // Make sure bools are correct
@@ -153,13 +155,18 @@ namespace PicView.PicGallery
                 GalleryFunctions.IsVerticalFullscreenOpen = false;
             }
 
+            
             if (UC.GetPicGallery.Container.Children.Count > 0)
             {
-                for (int i = 0; i < UC.GetPicGallery.Container.Children.Count; i++)
+                var tempItem = (PicGalleryItem)UC.GetPicGallery.Container.Children[0];
+                if (tempItem.innerborder.Width != GalleryNavigation.PicGalleryItem_Size)
                 {
-                    var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
-                    item.outterborder.Width = item.outterborder.Height = GalleryNavigation.PicGalleryItem_Size;
-                    item.innerborder.Width = item.innerborder.Height = GalleryNavigation.PicGalleryItem_Size_s;
+                    for (int i = 0; i < UC.GetPicGallery.Container.Children.Count; i++)
+                    {
+                        var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
+                        item.outterborder.Width = item.outterborder.Height = GalleryNavigation.PicGalleryItem_Size;
+                        item.innerborder.Width = item.innerborder.Height = GalleryNavigation.PicGalleryItem_Size_s;
+                    }
                 }
             }
         }

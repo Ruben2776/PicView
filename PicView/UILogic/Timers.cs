@@ -30,7 +30,7 @@ namespace PicView.UILogic
             {
                 AutoReset = false,
                 Enabled = true,
-                Interval = 150
+                Interval = 100
             };
             timer.Elapsed += async delegate
             {

@@ -54,23 +54,30 @@ namespace PicView.PicGallery
                 }
             });
 
+            bool toLoad = false;
+
             if (GetPicGallery.Container.Children.Count == 0)
             {
                 await GalleryLoad.Load().ConfigureAwait(false);
+                toLoad = true;
             }
             else if (GetPicGallery.Container.Children.Count == 1 && Pics.Count > 1)
             {
                 GetPicGallery.Container.Children.Clear();
                 await GalleryLoad.Load().ConfigureAwait(false);
+                toLoad = true;
             }
 
-            GalleryNavigation.SelectedGalleryItem = FolderIndex;
-
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            if (toLoad is false)
             {
-                GalleryNavigation.SetSelected(FolderIndex, true);
-            });
-            Timers.PicGalleryTimerHack();
+                GalleryNavigation.SelectedGalleryItem = FolderIndex;
+
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                {
+                    GalleryNavigation.SetSelected(FolderIndex, true);
+                    GalleryNavigation.ScrollTo();
+                });
+            }
         }
 
         internal static async Task OpenFullscreenGalleryAsync(bool startup)

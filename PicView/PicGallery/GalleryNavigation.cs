@@ -38,28 +38,7 @@ namespace PicView.PicGallery
             {
                 if (GetPicGallery == null || PicGalleryItem_Size == 0) { return 0; }
 
-                return (int)Math.Floor((GetPicGallery.Height - (GetPicGallery.Container.Margin.Top - GetPicGallery.Container.Margin.Bottom)) / PicGalleryItem_Size);
-            }
-        }
-
-        internal static int Items_per_page
-        {
-            get
-            {
-                if (GetPicGallery == null || PicGalleryItem_Size == 0) { return 0; }
-
-                if (GalleryFunctions.IsHorizontalOpen)
-                {
-                    return Horizontal_items * Vertical_items;
-                }
-                else if (GalleryFunctions.IsHorizontalFullscreenOpen)
-                {
-                    return (int)Math.Floor(GetPicGallery.Width / PicGalleryItem_Size);
-                }
-                else
-                {
-                    return (int)Math.Floor(GetPicGallery.Height / PicGalleryItem_Size);
-                }
+                return (int)Math.Floor((GetPicGallery.ActualHeight - (GetPicGallery.Container.Margin.Top - GetPicGallery.Container.Margin.Bottom)) / PicGalleryItem_Size);
             }
         }
 
@@ -92,22 +71,30 @@ namespace PicView.PicGallery
         /// <param name="item">The index of picGalleryItem</param>
         internal static void ScrollTo()
         {
-            if (GetPicGallery == null || PicGalleryItem_Size == 0) { return; }
+            if (GetPicGallery == null || PicGalleryItem_Size < 1) { return; }  
 
-            var selectedScrollTo = GetPicGallery.Container.Children[FolderIndex].TranslatePoint(new Point(), GetPicGallery.Container);
-
-            if (GalleryFunctions.IsHorizontalOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
+            if (GalleryFunctions.IsHorizontalOpen)
             {
+                if (GetPicGallery.Container.Children.Count < FolderIndex)
+                {
+                    return;
+                }
+                var selectedScrollTo = GetPicGallery.Container.Children[FolderIndex].TranslatePoint(new Point(), GetPicGallery.Container);
                 GetPicGallery.Scroller.ScrollToHorizontalOffset(selectedScrollTo.X - (Horizontal_items / 2) * PicGalleryItem_Size + (PicGalleryItem_Size_s / 2));
+
+                if (SelectedGalleryItem != FolderIndex)
+                {
+                    SetSelected(SelectedGalleryItem, false);
+                    SelectedGalleryItem = FolderIndex;
+                }
+            }
+            else if (GalleryFunctions.IsHorizontalFullscreenOpen)
+            {
+                GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
             }
             else
             {
                 GetPicGallery.Scroller.ScrollToVerticalOffset(CenterScrollPosition);
-            }
-            if (SelectedGalleryItem != FolderIndex)
-            {
-                SetSelected(SelectedGalleryItem, false);
-                SelectedGalleryItem = FolderIndex;
             }
         }
 
