@@ -150,8 +150,9 @@ namespace PicView.ChangeImage
             ConfigureWindows.GetMainWindow.Title = Application.Current.Resources["NoImage"] + " - " + SetTitle.AppName;
 
             Uri uri = new Uri($"pack://application:,,,/PicView;component/Themes/Resources/img/icon__Q6k_icon.ico", UriKind.Absolute);
-            UILogic.Sizing.ScaleImage.FitImage(48,48);
             ConfigureWindows.GetMainWindow.MainImage.Source = new System.Windows.Media.Imaging.BitmapImage(uri);
+            UILogic.Sizing.ScaleImage.FitImage(48,48);
+            
             FreshStartup = true;
             if (Pics != null)
             {

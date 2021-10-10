@@ -844,7 +844,7 @@ namespace PicView.UILogic.Loading
             MainContextMenu.Items.Add(clcm);
 
             // Add to elements
-            ConfigureWindows.GetMainWindow.MainImage.ContextMenu = ConfigureWindows.GetMainWindow.ParentContainer.ContextMenu = MainContextMenu;
+            ConfigureWindows.GetMainWindow.ParentContainer.ContextMenu = MainContextMenu;
             MainContextMenu.Opened += (tt, yy) => Recentcm_Opened(recentcm);
 
 #if DEBUG

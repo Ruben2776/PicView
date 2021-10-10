@@ -251,11 +251,6 @@ namespace PicView.UILogic.Sizing
                     GetMainWindow.ParentContainer.Width = MonitorInfo.Width * MonitorInfo.DpiScaling;
                     GetMainWindow.ParentContainer.Height = MonitorInfo.Height * MonitorInfo.DpiScaling;
                 }
-                else if (Properties.Settings.Default.AutoFitWindow || GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
-                {
-                    GetMainWindow.ParentContainer.Width = XWidth;
-                    GetMainWindow.ParentContainer.Height = XHeight;
-                }
                 else
                 {
                     GetMainWindow.ParentContainer.Width = double.NaN;
@@ -274,13 +269,13 @@ namespace PicView.UILogic.Sizing
 
                 if (GalleryFunctions.IsVerticalFullscreenOpen)
                 {
-                    GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - XHeight) / 2 + MonitorInfo.WorkArea.Top;
-                    GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - (XWidth + UC.GetPicGallery.Width)) / 2 + MonitorInfo.WorkArea.Left;
+                    GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - GetMainWindow.ActualHeight) / 2 + MonitorInfo.WorkArea.Top;
+                    GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - (GetMainWindow.ActualWidth + UC.GetPicGallery.Width)) / 2 + MonitorInfo.WorkArea.Left;
                 }
                 else if (GalleryFunctions.IsHorizontalFullscreenOpen)
                 {
-                    GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - (XHeight + GalleryNavigation.PicGalleryItem_Size + UC.GetPicGallery.Margin.Bottom + 4 * MonitorInfo.DpiScaling)) / 2 + MonitorInfo.WorkArea.Top;
-                    GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - XWidth) / 2 + MonitorInfo.WorkArea.Left;
+                    GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - (GetMainWindow.ActualHeight + GalleryNavigation.PicGalleryItem_Size + UC.GetPicGallery.Margin.Bottom + 4 * MonitorInfo.DpiScaling)) / 2 + MonitorInfo.WorkArea.Top;
+                    GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth) / 2 + MonitorInfo.WorkArea.Left;
 
                 }
                 else if (Properties.Settings.Default.AutoFitWindow)

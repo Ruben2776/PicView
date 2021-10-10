@@ -78,8 +78,6 @@ namespace PicView.UILogic.Loading
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
                 {
-                    Unload(); // Load clean setup when starting up without arguments
-
                     // Reset PicGallery and don't allow it to run,
                     // if only 1 image
                     Properties.Settings.Default.FullscreenGalleryHorizontal = Properties.Settings.Default.FullscreenGalleryVertical = false;
@@ -88,15 +86,22 @@ namespace PicView.UILogic.Loading
                     Properties.Settings.Default.Fullscreen = false;
 
                     // Determine proper startup size
-                    if (Properties.Settings.Default.Width != 0)
+                    if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width != 0)
                     {
                         SetLastWindowSize();
                     }
                     else
                     {
-                        ConfigureWindows.GetMainWindow.Width = ConfigureWindows.GetMainWindow.MinWidth;
-                        ConfigureWindows.GetMainWindow.Height = ConfigureWindows.GetMainWindow.MinHeight;
+                        if (Properties.Settings.Default.AutoFitWindow)
+                        {
+                            SetWindowBehavior();
+                        }
+
+                        //ConfigureWindows.GetMainWindow.Width = 700;
+                        //ConfigureWindows.GetMainWindow.Height = 700;
                     }
+
+                    Unload(); // Load clean setup when starting up without arguments
                 }));
             }
             else
@@ -132,13 +137,6 @@ namespace PicView.UILogic.Loading
             Trace.WriteLine("ContentRendered started");
 #endif
             #region Add dictionaries
-
-            Application.Current.Resources.MergedDictionaries.Add(
-                new ResourceDictionary
-                {
-                    Source = new Uri(@"/PicView;component/Themes/Styles/Separator.xaml", UriKind.Relative)
-                }
-            );
 
             Application.Current.Resources.MergedDictionaries.Add(
                 new ResourceDictionary
