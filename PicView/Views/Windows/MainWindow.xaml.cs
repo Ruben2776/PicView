@@ -32,7 +32,15 @@ namespace PicView.Views.Windows
             }
             Topmost = Properties.Settings.Default.TopMost;
 
-            Loaded += async (_, _) => await StartLoading.LoadedEventsAsync().ConfigureAwait(false);
+            Loaded += async (_, _) =>
+            {
+
+                // Subscribe to Windows resized event || Need to be exactly on load
+                HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle);
+                source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
+                Translations.LoadLanguage.DetermineLanguage();
+                await StartLoading.LoadedEventsAsync().ConfigureAwait(false);
+            };
             ContentRendered += delegate 
             {
                 // keyboard and Mouse_Keys Keys

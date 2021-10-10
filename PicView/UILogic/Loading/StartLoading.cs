@@ -23,12 +23,6 @@ namespace PicView.UILogic.Loading
     {
         internal static async Task LoadedEventsAsync()
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
-            {
-                // Subscribe to Windows resized event || Need to be exactly on load
-                HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle);
-                source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
-            }));
 
 #if DEBUG
             Trace.Listeners.Add(new TextWriterTraceListener("Debug.log"));
@@ -58,8 +52,6 @@ namespace PicView.UILogic.Loading
                 ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
                 ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
             }));
-
-            LoadLanguage.DetermineLanguage();
 
             if (!Properties.Settings.Default.ShowInterface)
             {
