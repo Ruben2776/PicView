@@ -1640,17 +1640,15 @@ namespace PicView.Editing.HlslEffects
 
         public PixelateEffect(double intensity)
         {
-            if (intensity > 60)
+            switch (intensity)
             {
-                PixelCounts = new Size(intensity / 2, intensity);
-            }
-            else if (intensity > 10)
-            {
-                PixelCounts = new Size(intensity / .5, intensity);
-            }
-            else
-            {
-                PixelCounts = new Size(intensity / .3, intensity);
+                case > 60:
+                    PixelCounts = new Size(intensity / .8, intensity);
+                    break;
+                case > 10:
+                    PixelCounts = new Size(intensity / .5, intensity);
+                    break;
+                default: break;
             }
 
             PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
