@@ -52,6 +52,7 @@ namespace PicView.UILogic
                 else
                 {
                     da.To = 1;
+                    Tooltip.CloseToolTipMessage();
                 }
 
                 if (GetImageSettingsMenu != null)
@@ -90,6 +91,7 @@ namespace PicView.UILogic
                 else
                 {
                     da.To = 1;
+                    Tooltip.CloseToolTipMessage();
                 }
 
                 if (GetFileMenu != null)
@@ -126,6 +128,7 @@ namespace PicView.UILogic
                 else
                 {
                     da.To = 1;
+                    Tooltip.CloseToolTipMessage();
                 }
                 GetQuickSettingsMenu.BeginAnimation(UIElement.OpacityProperty, da);
             }
@@ -150,6 +153,7 @@ namespace PicView.UILogic
                 else
                 {
                     da.To = 1;
+                    Tooltip.CloseToolTipMessage();
                 }
 
                 if (GetToolsAndEffectsMenu != null)
