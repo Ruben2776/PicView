@@ -161,14 +161,17 @@ namespace PicView.SystemIntegration
 
                 var w = UILogic.ConfigureWindows.GetMainWindow;
                 if (w == null || w.MainImage.Source == null) {  return IntPtr.Zero; }
-                ScaleImage.FitImage(w.MainImage.Source.Width, w.MainImage.Source.Height);
 
                 // Resize gallery
                 if (UC.GetPicGallery != null && GalleryFunctions.IsHorizontalOpen)
                 {
-                    UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.Width;
-                    UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.Height;
+                    UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+                    UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
                 }
+
+                ScaleImage.FitImage(w.MainImage.Source.Width, w.MainImage.Source.Height);
+
+
             }
 
             return IntPtr.Zero;

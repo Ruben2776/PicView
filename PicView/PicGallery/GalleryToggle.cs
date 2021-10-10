@@ -155,7 +155,6 @@ namespace PicView.PicGallery
                 }
 
                 GetFakeWindow.Show();
-                GalleryNavigation.ScrollTo();
                 GetMainWindow.Focus();
 
                 // Fix not showing up opacity bug..
@@ -166,6 +165,12 @@ namespace PicView.PicGallery
                 if (GetPicGallery.Container.Children.Count == 0)
                 {
                     loadItems = true;
+                }
+                else
+                {
+                    GalleryNavigation.SelectedGalleryItem = FolderIndex;
+                    GalleryNavigation.SetSelected(FolderIndex, true);
+                    GalleryNavigation.ScrollTo();
                 }
             });
 

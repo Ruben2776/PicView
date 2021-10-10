@@ -32,7 +32,7 @@ namespace PicView.Views.Windows
             }
             Topmost = Properties.Settings.Default.TopMost;
 
-            Loaded += (_, _) => System.Threading.Tasks.Task.Run(() => StartLoading.LoadedEventsAsync());
+            Loaded += async (_, _) => await StartLoading.LoadedEventsAsync().ConfigureAwait(false);
             ContentRendered += delegate 
             {
                 // keyboard and Mouse_Keys Keys

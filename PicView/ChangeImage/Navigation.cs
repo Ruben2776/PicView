@@ -97,36 +97,32 @@ namespace PicView.ChangeImage
                 archive = SupportedFiles.IsSupportedArchives(file);
                 if (archive == false)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                     {
                         Unload();
                     });
                     return;
                 }
             }
-            else
+            else if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 {
-                    ConfigureWindows.GetMainWindow.MainImage.Source = pic;
-
-                    if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
-                    {
-                        ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.Width;
-                        ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.Height;
-                    }
+                    ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.Width;
+                    ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.Height;
                 });
             }
 
             await GetValues(file).ConfigureAwait(false);
 
-            if (Pics.Count > 0)
+            switch (Pics.Count)
             {
-                FolderIndex = Pics.IndexOf(file);
-            }
-            else
-            {
-                FolderIndex = 0;
+                case > 0:
+                    FolderIndex = Pics.IndexOf(file);
+                    break;
+                default:
+                    FolderIndex = 0;
+                    break;
             }
 
             if (archive == false)
@@ -134,6 +130,10 @@ namespace PicView.ChangeImage
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
                 {
                     UpdatePic(FolderIndex, pic);
+                    if (Properties.Settings.Default.AutoFitWindow)
+                    {
+                        UILogic.Sizing.WindowSizing.SetWindowBehavior();
+                    }
                 });
 
                 await Task.Run(() => Preloader.PreLoad(FolderIndex)).ConfigureAwait(false);
@@ -252,6 +252,8 @@ namespace PicView.ChangeImage
         /// <param name="path"></param>
         internal static async Task LoadPiFromFileAsync(string path)
         {
+            bool folderChanged = false;
+
             // If count not correct or just started, get values
             if (Pics?.Count <= FolderIndex || FolderIndex < 0 || FreshStartup)
             {
@@ -263,6 +265,7 @@ namespace PicView.ChangeImage
                 // Reset old values and get new
                 ChangeFolder(true);
                 await GetValues(path).ConfigureAwait(false);
+                folderChanged = true;
             }
             else if (Pics.Contains(path) == false)
             {
@@ -285,25 +288,29 @@ namespace PicView.ChangeImage
                 await LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
             }
 
-            if (Properties.Settings.Default.FullscreenGalleryHorizontal || Properties.Settings.Default.FullscreenGalleryVertical)
+            if (GetPicGallery is not null && folderChanged)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, (Action)(() =>
+                if (Properties.Settings.Default.FullscreenGalleryHorizontal || Properties.Settings.Default.FullscreenGalleryVertical)
                 {
-                    if (GetPicGallery == null)
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, (Action)(() =>
                     {
-                        return;
-                    }
+                        if (GetPicGallery == null)
+                        {
+                            return;
+                        }
 
-                    // Remove children before loading new
-                    if (GetPicGallery.Container.Children.Count > 0)
-                    {
-                        GetPicGallery.Container.Children.Clear();
-                    }
-                }));
+                        // Remove children before loading new
+                        if (GetPicGallery.Container.Children.Count > 0)
+                        {
+                            GetPicGallery.Container.Children.Clear();
+                        }
+                    }));
 
-                // Load new gallery values, if changing folder
-                await GalleryLoad.Load().ConfigureAwait(false);
+                    // Load new gallery values, if changing folder
+                    await GalleryLoad.Load().ConfigureAwait(false);
+                }
             }
+
             FreshStartup = false;
         }
 
