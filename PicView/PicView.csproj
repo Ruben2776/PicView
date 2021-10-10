@@ -178,11 +178,11 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autoupdater.NET.Official" Version="1.7.0" />
-    <PackageReference Include="Magick.NET-Q16-x64" Version="8.3.2" />
-    <PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.7">
+    <PackageReference Include="Magick.NET-Q16-x64" Version="8.3.3" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.8">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="4.0.7" />
+    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="4.0.8" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
