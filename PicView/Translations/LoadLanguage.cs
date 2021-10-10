@@ -8,7 +8,7 @@ namespace PicView.Translations
     {
         internal static void DetermineLanguage()
         {
-            if (Properties.Settings.Default.UserLanguage != "en" && CultureInfo.CurrentUICulture.TwoLetterISOLanguageName != "en")
+            if (Properties.Settings.Default.UserLanguage != "en")
             {
                 Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
                 {
