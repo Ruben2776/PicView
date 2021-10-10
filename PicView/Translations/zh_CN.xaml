@@ -95,6 +95,11 @@
     <system:String x:Key="Language">语言</system:String>
     <system:String x:Key="ChangingLanguageRequiresRestart">* 切换语言需要重新启动应用程序</system:String>
 
+    <!--  Settings window, Gallery layout  -->
+    <system:String x:Key="FullscreenGalleryLayout">Fullscreen gallery layout</system:String>
+    <system:String x:Key="Vertical">Vertical</system:String>
+    <system:String x:Key="Horizontal">Horizontal</system:String>
+
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">通用设置</system:String>
     <system:String x:Key="UISettings">界面设置</system:String>

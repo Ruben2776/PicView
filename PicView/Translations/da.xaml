@@ -95,6 +95,11 @@
     <system:String x:Key="Language">Sprog</system:String>
     <system:String x:Key="ChangingLanguageRequiresRestart">* Skiftning af sprog kræver genstart</system:String>
 
+    <!--  Settings window, Gallery layout  -->
+    <system:String x:Key="FullscreenGalleryLayout">Orientering af fuldskærmsgalleriet</system:String>
+    <system:String x:Key="Vertical">Lodret</system:String>
+    <system:String x:Key="Horizontal">Vandret</system:String>
+
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">Generale Indstillinger</system:String>
     <system:String x:Key="UISettings">UI-indstillinger</system:String>

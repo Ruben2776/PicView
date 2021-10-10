@@ -372,7 +372,7 @@
                             VerticalAlignment="Center"
                             FontSize="12"
                             Foreground="{StaticResource MainColorBrush}"
-                            Text="Fullscreen Gallery Layout"
+                            Text="{StaticResource FullscreenGalleryLayout}"
                             TextWrapping="Wrap" />
                         <ComboBox
                             x:Name="GalleryBox"
@@ -380,9 +380,9 @@
                             HorizontalAlignment="Stretch">
                             <ComboBoxItem
                                 x:Name="GalleryVertical"
-                                Content="Vertical"
+                                Content="{StaticResource Vertical}"
                                 IsSelected="True" />
-                            <ComboBoxItem x:Name="GalleryHorizontal" Content="Horizontal" />
+                            <ComboBoxItem x:Name="GalleryHorizontal" Content="{StaticResource Horizontal}" />
                         </ComboBox>
                     </StackPanel>
 

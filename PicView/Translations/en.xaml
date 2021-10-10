@@ -95,6 +95,11 @@
     <system:String x:Key="Language">Language</system:String>
     <system:String x:Key="ChangingLanguageRequiresRestart">* Changing language requires restart</system:String>
 
+    <!--  Settings window, Gallery layout  -->
+    <system:String x:Key="FullscreenGalleryLayout">Fullscreen gallery layout</system:String>
+    <system:String x:Key="Vertical">Vertical</system:String>
+    <system:String x:Key="Horizontal">Horizontal</system:String>
+
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">General Settings</system:String>
     <system:String x:Key="UISettings">UI Settings</system:String>
@@ -112,6 +117,7 @@
     <system:String x:Key="SecAbbreviation">Sec.</system:String>
     <system:String x:Key="RestartApp">Restart the application</system:String>
     <system:String x:Key="CheckForUpdates">Check for updates</system:String>
+
 
     <!--  Effects Window  -->
     <system:String x:Key="HLSLPictureFX">HLSL Picture FX</system:String>

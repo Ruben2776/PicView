@@ -95,6 +95,11 @@
     <system:String x:Key="Language">Lenguaje</system:String>
     <system:String x:Key="ChangingLanguageRequiresRestart">* Cambiar el lenguaje requiere reabrir el programa</system:String>
 
+    <!--  Settings window, Gallery layout  -->
+    <system:String x:Key="FullscreenGalleryLayout">Fullscreen gallery layout</system:String>
+    <system:String x:Key="Vertical">Vertical</system:String>
+    <system:String x:Key="Horizontal">Horizontal</system:String>
+
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">Opciones Generales</system:String>
     <system:String x:Key="UISettings">Opciones de interfaz</system:String>
