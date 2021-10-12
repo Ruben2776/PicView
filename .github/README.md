@@ -102,3 +102,8 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it
 
 
 <img src="https://d33wubrfki0l68.cloudfront.net/bcc20ae9223923eb15cc96a7b83f00af4a9a6101/f90e0/assets/screenshots/picview-settings-window-dark-theme.webp" />
+
+## Donate
+If you wish to thank me for my work, please
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W46BJFV)
