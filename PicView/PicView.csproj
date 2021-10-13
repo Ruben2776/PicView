@@ -187,12 +187,12 @@
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
-    <PackageReference Include="SkiaSharp" Version="2.88.0-preview.145">
+    <PackageReference Include="SkiaSharp" Version="2.88.0-preview.150">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.0-preview.145" />
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.0-preview.150" />
     <PackageReference Include="WpfScreenHelper" Version="1.1.0" />
-    <PackageReference Include="XamlAnimatedGif" Version="2.0.1" />
+    <PackageReference Include="XamlAnimatedGif" Version="2.0.2" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
@@ -277,6 +277,10 @@
     <None Update="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="..\.github\README.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
     </None>
     <None Include="..\LICENSE.txt">
       <Pack>True</Pack>
@@ -370,9 +374,9 @@
 	
   <PropertyGroup>
     <FileVersion>1.5.0.0</FileVersion>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>False</SignAssembly>
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
-    <PackageProjectUrl>https://github.com/Ruben2776/PicView</PackageProjectUrl>
+    <PackageProjectUrl>https://PicView.org</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Ruben2776/PicView</RepositoryUrl>
     <PackageLicenseExpression> GPL-3.0-only</PackageLicenseExpression>
     <AssemblyOriginatorKeyFile>PicViewSignFile.pfx</AssemblyOriginatorKeyFile>
@@ -384,8 +388,9 @@
     <AssemblyVersion>1.5.0.0</AssemblyVersion>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows7.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
