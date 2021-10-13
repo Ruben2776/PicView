@@ -6,8 +6,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
     Title="{StaticResource HLSLPictureFX}"
-    Width="559"
-    Height="600"
+    Width="413"
+    Height="427"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros"
@@ -16,7 +16,7 @@
     Style="{DynamicResource MyWindowStyle}"
     mc:Ignorable="d">
 
-    <DockPanel LastChildFill="True">
+    <DockPanel Background="{StaticResource NoisyBg}" LastChildFill="True">
         <DockPanel
             x:Name="TitleBar"
             Height="30"
@@ -76,19 +76,16 @@
             DockPanel.Dock="Top"
             Fill="{StaticResource BorderBrush}" />
 
-        <StackPanel Background="{StaticResource NoisyBg}">
-            <WrapPanel
-                x:Name="EffectsContainer"
-                Margin="10,10,10,0"
-                Orientation="Horizontal">
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
+        <StackPanel>
+            <Border
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                Background="#21000000"
+                CornerRadius="4"
+                Margin="10,10,10,0"
+                Padding="6,8,6,8">
+                <WrapPanel x:Name="EffectsContainer" Orientation="Horizontal">
                     <CheckBox x:Name="NegativeButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="NegativeButtonBrush" Color="Transparent" />
@@ -104,16 +101,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    x:Name="GrayscaleButtonBorder"
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="GrayscaleButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="GrayscaleButtonBrush" Color="Transparent" />
@@ -129,15 +117,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="ColorToneButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="ColorToneButtonBrush" Color="Transparent" />
@@ -153,15 +133,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="OldMovieButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="OldMovieButtonBrush" Color="Transparent" />
@@ -177,15 +149,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="BloomButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="BloomButtonBrush" Color="Transparent" />
@@ -201,15 +165,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="GloomButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="GloomButtonBrush" Color="Transparent" />
@@ -225,15 +181,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="MonochromeButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="MonochromeButtonBrush" Color="Transparent" />
@@ -249,15 +197,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="WavewarperButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="WaveWarperButtonBrush" Color="Transparent" />
@@ -273,15 +213,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="UnderwaterButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="UnderwaterButtonBrush" Color="Transparent" />
@@ -297,15 +229,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="BandedSwirlButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="BandedSwirlButtonBrush" Color="Transparent" />
@@ -321,15 +245,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="SwirlButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="SwirlButtonBrush" Color="Transparent" />
@@ -345,15 +261,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="RippleButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="RippleButtonBrush" Color="Transparent" />
@@ -369,15 +277,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="RippleAltButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="RippleAltButtonBrush" Color="Transparent" />
@@ -393,15 +293,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="BlurButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="BlurButtonBrush" Color="Transparent" />
@@ -417,15 +309,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="DirectionalBlurButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="DirectionalBlurButtonBrush" Color="Transparent" />
@@ -441,15 +325,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="TelescopicBlurButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="TelescopicBlurButtonBrush" Color="Transparent" />
@@ -465,15 +341,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="PixelateButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="PixelateButtonBrush" Color="Transparent" />
@@ -489,15 +357,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="EmbossedButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="EmbossedButtonBrush" Color="Transparent" />
@@ -513,15 +373,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="SmoothMagnifyButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="SmoothMagnifyButtonBrush" Color="Transparent" />
@@ -537,15 +389,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="PivotButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="PivotButtonBrush" Color="Transparent" />
@@ -561,15 +405,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="PaperfoldButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="PaperfoldButtonBrush" Color="Transparent" />
@@ -585,15 +421,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="PencilSketchButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="PencilSketchButtonBrush" Color="Transparent" />
@@ -609,15 +437,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="SketchButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="SketchButtonBrush" Color="Transparent" />
@@ -633,15 +453,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="TonemappingButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="ToneMappingButtonBrush" Color="Transparent" />
@@ -657,15 +469,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="FrostyOutlineButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="FrostyOutlineButtonBrush" Color="Transparent" />
@@ -681,15 +485,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="BandsButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="BandsButtonBrush" Color="Transparent" />
@@ -705,15 +501,7 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
-                <Border
-                    Width="175"
-                    Height="42"
-                    Margin="0,0,4,4"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    CornerRadius="3"
-                    Style="{StaticResource ButtonBorder}">
                     <CheckBox x:Name="GlasTileButton">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="GlasTileButtonBrush" Color="Transparent" />
@@ -729,33 +517,25 @@
                             </TextBlock.Foreground>
                         </TextBlock>
                     </CheckBox>
-                </Border>
 
 
-            </WrapPanel>
-
+                </WrapPanel>
+            </Border>
             <Slider
                 x:Name="IntensitySlider"
                 Width="229"
                 Height="30"
-                Margin="0,8,0,0"
+                Margin="0,9,0,7"
                 IsMoveToPointEnabled="True"
                 IsSnapToTickEnabled="True"
                 Maximum="200"
                 Minimum="0"
                 TickFrequency="1.5"
-                Value="100" />
-
-            <TextBlock
-                Margin="0,8,0,4"
-                HorizontalAlignment="Center"
-                Text="{StaticResource ClickToAddShaderEffectToImage}" />
-            <TextBlock HorizontalAlignment="Center" Text="{StaticResource UncheckToRemoveEffect}" />
+                Value="100" HorizontalAlignment="Center" VerticalAlignment="Bottom" />
 
             <Border
-                Margin="0,10,0,0"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Center"
+                VerticalAlignment="Bottom"
                 Background="{StaticResource BackgroundColorBrushAlt}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1"
@@ -776,5 +556,6 @@
             </Border>
 
         </StackPanel>
+
     </DockPanel>
 </Window>

@@ -30,7 +30,7 @@ namespace PicView.Views.Windows
             Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
             StateChanged += FakeWindow_StateChanged;
             ConfigureWindows.GetMainWindow.Focus();
-            LostFocus += FakeWindow_LostFocus;
+            //LostFocus += FakeWindow_LostFocus;
             GotFocus += FakeWindow_LostFocus;
 
             EnableBlur(this);
@@ -60,8 +60,14 @@ namespace PicView.Views.Windows
             if (ConfigureWindows.GetMainWindow.WindowState == WindowState.Normal && GalleryFunctions.IsVerticalFullscreenOpen 
                 || ConfigureWindows.GetMainWindow.WindowState == WindowState.Normal && GalleryFunctions.IsHorizontalFullscreenOpen)
             {
-                Show();
+                if (IsVisible is false)
+                {
+                    Show();
+                    Activate();
+                }
+
                 ConfigureWindows.GetMainWindow.BringIntoView();
+                ConfigureWindows.GetMainWindow.Activate();
             }
             else if (ConfigureWindows.GetMainWindow.WindowState == WindowState.Minimized)
             {
