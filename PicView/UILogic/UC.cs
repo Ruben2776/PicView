@@ -25,6 +25,7 @@ namespace PicView.UILogic
         internal static GalleryShortcut? GetGalleryShortcut { get; set; }
         internal static CroppingTool? GetCropppingTool { get; set; }
         internal static ColorPicker? GetColorPicker { get; set; }
+        internal static GripButton? GetGripButton { get; set; }
 
         private static bool imageSettingsMenuOpen;
         private static bool fileMenuOpen;

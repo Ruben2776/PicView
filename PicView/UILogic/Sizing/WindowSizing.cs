@@ -28,7 +28,13 @@ namespace PicView.UILogic.Sizing
             {
                 ConfigureWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
                 ConfigureWindows.GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
-                ConfigureWindows.GetMainWindow.GripButton.Visibility = Visibility.Collapsed;
+
+                if (UC.GetGripButton is not null)
+                {
+                    UC.GetGripButton.Visibility = Visibility.Collapsed;
+                }
+
+                UC.GetGripButton.Visibility = Visibility.Collapsed;
 
                 if (GetQuickSettingsMenu != null)
                 {
@@ -41,7 +47,13 @@ namespace PicView.UILogic.Sizing
             {
                 ConfigureWindows.GetMainWindow.SizeToContent = SizeToContent.Manual;
                 ConfigureWindows.GetMainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
-                ConfigureWindows.GetMainWindow.GripButton.Visibility = Visibility.Visible;
+
+                if (UC.GetGripButton is null)
+                {
+                    UC.GetGripButton = new Views.UserControls.GripButton();
+                    ConfigureWindows.GetMainWindow.LowerBar.Children.Add(UC.GetGripButton);
+                }
+                UC.GetGripButton.Visibility = Visibility.Visible;               
 
                 if (GetQuickSettingsMenu != null)
                 {
@@ -122,7 +134,7 @@ namespace PicView.UILogic.Sizing
         {
             ConfigureWindows.GetMainWindow.WindowState = WindowState.Normal;
             Properties.Settings.Default.Maximized = false;
-            ConfigureWindows.GetMainWindow.GripButton.Visibility = Visibility.Visible;
+            UC.GetGripButton.Visibility = Visibility.Visible;
 
             // Reset margin
             GetMainWindow.TitleBar.Margin = new Thickness(0);
@@ -238,7 +250,11 @@ namespace PicView.UILogic.Sizing
             GetMainWindow.TitleBar.Margin = new Thickness(8, 8, 8, 0);
             GetMainWindow.LowerBar.Margin = new Thickness(8, 0, 8, 8);
 
-            ConfigureWindows.GetMainWindow.GripButton.Visibility = Visibility.Collapsed;
+            if (UC.GetGripButton is not null)
+            {
+                UC.GetGripButton.Visibility = Visibility.Collapsed;
+            }
+            
             GetMainWindow.TitleText.MaxWidth = MonitorInfo.WorkArea.Width - 192 * MonitorInfo.DpiScaling;
 
             Properties.Settings.Default.Maximized = true;
