@@ -6,7 +6,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
     Width="325"
-    d:Title="Settings window - PicView"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
@@ -365,29 +364,25 @@
 
             <TabItem FontSize="14" Header="{StaticResource UISettings}">
                 <StackPanel Margin="10">
-
-                    <StackPanel Margin="0,0,0,4" Orientation="Horizontal">
-                        <TextBlock
-                            Width="167"
-                            VerticalAlignment="Center"
-                            FontSize="12"
-                            Foreground="{StaticResource MainColorBrush}"
-                            Text="{StaticResource FullscreenGalleryLayout}"
-                            TextWrapping="Wrap" />
-                        <ComboBox
-                            x:Name="GalleryBox"
-                            Width="135"
-                            HorizontalAlignment="Stretch">
-                            <ComboBoxItem
-                                x:Name="GalleryVertical"
-                                Content="{StaticResource Vertical}"
-                                IsSelected="True" />
-                            <ComboBoxItem x:Name="GalleryHorizontal" Content="{StaticResource Horizontal}" />
-                        </ComboBox>
-                    </StackPanel>
+                    
+                    <Label
+                        VerticalAlignment="Center"
+                        Foreground="{StaticResource MainColorBrush}"
+                        Content="{StaticResource FullscreenGalleryLayout}"/>
+                    <ComboBox
+                        x:Name="GalleryBox"
+                        Width="150"
+                        Margin="8,2,0,2"
+                        HorizontalAlignment="Left">
+                        <ComboBoxItem
+                            x:Name="GalleryVertical"
+                            Content="{StaticResource Vertical}"
+                            IsSelected="True" />
+                        <ComboBoxItem x:Name="GalleryHorizontal" Content="{StaticResource Horizontal}" />
+                    </ComboBox>
 
                     <Label
-                        Margin="0,0,0,5"
+                        Margin="0,5,0,5"
                         VerticalAlignment="Center"
                         Content="{StaticResource MiscSettings}"
                         Foreground="{StaticResource MainColorBrush}" />
