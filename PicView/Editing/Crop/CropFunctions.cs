@@ -128,7 +128,7 @@ namespace PicView.Editing.Crop
         /// <returns></returns>
         internal static Int32Rect? GetCrop()
         {
-            var cropArea = CropService.GetCroppedArea();
+            var cropArea = CropService.GetCroppedArea(); // Contains the dimensions and coordinates of cropped area
 
             if (cropArea == null) { return null; }
 
@@ -138,15 +138,17 @@ namespace PicView.Editing.Crop
             x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / AspectRatio);
             y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / AspectRatio);
 
-            if (Rotateint == 0 || Rotateint == 180)
+            switch (Rotateint) // Degress the image has been rotated by
             {
-                width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
-                height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
-            }
-            else
-            {
-                width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
-                height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
+                case 0:
+                case 180:
+                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
+                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
+                    break;
+                default:
+                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
+                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
+                    break;
             }
 
             return new Int32Rect(x, y, width, height);
