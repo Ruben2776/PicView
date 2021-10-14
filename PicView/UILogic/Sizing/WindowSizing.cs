@@ -34,8 +34,6 @@ namespace PicView.UILogic.Sizing
                     UC.GetGripButton.Visibility = Visibility.Collapsed;
                 }
 
-                UC.GetGripButton.Visibility = Visibility.Collapsed;
-
                 if (GetQuickSettingsMenu != null)
                 {
                     GetQuickSettingsMenu.SetFit.IsChecked = true;
