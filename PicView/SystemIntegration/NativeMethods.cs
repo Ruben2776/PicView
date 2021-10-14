@@ -160,7 +160,7 @@ namespace PicView.SystemIntegration
                 }
 
                 var w = UILogic.ConfigureWindows.GetMainWindow;
-                if (w == null || w.MainImage.Source == null) {  return IntPtr.Zero; }
+                if (w.MainImage.Source == null) {  return IntPtr.Zero; }
 
                 // Resize gallery
                 if (UC.GetPicGallery != null && GalleryFunctions.IsHorizontalOpen)
