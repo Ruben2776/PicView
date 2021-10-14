@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.DeleteFiles;
 using static PicView.UILogic.TransformImage.Rotation;
@@ -42,6 +43,13 @@ namespace PicView.ChangeImage
             if (ConfigureWindows.GetMainWindow.CheckAccess())
             {
                 GalleryFunctions.Clear();
+            }
+            else
+            {
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() =>
+                {
+                    GalleryFunctions.Clear();
+                }));
             }
 
             Preloader.Clear();
