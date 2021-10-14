@@ -380,7 +380,6 @@ namespace PicView.ChangeImage
                 {
                     return;
                 }
-
                 while (preloadValue != null && preloadValue.isLoading)
                 {
                     // Wait for finnished result
@@ -421,16 +420,58 @@ namespace PicView.ChangeImage
             }
 
             // Check if works, if not show error message
-            if (preloadValue == null || preloadValue.bitmapSource == null)
+            if (preloadValue is not null)
             {
-                preloadValue = new Preloader.PreloadValue(ImageFunctions.ImageErrorMessage(), false);
+                while (preloadValue != null && preloadValue.isLoading)
+                {
+                    // Wait for finnished result
+                    await Task.Delay(5).ConfigureAwait(false);
 
-                if (preloadValue == null || preloadValue.bitmapSource == null)
+                    // Make loading skippable
+                    if (FolderIndex != index)
+                    {
+                        // Start preloading when browsing very fast to catch up
+                        await Task.Run(() => Preloader.PreLoad(FolderIndex)).ConfigureAwait(false);
+                        return;
+                    }
+                }
+                if (preloadValue is null) // Error correctiom
+                {
+                    await Preloader.AddAsync(index).ConfigureAwait(false);
+                    preloadValue = Preloader.Get(Navigation.Pics[index]);
+                }
+                if (preloadValue is null)
+                {
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                    {
+                        Error_Handling.Unload();
+                        ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                    });
+                    return;
+                }
+                if (preloadValue.bitmapSource == null)
+                {
+                    preloadValue = new Preloader.PreloadValue(ImageFunctions.ImageErrorMessage(), false);
+
+                    if (preloadValue == null || preloadValue.bitmapSource == null)
+                    {
+                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                        {
+                            Error_Handling.Unload();
+                            ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                        });
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 {
                     Error_Handling.Unload();
                     ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
-                    return;
-                }
+                });
+                return;
             }
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
@@ -589,8 +630,11 @@ namespace PicView.ChangeImage
                 }
                 else
                 {
-                    Error_Handling.Unload();
-                    ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => 
+                    {
+                        Error_Handling.Unload(); 
+                        ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]); 
+                    });
                     return;
                 }
 
@@ -673,7 +717,7 @@ namespace PicView.ChangeImage
             });
         }
 
-        #endregion Update Image values
+        #endregion
 
         #region Change navigation values
 
@@ -849,8 +893,7 @@ namespace PicView.ChangeImage
 
             if (preloadValue == null || preloadValue.bitmapSource == null)
             {
-                Error_Handling.Unload();
-                ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => { Error_Handling.Unload(); ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]); });
                 return;
             }
 
