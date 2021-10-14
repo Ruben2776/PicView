@@ -29,7 +29,7 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static void ChangeFolder(bool backup = false)
         {
-            if (Pics?.Count > 0 && backup)
+            if (Pics?.Count > 0 && Pics.Count > FolderIndex && backup)
             {
                 // Make a backup of xPicPath and FolderIndex
                 if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]))
