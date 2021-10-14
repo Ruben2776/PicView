@@ -50,12 +50,10 @@ namespace PicView.ImageHandling
                         using var skData = SKData.Create(filestream);
                         await filestream.DisposeAsync().ConfigureAwait(false);
                         using var codec = SKCodec.Create(skData);
-                        var sKBitmap = SKBitmap.Decode(codec);
+                        if (codec is null) { return null; }
 
-                        if (sKBitmap == null)
-                        {
-                            return null;
-                        }
+                        var sKBitmap = SKBitmap.Decode(codec);
+                        if (sKBitmap is null) { return null; }
 
                         var skPic = sKBitmap.ToWriteableBitmap();
                         skPic.Freeze();
