@@ -23,6 +23,13 @@ namespace PicView.Views.Windows
             ContentRendered += Window_ContentRendered;
 
             MaxWidth = MinWidth = 565 * WindowSizing.MonitorInfo.DpiScaling;
+            if (double.IsNaN(Width)) // Fixes if user opens window when loading from startup
+            {
+                WindowSizing.MonitorInfo = SystemIntegration.MonitorSize.GetMonitorSize();
+                MaxHeight = WindowSizing.MonitorInfo.WorkArea.Height;
+                Width *= WindowSizing.MonitorInfo.DpiScaling;
+                MaxWidth = MinWidth = 565 * WindowSizing.MonitorInfo.DpiScaling;
+            }
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)
