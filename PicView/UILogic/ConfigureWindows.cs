@@ -155,7 +155,7 @@ namespace PicView.UILogic
             }
             if (Properties.Settings.Default.Fullscreen)
             {
-                GetEffectsWindow.Topmost = true;
+                GetImageInfoWindow.Topmost = true;
                 GetImageInfoWindow.BringIntoView();
             }
             else
