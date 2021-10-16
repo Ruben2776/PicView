@@ -107,6 +107,8 @@ namespace PicView.ChangeImage
             }
         }
 
+        #region LoadPicAtValue
+
         /// <summary>
         /// Determine proper path from given string value
         /// </summary>
@@ -370,7 +372,7 @@ namespace PicView.ChangeImage
             // Check if works, if not show error message
             if (preloadValue is not null)
             {
-                while (preloadValue != null && preloadValue.isLoading)
+                while (preloadValue.isLoading)
                 {
                     // Wait for finnished result
                     await Task.Delay(5).ConfigureAwait(false);
@@ -382,20 +384,6 @@ namespace PicView.ChangeImage
                         await Task.Run(() => Preloader.PreLoad(FolderIndex)).ConfigureAwait(false);
                         return;
                     }
-                }
-                if (preloadValue is null) // Error correctiom
-                {
-                    await Preloader.AddAsync(index).ConfigureAwait(false);
-                    preloadValue = Preloader.Get(Navigation.Pics[index]);
-                }
-                if (preloadValue is null)
-                {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                    {
-                        Error_Handling.Unload();
-                        ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
-                    });
-                    return;
                 }
                 if (preloadValue.bitmapSource == null)
                 {
@@ -457,6 +445,55 @@ namespace PicView.ChangeImage
                 RecentFiles.Add(Pics?[index]);
             }
         }
+
+        /// <summary>
+        /// Handle logic if user wants to load from a folder
+        /// </summary>
+        /// <param name="folder"></param>
+        internal static async Task LoadPicFromFolderAsync(string folder)
+        {
+            // TODO add new function that can go to next/prev folder
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            {
+                ChangeFolder(true);
+            });
+
+
+            // If searching subdirectories, it might freeze UI, so wrap it in task
+            await Task.Run(() =>
+            {
+                Pics = FileList(folder);
+            }).ConfigureAwait(false);
+
+            if (Pics?.Count > 0)
+            {
+                await LoadPicAtIndexAsync(0).ConfigureAwait(false);
+            }
+            else
+            {
+                await ReloadAsync(true).ConfigureAwait(false);
+            }
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, async () =>
+            {
+                if (GetImageSettingsMenu is not null)
+                {
+                    GetImageSettingsMenu.GoToPic.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
+                }
+
+                // Load new gallery values, if changing folder
+                if (GetPicGallery != null && Properties.Settings.Default.FullscreenGalleryHorizontal || GetPicGallery != null && Properties.Settings.Default.FullscreenGalleryVertical)
+                {
+                    if (GetPicGallery.Container.Children.Count == 0)
+                    {
+                        await GalleryLoad.Load().ConfigureAwait(false);
+                    }
+                }
+            });
+        }
+
+        #endregion
+
+        #region UpdatePic
 
         /// <summary>
         /// Update picture, size it and set the title from index
@@ -621,51 +658,6 @@ namespace PicView.ChangeImage
         }
 
         /// <summary>
-        /// Handle logic if user wants to load from a folder
-        /// </summary>
-        /// <param name="folder"></param>
-        internal static async Task LoadPicFromFolderAsync(string folder)
-        {
-            // TODO add new function that can go to next/prev folder
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-            {
-                ChangeFolder(true);
-            });
-
-
-            // If searching subdirectories, it might freeze UI, so wrap it in task
-            await Task.Run(() =>
-            {
-                Pics = FileList(folder);
-            }).ConfigureAwait(false);
-
-            if (Pics?.Count > 0)
-            {
-                await LoadPicAtIndexAsync(0).ConfigureAwait(false);
-            }
-            else
-            {
-                await ReloadAsync(true).ConfigureAwait(false);
-            }
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, async () =>
-            {
-                if (GetImageSettingsMenu is not null)
-                {
-                    GetImageSettingsMenu.GoToPic.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
-                }
-
-                // Load new gallery values, if changing folder
-                if (GetPicGallery != null && Properties.Settings.Default.FullscreenGalleryHorizontal || GetPicGallery != null && Properties.Settings.Default.FullscreenGalleryVertical)
-                {
-                    if (GetPicGallery.Container.Children.Count == 0)
-                    {
-                        await GalleryLoad.Load().ConfigureAwait(false);
-                    }
-                }
-            });
-        }
-
-        /// <summary>
         /// Update after FastPic() was used
         /// </summary>
         internal static async Task FastPicUpdateAsync()
@@ -714,5 +706,7 @@ namespace PicView.ChangeImage
                 UpdatePic(FolderIndex, preloadValue.bitmapSource);
             });
         }
+
+        #endregion
     }
 }
