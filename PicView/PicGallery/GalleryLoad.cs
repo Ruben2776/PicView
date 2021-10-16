@@ -86,7 +86,15 @@ namespace PicView.PicGallery
                     // Set style
                     UC.GetPicGallery.Margin = new Thickness(0, 0, 0, 0);
                     UC.GetPicGallery.border.BorderThickness = new Thickness(1, 0, 0, 0);
-                    UC.GetPicGallery.border.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
+                    if (Properties.Settings.Default.DarkTheme)
+                    {
+                        UC.GetPicGallery.border.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
+                    }
+                    else
+                    {
+                        UC.GetPicGallery.border.Background = new SolidColorBrush(Colors.Transparent);
+                    }
+                    
                     UC.GetPicGallery.Container.Margin = new Thickness(0, 0, 0, 0);
 
                     // Make sure bools are correct
@@ -176,19 +184,6 @@ namespace PicView.PicGallery
             /// TODO Maybe make this start at at folder index
             /// and get it work with a real sorting method?
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
-            {
-                if (UC.GetPicGallery == null)
-                {
-                    return;
-                }
-
-                else if (UC.GetPicGallery.Container.Children.Count > 0)
-                {
-                    return;
-                }
-            }));
-
             var count = Navigation.Pics.Count;
             var index = Navigation.FolderIndex;
 
@@ -196,6 +191,15 @@ namespace PicView.PicGallery
             {
                 for (int i = 0; i < count; i++)
                 {
+                    if (count != Navigation.Pics.Count)
+                    {
+                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                        {
+                            UC.GetPicGallery.Container.Children.Clear();
+                        }));
+                        return;
+                    }
+
                     ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
                     {
                         bool selected = i == index;
@@ -206,13 +210,25 @@ namespace PicView.PicGallery
                             Timers.PicGalleryTimerHack();
                         }
                     }));
-                    _= UpdatePic(i).ConfigureAwait(false);
                 }
+                Parallel.For(0, count, async i =>
+                {
+                    await UpdatePic(i).ConfigureAwait(false);
+                });
             }
             else
             {
                 for (int i = 0; i < count; i++)
                 {
+                    if (count != Navigation.Pics.Count)
+                    {
+                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                        {
+                            UC.GetPicGallery.Container.Children.Clear();
+                        }));
+                        return;
+                    }
+
                     await Add(i).ConfigureAwait(false);
                 }
             }

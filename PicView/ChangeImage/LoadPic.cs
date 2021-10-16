@@ -208,6 +208,7 @@ namespace PicView.ChangeImage
             if (Pics?.Count <= FolderIndex || FolderIndex < 0 || FreshStartup)
             {
                 await GetValues(path).ConfigureAwait(false);
+                folderChanged = true;
             }
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
             else if (!string.IsNullOrWhiteSpace(Pics?[FolderIndex]) && Path.GetDirectoryName(path) != Path.GetDirectoryName(Pics[FolderIndex]))
@@ -227,7 +228,7 @@ namespace PicView.ChangeImage
                 FolderIndex = Pics.IndexOf(path);
             }
 
-            if (!FreshStartup)
+            if (FreshStartup is false || folderChanged)
             {
                 Preloader.Clear();
             }
@@ -244,11 +245,6 @@ namespace PicView.ChangeImage
                 {
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, (Action)(() =>
                     {
-                        if (GetPicGallery == null)
-                        {
-                            return;
-                        }
-
                         // Remove children before loading new
                         if (GetPicGallery.Container.Children.Count > 0)
                         {
