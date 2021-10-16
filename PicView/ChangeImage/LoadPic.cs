@@ -330,23 +330,70 @@ namespace PicView.ChangeImage
                 {
                     return;
                 }
-                while (preloadValue != null && preloadValue.isLoading)
-                {
-                    // Wait for finnished result
-                    await Task.Delay(5).ConfigureAwait(false);
 
-                    // Make loading skippable
-                    if (FolderIndex != index)
+                if (preloadValue is not null)
+                {
+                    while (preloadValue.isLoading)
                     {
-                        // Start preloading when browsing very fast to catch up
-                        await Task.Run(() => Preloader.PreLoad(FolderIndex)).ConfigureAwait(false);
-                        return;
+                        // Wait for finnished result
+                        await Task.Delay(5).ConfigureAwait(false);
+
+                        // Make loading skippable
+                        if (FolderIndex != index)
+                        {
+                            // Start preloading when browsing very fast to catch up
+                            await Task.Run(() => Preloader.PreLoad(FolderIndex)).ConfigureAwait(false);
+                            return;
+                        }
+                    }
+                    if (preloadValue.bitmapSource == null) // Show image error, unload if showing image error somehow fails
+                    {
+                        preloadValue = new Preloader.PreloadValue(ImageFunctions.ImageErrorMessage(), false);
+
+                        if (preloadValue == null || preloadValue.bitmapSource == null)
+                        {
+                            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                            {
+                                Error_Handling.Unload();
+                                ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                            });
+                            return;
+                        }
                     }
                 }
-                if (preloadValue == null) // Error correctiom
+                else // Error correctiom
                 {
                     await Preloader.AddAsync(index).ConfigureAwait(false);
                     preloadValue = Preloader.Get(Navigation.Pics[index]);
+
+                    if (preloadValue.bitmapSource == null) // Show image error, unload if showing image error somehow fails
+                    {
+                        preloadValue = new Preloader.PreloadValue(ImageFunctions.ImageErrorMessage(), false);
+
+                        if (preloadValue == null || preloadValue.bitmapSource == null)
+                        {
+                            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                            {
+                                Error_Handling.Unload();
+                                ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                            });
+                            return;
+                        }
+                    }
+
+                    while (preloadValue.isLoading)
+                    {
+                        // Wait for finnished result
+                        await Task.Delay(5).ConfigureAwait(false);
+
+                        // Make loading skippable
+                        if (FolderIndex != index)
+                        {
+                            // Start preloading when browsing very fast to catch up
+                            await Task.Run(() => Preloader.PreLoad(FolderIndex)).ConfigureAwait(false);
+                            return;
+                        }
+                    }
                 }
             }
 
@@ -366,47 +413,6 @@ namespace PicView.ChangeImage
                         GalleryNavigation.FullscreenGalleryNavigation();
                     });
                 }
-                return;
-            }
-
-            // Check if works, if not show error message
-            if (preloadValue is not null)
-            {
-                while (preloadValue.isLoading)
-                {
-                    // Wait for finnished result
-                    await Task.Delay(5).ConfigureAwait(false);
-
-                    // Make loading skippable
-                    if (FolderIndex != index)
-                    {
-                        // Start preloading when browsing very fast to catch up
-                        await Task.Run(() => Preloader.PreLoad(FolderIndex)).ConfigureAwait(false);
-                        return;
-                    }
-                }
-                if (preloadValue.bitmapSource == null)
-                {
-                    preloadValue = new Preloader.PreloadValue(ImageFunctions.ImageErrorMessage(), false);
-
-                    if (preloadValue == null || preloadValue.bitmapSource == null)
-                    {
-                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                        {
-                            Error_Handling.Unload();
-                            ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
-                        });
-                        return;
-                    }
-                }
-            }
-            else
-            {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                {
-                    Error_Handling.Unload();
-                    ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
-                });
                 return;
             }
 
