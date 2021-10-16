@@ -7,7 +7,7 @@
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
     Title="{StaticResource HLSLPictureFX}"
     Width="413"
-    Height="427"
+    Height="483"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros"
@@ -85,8 +85,10 @@
                 CornerRadius="4"
                 Margin="10,10,10,0"
                 Padding="6,8,6,8">
+                
                 <WrapPanel x:Name="EffectsContainer" Orientation="Horizontal">
-                    <CheckBox x:Name="NegativeButton">
+                    
+                    <CheckBox x:Name="NegativeButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="NegativeButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -102,7 +104,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="GrayscaleButton">
+                    <CheckBox x:Name="GrayscaleButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="GrayscaleButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -118,7 +120,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="ColorToneButton">
+                    <CheckBox x:Name="ColorToneButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="ColorToneButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -134,7 +136,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="OldMovieButton">
+                    <CheckBox x:Name="OldMovieButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="OldMovieButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -150,7 +152,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="BloomButton">
+                    <CheckBox x:Name="BloomButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="BloomButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -166,7 +168,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="GloomButton">
+                    <CheckBox x:Name="GloomButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="GloomButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -182,7 +184,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="MonochromeButton">
+                    <CheckBox x:Name="MonochromeButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="MonochromeButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -198,7 +200,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="WavewarperButton">
+                    <CheckBox x:Name="WavewarperButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="WaveWarperButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -214,7 +216,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="UnderwaterButton">
+                    <CheckBox x:Name="UnderwaterButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="UnderwaterButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -230,7 +232,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="BandedSwirlButton">
+                    <CheckBox x:Name="BandedSwirlButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="BandedSwirlButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -246,7 +248,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="SwirlButton">
+                    <CheckBox x:Name="SwirlButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="SwirlButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -262,7 +264,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="RippleButton">
+                    <CheckBox x:Name="RippleButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="RippleButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -278,7 +280,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="RippleAltButton">
+                    <CheckBox x:Name="RippleAltButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="RippleAltButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -294,7 +296,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="BlurButton">
+                    <CheckBox x:Name="BlurButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="BlurButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -310,7 +312,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="DirectionalBlurButton">
+                    <CheckBox x:Name="DirectionalBlurButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="DirectionalBlurButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -326,7 +328,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="TelescopicBlurButton">
+                    <CheckBox x:Name="TelescopicBlurButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="TelescopicBlurButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -342,7 +344,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="PixelateButton">
+                    <CheckBox x:Name="PixelateButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="PixelateButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -358,7 +360,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="EmbossedButton">
+                    <CheckBox x:Name="EmbossedButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="EmbossedButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -374,7 +376,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="SmoothMagnifyButton">
+                    <CheckBox x:Name="SmoothMagnifyButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="SmoothMagnifyButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -390,7 +392,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="PivotButton">
+                    <CheckBox x:Name="PivotButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="PivotButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -406,7 +408,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="PaperfoldButton">
+                    <CheckBox x:Name="PaperfoldButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="PaperfoldButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -422,7 +424,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="PencilSketchButton">
+                    <CheckBox x:Name="PencilSketchButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="PencilSketchButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -438,7 +440,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="SketchButton">
+                    <CheckBox x:Name="SketchButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="SketchButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -454,7 +456,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="TonemappingButton">
+                    <CheckBox x:Name="TonemappingButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="ToneMappingButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -470,7 +472,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="FrostyOutlineButton">
+                    <CheckBox x:Name="FrostyOutlineButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="FrostyOutlineButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -486,7 +488,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="BandsButton">
+                    <CheckBox x:Name="BandsButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="BandsButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -502,7 +504,7 @@
                         </TextBlock>
                     </CheckBox>
 
-                    <CheckBox x:Name="GlasTileButton">
+                    <CheckBox x:Name="GlasTileButton" Margin="0,2,0,2">
                         <CheckBox.Background>
                             <SolidColorBrush x:Name="GlasTileButtonBrush" Color="Transparent" />
                         </CheckBox.Background>
@@ -525,35 +527,89 @@
                 x:Name="IntensitySlider"
                 Width="229"
                 Height="30"
-                Margin="0,9,0,7"
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Bottom"
+                Margin="0,10,0,7"
                 IsMoveToPointEnabled="True"
                 IsSnapToTickEnabled="True"
                 Maximum="200"
                 Minimum="0"
                 TickFrequency="1.5"
-                Value="100" HorizontalAlignment="Center" VerticalAlignment="Bottom" />
+                Value="100"/>
 
-            <Border
+            <StackPanel 
+                Orientation="Horizontal"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Bottom"
-                Background="{StaticResource BackgroundColorBrushAlt}"
-                BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="2"
-                Effect="{StaticResource MenuShadowButtonBorder}"
-                Focusable="False">
-                <Label
-                    x:Name="SaveButton"
-                    Padding="15,10,15,10"
-                    Content="{StaticResource Save}">
-                    <Label.Background>
-                        <SolidColorBrush x:Name="SaveBrush" Color="{StaticResource BackgroundColorAlt}" />
-                    </Label.Background>
-                    <Label.Foreground>
-                        <SolidColorBrush x:Name="SaveText" Color="{StaticResource MainColor}" />
-                    </Label.Foreground>
-                </Label>
-            </Border>
+                VerticalAlignment="Bottom">
+
+                <Border
+                    Margin="0,0,10,0"
+                    Background="{StaticResource BackgroundColorBrushAlt}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="2"
+                    Effect="{StaticResource MenuShadowButtonBorder}"
+                    Focusable="False">
+                    <Button
+                        x:Name="SaveButton"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                        Margin="15,10,15,10"
+                        Content="{StaticResource Save}">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="SaveBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Button.Background>
+                        <Button.Foreground>
+                            <SolidColorBrush x:Name="SaveText" Color="{StaticResource MainColor}" />
+                        </Button.Foreground>
+                    </Button>
+                </Border>
+
+                <Border
+                    Background="{StaticResource BackgroundColorBrushAlt}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="2"
+                    Effect="{StaticResource MenuShadowButtonBorder}"
+                    Focusable="False">
+                    <Button
+                        x:Name="SetAsButton"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                        Margin="15,10,15,10"
+                        Content="{StaticResource SetAsWallpaper}">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="SetAsBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Button.Background>
+                        <Button.Foreground>
+                            <SolidColorBrush x:Name="SetAsText" Color="{StaticResource MainColor}" />
+                        </Button.Foreground>
+                    </Button>
+                </Border>
+
+                <Border
+                    Margin="10,0,0,0"
+                    Background="{StaticResource BackgroundColorBrushAlt}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="2"
+                    Effect="{StaticResource MenuShadowButtonBorder}"
+                    Focusable="False">
+                    <Button
+                        x:Name="CopyButton"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                        Margin="15,10,15,10"
+                        Content="{StaticResource Copy}"
+                        ToolTip="{StaticResource CopyImageTooltip}">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="CopyBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Button.Background>
+                        <Button.Foreground>
+                            <SolidColorBrush x:Name="CopyText" Color="{StaticResource MainColor}" />
+                        </Button.Foreground>
+                    </Button>
+                </Border>
+
+
+            </StackPanel>
 
         </StackPanel>
 

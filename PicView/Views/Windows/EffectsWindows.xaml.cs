@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
+using System.Windows.Input;
 
 namespace PicView.Views.Windows
 {
@@ -39,9 +40,15 @@ namespace PicView.Views.Windows
             // MinButton
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
 
-            TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
-
             IntensitySlider.ValueChanged += (_, _) => IntensitySlider_ValueChanged();
+
+            MouseLeftButtonDown += (_, e) =>
+            {
+                if (e.LeftButton == MouseButtonState.Pressed)
+                {
+                    DragMove();
+                }
+            };
 
             #region button events
 
@@ -186,7 +193,21 @@ namespace PicView.Views.Windows
             SaveButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SaveBrush); };
             SaveButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(SaveText); };
             SaveButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SaveBrush); };
-            SaveButton.MouseLeftButtonUp += async (sender, e) => await Open_Save.SaveFilesAsync();
+            SaveButton.Click += async (_, _) => await Open_Save.SaveFilesAsync();
+
+            // SetAsButton
+            SetAsButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(SetAsText); };
+            SetAsButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SetAsBrush); };
+            SetAsButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(SetAsText); };
+            SetAsButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SetAsBrush); };
+            SetAsButton.Click += async (_, _) => await SystemIntegration.Wallpaper.SetWallpaperAsync(SystemIntegration.Wallpaper.WallpaperStyle.Fit).ConfigureAwait(false);
+
+            // CopyButton
+            CopyButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(CopyText); };
+            CopyButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(CopyBrush); };
+            CopyButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(CopyText); };
+            CopyButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(CopyBrush); };
+            CopyButton.Click += (_, _) => Copy_Paste.CopyBitmap();
 
             #endregion
         }
