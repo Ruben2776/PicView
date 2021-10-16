@@ -13,7 +13,7 @@ namespace PicView.FileHandling
     /// <summary>
     /// Class to handle Most Recently Used files
     /// </summary>
-    internal static class RecentFiles
+    internal static class RecentFiles // TODO this really needs to be re-written since I've got a lot better at coding
     {
         /// <summary>
         /// File list for Most Recently Used files
