@@ -1,7 +1,5 @@
 ﻿using PicView.ChangeImage;
-using PicView.ImageHandling;
 using PicView.SystemIntegration;
-using PicView.UILogic;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -141,7 +139,7 @@ namespace PicView.FileHandling
                 }
                 if (Pics.Count >= 2 && !x.HasExited)
                 {
-                    await LoadPicAtIndexAsync(0).ConfigureAwait(false);
+                    await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
                 }
             };
             x.Exited += async delegate
@@ -150,7 +148,7 @@ namespace PicView.FileHandling
                 {
                     if (Navigation.FolderIndex > 0)
                     {
-                        await LoadPicAtIndexAsync(0).ConfigureAwait(false);
+                        await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
                     }
 
                     // Add zipped files as recent file

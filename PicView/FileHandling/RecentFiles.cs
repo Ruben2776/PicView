@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PicView.ChangeImage;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -146,7 +147,7 @@ namespace PicView.FileHandling
                         Height = double.NaN,
                         HorizontalAlignment = HorizontalAlignment.Left,
                     };
-                    button.Click += async delegate { await LoadPiFromFileAsync(menuItem.ToolTip.ToString()).ConfigureAwait(false); };
+                    button.Click += async delegate { await LoadPic.LoadPiFromFileAsync(menuItem.ToolTip.ToString()).ConfigureAwait(false); };
                     menuItem.MouseEnter += (_, _) => button.Foreground = new SolidColorBrush(Colors.White);
                     var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
                     menuItem.MouseLeave += (_, _) => button.Foreground = txt;
@@ -155,7 +156,7 @@ namespace PicView.FileHandling
                     var ext = Path.GetExtension(item);
                     var ext5 = !string.IsNullOrWhiteSpace(ext) && ext.Length >= 5 ? ext.Substring(0, 5) : ext;
                     menuItem.InputGestureText = ext5;
-                    menuItem.Click += async delegate { await LoadPiFromFileAsync(menuItem.ToolTip.ToString()).ConfigureAwait(false); };
+                    menuItem.Click += async delegate { await LoadPic.LoadPiFromFileAsync(menuItem.ToolTip.ToString()).ConfigureAwait(false); };
                 }
                 return;
             }
@@ -207,7 +208,7 @@ namespace PicView.FileHandling
                 var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
                 menuItem.MouseLeave += (_, _) => button.Foreground = txt;
                 // Set tooltip as argument to avoid subscribing and unsubscribing to events
-                menuItem.Click += async delegate { await LoadPiFromFileAsync(menuItem.ToolTip.ToString()).ConfigureAwait(false); };
+                menuItem.Click += async delegate { await LoadPic.LoadPiFromFileAsync(menuItem.ToolTip.ToString()).ConfigureAwait(false); };
                 var ext = Path.GetExtension(item);
                 var ext5 = !string.IsNullOrWhiteSpace(ext) && ext.Length >= 5 ? ext.Substring(0, 5) : ext;
                 menuItem.InputGestureText = ext5;

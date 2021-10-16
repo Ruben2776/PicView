@@ -1,4 +1,5 @@
-﻿using PicView.FileHandling;
+﻿using PicView.ChangeImage;
+using PicView.FileHandling;
 using PicView.ProcessHandling;
 using PicView.Views.UserControls;
 using PicView.Views.UserControls.Misc;
@@ -158,7 +159,7 @@ namespace PicView.UILogic.DragAndDrop
             {
                 if (Directory.Exists(files[0]))
                 {
-                    await LoadPicFromFolderAsync(files[0]).ConfigureAwait(false);
+                    await LoadPic.LoadPicFromFolderAsync(files[0]).ConfigureAwait(false);
                 }
                 return;
             }
@@ -174,7 +175,7 @@ namespace PicView.UILogic.DragAndDrop
                 }
             }
 
-            await LoadPicFromString(files[0]).ConfigureAwait(false);
+            await LoadPic.LoadPicFromString(files[0]).ConfigureAwait(false);
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
             {

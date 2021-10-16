@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using PicView.ChangeImage;
 using PicView.ImageHandling;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
@@ -93,7 +94,7 @@ namespace PicView.FileHandling
             };
             if (dlg.ShowDialog().HasValue)
             {
-                await LoadPiFromFileAsync(dlg.FileName).ConfigureAwait(false);
+                await LoadPic.LoadPiFromFileAsync(dlg.FileName).ConfigureAwait(false);
             }
             else
             {

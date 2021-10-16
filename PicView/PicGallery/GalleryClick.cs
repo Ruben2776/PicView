@@ -1,4 +1,5 @@
-﻿using PicView.UILogic;
+﻿using PicView.ChangeImage;
+using PicView.UILogic;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -7,7 +8,6 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.Thumbnails;
-using static PicView.PicGallery.GalleryFunctions;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.UC;
 
@@ -149,7 +149,7 @@ namespace PicView.PicGallery
                 GalleryNavigation.SelectedGalleryItem = id;
             });
             // Change image
-            await LoadPicAtIndexAsync(id, resize).ConfigureAwait(false);
+            await LoadPic.LoadPicAtIndexAsync(id, resize).ConfigureAwait(false);
         }
     }
 }

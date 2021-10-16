@@ -108,7 +108,7 @@ namespace PicView.FileHandling
             {
                 if (ChangeImage.Navigation.Pics.Count < 1)
                 {
-                    await ChangeImage.Navigation.LoadPiFromFileAsync(newPath).ConfigureAwait(false);
+                    await ChangeImage.LoadPic.LoadPiFromFileAsync(newPath).ConfigureAwait(false);
                     return false;
                 }
 

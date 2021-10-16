@@ -590,7 +590,7 @@ namespace PicView.Shortcuts
                     {
                         return;
                     }
-                    await FastPicUpdateAsync().ConfigureAwait(false);
+                    await ChangeImage.LoadPic.FastPicUpdateAsync().ConfigureAwait(false);
                     return;
 
                 default: break;

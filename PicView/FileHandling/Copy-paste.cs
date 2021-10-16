@@ -1,4 +1,5 @@
-﻿using PicView.ImageHandling;
+﻿using PicView.ChangeImage;
+using PicView.ImageHandling;
 using PicView.UILogic;
 using System;
 using System.IO;
@@ -97,7 +98,7 @@ namespace PicView.FileHandling
 
                 if (files != null)
                 {
-                    await LoadPicFromString(files[0]).ConfigureAwait(false);
+                    await LoadPic.LoadPicFromString(files[0]).ConfigureAwait(false);
 
                     if (files.Length > 1)
                     {
@@ -113,7 +114,7 @@ namespace PicView.FileHandling
             // Clipboard Image
             if (Clipboard.ContainsImage())
             {
-                Pic(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]);
+                LoadPic.Pic(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]);
                 return;
             }
 
@@ -126,7 +127,7 @@ namespace PicView.FileHandling
                 return;
             }
 
-            await LoadPicFromString(s).ConfigureAwait(false);
+            await LoadPic.LoadPicFromString(s).ConfigureAwait(false);
         }
 
         /// <summary>

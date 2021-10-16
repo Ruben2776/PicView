@@ -1,14 +1,12 @@
 ﻿using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.SystemIntegration;
-using PicView.Translations;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interop;
 using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Loading.LoadContextMenus;
@@ -119,7 +117,7 @@ namespace PicView.UILogic.Loading
                     }));
                 }
 
-                await QuickLoad(args[1]).ConfigureAwait(false);
+                await ChangeImage.LoadPic.QuickLoad(args[1]).ConfigureAwait(false);
             }
         }
 

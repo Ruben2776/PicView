@@ -1,4 +1,5 @@
 ﻿using PicView.Animations;
+using PicView.ChangeImage;
 using PicView.UILogic;
 using System.Globalization;
 using System.Threading.Tasks;
@@ -51,7 +52,7 @@ namespace PicView.Views.UserControls
                 x--;
                 x = x <= 0 ? 0 : x;
                 x = x >= Pics.Count ? Pics.Count - 1 : x;
-                await LoadPicAtIndexAsync(x).ConfigureAwait(false);
+                await LoadPic.LoadPicAtIndexAsync(x).ConfigureAwait(false);
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
                 {
                     GetImageSettingsMenu.GoToPic.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture);
