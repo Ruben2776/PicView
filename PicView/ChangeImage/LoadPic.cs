@@ -336,8 +336,8 @@ namespace PicView.ChangeImage
 
                 if (preloadValue is not null)
                 {
-                    var checkLoading = await CheckLoadingAsync(preloadValue, index).ConfigureAwait(false);
-                    if (checkLoading is false) { return; }
+                    preloadValue = await CheckLoadingAsync(preloadValue, index).ConfigureAwait(false);
+                    if (preloadValue is null) { return; }
                 }
                 else // Error correctiom
                 {
@@ -354,8 +354,8 @@ namespace PicView.ChangeImage
                         return;
                     }
 
-                    var checkLoading = await CheckLoadingAsync(preloadValue, index).ConfigureAwait(false);
-                    if (checkLoading is false) { return; }
+                    preloadValue = await CheckLoadingAsync(preloadValue, index).ConfigureAwait(false);
+                    if (preloadValue is null) { return; }
                 }
             }
 
@@ -470,6 +470,17 @@ namespace PicView.ChangeImage
         /// <param name="bitmapSource"></param>
         internal static void UpdatePic(int index, BitmapSource bitmapSource, bool resise = true)
         {
+            if (bitmapSource is null)
+            {
+                bitmapSource = ImageFunctions.ImageErrorMessage();
+                if (bitmapSource is null)
+                {
+                    Error_Handling.Unload();
+                    ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                    return;
+                }
+            }
+
             // Scroll to top if scroll enabled
             if (Properties.Settings.Default.ScrollEnabled)
             {
@@ -677,7 +688,7 @@ namespace PicView.ChangeImage
 
         #endregion
 
-        static async Task<bool> CheckLoadingAsync(Preloader.PreloadValue preloadValue, int index)
+        static async Task<Preloader.PreloadValue?> CheckLoadingAsync(Preloader.PreloadValue preloadValue, int index)
         {
             while (preloadValue.isLoading)
             {
@@ -689,7 +700,6 @@ namespace PicView.ChangeImage
                 {
                     // Start preloading when browsing very fast to catch up
                     await Task.Run(() => Preloader.PreLoad(FolderIndex)).ConfigureAwait(false);
-                    return false;
                 }
             }
             if (preloadValue.bitmapSource == null) // Show image error, unload if showing image error somehow fails
@@ -703,10 +713,10 @@ namespace PicView.ChangeImage
                         Error_Handling.Unload();
                         ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
                     });
-                    return false;
+                    return null;
                 }
             }
-            return true;
+            return preloadValue;
         }
     }
 }
