@@ -35,6 +35,13 @@ namespace PicView.ChangeImage
             if (File.Exists(file) == false)
             {
                 await LoadPicFromString(file, false).ConfigureAwait(false);
+                if (Properties.Settings.Default.AutoFitWindow)
+                {
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                    {
+                        UILogic.Sizing.WindowSizing.SetWindowBehavior();
+                    });
+                }
                 return;
             }
 
