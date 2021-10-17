@@ -5,6 +5,7 @@ using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Threading;
 using static PicView.SystemIntegration.NativeMethods;
 
 namespace PicView.Views.Windows
@@ -30,7 +31,6 @@ namespace PicView.Views.Windows
             Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
             StateChanged += FakeWindow_StateChanged;
             ConfigureWindows.GetMainWindow.Focus();
-            //LostFocus += FakeWindow_LostFocus;
             GotFocus += FakeWindow_LostFocus;
 
             EnableBlur(this);
@@ -78,6 +78,16 @@ namespace PicView.Views.Windows
         private void FakeWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             ConfigureWindows.GetMainWindow.Focus();
+        }
+
+        private bool IsUserVisible(FrameworkElement element, FrameworkElement container)
+        {
+            if (!element.IsVisible)
+                return false;
+
+            Rect bounds = element.TransformToAncestor(container).TransformBounds(new Rect(0.0, 0.0, element.ActualWidth, element.ActualHeight));
+            Rect rect = new Rect(0.0, 0.0, container.ActualWidth, container.ActualHeight);
+            return rect.Contains(bounds.TopLeft) || rect.Contains(bounds.BottomRight);
         }
     }
 }
