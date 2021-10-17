@@ -48,6 +48,17 @@ Improvements to the current code or bug fixes are also welcome!
 
 Built with the latest SDK of .NET and Visual Studio
 
+## File Explorer Thumbnails
+PicView uses the Windows thumbnails to preview image before it has loaded and in the gallerries, so it is recommended to install extensions for .svg and .webp thumbnails
+
+__Webp Thumbnails Win 10:__
+
+https://www.microsoft.com/en-us/p/webp-image-extensions/9pg2dk419drg?SilentAuth=1&wa=wsignin1.0#activetab=pivot:overviewtab
+
+__Svg Thumbnails:__
+
+https://github.com/tibold/svg-explorer-extension/
+
 ## Features
 **For a full list of features, check my website at https://picview.org**
 
