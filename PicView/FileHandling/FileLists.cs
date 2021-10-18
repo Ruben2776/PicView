@@ -45,36 +45,36 @@ namespace PicView.FileHandling
                     }
                     if (originFolder != currentFolder)
                     {
-                        return FileList(currentFolder);
+                        return FileList(new FileInfo(currentFolder));
                     }
-                    return FileList(originFolder);
+                    return FileList(new FileInfo(originFolder));
                 }
-                return FileList(Path.GetDirectoryName(Navigation.Pics?[Navigation.FolderIndex]));
+                return FileList(new FileInfo(Path.GetDirectoryName(Navigation.Pics?[Navigation.FolderIndex])));
             }
-            return FileList(Path.GetDirectoryName(Navigation.Pics?[Navigation.FolderIndex]));
+            return FileList(new FileInfo(Path.GetDirectoryName(Navigation.Pics?[Navigation.FolderIndex])));
         }
 
         /// <summary>
         /// Sort and return list of supported files
         /// </summary>
-        internal static List<string>? FileList(string path) => Properties.Settings.Default.SortPreference switch
+        internal static List<string>? FileList(FileInfo fileInfo) => Properties.Settings.Default.SortPreference switch
         {
-            0 => FileList(path, SortFilesBy.Name),
-            1 => FileList(path, SortFilesBy.FileSize),
-            2 => FileList(path, SortFilesBy.Creationtime),
-            3 => FileList(path, SortFilesBy.Extension),
-            4 => FileList(path, SortFilesBy.Lastaccesstime),
-            5 => FileList(path, SortFilesBy.Lastwritetime),
-            6 => FileList(path, SortFilesBy.Random),
-            _ => FileList(path, SortFilesBy.Name),
+            0 => FileList(fileInfo, SortFilesBy.Name),
+            1 => FileList(fileInfo, SortFilesBy.FileSize),
+            2 => FileList(fileInfo, SortFilesBy.Creationtime),
+            3 => FileList(fileInfo, SortFilesBy.Extension),
+            4 => FileList(fileInfo, SortFilesBy.Lastaccesstime),
+            5 => FileList(fileInfo, SortFilesBy.Lastwritetime),
+            6 => FileList(fileInfo, SortFilesBy.Random),
+            _ => FileList(fileInfo, SortFilesBy.Name),
         };
 
         /// <summary>
         /// Sort and return list of supported files
         /// </summary>
-        private static List<string>? FileList(string path, SortFilesBy sortFilesBy)
+        private static List<string>? FileList(FileInfo fileInfo, SortFilesBy sortFilesBy)
         {
-            if (!Directory.Exists(path)) { return null; }
+            if ((fileInfo.Directory.Exists) == false) { return null; }
 
             SearchOption searchOption;
 
@@ -87,7 +87,7 @@ namespace PicView.FileHandling
                 searchOption = SearchOption.AllDirectories;
             }
 
-            var items = Directory.EnumerateFiles(path, "*.*", searchOption)
+            var items = Directory.EnumerateFiles(fileInfo.DirectoryName, "*.*", searchOption)
                 .AsParallel()
                 .Where(file => SupportedFiles.IsSupportedExt(file)
 
@@ -115,9 +115,6 @@ namespace PicView.FileHandling
 
                 case SortFilesBy.Lastwritetime:
                     return items.OrderBy(f => new FileInfo(f).LastWriteTime).ToList();
-
-                case SortFilesBy.Random:
-                    return items.OrderBy(f => Guid.NewGuid()).ToList();
             }
         }
 
@@ -126,17 +123,17 @@ namespace PicView.FileHandling
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        internal static Task GetValues(string path) => Task.Run(async () =>
+        internal static Task GetValues(FileInfo fileInfo) => Task.Run(async () =>
         {
-            if (string.IsNullOrWhiteSpace(path))
+            if (fileInfo is null)
             {
                 await Error_Handling.ReloadAsync(true).ConfigureAwait(false);
                 return;
             }
             // Check if to load from archive
-            if (SupportedFiles.IsSupportedArchives(path))
+            if (SupportedFiles.IsSupportedArchives(fileInfo.FullName))
             {
-                if (!Extract(path))
+                if (!Extract(fileInfo.FullName))
                 {
                     if (Error_Handling.CheckOutOfRange() == false)
                     {
@@ -147,15 +144,9 @@ namespace PicView.FileHandling
                 }
                 return;
             }
-            var directoryName = Path.GetDirectoryName(path);
-            if (string.IsNullOrWhiteSpace(directoryName) || Directory.Exists(directoryName) == false)
-            {
-                await Error_Handling.ReloadAsync(true).ConfigureAwait(false);
-                return;
-            }
 
             // Set files to Pics and get index
-            Navigation.Pics = FileList(directoryName);
+            Navigation.Pics = FileList(fileInfo);
             if (Navigation.Pics == null)
             {
                 await Error_Handling.ReloadAsync(true).ConfigureAwait(false);

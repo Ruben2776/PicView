@@ -56,7 +56,7 @@ namespace PicView.Editing.Crop
                 }
                 else
                 {
-                    SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
+                    SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex, null);
                 }
                 CloseCrop();
             });    
@@ -70,7 +70,7 @@ namespace PicView.Editing.Crop
             }
             else
             {
-                SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex);
+                SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex, null);
             }
             ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(GetCropppingTool);
         }

@@ -56,7 +56,7 @@ namespace PicView.ImageHandling
                     var width = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
                     var height = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
 
-                    SetTitle.SetTitleString((int)width, (int)height, ChangeImage.Navigation.FolderIndex);
+                    SetTitle.SetTitleString((int)width, (int)height, ChangeImage.Navigation.FolderIndex, null);
                     Tooltip.CloseToolTipMessage();
                 });
             }

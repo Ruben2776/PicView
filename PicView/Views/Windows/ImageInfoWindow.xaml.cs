@@ -26,7 +26,7 @@ namespace PicView.Views.Windows
                 Window_ContentRendered(sender, e);
                 if (Pics.Count > FolderIndex)
                 {
-                    await UpdateValuesAsync(Pics[FolderIndex]).ConfigureAwait(false);
+                    await UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
                 }
                 else
                 {
@@ -111,7 +111,7 @@ namespace PicView.Views.Windows
             Star1.MouseLeftButtonDown += async delegate 
             { 
                 await ImageFunctions.SetRating(1).ConfigureAwait(false);
-                await UpdateValuesAsync(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]).ConfigureAwait(false);
+                await UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
             };
             Star1.MouseEnter += delegate { UpdateStars(1); };
             Star1.MouseLeave += delegate { UpdateStars(); };
@@ -119,7 +119,7 @@ namespace PicView.Views.Windows
             Star2.MouseLeftButtonDown += async delegate
             {
                 await ImageFunctions.SetRating(2).ConfigureAwait(false);
-                await UpdateValuesAsync(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]).ConfigureAwait(false);
+                await UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
             };
             Star2.MouseEnter += delegate { UpdateStars(2); };
             Star2.MouseLeave += delegate { UpdateStars(); };
@@ -127,7 +127,7 @@ namespace PicView.Views.Windows
             Star3.MouseLeftButtonDown += async delegate
             {
                 await ImageFunctions.SetRating(3).ConfigureAwait(false);
-                await UpdateValuesAsync(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]).ConfigureAwait(false);
+                await UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
             };
             Star3.MouseEnter += delegate { UpdateStars(3); };
             Star3.MouseLeave += delegate { UpdateStars(); };
@@ -135,7 +135,7 @@ namespace PicView.Views.Windows
             Star4.MouseLeftButtonDown += async delegate
             {
                 await ImageFunctions.SetRating(4).ConfigureAwait(false);
-                await UpdateValuesAsync(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]).ConfigureAwait(false);
+                await UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
             };
             Star4.MouseEnter += delegate { UpdateStars(4); };
             Star4.MouseLeave += delegate { UpdateStars(); };
@@ -143,7 +143,7 @@ namespace PicView.Views.Windows
             Star5.MouseLeftButtonDown += async delegate
             {
                 await ImageFunctions.SetRating(5).ConfigureAwait(false);
-                await UpdateValuesAsync(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]).ConfigureAwait(false);
+                await UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
             };
             Star5.MouseEnter += delegate{ UpdateStars(5); };
             Star5.MouseLeave += delegate { UpdateStars(); };

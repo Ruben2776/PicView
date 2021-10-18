@@ -19,16 +19,18 @@ namespace PicView.UILogic
         /// <param name="height"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        private static string[]? TitleString(int width, int height, int index)
+        private static string[]? TitleString(int width, int height, int index, FileInfo? fileInfo)
         {
-            FileInfo fileInfo;
-            try
+            if (fileInfo == null)
             {
-                fileInfo = new FileInfo(Pics[index]);
-            }
-            catch (System.Exception)
-            {
-                return null;
+                try
+                {
+                    fileInfo = new FileInfo(Pics[index]);
+                }
+                catch (System.Exception)
+                {
+                    return null;
+                }
             }
 
             var files = Pics.Count == 1 ?
@@ -73,9 +75,9 @@ namespace PicView.UILogic
         /// <param name="height"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        internal static void SetTitleString(int width, int height, int index)
+        internal static void SetTitleString(int width, int height, int index, FileInfo? fileInfo)
         {
-            var titleString = TitleString(width, height, index);
+            var titleString = TitleString(width, height, index, fileInfo);
             if (titleString == null)
             {
                 _= ChangeImage.Error_Handling.ReloadAsync();

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
@@ -17,11 +18,13 @@ namespace PicView.ChangeImage
         {
             internal BitmapSource? bitmapSource;
             internal bool isLoading;
+            internal FileInfo? fileInfo;
 
-            internal PreloadValue(BitmapSource? bitmap, bool loading)
+            internal PreloadValue(BitmapSource? bitmap, bool loading, FileInfo? fileInfo)
             {
                 bitmapSource = bitmap;
                 isLoading = loading;
+                this.fileInfo = fileInfo;
             }
         }
 
@@ -52,14 +55,16 @@ namespace PicView.ChangeImage
                 i = Math.Abs(i);
             }
 
-            var preloadValue = new PreloadValue(null, true);
+            var preloadValue = new PreloadValue(null, true, null);
             if (preloadValue is null) { return; }
 
             if (Sources.TryAdd(Navigation.Pics[i], preloadValue))
             {
-                var x = await ImageDecoder.RenderToBitmapSource(Pics?[i]).ConfigureAwait(false);
+                var info = new FileInfo(Navigation.Pics[i]);
+                var x = await ImageDecoder.RenderToBitmapSource(info).ConfigureAwait(false);
                 preloadValue.bitmapSource = x;
                 preloadValue.isLoading = false;
+                preloadValue.fileInfo = info;
             }
         }
 
@@ -193,18 +198,21 @@ namespace PicView.ChangeImage
                 // Add first elements behind
                 for (int i = index - 1; i > endPoint; i--)
                 {
+                    if (Pics.Count == 0) { return; }
                     await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 // Add second elements
                 for (int i = index + 1; i < (index + 1) + LoadBehind; i++)
                 {
+                    if (Pics.Count == 0) { return; }
                     await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 //Clean up infront
                 for (int i = (index + 1) + LoadBehind; i < ((index + 1) + LoadInfront * 2); i++)
                 {
+                    if (Pics.Count == 0) { return; }
                     Remove(i % Pics.Count);
                 }
             }
@@ -214,17 +222,20 @@ namespace PicView.ChangeImage
                 // Add first elements
                 for (int i = index + 1; i < (index + 1) + LoadInfront; i++)
                 {
+                    if (Pics.Count == 0) { return; }
                     await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
                 // Add second elements behind
                 for (int i = index - 1; i > endPoint; i--)
                 {
+                    if (Pics.Count == 0) { return; }
                     await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 //Clean up behind
                 for (int i = index - LoadInfront * 2; i <= endPoint; i++)
                 {
+                    if (Pics.Count == 0) { return; }
                     Remove(i % Pics.Count);
                 }
             }

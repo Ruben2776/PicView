@@ -18,75 +18,93 @@ namespace PicView.ImageHandling
         /// </summary>
         /// <param name="file">Absolute path of the file</param>
         /// <returns></returns>
-        internal static async Task<BitmapSource?> RenderToBitmapSource(string file)
+        internal static async Task<BitmapSource?> RenderToBitmapSource(FileInfo file)
         {
-            var ext = Path.GetExtension(file).ToUpperInvariant();
-            FileStream? filestream = null; // https://devblogs.microsoft.com/dotnet/file-io-improvements-in-dotnet-6/
-            switch (ext)
+            if (file == null)
             {
-                case ".JPG":
-                case ".JPEG":
-                case ".JPE":
-                case ".PNG":
-                case ".BMP":
-                case ".GIF":
-                case ".ICO":
-                case ".JFIF":
-                case ".WEBP":
-                case ".WBMP":
-                    try
+                return null;
+            }
+
+            FileStream? filestream = null; // https://devblogs.microsoft.com/dotnet/file-io-improvements-in-dotnet-6/
+            switch (file.Extension)
+            {
+                case ".jpg":
+                case ".jpeg":
+                case ".jpe":
+                case ".png":
+                case ".bmp":
+                case ".gif":
+                case ".ico":
+                case ".jfif":
+                case ".webp":
+                case ".wbmp":
+                    if (file.Length < 2e+9)
                     {
-                        filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
-                    }
-                    catch (Exception e)
-                    {
+                        try
+                        {
+                            filestream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
+                        }
+                        catch (Exception e)
+                        {
 #if DEBUG
-                        Trace.WriteLine("RenderToBitmapSource Skia returned " + file + " null, \n" + e.Message);
+                            Trace.WriteLine("RenderToBitmapSource Skia returned " + file + " null, \n" + e.Message);
 #endif
-                        return null;
-                    }
-                    using (var imgStream = new SKManagedStream(filestream))
-                    {
-                        using var skData = SKData.Create(filestream);
-                        await filestream.DisposeAsync().ConfigureAwait(false);
-                        using var codec = SKCodec.Create(skData);
-                        if (codec is null) { return null; }
+                            return null;
+                        }
+                        using (var imgStream = new SKManagedStream(filestream))
+                        {
+                            using var skData = SKData.Create(filestream);
+                            await filestream.DisposeAsync().ConfigureAwait(false);
+                            using var codec = SKCodec.Create(skData);
+                            if (codec is null) { return null; }
 
-                        var sKBitmap = SKBitmap.Decode(codec);
-                        if (sKBitmap is null) { return null; }
+                            var sKBitmap = SKBitmap.Decode(codec);
+                            if (sKBitmap is null) { return null; }
 
-                        var skPic = sKBitmap.ToWriteableBitmap();
-                        skPic.Freeze();
-                        sKBitmap.Dispose();
-                        return skPic;
+                            var skPic = sKBitmap.ToWriteableBitmap();
+                            skPic.Freeze();
+                            sKBitmap.Dispose();
+                            return skPic;
+                        }
                     }
-                case ".TIF":
-                case ".TIFF":
-                case ".DDS":
-                case "TGA": // TODO some tga files are created upside down https://github.com/Ruben2776/PicView/issues/22
-                case ".PSD":
-                case ".PSB":
-                case ".SVG":
-                case ".XCF":
-                    var fileInfo = new FileInfo(file);
-                    if (fileInfo == null)
+                    else
                     {
-                        return null;
+                        MagickImage largeMagickImage = new()
+                        {
+                            Quality = 100,
+                            ColorSpace = ColorSpace.Transparent
+                        };
+                        await largeMagickImage.ReadAsync(file);
+                        var largeBitmap = largeMagickImage.ToBitmapSource();
+                        largeMagickImage.Dispose();
+                        largeBitmap.Freeze();
+
+                        return largeBitmap;
                     }
+
+                case ".tif":
+                case ".tiff":
+                case ".dds":
+                case "tga": // TODO some tga files are created upside down https://github.com/Ruben2776/PicView/issues/22
+                case ".psd":
+                case ".psb":
+                case ".svg":
+                case ".xcf":
+
                     MagickImage magickImage = new()
                     {
                         Quality = 100,
                         ColorSpace = ColorSpace.Transparent
                     };
-                    if (fileInfo.Length >= 2147483647) // Streams with a length larger than 2147483647 are not supported, read from file instead
+                    if (file.Length >= 2147483647) // Streams with a length larger than 2147483647 are not supported, read from file instead
                     {
-                        magickImage.Read(fileInfo);
+                        magickImage.Read(file);
                     }
                     else
                     {
                         try
                         {
-                            filestream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
+                            filestream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
                             magickImage.Read(filestream);
                         }
                         catch (Exception e)

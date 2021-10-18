@@ -34,14 +34,14 @@ namespace PicView.UILogic
             }
         }
 
-        internal static async Task UpdateValuesAsync(string? file)
+        internal static async Task UpdateValuesAsync(FileInfo? fileInfo)
         {
             if (ConfigureWindows.GetImageInfoWindow == null || ConfigureWindows.GetImageInfoWindow != null && ConfigureWindows.GetImageInfoWindow.IsVisible == false)
             {
                 return;
             }
 
-            var data = await Task.Run(async () => (await GetImageData.RetrieveDataAsync(file).ConfigureAwait(false)));
+            var data = await Task.Run(async () => (await GetImageData.RetrieveDataAsync(fileInfo).ConfigureAwait(false)));
 
             await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {

@@ -200,7 +200,7 @@ namespace PicView.FileHandling
                     TempFilePath = directory[0];
                 }
 
-                var extractedFiles = FileList(TempFilePath);
+                var extractedFiles = FileList(new FileInfo(TempFilePath));
                 if (extractedFiles.Count > 0)
                 {
                     Pics = extractedFiles;

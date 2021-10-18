@@ -91,7 +91,7 @@ namespace PicView.UILogic
                 Refocus(false);
             });
 
-            await ImageInfo.UpdateValuesAsync(Pics?[FolderIndex]).ConfigureAwait(false);
+            await ImageInfo.UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
         }
 
         /// <summary>

@@ -13,14 +13,21 @@ namespace PicView.ImageHandling
 {
     internal static class GetImageData
     {
-        internal static async Task<string[]>? RetrieveDataAsync(string file)
+        internal static async Task<string[]>? RetrieveDataAsync(FileInfo? fileInfo)
         {
             string name, directoryname, fullname, creationtime, lastwritetime;
 
-            FileInfo fileInfo;
+            if (fileInfo is null)
+            {
+                name = string.Empty;
+                directoryname = string.Empty;
+                fullname = string.Empty;
+                creationtime = string.Empty;
+                lastwritetime = string.Empty;
+            }
+
             try
             {
-                fileInfo = new FileInfo(file);
                 name = Path.GetFileNameWithoutExtension(fileInfo.Name);
                 directoryname = fileInfo.DirectoryName;
                 fullname = fileInfo.FullName;
@@ -84,7 +91,7 @@ namespace PicView.ImageHandling
 
             try
             {
-                var so = ShellObject.FromParsingName(file);
+                var so = ShellObject.FromParsingName(fileInfo.FullName);
                 bitdepth = so.Properties.GetProperty(SystemProperties.System.Image.BitDepth).ValueAsObject;
                 dpiX = so.Properties.GetProperty(SystemProperties.System.Image.HorizontalResolution).ValueAsObject;
                 dpiY = so.Properties.GetProperty(SystemProperties.System.Image.VerticalResolution).ValueAsObject;
