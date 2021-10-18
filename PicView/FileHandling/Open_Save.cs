@@ -100,16 +100,6 @@ namespace PicView.FileHandling
             {
                 return;
             }
-
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
-            {
-                if (ScaleImage.XWidth < 1)
-                {
-                    ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
-                    ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
-                }
-                Close_UserControls();
-            });
         }
 
         /// <summary>

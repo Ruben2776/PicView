@@ -20,10 +20,7 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         internal static async Task<BitmapSource?> RenderToBitmapSource(FileInfo file)
         {
-            if (file == null)
-            {
-                return null;
-            }
+            if (file == null) { return null; }
 
             FileStream? filestream = null; // https://devblogs.microsoft.com/dotnet/file-io-improvements-in-dotnet-6/
             switch (file.Extension)
@@ -74,7 +71,15 @@ namespace PicView.ImageHandling
                             Quality = 100,
                             ColorSpace = ColorSpace.Transparent
                         };
-                        await largeMagickImage.ReadAsync(file);
+                        try
+                        {
+                            largeMagickImage.Read(file);
+                        }
+                        catch (Exception)
+                        {
+                            return null;
+                        }
+                       
                         var largeBitmap = largeMagickImage.ToBitmapSource();
                         largeMagickImage.Dispose();
                         largeBitmap.Freeze();

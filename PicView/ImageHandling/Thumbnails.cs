@@ -1,6 +1,7 @@
 ﻿using ImageMagick;
 using PicView.Views.UserControls;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
@@ -33,7 +34,7 @@ namespace PicView.ImageHandling
             }
             else
             {
-                pic = GetBitmapSourceThumb(Pics[x]);
+                pic = GetBitmapSourceThumb(new FileInfo(Pics[x]));
             }
 
             if (pic == null)
@@ -49,12 +50,32 @@ namespace PicView.ImageHandling
             return pic;
         }
 
-        internal static BitmapSource? GetBitmapSourceThumb(string path) => (System.IO.Path.GetExtension(path).ToUpperInvariant()) switch
+        internal static BitmapSource? GetBitmapSourceThumb(FileInfo fileInfo)
         {
-            // Return windows thumbnails if applicable, else use imagemagick
-            ".JPG" or ".JPEG" or ".JPE" or ".PNG" or ".BMP" or ".GIF" or ".ICO" or ".JFIF" => GetWindowsThumbnail(path),
-            _ => GetMagickImageThumb(path),
-        };
+            switch (fileInfo.Extension)
+            {
+                case ".jpg":
+                case ".jpeg":
+                case ".jpe":
+                case ".png":
+                case ".bmp":
+                case ".gif":
+                case ".ico":
+                case ".jfif":
+                case ".webp":
+                case ".wbmp":
+                    return GetWindowsThumbnail(fileInfo.FullName);
+                default:
+                    break;
+            }
+
+            if (fileInfo.Length > 1e+9)
+            {
+                return null;
+            }
+
+            return GetMagickImageThumb(fileInfo.FullName);
+        }
 
         /// <summary>
         /// Returns BitmapSource at specified quality and pixel size

@@ -117,7 +117,7 @@ namespace PicView.UILogic.Loading
                     }));
                 }
 
-                await ChangeImage.LoadPic.QuickLoad(args[1]).ConfigureAwait(false);
+                await ChangeImage.LoadPic.QuickLoadAsync(args[1]).ConfigureAwait(false);
             }
         }
 

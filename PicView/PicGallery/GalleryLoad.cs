@@ -236,7 +236,7 @@ namespace PicView.PicGallery
 
         internal static async Task Add(int i)
         {
-            var pic = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i]);
+            var pic = Thumbnails.GetBitmapSourceThumb(new System.IO.FileInfo(Navigation.Pics[i]));
 
             if (pic == null)
             {
@@ -248,7 +248,7 @@ namespace PicView.PicGallery
 
         internal static async Task Add(BitmapSource? pic, int i)
         {
-            pic = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i]);
+            pic = Thumbnails.GetBitmapSourceThumb(new System.IO.FileInfo(Navigation.Pics[i]));
 
             if (pic == null)
             {
@@ -260,7 +260,7 @@ namespace PicView.PicGallery
 
         internal static async Task AddUI(BitmapSource? pic, int i)
         {
-            pic = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i]);
+            pic = Thumbnails.GetBitmapSourceThumb(new System.IO.FileInfo(Navigation.Pics[i]));
 
             if (pic == null)
             {
@@ -281,7 +281,7 @@ namespace PicView.PicGallery
 
         internal static async Task UpdatePic(int i)
         {
-            var pic = Thumbnails.GetBitmapSourceThumb(ChangeImage.Navigation.Pics[i]);
+            var pic = Thumbnails.GetBitmapSourceThumb(new System.IO.FileInfo(Navigation.Pics[i]));
             if (pic == null)
             {
                 pic = ImageFunctions.ImageErrorMessage();

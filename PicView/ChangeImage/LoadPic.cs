@@ -30,7 +30,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
-        internal static async Task QuickLoad(string file)
+        internal static async Task QuickLoadAsync(string file)
         {
             if (File.Exists(file) == false)
             {
@@ -45,12 +45,16 @@ namespace PicView.ChangeImage
                 return;
             }
 
+            await QuickLoadAsync(new FileInfo(file)).ConfigureAwait(false);
+        }
+
+        internal static async Task QuickLoadAsync(FileInfo fileInfo)
+        {
             bool archive = false;
-            var fileInfo = new FileInfo(file);
             var pic = await ImageDecoder.RenderToBitmapSource(fileInfo).ConfigureAwait(false);
             if (pic is null)
             {
-                archive = SupportedFiles.IsSupportedArchives(file);
+                archive = SupportedFiles.IsSupportedArchives(fileInfo.FullName);
                 if (archive == false)
                 {
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
@@ -74,7 +78,7 @@ namespace PicView.ChangeImage
             switch (Pics.Count)
             {
                 case > 0:
-                    FolderIndex = Pics.IndexOf(file);
+                    FolderIndex = Pics.IndexOf(fileInfo.FullName);
                     break;
                 default:
                     FolderIndex = 0;
@@ -125,7 +129,7 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static async Task LoadPicFromString(string path, bool checkExists = true)
         {
-            await LoadingPreview(path).ConfigureAwait(false);
+            await LoadingPreview(new FileInfo(path)).ConfigureAwait(false);
 
             if (checkExists && File.Exists(path))
             {
@@ -191,14 +195,27 @@ namespace PicView.ChangeImage
         /// <param name="path"></param>
         internal static async Task LoadPiFromFileAsync(string path)
         {
-            await LoadingPreview(path).ConfigureAwait(false);
+            FileInfo? fileInfo = new FileInfo(path);
+            if (fileInfo.Exists == false) 
+            {
+                await LoadPicFromString(path, false).ConfigureAwait(false);
+                return;
+            }
+
+            if (fileInfo.Length < 5e+7)
+            {
+                await QuickLoadAsync(fileInfo).ConfigureAwait(false);
+                return;
+            }
+
+            await LoadingPreview(fileInfo).ConfigureAwait(false);
 
             bool folderChanged = false;
 
             // If count not correct or just started, get values
             if (Pics?.Count <= FolderIndex || FolderIndex < 0 || FreshStartup)
             {
-                await GetValues(new FileInfo(path)).ConfigureAwait(false);
+                await GetValues(fileInfo).ConfigureAwait(false);
                 folderChanged = true;
             }
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
@@ -206,17 +223,22 @@ namespace PicView.ChangeImage
             {
                 // Reset old values and get new
                 ChangeFolder(true);
-                await GetValues(new FileInfo(path)).ConfigureAwait(false);
+                await GetValues(fileInfo).ConfigureAwait(false);
                 folderChanged = true;
             }
             else if (Pics.Contains(path) == false)
             {
-                await GetValues(new FileInfo(path)).ConfigureAwait(false);
+                await GetValues(fileInfo).ConfigureAwait(false);
             }
 
             if (Pics?.Count > 0)
             {
                 FolderIndex = Pics.IndexOf(path);
+            }
+
+            if (FolderIndex <0)
+            {
+                FolderIndex = 0;
             }
 
             if (FreshStartup is false || folderChanged)
@@ -227,7 +249,7 @@ namespace PicView.ChangeImage
             if (FolderIndex >= 0 && Pics?.Count > 0) // check if being extracted and need to wait for it instead
             {
                 // Navigate to picture using obtained index
-                await LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
+                await LoadPicAtIndexAsync(FolderIndex, true, false).ConfigureAwait(false);
             }
 
             if (GetPicGallery is not null && folderChanged)
@@ -255,7 +277,7 @@ namespace PicView.ChangeImage
         /// Loads image at specified index
         /// </summary>
         /// <param name="index">The index of file to load from Pics</param>
-        internal static async Task LoadPicAtIndexAsync(int index, bool resize = true)
+        internal static async Task LoadPicAtIndexAsync(int index, bool resize = true, bool showLoadingThumb = true)
         {
             if (Pics?.Count < index || Pics?.Count < 1)
             {
@@ -276,33 +298,36 @@ namespace PicView.ChangeImage
             // Initate loading behavior, if needed
             if (preloadValue == null || preloadValue.isLoading)
             {
-                // Show a thumbnail while loading
-                BitmapSource? thumb = null;
-
-                if (GalleryFunctions.IsHorizontalFullscreenOpen == false || GalleryFunctions.IsVerticalFullscreenOpen == false)
+                if (showLoadingThumb)
                 {
-                    thumb = GetBitmapSourceThumb(Pics[FolderIndex]);
+                    // Show a thumbnail while loading
+                    BitmapSource? thumb = null;
+
+                    if (GalleryFunctions.IsHorizontalFullscreenOpen == false || GalleryFunctions.IsVerticalFullscreenOpen == false)
+                    {
+                        thumb = GetBitmapSourceThumb(new FileInfo(Pics[FolderIndex]));
+                    }
+
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                    {
+                        if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
+                        {
+                            thumb = GetThumb(index);
+                        }
+
+                        if (FreshStartup)
+                        {
+                            // Set loading from translation service
+                            SetLoadingString();
+                            FreshStartup = false;
+                        }
+
+                        if (thumb != null)
+                        {
+                            ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
+                        }
+                    });
                 }
-
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                {
-                    if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
-                    {
-                        thumb = GetThumb(index);
-                    }
-
-                    if (FreshStartup)
-                    {
-                        // Set loading from translation service
-                        SetLoadingString();
-                        FreshStartup = false;
-                    }
-
-                    if (thumb != null)
-                    {
-                        ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
-                    }
-                });
 
                 if (FastPicRunning) // Holding down button is too fast and will be laggy when not just loading thumbnails
                 {
@@ -708,7 +733,7 @@ namespace PicView.ChangeImage
             return preloadValue;
         }
 
-        static async Task LoadingPreview(string path)
+        static async Task LoadingPreview(FileInfo fileInfo)
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
@@ -717,7 +742,7 @@ namespace PicView.ChangeImage
 
                 if (ConfigureWindows.GetMainWindow.MainImage.Source == null)
                 {
-                    BitmapSource? bitmapSource = GetBitmapSourceThumb(path);
+                    BitmapSource? bitmapSource = GetBitmapSourceThumb(fileInfo);
                     if (bitmapSource != null)
                     {
                         ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
