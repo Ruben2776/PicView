@@ -74,8 +74,6 @@ namespace PicView.FileHandling
         /// </summary>
         private static List<string>? FileList(FileInfo fileInfo, SortFilesBy sortFilesBy)
         {
-            if ((fileInfo.Directory.Exists) == false) { return null; }
-
             SearchOption searchOption;
 
             if (!Properties.Settings.Default.IncludeSubDirectories || !string.IsNullOrWhiteSpace(TempZipFile))
@@ -95,8 +93,8 @@ namespace PicView.FileHandling
 
             switch (sortFilesBy)
             {
-                default:  // Alphanumeric sort
-                case SortFilesBy.Name:
+                default:
+                case SortFilesBy.Name: // Alphanumeric sort
                     var list = items.ToList();
                     list.Sort((x, y) => { return SystemIntegration.NativeMethods.StrCmpLogicalW(x, y); });
                     return list;
@@ -115,6 +113,9 @@ namespace PicView.FileHandling
 
                 case SortFilesBy.Lastwritetime:
                     return items.OrderBy(f => new FileInfo(f).LastWriteTime).ToList();
+
+                case SortFilesBy.Random:
+                    return items.OrderBy(f => Guid.NewGuid()).ToList();
             }
         }
 
@@ -123,7 +124,7 @@ namespace PicView.FileHandling
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        internal static Task GetValues(FileInfo fileInfo) => Task.Run(async () =>
+        internal static Task GetValuesAsync(FileInfo fileInfo) => Task.Run(async () =>
         {
             if (fileInfo is null)
             {

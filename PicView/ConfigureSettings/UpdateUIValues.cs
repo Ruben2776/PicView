@@ -15,9 +15,22 @@ namespace PicView.ConfigureSettings
     {
         internal static async Task ChangeSortingAsync(short sorting)
         {
-            Properties.Settings.Default.SortPreference = sorting;
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            {
+                SetTitle.SetLoadingString();
+            });
 
-            await Error_Handling.ReloadAsync().ConfigureAwait(false);
+            var preloadValue = Preloader.Get(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
+            if (preloadValue is null)
+            {
+                await Preloader.AddAsync(ChangeImage.Navigation.FolderIndex).ConfigureAwait(false);
+            }
+
+            Preloader.Clear();
+
+            Properties.Settings.Default.SortPreference = sorting;
+            Navigation.Pics = FileHandling.FileLists.FileList(preloadValue.fileInfo);
+            await ChangeImage.LoadPic.LoadPiFromFileAsync(preloadValue.fileInfo.FullName).ConfigureAwait(false);
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {

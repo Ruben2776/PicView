@@ -24,9 +24,9 @@ namespace PicView.ChangeImage
 {
     internal static class LoadPic
     {
+        #region QuickLoad
         /// <summary>
         /// Quickly load image and then update values
-        /// Only to be used from startup
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
@@ -73,7 +73,7 @@ namespace PicView.ChangeImage
                 });
             }
 
-            await GetValues(fileInfo).ConfigureAwait(false);
+            await GetValuesAsync(fileInfo).ConfigureAwait(false);
 
             switch (Pics.Count)
             {
@@ -119,6 +119,8 @@ namespace PicView.ChangeImage
                 RecentFiles.Add(Pics?[FolderIndex]);
             }
         }
+
+        #endregion
 
         #region LoadPicAtValue
 
@@ -202,6 +204,12 @@ namespace PicView.ChangeImage
                 return;
             }
 
+            if (fileInfo.DirectoryName == Path.GetDirectoryName(Pics[FolderIndex]))
+            {
+                await LoadPicAtIndexAsync(Pics.IndexOf(path), true, false).ConfigureAwait(false);
+                return;
+            }
+
             if (fileInfo.Length < 5e+7)
             {
                 await QuickLoadAsync(fileInfo).ConfigureAwait(false);
@@ -215,7 +223,7 @@ namespace PicView.ChangeImage
             // If count not correct or just started, get values
             if (Pics?.Count <= FolderIndex || FolderIndex < 0 || FreshStartup)
             {
-                await GetValues(fileInfo).ConfigureAwait(false);
+                await GetValuesAsync(fileInfo).ConfigureAwait(false);
                 folderChanged = true;
             }
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
@@ -223,12 +231,12 @@ namespace PicView.ChangeImage
             {
                 // Reset old values and get new
                 ChangeFolder(true);
-                await GetValues(fileInfo).ConfigureAwait(false);
+                await GetValuesAsync(fileInfo).ConfigureAwait(false);
                 folderChanged = true;
             }
             else if (Pics.Contains(path) == false)
             {
-                await GetValues(fileInfo).ConfigureAwait(false);
+                await GetValuesAsync(fileInfo).ConfigureAwait(false);
             }
 
             if (Pics?.Count > 0)
