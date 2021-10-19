@@ -8,7 +8,6 @@ using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.Copy_Paste;
 using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.Open_Save;
-using static PicView.FileHandling.RecentFiles;
 using static PicView.Library.Resources.SvgIcons;
 using static PicView.SystemIntegration.Wallpaper;
 using static PicView.UILogic.ConfigureWindows;
@@ -480,7 +479,7 @@ namespace PicView.UILogic.Loading
             };
 
             transcm.Header = transcmHeader;
-            transcmHeader.Click += ConfigureSettings.ConfigColors.ChangeBackground;          
+            transcmHeader.Click += ConfigureSettings.ConfigColors.ChangeBackground;
             transcm.Click += ConfigureSettings.ConfigColors.ChangeBackground;
 
             if (Properties.Settings.Default.DarkTheme == false)
@@ -794,7 +793,7 @@ namespace PicView.UILogic.Loading
                 Fill = scbf
             };
             pastecm.Icon = pastecmIcon;
-            pastecm.Click += async (_, _) => { MainContextMenu.IsOpen = false; await PasteAsync().ConfigureAwait(false);  };
+            pastecm.Click += async (_, _) => { MainContextMenu.IsOpen = false; await PasteAsync().ConfigureAwait(false); };
             MainContextMenu.Items.Add(pastecm);
 
             ///////////////////////////
@@ -845,7 +844,7 @@ namespace PicView.UILogic.Loading
 
             // Add to elements
             ConfigureWindows.GetMainWindow.ParentContainer.ContextMenu = MainContextMenu;
-            MainContextMenu.Opened += (tt, yy) => Recentcm_Opened(recentcm);
+            //MainContextMenu.Opened += (tt, yy) => Recentcm_Opened(recentcm);
 
 #if DEBUG
             Trace.WriteLine("Contextmenu loaded");

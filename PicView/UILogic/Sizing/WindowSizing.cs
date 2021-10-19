@@ -356,13 +356,7 @@ namespace PicView.UILogic.Sizing
 
             Properties.Settings.Default.Save();
             FileHandling.DeleteFiles.DeleteTempFiles();
-            FileHandling.RecentFiles.WriteToFile();
-
-#if DEBUG
-            Trace.Unindent();
-            Trace.WriteLine("Debugging closed at " + DateTime.Now);
-            Trace.Flush();
-#endif
+            ChangeImage.History.WriteToFile();
             Environment.Exit(0);
         }
 

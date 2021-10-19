@@ -1,5 +1,4 @@
-﻿using PicView.FileHandling;
-using PicView.PicGallery;
+﻿using PicView.PicGallery;
 using PicView.SystemIntegration;
 using System;
 using System.Collections.Generic;
@@ -43,7 +42,7 @@ namespace PicView.UILogic.Loading
                 {
                     SetWindowBehavior();
                 }
-                
+
                 ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Properties.Settings.Default.ScrollEnabled ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
 
                 // Set min size to DPI scaling
@@ -152,7 +151,7 @@ namespace PicView.UILogic.Loading
             #endregion Add dictionaries
 
             ConfigureSettings.ConfigColors.UpdateColor();
-            
+
 
             // Load UI and events
             AddUIElementsAndUpdateValues();
@@ -222,7 +221,6 @@ namespace PicView.UILogic.Loading
             LoadTooltipStyle();
 
             // Initilize Things!
-            RecentFiles.Initialize();
             InitializeZoom();
 
             // Add things!

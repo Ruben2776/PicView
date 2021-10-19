@@ -126,7 +126,7 @@ namespace PicView.UILogic.Sizing
                 Tooltip.ShowTooltipMessage(e.Message);
                 throw;
             }
-            
+
             if (size is not null && size.HasValue)
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
@@ -264,7 +264,7 @@ namespace PicView.UILogic.Sizing
             if (GetMainWindow.WindowState == System.Windows.WindowState.Normal)
             {
                 /// Update TitleBar
-                var interfaceSize = GetMainWindow.Logo.ActualWidth + GetMainWindow.MinButton.ActualWidth 
+                var interfaceSize = (GetMainWindow.Logo.ActualWidth + 13) + GetMainWindow.MinButton.ActualWidth
                     + GetMainWindow.FullscreenButton.ActualWidth + GetMainWindow.CloseButton.ActualWidth * MonitorInfo.DpiScaling;
 
                 var autoWidth = Properties.Settings.Default.AutoFitWindow ? GetMainWindow.ActualWidth : XWidth;

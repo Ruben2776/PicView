@@ -116,7 +116,7 @@ namespace PicView.ChangeImage
             // Add recent files, except when browing archive
             if (string.IsNullOrWhiteSpace(TempZipFile) && Pics?.Count > FolderIndex)
             {
-                RecentFiles.Add(Pics?[FolderIndex]);
+                History.Add(Pics?[FolderIndex]);
             }
         }
 
@@ -131,6 +131,11 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static async Task LoadPicFromString(string path, bool checkExists = true)
         {
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
+            {
+                UC.ToggleStartUpUC(true);
+            });
+
             if (checkExists && File.Exists(path))
             {
                 await LoadingPreview(new FileInfo(path)).ConfigureAwait(false);
@@ -204,7 +209,7 @@ namespace PicView.ChangeImage
         internal static async Task LoadPiFromFileAsync(string path)
         {
             FileInfo? fileInfo = new FileInfo(path);
-            if (fileInfo.Exists == false) 
+            if (fileInfo.Exists == false)
             {
                 await LoadPicFromString(path, false).ConfigureAwait(false);
                 return;
@@ -250,7 +255,7 @@ namespace PicView.ChangeImage
                 FolderIndex = Pics.IndexOf(path);
             }
 
-            if (FolderIndex <0)
+            if (FolderIndex < 0)
             {
                 FolderIndex = 0;
             }
@@ -351,6 +356,13 @@ namespace PicView.ChangeImage
                     ConfigureWindows.GetMainWindow.Title =
                     ConfigureWindows.GetMainWindow.TitleText.Text
                     = $"{image} {index + 1} / {Pics?.Count}";
+
+                    // Add recent files, except when browing archive
+                    if (string.IsNullOrWhiteSpace(TempZipFile) && Pics?.Count > FolderIndex)
+                    {
+                        History.Add(Pics?[FolderIndex]);
+                    }
+
                     return;
                 }
 
@@ -402,6 +414,12 @@ namespace PicView.ChangeImage
                         GalleryNavigation.FullscreenGalleryNavigation();
                     });
                 }
+
+                // Add recent files, except when browing archive
+                if (string.IsNullOrWhiteSpace(TempZipFile) && Pics?.Count > FolderIndex)
+                {
+                    History.Add(Pics?[FolderIndex]);
+                }
                 return;
             }
 
@@ -437,7 +455,7 @@ namespace PicView.ChangeImage
             // Add recent files, except when browing archive
             if (string.IsNullOrWhiteSpace(TempZipFile) && Pics?.Count > index)
             {
-                RecentFiles.Add(Pics?[index]);
+                History.Add(Pics?[index]);
             }
         }
 

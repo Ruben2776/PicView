@@ -74,7 +74,7 @@ namespace PicView.FileHandling
             for (int i = 0; i < appName.Length; i++)
             {
                 string? registryPath = NativeMethods.GetPathForExe(appName[i]);
-                if (registryPath == null) {  return null; }
+                if (registryPath == null) { return null; }
                 if (File.Exists(registryPath))
                 {
                     return registryPath;
@@ -152,7 +152,7 @@ namespace PicView.FileHandling
                     }
 
                     // Add zipped files as recent file
-                    RecentFiles.Add(TempZipFile);
+                    History.Add(TempZipFile);
 
                     if (Properties.Settings.Default.FullscreenGalleryHorizontal)
                     {

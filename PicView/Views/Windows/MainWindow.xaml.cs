@@ -41,12 +41,13 @@ namespace PicView.Views.Windows
                 Translations.LoadLanguage.DetermineLanguage();
                 await StartLoading.LoadedEventsAsync().ConfigureAwait(false);
             };
-            ContentRendered += delegate 
+            ContentRendered += delegate
             {
                 // keyboard and Mouse_Keys Keys
-                KeyDown += async (sender, e) => await MainShortcuts.MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
-                KeyUp += async (sender, e) => await MainShortcuts.MainWindow_KeysUpAsync(sender, e).ConfigureAwait(false);
-                MouseLeftButtonDown += async (sender, e) => await MainShortcuts.MouseLeftButtonDownAsync(sender, e).ConfigureAwait(false);
+                KeyDown += async (sender, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
+                KeyUp += async (sender, e) => await MainKeyboardShortcuts.MainWindow_KeysUpAsync(sender, e).ConfigureAwait(false);
+                MouseLeftButtonDown += async (sender, e) => await MainMouseKeys.MouseLeftButtonDownAsync(sender, e).ConfigureAwait(false);
+                MouseDown += (sender, e) => MainMouseKeys.MouseButtonDownAsync(sender, e).ConfigureAwait(false);
 
                 // Lowerbar
                 LowerBar.Drop += async (sender, e) => await UILogic.DragAndDrop.Image_DragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
@@ -58,8 +59,8 @@ namespace PicView.Views.Windows
                 StartLoading.ContentRenderedEvent();
 
                 // MainImage
-                ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonUp += MainShortcuts.MainImage_MouseLeftButtonUp;
-                ConfigureWindows.GetMainWindow.MainImage.MouseMove += MainShortcuts.MainImage_MouseMove;
+                ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonUp += MainMouseKeys.MainImage_MouseLeftButtonUp;
+                ConfigureWindows.GetMainWindow.MainImage.MouseMove += MainMouseKeys.MainImage_MouseMove;
 
                 // ClickArrows
                 GetClickArrowLeft.MouseLeftButtonDown += async (_, _) => await ChangeImage.Navigation.PicButtonAsync(true, false).ConfigureAwait(false);
@@ -100,17 +101,17 @@ namespace PicView.Views.Windows
                 ParentContainer.Drop += async (sender, e) => await UILogic.DragAndDrop.Image_DragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
                 ParentContainer.DragEnter += UILogic.DragAndDrop.Image_DragAndDrop.Image_DragEnter;
                 ParentContainer.DragLeave += UILogic.DragAndDrop.Image_DragAndDrop.Image_DragLeave;
-                ParentContainer.PreviewMouseWheel += async (sender, e) => await MainShortcuts.MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);
+                ParentContainer.PreviewMouseWheel += async (sender, e) => await MainMouseKeys.MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);
 
                 CloseButton.TheButton.Click += (_, _) => SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
 
-                Closing += (_, _) =>  UILogic.Sizing.WindowSizing.Window_Closing();
+                Closing += (_, _) => UILogic.Sizing.WindowSizing.Window_Closing();
                 StateChanged += (_, _) => UILogic.Sizing.WindowSizing.MainWindow_StateChanged();
-                
+
                 Deactivated += (_, _) => ConfigureSettings.ConfigColors.MainWindowUnfocus();
                 Activated += (_, _) => ConfigureSettings.ConfigColors.MainWindowFocus();
 
-                Microsoft.Win32.SystemEvents.DisplaySettingsChanged += (_, _) =>  UILogic.Sizing.WindowSizing.SystemEvents_DisplaySettingsChanged();
+                Microsoft.Win32.SystemEvents.DisplaySettingsChanged += (_, _) => UILogic.Sizing.WindowSizing.SystemEvents_DisplaySettingsChanged();
             };
         }
 
