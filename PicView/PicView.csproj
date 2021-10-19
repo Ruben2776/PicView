@@ -171,6 +171,7 @@
     <Resource Include="Themes\Resources\fonts\texgyreheros-bold.otf" />
     <Resource Include="Themes\Resources\fonts\texgyreheros-italic.otf" />
     <Resource Include="Themes\Resources\fonts\texgyreheros-regular.otf" />
+    <Resource Include="Themes\Resources\img\logo.png" />
     <Resource Include="Themes\Resources\img\noisy-texture-100x100-o4-d13-c-fafafa-t0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -365,6 +366,7 @@
   <ItemGroup>
     <None Remove="Themes\Resources\img\favicon.ico" />
     <None Remove="Themes\Resources\img\icon__Q6k_icon.ico" />
+    <None Remove="Themes\Resources\img\logo.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Themes\Resources\img\icon__Q6k_icon.ico" />

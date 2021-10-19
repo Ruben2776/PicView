@@ -92,13 +92,13 @@ namespace PicView.FileHandling
                 Filter = FilterFiles,
                 Title = $"{Application.Current.Resources["OpenFileDialog"]} - {SetTitle.AppName}"
             };
-            if (dlg.ShowDialog().HasValue)
+            if (dlg.ShowDialog() == true)
             {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                {
+                    ToggleStartUpUC(true);
+                });
                 await LoadPic.LoadPiFromFileAsync(dlg.FileName).ConfigureAwait(false);
-            }
-            else
-            {
-                return;
             }
         }
 

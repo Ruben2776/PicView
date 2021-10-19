@@ -180,7 +180,8 @@
     <!--  File related  -->
     <system:String x:Key="Open">Open</system:String>
     <system:String x:Key="OpenWith">Open with...</system:String>
-    <system:String x:Key="OpenFileDialog">Open file dialog</system:String>
+    <system:String x:Key="OpenFileDialog">Select a file</system:String>
+    <system:String x:Key="OpenLastFile">Open last file</system:String>
     <system:String x:Key="ShowInFolder">Show in folder</system:String>
     <system:String x:Key="Save">Save</system:String>
     <system:String x:Key="SaveImage">Save image</system:String>

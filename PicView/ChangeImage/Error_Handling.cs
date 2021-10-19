@@ -156,6 +156,9 @@ namespace PicView.ChangeImage
         {
             ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["NoImage"];
             ConfigureWindows.GetMainWindow.Title = Application.Current.Resources["NoImage"] + " - " + SetTitle.AppName;
+            ConfigureWindows.GetMainWindow.MainImage.Source = null;
+
+            UC.ToggleStartUpUC(false);
             
             FreshStartup = true;
             if (Pics != null)

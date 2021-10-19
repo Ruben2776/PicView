@@ -131,10 +131,10 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static async Task LoadPicFromString(string path, bool checkExists = true)
         {
-            await LoadingPreview(new FileInfo(path)).ConfigureAwait(false);
-
             if (checkExists && File.Exists(path))
             {
+                await LoadingPreview(new FileInfo(path)).ConfigureAwait(false);
+
                 // set up size so it feels better when starting application
                 await TryFitImageAsync(path).ConfigureAwait(false);
 
@@ -144,6 +144,12 @@ namespace PicView.ChangeImage
             }
             else
             {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                {
+                    // Set Loading
+                    SetLoadingString();
+                });
+
                 bool result = Uri.TryCreate(path, UriKind.Absolute, out Uri? uriResult)
                     && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
 
@@ -204,7 +210,7 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            if (fileInfo.DirectoryName == Path.GetDirectoryName(Pics[FolderIndex]))
+            if (Pics.Count > FolderIndex && fileInfo.DirectoryName == Path.GetDirectoryName(Pics[FolderIndex]))
             {
                 await LoadPicAtIndexAsync(Pics.IndexOf(path), true, false).ConfigureAwait(false);
                 return;

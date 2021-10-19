@@ -10,6 +10,7 @@ namespace PicView.UILogic
 {
     internal static class UC
     {
+        internal static StartUpUC? GetStartUpUC { get; set; }
         internal static ImageSettings? GetImageSettingsMenu { get; set; }
         internal static FileMenu? GetFileMenu { get; set; }
         internal static QuickSettingsMenu? GetQuickSettingsMenu { get; set; }
@@ -364,5 +365,29 @@ namespace PicView.UILogic
         }
 
         #endregion Toggle open close menus
+
+        internal static void ToggleStartUpUC(bool remove)
+        {
+            if (remove)
+            {
+                if (ConfigureWindows.GetMainWindow.ParentContainer.Children.Contains(GetStartUpUC))
+                {
+                    ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(GetStartUpUC);
+                }
+
+                GetStartUpUC = null;
+                return;
+            }
+
+            if (GetStartUpUC is null)
+            {
+                GetStartUpUC = new StartUpUC();
+                ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetStartUpUC);
+            }
+            else if (ConfigureWindows.GetMainWindow.ParentContainer.Children.Contains(GetStartUpUC) == false)
+            {
+                ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetStartUpUC);
+            }
+        }
     }
 }
