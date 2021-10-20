@@ -64,7 +64,29 @@ namespace PicView.ChangeImage
                     return;
                 }
             }
-            else if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
+            else
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
+                {
+                    if (fileInfo.Extension == ".gif")
+                    {
+                        XamlAnimatedGif.AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(fileInfo.FullName));
+                    }
+                    else
+                    {
+                        ConfigureWindows.GetMainWindow.MainImage.Source = pic;
+                    }
+
+                    if (Properties.Settings.Default.AutoFitWindow)
+                    {
+                        UILogic.Sizing.WindowSizing.SetWindowBehavior();
+                    }
+
+                    FitImage(pic.PixelWidth, pic.PixelHeight);
+                });
+            }
+
+            if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 {
@@ -86,17 +108,13 @@ namespace PicView.ChangeImage
             }
             FolderIndex = FolderIndex == -1 ? 0 : FolderIndex; // Fixes weird error if you load example.jpg where the actual name is example.JPG
 
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            {
+                SetTitleString(pic.PixelWidth, pic.PixelHeight, FolderIndex, fileInfo);
+            });
+
             if (archive == false)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
-                {
-                    UpdatePic(FolderIndex, pic, true, fileInfo);
-                    if (Properties.Settings.Default.AutoFitWindow)
-                    {
-                        UILogic.Sizing.WindowSizing.SetWindowBehavior();
-                    }
-                });
-
                 await Task.Run(() => Preloader.PreLoad(FolderIndex)).ConfigureAwait(false);
                 await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
             }
