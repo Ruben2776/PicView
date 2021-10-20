@@ -81,17 +81,20 @@ namespace PicView.ChangeImage
         {
             if (fileHistory == null) { InstantiateQ(); }
 
-            if (fileHistory.Exists(e => e.EndsWith(fileName)))
+            lock (fileHistory) // index out of range exception when multiple threads accessing it
             {
-                return;
-            }
+                if (fileHistory.Exists(e => e.EndsWith(fileName)))
+                {
+                    return;
+                }
 
-            if (fileHistory.Count >= maxCount)
-            {
-                fileHistory.Remove(fileHistory.Last());
-            }
+                if (fileHistory.Count >= maxCount)
+                {
+                    fileHistory.Remove(fileHistory[fileHistory.Count - 1]);
+                }
 
-            fileHistory.Add(fileName);
+                fileHistory.Add(fileName);
+            }
         }
 
         internal static async Task NextAsync()
@@ -141,14 +144,14 @@ namespace PicView.ChangeImage
 
             var header = Path.GetFileNameWithoutExtension(filePath);
             header = header.Length > 30 ? FileFunctions.Shorten(header, 30) : header;
-            // Add items
+
             var menuItem = new MenuItem()
             {
                 Header = header,
                 ToolTip = filePath,
                 Icon = cmIcon
             };
-            // Set tooltip as argument to avoid subscribing and unsubscribing to events
+
             menuItem.Click += async (_, _) => await LoadPic.LoadPiFromFileAsync(menuItem.ToolTip.ToString()).ConfigureAwait(false);
             var ext = Path.GetExtension(filePath);
             var ext5 = !string.IsNullOrWhiteSpace(ext) && ext.Length >= 5 ? ext.Substring(0, 5) : ext;
