@@ -1,8 +1,8 @@
-﻿using PicView.ChangeImage;
+﻿using PicView.Animations;
+using PicView.ChangeImage;
 using PicView.ConfigureSettings;
 using PicView.Translations;
 using PicView.UILogic;
-using PicView.Animations;
 using PicView.UILogic.Sizing;
 using System;
 using System.Globalization;
@@ -11,9 +11,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
+using static PicView.Animations.MouseOverAnimations;
 using static PicView.ConfigureSettings.ConfigColors;
 using static PicView.SystemIntegration.Wallpaper;
-using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.Windows
 {
@@ -40,7 +41,7 @@ namespace PicView.Views.Windows
 
                 // GalleryBox
                 if (Properties.Settings.Default.FullscreenGalleryVertical == false && Properties.Settings.Default.FullscreenGalleryHorizontal == false)
-                { 
+                {
                     Properties.Settings.Default.FullscreenGalleryHorizontal = true;
                     GalleryVertical.IsSelected = Properties.Settings.Default.FullscreenGalleryHorizontal;
                 }
@@ -50,7 +51,7 @@ namespace PicView.Views.Windows
                     GalleryHorizontal.IsSelected = Properties.Settings.Default.FullscreenGalleryHorizontal;
                 }
 
-                GalleryBox.SelectionChanged += delegate 
+                GalleryBox.SelectionChanged += delegate
                 {
                     if (GalleryVertical.IsSelected)
                     {
@@ -69,7 +70,15 @@ namespace PicView.Views.Windows
                 SubDirRadio.Click += async delegate
                 {
                     Properties.Settings.Default.IncludeSubDirectories = !Properties.Settings.Default.IncludeSubDirectories;
-                    await Error_Handling.ReloadAsync().ConfigureAwait(false);
+                    if (Error_Handling.CheckOutOfRange()) { return; }
+                    var preloadValue = Preloader.Get((ChangeImage.Navigation.Pics[Navigation.FolderIndex]));
+                    if (preloadValue is null) { return; }
+                    await FileHandling.FileLists.GetValuesAsync(preloadValue.fileInfo).ConfigureAwait(false);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                    {
+                        SetTitle.SetTitleString(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight,
+                            Navigation.FolderIndex, preloadValue.fileInfo);
+                    });
                 };
 
                 // BorderColorRadio
