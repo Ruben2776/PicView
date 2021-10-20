@@ -1,9 +1,13 @@
 ﻿using PicView.FileHandling;
 using PicView.UILogic;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace PicView.ChangeImage
 {
@@ -121,6 +125,55 @@ namespace PicView.ChangeImage
             }
 
             await LoadPic.LoadPiFromFileAsync(fileHistory[index]).ConfigureAwait(false);
+        }
+
+        static MenuItem menuItem(string filePath, int i)
+        {
+            var cmIcon = new TextBlock
+            {
+                Text = (i + 1).ToString(CultureInfo.CurrentCulture),
+                FontFamily = new FontFamily("/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros"),
+                FontSize = 11,
+                Width = 12,
+                Height = 12,
+                Foreground = (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"]
+            };
+
+            var header = Path.GetFileNameWithoutExtension(filePath);
+            header = header.Length > 30 ? FileFunctions.Shorten(header, 30) : header;
+            // Add items
+            var menuItem = new MenuItem()
+            {
+                Header = header,
+                ToolTip = filePath,
+                Icon = cmIcon
+            };
+            // Set tooltip as argument to avoid subscribing and unsubscribing to events
+            menuItem.Click += async (_, _) => await LoadPic.LoadPiFromFileAsync(menuItem.ToolTip.ToString()).ConfigureAwait(false);
+            var ext = Path.GetExtension(filePath);
+            var ext5 = !string.IsNullOrWhiteSpace(ext) && ext.Length >= 5 ? ext.Substring(0, 5) : ext;
+            menuItem.InputGestureText = ext5;
+            return menuItem;
+        }
+
+        internal static void RefreshRecentItemsMenu()
+        {
+            if (fileHistory == null) { InstantiateQ(); }
+
+            var cm = (MenuItem)ConfigureWindows.MainContextMenu.Items[5];
+            for (int i = 0; i < maxCount; i++)
+            {
+                var item = menuItem(fileHistory[i], i);
+                if (item is null) { break; }
+                if (cm.Items.Count <= i)
+                {
+                    cm.Items.Add(item);
+                }
+                else
+                {
+                    cm.Items[i] = item;
+                }
+            }
         }
     }
 }

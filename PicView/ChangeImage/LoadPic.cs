@@ -208,6 +208,11 @@ namespace PicView.ChangeImage
         /// <param name="path"></param>
         internal static async Task LoadPiFromFileAsync(string path)
         {
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
+            {
+                UC.ToggleStartUpUC(true);
+            });
+
             FileInfo? fileInfo = new FileInfo(path);
             if (fileInfo.Exists == false)
             {
@@ -413,12 +418,6 @@ namespace PicView.ChangeImage
                     {
                         GalleryNavigation.FullscreenGalleryNavigation();
                     });
-                }
-
-                // Add recent files, except when browing archive
-                if (string.IsNullOrWhiteSpace(TempZipFile) && Pics?.Count > FolderIndex)
-                {
-                    History.Add(Pics?[FolderIndex]);
                 }
                 return;
             }

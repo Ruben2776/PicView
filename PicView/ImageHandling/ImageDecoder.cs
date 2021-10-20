@@ -21,6 +21,7 @@ namespace PicView.ImageHandling
         internal static async Task<BitmapSource?> RenderToBitmapSource(FileInfo file)
         {
             if (file == null) { return null; }
+            if (file.Length <= 0) { return null; }
 
             FileStream? filestream = null; // https://devblogs.microsoft.com/dotnet/file-io-improvements-in-dotnet-6/
             switch (file.Extension)
@@ -35,56 +36,31 @@ namespace PicView.ImageHandling
                 case ".jfif":
                 case ".webp":
                 case ".wbmp":
-                    if (file.Length < 2e+9)
+                    try
                     {
-                        try
-                        {
-                            filestream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
-                        }
-                        catch (Exception e)
-                        {
-#if DEBUG
-                            Trace.WriteLine("RenderToBitmapSource Skia returned " + file + " null, \n" + e.Message);
-#endif
-                            return null;
-                        }
-                        using (var imgStream = new SKManagedStream(filestream))
-                        {
-                            using var skData = SKData.Create(filestream);
-                            await filestream.DisposeAsync().ConfigureAwait(false);
-                            using var codec = SKCodec.Create(skData);
-                            if (codec is null) { return null; }
-
-                            var sKBitmap = SKBitmap.Decode(codec);
-                            if (sKBitmap is null) { return null; }
-
-                            var skPic = sKBitmap.ToWriteableBitmap();
-                            skPic.Freeze();
-                            sKBitmap.Dispose();
-                            return skPic;
-                        }
+                        filestream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
                     }
-                    else
+                    catch (Exception e)
                     {
-                        MagickImage largeMagickImage = new()
-                        {
-                            Quality = 100,
-                            ColorSpace = ColorSpace.Transparent
-                        };
-                        try
-                        {
-                            largeMagickImage.Read(file);
-                        }
-                        catch (Exception)
-                        {
-                            return null;
-                        }
-                       
-                        var largeBitmap = largeMagickImage.ToBitmapSource();
-                        largeMagickImage.Dispose();
-                        largeBitmap.Freeze();
+#if DEBUG
+                        Trace.WriteLine("RenderToBitmapSource Skia returned " + file + " null, \n" + e.Message);
+#endif
+                        return null;
+                    }
+                    using (var imgStream = new SKManagedStream(filestream))
+                    {
+                        using var skData = SKData.Create(filestream);
+                        await filestream.DisposeAsync().ConfigureAwait(false);
+                        using var codec = SKCodec.Create(skData);
+                        if (codec is null) { return null; }
 
-                        return largeBitmap;
+                        var sKBitmap = SKBitmap.Decode(codec);
+                        if (sKBitmap is null) { return null; }
+
+                        var skPic = sKBitmap.ToWriteableBitmap();
+                        skPic.Freeze();
+                        sKBitmap.Dispose();
+                        return skPic;
                     }
 
                 case ".tif":
@@ -103,7 +79,17 @@ namespace PicView.ImageHandling
                     };
                     if (file.Length >= 2147483647) // Streams with a length larger than 2147483647 are not supported, read from file instead
                     {
-                        magickImage.Read(file);
+                        try
+                        {
+                            magickImage.Read(file);
+                        }
+                        catch (Exception e)
+                        {
+#if DEBUG
+                            Trace.WriteLine("RenderToBitmapSource MagickImage returned " + file + " null, \n" + e.Message);
+#endif
+                            return null;
+                        }
                     }
                     else
                     {
