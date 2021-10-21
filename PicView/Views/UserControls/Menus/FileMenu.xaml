@@ -2,11 +2,9 @@
     x:Class="PicView.Views.UserControls.FileMenu"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
-    Foreground="{StaticResource MainColorBrush}"
-    mc:Ignorable="d">
+    Canvas.ZIndex="3"
+    Foreground="{StaticResource MainColorBrush}">
     <StackPanel>
         <Border
             Width="259"
