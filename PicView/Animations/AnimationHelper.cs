@@ -479,6 +479,36 @@ namespace PicView.Animations
             item.innerborder.BeginAnimation(FrameworkElement.HeightProperty, da);
         }
 
+        internal static void HeightAnimation(FrameworkElement element, double from, double to, bool reverse)
+        {
+            var da = new DoubleAnimation
+            {
+                FillBehavior = FillBehavior.Stop,
+                AccelerationRatio = 0.4,
+                DecelerationRatio = 0.6,
+            };
+
+            if (reverse)
+            {
+                da.From = from;
+                da.To = to;
+                da.Duration = TimeSpan.FromSeconds(.3);
+            }
+            else
+            {
+                da.From = from;
+                da.To = to;
+                da.Duration = TimeSpan.FromSeconds(.25);
+            }
+
+            da.Completed += delegate
+            {
+                element.Height = to;
+            };
+
+            element.BeginAnimation(FrameworkElement.HeightProperty, da);
+        }
+
         #endregion Size Animation
     }
 }
