@@ -13,7 +13,7 @@ namespace PicView.ImageHandling
 {
     internal static class GetImageData
     {
-        internal static async Task<string[]>? RetrieveDataAsync(FileInfo? fileInfo)
+        internal static async Task<string[]>? RetrieveDataAsync(FileInfo? fileInfo, bool exif)
         {
             string name, directoryname, fullname, creationtime, lastwritetime;
 
@@ -89,6 +89,16 @@ namespace PicView.ImageHandling
             string dpi;
             bool skip = false;
 
+            // exif
+            string altitude = String.Empty;
+            string altitudeValue = String.Empty;
+
+            string latitude = String.Empty;
+            string latitudeValue = String.Empty;
+
+            string longitude = String.Empty;
+            string longitudeValue = String.Empty;
+
             try
             {
                 var so = ShellObject.FromParsingName(fileInfo.FullName);
@@ -96,6 +106,37 @@ namespace PicView.ImageHandling
                 dpiX = so.Properties.GetProperty(SystemProperties.System.Image.HorizontalResolution).ValueAsObject;
                 dpiY = so.Properties.GetProperty(SystemProperties.System.Image.VerticalResolution).ValueAsObject;
                 stars = so.Properties.GetProperty(SystemProperties.System.Rating).ValueAsObject;
+
+                if (exif)
+                {
+                    var getaltitude = so.Properties.GetProperty(SystemProperties.System.GPS.Altitude);
+                    altitude = getaltitude.Description.DisplayName;
+                    var altitudeObject = getaltitude.ValueAsObject;
+                    if (altitudeObject is not null)
+                    {
+                        var altitudes = (double[])altitudeObject;
+                        latitudeValue = altitudes[0].ToString() + ", " + altitudes[1].ToString() + ", " + altitudes[2].ToString();
+                    }
+
+                    var getLatitude = so.Properties.GetProperty(SystemProperties.System.GPS.Latitude);
+                    latitude = getLatitude.Description.DisplayName;
+                    var latitudeObject = getLatitude.ValueAsObject;
+                    if (latitudeObject is not null)
+                    {
+                        var latitudes = (double[])latitudeObject;
+                        latitudeValue = latitudes[0].ToString() + ", " + latitudes[1].ToString() + ", " + latitudes[2].ToString();
+                    }
+
+                    var getLongitude = so.Properties.GetProperty(SystemProperties.System.GPS.Longitude);
+                    longitude = getLongitude.Description.DisplayName;
+                    var longitudeObject = getLongitude.ValueAsObject;
+                    if (longitudeObject is not null)
+                    {
+                        var longitudes = (double[])longitudeObject;
+                        longitudeValue = longitudes[0].ToString() + ", " + longitudes[1].ToString() + ", " + longitudes[2].ToString();
+                    }
+                }
+
                 so.Dispose();
             }
             catch (Exception)
@@ -159,7 +200,13 @@ namespace PicView.ImageHandling
                 // Aspect ratio
                 ratioText,
 
-                stars.ToString()
+                stars.ToString(),
+
+                altitude, altitudeValue,
+
+                latitude, latitudeValue,
+
+                longitude, longitudeValue,
             };
         }
     }

@@ -15,6 +15,7 @@ namespace PicView.Views.Windows
     public partial class ImageInfoWindow : Window
     {
         double startheight;
+        internal bool ShowExif;
 
         public ImageInfoWindow()
         {
@@ -114,28 +115,27 @@ namespace PicView.Views.Windows
             ExpandButton.Click += (_, _) =>
             {
                 double from, to;
-                bool reverse;
                 if (Height == startheight)
                 {
                     from = startheight;
-                    to = 500;
-                    reverse = false;
+                    to = 700;
+                    ShowExif = true;
                 }
                 else
                 {
                     to = startheight;
-                    from = 500;
-                    reverse = true;
+                    from = 700;
+                    ShowExif = false;
                 }
 
-                AnimationHelper.HeightAnimation(this, from, to, reverse);
-                if (reverse)
+                AnimationHelper.HeightAnimation(this, from, to, !ShowExif);
+                if (ShowExif)
                 {
-                    xGeo.Geometry = Geometry.Parse("F1 M512,512z M0,0z M98,190.06L237.78,353.18A24,24,0,0,0,274.22,353.18L414,190.06C427.34,174.49,416.28,150.44,395.78,150.44L116.18,150.44C95.6799999999999,150.44,84.6199999999999,174.49,97.9999999999999,190.06z");
+                    xGeo.Geometry = Geometry.Parse("F1 M512,512z M0,0z M414,321.94L274.22,158.82A24,24,0,0,0,237.78,158.82L98,321.94C84.66,337.51,95.72,361.56,116.22,361.56L395.82,361.56C416.32,361.56,427.38,337.51,414,321.94z");
                 }
                 else
                 {
-                    xGeo.Geometry = Geometry.Parse("F1 M512,512z M0,0z M414,321.94L274.22,158.82A24,24,0,0,0,237.78,158.82L98,321.94C84.66,337.51,95.72,361.56,116.22,361.56L395.82,361.56C416.32,361.56,427.38,337.51,414,321.94z");
+                    xGeo.Geometry = Geometry.Parse("F1 M512,512z M0,0z M98,190.06L237.78,353.18A24,24,0,0,0,274.22,353.18L414,190.06C427.34,174.49,416.28,150.44,395.78,150.44L116.18,150.44C95.6799999999999,150.44,84.6199999999999,174.49,97.9999999999999,190.06z");
                 }
             };
 

@@ -63,13 +63,15 @@ namespace PicView.ImageHandling
                         return skPic;
                     }
 
+                case ".svg":
+                case ".svgz": // TODO convert to drawingimage instead
+
                 case ".tif":
                 case ".tiff":
                 case ".dds":
                 case "tga": // TODO some tga files are created upside down https://github.com/Ruben2776/PicView/issues/22
                 case ".psd":
                 case ".psb":
-                case ".svg":
                 case ".xcf":
 
                     MagickImage magickImage = new()

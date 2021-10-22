@@ -1,5 +1,6 @@
 ﻿using PicView.FileHandling;
 using PicView.ImageHandling;
+using PicView.Views.UserControls;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -41,7 +42,7 @@ namespace PicView.UILogic
                 return;
             }
 
-            var data = await Task.Run(async () => (await GetImageData.RetrieveDataAsync(fileInfo).ConfigureAwait(false)));
+            var data = await Task.Run(async () => (await GetImageData.RetrieveDataAsync(fileInfo, ConfigureWindows.GetImageInfoWindow.ShowExif).ConfigureAwait(false)));
 
             await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
@@ -72,6 +73,28 @@ namespace PicView.UILogic
                     ConfigureWindows.GetImageInfoWindow.AspectRatioBox.Text = data[11];
 
                     rating = data[12];
+
+                    if (data.Length > 13)
+                    {
+                        if (ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Count > 0)
+                        {
+                            var altitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[0];
+                            altitudeBox.SetValues(data[13], data[14], false);
+                            var latitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[1];
+                            latitudeBox.SetValues(data[15], data[16], false);
+                            var longitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[2];
+                            longitudeBox.SetValues(data[17], data[18], false);
+                        }
+                        else
+                        {
+                            var altitudeBox = new TextboxInfo(data[13], data[14], false);
+                            var latitudeBox = new TextboxInfo(data[15], data[16], false);
+                            var longitudeBox = new TextboxInfo(data[17], data[18], false);
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(altitudeBox);
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(latitudeBox);
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(longitudeBox);
+                        }
+                    }
                 }
                 else
                 {

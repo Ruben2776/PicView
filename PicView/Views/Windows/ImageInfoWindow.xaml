@@ -8,6 +8,7 @@
     Title="{StaticResource ImageInfo}"
     Width="806"
     Height="374"
+    d:Height="700"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
@@ -181,10 +182,8 @@
 
         </DockPanel>
 
-        <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
-            <DockPanel
-                x:Name="MainBackground"
-                Background="{StaticResource NoisyBg}">
+        <Border x:Name="MainBackground" Background="{StaticResource NoisyBg}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+            <DockPanel>
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
 
                     <StackPanel Margin="10,5,10,0" Orientation="Vertical">
@@ -477,29 +476,70 @@
                 </StackPanel>
 
 
-
                 <StackPanel DockPanel.Dock="Bottom" Margin="0,10,0,0">
-                    <Rectangle Height="1" Fill="{StaticResource BorderBrush}" />
-                    <Button Height="25" x:Name="ExpandButton">
-                        <Button.Background>
-                            <SolidColorBrush x:Name="ExpandButtonBg" Color="{StaticResource BackgroundColorFadeSubtle}" />
-                        </Button.Background>
-                        <Image Width="20" Height="20">
-                            <Image.Source>
-                                <DrawingImage>
-                                    <DrawingImage.Drawing>
-                                        <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                            <GeometryDrawing x:Name="xGeo" Geometry="F1 M512,512z M0,0z M98,190.06L237.78,353.18A24,24,0,0,0,274.22,353.18L414,190.06C427.34,174.49,416.28,150.44,395.78,150.44L116.18,150.44C95.6799999999999,150.44,84.6199999999999,174.49,97.9999999999999,190.06z" >
-                                                <GeometryDrawing.Brush>
-                                                    <SolidColorBrush x:Name="chevronDownBrush" Color="{StaticResource IconColor}" />
-                                                </GeometryDrawing.Brush>
-                                            </GeometryDrawing>
-                                        </DrawingGroup>
-                                    </DrawingImage.Drawing>
-                                </DrawingImage>
-                            </Image.Source>
-                        </Image>
-                    </Button>
+                    <Border BorderThickness="0,1,0,1" BorderBrush="{StaticResource BorderBrush}">
+                        <Button Height="25" x:Name="ExpandButton">
+                            <Button.Background>
+                                <SolidColorBrush x:Name="ExpandButtonBg" Color="{StaticResource BackgroundColorFadeSubtle}" />
+                            </Button.Background>
+                            <Image Width="20" Height="20">
+                                <Image.Source>
+                                    <DrawingImage>
+                                        <DrawingImage.Drawing>
+                                            <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                                <GeometryDrawing x:Name="xGeo" Geometry="F1 M512,512z M0,0z M98,190.06L237.78,353.18A24,24,0,0,0,274.22,353.18L414,190.06C427.34,174.49,416.28,150.44,395.78,150.44L116.18,150.44C95.6799999999999,150.44,84.6199999999999,174.49,97.9999999999999,190.06z" >
+                                                    <GeometryDrawing.Brush>
+                                                        <SolidColorBrush x:Name="chevronDownBrush" Color="{StaticResource IconColor}" />
+                                                    </GeometryDrawing.Brush>
+                                                </GeometryDrawing>
+                                            </DrawingGroup>
+                                        </DrawingImage.Drawing>
+                                    </DrawingImage>
+                                </Image.Source>
+                            </Image>
+                        </Button>
+                    </Border>
+                    <ScrollViewer
+                        x:Name="Scroller"
+                        MaxHeight="215"
+                        CanContentScroll="False"
+                        FocusVisualStyle="{x:Null}"
+                        Focusable="False"
+                        HorizontalScrollBarVisibility="Disabled"
+                        VerticalScrollBarVisibility="Auto">
+                        <ScrollViewer.Style>
+                            <Style TargetType="{x:Type ScrollViewer}">
+                                <Setter Property="OverridesDefaultStyle" Value="True" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <ScrollContentPresenter Grid.RowSpan="2" Grid.ColumnSpan="2" />
+                                                <ScrollBar
+                                                    Name="PART_VerticalScrollBar"
+                                                    Grid.Column="1"
+                                                    Maximum="{TemplateBinding ScrollableHeight}"
+                                                    ViewportSize="{TemplateBinding ViewportHeight}"
+                                                    Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                                                    Value="{TemplateBinding VerticalOffset}" />
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ScrollViewer.Style>
+                        <WrapPanel x:Name="ExifParent" Margin="10,5,10,0" Orientation="Horizontal" >
+
+                        </WrapPanel>
+                    </ScrollViewer>
                 </StackPanel>
 
             </DockPanel>
