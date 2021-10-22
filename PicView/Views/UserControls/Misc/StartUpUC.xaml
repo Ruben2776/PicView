@@ -1,8 +1,10 @@
 ﻿<UserControl x:Class="PicView.Views.UserControls.StartUpUC"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Grid Height="500">
-        <Image Width="925" Height="250" Source="pack://application:,,,/Themes/Resources/img/logo.png"  />
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+             HorizontalAlignment="Center" 
+             VerticalAlignment="Center">
+    <Grid>
+        <Image Stretch="None" Source="pack://application:,,,/Themes/Resources/img/logo.png"  />
         <StackPanel Height="30" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,181,25,16">
             <Button x:Name="SelectFile">
                 <StackPanel Orientation="Horizontal">
