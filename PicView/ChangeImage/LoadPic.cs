@@ -57,7 +57,7 @@ namespace PicView.ChangeImage
                 archive = SupportedFiles.IsSupportedArchives(fileInfo.FullName);
                 if (archive == false)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                    await Dispatcher.CurrentDispatcher.InvokeAsync(() =>
                     {
                         Unload();
                     });
@@ -83,15 +83,7 @@ namespace PicView.ChangeImage
                     }
 
                     FitImage(pic.PixelWidth, pic.PixelHeight);
-                });
-            }
-
-            if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
-            {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                {
-                    ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.Width;
-                    ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.Height;
+                    SetLoadingString();
                 });
             }
 
