@@ -74,18 +74,23 @@ namespace PicView.FileHandling
         /// </summary>
         private static List<string>? FileList(FileInfo fileInfo, SortFilesBy sortFilesBy)
         {
+            if (fileInfo is null) { return null; }
+
             SearchOption searchOption;
 
-            if (!Properties.Settings.Default.IncludeSubDirectories || !string.IsNullOrWhiteSpace(TempZipFile))
-            {
-                searchOption = SearchOption.TopDirectoryOnly;
-            }
-            else
+            if (Properties.Settings.Default.IncludeSubDirectories && string.IsNullOrWhiteSpace(TempZipFile)) // Don't search subdirectories when zipped
             {
                 searchOption = SearchOption.AllDirectories;
             }
+            else
+            {
+                searchOption = SearchOption.TopDirectoryOnly;
+            }
 
-            var items = Directory.EnumerateFiles(fileInfo.DirectoryName, "*.*", searchOption)
+            string? directory = FileFunctions.CheckIfDirectoryOrFile(fileInfo.FullName) ? fileInfo.FullName : fileInfo.DirectoryName;
+            if (directory == null) { return null; }
+
+            var items = Directory.EnumerateFiles(directory, "*.*", searchOption)
                 .AsParallel()
                 .Where(file => SupportedFiles.IsSupportedExt(file)
 
@@ -140,7 +145,7 @@ namespace PicView.FileHandling
                     {
                         Navigation.BackupPath = Navigation.Pics[Navigation.FolderIndex];
                     }
-                    
+
                     await Error_Handling.ReloadAsync(true).ConfigureAwait(false);
                 }
                 return;
