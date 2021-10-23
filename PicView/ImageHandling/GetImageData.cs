@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAPICodePack.Shell;
+﻿using ImageMagick;
+using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using PicView.ChangeImage;
 using PicView.UILogic;
@@ -13,7 +14,7 @@ namespace PicView.ImageHandling
 {
     internal static class GetImageData
     {
-        internal static async Task<string[]>? RetrieveDataAsync(FileInfo? fileInfo, bool exif)
+        internal static async Task<string[]>? RetrieveDataAsync(FileInfo? fileInfo)
         {
             string name, directoryname, fullname, creationtime, lastwritetime;
 
@@ -25,22 +26,24 @@ namespace PicView.ImageHandling
                 creationtime = string.Empty;
                 lastwritetime = string.Empty;
             }
-
-            try
+            else
             {
-                name = Path.GetFileNameWithoutExtension(fileInfo.Name);
-                directoryname = fileInfo.DirectoryName;
-                fullname = fileInfo.FullName;
-                creationtime = fileInfo.CreationTime.ToString(CultureInfo.CurrentCulture);
-                lastwritetime = fileInfo.LastWriteTime.ToString(CultureInfo.CurrentCulture);
-            }
-            catch (Exception)
-            {
-                name = string.Empty;
-                directoryname = string.Empty;
-                fullname = string.Empty;
-                creationtime = string.Empty;
-                lastwritetime = string.Empty;
+                try
+                {
+                    name = Path.GetFileNameWithoutExtension(fileInfo.Name);
+                    directoryname = fileInfo.DirectoryName;
+                    fullname = fileInfo.FullName;
+                    creationtime = fileInfo.CreationTime.ToString(CultureInfo.CurrentCulture);
+                    lastwritetime = fileInfo.LastWriteTime.ToString(CultureInfo.CurrentCulture);
+                }
+                catch (Exception)
+                {
+                    name = string.Empty;
+                    directoryname = string.Empty;
+                    fullname = string.Empty;
+                    creationtime = string.Empty;
+                    lastwritetime = string.Empty;
+                }
             }
 
             BitmapSource? image = null;
@@ -90,14 +93,13 @@ namespace PicView.ImageHandling
             bool skip = false;
 
             // exif
-            string altitude = String.Empty;
-            string altitudeValue = String.Empty;
-
             string latitude = String.Empty;
             string latitudeValue = String.Empty;
 
             string longitude = String.Empty;
             string longitudeValue = String.Empty;
+
+            string googleLink = String.Empty;
 
             try
             {
@@ -107,34 +109,26 @@ namespace PicView.ImageHandling
                 dpiY = so.Properties.GetProperty(SystemProperties.System.Image.VerticalResolution).ValueAsObject;
                 stars = so.Properties.GetProperty(SystemProperties.System.Rating).ValueAsObject;
 
-                if (exif)
+                var magickImage = new MagickImage();
+                magickImage.Read(fileInfo);
+                var exifData = magickImage.GetExifProfile();
+                magickImage.Dispose();
+
+                latitude = so.Properties.GetProperty(SystemProperties.System.GPS.Latitude).Description.DisplayName;
+                longitude = so.Properties.GetProperty(SystemProperties.System.GPS.Longitude).Description.DisplayName;
+
+                var gpsLong = exifData.GetValue(ExifTag.GPSLongitude);
+                var gpsLongRef = exifData.GetValue(ExifTag.GPSLongitudeRef);
+                var gpsLatitude = exifData.GetValue(ExifTag.GPSLatitude);
+                var gpsLatitudeRef = exifData.GetValue(ExifTag.GPSLatitudeRef);
+
+                if (gpsLong is not null && gpsLongRef is not null && gpsLatitude is not null && gpsLatitudeRef is not null)
                 {
-                    var getaltitude = so.Properties.GetProperty(SystemProperties.System.GPS.Altitude);
-                    altitude = getaltitude.Description.DisplayName;
-                    var altitudeObject = getaltitude.ValueAsObject;
-                    if (altitudeObject is not null)
-                    {
-                        var altitudes = (double[])altitudeObject;
-                        latitudeValue = altitudes[0].ToString() + ", " + altitudes[1].ToString() + ", " + altitudes[2].ToString();
-                    }
+                    latitudeValue = GetCoordinates(gpsLatitudeRef.ToString(), gpsLatitude.Value).ToString();
+                    longitudeValue = GetCoordinates(gpsLongRef.ToString(), gpsLong.Value).ToString();
 
-                    var getLatitude = so.Properties.GetProperty(SystemProperties.System.GPS.Latitude);
-                    latitude = getLatitude.Description.DisplayName;
-                    var latitudeObject = getLatitude.ValueAsObject;
-                    if (latitudeObject is not null)
-                    {
-                        var latitudes = (double[])latitudeObject;
-                        latitudeValue = latitudes[0].ToString() + ", " + latitudes[1].ToString() + ", " + latitudes[2].ToString();
-                    }
-
-                    var getLongitude = so.Properties.GetProperty(SystemProperties.System.GPS.Longitude);
-                    longitude = getLongitude.Description.DisplayName;
-                    var longitudeObject = getLongitude.ValueAsObject;
-                    if (longitudeObject is not null)
-                    {
-                        var longitudes = (double[])longitudeObject;
-                        longitudeValue = longitudes[0].ToString() + ", " + longitudes[1].ToString() + ", " + longitudes[2].ToString();
-                    }
+                    googleLink = @"https://www.google.com/maps/search/?api=1&query=" + latitudeValue + "," + longitudeValue;
+                    googleLink = System.Text.RegularExpressions.Regex.Replace(googleLink, @"\s+", ""); // remove whitespace to make it work
                 }
 
                 so.Dispose();
@@ -177,7 +171,7 @@ namespace PicView.ImageHandling
                 lastwritetime,
 
                 // Resolution
-                image.PixelWidth + " x " + image.PixelHeight + " " + Application.Current.Resources["Pixels"],
+                source.bitmapSource.PixelWidth + " x " + source.bitmapSource.PixelHeight + " " + Application.Current.Resources["Pixels"],
 
                 // DPI
                 dpi,
@@ -186,7 +180,7 @@ namespace PicView.ImageHandling
                 bitdepth.ToString(),
 
                 // Megapixels
-                ((float)image.PixelHeight * image.PixelWidth / 1000000)
+                ((float)source.bitmapSource.PixelHeight * source.bitmapSource.PixelWidth / 1000000)
                     .ToString("0.##", CultureInfo.CurrentCulture) + " " + Application.Current.Resources["MegaPixels"],
 
                 // Print size cm
@@ -202,12 +196,24 @@ namespace PicView.ImageHandling
 
                 stars.ToString(),
 
-                altitude, altitudeValue,
-
-                latitude, latitudeValue,
+                latitude, (string)latitudeValue,
 
                 longitude, longitudeValue,
+
+                googleLink
             };
+        }
+
+        private static double GetCoordinates(string gpsRef, Rational[] rationals)
+        {
+            double degrees = rationals[0].Numerator / rationals[0].Denominator;
+            double minutes = rationals[1].Numerator / rationals[1].Denominator;
+            double seconds = rationals[2].Numerator / rationals[2].Denominator;
+
+            double coordinate = degrees + (minutes / 60d) + (seconds / 3600d);
+            if (gpsRef == "S" || gpsRef == "W")
+                coordinate *= -1;
+            return coordinate;
         }
     }
 }

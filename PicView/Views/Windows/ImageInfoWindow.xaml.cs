@@ -15,7 +15,6 @@ namespace PicView.Views.Windows
     public partial class ImageInfoWindow : Window
     {
         double startheight;
-        internal bool ShowExif;
 
         public ImageInfoWindow()
         {
@@ -115,21 +114,22 @@ namespace PicView.Views.Windows
             ExpandButton.Click += (_, _) =>
             {
                 double from, to;
+                bool expanded;
                 if (Height == startheight)
                 {
                     from = startheight;
                     to = 700;
-                    ShowExif = true;
+                    expanded = false;
                 }
                 else
                 {
                     to = startheight;
                     from = 700;
-                    ShowExif = false;
+                    expanded = true;
                 }
 
-                AnimationHelper.HeightAnimation(this, from, to, !ShowExif);
-                if (ShowExif)
+                AnimationHelper.HeightAnimation(this, from, to, expanded);
+                if (expanded)
                 {
                     xGeo.Geometry = Geometry.Parse("F1 M512,512z M0,0z M414,321.94L274.22,158.82A24,24,0,0,0,237.78,158.82L98,321.94C84.66,337.51,95.72,361.56,116.22,361.56L395.82,361.56C416.32,361.56,427.38,337.51,414,321.94z");
                 }

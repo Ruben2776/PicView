@@ -7,6 +7,16 @@ namespace PicView.ProcessHandling
 {
     internal static class ProcessLogic
     {
+        internal static void Hyperlink_RequestNavigate(string url)
+        {
+            var ps = new ProcessStartInfo(url)
+            {
+                UseShellExecute = true,
+                Verb = "open"
+            };
+            Process.Start(ps);
+
+        }
         internal static string? GetPathToProcess()
         {
             var GetAppPath = System.Environment.ProcessPath;
