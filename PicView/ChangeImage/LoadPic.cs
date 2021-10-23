@@ -165,7 +165,6 @@ namespace PicView.ChangeImage
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 {
-                    // Set Loading
                     SetLoadingString();
                 });
 
@@ -250,7 +249,7 @@ namespace PicView.ChangeImage
                 {
                     await GetValuesAsync(fileInfo).ConfigureAwait(false);
                 }
-                await LoadPicAtIndexAsync(Pics.IndexOf(fileInfo.FullName), true, false, fileInfo).ConfigureAwait(false);
+                await LoadPicAtIndexAsync(Pics.IndexOf(fileInfo.FullName), false, fileInfo).ConfigureAwait(false);
                 return;
             }
 
@@ -301,7 +300,7 @@ namespace PicView.ChangeImage
             if (FolderIndex >= 0 && Pics?.Count > 0) // check if being extracted and need to wait for it instead
             {
                 // Navigate to picture using obtained index
-                await LoadPicAtIndexAsync(FolderIndex, true, false).ConfigureAwait(false);
+                await LoadPicAtIndexAsync(FolderIndex, false, fileInfo).ConfigureAwait(false);
             }
 
             if (GetPicGallery is not null && folderChanged)
@@ -326,10 +325,52 @@ namespace PicView.ChangeImage
         }
 
         /// <summary>
+        /// Handle logic if user wants to load from a folder
+        /// </summary>
+        /// <param name="folder"></param>
+        internal static async Task LoadPicFromFolderAsync(string folder)
+        {
+            // TODO add new function that can go to next/prev folder
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            {
+                SetLoadingString();
+                ChangeFolder(true);
+            });
+
+            await FileLists.GetValuesAsync(new FileInfo(folder)).ConfigureAwait(false);
+
+            if (Pics?.Count > 0)
+            {
+                await LoadPiFromFileAsync(Pics[0]).ConfigureAwait(false);
+            }
+            else
+            {
+                await Error_Handling.UnexpectedError().ConfigureAwait(false);
+                return;
+            }
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, async () =>
+            {
+                if (GetImageSettingsMenu is not null)
+                {
+                    GetImageSettingsMenu.GoToPic.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
+                }
+
+                // Load new gallery values, if changing folder
+                if (GetPicGallery != null && Properties.Settings.Default.FullscreenGalleryHorizontal || GetPicGallery != null && Properties.Settings.Default.FullscreenGalleryVertical)
+                {
+                    if (GetPicGallery.Container.Children.Count == 0)
+                    {
+                        await GalleryLoad.Load().ConfigureAwait(false);
+                    }
+                }
+            });
+        }
+
+        /// <summary>
         /// Loads image at specified index
         /// </summary>
         /// <param name="index">The index of file to load from Pics</param>
-        internal static async Task LoadPicAtIndexAsync(int index, bool resize = true, bool showLoadingThumb = true, FileInfo? fileInfo = null)
+        internal static async Task LoadPicAtIndexAsync(int index, bool showLoadingThumb = true, FileInfo? fileInfo = null)
         {
             if (Pics?.Count < index || Pics?.Count < 1)
             {
@@ -371,14 +412,13 @@ namespace PicView.ChangeImage
                             await LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
                             return;
                         }
-
                     }
 
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                     {
                         if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
                         {
-                            thumb = GetThumb(index);
+                            thumb = GetThumb(index, fileInfo);
                         }
 
                         if (FreshStartup)
@@ -481,7 +521,7 @@ namespace PicView.ChangeImage
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
             {
-                UpdatePic(index, preloadValue.bitmapSource, resize, preloadValue.fileInfo);
+                UpdatePic(index, preloadValue.bitmapSource, preloadValue.fileInfo);
             });
 
             // Update PicGallery selected item, if needed
@@ -515,51 +555,6 @@ namespace PicView.ChangeImage
             }
         }
 
-        /// <summary>
-        /// Handle logic if user wants to load from a folder
-        /// </summary>
-        /// <param name="folder"></param>
-        internal static async Task LoadPicFromFolderAsync(string folder)
-        {
-            // TODO add new function that can go to next/prev folder
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-            {
-                SetLoadingString();
-                ChangeFolder(true);
-            });
-
-            // If searching subdirectories, it might freeze UI, so wrap it in task
-            await Task.Run(() =>
-            {
-                Pics = FileList(new FileInfo(folder));
-            }).ConfigureAwait(false);
-
-            if (Pics?.Count > 0)
-            {
-                await LoadPicAtIndexAsync(0).ConfigureAwait(false);
-            }
-            else
-            {
-                await ReloadAsync(true).ConfigureAwait(false);
-            }
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, async () =>
-            {
-                if (GetImageSettingsMenu is not null)
-                {
-                    GetImageSettingsMenu.GoToPic.GoToPicBox.Text = (FolderIndex + 1).ToString(CultureInfo.CurrentCulture);
-                }
-
-                // Load new gallery values, if changing folder
-                if (GetPicGallery != null && Properties.Settings.Default.FullscreenGalleryHorizontal || GetPicGallery != null && Properties.Settings.Default.FullscreenGalleryVertical)
-                {
-                    if (GetPicGallery.Container.Children.Count == 0)
-                    {
-                        await GalleryLoad.Load().ConfigureAwait(false);
-                    }
-                }
-            });
-        }
-
         #endregion
 
         #region UpdatePic
@@ -569,7 +564,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="index"></param>
         /// <param name="bitmapSource"></param>
-        internal static void UpdatePic(int index, BitmapSource bitmapSource, bool resise = true, FileInfo? fileInfo = null)
+        internal static void UpdatePic(int index, BitmapSource bitmapSource, FileInfo? fileInfo = null)
         {
             if (bitmapSource is null)
             {
@@ -612,11 +607,7 @@ namespace PicView.ChangeImage
                 ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
             }
 
-            if (resise)
-            {
-                FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
-            }
-
+            FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
             SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index, fileInfo);
         }
 

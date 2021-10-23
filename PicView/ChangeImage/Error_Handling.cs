@@ -123,11 +123,10 @@ namespace PicView.ChangeImage
                     }
                 });
 
-
                 if (containerCheck)
                 {
                     await GalleryFunctions.SortGallery().ConfigureAwait(false);
-                    await LoadPic.LoadPicAtIndexAsync(FolderIndex, true, true, fileInfo).ConfigureAwait(false);
+                    await LoadPic.LoadPicAtIndexAsync(FolderIndex, true, fileInfo).ConfigureAwait(false);
                 }
                 else
                 {

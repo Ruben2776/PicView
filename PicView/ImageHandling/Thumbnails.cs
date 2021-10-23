@@ -15,7 +15,7 @@ namespace PicView.ImageHandling
         /// or full image if preloaded.
         /// </summary>
         /// <returns></returns>
-        internal static BitmapSource? GetThumb(int x)
+        internal static BitmapSource? GetThumb(int x, FileInfo? fileInfo = null)
         {
             if (ChangeImage.Error_Handling.CheckOutOfRange())
             {
@@ -34,7 +34,11 @@ namespace PicView.ImageHandling
             }
             else
             {
-                pic = GetBitmapSourceThumb(new FileInfo(Pics[x]));
+                if (fileInfo is null)
+                {
+                    fileInfo = new FileInfo(Pics[x]);
+                }
+                pic = GetBitmapSourceThumb(fileInfo);
             }
 
             if (pic == null)
