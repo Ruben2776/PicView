@@ -154,7 +154,7 @@ namespace PicView.ChangeImage
             }
             else if (Clipboard.ContainsImage())
             {
-                LoadPic.Pic(Clipboard.GetImage(), (string)Application.Current.Resources["Base64Image"]);
+                await LoadPic.LoadPicFromBitmap(Clipboard.GetImage(), (string)Application.Current.Resources["Base64Image"]).ConfigureAwait(false);
             }
             else if (Uri.IsWellFormedUriString(path, UriKind.Absolute)) // Check if from web
             {

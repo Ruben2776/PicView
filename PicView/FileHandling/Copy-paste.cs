@@ -114,7 +114,7 @@ namespace PicView.FileHandling
             // Clipboard Image
             if (Clipboard.ContainsImage())
             {
-                LoadPic.Pic(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]);
+                await LoadPic.LoadPicFromBitmap(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]).ConfigureAwait(false);
                 return;
             }
 

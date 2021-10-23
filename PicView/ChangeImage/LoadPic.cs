@@ -236,7 +236,6 @@ namespace PicView.ChangeImage
                 UC.ToggleStartUpUC(true);
             });
 
-
             if (fileInfo.Exists == false)
             {
                 await LoadPicFromString(fileInfo.FullName, false, fileInfo).ConfigureAwait(false);
@@ -571,8 +570,7 @@ namespace PicView.ChangeImage
                 bitmapSource = ImageFunctions.ImageErrorMessage();
                 if (bitmapSource is null)
                 {
-                    Error_Handling.Unload();
-                    ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                    _ = Error_Handling.UnexpectedError();
                     return;
                 }
             }
@@ -646,11 +644,19 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="pic"></param>
         /// <param name="imageName"></param>
-        internal static void Pic(BitmapSource bitmap, string imageName)
+        internal static async Task LoadPicFromBitmap(BitmapSource bitmap, string imageName)
         {
-            _ = UpdatePic(imageName, bitmap);
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                SetTitle.SetLoadingString();
+            });
 
-            DeleteFiles.DeleteTempFiles();
+            await UpdatePic(imageName, bitmap).ConfigureAwait(false);
+
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                UC.ToggleStartUpUC(true);
+            });
         }
 
         /// <summary>
@@ -687,11 +693,7 @@ namespace PicView.ChangeImage
                 }
                 else
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                    {
-                        Error_Handling.Unload();
-                        ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
-                    });
+                    await Error_Handling.UnexpectedError().ConfigureAwait(false);
                     return;
                 }
 
