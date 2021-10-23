@@ -201,6 +201,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Update="Views\UserControls\Buttons\LinkButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\UserControls\Buttons\GoToPicButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -293,6 +296,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Themes\Styles\ColorThemes\Light.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserControls\Buttons\LinkButton.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\UserControls\Buttons\GoToPicButton.xaml">

@@ -88,9 +88,8 @@ namespace PicView.ImageHandling
                 ratioText = $"{firstRatio}:{secondRatio} ({Application.Current.Resources["Portrait"]})";
             }
 
-            object bitdepth, dpiX, dpiY, stars;
-            string dpi;
-            bool skip = false;
+            object bitdepth, stars;
+            string dpi = String.Empty;
 
             // exif
             string latitude = String.Empty;
@@ -100,35 +99,50 @@ namespace PicView.ImageHandling
             string longitudeValue = String.Empty;
 
             string googleLink = String.Empty;
+            string bingLink = String.Empty;
 
             try
             {
                 var so = ShellObject.FromParsingName(fileInfo.FullName);
                 bitdepth = so.Properties.GetProperty(SystemProperties.System.Image.BitDepth).ValueAsObject;
-                dpiX = so.Properties.GetProperty(SystemProperties.System.Image.HorizontalResolution).ValueAsObject;
-                dpiY = so.Properties.GetProperty(SystemProperties.System.Image.VerticalResolution).ValueAsObject;
                 stars = so.Properties.GetProperty(SystemProperties.System.Rating).ValueAsObject;
 
-                var magickImage = new MagickImage();
-                magickImage.Read(fileInfo);
+                var magickImage = new MagickImage(fileInfo);
                 var exifData = magickImage.GetExifProfile();
                 magickImage.Dispose();
 
-                latitude = so.Properties.GetProperty(SystemProperties.System.GPS.Latitude).Description.DisplayName;
-                longitude = so.Properties.GetProperty(SystemProperties.System.GPS.Longitude).Description.DisplayName;
-
-                var gpsLong = exifData.GetValue(ExifTag.GPSLongitude);
-                var gpsLongRef = exifData.GetValue(ExifTag.GPSLongitudeRef);
-                var gpsLatitude = exifData.GetValue(ExifTag.GPSLatitude);
-                var gpsLatitudeRef = exifData.GetValue(ExifTag.GPSLatitudeRef);
-
-                if (gpsLong is not null && gpsLongRef is not null && gpsLatitude is not null && gpsLatitudeRef is not null)
+                if (exifData is null)
                 {
-                    latitudeValue = GetCoordinates(gpsLatitudeRef.ToString(), gpsLatitude.Value).ToString();
-                    longitudeValue = GetCoordinates(gpsLongRef.ToString(), gpsLong.Value).ToString();
+                    var dpiX = so.Properties.GetProperty(SystemProperties.System.Image.HorizontalResolution).ValueAsObject;
+                    var dpiY = so.Properties.GetProperty(SystemProperties.System.Image.VerticalResolution).ValueAsObject;
+                    dpi = Math.Round((double)dpiX) + " x " + Math.Round((double)dpiY) + " " + Application.Current.Resources["Dpi"];
+                }
+                else
+                {
+                    var dpiX = exifData.GetValue(ExifTag.XResolution);
+                    var dpiY = exifData.GetValue(ExifTag.YResolution);
 
-                    googleLink = @"https://www.google.com/maps/search/?api=1&query=" + latitudeValue + "," + longitudeValue;
-                    googleLink = System.Text.RegularExpressions.Regex.Replace(googleLink, @"\s+", ""); // remove whitespace to make it work
+                    if (dpiX is not null && dpiY is not null)
+                    {
+                        dpi = dpiX.Value + " x " + dpiY.Value + " " + Application.Current.Resources["Dpi"];
+                    }
+
+                    latitude = so.Properties.GetProperty(SystemProperties.System.GPS.Latitude).Description.DisplayName;
+                    longitude = so.Properties.GetProperty(SystemProperties.System.GPS.Longitude).Description.DisplayName;
+
+                    var gpsLong = exifData.GetValue(ExifTag.GPSLongitude);
+                    var gpsLongRef = exifData.GetValue(ExifTag.GPSLongitudeRef);
+                    var gpsLatitude = exifData.GetValue(ExifTag.GPSLatitude);
+                    var gpsLatitudeRef = exifData.GetValue(ExifTag.GPSLatitudeRef);
+
+                    if (gpsLong is not null && gpsLongRef is not null && gpsLatitude is not null && gpsLatitudeRef is not null)
+                    {
+                        latitudeValue = GetCoordinates(gpsLatitudeRef.ToString(), gpsLatitude.Value).ToString();
+                        longitudeValue = GetCoordinates(gpsLongRef.ToString(), gpsLong.Value).ToString();
+
+                        googleLink = @"https://www.google.com/maps/search/?api=1&query=" + latitudeValue + "," + longitudeValue;
+                        bingLink = @"https://bing.com/maps/default.aspx?cp=" + latitudeValue + "~" + longitudeValue + "&style=o&lvl=1&dir=0&scene=1140291";
+                    }
                 }
 
                 so.Dispose();
@@ -136,24 +150,12 @@ namespace PicView.ImageHandling
             catch (Exception)
             {
                 bitdepth = string.Empty;
-                dpiX = string.Empty;
-                dpiY = string.Empty;
-                skip = true;
                 stars = string.Empty;
             }
 
             if (bitdepth == null)
             {
                 bitdepth = string.Empty;
-            }
-
-            if (skip || dpiX == null)
-            {
-                dpi = string.Empty;
-            }
-            else
-            {
-                dpi = Math.Round((double)dpiX) + " x " + Math.Round((double)dpiY) + " " + Application.Current.Resources["Dpi"];
             }
 
             if (stars is null)
@@ -196,11 +198,11 @@ namespace PicView.ImageHandling
 
                 stars.ToString(),
 
-                latitude, (string)latitudeValue,
+                latitude, latitudeValue,
 
                 longitude, longitudeValue,
 
-                googleLink
+                bingLink, googleLink
             };
         }
 
