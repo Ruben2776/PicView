@@ -7,7 +7,7 @@
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
     Title="{StaticResource ImageInfo}"
     Width="806"
-    Height="374"
+    Height="344"
     d:Height="700"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
@@ -188,7 +188,7 @@
 
                     <StackPanel Margin="10,5,10,0" Orientation="Vertical">
 
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                             <TextBlock
                                 Width="130"
                                 Margin="0,0,10,0"
@@ -213,7 +213,7 @@
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                             <TextBlock
                                 Width="130"
                                 Margin="0,0,10,0"
@@ -238,7 +238,7 @@
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                             <TextBlock
                                 Width="130"
                                 Margin="0,0,10,0"
@@ -262,7 +262,7 @@
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                             <TextBlock
                                 Width="130"
                                 Margin="0,0,10,0"
@@ -285,7 +285,7 @@
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                             <TextBlock
                                 Width="130"
                                 Margin="0,0,10,0"
@@ -308,7 +308,7 @@
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                             <TextBlock
                                 Width="130"
                                 Margin="0,0,10,0"
@@ -334,7 +334,7 @@
 
                     <StackPanel Margin="0,5,0,0" Orientation="Vertical">
 
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                             <TextBlock
                                 Width="130"
                                 Margin="0,0,10,0"
@@ -357,7 +357,7 @@
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                             <TextBlock
                                 Width="130"
                                 Margin="0,0,10,0"
@@ -380,7 +380,7 @@
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                             <TextBlock
                                 Width="130"
                                 Margin="0,0,10,0"
@@ -403,7 +403,7 @@
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                             <TextBlock
                                 Width="130"
                                 Margin="0,0,10,0"
@@ -426,7 +426,7 @@
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                             <TextBlock
                                 Width="130"
                                 Margin="0,0,10,0"
@@ -449,7 +449,7 @@
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Margin="15,15,0,0" Orientation="Horizontal">
+                        <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                             <TextBlock
                                 Width="130"
                                 Margin="0,0,10,0"

@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:uc="clr-namespace:PicView.Views.UserControls"
              mc:Ignorable="d" 
-             Margin="15,15,10,0">
+             Margin="10,10,10,0">
     <StackPanel Orientation="Horizontal">
         <TextBlock
             x:Name="ValueName"
