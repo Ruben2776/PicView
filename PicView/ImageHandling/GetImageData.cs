@@ -14,7 +14,7 @@ namespace PicView.ImageHandling
 {
     internal static class GetImageData
     {
-        internal static async Task<string[]>? RetrieveDataAsync(FileInfo? fileInfo)
+        internal static Task<string[]?> RetrieveData(FileInfo? fileInfo) => Task.Run(() =>
         {
             string name, directoryname, fullname, creationtime, lastwritetime;
 
@@ -54,7 +54,7 @@ namespace PicView.ImageHandling
             }
             else
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                 {
                     image = ImageDecoder.GetRenderedBitmapFrame();
                 });
@@ -204,7 +204,7 @@ namespace PicView.ImageHandling
 
                 bingLink, googleLink
             };
-        }
+        });
 
         private static double GetCoordinates(string gpsRef, Rational[] rationals)
         {

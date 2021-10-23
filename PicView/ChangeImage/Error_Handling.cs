@@ -25,6 +25,15 @@ namespace PicView.ChangeImage
             return false;
         }
 
+        internal static async Task UnexpectedError()
+        {
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            {
+                Unload();
+                Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+            });
+        }
+
         /// <summary>
         /// Clears data, to free objects no longer necessary to store in memory and allow changing folder without error.
         /// </summary>
@@ -62,16 +71,17 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static async Task ReloadAsync(bool fromBackup = false)
         {
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                SetTitle.SetLoadingString();
+            });
+
             string? path = null;
             if (fromBackup)
             {
                 if (string.IsNullOrWhiteSpace(BackupPath))
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
-                    {
-                        Unload();
-                    });
-
+                    await UnexpectedError().ConfigureAwait(false);
                     return;
                 }
                 path = BackupPath;
@@ -87,21 +97,25 @@ namespace PicView.ChangeImage
                     path = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
                 });
             }
+            if (path == null)
+            {
+                await UnexpectedError().ConfigureAwait(false);
+                return;
+            }
 
-            if (path is not null && File.Exists(path))
+            if (File.Exists(path))
             {
                 // Force reloading values by setting freshStartup to true
                 FreshStartup = true;
 
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
-                {
-                    // Clear Preloader, to avoid errors by FolderIndex changing location because of re-sorting
-                    Preloader.Clear();
-                });
+                Preloader.Clear();
+
+                FileInfo fileInfo = new FileInfo(path);
+                await FileLists.GetValuesAsync(fileInfo).ConfigureAwait(false);
 
                 bool containerCheck = false;
 
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                 {
                     if (UC.GetPicGallery?.Container?.Children?.Count > 0)
                     {
@@ -113,15 +127,15 @@ namespace PicView.ChangeImage
                 if (containerCheck)
                 {
                     await GalleryFunctions.SortGallery().ConfigureAwait(false);
-                    await LoadPic.LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
+                    await LoadPic.LoadPicAtIndexAsync(FolderIndex, true, true, fileInfo).ConfigureAwait(false);
                 }
                 else
                 {
-                    await LoadPic.LoadPiFromFileAsync(path).ConfigureAwait(false);
+                    await LoadPic.LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
                 }
 
                 // Reset
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                 {
                     if (Flipped)
                     {
@@ -135,9 +149,13 @@ namespace PicView.ChangeImage
                 });
 
             }
-            else if (Clipboard.ContainsImage() || Base64.IsBase64String(path))
+            else if (Base64.IsBase64String(path))
             {
-                return;
+                await LoadPic.LoadBase64PicAsync(path).ConfigureAwait(false);
+            }
+            else if (Clipboard.ContainsImage())
+            {
+                LoadPic.Pic(Clipboard.GetImage(), (string)Application.Current.Resources["Base64Image"]);
             }
             else if (Uri.IsWellFormedUriString(path, UriKind.Absolute)) // Check if from web
             {
@@ -145,7 +163,7 @@ namespace PicView.ChangeImage
             }
             else
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() => { Unload(); });
+                await UnexpectedError().ConfigureAwait(false);
             }
         }
 
@@ -159,7 +177,7 @@ namespace PicView.ChangeImage
             ConfigureWindows.GetMainWindow.MainImage.Source = null;
 
             UC.ToggleStartUpUC(false);
-            
+
             FreshStartup = true;
             if (Pics != null)
             {

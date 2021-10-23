@@ -9,6 +9,11 @@ namespace PicView.ProcessHandling
     {
         internal static void Hyperlink_RequestNavigate(string url)
         {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                return;
+            }
+
             var ps = new ProcessStartInfo(url)
             {
                 UseShellExecute = true,

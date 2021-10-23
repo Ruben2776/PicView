@@ -74,40 +74,56 @@ namespace PicView.ImageHandling
                 return null;
             }
 
-            return GetMagickImageThumb(fileInfo.FullName);
+            return GetMagickImageThumb(fileInfo);
         }
 
         /// <summary>
         /// Returns BitmapSource at specified quality and pixel size
         /// </summary>
-        /// <param name="file"></param>
+        /// <param name="fileInfo"></param>
         /// <param name="quality"></param>
         /// <param name="size"></param>
         /// <returns></returns>
-        private static BitmapSource? GetMagickImageThumb(string file, byte quality = 100, short size = 500)
+        private static BitmapSource? GetMagickImageThumb(FileInfo fileInfo, byte quality = 100, short size = 500)
         {
             BitmapSource pic;
 
-            using MagickImage magick = new MagickImage
+            using MagickImage magickImage = new MagickImage
             {
                 Quality = quality,
                 ColorSpace = ColorSpace.Transparent
             };
             try
             {
-                magick.Read(file);
-                magick.AdaptiveResize(size, size);
+                magickImage.Read(fileInfo);
+                var exifData = magickImage.GetExifProfile();
+                if (exifData != null)
+                {
+                    // Create thumbnail from exif information
+                    using (MagickImage thumbnail = (MagickImage)exifData.CreateThumbnail())
+                    {
+                        // Check if exif profile contains thumbnail and save it
+                        if (thumbnail != null)
+                        {
+                            var bitmapSource = thumbnail.ToBitmapSource();
+                            bitmapSource.Freeze();
+                            return bitmapSource;
+                        }
+                    }
+                }
+
+                magickImage.AdaptiveResize(size, size);
             }
 #if DEBUG
             catch (MagickException e)
             {
-                Trace.WriteLine("GetMagickImage returned " + file + " null, \n" + e.Message);
+                Trace.WriteLine("GetMagickImage returned " + fileInfo + " null, \n" + e.Message);
                 return null;
             }
 #else
                 catch (MagickException) { return null; }
 #endif
-            pic = magick.ToBitmapSource();
+            pic = magickImage.ToBitmapSource();
             pic.Freeze();
             return pic;
         }

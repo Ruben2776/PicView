@@ -39,6 +39,16 @@ namespace PicView.UILogic
                 return null;
             }
 
+            if (index != ChangeImage.Navigation.FolderIndex || Pics?.Count < index || index >= Pics.Count)
+            {
+                return new string[]
+                {
+                    (string)Application.Current.Resources["UnexpectedError"],
+                    (string)Application.Current.Resources["UnexpectedError"],
+                    (string)Application.Current.Resources["UnexpectedError"]
+                };
+            }
+
             var files = Pics.Count == 1 ?
                 Application.Current.Resources["File"] : Application.Current.Resources["Files"];
 
@@ -78,7 +88,7 @@ namespace PicView.UILogic
             var titleString = TitleString(width, height, index, fileInfo);
             if (titleString == null)
             {
-                _= ChangeImage.Error_Handling.ReloadAsync();
+                _ = ChangeImage.Error_Handling.ReloadAsync();
                 return;
             }
 

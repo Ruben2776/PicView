@@ -43,9 +43,9 @@ namespace PicView.ChangeImage
         /// Add file to preloader from index
         /// </summary>
         /// <param name="i">Index of Pics</param>
-        internal static async Task AddAsync(int i)
+        internal static async Task AddAsync(int i, FileInfo? fileInfo = null)
         {
-            if (Pics == null || i >= Pics?.Count)
+            if (i >= Pics?.Count)
             {
                 return;
             }
@@ -60,11 +60,17 @@ namespace PicView.ChangeImage
 
             if (Sources.TryAdd(Navigation.Pics[i], preloadValue))
             {
-                var info = new FileInfo(Navigation.Pics[i]);
-                var x = await ImageDecoder.RenderToBitmapSource(info).ConfigureAwait(false);
-                preloadValue.bitmapSource = x;
-                preloadValue.isLoading = false;
-                preloadValue.fileInfo = info;
+                await Task.Run(async () =>
+                {
+                    if (fileInfo is null)
+                    {
+                        fileInfo = new FileInfo(Navigation.Pics[i]);
+                    }
+                    var x = await ImageDecoder.RenderToBitmapSource(fileInfo).ConfigureAwait(false);
+                    preloadValue.bitmapSource = x;
+                    preloadValue.isLoading = false;
+                    preloadValue.fileInfo = fileInfo;
+                }).ConfigureAwait(false);
             }
         }
 
@@ -121,7 +127,7 @@ namespace PicView.ChangeImage
 
         internal static bool Rename(string file, string name)
         {
-            if (file == null || name == null) {  return false; }
+            if (file == null || name == null) { return false; }
 
             if (Sources.TryRemove(file, out var preloadValue) == false)
             {
@@ -187,7 +193,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="index"></param>
         /// <param name="reverse"></param>
-        internal static Task PreLoad(int index) => Task.Run(async () =>
+        internal static Task PreLoad(int index) => Task.Run(() =>
         {
             IsRunning = true;
 
@@ -199,14 +205,14 @@ namespace PicView.ChangeImage
                 for (int i = index - 1; i > endPoint; i--)
                 {
                     if (Pics.Count == 0) { return; }
-                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
+                    _ = AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 // Add second elements
                 for (int i = index + 1; i < (index + 1) + LoadBehind; i++)
                 {
                     if (Pics.Count == 0) { return; }
-                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
+                    _ = AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 //Clean up infront
@@ -223,13 +229,13 @@ namespace PicView.ChangeImage
                 for (int i = index + 1; i < (index + 1) + LoadInfront; i++)
                 {
                     if (Pics.Count == 0) { return; }
-                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
+                    _ = AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
                 // Add second elements behind
                 for (int i = index - 1; i > endPoint; i--)
                 {
                     if (Pics.Count == 0) { return; }
-                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
+                    _ = AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 //Clean up behind

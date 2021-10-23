@@ -11,6 +11,11 @@ namespace PicView.ImageHandling
 {
     internal static class Base64
     {
+        /// <summary>
+        /// Converts string from base64 value to BitmapSource
+        /// </summary>
+        /// <param name="base64String"></param>
+        /// <returns></returns>
         internal static Task<BitmapSource?> Base64StringToBitmap(string base64String) => Task.Run(() =>
         {
             byte[] binaryData = Convert.FromBase64String(base64String);
