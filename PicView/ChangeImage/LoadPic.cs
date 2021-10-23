@@ -232,6 +232,10 @@ namespace PicView.ChangeImage
 
             if (Pics.Count > FolderIndex && fileInfo.DirectoryName == Path.GetDirectoryName(Pics[FolderIndex]))
             {
+                if (Pics.Contains(fileInfo.FullName) == false)
+                {
+                    await GetValuesAsync(fileInfo).ConfigureAwait(false);
+                }
                 await LoadPicAtIndexAsync(Pics.IndexOf(path), true, false).ConfigureAwait(false);
                 return;
             }
