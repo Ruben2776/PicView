@@ -129,7 +129,7 @@ namespace PicView.FileHandling
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        internal static Task GetValuesAsync(FileInfo fileInfo) => Task.Run(async () =>
+        internal static Task RetrieveFilelistAsync(FileInfo fileInfo) => Task.Run(async () =>
         {
             if (fileInfo is null)
             {

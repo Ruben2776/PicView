@@ -74,27 +74,30 @@ namespace PicView.UILogic
 
                     rating = data[12];
 
-                    if (ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Count > 0)
+                    if (data.Length > 12)
                     {
-                        var latitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[0];
-                        latitudeBox.SetValues(data[13], data[14], false);
-                        var longitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[1];
-                        longitudeBox.SetValues(data[15], data[16], false);
-                        var linkX = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[2];
-                        linkX.SetURL(data[17], "Bing");
-                        var linkY = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[3];
-                        linkY.SetURL(data[18], "Google");
-                    }
-                    else
-                    {
-                        var latitudeBox = new TextboxInfo(data[13], data[14], false);
-                        var longitudeBox = new TextboxInfo(data[15], data[16], false);
-                        var linkX = new LinkTextBox(data[17], "Bing");
-                        var linkY = new LinkTextBox(data[18], "Google");
-                        ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(latitudeBox);
-                        ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(longitudeBox);
-                        ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(linkX);
-                        ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(linkY);
+                        if (ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Count > 0)
+                        {
+                            var latitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[0];
+                            latitudeBox.SetValues(data[13], data[14], false);
+                            var longitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[1];
+                            longitudeBox.SetValues(data[15], data[16], false);
+                            var linkX = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[2];
+                            linkX.SetURL(data[17], "Bing");
+                            var linkY = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[3];
+                            linkY.SetURL(data[18], "Google");
+                        }
+                        else
+                        {
+                            var latitudeBox = new TextboxInfo(data[13], data[14], false);
+                            var longitudeBox = new TextboxInfo(data[15], data[16], false);
+                            var linkX = new LinkTextBox(data[17], "Bing");
+                            var linkY = new LinkTextBox(data[18], "Google");
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(latitudeBox);
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(longitudeBox);
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(linkX);
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(linkY);
+                        }
                     }
                 }
                 else
@@ -124,6 +127,8 @@ namespace PicView.UILogic
                     ConfigureWindows.GetImageInfoWindow.AspectRatioBox.Text = string.Empty;
 
                     rating = 0;
+
+                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Clear();
                 }
 
                 UpdateStars();

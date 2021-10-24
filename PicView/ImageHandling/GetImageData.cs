@@ -88,6 +88,17 @@ namespace PicView.ImageHandling
                 ratioText = $"{firstRatio}:{secondRatio} ({Application.Current.Resources["Portrait"]})";
             }
 
+            string resolution = source.bitmapSource.PixelWidth + " x " + source.bitmapSource.PixelHeight + " " + Application.Current.Resources["Pixels"];
+
+            string megaPixels = ((float)source.bitmapSource.PixelHeight * source.bitmapSource.PixelWidth / 1000000)
+                    .ToString("0.##", CultureInfo.CurrentCulture) + " " + Application.Current.Resources["MegaPixels"];
+
+            string printSizeCm = cmWidth.ToString("0.##", CultureInfo.CurrentCulture) + " x " + cmHeight.ToString("0.##", CultureInfo.CurrentCulture)
+                    + " " + Application.Current.Resources["Centimeters"];
+
+            string printSizeInch = inchesWidth.ToString("0.##", CultureInfo.CurrentCulture) + " x " + inchesHeight.ToString("0.##", CultureInfo.CurrentCulture)
+                    + " " + Application.Current.Resources["Inches"];
+
             object bitdepth, stars;
             string dpi = String.Empty;
 
@@ -101,56 +112,16 @@ namespace PicView.ImageHandling
             string googleLink = String.Empty;
             string bingLink = String.Empty;
 
-            try
+
+            var so = ShellObject.FromParsingName(fileInfo.FullName);
+            bitdepth = so.Properties.GetProperty(SystemProperties.System.Image.BitDepth).ValueAsObject;
+            stars = so.Properties.GetProperty(SystemProperties.System.Rating).ValueAsObject;
+
+            var dpiX = so.Properties.GetProperty(SystemProperties.System.Image.HorizontalResolution).ValueAsObject;
+            var dpiY = so.Properties.GetProperty(SystemProperties.System.Image.VerticalResolution).ValueAsObject;
+            if (dpiX is not null && dpiY is not null)
             {
-                var so = ShellObject.FromParsingName(fileInfo.FullName);
-                bitdepth = so.Properties.GetProperty(SystemProperties.System.Image.BitDepth).ValueAsObject;
-                stars = so.Properties.GetProperty(SystemProperties.System.Rating).ValueAsObject;
-
-                var magickImage = new MagickImage(fileInfo);
-                var exifData = magickImage.GetExifProfile();
-                magickImage.Dispose();
-
-                if (exifData is null)
-                {
-                    var dpiX = so.Properties.GetProperty(SystemProperties.System.Image.HorizontalResolution).ValueAsObject;
-                    var dpiY = so.Properties.GetProperty(SystemProperties.System.Image.VerticalResolution).ValueAsObject;
-                    dpi = Math.Round((double)dpiX) + " x " + Math.Round((double)dpiY) + " " + Application.Current.Resources["Dpi"];
-                }
-                else
-                {
-                    var dpiX = exifData.GetValue(ExifTag.XResolution);
-                    var dpiY = exifData.GetValue(ExifTag.YResolution);
-
-                    if (dpiX is not null && dpiY is not null)
-                    {
-                        dpi = dpiX.Value + " x " + dpiY.Value + " " + Application.Current.Resources["Dpi"];
-                    }
-
-                    latitude = so.Properties.GetProperty(SystemProperties.System.GPS.Latitude).Description.DisplayName;
-                    longitude = so.Properties.GetProperty(SystemProperties.System.GPS.Longitude).Description.DisplayName;
-
-                    var gpsLong = exifData.GetValue(ExifTag.GPSLongitude);
-                    var gpsLongRef = exifData.GetValue(ExifTag.GPSLongitudeRef);
-                    var gpsLatitude = exifData.GetValue(ExifTag.GPSLatitude);
-                    var gpsLatitudeRef = exifData.GetValue(ExifTag.GPSLatitudeRef);
-
-                    if (gpsLong is not null && gpsLongRef is not null && gpsLatitude is not null && gpsLatitudeRef is not null)
-                    {
-                        latitudeValue = GetCoordinates(gpsLatitudeRef.ToString(), gpsLatitude.Value).ToString();
-                        longitudeValue = GetCoordinates(gpsLongRef.ToString(), gpsLong.Value).ToString();
-
-                        googleLink = @"https://www.google.com/maps/search/?api=1&query=" + latitudeValue + "," + longitudeValue;
-                        bingLink = @"https://bing.com/maps/default.aspx?cp=" + latitudeValue + "~" + longitudeValue + "&style=o&lvl=1&dir=0&scene=1140291";
-                    }
-                }
-
-                so.Dispose();
-            }
-            catch (Exception)
-            {
-                bitdepth = string.Empty;
-                stars = string.Empty;
+                dpi = Math.Round((double)dpiX) + " x " + Math.Round((double)dpiY) + " " + Application.Current.Resources["Dpi"];
             }
 
             if (bitdepth == null)
@@ -163,6 +134,62 @@ namespace PicView.ImageHandling
                 stars = string.Empty;
             }
 
+            var magickImage = new MagickImage();
+            try
+            {
+                magickImage.Read(fileInfo);
+            }
+            catch (Exception)
+            {
+                return new string[] {
+                        name,
+                        directoryname,
+                        fullname,
+                        creationtime,
+                        lastwritetime,
+
+                        resolution,
+
+                        dpi,
+
+                        bitdepth.ToString(),
+
+                        megaPixels,
+
+                        printSizeCm,
+                        printSizeInch,
+
+                        ratioText,
+
+                        stars.ToString(),
+                    };
+            }
+
+            var exifData = magickImage.GetExifProfile();
+            magickImage.Dispose();
+
+            if (exifData is not null)
+            {
+                latitude = so.Properties.GetProperty(SystemProperties.System.GPS.Latitude).Description.DisplayName;
+                longitude = so.Properties.GetProperty(SystemProperties.System.GPS.Longitude).Description.DisplayName;
+
+                var gpsLong = exifData.GetValue(ExifTag.GPSLongitude);
+                var gpsLongRef = exifData.GetValue(ExifTag.GPSLongitudeRef);
+                var gpsLatitude = exifData.GetValue(ExifTag.GPSLatitude);
+                var gpsLatitudeRef = exifData.GetValue(ExifTag.GPSLatitudeRef);
+
+                if (gpsLong is not null && gpsLongRef is not null && gpsLatitude is not null && gpsLatitudeRef is not null)
+                {
+                    latitudeValue = GetCoordinates(gpsLatitudeRef.ToString(), gpsLatitude.Value).ToString();
+                    longitudeValue = GetCoordinates(gpsLongRef.ToString(), gpsLong.Value).ToString();
+
+                    googleLink = @"https://www.google.com/maps/search/?api=1&query=" + latitudeValue + "," + longitudeValue;
+                    bingLink = @"https://bing.com/maps/default.aspx?cp=" + latitudeValue + "~" + longitudeValue + "&style=o&lvl=1&dir=0&scene=1140291";
+                }
+            }
+
+            so.Dispose();
+
             return new string[]
             {
                 // Fileinfo
@@ -172,28 +199,17 @@ namespace PicView.ImageHandling
                 creationtime,
                 lastwritetime,
 
-                // Resolution
-                source.bitmapSource.PixelWidth + " x " + source.bitmapSource.PixelHeight + " " + Application.Current.Resources["Pixels"],
+                resolution,
 
-                // DPI
                 dpi,
 
-                // Bit dpeth
                 bitdepth.ToString(),
 
-                // Megapixels
-                ((float)source.bitmapSource.PixelHeight * source.bitmapSource.PixelWidth / 1000000)
-                    .ToString("0.##", CultureInfo.CurrentCulture) + " " + Application.Current.Resources["MegaPixels"],
+                megaPixels,
 
-                // Print size cm
-                cmWidth.ToString("0.##", CultureInfo.CurrentCulture) + " x " + cmHeight.ToString("0.##", CultureInfo.CurrentCulture)
-                    + " " + Application.Current.Resources["Centimeters"],
+                printSizeCm,
+                printSizeInch,
 
-                // Print size inch
-                inchesWidth.ToString("0.##", CultureInfo.CurrentCulture) + " x " + inchesHeight.ToString("0.##", CultureInfo.CurrentCulture)
-                    + " " + Application.Current.Resources["Inches"],
-
-                // Aspect ratio
                 ratioText,
 
                 stars.ToString(),

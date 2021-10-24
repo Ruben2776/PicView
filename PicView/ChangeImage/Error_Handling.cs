@@ -31,6 +31,9 @@ namespace PicView.ChangeImage
             {
                 Unload();
                 Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                ConfigureWindows.GetMainWindow.Title = (string)Application.Current.Resources["UnexpectedError"] + " - PicView";
+                ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["UnexpectedError"];
+                ConfigureWindows.GetMainWindow.TitleText.ToolTip = (string)Application.Current.Resources["UnexpectedError"];
             });
         }
 
@@ -111,7 +114,7 @@ namespace PicView.ChangeImage
                 Preloader.Clear();
 
                 FileInfo fileInfo = new FileInfo(path);
-                await FileLists.GetValuesAsync(fileInfo).ConfigureAwait(false);
+                await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
 
                 bool containerCheck = false;
 

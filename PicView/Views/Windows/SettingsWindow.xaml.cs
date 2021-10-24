@@ -73,7 +73,7 @@ namespace PicView.Views.Windows
                     if (Error_Handling.CheckOutOfRange()) { return; }
                     var preloadValue = Preloader.Get((ChangeImage.Navigation.Pics[Navigation.FolderIndex]));
                     if (preloadValue is null) { return; }
-                    await FileHandling.FileLists.GetValuesAsync(preloadValue.fileInfo).ConfigureAwait(false);
+                    await FileHandling.FileLists.RetrieveFilelistAsync(preloadValue.fileInfo).ConfigureAwait(false);
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                     {
                         SetTitle.SetTitleString(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight,
