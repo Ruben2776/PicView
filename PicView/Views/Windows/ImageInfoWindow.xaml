@@ -7,7 +7,7 @@
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
     Title="{StaticResource ImageInfo}"
     Width="806"
-    Height="344"
+    Height="388"
     d:Height="700"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
@@ -315,6 +315,29 @@
                                 VerticalAlignment="Center"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                                 FontSize="14"
+                                Text="{StaticResource LastAccessTime}"
+                                ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
+                            <TextBox
+                                x:Name="AccessedBox"
+                                Width="180"
+                                d:Text="Today, ‎October ‎25, ‎2021, ‏‎11:29 AM" />
+                            <Border
+                                Width="37"
+                                Height="35"
+                                Margin="10,0,0,0"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1">
+                                <uc:CopyButton x:Name="Accessedopy" ToolTip="{StaticResource Copy}" />
+                            </Border>
+                        </StackPanel>
+                        
+                        <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
+                            <TextBlock
+                                Width="130"
+                                Margin="0,0,10,0"
+                                VerticalAlignment="Center"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                                FontSize="14"
                                 Text="{StaticResource BitDepth}"
                                 ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                             <TextBox
@@ -341,19 +364,44 @@
                                 VerticalAlignment="Center"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                                 FontSize="14"
-                                Text="{StaticResource SizePx}"
+                                Text="{StaticResource Width}"
                                 ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                             <TextBox
-                                x:Name="SizePxBox"
+                                x:Name="WidthBox"
                                 Width="180"
-                                d:Text="1920 x 1080 pixels" />
+                                IsReadOnly="False"
+                                d:Text="1920" />
                             <Border
                                 Width="37"
                                 Height="35"
                                 Margin="10,0,0,0"
                                 BorderBrush="{StaticResource BorderBrush}"
                                 BorderThickness="1">
-                                <uc:CopyButton x:Name="SizePxCopy" ToolTip="{StaticResource Copy}" />
+                                <uc:CopyButton x:Name="WidthCopy" ToolTip="{StaticResource Copy}" />
+                            </Border>
+                        </StackPanel>
+                        
+                        <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
+                            <TextBlock
+                                Width="130"
+                                Margin="0,0,10,0"
+                                VerticalAlignment="Center"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                                FontSize="14"
+                                Text="{StaticResource Height}"
+                                ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
+                            <TextBox
+                                x:Name="HeightBox"
+                                Width="180"
+                                IsReadOnly="False"
+                                d:Text="1080" />
+                            <Border
+                                Width="37"
+                                Height="35"
+                                Margin="10,0,0,0"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1">
+                                <uc:CopyButton x:Name="HeightCopy" ToolTip="{StaticResource Copy}" />
                             </Border>
                         </StackPanel>
 

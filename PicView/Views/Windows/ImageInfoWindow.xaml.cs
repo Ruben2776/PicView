@@ -220,9 +220,14 @@ namespace PicView.Views.Windows
                 Clipboard.SetText(ModifiedBox.Text);
             };
 
-            SizePxCopy.TheButton.Click += delegate
+            WidthCopy.TheButton.Click += delegate
             {
-                Clipboard.SetText(SizePxBox.Text);
+                Clipboard.SetText(WidthBox.Text);
+            };
+
+            HeightCopy.TheButton.Click += delegate
+            {
+                Clipboard.SetText(HeightBox.Text);
             };
 
             SizeMpCopy.TheButton.Click += delegate

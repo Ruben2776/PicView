@@ -16,7 +16,7 @@ namespace PicView.ImageHandling
     {
         internal static Task<string[]?> RetrieveData(FileInfo? fileInfo) => Task.Run(() =>
         {
-            string name, directoryname, fullname, creationtime, lastwritetime;
+            string name, directoryname, fullname, creationtime, lastwritetime, lastaccesstime;
 
             if (fileInfo is null)
             {
@@ -25,6 +25,7 @@ namespace PicView.ImageHandling
                 fullname = string.Empty;
                 creationtime = string.Empty;
                 lastwritetime = string.Empty;
+                lastaccesstime = String.Empty;
             }
             else
             {
@@ -35,6 +36,7 @@ namespace PicView.ImageHandling
                     fullname = fileInfo.FullName;
                     creationtime = fileInfo.CreationTime.ToString(CultureInfo.CurrentCulture);
                     lastwritetime = fileInfo.LastWriteTime.ToString(CultureInfo.CurrentCulture);
+                    lastaccesstime = fileInfo.LastAccessTime.ToString(CultureInfo.CurrentCulture);
                 }
                 catch (Exception)
                 {
@@ -43,6 +45,7 @@ namespace PicView.ImageHandling
                     fullname = string.Empty;
                     creationtime = string.Empty;
                     lastwritetime = string.Empty;
+                    lastaccesstime = string.Empty;
                 }
             }
 
@@ -60,7 +63,7 @@ namespace PicView.ImageHandling
                 });
             }
 
-            if (image == null)
+            if (image == null || source == null)
             {
 #pragma warning disable CS8603 // Possible null reference return.
                 return null;
@@ -87,8 +90,6 @@ namespace PicView.ImageHandling
             {
                 ratioText = $"{firstRatio}:{secondRatio} ({Application.Current.Resources["Portrait"]})";
             }
-
-            string resolution = source.bitmapSource.PixelWidth + " x " + source.bitmapSource.PixelHeight + " " + Application.Current.Resources["Pixels"];
 
             string megaPixels = ((float)source.bitmapSource.PixelHeight * source.bitmapSource.PixelWidth / 1000000)
                     .ToString("0.##", CultureInfo.CurrentCulture) + " " + Application.Current.Resources["MegaPixels"];
@@ -147,12 +148,14 @@ namespace PicView.ImageHandling
                         fullname,
                         creationtime,
                         lastwritetime,
-
-                        resolution,
-
-                        dpi,
+                        lastaccesstime,
 
                         bitdepth.ToString(),
+
+                        source.bitmapSource.PixelWidth.ToString(),
+                        source.bitmapSource.PixelHeight.ToString(),
+
+                        dpi,
 
                         megaPixels,
 
@@ -198,12 +201,14 @@ namespace PicView.ImageHandling
                 fullname,
                 creationtime,
                 lastwritetime,
-
-                resolution,
-
-                dpi,
+                lastaccesstime,
 
                 bitdepth.ToString(),
+
+                source.bitmapSource.PixelWidth.ToString(),
+                source.bitmapSource.PixelHeight.ToString(),
+
+                dpi,
 
                 megaPixels,
 

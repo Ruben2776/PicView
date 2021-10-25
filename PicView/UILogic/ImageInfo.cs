@@ -58,41 +58,45 @@ namespace PicView.UILogic
 
                     ConfigureWindows.GetImageInfoWindow.ModifiedBox.Text = data[4];
 
-                    ConfigureWindows.GetImageInfoWindow.SizePxBox.Text = data[5];
+                    ConfigureWindows.GetImageInfoWindow.AccessedBox.Text = data[5];
 
-                    ConfigureWindows.GetImageInfoWindow.ResolutionBox.Text = data[6];
+                    ConfigureWindows.GetImageInfoWindow.BitDepthBox.Text = data[6];
 
-                    ConfigureWindows.GetImageInfoWindow.BitDepthBox.Text = data[7];
+                    ConfigureWindows.GetImageInfoWindow.WidthBox.Text = data[7];
 
-                    ConfigureWindows.GetImageInfoWindow.SizeMpBox.Text = data[8];
+                    ConfigureWindows.GetImageInfoWindow.HeightBox.Text = data[8];
 
-                    ConfigureWindows.GetImageInfoWindow.PrintSizeCmBox.Text = data[9];
+                    ConfigureWindows.GetImageInfoWindow.ResolutionBox.Text = data[9];
 
-                    ConfigureWindows.GetImageInfoWindow.PrintSizeInBox.Text = data[10];
+                    ConfigureWindows.GetImageInfoWindow.SizeMpBox.Text = data[10];
 
-                    ConfigureWindows.GetImageInfoWindow.AspectRatioBox.Text = data[11];
+                    ConfigureWindows.GetImageInfoWindow.PrintSizeCmBox.Text = data[11];
 
-                    rating = data[12];
+                    ConfigureWindows.GetImageInfoWindow.PrintSizeInBox.Text = data[12];
 
-                    if (data.Length > 12)
+                    ConfigureWindows.GetImageInfoWindow.AspectRatioBox.Text = data[13];
+
+                    rating = data[14];
+
+                    if (data.Length > 15)
                     {
                         if (ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Count > 0)
                         {
                             var latitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[0];
-                            latitudeBox.SetValues(data[13], data[14], false);
+                            latitudeBox.SetValues(data[15], data[16], false);
                             var longitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[1];
-                            longitudeBox.SetValues(data[15], data[16], false);
+                            longitudeBox.SetValues(data[17], data[18], false);
                             var linkX = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[2];
-                            linkX.SetURL(data[17], "Bing");
+                            linkX.SetURL(data[19], "Bing");
                             var linkY = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[3];
-                            linkY.SetURL(data[18], "Google");
+                            linkY.SetURL(data[20], "Google");
                         }
                         else
                         {
-                            var latitudeBox = new TextboxInfo(data[13], data[14], false);
-                            var longitudeBox = new TextboxInfo(data[15], data[16], false);
-                            var linkX = new LinkTextBox(data[17], "Bing");
-                            var linkY = new LinkTextBox(data[18], "Google");
+                            var latitudeBox = new TextboxInfo(data[15], data[16], false);
+                            var longitudeBox = new TextboxInfo(data[17], data[18], false);
+                            var linkX = new LinkTextBox(data[19], "Bing");
+                            var linkY = new LinkTextBox(data[20], "Google");
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(latitudeBox);
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(longitudeBox);
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(linkX);
@@ -112,7 +116,9 @@ namespace PicView.UILogic
 
                     ConfigureWindows.GetImageInfoWindow.ModifiedBox.Text =
 
-                    ConfigureWindows.GetImageInfoWindow.SizePxBox.Text =
+                    ConfigureWindows.GetImageInfoWindow.WidthBox.Text =
+
+                    ConfigureWindows.GetImageInfoWindow.HeightBox.Text =
 
                     ConfigureWindows.GetImageInfoWindow.ResolutionBox.Text =
 
