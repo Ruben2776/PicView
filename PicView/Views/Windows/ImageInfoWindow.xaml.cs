@@ -118,13 +118,13 @@ namespace PicView.Views.Windows
                 if (Height == startheight)
                 {
                     from = startheight;
-                    to = 700;
+                    to = 750;
                     expanded = false;
                 }
                 else
                 {
                     to = startheight;
-                    from = 700;
+                    from = 750;
                     expanded = true;
                 }
 

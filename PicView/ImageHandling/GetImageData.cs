@@ -2,13 +2,11 @@
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using PicView.ChangeImage;
-using PicView.UILogic;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media.Imaging;
 
 namespace PicView.ImageHandling
 {
@@ -49,34 +47,23 @@ namespace PicView.ImageHandling
                 }
             }
 
-            BitmapSource? image = null;
-            var source = Preloader.Get(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
-            if (source != null)
+            var preloadValue = Preloader.Get(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
+            while (preloadValue.isLoading)
             {
-                image = source.bitmapSource;
-            }
-            else
-            {
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
-                {
-                    image = ImageDecoder.GetRenderedBitmapFrame();
-                });
+                _ = Preloader.AddAsync(ChangeImage.Navigation.FolderIndex);
+
+                if (preloadValue == null) { return null; }
             }
 
-            if (image == null || source == null)
-            {
-#pragma warning disable CS8603 // Possible null reference return.
-                return null;
-#pragma warning restore CS8603 // Possible null reference return.
-            }
+            if (preloadValue == null) { return null; }
 
-            var inchesWidth = image.PixelWidth / image.DpiX;
-            var inchesHeight = image.PixelHeight / image.DpiY;
+            var inchesWidth = preloadValue.bitmapSource.PixelWidth / preloadValue.bitmapSource.DpiX;
+            var inchesHeight = preloadValue.bitmapSource.PixelHeight / preloadValue.bitmapSource.DpiY;
             var cmWidth = inchesWidth * 2.54;
             var cmHeight = inchesHeight * 2.54;
 
-            var firstRatio = image.PixelWidth / UILogic.TransformImage.ZoomLogic.GCD(image.PixelWidth, image.PixelHeight);
-            var secondRatio = image.PixelHeight / UILogic.TransformImage.ZoomLogic.GCD(image.PixelWidth, image.PixelHeight);
+            var firstRatio = preloadValue.bitmapSource.PixelWidth / UILogic.TransformImage.ZoomLogic.GCD(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight);
+            var secondRatio = preloadValue.bitmapSource.PixelHeight / UILogic.TransformImage.ZoomLogic.GCD(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight);
             string ratioText;
             if (firstRatio == secondRatio)
             {
@@ -91,7 +78,7 @@ namespace PicView.ImageHandling
                 ratioText = $"{firstRatio}:{secondRatio} ({Application.Current.Resources["Portrait"]})";
             }
 
-            string megaPixels = ((float)source.bitmapSource.PixelHeight * source.bitmapSource.PixelWidth / 1000000)
+            string megaPixels = ((float)preloadValue.bitmapSource.PixelHeight * preloadValue.bitmapSource.PixelWidth / 1000000)
                     .ToString("0.##", CultureInfo.CurrentCulture) + " " + Application.Current.Resources["MegaPixels"];
 
             string printSizeCm = cmWidth.ToString("0.##", CultureInfo.CurrentCulture) + " x " + cmHeight.ToString("0.##", CultureInfo.CurrentCulture)
@@ -104,6 +91,8 @@ namespace PicView.ImageHandling
             string dpi = String.Empty;
 
             // exif
+            string gps = String.Empty;
+
             string latitude = String.Empty;
             string latitudeValue = String.Empty;
 
@@ -113,6 +102,17 @@ namespace PicView.ImageHandling
             string googleLink = String.Empty;
             string bingLink = String.Empty;
 
+            string authors = String.Empty;
+            string authorsValue = String.Empty;
+
+            string dateTaken = String.Empty;
+            string dateTakenValue = String.Empty;
+
+            string programName = String.Empty;
+            string programNameValue = String.Empty;
+
+            string copyrightName = String.Empty;
+            string copyrightValue = String.Empty;
 
             var so = ShellObject.FromParsingName(fileInfo.FullName);
             bitdepth = so.Properties.GetProperty(SystemProperties.System.Image.BitDepth).ValueAsObject;
@@ -152,8 +152,8 @@ namespace PicView.ImageHandling
 
                         bitdepth.ToString(),
 
-                        source.bitmapSource.PixelWidth.ToString(),
-                        source.bitmapSource.PixelHeight.ToString(),
+                        preloadValue.bitmapSource.PixelWidth.ToString(),
+                        preloadValue.bitmapSource.PixelHeight.ToString(),
 
                         dpi,
 
@@ -171,11 +171,39 @@ namespace PicView.ImageHandling
             var exifData = magickImage.GetExifProfile();
             magickImage.Dispose();
 
+            latitude = so.Properties.GetProperty(SystemProperties.System.GPS.Latitude).Description.DisplayName;
+            longitude = so.Properties.GetProperty(SystemProperties.System.GPS.Longitude).Description.DisplayName;
+
+            var _author = so.Properties.GetProperty(SystemProperties.System.Author);
+            authors = _author.Description.DisplayName;
+            if (_author.ValueAsObject is not null)
+            {
+                authorsValue = _author.ValueAsObject.ToString();
+            }
+
+            var _dateTaken = so.Properties.GetProperty(SystemProperties.System.Photo.DateTaken);
+            dateTaken = _dateTaken.Description.DisplayName;
+            if (_dateTaken.ValueAsObject is not null)
+            {
+                dateTakenValue = _dateTaken.ValueAsObject.ToString();
+            }
+
+            var _program = so.Properties.GetProperty(SystemProperties.System.ApplicationName);
+            programName = _program.Description.DisplayName;
+            if (_program.ValueAsObject is not null)
+            {
+                programNameValue = _program.ValueAsObject.ToString();
+            }
+
+            var _copyright = so.Properties.GetProperty(SystemProperties.System.ApplicationName);
+            copyrightName = _copyright.Description.DisplayName;
+            if (_copyright.ValueAsObject is not null)
+            {
+                copyrightValue = _copyright.ValueAsObject.ToString();
+            }
+
             if (exifData is not null)
             {
-                latitude = so.Properties.GetProperty(SystemProperties.System.GPS.Latitude).Description.DisplayName;
-                longitude = so.Properties.GetProperty(SystemProperties.System.GPS.Longitude).Description.DisplayName;
-
                 var gpsLong = exifData.GetValue(ExifTag.GPSLongitude);
                 var gpsLongRef = exifData.GetValue(ExifTag.GPSLongitudeRef);
                 var gpsLatitude = exifData.GetValue(ExifTag.GPSLatitude);
@@ -205,8 +233,8 @@ namespace PicView.ImageHandling
 
                 bitdepth.ToString(),
 
-                source.bitmapSource.PixelWidth.ToString(),
-                source.bitmapSource.PixelHeight.ToString(),
+                preloadValue.bitmapSource.PixelWidth.ToString(),
+                preloadValue.bitmapSource.PixelHeight.ToString(),
 
                 dpi,
 
@@ -220,10 +248,14 @@ namespace PicView.ImageHandling
                 stars.ToString(),
 
                 latitude, latitudeValue,
-
                 longitude, longitudeValue,
+                bingLink, googleLink,
 
-                bingLink, googleLink
+                authors, authorsValue,
+                dateTaken, dateTakenValue,
+
+                programName, programNameValue,
+                copyrightName,copyrightValue,
             };
         });
 

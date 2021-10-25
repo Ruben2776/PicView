@@ -82,25 +82,58 @@ namespace PicView.UILogic
                     {
                         if (ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Count > 0)
                         {
-                            var latitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[0];
-                            latitudeBox.SetValues(data[15], data[16], false);
-                            var longitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[1];
-                            longitudeBox.SetValues(data[17], data[18], false);
-                            var linkX = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[2];
+                            var latitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[1];
+                            latitudeBox.SetValues(data[15], data[16], true);
+                            var longitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[2];
+                            longitudeBox.SetValues(data[17], data[18], true);
+
+                            var linkX = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[3];
                             linkX.SetURL(data[19], "Bing");
-                            var linkY = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[3];
+                            var linkY = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[4];
                             linkY.SetURL(data[20], "Google");
+
+                            var authorBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[6];
+                            authorBox.SetValues(data[21], data[22], true);
+                            var dateTakenBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[7];
+                            dateTakenBox.SetValues(data[23], data[24], true);
+
+                            var program = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[8];
+                            program.SetValues(data[25], data[26], true);
+                            var copyright = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[9];
+                            copyright.SetValues(data[27], data[28], true);
+
                         }
                         else
                         {
-                            var latitudeBox = new TextboxInfo(data[15], data[16], false);
-                            var longitudeBox = new TextboxInfo(data[17], data[18], false);
+                            var latitudeBox = new TextboxInfo(data[15], data[16], true);
+                            var longitudeBox = new TextboxInfo(data[17], data[18], true);
+
                             var linkX = new LinkTextBox(data[19], "Bing");
                             var linkY = new LinkTextBox(data[20], "Google");
+
+                            var authorBox = new TextboxInfo(data[21], data[22], true);
+                            var dateTakenBox = new TextboxInfo(data[23], data[24], true);
+
+                            var program = new TextboxInfo(data[25], data[26], true);
+                            var copyright = new TextboxInfo(data[27], data[28], true);
+
+                            var gps = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["GPS"];
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(gps);
+
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(latitudeBox);
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(longitudeBox);
+
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(linkX);
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(linkY);
+
+                            var origin = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["Origin"];
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(origin);
+
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(authorBox);
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(dateTakenBox);
+
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(program);
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(copyright);
                         }
                     }
                 }
