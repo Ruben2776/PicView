@@ -12,7 +12,7 @@ namespace PicView.ImageHandling
 {
     internal static class GetImageData
     {
-        internal static Task<string[]?> RetrieveData(FileInfo? fileInfo) => Task.Run(() =>
+        internal static Task<string[]?> RetrieveData(FileInfo? fileInfo) => Task.Run(async () =>
         {
             string name, directoryname, fullname, creationtime, lastwritetime, lastaccesstime;
 
@@ -48,9 +48,22 @@ namespace PicView.ImageHandling
             }
 
             var preloadValue = Preloader.Get(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
+            if (preloadValue is null)
+            {
+                await Preloader.AddAsync(ChangeImage.Navigation.FolderIndex).ConfigureAwait(false);
+
+                if (preloadValue is null)
+                {
+                    preloadValue = new Preloader.PreloadValue(null, false, fileInfo);
+                    await UILogic.ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                    {
+                        preloadValue.bitmapSource = ImageDecoder.GetRenderedBitmapFrame();
+                    });
+                }
+            }
             while (preloadValue.isLoading)
             {
-                _ = Preloader.AddAsync(ChangeImage.Navigation.FolderIndex);
+                await Task.Delay(200).ConfigureAwait(false);
 
                 if (preloadValue == null) { return null; }
             }
@@ -102,6 +115,12 @@ namespace PicView.ImageHandling
             string googleLink = String.Empty;
             string bingLink = String.Empty;
 
+            string title = String.Empty;
+            string titleValue = String.Empty;
+
+            string subject = String.Empty;
+            string subjectValue = String.Empty;
+
             string authors = String.Empty;
             string authorsValue = String.Empty;
 
@@ -120,6 +139,12 @@ namespace PicView.ImageHandling
             string colorRepresentation = String.Empty;
             string colorRepresentationValue = String.Empty;
 
+            string compression = String.Empty;
+            string compressionValue = String.Empty;
+
+            string compressionBits = String.Empty;
+            string compressionBitsValue = String.Empty;
+
             string cameraMaker = String.Empty;
             string cameroMakerValue = String.Empty;
 
@@ -131,6 +156,24 @@ namespace PicView.ImageHandling
 
             string exposure = String.Empty;
             string exposureValue = String.Empty;
+
+            string isoSpeed = String.Empty;
+            string isoSpeedValue = String.Empty;
+
+            string exposureBias = String.Empty;
+            string exposureBiasValue = String.Empty;
+
+            string focal = String.Empty;
+            string focalValue = String.Empty;
+
+            string maxAperture = String.Empty;
+            string maxApertureValue = String.Empty;
+
+            string flashMode = String.Empty;
+            string flashModeValue = String.Empty;
+
+            string flashEnergy = String.Empty;
+            string flashEnergyValue = String.Empty;
 
             var so = ShellObject.FromParsingName(fileInfo.FullName);
             bitdepth = so.Properties.GetProperty(SystemProperties.System.Image.BitDepth).ValueAsObject;
@@ -192,6 +235,20 @@ namespace PicView.ImageHandling
             latitude = so.Properties.GetProperty(SystemProperties.System.GPS.Latitude).Description.DisplayName;
             longitude = so.Properties.GetProperty(SystemProperties.System.GPS.Longitude).Description.DisplayName;
 
+            var _title = so.Properties.GetProperty(SystemProperties.System.Title);
+            title = _title.Description.DisplayName;
+            if (_title.ValueAsObject is not null)
+            {
+                titleValue = _title.ValueAsObject.ToString();
+            }
+
+            var _subject = so.Properties.GetProperty(SystemProperties.System.Subject);
+            subject = _subject.Description.DisplayName;
+            if (_subject.ValueAsObject is not null)
+            {
+                subjectValue = _subject.ValueAsObject.ToString();
+            }
+
             var _author = so.Properties.GetProperty(SystemProperties.System.Author);
             authors = _author.Description.DisplayName;
             if (_author.ValueAsObject is not null)
@@ -240,6 +297,9 @@ namespace PicView.ImageHandling
 
             colorRepresentation = so.Properties.GetProperty(SystemProperties.System.Image.ColorSpace).Description.DisplayName;
 
+            compression = so.Properties.GetProperty(SystemProperties.System.Image.Compression).Description.DisplayName;
+            compressionBits = so.Properties.GetProperty(SystemProperties.System.Image.CompressedBitsPerPixel).Description.DisplayName;
+
             var manu = so.Properties.GetProperty(SystemProperties.System.Photo.CameraManufacturer);
             cameraMaker = manu.Description.DisplayName;
             if (manu.ValueAsObject is not null)
@@ -263,6 +323,22 @@ namespace PicView.ImageHandling
                 exposureValue = expo.ValueAsObject.ToString();
             }
 
+            var iso = so.Properties.GetProperty(SystemProperties.System.Photo.ISOSpeed);
+            isoSpeed = iso.Description.DisplayName;
+            if (iso.ValueAsObject is not null)
+            {
+                isoSpeedValue = iso.ValueAsObject.ToString();
+            }
+
+            exposureBias = so.Properties.GetProperty(SystemProperties.System.Photo.ExposureBias).Description.DisplayName;
+
+            maxAperture = so.Properties.GetProperty(SystemProperties.System.Photo.MaxAperture).Description.DisplayName;
+
+            focal = so.Properties.GetProperty(SystemProperties.System.Photo.FocalLength).Description.DisplayName;
+
+            flashMode = so.Properties.GetProperty(SystemProperties.System.Photo.Flash).Description.DisplayName;
+
+            flashEnergy = so.Properties.GetProperty(SystemProperties.System.Photo.FlashEnergy).Description.DisplayName;
 
             if (exifData is not null)
             {
@@ -286,12 +362,53 @@ namespace PicView.ImageHandling
                     colorRepresentationValue = colorSpace.ToString();
                 }
 
+                var compr = exifData.GetValue(ExifTag.Compression);
+                if (compr is not null)
+                {
+                    compressionValue = compr.ToString();
+                }
+
+                var comprBits = exifData.GetValue(ExifTag.CompressedBitsPerPixel);
+                if (comprBits is not null)
+                {
+                    compressionBitsValue = comprBits.ToString();
+                }
+
                 var fNumber = exifData?.GetValue(ExifTag.FNumber);
                 if (fNumber is not null)
                 {
                     fstopValue = fNumber.ToString();
                 }
 
+                var bias = exifData.GetValue(ExifTag.ExposureBiasValue);
+                if (bias is not null)
+                {
+                    exposureBiasValue = bias.ToString();
+                }
+
+                var maxApart = exifData.GetValue(ExifTag.MaxApertureValue);
+                if (maxApart is not null)
+                {
+                    maxApertureValue = maxApart.ToString();
+                }
+
+                var fcal = exifData.GetValue(ExifTag.FocalLength);
+                if (fcal is not null)
+                {
+                    focalValue = fcal.ToString();
+                }
+
+                var flash = exifData.GetValue(ExifTag.Flash);
+                if (flash is not null)
+                {
+                    flashModeValue = flash.ToString();
+                }
+
+                var fenergy = exifData.GetValue(ExifTag.FlashEnergy);
+                if (fenergy is not null)
+                {
+                    flashEnergyValue = fenergy.ToString();
+                }
             }
 
             so.Dispose();
@@ -326,6 +443,9 @@ namespace PicView.ImageHandling
                 longitude, longitudeValue,
                 bingLink, googleLink,
 
+                title, titleValue,
+                subject, subjectValue,
+
                 authors, authorsValue,
                 dateTaken, dateTakenValue,
 
@@ -335,16 +455,33 @@ namespace PicView.ImageHandling
                 resolutionUnit, resolutionUnitValue,
                 colorRepresentation, colorRepresentationValue,
 
+                compression, compressionValue,
+                compressionBits, compressionBitsValue,
+
                 cameraMaker, cameroMakerValue,
                 cameraModel, cameroModelValue,
 
                 fstop, fstopValue,
                 exposure, exposureValue,
+
+                isoSpeed, isoSpeedValue,
+                exposureBias, exposureBiasValue,
+
+                maxAperture, maxApertureValue,
+                focal, focalValue,
+
+                flashMode, flashModeValue,
+                flashEnergy, flashEnergyValue,
             };
         });
 
         private static double GetCoordinates(string gpsRef, Rational[] rationals)
         {
+            if (rationals[0].Denominator == 0 || rationals[1].Denominator == 0 || rationals[2].Denominator == 0)
+            {
+                return 0;
+            }
+
             double degrees = rationals[0].Numerator / rationals[0].Denominator;
             double minutes = rationals[1].Numerator / rationals[1].Denominator;
             double seconds = rationals[2].Numerator / rationals[2].Denominator;

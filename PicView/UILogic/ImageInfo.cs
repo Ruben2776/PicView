@@ -82,40 +82,69 @@ namespace PicView.UILogic
                     {
                         if (ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Count > 0)
                         {
-                            var latitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[0];
+                            // 0 == GPS
+                            var latitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[1];
                             latitudeBox.SetValues(data[15], data[16], true);
-                            var longitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[1];
+                            var longitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[2];
                             longitudeBox.SetValues(data[17], data[18], true);
 
-                            var linkX = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[2];
+                            var linkX = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[3];
                             linkX.SetURL(data[19], "Bing");
-                            var linkY = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[3];
+                            var linkY = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[4];
                             linkY.SetURL(data[20], "Google");
 
-                            var authorBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[4];
-                            authorBox.SetValues(data[21], data[22], true);
-                            var dateTakenBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[5];
+                            // 5 == Origin
+                            var title = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[6];
+                            title.SetValues(data[21], data[22], true);
+                            var dateTakenBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[7];
                             dateTakenBox.SetValues(data[23], data[24], true);
 
-                            var program = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[6];
-                            program.SetValues(data[25], data[26], true);
-                            var copyright = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[7];
-                            copyright.SetValues(data[27], data[28], true);
+                            var authorBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[8];
+                            authorBox.SetValues(data[25], data[26], true);
+                            var subject = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[9];
+                            subject.SetValues(data[27], data[28], true);
 
-                            var resolutionUnit = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[8];
-                            resolutionUnit.SetValues(data[29], data[30], true);
-                            var colorRepresentation = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[9];
-                            colorRepresentation.SetValues(data[31], data[32], true);
+                            var program = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[10];
+                            program.SetValues(data[29], data[30], true);
+                            var copyright = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[11];
+                            copyright.SetValues(data[31], data[32], true);
 
-                            var cameraMaker = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[10];
-                            cameraMaker.SetValues(data[33], data[34], true);
-                            var cameraModel = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[11];
-                            cameraModel.SetValues(data[35], data[36], true);
+                            // 12 == Image
+                            var resolutionUnit = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[13];
+                            resolutionUnit.SetValues(data[33], data[34], true);
+                            var colorRepresentation = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[14];
+                            colorRepresentation.SetValues(data[35], data[36], true);
 
-                            var fstop = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[12];
-                            fstop.SetValues(data[37], data[38], true);
-                            var exposure = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[13];
-                            exposure.SetValues(data[39], data[40], true);
+                            var compression = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[15];
+                            compression.SetValues(data[37], data[38], true);
+                            var compressionBits = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[16];
+                            compressionBits.SetValues(data[39], data[40], true);
+
+                            // 17 == Camera
+                            var cameraMaker = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[18];
+                            cameraMaker.SetValues(data[41], data[42], true);
+                            var cameraModel = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[19];
+                            cameraModel.SetValues(data[43], data[44], true);
+
+                            var fstop = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[20];
+                            fstop.SetValues(data[45], data[46], true);
+                            var exposure = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[21];
+                            exposure.SetValues(data[47], data[48], true);
+
+                            var isoSpeed = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[22];
+                            isoSpeed.SetValues(data[49], data[50], true);
+                            var exposureBias = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[23];
+                            exposureBias.SetValues(data[51], data[52], true);
+
+                            var maxAperture = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[24];
+                            maxAperture.SetValues(data[53], data[54], true);
+                            var focal = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[25];
+                            focal.SetValues(data[55], data[56], true);
+
+                            var flashMode = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[26];
+                            flashMode.SetValues(data[57], data[58], true);
+                            var flashEnergy = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[27];
+                            flashEnergy.SetValues(data[59], data[60], true);
                         }
                         else
                         {
@@ -125,20 +154,38 @@ namespace PicView.UILogic
                             var linkX = new LinkTextBox(data[19], "Bing");
                             var linkY = new LinkTextBox(data[20], "Google");
 
-                            var authorBox = new TextboxInfo(data[21], data[22], true);
-                            var dateTakenBox = new TextboxInfo(data[23], data[24], true);
+                            var title = new TextboxInfo(data[21], data[22], true);
+                            var subject = new TextboxInfo(data[23], data[24], true);
 
-                            var program = new TextboxInfo(data[25], data[26], true);
-                            var copyright = new TextboxInfo(data[27], data[28], true);
+                            var authorBox = new TextboxInfo(data[25], data[26], true);
+                            var dateTakenBox = new TextboxInfo(data[27], data[28], true);
 
-                            var resolutionUnit = new TextboxInfo(data[29], data[30], true);
-                            var colorRepresentation = new TextboxInfo(data[31], data[32], true);
+                            var program = new TextboxInfo(data[29], data[30], true);
+                            var copyright = new TextboxInfo(data[31], data[32], true);
 
-                            var cameraMaker = new TextboxInfo(data[33], data[34], true);
-                            var cameraModel = new TextboxInfo(data[35], data[36], true);
+                            var resolutionUnit = new TextboxInfo(data[33], data[34], true);
+                            var colorRepresentation = new TextboxInfo(data[35], data[36], true);
 
-                            var fstop = new TextboxInfo(data[37], data[38], true);
-                            var exposure = new TextboxInfo(data[39], data[40], true);
+                            var compression = new TextboxInfo(data[37], data[38], true);
+                            var compressionBits = new TextboxInfo(data[39], data[40], true);
+
+                            var cameraMaker = new TextboxInfo(data[41], data[42], true);
+                            var cameraModel = new TextboxInfo(data[43], data[44], true);
+
+                            var fstop = new TextboxInfo(data[45], data[46], true);
+                            var exposure = new TextboxInfo(data[47], data[48], true);
+
+                            var isoSpeed = new TextboxInfo(data[49], data[50], true);
+                            var exposureBias = new TextboxInfo(data[51], data[52], true);
+
+                            var maxAperture = new TextboxInfo(data[53], data[54], true);
+                            var focal = new TextboxInfo(data[55], data[56], true);
+
+                            var flashMode = new TextboxInfo(data[57], data[58], true);
+                            var flashEnergy = new TextboxInfo(data[59], data[60], true);
+
+                            var gps = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["GPS"];
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(gps);
 
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(latitudeBox);
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(longitudeBox);
@@ -146,20 +193,44 @@ namespace PicView.UILogic
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(linkX);
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(linkY);
 
+                            var origin = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["Origin"];
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(origin);
+
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(title);
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(subject);
+
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(authorBox);
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(dateTakenBox);
 
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(program);
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(copyright);
 
+                            var image = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["Image"];
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(image);
+
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(resolutionUnit);
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(colorRepresentation);
+
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(compression);
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(compressionBits);
+
+                            var camera = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["Camera"];
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(camera);
 
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(cameraMaker);
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(cameraModel);
 
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(fstop);
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(exposure);
+
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(isoSpeed);
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(exposureBias);
+
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(maxAperture);
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(focal);
+
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(flashMode);
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(flashEnergy);
                         }
                     }
                 }
