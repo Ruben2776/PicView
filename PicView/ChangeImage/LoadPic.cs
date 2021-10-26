@@ -477,6 +477,11 @@ namespace PicView.ChangeImage
 
                     if (preloadValue == null)
                     {
+                        if (index != FolderIndex)
+                        {
+                            return;
+                        }
+
                         // Trying again fixes error when recovering from divide by zero
                         await Preloader.AddAsync(index).ConfigureAwait(false);
                         try
@@ -545,7 +550,7 @@ namespace PicView.ChangeImage
                 });
             }
 
-            _ = ImageInfo.UpdateValuesAsync(preloadValue.fileInfo).ConfigureAwait(false);
+            await ImageInfo.UpdateValuesAsync(preloadValue.fileInfo).ConfigureAwait(false);
 
             if (Pics?.Count > 1)
             {
@@ -556,7 +561,7 @@ namespace PicView.ChangeImage
 
                 if (FolderIndex == index)
                 {
-                    await Taskbar.Progress((double)index / Pics.Count).ConfigureAwait(false);
+                    _ = Taskbar.Progress((double)index / Pics.Count).ConfigureAwait(false);
                 }
             }
 
