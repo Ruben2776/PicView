@@ -114,6 +114,24 @@ namespace PicView.ImageHandling
             string copyrightName = String.Empty;
             string copyrightValue = String.Empty;
 
+            string resolutionUnit = String.Empty;
+            string resolutionUnitValue = String.Empty;
+
+            string colorRepresentation = String.Empty;
+            string colorRepresentationValue = String.Empty;
+
+            string cameraMaker = String.Empty;
+            string cameroMakerValue = String.Empty;
+
+            string cameraModel = String.Empty;
+            string cameroModelValue = String.Empty;
+
+            string fstop = String.Empty;
+            string fstopValue = String.Empty;
+
+            string exposure = String.Empty;
+            string exposureValue = String.Empty;
+
             var so = ShellObject.FromParsingName(fileInfo.FullName);
             bitdepth = so.Properties.GetProperty(SystemProperties.System.Image.BitDepth).ValueAsObject;
             stars = so.Properties.GetProperty(SystemProperties.System.Rating).ValueAsObject;
@@ -178,7 +196,18 @@ namespace PicView.ImageHandling
             authors = _author.Description.DisplayName;
             if (_author.ValueAsObject is not null)
             {
-                authorsValue = _author.ValueAsObject.ToString();
+                var authorsArray = (string[])_author.ValueAsObject;
+                for (int i = 0; i < authorsArray.Length; i++)
+                {
+                    if (i == 0)
+                    {
+                        authorsValue = authorsArray[0];
+                    }
+                    else
+                    {
+                        authorsValue += ", " + authorsArray[i];
+                    }
+                }
             }
 
             var _dateTaken = so.Properties.GetProperty(SystemProperties.System.Photo.DateTaken);
@@ -195,12 +224,45 @@ namespace PicView.ImageHandling
                 programNameValue = _program.ValueAsObject.ToString();
             }
 
-            var _copyright = so.Properties.GetProperty(SystemProperties.System.ApplicationName);
+            var _copyright = so.Properties.GetProperty(SystemProperties.System.Copyright);
             copyrightName = _copyright.Description.DisplayName;
             if (_copyright.ValueAsObject is not null)
             {
                 copyrightValue = _copyright.ValueAsObject.ToString();
             }
+
+            var _resolutionUnit = so.Properties.GetProperty(SystemProperties.System.Image.ResolutionUnit);
+            resolutionUnit = _resolutionUnit.Description.DisplayName;
+            if (_resolutionUnit.ValueAsObject is not null)
+            {
+                resolutionUnitValue = _resolutionUnit.ValueAsObject.ToString();
+            }
+
+            colorRepresentation = so.Properties.GetProperty(SystemProperties.System.Image.ColorSpace).Description.DisplayName;
+
+            var manu = so.Properties.GetProperty(SystemProperties.System.Photo.CameraManufacturer);
+            cameraMaker = manu.Description.DisplayName;
+            if (manu.ValueAsObject is not null)
+            {
+                cameroMakerValue = manu.ValueAsObject.ToString();
+            }
+
+            var cam = so.Properties.GetProperty(SystemProperties.System.Photo.CameraModel);
+            cameraModel = cam.Description.DisplayName;
+            if (cam.ValueAsObject is not null)
+            {
+                cameroModelValue = cam.ValueAsObject.ToString();
+            }
+
+            fstop = so.Properties.GetProperty(SystemProperties.System.Photo.FNumber).Description.DisplayName;
+
+            var expo = so.Properties.GetProperty(SystemProperties.System.Photo.ExposureTime);
+            exposure = expo.Description.DisplayName;
+            if (expo.ValueAsObject is not null)
+            {
+                exposureValue = expo.ValueAsObject.ToString();
+            }
+
 
             if (exifData is not null)
             {
@@ -217,6 +279,19 @@ namespace PicView.ImageHandling
                     googleLink = @"https://www.google.com/maps/search/?api=1&query=" + latitudeValue + "," + longitudeValue;
                     bingLink = @"https://bing.com/maps/default.aspx?cp=" + latitudeValue + "~" + longitudeValue + "&style=o&lvl=1&dir=0&scene=1140291";
                 }
+
+                var colorSpace = exifData.GetValue(ExifTag.ColorSpace);
+                if (colorSpace is not null)
+                {
+                    colorRepresentationValue = colorSpace.ToString();
+                }
+
+                var fNumber = exifData?.GetValue(ExifTag.FNumber);
+                if (fNumber is not null)
+                {
+                    fstopValue = fNumber.ToString();
+                }
+
             }
 
             so.Dispose();
@@ -256,6 +331,15 @@ namespace PicView.ImageHandling
 
                 programName, programNameValue,
                 copyrightName,copyrightValue,
+
+                resolutionUnit, resolutionUnitValue,
+                colorRepresentation, colorRepresentationValue,
+
+                cameraMaker, cameroMakerValue,
+                cameraModel, cameroModelValue,
+
+                fstop, fstopValue,
+                exposure, exposureValue,
             };
         });
 
