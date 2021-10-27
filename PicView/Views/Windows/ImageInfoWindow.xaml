@@ -593,7 +593,7 @@
                         </Border>
                         <WrapPanel 
                             x:Name="ExifParent"
-                            Margin="10,5,10,0"
+                            Margin="10,5,10,5"
                             Orientation="Horizontal"
                             HorizontalAlignment="Center">
 

@@ -14,6 +14,11 @@ namespace PicView.ImageHandling
     {
         internal static Task<string[]?> RetrieveData(FileInfo? fileInfo) => Task.Run(async () =>
         {
+            if (fileInfo is not null && ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex] != fileInfo.FullName)
+            {
+                return null;
+            }
+
             string name, directoryname, fullname, creationtime, lastwritetime, lastaccesstime;
 
             if (fileInfo is null)
@@ -112,6 +117,9 @@ namespace PicView.ImageHandling
             string longitude = String.Empty;
             string longitudeValue = String.Empty;
 
+            string altitude = String.Empty;
+            string altitudeValue = String.Empty;
+
             string googleLink = String.Empty;
             string bingLink = String.Empty;
 
@@ -175,6 +183,12 @@ namespace PicView.ImageHandling
             string flashEnergy = String.Empty;
             string flashEnergyValue = String.Empty;
 
+            string flength35 = String.Empty;
+            string flength35Value = String.Empty;
+
+            string meteringMode = String.Empty;
+            string meteringModeValue = String.Empty;
+
             var so = ShellObject.FromParsingName(fileInfo.FullName);
             bitdepth = so.Properties.GetProperty(SystemProperties.System.Image.BitDepth).ValueAsObject;
             stars = so.Properties.GetProperty(SystemProperties.System.Rating).ValueAsObject;
@@ -234,6 +248,7 @@ namespace PicView.ImageHandling
 
             latitude = so.Properties.GetProperty(SystemProperties.System.GPS.Latitude).Description.DisplayName;
             longitude = so.Properties.GetProperty(SystemProperties.System.GPS.Longitude).Description.DisplayName;
+            altitude = so.Properties.GetProperty(SystemProperties.System.GPS.Altitude).Description.DisplayName;
 
             var _title = so.Properties.GetProperty(SystemProperties.System.Title);
             title = _title.Description.DisplayName;
@@ -330,6 +345,8 @@ namespace PicView.ImageHandling
                 isoSpeedValue = iso.ValueAsObject.ToString();
             }
 
+            meteringMode = so.Properties.GetProperty(SystemProperties.System.Photo.MeteringMode).Description.DisplayName;
+
             exposureBias = so.Properties.GetProperty(SystemProperties.System.Photo.ExposureBias).Description.DisplayName;
 
             maxAperture = so.Properties.GetProperty(SystemProperties.System.Photo.MaxAperture).Description.DisplayName;
@@ -339,6 +356,13 @@ namespace PicView.ImageHandling
             flashMode = so.Properties.GetProperty(SystemProperties.System.Photo.Flash).Description.DisplayName;
 
             flashEnergy = so.Properties.GetProperty(SystemProperties.System.Photo.FlashEnergy).Description.DisplayName;
+
+            var f35 = so.Properties.GetProperty(SystemProperties.System.Photo.FocalLengthInFilm);
+            flength35 = f35.Description.DisplayName;
+            if (f35.ValueAsObject is not null)
+            {
+                flength35Value = f35.ValueAsObject.ToString();
+            }
 
             if (exifData is not null)
             {
@@ -354,6 +378,11 @@ namespace PicView.ImageHandling
 
                     googleLink = @"https://www.google.com/maps/search/?api=1&query=" + latitudeValue + "," + longitudeValue;
                     bingLink = @"https://bing.com/maps/default.aspx?cp=" + latitudeValue + "~" + longitudeValue + "&style=o&lvl=1&dir=0&scene=1140291";
+                }
+                var gpsAltitude = exifData?.GetValue(ExifTag.GPSAltitude);
+                if (gpsAltitude is not null)
+                {
+                    altitudeValue = gpsAltitude.Value.ToString();
                 }
 
                 var colorSpace = exifData.GetValue(ExifTag.ColorSpace);
@@ -409,6 +438,12 @@ namespace PicView.ImageHandling
                 {
                     flashEnergyValue = fenergy.ToString();
                 }
+
+                var metering = exifData.GetValue(ExifTag.MeteringMode);
+                if (metering is not null)
+                {
+                    meteringModeValue = metering.ToString();
+                }
             }
 
             so.Dispose();
@@ -442,6 +477,7 @@ namespace PicView.ImageHandling
                 latitude, latitudeValue,
                 longitude, longitudeValue,
                 bingLink, googleLink,
+                altitude, altitudeValue,
 
                 title, titleValue,
                 subject, subjectValue,
@@ -468,10 +504,14 @@ namespace PicView.ImageHandling
                 exposureBias, exposureBiasValue,
 
                 maxAperture, maxApertureValue,
+
                 focal, focalValue,
+                flength35, flength35Value,
 
                 flashMode, flashModeValue,
                 flashEnergy, flashEnergyValue,
+
+                meteringMode, meteringModeValue
             };
         });
 
