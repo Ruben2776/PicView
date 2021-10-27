@@ -458,7 +458,10 @@ namespace PicView.ChangeImage
                     preloadValue = await CheckLoadingAsync(preloadValue, index).ConfigureAwait(false);
                     if (preloadValue is null)
                     {
-                        await Error_Handling.UnexpectedError().ConfigureAwait(false);
+                        if (FolderIndex == index)
+                        {
+                            await Error_Handling.UnexpectedError().ConfigureAwait(false);
+                        }
                         return;
                     }
                 }
@@ -471,32 +474,29 @@ namespace PicView.ChangeImage
                     }
                     catch (Exception)
                     {
-                        await Error_Handling.UnexpectedError().ConfigureAwait(false);
+                        if (FolderIndex == index)
+                        {
+                            await Error_Handling.UnexpectedError().ConfigureAwait(false);
+                        }
                         return;
                     }
 
                     if (preloadValue == null)
                     {
-                        if (index != FolderIndex)
+                        if (index == FolderIndex)
                         {
-                            return;
-                        }
-
-                        // Trying again fixes error when recovering from divide by zero
-                        await Preloader.AddAsync(index).ConfigureAwait(false);
-                        try
-                        {
+                            // Trying again fixes error when recovering from divide by zero
+                            await Preloader.AddAsync(index).ConfigureAwait(false);
                             preloadValue = Preloader.Get(Navigation.Pics[index]);
                         }
-                        catch (Exception)
-                        {
-                            await Error_Handling.UnexpectedError().ConfigureAwait(false);
-                            return;
-                        }
+                        else { return; }
 
                         if (preloadValue == null)
                         {
-                            await Error_Handling.UnexpectedError().ConfigureAwait(false);
+                            if (FolderIndex == index)
+                            {
+                                await Error_Handling.UnexpectedError().ConfigureAwait(false);
+                            }
                             return;
                         }
                     }
@@ -504,7 +504,10 @@ namespace PicView.ChangeImage
                     preloadValue = await CheckLoadingAsync(preloadValue, index).ConfigureAwait(false);
                     if (preloadValue == null)
                     {
-                        await Error_Handling.UnexpectedError().ConfigureAwait(false);
+                        if (FolderIndex == index)
+                        {
+                            await Error_Handling.UnexpectedError().ConfigureAwait(false);
+                        }
                         return;
                     }
                 }
