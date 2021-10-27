@@ -154,6 +154,47 @@ namespace PicView.UILogic
 
                             var meteringMode = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[30];
                             meteringMode.SetValues(data[65], data[66], true);
+
+                            // 31 == Film
+                            var lensmaker = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[32];
+                            lensmaker.SetValues(data[67], data[68], true);
+                            var lensmodel = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[33];
+                            lensmodel.SetValues(data[69], data[70], true);
+
+                            var flashManufacturer = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[34];
+                            flashManufacturer.SetValues(data[71], data[72], true);
+                            var flashModel = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[35];
+                            flashModel.SetValues(data[73], data[74], true);
+
+                            var camSerialNumber = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[36];
+                            camSerialNumber.SetValues(data[75], data[76], true);
+
+                            var contrast = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[37];
+                            contrast.SetValues(data[77], data[78], true);
+                            var brightness = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[38];
+                            brightness.SetValues(data[79], data[80], true);
+
+                            var lightSource = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[39];
+                            lightSource.SetValues(data[81], data[82], true);
+
+                            var exposureProgram = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[40];
+                            exposureProgram.SetValues(data[83], data[84], true);
+
+                            var saturation = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[41];
+                            saturation.SetValues(data[85], data[86], true);
+                            var sharpness = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[42];
+                            sharpness.SetValues(data[87], data[88], true);
+
+                            var whiteBalance = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[43];
+                            whiteBalance.SetValues(data[89], data[90], true);
+                            var photometricInterpolation = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[44];
+                            photometricInterpolation.SetValues(data[91], data[92], true);
+
+                            var digitalZoom = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[45];
+                            digitalZoom.SetValues(data[93], data[94], true);
+
+                            var exifversion = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[46];
+                            exifversion.SetValues(data[95], data[96], true);
                         }
                         else
                         {
@@ -198,6 +239,32 @@ namespace PicView.UILogic
                             var flashEnergy = new TextboxInfo(data[63], data[64], true);
 
                             var metering = new TextboxInfo(data[65], data[66], true);
+
+                            var lensmaker = new TextboxInfo(data[67], data[68], true);
+                            var lensmodel = new TextboxInfo(data[69], data[70], true);
+
+                            var flashManufacturer = new TextboxInfo(data[71], data[72], true);
+                            var flashModel = new TextboxInfo(data[73], data[74], true);
+
+                            var camSerialNumber = new TextboxInfo(data[75], data[76], true);
+
+                            var contrast = new TextboxInfo(data[77], data[78], true);
+                            var brightness = new TextboxInfo(data[79], data[80], true);
+
+                            var lightSource = new TextboxInfo(data[81], data[82], true);
+
+                            var exposureProgram = new TextboxInfo(data[83], data[84], true);
+
+                            var saturation = new TextboxInfo(data[85], data[86], true);
+                            var sharpness = new TextboxInfo(data[87], data[88], true);
+
+                            var whiteBalance = new TextboxInfo(data[89], data[90], true);
+
+                            var photometricInterpolation = new TextboxInfo(data[91], data[92], true);
+
+                            var digitalZoom = new TextboxInfo(data[93], data[94], true);
+
+                            var exifversion = new TextboxInfo(data[95], data[96], true);
 
                             var gps = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["GPS"];
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(gps);
@@ -252,6 +319,35 @@ namespace PicView.UILogic
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(flashEnergy);
 
                             ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(metering);
+
+                            var film = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["Film"];
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(film);
+
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(lensmaker);
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(lensmodel);
+
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(flashManufacturer);
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(flashModel);
+
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(camSerialNumber);
+
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(contrast);
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(brightness);
+
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(lightSource);
+
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(exposureProgram);
+
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(saturation);
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(sharpness);
+
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(whiteBalance);
+
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(photometricInterpolation);
+
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(digitalZoom);
+
+                            ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(exifversion);
                         }
                     }
                 }

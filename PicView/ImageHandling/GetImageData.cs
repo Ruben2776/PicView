@@ -189,6 +189,51 @@ namespace PicView.ImageHandling
             string meteringMode = String.Empty;
             string meteringModeValue = String.Empty;
 
+            string lensManufacturer = String.Empty;
+            string lensManufacturerValue = String.Empty;
+
+            string lensmodel = String.Empty;
+            string lensmodelValue = String.Empty;
+
+            string flashManufacturer = String.Empty;
+            string flashManufacturerValue = String.Empty;
+
+            string flashModel = String.Empty;
+            string flashModelValue = String.Empty;
+
+            string camSerialNumber = String.Empty;
+            string camSerialNumberValue = String.Empty;
+
+            string contrast = String.Empty;
+            string contrastValue = String.Empty;
+
+            string brightness = String.Empty;
+            string brightnessValue = String.Empty;
+
+            string lightSource = String.Empty;
+            string lightSourceValue = String.Empty;
+
+            string exposureProgram = String.Empty;
+            string exposureProgramValue = String.Empty;
+
+            string saturation = String.Empty;
+            string saturationValue = String.Empty;
+
+            string sharpness = String.Empty;
+            string sharpnessValue = String.Empty;
+
+            string whiteBalance = String.Empty;
+            string whiteBalanceValue = String.Empty;
+
+            string photometricInterpolation = String.Empty;
+            string photometricInterpolationValue = String.Empty;
+
+            string digitalZoom = String.Empty;
+            string digitalZoomValue = String.Empty;
+
+            string exifversion = String.Empty;
+            string exifversionValue = String.Empty;
+
             var so = ShellObject.FromParsingName(fileInfo.FullName);
             bitdepth = so.Properties.GetProperty(SystemProperties.System.Image.BitDepth).ValueAsObject;
             stars = so.Properties.GetProperty(SystemProperties.System.Rating).ValueAsObject;
@@ -315,11 +360,11 @@ namespace PicView.ImageHandling
             compression = so.Properties.GetProperty(SystemProperties.System.Image.Compression).Description.DisplayName;
             compressionBits = so.Properties.GetProperty(SystemProperties.System.Image.CompressedBitsPerPixel).Description.DisplayName;
 
-            var manu = so.Properties.GetProperty(SystemProperties.System.Photo.CameraManufacturer);
-            cameraMaker = manu.Description.DisplayName;
-            if (manu.ValueAsObject is not null)
+            var camManu = so.Properties.GetProperty(SystemProperties.System.Photo.CameraManufacturer);
+            cameraMaker = camManu.Description.DisplayName;
+            if (camManu.ValueAsObject is not null)
             {
-                cameroMakerValue = manu.ValueAsObject.ToString();
+                cameroMakerValue = camManu.ValueAsObject.ToString();
             }
 
             var cam = so.Properties.GetProperty(SystemProperties.System.Photo.CameraModel);
@@ -327,6 +372,20 @@ namespace PicView.ImageHandling
             if (cam.ValueAsObject is not null)
             {
                 cameroModelValue = cam.ValueAsObject.ToString();
+            }
+
+            var flashManu = so.Properties.GetProperty(SystemProperties.System.Photo.FlashManufacturer);
+            flashManufacturer = flashManu.Description.DisplayName;
+            if (flashManu.ValueAsObject is not null)
+            {
+                flashManufacturerValue = flashManu.ValueAsObject.ToString();
+            }
+
+            var flashM = so.Properties.GetProperty(SystemProperties.System.Photo.FlashModel);
+            flashModel = flashM.Description.DisplayName;
+            if (flashM.ValueAsObject is not null)
+            {
+                flashModelValue = flashManu.ValueAsObject.ToString();
             }
 
             fstop = so.Properties.GetProperty(SystemProperties.System.Photo.FNumber).Description.DisplayName;
@@ -358,10 +417,62 @@ namespace PicView.ImageHandling
             flashEnergy = so.Properties.GetProperty(SystemProperties.System.Photo.FlashEnergy).Description.DisplayName;
 
             var f35 = so.Properties.GetProperty(SystemProperties.System.Photo.FocalLengthInFilm);
+
+            var serial = so.Properties.GetProperty(SystemProperties.System.Photo.CameraSerialNumber);
+            camSerialNumber = serial.Description.DisplayName;
+            if (serial.ValueAsObject is not null)
+            {
+                camSerialNumberValue = serial.ValueAsObject.ToString();
+            }
+
             flength35 = f35.Description.DisplayName;
             if (f35.ValueAsObject is not null)
             {
                 flength35Value = f35.ValueAsObject.ToString();
+            }
+
+            var lensm = so.Properties.GetProperty(SystemProperties.System.Photo.LensManufacturer);
+            lensManufacturer = lensm.Description.DisplayName;
+            if (lensm.ValueAsObject is not null)
+            {
+                lensManufacturerValue = lensm.ValueAsObject.ToString();
+            }
+
+            var _lensmodel = so.Properties.GetProperty(SystemProperties.System.Photo.LensModel);
+            lensmodel = _lensmodel.Description.DisplayName;
+            if (_lensmodel.ValueAsObject is not null)
+            {
+                lensmodelValue = _lensmodel.ValueAsObject.ToString();
+            }
+
+            contrast = so.Properties.GetProperty(SystemProperties.System.Photo.Contrast).Description.DisplayName;
+
+            var bright = so.Properties.GetProperty(SystemProperties.System.Photo.Brightness);
+            brightness = bright.Description.DisplayName;
+            if (bright.ValueAsObject is not null)
+            {
+                brightnessValue = bright.ValueAsObject.ToString();
+            }
+
+            lightSource = so.Properties.GetProperty(SystemProperties.System.Photo.LightSource).Description.DisplayName;
+
+            exposureProgram = so.Properties.GetProperty(SystemProperties.System.Photo.ExposureProgram).Description.DisplayName;
+
+            saturation = so.Properties.GetProperty(SystemProperties.System.Photo.Saturation).Description.DisplayName;
+
+            sharpness = so.Properties.GetProperty(SystemProperties.System.Photo.Sharpness).Description.DisplayName;
+
+            whiteBalance = so.Properties.GetProperty(SystemProperties.System.Photo.WhiteBalance).Description.DisplayName;
+
+            photometricInterpolation = so.Properties.GetProperty(SystemProperties.System.Photo.PhotometricInterpretation).Description.DisplayName;
+
+            digitalZoom = so.Properties.GetProperty(SystemProperties.System.Photo.DigitalZoom).Description.DisplayName;
+
+            var exifv = so.Properties.GetProperty(SystemProperties.System.Photo.EXIFVersion);
+            exifversion = exifv.Description.DisplayName;
+            if (exifv.ValueAsObject is not null)
+            {
+                exifversionValue = exifv.ValueAsObject.ToString();
             }
 
             if (exifData is not null)
@@ -388,61 +499,109 @@ namespace PicView.ImageHandling
                 var colorSpace = exifData.GetValue(ExifTag.ColorSpace);
                 if (colorSpace is not null)
                 {
-                    colorRepresentationValue = colorSpace.ToString();
+                    colorRepresentationValue = colorSpace.Value.ToString();
                 }
 
                 var compr = exifData.GetValue(ExifTag.Compression);
                 if (compr is not null)
                 {
-                    compressionValue = compr.ToString();
+                    compressionValue = compr.Value.ToString();
                 }
 
                 var comprBits = exifData.GetValue(ExifTag.CompressedBitsPerPixel);
                 if (comprBits is not null)
                 {
-                    compressionBitsValue = comprBits.ToString();
+                    compressionBitsValue = comprBits.Value.ToString();
                 }
 
                 var fNumber = exifData?.GetValue(ExifTag.FNumber);
                 if (fNumber is not null)
                 {
-                    fstopValue = fNumber.ToString();
+                    fstopValue = fNumber.Value.ToString();
                 }
 
                 var bias = exifData.GetValue(ExifTag.ExposureBiasValue);
                 if (bias is not null)
                 {
-                    exposureBiasValue = bias.ToString();
+                    exposureBiasValue = bias.Value.ToString();
                 }
 
                 var maxApart = exifData.GetValue(ExifTag.MaxApertureValue);
                 if (maxApart is not null)
                 {
-                    maxApertureValue = maxApart.ToString();
+                    maxApertureValue = maxApart.Value.ToString();
                 }
 
                 var fcal = exifData.GetValue(ExifTag.FocalLength);
                 if (fcal is not null)
                 {
-                    focalValue = fcal.ToString();
+                    focalValue = fcal.Value.ToString();
                 }
 
                 var flash = exifData.GetValue(ExifTag.Flash);
                 if (flash is not null)
                 {
-                    flashModeValue = flash.ToString();
+                    flashModeValue = flash.Value.ToString();
                 }
 
                 var fenergy = exifData.GetValue(ExifTag.FlashEnergy);
                 if (fenergy is not null)
                 {
-                    flashEnergyValue = fenergy.ToString();
+                    flashEnergyValue = fenergy.Value.ToString();
                 }
 
                 var metering = exifData.GetValue(ExifTag.MeteringMode);
                 if (metering is not null)
                 {
-                    meteringModeValue = metering.ToString();
+                    meteringModeValue = metering.Value.ToString();
+                }
+
+                var _contrast = exifData.GetValue(ExifTag.Contrast);
+                if (_contrast is not null)
+                {
+                    contrastValue = _contrast.Value.ToString();
+                }
+
+                var light = exifData.GetValue(ExifTag.LightSource);
+                if (light is not null)
+                {
+                    lightSourceValue = light.Value.ToString();
+                }
+
+                var expoPro = exifData.GetValue(ExifTag.ExposureProgram);
+                if (expoPro is not null)
+                {
+                    exposureProgramValue = expoPro.Value.ToString();
+                }
+
+                var satu = exifData.GetValue(ExifTag.Saturation);
+                if (satu is not null)
+                {
+                    saturationValue = satu.Value.ToString();
+                }
+
+                var sharp = exifData.GetValue(ExifTag.Sharpness);
+                if (sharp is not null)
+                {
+                    sharpnessValue = sharp.Value.ToString();
+                }
+
+                var whiteB = exifData.GetValue(ExifTag.WhiteBalance);
+                if (whiteB is not null)
+                {
+                    whiteBalanceValue = whiteB.Value.ToString();
+                }
+
+                var photometric = exifData.GetValue(ExifTag.PhotometricInterpretation);
+                if (photometric is not null)
+                {
+                    photometricInterpolationValue = photometric.Value.ToString();
+                }
+
+                var digizoom = exifData.GetValue(ExifTag.DigitalZoomRatio);
+                if (digizoom is not null)
+                {
+                    digitalZoomValue = digizoom.Value.ToString();
                 }
             }
 
@@ -511,7 +670,32 @@ namespace PicView.ImageHandling
                 flashMode, flashModeValue,
                 flashEnergy, flashEnergyValue,
 
-                meteringMode, meteringModeValue
+                meteringMode, meteringModeValue,
+
+                lensManufacturer, lensManufacturerValue,
+                lensmodel, lensmodelValue,
+
+                flashManufacturer, flashManufacturerValue,
+                flashModel, flashModelValue,
+
+                camSerialNumber, camSerialNumberValue,
+
+                contrast, contrastValue,
+                brightness, brightnessValue,
+
+                lightSource, lightSourceValue,
+
+                exposureProgram, exposureProgramValue,
+
+                saturation, saturationValue,
+                sharpness, sharpnessValue,
+
+                whiteBalance, whiteBalanceValue,
+                photometricInterpolation, photometricInterpolationValue,
+
+                digitalZoom, digitalZoomValue,
+
+                exifversion, exifversionValue,
             };
         });
 
