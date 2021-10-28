@@ -179,19 +179,19 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autoupdater.NET.Official" Version="1.7.0" />
-    <PackageReference Include="Magick.NET-Q16-x64" Version="8.3.3" />
-    <PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.8">
+    <PackageReference Include="Magick.NET-Q16-x64" Version="8.4.0" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.9">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="4.0.8" />
+    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="4.0.9" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
-    <PackageReference Include="SkiaSharp" Version="2.88.0-preview.150">
+    <PackageReference Include="SkiaSharp" Version="2.88.0-preview.152">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.0-preview.150" />
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.0-preview.152" />
     <PackageReference Include="WpfScreenHelper" Version="1.1.0" />
     <PackageReference Include="XamlAnimatedGif" Version="2.0.2" />
   </ItemGroup>
