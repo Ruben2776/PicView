@@ -119,10 +119,6 @@
     <system:String x:Key="CheckForUpdates">Auf Updates prüfen</system:String>
 
     <!--  Effects Window  -->
-    <system:String x:Key="HLSLPictureFX">HLSL Bild FX</system:String>
-    <system:String x:Key="ClickToAddShaderEffectToImage">Drücke den Knopf um einen spezifizierten Shader Effekt hinzuzufügen</system:String>
-    <system:String x:Key="UncheckToRemoveEffect">Uncheck um den Effekt zu entfernen</system:String>
-
     <system:String x:Key="NegativeColors">Negativ Farben</system:String>
     <system:String x:Key="BlackAndWhite">Schwarz &amp; Weiß</system:String>
     <system:String x:Key="ColorTone">Farbton</system:String>
@@ -241,7 +237,6 @@
     <system:String x:Key="Created">Erstellt</system:String>
     <system:String x:Key="Modified">Geändert</system:String>
     <system:String x:Key="Size">Größe</system:String>
-    <system:String x:Key="SizePx">Größe (px)</system:String>
     <system:String x:Key="Pixels">Pixel</system:String>
     <system:String x:Key="SizeMp">Größe (mp)</system:String>
     <system:String x:Key="MegaPixels">Megapixel</system:String>
@@ -257,6 +252,7 @@
     <system:String x:Key="Centimeters">Zentimeter</system:String>
     <system:String x:Key="Inches">Zoll</system:String>
     <system:String x:Key="BitDepth">Bit Tiefe</system:String>
+    <system:String x:Key="SizeTooltip">Enter desired size in pixels or percentage. Input 0 in either width or height to preserve aspect ratio.</system:String>
 
     <!--  Keyboard key names  -->
     <system:String x:Key="Delete">Löschen</system:String>

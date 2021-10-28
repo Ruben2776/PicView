@@ -5,7 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
-    Title="{StaticResource HLSLPictureFX}"
     Width="413"
     Height="483"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"

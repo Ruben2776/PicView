@@ -114,10 +114,6 @@
     <system:String x:Key="CheckForUpdates">업데이트 확인</system:String>
 
     <!--  Effects Window  -->
-    <system:String x:Key="HLSLPictureFX">HLSL 그림 FX</system:String>
-    <system:String x:Key="ClickToAddShaderEffectToImage">지정된 셰이더 효과를 이미지에 추가하려면 버튼을 클릭하십시오</system:String>
-    <system:String x:Key="UncheckToRemoveEffect">효과를 제거하려면 선택 취소</system:String>
-
     <system:String x:Key="NegativeColors">네거티브 컬러</system:String>
     <system:String x:Key="BlackAndWhite">검정 &amp; 흰색</system:String>
     <system:String x:Key="ColorTone">색조</system:String>
@@ -236,7 +232,6 @@
     <system:String x:Key="Created">생성</system:String>
     <system:String x:Key="Modified">수정</system:String>
     <system:String x:Key="Size">크기</system:String>
-    <system:String x:Key="SizePx">크기 (px)</system:String>
     <system:String x:Key="Pixels">픽셀</system:String>
     <system:String x:Key="SizeMp">크기 (mp)</system:String>
     <system:String x:Key="MegaPixels">메가픽셀</system:String>
@@ -252,6 +247,7 @@
     <system:String x:Key="Centimeters">센티미터</system:String>
     <system:String x:Key="Inches">인치</system:String>
     <system:String x:Key="BitDepth">비트 깊이</system:String>
+    <system:String x:Key="SizeTooltip">Enter desired size in pixels or percentage. Input 0 in either width or height to preserve aspect ratio</system:String>
 
     <!--  Keyboard key names  -->
     <system:String x:Key="Delete">Delete</system:String>

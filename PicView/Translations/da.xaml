@@ -119,10 +119,6 @@
     <system:String x:Key="CheckForUpdates">Søg efter opdateringer</system:String>
 
     <!--  Effects Window  -->
-    <system:String x:Key="HLSLPictureFX">HLSL Billede effekter</system:String>
-    <system:String x:Key="ClickToAddShaderEffectToImage">Klik på knappen for at tilføje den specificererede shader-effekt til billedet</system:String>
-    <system:String x:Key="UncheckToRemoveEffect">Fjern markeringen for at fjerne effekten</system:String>
-
     <system:String x:Key="NegativeColors">Negative Farver</system:String>
     <system:String x:Key="BlackAndWhite">Sort/hvid</system:String>
     <system:String x:Key="ColorTone">Farve Tone</system:String>
@@ -241,7 +237,6 @@
     <system:String x:Key="Created">Opretted</system:String>
     <system:String x:Key="Modified">Modificeret</system:String>
     <system:String x:Key="Size">Størrelse</system:String>
-    <system:String x:Key="SizePx">Størrelse (px)</system:String>
     <system:String x:Key="Pixels">pixels</system:String>
     <system:String x:Key="SizeMp">Størrelse (mp)</system:String>
     <system:String x:Key="MegaPixels">megapixels</system:String>
@@ -257,6 +252,7 @@
     <system:String x:Key="Centimeters">centimeter</system:String>
     <system:String x:Key="Inches">tommer</system:String>
     <system:String x:Key="BitDepth">Bit dybde</system:String>
+    <system:String x:Key="SizeTooltip">Indtast størrelse i pixels eller procent. Indtast 0 i højde eller bredde for at bevare størrelsesforholdet.</system:String>
 
     <!--  Keyboard key names  -->
     <system:String x:Key="Delete">Del</system:String>

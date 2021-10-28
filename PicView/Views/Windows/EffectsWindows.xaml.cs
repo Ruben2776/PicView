@@ -1,14 +1,14 @@
-﻿using PicView.Editing.HlslEffects;
+﻿using PicView.Animations;
+using PicView.Editing.HlslEffects;
 using PicView.FileHandling;
 using PicView.UILogic;
-using PicView.Animations;
 using PicView.UILogic.Sizing;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using static PicView.Animations.MouseOverAnimations;
 using System.Windows.Input;
+using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.Windows
 {
@@ -17,7 +17,7 @@ namespace PicView.Views.Windows
         public EffectsWindow()
         {
             InitializeComponent();
-            Title = Application.Current.Resources["HLSLPictureFX"] + " - PicView";
+            Title = Application.Current.Resources["ShaderEffects"] + " - PicView";
             MaxHeight = WindowSizing.MonitorInfo.WorkArea.Height;
             Width *= WindowSizing.MonitorInfo.DpiScaling;
             if (double.IsNaN(Width)) // Fixes if user opens window when loading from startup
