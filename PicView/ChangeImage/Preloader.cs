@@ -216,9 +216,9 @@ namespace PicView.ChangeImage
                 }
 
                 //Clean up infront
-                for (int i = (index + 1) + LoadBehind; i < ((index + 1) + LoadInfront * 2); i++)
+                for (int i = (index + 1) + LoadBehind; i < (index + 1) + LoadInfront; i++)
                 {
-                    if (Pics.Count == 0 || Sources.Count < LoadBehind + LoadInfront + 2) { return; }
+                    if (Pics.Count == 0) { return; }
                     Remove(i % Pics.Count);
                 }
             }
@@ -239,9 +239,9 @@ namespace PicView.ChangeImage
                 }
 
                 //Clean up behind
-                for (int i = index - LoadInfront * 2; i <= endPoint; i++)
+                for (int i = index - LoadInfront; i <= endPoint; i++)
                 {
-                    if (Pics.Count == 0 || Sources.Count < LoadBehind + LoadInfront + 2) { return; }
+                    if (Pics.Count == 0) { return; }
                     Remove(i % Pics.Count);
                 }
             }
