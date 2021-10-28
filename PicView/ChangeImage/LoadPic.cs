@@ -699,7 +699,7 @@ namespace PicView.ChangeImage
 
                 if (isGif)
                 {
-                    Size? imageSize = await ImageFunctions.ImageSizeAsync(file).ConfigureAwait(true);
+                    Size? imageSize = await ImageSizeFunctions.ImageSizeAsync(file).ConfigureAwait(true);
                     if (imageSize.HasValue)
                     {
                         FitImage(imageSize.Value.Width, imageSize.Value.Height);

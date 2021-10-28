@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -23,16 +22,9 @@ namespace PicView.Shortcuts
                     break;
 
                 case Key.W:
-                case Key.U:
+                case Key.Up:
                     if (scrollViewer == null) { return; }
                     scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - 10);
-                    break;
-
-                case Key.Q:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        Environment.Exit(0);
-                    }
                     break;
 
                 default: break;
