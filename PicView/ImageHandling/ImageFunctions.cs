@@ -2,7 +2,6 @@
 using PicView.ChangeImage;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
@@ -83,34 +82,6 @@ namespace PicView.ImageHandling
             };
             return imageOptimizer.LosslessCompress(file);
         });
-
-        internal static async Task<Size?> ImageSizeAsync(string file)
-        {
-            using var magick = new MagickImage();
-            FileInfo? fileInfo= new FileInfo(file);
-            if (fileInfo.Length > 2e+9)
-            {
-#if DEBUG
-                Trace.WriteLine("File size bigger than 2gb");
-#endif
-                return null;
-            }
-            try
-            {
-                await magick.ReadAsync(fileInfo).ConfigureAwait(false);
-            }
-#if DEBUG
-            catch (MagickException e)
-            {
-                Trace.WriteLine("ImageSize returned " + file + " null, \n" + e.Message);
-                return null;
-            }
-#else
-                catch (MagickException) { return null; }
-#endif
-
-            return new Size(magick.Width, magick.Height);
-        }
 
         internal static RenderTargetBitmap ImageErrorMessage()
         {

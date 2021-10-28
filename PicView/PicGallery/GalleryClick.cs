@@ -35,7 +35,7 @@ namespace PicView.PicGallery
             ConfigureWindows.GetMainWindow.MainImage.Source = z.img.Source;
             Border? border = null;
             Image? image = null;
-            var size = await ImageHandling.ImageFunctions.ImageSizeAsync(Pics[id]).ConfigureAwait(true);
+            var size = await ImageHandling.ImageSizeFunctions.ImageSizeAsync(Pics[id]).ConfigureAwait(true);
             if (size.HasValue)
             {
                 GalleryFunctions.IsHorizontalOpen = false;

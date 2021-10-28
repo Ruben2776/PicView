@@ -1,7 +1,6 @@
 ﻿using PicView.Animations;
 using PicView.ImageHandling;
 using PicView.UILogic;
-using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -21,9 +20,9 @@ namespace PicView.Views.Windows
             InitializeComponent();
             startheight = Height;
             extendedheight = 750;
-            ContentRendered += async (sender, e) =>
+            ContentRendered += async (_, _) =>
             {
-                Window_ContentRendered(sender, e);
+                Window_ContentRendered();
                 if (Pics.Count > FolderIndex)
                 {
                     await UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
@@ -77,9 +76,9 @@ namespace PicView.Views.Windows
             xGeo.Geometry = Geometry.Parse("F1 M512,512z M0,0z M98,190.06L237.78,353.18A24,24,0,0,0,274.22,353.18L414,190.06C427.34,174.49,416.28,150.44,395.78,150.44L116.18,150.44C95.6799999999999,150.44,84.6199999999999,174.49,97.9999999999999,190.06z");
         }
 
-        private void Window_ContentRendered(object sender, EventArgs e)
+        private void Window_ContentRendered()
         {
-            KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(null, e, this);
+            KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(Scroller, e, this);
 
             // Hack to deselect border on mouse click
             MouseLeftButtonDown += delegate
@@ -93,51 +92,42 @@ namespace PicView.Views.Windows
             CloseButton.TheButton.Click += delegate { Hide(); ConfigureWindows.GetMainWindow.Focus(); };
 
             // MinButton
-            MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
+            MinButton.TheButton.Click += (_, _) => SystemCommands.MinimizeWindow(this);
 
-            TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
-            MainBackground.MouseLeftButtonDown += delegate { DragMove(); };
+            TitleBar.MouseLeftButtonDown += (_, _) => DragMove();
+            MainBackground.MouseLeftButtonDown += (_, _) => DragMove();
 
             // FileProperties
-            FileProperties.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(FilePropertiesFill); };
-            FileProperties.MouseEnter += delegate { ButtonMouseOverAnim(FilePropertiesFill); };
-            FileProperties.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(FilePropertiesBrush); };
-            FileProperties.MouseLeave += delegate { ButtonMouseLeaveAnim(FilePropertiesFill); };
-            FileProperties.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(FilePropertiesBrush); };
-            FileProperties.Click += delegate
-            {
-                SystemIntegration.NativeMethods.ShowFileProperties(Pics[FolderIndex]);
-            };
+            FileProperties.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(FilePropertiesFill);
+            FileProperties.MouseEnter += (_, _) => ButtonMouseOverAnim(FilePropertiesFill);
+            FileProperties.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(FilePropertiesBrush);
+            FileProperties.MouseLeave += (_, _) => ButtonMouseLeaveAnim(FilePropertiesFill);
+            FileProperties.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(FilePropertiesBrush);
+            FileProperties.Click += (_, _) => SystemIntegration.NativeMethods.ShowFileProperties(Pics[FolderIndex]);
 
             // Delete
-            Delete.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(DeleteFill); };
-            Delete.MouseEnter += delegate { ButtonMouseOverAnim(DeleteFill); };
-            Delete.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(DeleteBrush); };
-            Delete.MouseLeave += delegate { ButtonMouseLeaveAnim(DeleteFill); };
-            Delete.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(DeleteBrush); };
-            Delete.Click += async delegate
-            {
-                await FileHandling.DeleteFiles.DeleteFileAsync(Keyboard.IsKeyDown(Key.LeftShift)).ConfigureAwait(false);
-            };
+            Delete.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(DeleteFill);
+            Delete.MouseEnter += (_, _) => ButtonMouseOverAnim(DeleteFill);
+            Delete.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(DeleteBrush);
+            Delete.MouseLeave += (_, _) => ButtonMouseLeaveAnim(DeleteFill);
+            Delete.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(DeleteBrush);
+            Delete.Click += async (_, _) => await FileHandling.DeleteFiles.DeleteFileAsync(Keyboard.IsKeyDown(Key.LeftShift)).ConfigureAwait(false);
 
             // OpenWith
-            OpenWith.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(OpenWithFill); };
-            OpenWith.MouseEnter += delegate { ButtonMouseOverAnim(OpenWithFill); };
-            OpenWith.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(OpenWithBrush); };
-            OpenWith.MouseLeave += delegate { ButtonMouseLeaveAnim(OpenWithFill); };
-            OpenWith.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(OpenWithBrush); };
-            OpenWith.Click += delegate { FileHandling.Open_Save.OpenWith(Pics[FolderIndex]); };
+            OpenWith.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(OpenWithFill);
+            OpenWith.MouseEnter += (_, _) => ButtonMouseOverAnim(OpenWithFill);
+            OpenWith.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(OpenWithBrush);
+            OpenWith.MouseLeave += (_, _) => ButtonMouseLeaveAnim(OpenWithFill);
+            OpenWith.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(OpenWithBrush);
+            OpenWith.Click += (_, _) => FileHandling.Open_Save.OpenWith(Pics[FolderIndex]);
 
             // ShowInFolder
-            ShowInFolder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ShowInFolderFill); };
-            ShowInFolder.MouseEnter += delegate { ButtonMouseOverAnim(ShowInFolderFill); };
-            ShowInFolder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ShowInFolderBrush); };
-            ShowInFolder.MouseLeave += delegate { ButtonMouseLeaveAnim(ShowInFolderFill); };
-            ShowInFolder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ShowInFolderBrush); };
-            ShowInFolder.Click += delegate
-            {
-                FileHandling.Open_Save.Open_In_Explorer();
-            };
+            ShowInFolder.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(ShowInFolderFill);
+            ShowInFolder.MouseEnter += (_, _) => ButtonMouseOverAnim(ShowInFolderFill);
+            ShowInFolder.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(ShowInFolderBrush);
+            ShowInFolder.MouseLeave += (_, _) => ButtonMouseLeaveAnim(ShowInFolderFill);
+            ShowInFolder.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(ShowInFolderBrush);
+            ShowInFolder.Click += (_, _) => FileHandling.Open_Save.Open_In_Explorer();
 
             // Optimize Image
             OptimizeImageButton.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(OptimizeImageFill);
@@ -156,7 +146,7 @@ namespace PicView.Views.Windows
 
             ExpandButton.Click += (_, _) => ExtendOrCollopase();
 
-            PreviewMouseWheel += (sender, e) =>
+            PreviewMouseWheel += (_, e) => // Collapse when scrolling down
             {
                 if (e.Delta < 0 && Height == startheight)
                 {
@@ -164,7 +154,7 @@ namespace PicView.Views.Windows
                 }
             };
 
-            TitleBar.MouseLeave += delegate { UpdateStars(); };
+            TitleBar.MouseLeave += (_, _) => UpdateStars();
 
             // Stars
             Star1.MouseLeftButtonDown += async delegate
@@ -172,45 +162,48 @@ namespace PicView.Views.Windows
                 await ImageFunctions.SetRating(1).ConfigureAwait(false);
                 await UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
             };
-            Star1.MouseEnter += delegate { UpdateStars(1); };
-            Star1.MouseLeave += delegate { UpdateStars(); };
+            Star1.MouseEnter += (_, _) => UpdateStars(1);
+            Star1.MouseLeave += (_, _) => UpdateStars();
 
             Star2.MouseLeftButtonDown += async delegate
             {
                 await ImageFunctions.SetRating(2).ConfigureAwait(false);
                 await UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
             };
-            Star2.MouseEnter += delegate { UpdateStars(2); };
-            Star2.MouseLeave += delegate { UpdateStars(); };
+            Star2.MouseEnter += (_, _) => UpdateStars(2);
+            Star2.MouseLeave += (_, _) => UpdateStars();
 
             Star3.MouseLeftButtonDown += async delegate
             {
                 await ImageFunctions.SetRating(3).ConfigureAwait(false);
                 await UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
             };
-            Star3.MouseEnter += delegate { UpdateStars(3); };
-            Star3.MouseLeave += delegate { UpdateStars(); };
+            Star3.MouseEnter += (_, _) => UpdateStars(3);
+            Star3.MouseLeave += (_, _) => UpdateStars();
 
             Star4.MouseLeftButtonDown += async delegate
             {
                 await ImageFunctions.SetRating(4).ConfigureAwait(false);
                 await UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
             };
-            Star4.MouseEnter += delegate { UpdateStars(4); };
-            Star4.MouseLeave += delegate { UpdateStars(); };
+            Star4.MouseEnter += (_, _) => UpdateStars(4);
+            Star4.MouseLeave += (_, _) => UpdateStars();
 
             Star5.MouseLeftButtonDown += async delegate
             {
                 await ImageFunctions.SetRating(5).ConfigureAwait(false);
                 await UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
             };
-            Star5.MouseEnter += delegate { UpdateStars(5); };
-            Star5.MouseLeave += delegate { UpdateStars(); };
+            Star5.MouseEnter += (_, _) => UpdateStars(5);
+            Star5.MouseLeave += (_, _) => UpdateStars();
 
             // FilenameBox
             FilenameBox.AcceptsReturn = false;
             FilenameBox.KeyUp += async (_, e) =>
-            await ImageInfo.RenameTask(e, FilenameBox, (Path.GetDirectoryName(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex])) + "/" + FilenameBox.Text + Path.GetExtension(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex])).ConfigureAwait(false);
+            await ImageInfo.RenameTask(
+                e,
+                FilenameBox,
+                (Path.GetDirectoryName(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex])) + "/" + FilenameBox.Text + Path.GetExtension(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex])).ConfigureAwait(false);
 
             // FolderBox
             FolderBox.AcceptsReturn = false;
@@ -220,65 +213,47 @@ namespace PicView.Views.Windows
             FullPathBox.AcceptsReturn = false;
             FullPathBox.KeyUp += async (_, e) => await ImageInfo.RenameTask(e, FullPathBox, FullPathBox.Text).ConfigureAwait(false);
 
-            FilenameCopy.TheButton.Click += delegate
+            // WidhtBox
+            WidthBox.AcceptsReturn = false;
+            WidthBox.KeyUp += async (_, e) =>
             {
-                Clipboard.SetText(FilenameBox.Text);
+                if (e.Key != System.Windows.Input.Key.Enter) { return; }
+                if (int.TryParse(WidthBox.Text, out var width) && int.TryParse(HeightBox.Text, out var height))
+                {
+                    var resize = await ImageSizeFunctions.ResizeImageAsync(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex], width, height).ConfigureAwait(false);
+                    if (resize)
+                    {
+                        await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);
+                    }
+                }
             };
 
-            FolderCopy.TheButton.Click += delegate
-            {
-                Clipboard.SetText(FolderBox.Text);
-            };
+            // HeightBox
+            HeightBox.AcceptsReturn = false;
 
-            FullpathCopy.TheButton.Click += delegate
-            {
-                Clipboard.SetText(FullPathBox.Text);
-            };
+            FilenameCopy.TheButton.Click += (_, _) => Clipboard.SetText(FilenameBox.Text);
 
-            CreatedCopy.TheButton.Click += delegate
-            {
-                Clipboard.SetText(CreatedBox.Text);
-            };
+            FolderCopy.TheButton.Click += (_, _) => Clipboard.SetText(FolderBox.Text);
 
-            ModifiedCopy.TheButton.Click += delegate
-            {
-                Clipboard.SetText(ModifiedBox.Text);
-            };
+            FullpathCopy.TheButton.Click += (_, _) => Clipboard.SetText(FullPathBox.Text);
 
-            WidthCopy.TheButton.Click += delegate
-            {
-                Clipboard.SetText(WidthBox.Text);
-            };
+            CreatedCopy.TheButton.Click += (_, _) => Clipboard.SetText(CreatedBox.Text);
 
-            HeightCopy.TheButton.Click += delegate
-            {
-                Clipboard.SetText(HeightBox.Text);
-            };
+            ModifiedCopy.TheButton.Click += (_, _) => Clipboard.SetText(ModifiedBox.Text);
 
-            SizeMpCopy.TheButton.Click += delegate
-            {
-                Clipboard.SetText(SizeMpBox.Text);
-            };
+            WidthCopy.TheButton.Click += (_, _) => Clipboard.SetText(WidthBox.Text);
 
-            DpiCopy.TheButton.Click += delegate
-            {
-                Clipboard.SetText(ResolutionBox.Text);
-            };
+            HeightCopy.TheButton.Click += (_, _) => Clipboard.SetText(HeightBox.Text);
 
-            PrintSizeCmCopy.TheButton.Click += delegate
-            {
-                Clipboard.SetText(PrintSizeCmBox.Text);
-            };
+            SizeMpCopy.TheButton.Click += (_, _) => Clipboard.SetText(SizeMpBox.Text);
 
-            PrintSizeInCopy.TheButton.Click += delegate
-            {
-                Clipboard.SetText(PrintSizeInBox.Text);
-            };
+            DpiCopy.TheButton.Click += (_, _) => Clipboard.SetText(ResolutionBox.Text);
 
-            AspectRatioCopy.TheButton.Click += delegate
-            {
-                Clipboard.SetText(AspectRatioBox.Text);
-            };
+            PrintSizeCmCopy.TheButton.Click += (_, _) => Clipboard.SetText(PrintSizeCmBox.Text);
+
+            PrintSizeInCopy.TheButton.Click += (_, _) => Clipboard.SetText(PrintSizeInBox.Text);
+
+            AspectRatioCopy.TheButton.Click += (_, _) => Clipboard.SetText(AspectRatioBox.Text);
         }
     }
 }
