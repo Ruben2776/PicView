@@ -133,7 +133,7 @@ namespace PicView.UILogic.TransformImage
                 {
                     newXproperty = maxX;
                 }
-                
+
                 if (isXOutOfBorder && newYproperty < maxY || isXOutOfBorder == false && newYproperty > maxY)
                 {
                     newYproperty = maxY;
@@ -160,7 +160,7 @@ namespace PicView.UILogic.TransformImage
         /// </summary>
         internal static void ResetZoom(bool animate = true)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Source == null 
+            if (ConfigureWindows.GetMainWindow.MainImage.Source == null
                 || scaleTransform == null
                 || translateTransform == null) { return; }
 
@@ -224,15 +224,15 @@ namespace PicView.UILogic.TransformImage
             switch (ZoomValue)
             {
                 case > 4:
-                    zoomSpeed = increment ? zoomSpeed+= 1.5 : zoomSpeed += 2;
+                    zoomSpeed += 1.5;
                     break;
                 case > 3.2:
-                    zoomSpeed = increment ? zoomSpeed += 1 : zoomSpeed += 1.5;
+                    zoomSpeed += 1;
                     break;
                 case > 1.6:
-                    zoomSpeed = increment ? zoomSpeed += .5 : zoomSpeed += 1;
+                    zoomSpeed += .5;
                     break;
-                    default: break;
+                default: break;
             }
 
             if (increment == false)
