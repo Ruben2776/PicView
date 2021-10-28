@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media.Imaging;
 
 namespace PicView.ImageHandling
 {
@@ -52,36 +53,52 @@ namespace PicView.ImageHandling
                 }
             }
 
-            var preloadValue = Preloader.Get(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
-            if (preloadValue is null)
-            {
-                await Preloader.AddAsync(ChangeImage.Navigation.FolderIndex).ConfigureAwait(false);
+            BitmapSource? bitmapSource = null;
 
+            if (ChangeImage.Navigation.Pics.Count > 0 && ChangeImage.Navigation.Pics.Count > ChangeImage.Navigation.FolderIndex)
+            {
+                var preloadValue = Preloader.Get(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
                 if (preloadValue is null)
                 {
-                    preloadValue = new Preloader.PreloadValue(null, false, fileInfo);
-                    await UILogic.ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                    await Preloader.AddAsync(ChangeImage.Navigation.FolderIndex).ConfigureAwait(false);
+
+                    if (preloadValue is null)
                     {
-                        preloadValue.bitmapSource = ImageDecoder.GetRenderedBitmapFrame();
-                    });
+                        preloadValue = new Preloader.PreloadValue(null, false, fileInfo);
+                        await UILogic.ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                        {
+                            preloadValue.bitmapSource = ImageDecoder.GetRenderedBitmapFrame();
+                        });
+                    }
                 }
-            }
-            while (preloadValue.isLoading)
-            {
-                await Task.Delay(200).ConfigureAwait(false);
+                while (preloadValue.isLoading)
+                {
+                    await Task.Delay(200).ConfigureAwait(false);
+
+                    if (preloadValue == null) { return null; }
+                }
 
                 if (preloadValue == null) { return null; }
+
+                bitmapSource = preloadValue.bitmapSource;
+            }
+            else
+            {
+                await UILogic.ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                {
+                    bitmapSource = ImageDecoder.GetRenderedBitmapFrame();
+                });
             }
 
-            if (preloadValue == null) { return null; }
+            if (bitmapSource is null) { return null; }
 
-            var inchesWidth = preloadValue.bitmapSource.PixelWidth / preloadValue.bitmapSource.DpiX;
-            var inchesHeight = preloadValue.bitmapSource.PixelHeight / preloadValue.bitmapSource.DpiY;
+            var inchesWidth = bitmapSource.PixelWidth / bitmapSource.DpiX;
+            var inchesHeight = bitmapSource.PixelHeight / bitmapSource.DpiY;
             var cmWidth = inchesWidth * 2.54;
             var cmHeight = inchesHeight * 2.54;
 
-            var firstRatio = preloadValue.bitmapSource.PixelWidth / UILogic.TransformImage.ZoomLogic.GCD(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight);
-            var secondRatio = preloadValue.bitmapSource.PixelHeight / UILogic.TransformImage.ZoomLogic.GCD(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight);
+            var firstRatio = bitmapSource.PixelWidth / UILogic.TransformImage.ZoomLogic.GCD(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+            var secondRatio = bitmapSource.PixelHeight / UILogic.TransformImage.ZoomLogic.GCD(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
             string ratioText;
             if (firstRatio == secondRatio)
             {
@@ -96,7 +113,7 @@ namespace PicView.ImageHandling
                 ratioText = $"{firstRatio}:{secondRatio} ({Application.Current.Resources["Portrait"]})";
             }
 
-            string megaPixels = ((float)preloadValue.bitmapSource.PixelHeight * preloadValue.bitmapSource.PixelWidth / 1000000)
+            string megaPixels = ((float)bitmapSource.PixelHeight * bitmapSource.PixelWidth / 1000000)
                     .ToString("0.##", CultureInfo.CurrentCulture) + " " + Application.Current.Resources["MegaPixels"];
 
             string printSizeCm = cmWidth.ToString("0.##", CultureInfo.CurrentCulture) + " x " + cmHeight.ToString("0.##", CultureInfo.CurrentCulture)
@@ -107,6 +124,34 @@ namespace PicView.ImageHandling
 
             object bitdepth, stars;
             string dpi = String.Empty;
+
+            if (fileInfo is null)
+            {
+                return new string[] {
+                        name,
+                        directoryname,
+                        fullname,
+                        creationtime,
+                        lastwritetime,
+                        lastaccesstime,
+
+                        "",
+
+                        bitmapSource.PixelWidth.ToString(),
+                        bitmapSource.PixelHeight.ToString(),
+
+                        dpi,
+
+                        megaPixels,
+
+                        printSizeCm,
+                        printSizeInch,
+
+                        ratioText,
+
+                        "0",
+                    };
+            }
 
             // exif
             string gps = String.Empty;
@@ -272,8 +317,8 @@ namespace PicView.ImageHandling
 
                         bitdepth.ToString(),
 
-                        preloadValue.bitmapSource.PixelWidth.ToString(),
-                        preloadValue.bitmapSource.PixelHeight.ToString(),
+                        bitmapSource.PixelWidth.ToString(),
+                        bitmapSource.PixelHeight.ToString(),
 
                         dpi,
 
@@ -619,8 +664,8 @@ namespace PicView.ImageHandling
 
                 bitdepth.ToString(),
 
-                preloadValue.bitmapSource.PixelWidth.ToString(),
-                preloadValue.bitmapSource.PixelHeight.ToString(),
+                bitmapSource.PixelWidth.ToString(),
+                bitmapSource.PixelHeight.ToString(),
 
                 dpi,
 
