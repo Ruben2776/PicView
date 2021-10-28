@@ -360,6 +360,7 @@ namespace PicView.ChangeImage
             {
                 SetLoadingString();
                 ChangeFolder(true);
+                UC.ToggleStartUpUC(true);
             });
 
             await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
