@@ -1,5 +1,4 @@
 ﻿using ImageMagick;
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -37,7 +36,7 @@ namespace PicView.ImageHandling
             return new Size(magick.Width, magick.Height);
         }
 
-        internal static async Task<bool> ResizeImageAsync(string file, int width, int height, Percentage? percentage = null) => await Task.Run(async () =>
+        internal static async Task<bool> ResizeImageAsync(string file, int width, int height, Percentage? percentage = null)
         {
             if (string.IsNullOrWhiteSpace(file)) { return false; }
             if (File.Exists(file) == false) { return false; }
@@ -49,24 +48,30 @@ namespace PicView.ImageHandling
                 ColorSpace = ColorSpace.Transparent
             };
 
-            FileStream? filestream = null;
             try
             {
-                filestream = new FileStream(file, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None, 4096, true);
+                await magick.ReadAsync(file).ConfigureAwait(false);
             }
-            catch (Exception e)
+            catch (MagickException e)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(ResizeImageAsync)} exception caught \n {e.Message}");
+                Trace.WriteLine($"{nameof(ResizeImageAsync)} magic read exception caught \n {e.Message}");
 #endif
                 return false;
             }
 
-            if (filestream is null) { return false; }
-
             try
             {
-                magick.Read(filestream);
+                if (percentage is not null)
+                {
+                    magick.Resize(percentage.Value);
+                }
+                else
+                {
+                    magick.Resize(width, height);
+                }
+
+                await magick.WriteAsync(file).ConfigureAwait(false);
             }
             catch (MagickException e)
             {
@@ -76,51 +81,8 @@ namespace PicView.ImageHandling
                 return false;
             }
 
-            await filestream.DisposeAsync().ConfigureAwait(false);
-
-            if (percentage is not null)
-            {
-                try
-                {
-                    magick.Resize(percentage.Value);
-                }
-                catch (MagickException e)
-                {
-#if DEBUG
-                    Trace.WriteLine($"{nameof(ResizeImageAsync)} exception caught \n {e.Message}");
-#endif
-                    return false;
-                }
-            }
-            else
-            {
-                try
-                {
-                    magick.Resize(width, height);
-                }
-                catch (MagickException e)
-                {
-#if DEBUG
-                    Trace.WriteLine($"{nameof(ResizeImageAsync)} exception caught \n {e.Message}");
-#endif
-                    return false;
-                }
-            }
-
-            try
-            {
-                await magick.WriteAsync(file).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-#if DEBUG
-                Trace.WriteLine($"{nameof(ResizeImageAsync)} exception caught \n {e.Message}");
-#endif
-                return false;
-            }
-
             magick.Dispose();
             return true;
-        });
+        }
     }
 }
