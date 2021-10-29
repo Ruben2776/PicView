@@ -70,7 +70,7 @@ namespace PicView.ChangeImage
             }
             else
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Send, () =>
                 {
                     if (fileInfo.Extension == ".gif")
                     {
@@ -81,12 +81,6 @@ namespace PicView.ChangeImage
                         ConfigureWindows.GetMainWindow.MainImage.Source = pic;
                     }
 
-                    if (Properties.Settings.Default.AutoFitWindow)
-                    {
-                        UILogic.Sizing.WindowSizing.SetWindowBehavior();
-                    }
-
-                    FitImage(pic.PixelWidth, pic.PixelHeight);
                     SetLoadingString();
                 });
             }
@@ -104,8 +98,15 @@ namespace PicView.ChangeImage
             }
             FolderIndex = FolderIndex == -1 ? 0 : FolderIndex; // Fixes weird error if you load example.jpg where the actual name is example.JPG
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
             {
+                FitImage(pic.PixelWidth, pic.PixelHeight);
+
+                if (Properties.Settings.Default.AutoFitWindow)
+                {
+                    UILogic.Sizing.WindowSizing.SetWindowBehavior();
+                }
+
                 SetTitleString(pic.PixelWidth, pic.PixelHeight, FolderIndex, fileInfo);
             });
 

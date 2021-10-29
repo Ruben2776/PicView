@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Loading.LoadContextMenus;
@@ -29,7 +30,7 @@ namespace PicView.UILogic.Loading
             FreshStartup = true;
             Pics = new List<string>();
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            await Dispatcher.CurrentDispatcher.InvokeAsync(() =>
             {
                 // Load sizing properties
                 MonitorInfo = MonitorSize.GetMonitorSize();
@@ -48,16 +49,16 @@ namespace PicView.UILogic.Loading
                 // Set min size to DPI scaling
                 ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
                 ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
-            }));
+            });
 
             if (!Properties.Settings.Default.ShowInterface)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() =>
                 {
                     ConfigureWindows.GetMainWindow.TitleBar.Visibility =
                        ConfigureWindows.GetMainWindow.LowerBar.Visibility
                        = Visibility.Collapsed;
-                }));
+                });
 
             }
 
@@ -65,7 +66,7 @@ namespace PicView.UILogic.Loading
             var args = Environment.GetCommandLineArgs();
             if (args.Length == 1)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() =>
                 {
                     // Reset PicGallery and don't allow it to run,
                     // if only 1 image
@@ -85,29 +86,29 @@ namespace PicView.UILogic.Loading
                         {
                             SetWindowBehavior();
                         }
-
-                        //ConfigureWindows.GetMainWindow.Width = 700;
-                        //ConfigureWindows.GetMainWindow.Height = 700;
                     }
 
                     Unload(); // Load clean setup when starting up without arguments
-                }));
+                });
             }
             else
             {
+                if (Properties.Settings.Default.StartInFullscreenGallery)
+                {
+                    await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
+                }
+
+                await ChangeImage.LoadPic.QuickLoadAsync(args[1]).ConfigureAwait(false);
+
                 // Determine prefered UI for startup
                 if (Properties.Settings.Default.Fullscreen)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, (Action)(() =>
                     {
                         Sizing.WindowSizing.Fullscreen_Restore(true);
                     }));
                 }
-                else if (Properties.Settings.Default.StartInFullscreenGallery)
-                {
-                    await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
 
-                }
                 else if (Properties.Settings.Default.Width > 0 && Properties.Settings.Default.AutoFitWindow == false)
                 {
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
@@ -115,8 +116,6 @@ namespace PicView.UILogic.Loading
                         SetLastWindowSize();
                     }));
                 }
-
-                await ChangeImage.LoadPic.QuickLoadAsync(args[1]).ConfigureAwait(false);
             }
         }
 

@@ -34,7 +34,6 @@ namespace PicView.Views.Windows
 
             Loaded += async (_, _) =>
             {
-
                 // Subscribe to Windows resized event || Need to be exactly on load
                 HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle);
                 source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
