@@ -38,6 +38,11 @@ namespace PicView.PicGallery
             {
                 if (GetPicGallery == null || PicGalleryItem_Size == 0) { return 0; }
 
+                if (Properties.Settings.Default.Fullscreen)
+                {
+                    return (int)Math.Floor((GetPicGallery.Container.ActualHeight - (GetPicGallery.Container.Margin.Top)) / PicGalleryItem_Size);
+                }
+
                 return (int)Math.Floor((GetPicGallery.ActualHeight - (GetPicGallery.Container.Margin.Top - GetPicGallery.Container.Margin.Bottom)) / PicGalleryItem_Size);
             }
         }
@@ -46,7 +51,7 @@ namespace PicView.PicGallery
         {
             get
             {
-                if (GetPicGallery == null || PicGalleryItem_Size == 0) {  return 0; }
+                if (GetPicGallery == null || PicGalleryItem_Size == 0) { return 0; }
                 if (GetPicGallery.Container.Children.Count <= SelectedGalleryItem) { return 0; }
 
                 var selectedScrollTo = GetPicGallery.Container.Children[SelectedGalleryItem].TranslatePoint(new Point(), GetPicGallery.Container);
@@ -55,7 +60,7 @@ namespace PicView.PicGallery
                 {
                     return selectedScrollTo.Y - (Vertical_items / 2) * PicGalleryItem_Size;
                 }
-                
+
                 return selectedScrollTo.X - (Horizontal_items / 2) * PicGalleryItem_Size + (PicGalleryItem_Size_s / 2); // Scroll to overlap half of item
             }
         }
@@ -71,7 +76,7 @@ namespace PicView.PicGallery
         /// <param name="item">The index of picGalleryItem</param>
         internal static void ScrollTo()
         {
-            if (GetPicGallery == null || PicGalleryItem_Size < 1) { return; }  
+            if (GetPicGallery == null || PicGalleryItem_Size < 1) { return; }
 
             if (GalleryFunctions.IsHorizontalOpen)
             {
@@ -228,9 +233,9 @@ namespace PicView.PicGallery
                     break;
             }
 
-            if (SelectedGalleryItem >= Pics.Count -1)
+            if (SelectedGalleryItem >= Pics.Count - 1)
             {
-                SelectedGalleryItem = Pics.Count -1;
+                SelectedGalleryItem = Pics.Count - 1;
             }
 
             if (SelectedGalleryItem < 0)
@@ -242,7 +247,7 @@ namespace PicView.PicGallery
             if (backup != SelectedGalleryItem && backup != FolderIndex)
             {
                 SetSelected(backup, false); // deselect
-            }       
+            }
 
             if (direction == Direction.Up || direction == Direction.Down)
             {
@@ -309,7 +314,7 @@ namespace PicView.PicGallery
             else
             {
                 GetPicGallery.Scroller.ScrollToVerticalOffset(GetPicGallery.Scroller.VerticalOffset - PicGalleryItem_Size);
-            }            
+            }
         }
 
         #endregion
