@@ -261,17 +261,13 @@ namespace PicView.Shortcuts
                         {
                             Close_UserControls();
                         }
-                        else if (Properties.Settings.Default.Fullscreen)
+                        else if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalOpen)
                         {
-                            UILogic.Sizing.WindowSizing.Fullscreen_Restore();
+                            GalleryToggle.CloseCurrentGallery();
                         }
                         else if (Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
                         {
                             Slideshow.StopSlideshow();
-                        }
-                        else if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalOpen)
-                        {
-                            GalleryToggle.CloseCurrentGallery();
                         }
                         else if (IsDialogOpen)
                         {
@@ -296,6 +292,10 @@ namespace PicView.Shortcuts
                         else if (GetSettingsWindow != null && GetSettingsWindow.IsVisible)
                         {
                             GetSettingsWindow.Hide();
+                        }
+                        else if (Properties.Settings.Default.Fullscreen)
+                        {
+                            UILogic.Sizing.WindowSizing.Fullscreen_Restore();
                         }
                         else if (!MainContextMenu.IsVisible)
                         {
