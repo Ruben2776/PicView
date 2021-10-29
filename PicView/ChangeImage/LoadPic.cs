@@ -221,7 +221,7 @@ namespace PicView.ChangeImage
             LoadingPreview(fileInfo);
 
             bool folderChanged = await Error_Handling.CheckDirectoryChangeAndPicGallery(fileInfo).ConfigureAwait(false);
-
+            await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
 
             if (Pics?.Count > 0)
             {
@@ -245,6 +245,11 @@ namespace PicView.ChangeImage
             }
 
             FreshStartup = false;
+
+            if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
+            {
+                await GalleryLoad.Load().ConfigureAwait(false);
+            }
         }
 
         /// <summary>

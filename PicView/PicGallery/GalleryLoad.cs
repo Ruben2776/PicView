@@ -193,9 +193,10 @@ namespace PicView.PicGallery
                 {
                     if (count != Navigation.Pics.Count)
                     {
-                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
                         {
                             UC.GetPicGallery.Container.Children.Clear();
+                            await Load().ConfigureAwait(false); // restart when changing directory
                         }));
                         return;
                     }
@@ -222,9 +223,10 @@ namespace PicView.PicGallery
                 {
                     if (count != Navigation.Pics.Count)
                     {
-                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
                         {
                             UC.GetPicGallery.Container.Children.Clear();
+                            await Load().ConfigureAwait(false);
                         }));
                         return;
                     }
@@ -281,16 +283,24 @@ namespace PicView.PicGallery
 
         internal static async Task UpdatePic(int i)
         {
+            if (ChangeImage.Navigation.Pics?.Count < ChangeImage.Navigation.FolderIndex || ChangeImage.Navigation.Pics?.Count < 1)
+            {
+                GalleryFunctions.Clear();
+                await Load().ConfigureAwait(false); // restart when changing directory
+                return;
+            }
+
             var pic = Thumbnails.GetBitmapSourceThumb(new System.IO.FileInfo(Navigation.Pics[i]));
             if (pic == null)
             {
                 pic = ImageFunctions.ImageErrorMessage();
             }
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
             {
                 if (ChangeImage.Navigation.Pics?.Count < ChangeImage.Navigation.FolderIndex || ChangeImage.Navigation.Pics?.Count < 1 || i >= UC.GetPicGallery.Container.Children.Count)
                 {
                     GalleryFunctions.Clear();
+                    await Load().ConfigureAwait(false); // restart when changing directory
                     return;
                 }
                 var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
