@@ -38,12 +38,7 @@ namespace PicView.PicGallery
             {
                 if (GetPicGallery == null || PicGalleryItem_Size == 0) { return 0; }
 
-                if (Properties.Settings.Default.Fullscreen)
-                {
-                    return (int)Math.Floor((GetPicGallery.Container.ActualHeight - (GetPicGallery.Container.Margin.Top)) / PicGalleryItem_Size);
-                }
-
-                return (int)Math.Floor((GetPicGallery.ActualHeight - (GetPicGallery.Container.Margin.Top - GetPicGallery.Container.Margin.Bottom)) / PicGalleryItem_Size);
+                return (int)Math.Floor((GetPicGallery.Scroller.ViewportHeight - GetPicGallery.Container.Margin.Top) / PicGalleryItem_Size);
             }
         }
 
