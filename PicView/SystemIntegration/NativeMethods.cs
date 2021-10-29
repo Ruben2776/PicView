@@ -4,7 +4,6 @@ using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Windows;
@@ -148,19 +147,44 @@ namespace PicView.SystemIntegration
         /// Executes when user manually resized window
         public static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            if (ChangeImage.Navigation.FreshStartup || Properties.Settings.Default.AutoFitWindow || GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
+            if (Properties.Settings.Default.AutoFitWindow || GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 return IntPtr.Zero;
             }
+
             if (msg == WM_SIZING || msg == 0x0005)
             {
-                if (UILogic.ConfigureWindows.GetMainWindow.WindowState == WindowState.Maximized)
+                var w = UILogic.ConfigureWindows.GetMainWindow;
+                if (w == null) { return IntPtr.Zero; }
+
+                if (ChangeImage.Navigation.FreshStartup)
+                {
+                    if (w.MainImage.Source == null)
+                    {
+                        if (UC.GetStartUpUC is not null)
+                        {
+                            if (w.Width < 900)
+                            {
+                                UC.GetStartUpUC.logo.Width = 247;
+                                UC.GetStartUpUC.buttons.Margin = new Thickness(0, 0, 0, 0);
+                                UC.GetStartUpUC.buttons.VerticalAlignment = VerticalAlignment.Bottom;
+                            }
+                            else if (w.Width > 900)
+                            {
+                                UC.GetStartUpUC.logo.Width = double.NaN;
+                                UC.GetStartUpUC.buttons.Margin = new Thickness(0, 181, 25, 16);
+                                UC.GetStartUpUC.buttons.VerticalAlignment = VerticalAlignment.Center;
+                            }
+                        }
+                    }
+                }
+                else { return IntPtr.Zero; }
+
+                if (w.WindowState == WindowState.Maximized)
                 {
                     UILogic.Sizing.WindowSizing.Restore_From_Move();
                 }
-
-                var w = UILogic.ConfigureWindows.GetMainWindow;
-                if (w.MainImage.Source == null) {  return IntPtr.Zero; }
+                if (w.MainImage.Source == null) { return IntPtr.Zero; }
 
                 // Resize gallery
                 if (UC.GetPicGallery != null && GalleryFunctions.IsHorizontalOpen)
@@ -170,8 +194,6 @@ namespace PicView.SystemIntegration
                 }
 
                 ScaleImage.FitImage(w.MainImage.Source.Width, w.MainImage.Source.Height);
-
-
             }
 
             return IntPtr.Zero;
@@ -343,7 +365,7 @@ namespace PicView.SystemIntegration
             RegistryKey? fileKey = localMachine.OpenSubKey(string.Format(@"{0}\{1}", @"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths", fileName));
             if (fileKey == null) { return null; }
             object? result = fileKey.GetValue(string.Empty);
-            if (result == null) {  return null;}
+            if (result == null) { return null; }
             fileKey.Close();
 
 

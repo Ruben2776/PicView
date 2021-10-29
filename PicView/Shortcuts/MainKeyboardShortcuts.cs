@@ -415,7 +415,10 @@ namespace PicView.Shortcuts
                     case Key.E:
                         if (!GalleryFunctions.IsHorizontalOpen)
                         {
-                            OpenWith(Pics[FolderIndex]);
+                            if (ChangeImage.Error_Handling.CheckOutOfRange() == false)
+                            {
+                                OpenWith(Pics[FolderIndex]);
+                            }
                         }
                         else
                         {
