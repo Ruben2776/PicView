@@ -25,13 +25,6 @@ namespace PicView.Views.Windows
 
         private void FakeWindow_ContentRendered(object sender, EventArgs e)
         {
-            PreviewMouseLeftButtonDown += FakeWindow_MouseLeftButtonDown;
-            PreviewMouseRightButtonDown += FakeWindow_MouseLeftButtonDown;
-            Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
-            StateChanged += FakeWindow_StateChanged;
-            ConfigureWindows.GetMainWindow.Focus();
-            ConfigureWindows.GetMainWindow.Activated += GetMainWindow_Activated;
-
             EnableBlur(this);
 
             // Hide from alt tab
@@ -40,6 +33,16 @@ namespace PicView.Views.Windows
             helper.EnsureHandle();
 
             ConfigureWindows.GetMainWindow.BringIntoView();
+            ConfigureWindows.GetMainWindow.Activate();
+            ConfigureWindows.GetMainWindow.Topmost = true;
+            ConfigureWindows.GetMainWindow.Topmost = Properties.Settings.Default.TopMost;
+
+            PreviewMouseLeftButtonDown += FakeWindow_MouseLeftButtonDown;
+            PreviewMouseRightButtonDown += FakeWindow_MouseLeftButtonDown;
+            Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
+            StateChanged += FakeWindow_StateChanged;
+            ConfigureWindows.GetMainWindow.Focus();
+            ConfigureWindows.GetMainWindow.Activated += GetMainWindow_Activated;
         }
 
         private void GetMainWindow_Activated(object? sender, EventArgs e)

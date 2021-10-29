@@ -18,7 +18,7 @@ namespace PicView.UILogic
                 AutoReset = true,
                 Enabled = false
             };
-            ActivityTimer.Elapsed += (s, e) => Fade(false);
+            ActivityTimer.Elapsed += (s, e) => FadeAsync(false);
         }
 
         internal static void PicGalleryTimerHack()
