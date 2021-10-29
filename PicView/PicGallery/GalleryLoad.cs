@@ -94,7 +94,7 @@ namespace PicView.PicGallery
                     {
                         UC.GetPicGallery.border.Background = new SolidColorBrush(Colors.Transparent);
                     }
-                    
+
                     UC.GetPicGallery.Container.Margin = new Thickness(0, 0, 0, 0);
 
                     // Make sure bools are correct
@@ -163,7 +163,7 @@ namespace PicView.PicGallery
                 GalleryFunctions.IsVerticalFullscreenOpen = false;
             }
 
-            
+
             if (UC.GetPicGallery.Container.Children.Count > 0)
             {
                 var tempItem = (PicGalleryItem)UC.GetPicGallery.Container.Children[0];
@@ -288,6 +288,11 @@ namespace PicView.PicGallery
             }
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
+                if (ChangeImage.Navigation.Pics?.Count < ChangeImage.Navigation.FolderIndex || ChangeImage.Navigation.Pics?.Count < 1 || i >= UC.GetPicGallery.Container.Children.Count)
+                {
+                    GalleryFunctions.Clear();
+                    return;
+                }
                 var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
                 item.img.Source = pic;
                 item.MouseLeftButtonDown += async delegate

@@ -220,43 +220,8 @@ namespace PicView.ChangeImage
 
             LoadingPreview(fileInfo);
 
-            bool folderChanged = false;
+            bool folderChanged = await Error_Handling.CheckDirectoryChangeAndPicGallery(fileInfo).ConfigureAwait(false);
 
-            // If count not correct or just started, get values
-            if (Pics?.Count <= FolderIndex || FolderIndex < 0 || FreshStartup)
-            {
-                folderChanged = true;
-            }
-            // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
-            else if (!string.IsNullOrWhiteSpace(Pics?[FolderIndex]) && fileInfo.Directory.FullName != Path.GetDirectoryName(Pics[FolderIndex]))
-            {
-                // Reset old values and get new
-                ChangeFolder(true);
-                folderChanged = true;
-            }
-
-            if (folderChanged || Pics.Contains(fileInfo.FullName) == false)
-            {
-                await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
-            }
-
-            if (GetPicGallery is not null && folderChanged)
-            {
-                if (Properties.Settings.Default.FullscreenGalleryHorizontal || Properties.Settings.Default.FullscreenGalleryVertical)
-                {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, (Action)(() =>
-                    {
-                        // Remove children before loading new
-                        if (GetPicGallery.Container.Children.Count > 0)
-                        {
-                            GetPicGallery.Container.Children.Clear();
-                        }
-                    }));
-
-                    // Load new gallery values, if changing folder
-                    await GalleryLoad.Load().ConfigureAwait(false);
-                }
-            }
 
             if (Pics?.Count > 0)
             {
@@ -294,6 +259,7 @@ namespace PicView.ChangeImage
                 Error_Handling.UnexpectedError();
                 return;
             }
+
             await LoadPicFromFolderAsync(fileInfo).ConfigureAwait(false);
         }
 
@@ -307,9 +273,15 @@ namespace PicView.ChangeImage
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 SetLoadingString();
-                ChangeFolder(true);
                 UC.ToggleStartUpUC(true);
             });
+
+            bool folderChanged = await Error_Handling.CheckDirectoryChangeAndPicGallery(fileInfo).ConfigureAwait(false);
+
+            if (FreshStartup is false || folderChanged)
+            {
+                Preloader.Clear();
+            }
 
             await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
 
@@ -321,6 +293,11 @@ namespace PicView.ChangeImage
             {
                 Error_Handling.UnexpectedError();
                 return;
+            }
+
+            if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
+            {
+                await GalleryLoad.Load().ConfigureAwait(false);
             }
         }
 

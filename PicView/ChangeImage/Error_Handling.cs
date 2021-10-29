@@ -37,6 +37,45 @@ namespace PicView.ChangeImage
             });
         }
 
+        internal static async Task<bool> CheckDirectoryChangeAndPicGallery(FileInfo fileInfo)
+        {
+            bool folderChanged = false;
+
+            // If count not correct or just started, get values
+            if (Pics?.Count <= FolderIndex || FolderIndex < 0 || FreshStartup)
+            {
+                folderChanged = true;
+            }
+            // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
+            else if (!string.IsNullOrWhiteSpace(Pics?[FolderIndex]) && fileInfo.Directory.FullName != Path.GetDirectoryName(Pics[FolderIndex]))
+            {
+                // Reset old values and get new
+                ChangeFolder(true);
+                folderChanged = true;
+            }
+
+            if (Pics.Contains(fileInfo.FullName) == false)
+            {
+                folderChanged = true;
+            }
+
+            if (UC.GetPicGallery is not null && folderChanged)
+            {
+                if (Properties.Settings.Default.FullscreenGalleryHorizontal || Properties.Settings.Default.FullscreenGalleryVertical)
+                {
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, (Action)(() =>
+                    {
+                        // Remove children before loading new
+                        if (UC.GetPicGallery.Container.Children.Count > 0)
+                        {
+                            UC.GetPicGallery.Container.Children.Clear();
+                        }
+                    }));
+                }
+            }
+            return folderChanged;
+        }
+
         /// <summary>
         /// If url returns "web", if base64 returns "base64" if file, returns file path, if directory returns "directory" else returns empty
         /// </summary>
