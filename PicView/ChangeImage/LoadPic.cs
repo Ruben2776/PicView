@@ -218,12 +218,6 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            if (fileInfo.Length < 5e+7)
-            {
-                await QuickLoadAsync(fileInfo).ConfigureAwait(false);
-                return;
-            }
-
             LoadingPreview(fileInfo);
 
             bool folderChanged = false;
@@ -231,7 +225,6 @@ namespace PicView.ChangeImage
             // If count not correct or just started, get values
             if (Pics?.Count <= FolderIndex || FolderIndex < 0 || FreshStartup)
             {
-                await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
                 folderChanged = true;
             }
             // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
@@ -239,12 +232,30 @@ namespace PicView.ChangeImage
             {
                 // Reset old values and get new
                 ChangeFolder(true);
-                await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
                 folderChanged = true;
             }
-            else if (Pics.Contains(fileInfo.FullName) == false)
+
+            if (folderChanged || Pics.Contains(fileInfo.FullName) == false)
             {
                 await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
+            }
+
+            if (GetPicGallery is not null && folderChanged)
+            {
+                if (Properties.Settings.Default.FullscreenGalleryHorizontal || Properties.Settings.Default.FullscreenGalleryVertical)
+                {
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, (Action)(() =>
+                    {
+                        // Remove children before loading new
+                        if (GetPicGallery.Container.Children.Count > 0)
+                        {
+                            GetPicGallery.Container.Children.Clear();
+                        }
+                    }));
+
+                    // Load new gallery values, if changing folder
+                    await GalleryLoad.Load().ConfigureAwait(false);
+                }
             }
 
             if (Pics?.Count > 0)
@@ -266,24 +277,6 @@ namespace PicView.ChangeImage
             {
                 // Navigate to picture using obtained index
                 await LoadPicAtIndexAsync(FolderIndex, false, fileInfo).ConfigureAwait(false);
-            }
-
-            if (GetPicGallery is not null && folderChanged)
-            {
-                if (Properties.Settings.Default.FullscreenGalleryHorizontal || Properties.Settings.Default.FullscreenGalleryVertical)
-                {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, (Action)(() =>
-                    {
-                        // Remove children before loading new
-                        if (GetPicGallery.Container.Children.Count > 0)
-                        {
-                            GetPicGallery.Container.Children.Clear();
-                        }
-                    }));
-
-                    // Load new gallery values, if changing folder
-                    _ = GalleryLoad.Load().ConfigureAwait(false);
-                }
             }
 
             FreshStartup = false;
