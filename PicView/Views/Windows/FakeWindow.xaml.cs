@@ -5,17 +5,16 @@ using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Threading;
 using static PicView.SystemIntegration.NativeMethods;
 
 namespace PicView.Views.Windows
 {
     public partial class FakeWindow : Window
     {
+        internal bool ActuallyVisible { get; set; }
         public FakeWindow()
         {
-            Focusable = false;
-            Topmost = false;
+            ShowActivated = false;
             InitializeComponent();
             Width = WindowSizing.MonitorInfo.Width;
             Height = WindowSizing.MonitorInfo.Height;
@@ -31,20 +30,37 @@ namespace PicView.Views.Windows
             Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
             StateChanged += FakeWindow_StateChanged;
             ConfigureWindows.GetMainWindow.Focus();
-            GotFocus += FakeWindow_LostFocus;
+            ConfigureWindows.GetMainWindow.Activated += GetMainWindow_Activated;
 
             EnableBlur(this);
 
             // Hide from alt tab
-            var helper = new WindowInteropHelper(this).Handle;
-            _ = SetWindowLong(helper, GWL_EX_STYLE, (GetWindowLong(helper, GWL_EX_STYLE) | WS_EX_TOOLWINDOW) & ~WS_EX_APPWINDOW);
+            var helper = new WindowInteropHelper(this);
+            _ = SetWindowLong(helper.Handle, GWL_EX_STYLE, (GetWindowLong(helper.Handle, GWL_EX_STYLE) | WS_EX_TOOLWINDOW) & ~WS_EX_APPWINDOW);
+            helper.EnsureHandle();
 
             ConfigureWindows.GetMainWindow.BringIntoView();
         }
 
-        private void FakeWindow_LostFocus(object sender, RoutedEventArgs e)
+        private void GetMainWindow_Activated(object? sender, EventArgs e)
         {
-            ConfigureWindows.GetMainWindow.Focus();
+            if (ConfigureWindows.GetMainWindow.WindowState == WindowState.Normal && GalleryFunctions.IsVerticalFullscreenOpen
+                || ConfigureWindows.GetMainWindow.WindowState == WindowState.Normal && GalleryFunctions.IsHorizontalFullscreenOpen)
+            {
+                if (ActuallyVisible)
+                {
+                    return;
+                }
+
+                Show();
+                Activate();
+                ActuallyVisible = true;
+                ConfigureWindows.GetMainWindow.Topmost = true;
+                ConfigureWindows.GetMainWindow.Topmost = Properties.Settings.Default.TopMost;
+                ConfigureWindows.GetMainWindow.BringIntoView();
+                Keyboard.Focus(ConfigureWindows.GetMainWindow);
+                FocusManager.SetFocusedElement(FocusManager.GetFocusScope(ConfigureWindows.GetMainWindow), null);
+            }
         }
 
         private void FakeWindow_StateChanged(object sender, EventArgs e)
@@ -57,7 +73,7 @@ namespace PicView.Views.Windows
 
         private void MainWindow_StateChanged(object sender, EventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.WindowState == WindowState.Normal && GalleryFunctions.IsVerticalFullscreenOpen 
+            if (ConfigureWindows.GetMainWindow.WindowState == WindowState.Normal && GalleryFunctions.IsVerticalFullscreenOpen
                 || ConfigureWindows.GetMainWindow.WindowState == WindowState.Normal && GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 if (IsVisible is false)
@@ -65,29 +81,17 @@ namespace PicView.Views.Windows
                     Show();
                     Activate();
                 }
-
-                ConfigureWindows.GetMainWindow.BringIntoView();
-                ConfigureWindows.GetMainWindow.Activate();
             }
             else if (ConfigureWindows.GetMainWindow.WindowState == WindowState.Minimized)
             {
                 Hide();
+                ActuallyVisible = false;
             }
         }
 
         private void FakeWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             ConfigureWindows.GetMainWindow.Focus();
-        }
-
-        private bool IsUserVisible(FrameworkElement element, FrameworkElement container)
-        {
-            if (!element.IsVisible)
-                return false;
-
-            Rect bounds = element.TransformToAncestor(container).TransformBounds(new Rect(0.0, 0.0, element.ActualWidth, element.ActualHeight));
-            Rect rect = new Rect(0.0, 0.0, container.ActualWidth, container.ActualHeight);
-            return rect.Contains(bounds.TopLeft) || rect.Contains(bounds.BottomRight);
         }
     }
 }

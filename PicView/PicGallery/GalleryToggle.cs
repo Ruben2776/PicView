@@ -107,7 +107,12 @@ namespace PicView.PicGallery
 
                 if (GetFakeWindow == null)
                 {
-                    GetFakeWindow = new FakeWindow();
+                    GetFakeWindow = new FakeWindow()
+                    {
+                        WindowStyle = WindowStyle.None,
+                        ShowInTaskbar = false,
+                        ShowActivated = false
+                    };
 
                     if (Properties.Settings.Default.FullscreenGalleryHorizontal)
                     {

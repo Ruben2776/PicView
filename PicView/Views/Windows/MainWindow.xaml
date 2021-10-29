@@ -12,6 +12,7 @@
     BorderThickness="1"
     Foreground="{StaticResource MainColorBrush}"
     Style="{DynamicResource MyWindowStyle}"
+    Focusable="True"
     WindowStartupLocation="CenterScreen">
 
     <Window.Resources>

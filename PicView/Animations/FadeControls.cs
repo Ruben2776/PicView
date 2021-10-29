@@ -2,7 +2,6 @@
 using PicView.UILogic;
 using PicView.UILogic.TransformImage;
 using System;
-using System.Threading.Tasks;
 using System.Timers;
 using static PicView.UILogic.UC;
 
@@ -19,7 +18,7 @@ namespace PicView.Animations
         /// Hides/shows interface elements with a fade animation
         /// </summary>
         /// <param name="show"></param>
-        internal static async Task FadeControlsAsync(bool show, double time = .5)
+        internal static void Fade(bool show, double time = .5)
         {
             if (Properties.Settings.Default.ShowInterface
                 || Properties.Settings.Default.Fullscreen
@@ -35,7 +34,7 @@ namespace PicView.Animations
                 return;
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
             {
                 if (GetCropppingTool != null)
                 {

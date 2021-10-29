@@ -52,8 +52,8 @@ namespace PicView.Views.Windows
                 LowerBar.Drop += async (sender, e) => await UILogic.DragAndDrop.Image_DragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
                 LowerBar.MouseLeftButtonDown += UILogic.Sizing.WindowSizing.MoveAlt;
 
-                MouseMove += async (sender, e) => await HideInterfaceLogic.Interface_MouseMoveAsync(sender, e).ConfigureAwait(false);
-                MouseLeave += async (sender, e) => await HideInterfaceLogic.Interface_MouseLeaveAsync(sender, e).ConfigureAwait(false);
+                MouseMove += (sender, e) => HideInterfaceLogic.Interface_MouseMove(sender, e);
+                MouseLeave += (sender, e) => HideInterfaceLogic.Interface_MouseLeave(sender, e);
 
                 StartLoading.ContentRenderedEvent();
 
@@ -146,7 +146,7 @@ namespace PicView.Views.Windows
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 Navigation.ClickArrowRightClicked = false;
 
-                _ = FadeControls.FadeControlsAsync(true);
+                FadeControls.Fade(true);
             }
             else if (Navigation.ClickArrowLeftClicked)
             {
@@ -154,7 +154,7 @@ namespace PicView.Views.Windows
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 Navigation.ClickArrowLeftClicked = false;
 
-                _ = FadeControls.FadeControlsAsync(true);
+                FadeControls.Fade(true);
             }
 
             base.OnRenderSizeChanged(sizeInfo);

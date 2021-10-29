@@ -74,7 +74,7 @@ namespace PicView.ConfigureSettings
         #endregion Update and set colors
 
         #region Window LostFocus style change
-        
+
         internal static void MainWindowUnfocus()
         {
             var w = ConfigureWindows.GetMainWindow;
@@ -87,6 +87,11 @@ namespace PicView.ConfigureSettings
 
             var x = (SolidColorBrush)w.Logo.TryFindResource("LogoBrush");
             x.Color = fadeColor1.Color;
+
+            if (ConfigureWindows.GetFakeWindow is not null && Properties.Settings.Default.FullscreenGalleryHorizontal || ConfigureWindows.GetFakeWindow is not null && Properties.Settings.Default.FullscreenGalleryVertical)
+            {
+                ConfigureWindows.GetFakeWindow.ActuallyVisible = false;
+            }
         }
 
         internal static void MainWindowFocus()
