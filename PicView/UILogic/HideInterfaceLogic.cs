@@ -128,7 +128,7 @@ namespace PicView.UILogic
         /// <param name="e"></param>
         internal static void Interface_MouseMove(object sender, MouseEventArgs e)
         {
-            Fade(true);
+            _ = FadeAsync(true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -138,8 +138,7 @@ namespace PicView.UILogic
         /// <param name="e"></param>
         internal static void Interface_MouseLeave(object sender, MouseEventArgs e)
         {
-            // Fade controis when mouse leaves mainwindow
-            Fade(false);
+            _ = FadeAsync(false).ConfigureAwait(false);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace PicView.Views.UserControls
                 }
                 else if (Properties.Settings.Default.ShowInterface == false || Properties.Settings.Default.Fullscreen)
                 {
-                    if (UC.GetPicGallery.IsVisible == false)
+                    if (UC.GetPicGallery is null || UC.GetPicGallery.IsVisible == false)
                     {
                         SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
                     }

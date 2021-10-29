@@ -12,7 +12,7 @@
         <Button
             x:Name="TheButton"
             Width="40"
-            Height="25">
+            Height="24">
 
             <Image
                 Width="20"
