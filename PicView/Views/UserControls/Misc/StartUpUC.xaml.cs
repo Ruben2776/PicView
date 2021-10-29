@@ -78,7 +78,7 @@ namespace PicView.Views.UserControls
                 ButtonMouseLeaveAnim(pasteTxt);
             };
 
-            PasteButton.Click += async (_, _) => await FileHandling.Copy_Paste.PasteAsync().ConfigureAwait(false);
+            PasteButton.Click += (_, _) => FileHandling.Copy_Paste.Paste();
         }
     }
 }

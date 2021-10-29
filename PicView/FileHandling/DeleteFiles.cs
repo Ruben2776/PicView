@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Tooltip;
 
@@ -111,15 +110,11 @@ namespace PicView.FileHandling
 
             if (Pics.Count <= 0)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
-                {
-                    Unload();
-                });
-
+                Error_Handling.UnexpectedError();
                 return;
             }
 
-            await PicAsync(false).ConfigureAwait(false);
+            await NavigateToPicAsync(false).ConfigureAwait(false);
 
             ShowTooltipMessage(Recyclebin ? Application.Current.Resources["SentFileToRecycleBin"] : Application.Current.Resources["Deleted"]);
         }

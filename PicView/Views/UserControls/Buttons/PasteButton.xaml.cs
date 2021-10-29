@@ -1,5 +1,5 @@
-﻿using PicView.FileHandling;
-using PicView.Animations;
+﻿using PicView.Animations;
+using PicView.FileHandling;
 using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
@@ -13,16 +13,16 @@ namespace PicView.Views.UserControls
 
             Loaded += delegate
             {
-                TheButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(PasteButtonBrush);
-                TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(PasteButtonBrush, true);
-                TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(PasteButtonBrush, false);
+                TheButton.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(PasteButtonBrush);
+                TheButton.MouseEnter += (_, _) => ButtonMouseOverAnim(PasteButtonBrush, true);
+                TheButton.MouseLeave += (_, _) => ButtonMouseLeaveAnimBgColor(PasteButtonBrush, false);
 
                 if (!Properties.Settings.Default.DarkTheme)
                 {
                     AnimationHelper.LightThemeMouseEvent(this, IconBrush);
                 }
 
-                TheButton.Click += async delegate { await Copy_Paste.PasteAsync().ConfigureAwait(false); };
+                TheButton.Click += (_, _) => Copy_Paste.Paste();
             };
         }
     }

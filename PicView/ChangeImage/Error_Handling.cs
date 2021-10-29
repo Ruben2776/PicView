@@ -25,16 +25,58 @@ namespace PicView.ChangeImage
             return false;
         }
 
-        internal static async Task UnexpectedError()
+        internal static void UnexpectedError()
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
             {
-                Unload();
+                Unload(true);
                 Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
                 ConfigureWindows.GetMainWindow.Title = (string)Application.Current.Resources["UnexpectedError"] + " - PicView";
                 ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["UnexpectedError"];
                 ConfigureWindows.GetMainWindow.TitleText.ToolTip = (string)Application.Current.Resources["UnexpectedError"];
             });
+        }
+
+        /// <summary>
+        /// If url returns "web", if base64 returns "base64" if file, returns file path, if directory returns "directory" else returns empty
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        internal static string CheckIfLoadableString(string s)
+        {
+            bool result = Uri.TryCreate(s, UriKind.Absolute, out Uri? uriResult)
+                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+
+            if (result)
+            {
+                return "web";
+            }
+            else if (Base64.IsBase64String(s))
+            {
+                return "base64";
+            }
+
+            if (FileFunctions.FilePathHasInvalidChars(s))
+            {
+                FileFunctions.MakeValidFileName(s);
+            }
+
+            s = s.Replace("\"", "");
+            s = s.Trim();
+
+            if (File.Exists(s))
+            {
+                return s;
+            }
+
+            else if (Directory.Exists(s))
+            {
+                return "directory";
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
 
         /// <summary>
@@ -84,7 +126,7 @@ namespace PicView.ChangeImage
             {
                 if (string.IsNullOrWhiteSpace(BackupPath))
                 {
-                    await UnexpectedError().ConfigureAwait(false);
+                    UnexpectedError();
                     return;
                 }
                 path = BackupPath;
@@ -102,7 +144,7 @@ namespace PicView.ChangeImage
             }
             if (path == null)
             {
-                await UnexpectedError().ConfigureAwait(false);
+                UnexpectedError();
                 return;
             }
 
@@ -157,7 +199,7 @@ namespace PicView.ChangeImage
             }
             else if (Clipboard.ContainsImage())
             {
-                await LoadPic.LoadPicFromBitmap(Clipboard.GetImage(), (string)Application.Current.Resources["Base64Image"]).ConfigureAwait(false);
+                LoadPic.LoadPicFromBitmap(Clipboard.GetImage(), (string)Application.Current.Resources["Base64Image"]);
             }
             else if (Uri.IsWellFormedUriString(path, UriKind.Absolute)) // Check if from web
             {
@@ -165,14 +207,14 @@ namespace PicView.ChangeImage
             }
             else
             {
-                await UnexpectedError().ConfigureAwait(false);
+                UnexpectedError();
             }
         }
 
         /// <summary>
         /// Reset to default state
         /// </summary>
-        internal static void Unload()
+        internal static void Unload(bool showStartup)
         {
             ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["NoImage"];
             ConfigureWindows.GetMainWindow.Title = Application.Current.Resources["NoImage"] + " - " + SetTitle.AppName;

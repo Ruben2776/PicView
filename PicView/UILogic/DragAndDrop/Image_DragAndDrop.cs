@@ -134,7 +134,6 @@ namespace PicView.UILogic.DragAndDrop
                 RemoveDragOverlay();
             });
 
-
             // Load dropped URL
             if (e.Data.GetData(DataFormats.Html) != null)
             {
@@ -175,16 +174,15 @@ namespace PicView.UILogic.DragAndDrop
                 }
             }
 
-            await LoadPic.LoadPicFromString(files[0]).ConfigureAwait(false);
+            LoadPic.LoadPicFromString(files[0]);
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, () =>
             {
                 // Don't show drop message any longer
                 CloseToolTipMessage();
 
                 ConfigureWindows.GetMainWindow.Activate();
             });
-
 
             // Open additional windows if multiple files dropped 
             if (files.Length > 0)

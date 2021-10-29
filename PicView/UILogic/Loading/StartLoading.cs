@@ -66,7 +66,7 @@ namespace PicView.UILogic.Loading
             var args = Environment.GetCommandLineArgs();
             if (args.Length == 1)
             {
-                await Dispatcher.CurrentDispatcher.InvokeAsync(() =>
+                Dispatcher.CurrentDispatcher.Invoke(() =>
                 {
                     // Reset PicGallery and don't allow it to run,
                     // if only 1 image
@@ -88,7 +88,7 @@ namespace PicView.UILogic.Loading
                         }
                     }
 
-                    Unload(); // Load clean setup when starting up without arguments
+                    Unload(true); // Load clean setup when starting up without arguments
                 });
             }
             else
@@ -103,7 +103,7 @@ namespace PicView.UILogic.Loading
                 // Determine prefered UI for startup
                 if (Properties.Settings.Default.Fullscreen)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, (Action)(() =>
+                    ConfigureWindows.GetMainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Render, (Action)(() =>
                     {
                         Sizing.WindowSizing.Fullscreen_Restore(true);
                     }));
@@ -111,10 +111,10 @@ namespace PicView.UILogic.Loading
 
                 else if (Properties.Settings.Default.Width > 0 && Properties.Settings.Default.AutoFitWindow == false)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                    Dispatcher.CurrentDispatcher.Invoke(() =>
                     {
                         SetLastWindowSize();
-                    }));
+                    });
                 }
             }
         }

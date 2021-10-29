@@ -793,7 +793,7 @@ namespace PicView.UILogic.Loading
                 Fill = scbf
             };
             pastecm.Icon = pastecmIcon;
-            pastecm.Click += async (_, _) => { MainContextMenu.IsOpen = false; await PasteAsync().ConfigureAwait(false); };
+            pastecm.Click += async (_, _) => { MainContextMenu.IsOpen = false; Paste(); };
             MainContextMenu.Items.Add(pastecm);
 
             ///////////////////////////

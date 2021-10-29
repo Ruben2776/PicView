@@ -45,10 +45,7 @@ namespace PicView.ChangeImage
         /// <param name="i">Index of Pics</param>
         internal static async Task AddAsync(int i, FileInfo? fileInfo = null)
         {
-            if (i >= Pics?.Count)
-            {
-                return;
-            }
+            if (i >= Pics?.Count) { return; }
 
             if (i < 0)
             {

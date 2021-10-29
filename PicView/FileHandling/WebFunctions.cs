@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using static PicView.ChangeImage.Error_Handling;
-using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Tooltip;
 
 namespace PicView.FileHandling
@@ -35,7 +34,7 @@ namespace PicView.FileHandling
                 var destination = await DownloadData(url, true).ConfigureAwait(false);
                 var isGif = Path.GetExtension(url).Contains(".gif", StringComparison.OrdinalIgnoreCase);
 
-                await LoadPic.PicAsync(destination, url, isGif).ConfigureAwait(false);
+                await LoadPic.LoadPreparedPicAsync(destination, url, isGif).ConfigureAwait(false);
 
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 {

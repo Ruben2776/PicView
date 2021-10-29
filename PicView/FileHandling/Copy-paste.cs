@@ -4,7 +4,6 @@ using PicView.UILogic;
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
@@ -89,7 +88,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// Retrieves the data from the clipboard and attemps to load image, if possible
         /// </summary>
-        internal static async Task PasteAsync()
+        internal static void Paste()
         {
             // file
             if (Clipboard.ContainsFileDropList()) // If Clipboard has one or more files
@@ -98,7 +97,7 @@ namespace PicView.FileHandling
 
                 if (files != null)
                 {
-                    await LoadPic.LoadPicFromString(files[0]).ConfigureAwait(false);
+                    LoadPic.LoadPicFromString(files[0]);
 
                     if (files.Length > 1)
                     {
@@ -114,7 +113,7 @@ namespace PicView.FileHandling
             // Clipboard Image
             if (Clipboard.ContainsImage())
             {
-                await LoadPic.LoadPicFromBitmap(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]).ConfigureAwait(false);
+                LoadPic.LoadPicFromBitmap(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]);
                 return;
             }
 
@@ -127,7 +126,15 @@ namespace PicView.FileHandling
                 return;
             }
 
-            await LoadPic.LoadPicFromString(s).ConfigureAwait(false);
+            string check = Error_Handling.CheckIfLoadableString(s);
+            switch (check)
+            {
+                default: _ = LoadPic.LoadPiFromFileAsync(check).ConfigureAwait(false); return;
+                case "web": _ = WebFunctions.PicWeb(s).ConfigureAwait(false); return;
+                case "base64": _ = LoadPic.LoadBase64PicAsync(s).ConfigureAwait(false); return;
+                case "directory": _ = LoadPic.LoadPicFromFolderAsync(s).ConfigureAwait(false); return;
+                case "": return;
+            }
         }
 
         /// <summary>

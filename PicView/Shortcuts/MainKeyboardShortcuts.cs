@@ -80,12 +80,12 @@ namespace PicView.Shortcuts
                     // Go to first if Ctrl held down
                     if (ctrlDown && !e.IsRepeat)
                     {
-                        await PicAsync(true, true).ConfigureAwait(false);
+                        await NavigateToPicAsync(true, true).ConfigureAwait(false);
                     }
                     else
                     {
                         FastPicRunning = e.IsRepeat; // Report if key held down
-                        await PicAsync().ConfigureAwait(false);
+                        await NavigateToPicAsync().ConfigureAwait(false);
                     }
                     return;
 
@@ -100,12 +100,12 @@ namespace PicView.Shortcuts
                     // Go to last if Ctrl held down
                     if (ctrlDown && !e.IsRepeat)
                     {
-                        await PicAsync(false, true).ConfigureAwait(false);
+                        await NavigateToPicAsync(false, true).ConfigureAwait(false);
                     }
                     else
                     {
                         FastPicRunning = e.IsRepeat; // Report if key held down
-                        await PicAsync(false).ConfigureAwait(false);
+                        await NavigateToPicAsync(false).ConfigureAwait(false);
                     }
                     return;
 
@@ -150,7 +150,7 @@ namespace PicView.Shortcuts
                         }
                         else if (GalleryFunctions.IsVerticalFullscreenOpen)
                         {
-                            await PicAsync(false).ConfigureAwait(false);
+                            await NavigateToPicAsync(false).ConfigureAwait(false);
                         }
                         else if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalOpen)
                         {
@@ -180,7 +180,7 @@ namespace PicView.Shortcuts
                         }
                         else if (GalleryFunctions.IsVerticalFullscreenOpen)
                         {
-                            await PicAsync().ConfigureAwait(false);
+                            await NavigateToPicAsync().ConfigureAwait(false);
                         }
                         else if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsHorizontalOpen)
                         {
@@ -220,7 +220,7 @@ namespace PicView.Shortcuts
                         }
                         else if (GalleryFunctions.IsVerticalFullscreenOpen)
                         {
-                            await PicAsync().ConfigureAwait(false);
+                            await NavigateToPicAsync().ConfigureAwait(false);
                         }
                         else
                         {
@@ -374,7 +374,7 @@ namespace PicView.Shortcuts
                     case Key.V:
                         if (ctrlDown && !GalleryFunctions.IsHorizontalOpen)
                         {
-                            await PasteAsync().ConfigureAwait(false);
+                            Paste();
                         }
                         break;
 
@@ -541,12 +541,6 @@ namespace PicView.Shortcuts
                         ResetZoom();
                         break;
 
-#if DEBUG
-                    // F8
-                    case Key.F8:
-                        Unload();
-                        break;
-#endif
                     // F11
                     case Key.F11:
                         UILogic.Sizing.WindowSizing.Fullscreen_Restore();

@@ -1,23 +1,6 @@
-﻿using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.PicGallery;
-using PicView.SystemIntegration;
+﻿using PicView.PicGallery;
 using PicView.UILogic;
-using System;
-using System.Globalization;
-using System.IO;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using static PicView.ChangeImage.Error_Handling;
-using static PicView.FileHandling.ArchiveExtraction;
-using static PicView.FileHandling.FileLists;
-using static PicView.ImageHandling.Thumbnails;
-using static PicView.UILogic.SetTitle;
-using static PicView.UILogic.Sizing.ScaleImage;
-using static PicView.UILogic.Tooltip;
-using static PicView.UILogic.UC;
 
 namespace PicView.ChangeImage
 {
@@ -82,7 +65,7 @@ namespace PicView.ChangeImage
         /// <param name="next">Whether it's forward or not</param>
         /// <param name="end">Whether to go to last or first,
         /// depending on the next value</param>
-        internal static async Task PicAsync(bool next = true, bool end = false)
+        internal static async Task NavigateToPicAsync(bool next = true, bool end = false)
         {
             // Exit if not intended to change picture
             if (Error_Handling.CheckOutOfRange())
@@ -180,12 +163,12 @@ namespace PicView.ChangeImage
                 if (right)
                 {
                     RightbuttonClicked = true;
-                    await PicAsync().ConfigureAwait(false);
+                    await NavigateToPicAsync().ConfigureAwait(false);
                 }
                 else
                 {
                     LeftbuttonClicked = true;
-                    await PicAsync(false, false).ConfigureAwait(false);
+                    await NavigateToPicAsync(false, false).ConfigureAwait(false);
                 }
             }
             else // Alternative interface buttons
@@ -198,12 +181,12 @@ namespace PicView.ChangeImage
                 if (right)
                 {
                     ClickArrowRightClicked = true;
-                    await PicAsync().ConfigureAwait(false);
+                    await NavigateToPicAsync().ConfigureAwait(false);
                 }
                 else
                 {
                     ClickArrowLeftClicked = true;
-                    await PicAsync(false, false).ConfigureAwait(false);
+                    await NavigateToPicAsync(false, false).ConfigureAwait(false);
                 }
             }
         }

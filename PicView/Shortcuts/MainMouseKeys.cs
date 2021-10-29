@@ -178,7 +178,7 @@ namespace PicView.Shortcuts
             {
                 if (Properties.Settings.Default.FullscreenGalleryHorizontal && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                 {
-                    await PicAsync(e.Delta > 0).ConfigureAwait(false);
+                    await NavigateToPicAsync(e.Delta > 0).ConfigureAwait(false);
                 }
                 else
                 {
@@ -189,7 +189,7 @@ namespace PicView.Shortcuts
             {
                 if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
                 {
-                    await PicAsync(e.Delta > 0).ConfigureAwait(false);
+                    await NavigateToPicAsync(e.Delta > 0).ConfigureAwait(false);
                 }
                 else
                 {
@@ -199,7 +199,7 @@ namespace PicView.Shortcuts
                         {
                             return;
                         }
-                        await PicAsync(e.Delta > 0).ConfigureAwait(false);
+                        await NavigateToPicAsync(e.Delta > 0).ConfigureAwait(false);
                     }
                     if (GetMainWindow.CheckAccess() == false)
                     {
@@ -225,14 +225,14 @@ namespace PicView.Shortcuts
                 }
                 else
                 {
-                    await PicAsync(e.Delta > 0).ConfigureAwait(false);
+                    await NavigateToPicAsync(e.Delta > 0).ConfigureAwait(false);
                 }
             }
             else
             {
                 if (Properties.Settings.Default.CtrlZoom)
                 {
-                    await PicAsync(e.Delta > 0).ConfigureAwait(false);
+                    await NavigateToPicAsync(e.Delta > 0).ConfigureAwait(false);
                 }
                 else
                 {
