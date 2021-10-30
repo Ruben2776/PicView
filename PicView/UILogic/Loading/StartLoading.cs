@@ -67,24 +67,14 @@ namespace PicView.UILogic.Loading
             {
                 Dispatcher.CurrentDispatcher.Invoke(() =>
                 {
-                    // Reset PicGallery and don't allow it to run,
-                    // if only 1 image
-                    Properties.Settings.Default.FullscreenGalleryHorizontal = Properties.Settings.Default.FullscreenGalleryVertical = false;
-
-                    // Don't start it in fullscreen with no image
-                    Properties.Settings.Default.Fullscreen = false;
-
                     // Determine proper startup size
                     if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width != 0)
                     {
                         SetLastWindowSize();
                     }
-                    else
+                    else if (Properties.Settings.Default.AutoFitWindow)
                     {
-                        if (Properties.Settings.Default.AutoFitWindow)
-                        {
-                            SetWindowBehavior();
-                        }
+                        SetWindowBehavior();
                     }
 
                     Unload(true); // Load clean setup when starting up without arguments

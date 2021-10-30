@@ -579,6 +579,8 @@ namespace PicView.ChangeImage
                 SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, imageName);
 
                 CloseToolTipMessage();
+
+                UC.ToggleStartUpUC(true);
             });
 
             _ = Taskbar.NoProgress().ConfigureAwait(false);
@@ -677,6 +679,7 @@ namespace PicView.ChangeImage
             {
                 return;
             }
+
             UpdatePic(b64, pic);
         }
 
