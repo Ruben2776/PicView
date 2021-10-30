@@ -5,6 +5,7 @@ using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Threading;
 using static PicView.SystemIntegration.NativeMethods;
 
 namespace PicView.Views.Windows
@@ -25,13 +26,6 @@ namespace PicView.Views.Windows
 
         private void FakeWindow_ContentRendered(object sender, EventArgs e)
         {
-            PreviewMouseLeftButtonDown += FakeWindow_MouseLeftButtonDown;
-            PreviewMouseRightButtonDown += FakeWindow_MouseLeftButtonDown;
-            Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
-            StateChanged += FakeWindow_StateChanged;
-            ConfigureWindows.GetMainWindow.Focus();
-            ConfigureWindows.GetMainWindow.Activated += GetMainWindow_Activated;
-
             EnableBlur(this);
 
             // Hide from alt tab
@@ -39,7 +33,29 @@ namespace PicView.Views.Windows
             _ = SetWindowLong(helper.Handle, GWL_EX_STYLE, (GetWindowLong(helper.Handle, GWL_EX_STYLE) | WS_EX_TOOLWINDOW) & ~WS_EX_APPWINDOW);
             helper.EnsureHandle();
 
-            ConfigureWindows.GetMainWindow.BringIntoView();
+            var timer = new System.Timers.Timer(20)
+            {
+                AutoReset = false,
+                Enabled = true
+            };
+            timer.Elapsed += delegate
+            {
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
+                {
+                    ConfigureWindows.GetMainWindow.Topmost = true;
+                    ConfigureWindows.GetMainWindow.Topmost = Properties.Settings.Default.TopMost;
+                    ConfigureWindows.GetMainWindow.BringIntoView();
+                    Keyboard.Focus(ConfigureWindows.GetMainWindow);
+                    FocusManager.SetFocusedElement(FocusManager.GetFocusScope(ConfigureWindows.GetMainWindow), null);
+                });
+            };
+            timer.Start();
+
+            PreviewMouseLeftButtonDown += FakeWindow_MouseLeftButtonDown;
+            PreviewMouseRightButtonDown += FakeWindow_MouseLeftButtonDown;
+            Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
+            StateChanged += FakeWindow_StateChanged;
+            ConfigureWindows.GetMainWindow.Activated += GetMainWindow_Activated;
         }
 
         private void GetMainWindow_Activated(object? sender, EventArgs e)
