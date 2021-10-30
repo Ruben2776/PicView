@@ -142,24 +142,9 @@ namespace PicView.Shortcuts
                     {
                         GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
                     }
-                    else if (GetPicGallery != null)
+                    else if (GalleryFunctions.IsHorizontalOpen && GetPicGallery != null)
                     {
-                        if (GalleryFunctions.IsHorizontalOpen)
-                        {
-                            GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Up);
-                        }
-                        else if (GalleryFunctions.IsVerticalFullscreenOpen)
-                        {
-                            await NavigateToPicAsync(false).ConfigureAwait(false);
-                        }
-                        else if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalOpen)
-                        {
-                            GalleryNavigation.ScrollTo(true, ctrlDown);
-                        }
-                        else
-                        {
-                            Rotate(true);
-                        }
+                        GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Up);
                     }
                     else
                     {
@@ -177,14 +162,6 @@ namespace PicView.Shortcuts
                         if (GalleryFunctions.IsHorizontalOpen)
                         {
                             GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Down);
-                        }
-                        else if (GalleryFunctions.IsVerticalFullscreenOpen)
-                        {
-                            await NavigateToPicAsync().ConfigureAwait(false);
-                        }
-                        else if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsHorizontalOpen)
-                        {
-                            GalleryNavigation.ScrollTo(false, ctrlDown);
                         }
                         else
                         {
@@ -211,21 +188,6 @@ namespace PicView.Shortcuts
                     if (Properties.Settings.Default.ScrollEnabled && ConfigureWindows.GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
                     {
                         GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + 30);
-                    }
-                    else if (GetPicGallery != null)
-                    {
-                        if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsHorizontalOpen)
-                        {
-                            GalleryNavigation.ScrollTo(false, ctrlDown);
-                        }
-                        else if (GalleryFunctions.IsVerticalFullscreenOpen)
-                        {
-                            await NavigateToPicAsync().ConfigureAwait(false);
-                        }
-                        else
-                        {
-                            Rotate(false);
-                        }
                     }
                     else
                     {
