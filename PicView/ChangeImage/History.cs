@@ -20,14 +20,23 @@ namespace PicView.ChangeImage
         {
             fileHistory = new List<string>();
 
-            var listToRead = new StreamReader(FileFunctions.GetWritingPath() + "\\Recent.txt");
+            string path = FileFunctions.GetWritingPath() + "\\Recent.txt";
 
-            using (listToRead)
+            if (File.Exists(path))
             {
-                while (listToRead.Peek() >= 0)
+                var listToRead = new StreamReader(path);
+
+                using (listToRead)
                 {
-                    fileHistory.Add(listToRead.ReadLine());
+                    while (listToRead.Peek() >= 0)
+                    {
+                        fileHistory.Add(listToRead.ReadLine());
+                    }
                 }
+            }
+            else
+            {
+                WriteToFile();
             }
         }
 
