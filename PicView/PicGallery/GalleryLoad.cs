@@ -183,6 +183,9 @@ namespace PicView.PicGallery
         {
             /// TODO Maybe make this start at at folder index
             /// and get it work with a real sorting method?
+            /// 
+
+            if (UC.GetPicGallery is null) { return; }
 
             var count = Navigation.Pics.Count;
             var index = Navigation.FolderIndex;
