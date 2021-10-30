@@ -59,11 +59,16 @@ namespace PicView.UILogic
 
             await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
+                if (ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex] != fileInfo.FullName)
+                {
+                    return;
+                }
                 if (data == null)
                 {
                     Clear();
                     return;
                 }
+
                 ConfigureWindows.GetImageInfoWindow.FilenameBox.Text = data[0];
 
                 ConfigureWindows.GetImageInfoWindow.FolderBox.Text = data[1];

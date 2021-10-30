@@ -368,7 +368,7 @@ namespace PicView.UILogic
 
         internal static void ToggleStartUpUC(bool remove)
         {
-            if (remove)
+            if (remove && GetStartUpUC is not null)
             {
                 if (ConfigureWindows.GetMainWindow.ParentContainer.Children.Contains(GetStartUpUC))
                 {

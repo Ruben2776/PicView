@@ -16,7 +16,7 @@ namespace PicView.PicGallery
     internal static class GalleryFunctions
     {
         internal static bool IsHorizontalOpen { get; set; }
-        internal static bool IsVerticalFullscreenOpen {  get; set; }
+        internal static bool IsVerticalFullscreenOpen { get; set; }
         internal static bool IsHorizontalFullscreenOpen { get; set; }
 
         public class tempPics
@@ -69,10 +69,9 @@ namespace PicView.PicGallery
                 return;
             }
 
-
             for (int i = 0; i < pics.Count; i++)
             {
-                await GalleryLoad.Add(pics[i].pic, i).ConfigureAwait(false);
+                GalleryLoad.Add(pics[i].pic, i);
             }
             pics.Clear();
             pics = null;
@@ -80,16 +79,20 @@ namespace PicView.PicGallery
 
         internal static void Clear()
         {
-            if (GetPicGallery == null)
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() =>
             {
-                return;
-            }
+                if (GetPicGallery == null)
+                {
+                    return;
+                }
 
-            GetPicGallery.Container.Children.Clear();
+                GetPicGallery.Container.Children.Clear();
 
 #if DEBUG
-            Trace.WriteLine("Cleared Gallery children");
+                Trace.WriteLine("Cleared Gallery children");
 #endif
+            }));
+
         }
     }
 }

@@ -1,8 +1,5 @@
 ﻿using PicView.PicGallery;
 using PicView.SystemIntegration;
-using System;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.UILogic.ConfigureWindows;
@@ -51,7 +48,7 @@ namespace PicView.UILogic.Sizing
                     UC.GetGripButton = new Views.UserControls.GripButton();
                     ConfigureWindows.GetMainWindow.LowerBar.Children.Add(UC.GetGripButton);
                 }
-                UC.GetGripButton.Visibility = Visibility.Visible;               
+                UC.GetGripButton.Visibility = Visibility.Visible;
 
                 if (GetQuickSettingsMenu != null)
                 {
@@ -252,7 +249,7 @@ namespace PicView.UILogic.Sizing
             {
                 UC.GetGripButton.Visibility = Visibility.Collapsed;
             }
-            
+
             GetMainWindow.TitleText.MaxWidth = MonitorInfo.WorkArea.Width - 192 * MonitorInfo.DpiScaling;
 
             Properties.Settings.Default.Maximized = true;
@@ -323,10 +320,35 @@ namespace PicView.UILogic.Sizing
         /// <param name="e"></param>
         internal static void Window_Closing()
         {
+            if (!Properties.Settings.Default.AutoFitWindow && !Properties.Settings.Default.Fullscreen)
+            {
+                Properties.Settings.Default.Top = GetMainWindow.Top;
+                Properties.Settings.Default.Left = GetMainWindow.Left;
+                Properties.Settings.Default.Height = GetMainWindow.Height;
+                Properties.Settings.Default.Width = GetMainWindow.Width;
+            }
+            GetMainWindow.Hide(); // Make it feel faster
+
             // Close Extra windows when closing
             if (GetFakeWindow != null)
             {
                 GetFakeWindow.Close();
+            }
+            if (GetInfoWindow != null)
+            {
+                GetInfoWindow.Close();
+            }
+            if (GetImageInfoWindow != null)
+            {
+                GetImageInfoWindow.Close();
+            }
+            if (GetEffectsWindow != null)
+            {
+                GetEffectsWindow.Close();
+            }
+            if (GetSettingsWindow != null)
+            {
+                GetSettingsWindow.Close();
             }
 
             if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
@@ -345,21 +367,10 @@ namespace PicView.UILogic.Sizing
                 Properties.Settings.Default.StartInFullscreenGallery = false;
             }
 
-            if (!Properties.Settings.Default.AutoFitWindow && !Properties.Settings.Default.Fullscreen)
-            {
-                Properties.Settings.Default.Top = GetMainWindow.Top;
-                Properties.Settings.Default.Left = GetMainWindow.Left;
-                Properties.Settings.Default.Height = GetMainWindow.Height;
-                Properties.Settings.Default.Width = GetMainWindow.Width;
-            }
-            GetMainWindow.Hide(); // Make it feel faster
-
             Properties.Settings.Default.Save();
             FileHandling.DeleteFiles.DeleteTempFiles();
             ChangeImage.History.WriteToFile();
-            Environment.Exit(0);
+            Application.Current.Shutdown();
         }
-
-
     }
 }

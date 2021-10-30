@@ -212,9 +212,9 @@ namespace PicView.PicGallery
                         }
                     }));
                 }
-                Parallel.For(0, count, async i =>
+                Parallel.For(0, count, i =>
                 {
-                    await UpdatePic(i).ConfigureAwait(false);
+                    UpdatePic(i);
                 });
             }
             else
@@ -231,12 +231,12 @@ namespace PicView.PicGallery
                         return;
                     }
 
-                    await Add(i).ConfigureAwait(false);
+                    Add(i);
                 }
             }
         });
 
-        internal static async Task Add(int i)
+        internal static void Add(int i)
         {
             var pic = Thumbnails.GetBitmapSourceThumb(new System.IO.FileInfo(Navigation.Pics[i]));
 
@@ -245,10 +245,10 @@ namespace PicView.PicGallery
                 pic = ImageFunctions.ImageErrorMessage();
             }
 
-            await AddUI(pic, i).ConfigureAwait(false);
+            AddUI(pic, i);
         }
 
-        internal static async Task Add(BitmapSource? pic, int i)
+        internal static void Add(BitmapSource? pic, int i)
         {
             pic = Thumbnails.GetBitmapSourceThumb(new System.IO.FileInfo(Navigation.Pics[i]));
 
@@ -257,10 +257,10 @@ namespace PicView.PicGallery
                 pic = ImageFunctions.ImageErrorMessage();
             }
 
-            await AddUI(pic, i).ConfigureAwait(false);
+            AddUI(pic, i);
         }
 
-        internal static async Task AddUI(BitmapSource? pic, int i)
+        internal static void AddUI(BitmapSource? pic, int i)
         {
             pic = Thumbnails.GetBitmapSourceThumb(new System.IO.FileInfo(Navigation.Pics[i]));
 
@@ -269,7 +269,7 @@ namespace PicView.PicGallery
                 pic = ImageFunctions.ImageErrorMessage();
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() =>
             {
                 var selected = i == Navigation.FolderIndex;
                 var item = new PicGalleryItem(pic, i, selected);
@@ -281,12 +281,12 @@ namespace PicView.PicGallery
             }));
         }
 
-        internal static async Task UpdatePic(int i)
+        internal static void UpdatePic(int i)
         {
             if (ChangeImage.Navigation.Pics?.Count < ChangeImage.Navigation.FolderIndex || ChangeImage.Navigation.Pics?.Count < 1)
             {
                 GalleryFunctions.Clear();
-                await Load().ConfigureAwait(false); // restart when changing directory
+                _ = Load().ConfigureAwait(false); // restart when changing directory
                 return;
             }
 
@@ -295,7 +295,7 @@ namespace PicView.PicGallery
             {
                 pic = ImageFunctions.ImageErrorMessage();
             }
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(async () =>
             {
                 if (ChangeImage.Navigation.Pics?.Count < ChangeImage.Navigation.FolderIndex || ChangeImage.Navigation.Pics?.Count < 1 || i >= UC.GetPicGallery.Container.Children.Count)
                 {

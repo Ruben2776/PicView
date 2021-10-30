@@ -160,7 +160,7 @@ namespace PicView.ChangeImage
 
                 LoadingPreview(fileInfo);
 
-                _ = LoadPiFromFileAsync(path).ConfigureAwait(false);
+                _ = LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
             }
             else
             {
@@ -187,7 +187,7 @@ namespace PicView.ChangeImage
         /// <param name="path"></param>
         internal static async Task LoadPiFromFileAsync(string path)
         {
-            FileInfo? fileInfo = new FileInfo(path);
+            var fileInfo = new FileInfo(path);
             await LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
         }
 
@@ -351,6 +351,7 @@ namespace PicView.ChangeImage
                         if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
                         {
                             thumb = GetThumb(index, fileInfo);
+                            GalleryNavigation.FullscreenGalleryNavigation();
                         }
 
                         if (FreshStartup)
@@ -376,11 +377,6 @@ namespace PicView.ChangeImage
                     ConfigureWindows.GetMainWindow.TitleText.Text
                     = $"{image} {index + 1} / {Pics?.Count}";
 
-                    // Add recent files, except when browing archive
-                    if (string.IsNullOrWhiteSpace(TempZipFile) && Pics?.Count > FolderIndex)
-                    {
-                        History.Add(Pics?[FolderIndex]);
-                    }
                     return;
                 }
 
@@ -481,7 +477,7 @@ namespace PicView.ChangeImage
                 });
             }
 
-            await ImageInfo.UpdateValuesAsync(preloadValue.fileInfo).ConfigureAwait(false);
+            _ = ImageInfo.UpdateValuesAsync(preloadValue.fileInfo).ConfigureAwait(false);
 
             if (Pics?.Count > 1)
             {
@@ -501,7 +497,6 @@ namespace PicView.ChangeImage
             {
                 History.Add(Pics?[index]);
             }
-
         }
 
         #endregion
@@ -621,6 +616,7 @@ namespace PicView.ChangeImage
         {
             FileInfo fileInfo = new FileInfo(file);
             BitmapSource? bitmapSource = isGif ? null : await ImageDecoder.RenderToBitmapSource(fileInfo).ConfigureAwait(false);
+
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, async () =>
             {
                 if (Properties.Settings.Default.ScrollEnabled)

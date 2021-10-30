@@ -53,13 +53,12 @@ namespace PicView.UILogic.Loading
 
             if (!Properties.Settings.Default.ShowInterface)
             {
-                await Dispatcher.CurrentDispatcher.InvokeAsync(() =>
-                {
-                    ConfigureWindows.GetMainWindow.TitleBar.Visibility =
-                       ConfigureWindows.GetMainWindow.LowerBar.Visibility
-                       = Visibility.Collapsed;
-                });
-
+                Dispatcher.CurrentDispatcher.Invoke(() =>
+                 {
+                     ConfigureWindows.GetMainWindow.TitleBar.Visibility =
+                        ConfigureWindows.GetMainWindow.LowerBar.Visibility
+                        = Visibility.Collapsed;
+                 });
             }
 
             // Load image if possible
@@ -95,7 +94,7 @@ namespace PicView.UILogic.Loading
             {
                 if (Properties.Settings.Default.StartInFullscreenGallery)
                 {
-                    await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
+                    _ = GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
                 }
 
                 await ChangeImage.LoadPic.QuickLoadAsync(args[1]).ConfigureAwait(false);

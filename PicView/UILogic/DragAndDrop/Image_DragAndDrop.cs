@@ -160,6 +160,10 @@ namespace PicView.UILogic.DragAndDrop
                 {
                     await LoadPic.LoadPicFromFolderAsync(files[0]).ConfigureAwait(false);
                 }
+                else if (SupportedFiles.IsSupportedArchives(files[0]))
+                {
+                    await LoadPic.LoadPiFromFileAsync(files[0]).ConfigureAwait(false);
+                }
                 return;
             }
 

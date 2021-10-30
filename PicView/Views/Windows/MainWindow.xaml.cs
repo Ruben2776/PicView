@@ -146,7 +146,7 @@ namespace PicView.Views.Windows
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 Navigation.ClickArrowRightClicked = false;
 
-                FadeControls.FadeAsync(true);
+                _ = FadeControls.FadeAsync(true);
             }
             else if (Navigation.ClickArrowLeftClicked)
             {
@@ -154,7 +154,7 @@ namespace PicView.Views.Windows
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 Navigation.ClickArrowLeftClicked = false;
 
-                FadeControls.FadeAsync(true);
+                _ = FadeControls.FadeAsync(true);
             }
 
             base.OnRenderSizeChanged(sizeInfo);

@@ -100,7 +100,6 @@ namespace PicView.ConfigureSettings
             var main1 = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
             var main2 = (SolidColorBrush)Application.Current.Resources["BorderBrushAlt"];
 
-
             w.TitleText.InnerTextBox.Foreground = main1;
             w.TitleText.Background = main2;
             w.LowerBar.Background = main2;
