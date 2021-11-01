@@ -1,5 +1,4 @@
 ﻿using PicView.Animations;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
@@ -32,14 +31,7 @@ namespace PicView.Views.UserControls
                     AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
                 };
 
-                TheButton.Click += async delegate
-                {
-                    UILogic.TransformImage.Rotation.Rotate(false);
-                    // Move cursor after rotating
-                    await Task.Delay(15).ConfigureAwait(true); // Delay it, so that the move takes place after window has resized
-                    var p = TheButton.PointToScreen(new System.Windows.Point(25, 25));
-                    SystemIntegration.NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
-                };
+                TheButton.Click += async (_, _) => await UILogic.TransformImage.Rotation.RotateAndMoveCursor(false, TheButton).ConfigureAwait(false);
             };
         }
     }

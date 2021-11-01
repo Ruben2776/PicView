@@ -55,7 +55,7 @@ namespace PicView.ChangeImage
         internal static async Task QuickLoadAsync(FileInfo fileInfo)
         {
             bool archive = false;
-            var pic = await ImageDecoder.RenderToBitmapSource(fileInfo).ConfigureAwait(false);
+            var pic = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
             if (pic is null)
             {
                 archive = SupportedFiles.IsSupportedArchives(fileInfo.FullName);
@@ -617,7 +617,7 @@ namespace PicView.ChangeImage
         internal static async Task LoadPreparedPicAsync(string file, string imageName, bool isGif)
         {
             FileInfo fileInfo = new FileInfo(file);
-            BitmapSource? bitmapSource = isGif ? null : await ImageDecoder.RenderToBitmapSource(fileInfo).ConfigureAwait(false);
+            BitmapSource? bitmapSource = isGif ? null : await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, async () =>
             {

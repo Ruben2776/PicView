@@ -63,8 +63,8 @@ namespace PicView.ChangeImage
                     {
                         fileInfo = new FileInfo(Navigation.Pics[i]);
                     }
-                    var x = await ImageDecoder.RenderToBitmapSource(fileInfo).ConfigureAwait(false);
-                    preloadValue.bitmapSource = x;
+                    var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+                    preloadValue.bitmapSource = bitmapSource;
                     preloadValue.isLoading = false;
                     preloadValue.fileInfo = fileInfo;
                 }).ConfigureAwait(false);

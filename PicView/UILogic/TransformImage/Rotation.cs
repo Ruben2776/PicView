@@ -1,5 +1,7 @@
 ﻿using PicView.PicGallery;
 using PicView.UILogic.Sizing;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 
 namespace PicView.UILogic.TransformImage
@@ -12,6 +14,15 @@ namespace PicView.UILogic.TransformImage
         /// Used to get and set image rotation by degrees
         /// </summary>
         internal static int Rotateint { get; set; }
+
+        internal static async Task RotateAndMoveCursor(bool right, UIElement uIElement)
+        {
+            Rotate(false);
+            // Move cursor after rotating
+            await Task.Delay(300).ConfigureAwait(true); // Delay it, so that the move takes place after window has resized
+            var p = uIElement.PointToScreen(new System.Windows.Point(25, 25));
+            SystemIntegration.NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+        }
 
         /// <summary>
         /// Rotates the image the specified degrees

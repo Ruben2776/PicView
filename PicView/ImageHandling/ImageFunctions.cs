@@ -3,7 +3,6 @@ using PicView.ChangeImage;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System.Globalization;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -42,15 +41,28 @@ namespace PicView.ImageHandling
 
         internal static async Task OptimizeImageAsyncWithErrorChecking()
         {
-            if (Error_Handling.CheckOutOfRange())
+            if (Error_Handling.CheckOutOfRange()) { return; }
+
+            var preloadValue = Preloader.Get(Navigation.Pics[Navigation.FolderIndex]);
+            if (preloadValue == null)
             {
-                return;
+                await Preloader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
             }
-            Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"] as string, true);
+
+            bool toCenter = false;
+
             var success = await OptimizeImageAsync(Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
+
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            {
+                toCenter = UC.QuickSettingsMenuOpen;
+            });
+
+            Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"] as string, toCenter);
+
             if (success)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, () =>
                 {
                     var width = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
                     var height = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
@@ -59,27 +71,40 @@ namespace PicView.ImageHandling
                     Tooltip.CloseToolTipMessage();
                 });
             }
+
+            var fileInfo = new System.IO.FileInfo(Navigation.Pics[Navigation.FolderIndex]);
+            var readablePrevSize = FileHandling.FileFunctions.GetSizeReadable(preloadValue.fileInfo.Length);
+            var readableNewSize = FileHandling.FileFunctions.GetSizeReadable(fileInfo.Length);
+
+            var originalValue = preloadValue.fileInfo.Length;
+            var decreasedValue = fileInfo.Length;
+            if (originalValue != decreasedValue)
+            {
+                var percentDecrease = ((float)(originalValue - decreasedValue) / decreasedValue) * 100;
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, () =>
+                {
+                    Tooltip.ShowTooltipMessage($"{readablePrevSize} > {readableNewSize} = {percentDecrease.ToString("0.## ", CultureInfo.CurrentCulture)}%", toCenter, System.TimeSpan.FromSeconds(3.5));
+                });
+            }
             else
             {
-                Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"] as string, true);
+                Tooltip.ShowTooltipMessage($"0%", toCenter);
             }
+
         }
 
         internal static async Task<bool> OptimizeImageAsync(string file) => await Task.Run(() =>
         {
-            switch (Path.GetExtension(file).ToUpperInvariant())
-            {
-                case ".JPG":
-                case ".JPEG":
-                case ".PNG":
-                case ".ICO":
-                    break;
-                default: return false;
-            }
             ImageOptimizer imageOptimizer = new()
             {
                 OptimalCompression = true
             };
+
+            if (imageOptimizer.IsSupported(file) == false)
+            {
+                return false;
+            }
+
             return imageOptimizer.LosslessCompress(file);
         });
 

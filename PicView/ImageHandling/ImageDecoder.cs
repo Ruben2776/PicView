@@ -16,14 +16,14 @@ namespace PicView.ImageHandling
         /// <summary>
         /// Decodes image from file to BitMapSource
         /// </summary>
-        /// <param name="file">Absolute path of the file</param>
+        /// <param name="fileInfo">Cannot be null</param>
         /// <returns></returns>
-        internal static async Task<BitmapSource?> RenderToBitmapSource(FileInfo file)
+        internal static async Task<BitmapSource?> ReturnBitmapSourceAsync(FileInfo fileInfo)
         {
-            if (file == null) { return null; }
-            if (file.Length <= 0) { return null; }
+            if (fileInfo == null) { return null; }
+            if (fileInfo.Length <= 0) { return null; }
 
-            switch (file.Extension)
+            switch (fileInfo.Extension)
             {
                 case ".jpg":
                 case ".jpeg":
@@ -35,12 +35,12 @@ namespace PicView.ImageHandling
                 case ".jfif":
                 case ".webp":
                 case ".wbmp":
-                    return await GetWriteableBitmap(file).ConfigureAwait(false);
+                    return await getWriteableBitmap(fileInfo).ConfigureAwait(false);
 
-                case ".tga": // TODO some tga files are created upside down https://github.com/Ruben2776/PicView/issues/22
-                    return getDefaultBitmapSource(file, true);
+                case ".tga":
+                    return getDefaultBitmapSource(fileInfo, true);
 
-                case ".svg":
+                case ".svg": // TODO convert to drawingimage instead
                 case ".svgz": // TODO convert to drawingimage instead
                 case ".tif":
                 case ".tiff":
@@ -48,11 +48,13 @@ namespace PicView.ImageHandling
                 case ".psd":
                 case ".psb":
                 case ".xcf":
-                    return await getMagicBitmapsource(file).ConfigureAwait(false);
+                    return await getMagicBitmapsource(fileInfo).ConfigureAwait(false);
                 default: // some formats cause exceptions when using filestream, so defaulting to reading from file
-                    return getDefaultBitmapSource(file);
+                    return getDefaultBitmapSource(fileInfo);
             }
         }
+
+        #region Render Image From Source
 
         internal static MagickImage? GetRenderedMagickImage()
         {
@@ -82,7 +84,13 @@ namespace PicView.ImageHandling
 
                 return SaveImage;
             }
-            catch (Exception) { return null; }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(GetRenderedBitmapFrame)} exception, \n {e.Message}");
+#endif
+                return null;
+            }
         }
 
         internal static BitmapFrame? GetRenderedBitmapFrame()
@@ -116,12 +124,20 @@ namespace PicView.ImageHandling
 
                 return bitmapFrame;
             }
-            catch (Exception) { return null; }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(GetRenderedBitmapFrame)} exception, \n {e.Message}");
+#endif
+                return null;
+            }
         }
+
+        #endregion
 
         #region Private functions
 
-        private static async Task<WriteableBitmap?> GetWriteableBitmap(FileInfo fileInfo)
+        private static async Task<WriteableBitmap?> getWriteableBitmap(FileInfo fileInfo)
         {
             FileStream? filestream = null; // https://devblogs.microsoft.com/dotnet/file-io-improvements-in-dotnet-6/
             byte[] data;
@@ -144,7 +160,7 @@ namespace PicView.ImageHandling
             catch (Exception e)
             {
 #if DEBUG
-                Trace.WriteLine("RenderToBitmapSource Skia returned " + fileInfo + " null, \n" + e.Message);
+                Trace.WriteLine($"{nameof(getWriteableBitmap)} {fileInfo.Name} exception, \n {e.Message}");
 #endif
                 return null;
             }
@@ -167,7 +183,7 @@ namespace PicView.ImageHandling
                 catch (Exception e)
                 {
 #if DEBUG
-                    Trace.WriteLine("RenderToBitmapSource MagickImage returned " + fileInfo.FullName + " null, \n" + e.Message);
+                    Trace.WriteLine($"{nameof(getMagicBitmapsource)} {fileInfo.Name} exception, \n {e.Message}");
 #endif
                     return null;
                 }
@@ -182,7 +198,7 @@ namespace PicView.ImageHandling
                 catch (Exception e)
                 {
 #if DEBUG
-                    Trace.WriteLine("RenderToBitmapSource MagickImage returned " + fileInfo + " null, \n" + e.Message);
+                    Trace.WriteLine($"{nameof(getMagicBitmapsource)} {fileInfo.Name} exception, \n {e.Message}");
 #endif
                     return null;
                 }
@@ -211,7 +227,7 @@ namespace PicView.ImageHandling
             catch (Exception e)
             {
 #if DEBUG
-                Trace.WriteLine("RenderToBitmapSource MagickImage returned " + fileInfo.Name + " null, \n" + e.Message);
+                Trace.WriteLine($"{nameof(getDefaultBitmapSource)} {fileInfo.Name} exception, \n {e.Message}");
 #endif
                 return null;
             }
