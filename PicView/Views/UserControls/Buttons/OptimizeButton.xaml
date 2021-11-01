@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="PicView.Views.UserControls.OptimizeButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             ToolTip="{StaticResource OptimizeImage}">
+    <Button
+        x:Name="TheButton"
+        Width="51"
+        Height="51"
+        BorderThickness="0">
+        <Button.Background>
+            <SolidColorBrush x:Name="ButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+        </Button.Background>
+        <Image
+            Width="20"
+            Height="20">
+            <Image.Source>
+                <DrawingImage >
+                    <DrawingImage.Drawing>
+                        <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                            <GeometryDrawing Geometry="F1 M512,512z M0,0z M448,256C448,150 362,64 256,64 150,64 64,150 64,256 64,362 150,448 256,448 362,448 448,362 448,256z">
+                                <GeometryDrawing.Pen>
+                                    <Pen Thickness="32" StartLineCap="Flat" EndLineCap="Flat" LineJoin="Miter" MiterLimit="1">
+                                        <Pen.Brush>
+                                            <SolidColorBrush x:Name="IconBrush1" Color="{StaticResource IconColor}" />
+                                        </Pen.Brush>
+                                    </Pen>
+                                </GeometryDrawing.Pen>
+                            </GeometryDrawing>
+                            <GeometryDrawing Geometry="F1 M512,512z M0,0z M360,94.59L360,296 M443.13,212.87L296,360 M417.41,360L216,360 M299.13,443.13L155.13,299.13 M152,416L152,216 M68.87,299.13L212.87,155.13 M94.59,152L288,152 M212.87,68.87L360,216">
+                                <GeometryDrawing.Pen>
+                                    <Pen Thickness="32" StartLineCap="Round" EndLineCap="Round" LineJoin="Round" MiterLimit="1">
+                                        <Pen.Brush>
+                                            <SolidColorBrush x:Name="IconBrush2" Color="{StaticResource IconColor}" />
+                                        </Pen.Brush>
+                                    </Pen>
+                                </GeometryDrawing.Pen>
+                            </GeometryDrawing>
+                        </DrawingGroup>
+                    </DrawingImage.Drawing>
+                </DrawingImage>
+            </Image.Source>
+        </Image>
+    </Button>
+</UserControl>

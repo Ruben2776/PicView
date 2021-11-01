@@ -14,7 +14,7 @@ namespace PicView.UILogic
         /// <param name="message">The message to display</param>
         /// <param name="center">If centered or on bottom</param>
         /// <param name="time">How long until it fades away</param>
-        private static void ShowTooltipMessage(object message, bool center, TimeSpan time)
+        internal static void ShowTooltipMessage(object message, bool center, TimeSpan time)
         {
             if (GetToolTipMessage == null || message == null)
             {
