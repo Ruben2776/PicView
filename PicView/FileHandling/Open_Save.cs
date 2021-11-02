@@ -2,7 +2,6 @@
 using PicView.ChangeImage;
 using PicView.ImageHandling;
 using PicView.UILogic;
-using PicView.UILogic.Sizing;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -26,8 +25,8 @@ namespace PicView.FileHandling
         ///  TODO update for and check file support
         /// </summary>
         internal const string FilterFiles =
-            "Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg;*.webp;*"                                   // Common pics
-            + "|jpg| *.jpg;*.jpeg*"                                                                         // JPG
+            "Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg;*.webp;"                                    // Common pics
+            + "|jpg| *.jpg;*.jpeg"                                                                          // JPG
             + "|PNG|*.png;"                                                                                 // PNG
             + "|gif|*.gif;"                                                                                 // GIF
             + "|ico|*.ico;"                                                                                 // ICO
@@ -178,7 +177,7 @@ namespace PicView.FileHandling
             {
                 success = await SaveImages.TrySaveImage(Rotateint, Flipped, source, null, Savedlg.FileName, null, effectApplied).ConfigureAwait(false);
             }
-            
+
             if (success == false)
             {
                 ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
@@ -194,7 +193,7 @@ namespace PicView.FileHandling
             {
                 Close_UserControls();
             });
-            
+
             IsDialogOpen = false;
         }
 
