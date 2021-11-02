@@ -152,7 +152,11 @@ namespace PicView.UILogic.Loading
             {
                 Content = Application.Current.Resources["FileName"],
                 BorderThickness = new Thickness(0, 0, 0, 0),
+                FontSize = 13,
                 MinWidth = 125,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Width = double.NaN,
+                Height = double.NaN,
                 IsChecked = Properties.Settings.Default.SortPreference == 0
             };
             sortcmChild0Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(0).ConfigureAwait(false); };
@@ -179,7 +183,11 @@ namespace PicView.UILogic.Loading
             {
                 Content = Application.Current.Resources["FileSize"],
                 BorderThickness = new Thickness(0, 0, 0, 0),
+                FontSize = 13,
                 MinWidth = 125,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Width = double.NaN,
+                Height = double.NaN,
                 IsChecked = Properties.Settings.Default.SortPreference == 1
             };
             sortcmChild1Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(1).ConfigureAwait(false); };
@@ -206,7 +214,11 @@ namespace PicView.UILogic.Loading
             {
                 Content = Application.Current.Resources["CreationTime"],
                 BorderThickness = new Thickness(0, 0, 0, 0),
+                FontSize = 13,
                 MinWidth = 125,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Width = double.NaN,
+                Height = double.NaN,
                 IsChecked = Properties.Settings.Default.SortPreference == 2
             };
             sortcmChild2Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(2).ConfigureAwait(false); };
@@ -233,7 +245,11 @@ namespace PicView.UILogic.Loading
             {
                 Content = Application.Current.Resources["FileExtension"],
                 BorderThickness = new Thickness(0, 0, 0, 0),
+                FontSize = 13,
                 MinWidth = 125,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Width = double.NaN,
+                Height = double.NaN,
                 IsChecked = Properties.Settings.Default.SortPreference == 3
             };
             sortcmChild3Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(3).ConfigureAwait(false); };
@@ -260,7 +276,11 @@ namespace PicView.UILogic.Loading
             {
                 Content = Application.Current.Resources["LastAccessTime"],
                 BorderThickness = new Thickness(0, 0, 0, 0),
+                FontSize = 13,
                 MinWidth = 125,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Width = double.NaN,
+                Height = double.NaN,
                 IsChecked = Properties.Settings.Default.SortPreference == 4
             };
             sortcmChild4Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(4).ConfigureAwait(false); };
@@ -287,7 +307,11 @@ namespace PicView.UILogic.Loading
             {
                 Content = Application.Current.Resources["LastWriteTime"],
                 BorderThickness = new Thickness(0, 0, 0, 0),
+                FontSize = 13,
                 MinWidth = 125,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Width = double.NaN,
+                Height = double.NaN,
                 IsChecked = Properties.Settings.Default.SortPreference == 5
             };
             sortcmChild5Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(5).ConfigureAwait(false); };
@@ -314,7 +338,11 @@ namespace PicView.UILogic.Loading
             {
                 Content = Application.Current.Resources["Random"],
                 BorderThickness = new Thickness(0, 0, 0, 0),
+                FontSize = 13,
                 MinWidth = 125,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Width = double.NaN,
+                Height = double.NaN,
                 IsChecked = Properties.Settings.Default.SortPreference == 6
             };
             sortcmChild6Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(6).ConfigureAwait(false); };
@@ -364,7 +392,7 @@ namespace PicView.UILogic.Loading
             {
                 IsChecked = Properties.Settings.Default.Looping,
                 Content = Application.Current.Resources["Looping"],
-                FontSize = 13,
+                FontSize = 12,
                 MinWidth = 125,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Width = double.NaN,
@@ -397,7 +425,7 @@ namespace PicView.UILogic.Loading
             {
                 IsChecked = Properties.Settings.Default.ScrollEnabled,
                 Content = Application.Current.Resources["Scrolling"],
-                FontSize = 13,
+                FontSize = 12,
                 MinWidth = 125,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Width = double.NaN,
@@ -430,7 +458,7 @@ namespace PicView.UILogic.Loading
             {
                 Content = Application.Current.Resources["ShowHideUI"],
                 IsChecked = Properties.Settings.Default.ShowInterface,
-                FontSize = 13,
+                FontSize = 12,
                 MinWidth = 125,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Width = double.NaN,
@@ -447,7 +475,6 @@ namespace PicView.UILogic.Loading
             };
             altcm.Header = altcmHeader;
             altcm.Click += delegate { HideInterfaceLogic.ToggleInterface(); };
-            altcmHeader.Click += delegate { HideInterfaceLogic.ToggleInterface(); };
 
             if (Properties.Settings.Default.DarkTheme == false)
             {
@@ -472,15 +499,13 @@ namespace PicView.UILogic.Loading
             {
                 Content = Application.Current.Resources["ChangeBg"],
                 ToolTip = Application.Current.Resources["ChangeBgTooltip"],
-                FontSize = 13,
+                FontSize = 12,
                 Width = double.NaN,
                 Height = double.NaN,
                 HorizontalAlignment = HorizontalAlignment.Left
             };
 
             transcm.Header = transcmHeader;
-            transcmHeader.Click += ConfigureSettings.ConfigColors.ChangeBackground;
-            transcm.Click += ConfigureSettings.ConfigColors.ChangeBackground;
 
             if (Properties.Settings.Default.DarkTheme == false)
             {
@@ -494,6 +519,42 @@ namespace PicView.UILogic.Loading
             settingscm.Items.Add(transcm);
 
             ///////////////////////////
+            ///   Stay on top     \\\\
+            ///////////////////////////
+            var Staycm = new MenuItem
+            {
+
+            };
+            var StaycmHeader = new CheckBox
+            {
+                IsChecked = Properties.Settings.Default.TopMost,
+                Content = Application.Current.Resources["StayTopMost"],
+                ToolTip = Application.Current.Resources["StayTopMost"],
+                FontSize = 12,
+                Width = double.NaN,
+                Height = double.NaN,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+
+            StaycmHeader.Checked += (_, _) => ConfigureWindows.IsMainWindowTopMost = !Properties.Settings.Default.TopMost;
+            StaycmHeader.Unchecked += (_, _) => ConfigureWindows.IsMainWindowTopMost = false;
+
+            Staycm.Header = StaycmHeader;
+            StaycmHeader.Click += ConfigureSettings.ConfigColors.ChangeBackground;
+            Staycm.Click += ConfigureSettings.ConfigColors.ChangeBackground;
+
+            if (Properties.Settings.Default.DarkTheme == false)
+            {
+                StaycmHeader.MouseEnter += (_, _) => StaycmHeader.Foreground = new SolidColorBrush(Colors.White);
+                Staycm.MouseEnter += (_, _) => Staycm.Foreground = new SolidColorBrush(Colors.White);
+
+                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
+                Staycm.MouseLeave += (_, _) => Staycm.Foreground = txt;
+                StaycmHeader.MouseLeave += (_, _) => StaycmHeader.Foreground = txt;
+            }
+            settingscm.Items.Add(Staycm);
+
+            ///////////////////////////
             /// Settings shortcut  \\\\
             ///////////////////////////
             settingscm.Items.Add(new Separator());
@@ -501,7 +562,7 @@ namespace PicView.UILogic.Loading
             {
                 Content = Application.Current.Resources["SettingsWindow"],
                 ToolTip = Application.Current.Resources["ShowAllSettingsWindow"],
-                FontSize = 13,
+                FontSize = 12,
                 Width = double.NaN,
                 Height = double.NaN,
                 HorizontalAlignment = HorizontalAlignment.Left

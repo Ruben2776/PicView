@@ -1,5 +1,6 @@
 ﻿using PicView.Animations;
 using System.Windows.Controls;
+using System.Windows.Media;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
@@ -15,25 +16,23 @@ namespace PicView.Views.UserControls
 
             Loaded += delegate
             {
+                var IconBrush = (SolidColorBrush)Resources["IconBrush"];
                 TheButton.PreviewMouseLeftButtonDown += delegate
                 {
-                    ButtonMouseOverAnim(IconBrush1, false, true);
-                    ButtonMouseOverAnim(IconBrush2, false, true);
+                    ButtonMouseOverAnim(IconBrush, false, true);
                     ButtonMouseOverAnim(ButtonBrush, false, true);
                     AnimationHelper.MouseEnterBgTexColor(ButtonBrush);
                 };
 
                 TheButton.MouseEnter += delegate
                 {
-                    ButtonMouseOverAnim(IconBrush1);
-                    ButtonMouseOverAnim(IconBrush2);
+                    ButtonMouseOverAnim(IconBrush);
                     AnimationHelper.MouseEnterBgTexColor(ButtonBrush);
                 };
 
                 TheButton.MouseLeave += delegate
                 {
-                    ButtonMouseLeaveAnim(IconBrush1);
-                    ButtonMouseLeaveAnim(IconBrush2);
+                    ButtonMouseLeaveAnim(IconBrush);
                     AnimationHelper.MouseLeaveBgTexColor(ButtonBrush);
                 };
 
