@@ -81,7 +81,7 @@ Click the expander button to view GPS coordinates which links to Google or BING 
 
 
 <h3 align="center">
-    Fullscreen Gallery
+    Horizontal Gallery
 </h3>
 
 <h1 align="center">
@@ -90,7 +90,7 @@ Click the expander button to view GPS coordinates which links to Google or BING 
 
 
 <h3 align="center">
-    Horizontal Gallery
+    Fullscreen Gallery
 </h3>
 
 <h1 align="center">
