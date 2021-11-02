@@ -50,27 +50,53 @@ Built with the latest SDK of .NET and Visual Studio
 
 ## Features
 **For a full list of features, check my website at https://picview.org**
-
-## Upcoming features
-Take a look at https://github.com/Ruben2776/PicView/projects/1
-
 ___
 
-<h1 align="center">
-    <img src="https://picview.org/assets/screenshots/effects-window-dark.webp" />
-</h1>
-
-Chose between 27 image effects. Change slider value to adjust intensity. Save effects to image by copying it, saving it or setting it as wallpaper. Effect will be applied when changing images.
-<br>
+<h3 align="center">
+    Image Info Window
+</h3>
 
 <h1 align="center">
-    <img src="https://d33wubrfki0l68.cloudfront.net/c001d6d4a0b15bb654846648d862b18464c4ccd9/6dc3d/assets/screenshots/image-info-dark.webp" />
+    <img src="https://picview.org/assets/screenshots/EXIF-image-Info-Dark.webp" />
 </h1>
 
-Press the <code>Optimize Image</code> button to losslessly compress image <br>
-Click stars to set EXIF rating<br>
-Edit textbox values to rename or move current file
-<br>
+Lossleslly compress current image by pressing the __Optimize Image__ button.
+
+Click on the stars to save EXIF image rating.
+
+Rename or move files by editing the text box values.
+
+__Resize image:__
+
+Edit the Width and Height boxes to rezise image.
+
+Input 0 in either Width or Height to preserve aspect ratio.
+
+Use % to resize it by percentage.
+
+#### EXIF:
+
+Click the expander button to view GPS coordinates which links to Google or BING maps, including advanced camera info, image info, authors, copyright etc.
+
+
+
+<h3 align="center">
+    Fullscreen Gallery
+</h3>
+
+<h1 align="center">
+    <img src="https://picview.org/assets/screenshots/PicView-Horizontal-Image-Gallery-Dark-Theme-900w.webp" />
+</h1>
+
+
+<h3 align="center">
+    Horizontal Gallery
+</h3>
+
+<h1 align="center">
+    <img src="https://picview.org/assets/screenshots/PicView-Fullscreen-Image-Gallery-dark-theme-900w.webp" />
+</h1>
+
 
 ___
 If you have 7-Zip or WinRAR installed, you can view images inside archives, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
@@ -93,15 +119,12 @@ If you have 7-Zip or WinRAR installed, you can view images inside archives, such
 Rename or move files in the titlebar by pressing `F2` or right clicking it
 
 **File support** 
- > .jpg  .jpeg  .jpe  .png  .bmp  .tif  .tiff  .gif  .ico  .jfif  .webp .svgz .jxl <br>
-   .psd  .psb .xcf .svg .heic .tga .dds<br>.3fr  .arw  .cr2  .crw  .dcr  .dng  .erf  .kdc  .mdc  .mef  .mos  .mrw  .nef  .nrw  .orf  .pef .raf  .raw  .rw2  .srf  .x3f *<br>
+ > .jpg  .jpeg  .jpe  .png  .bmp  .tif  .tiff  .gif  .ico  .jfif  .webp .svg .svgz <br>
+   .psd  .psb .xcf .jxl .heic .hdr .tga .dds<br>.3fr  .arw  .cr2  .crw  .dcr  .dng  .erf  .kdc  .mdc  .mef  .mos  .mrw  .nef  .nrw  .orf  .pef .raf  .raw  .rw2  .srf  .x3f *<br>
    .pgm  .hdr  .cut  .exr  .dib  .emf  .wmf  .wpg  .pcx  .xbm  .xpm .wbmp *
    
    _* RAW camera formats may be slower to load_
 
-
-
-<img src="https://d33wubrfki0l68.cloudfront.net/bcc20ae9223923eb15cc96a7b83f00af4a9a6101/f90e0/assets/screenshots/picview-settings-window-dark-theme.webp" />
 
 ## Donate
 If you wish to thank me for my work, please
