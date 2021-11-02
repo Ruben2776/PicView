@@ -136,6 +136,14 @@ namespace PicView.Views.Windows
 
         private void Window_ContentRendered()
         {
+            Activated += async (_, _) =>
+            {
+                if (FullPathBox.Text != ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex])
+                {
+                    await UpdateValuesAsync(null).ConfigureAwait(false);
+                }
+            };
+
             KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(Scroller, e, this);
 
             // Hack to deselect border on mouse click

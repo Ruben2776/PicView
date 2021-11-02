@@ -37,6 +37,16 @@ namespace PicView.UILogic
 
         internal static async Task UpdateValuesAsync(FileInfo? fileInfo)
         {
+            if (fileInfo is null)
+            {
+                if (ChangeImage.Navigation.Pics.Count > 0 && ChangeImage.Error_Handling.CheckOutOfRange())
+                {
+                    return;
+                }
+
+                fileInfo = new FileInfo(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
+            }
+
             bool toReturn = false;
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () =>
