@@ -178,22 +178,23 @@ namespace PicView.SystemIntegration
                         }
                     }
                 }
-                else { return IntPtr.Zero; }
-
-                if (w.WindowState == WindowState.Maximized)
+                else
                 {
-                    UILogic.Sizing.WindowSizing.Restore_From_Move();
-                }
-                if (w.MainImage.Source == null) { return IntPtr.Zero; }
+                    if (w.WindowState == WindowState.Maximized)
+                    {
+                        UILogic.Sizing.WindowSizing.Restore_From_Move();
+                    }
+                    if (w.MainImage.Source == null) { return IntPtr.Zero; }
 
-                // Resize gallery
-                if (UC.GetPicGallery != null && GalleryFunctions.IsHorizontalOpen)
-                {
-                    UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
-                    UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
-                }
+                    // Resize gallery
+                    if (UC.GetPicGallery != null && GalleryFunctions.IsHorizontalOpen)
+                    {
+                        UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+                        UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
+                    }
 
-                ScaleImage.FitImage(w.MainImage.Source.Width, w.MainImage.Source.Height);
+                    ScaleImage.FitImage(w.MainImage.Source.Width, w.MainImage.Source.Height);
+                }
             }
 
             return IntPtr.Zero;
