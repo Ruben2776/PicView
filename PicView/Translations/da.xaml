@@ -176,6 +176,7 @@
     <system:String x:Key="Open">Åben</system:String>
     <system:String x:Key="OpenWith">Åben med...</system:String>
     <system:String x:Key="OpenFileDialog">Åben fil dialog</system:String>
+    <system:String x:Key="OpenLastFile">Åben seneste fil</system:String>
     <system:String x:Key="ShowInFolder">Vis i mappe</system:String>
     <system:String x:Key="Save">Gem</system:String>
     <system:String x:Key="SaveImage">Gem billede</system:String>

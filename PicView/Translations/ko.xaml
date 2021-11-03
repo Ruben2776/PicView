@@ -171,6 +171,7 @@
     <system:String x:Key="Open">열기</system:String>
     <system:String x:Key="OpenWith">열기...</system:String>
     <system:String x:Key="OpenFileDialog">파일 열기 대화 상자</system:String>
+    <system:String x:Key="OpenLastFile">Open last file</system:String>
     <system:String x:Key="ShowInFolder">폴더에 표시</system:String>
     <system:String x:Key="Save">저장</system:String>
     <system:String x:Key="SaveImage">이미지 저장</system:String>

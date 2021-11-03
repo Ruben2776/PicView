@@ -176,6 +176,7 @@
     <system:String x:Key="Open">Abrir</system:String>
     <system:String x:Key="OpenWith">Abrir con...</system:String>
     <system:String x:Key="OpenFileDialog">Abrir selector de archivo</system:String>
+    <system:String x:Key="OpenLastFile">Open last file</system:String>
     <system:String x:Key="ShowInFolder">Mostrar en carpeta</system:String>
     <system:String x:Key="Save">Guardar</system:String>
     <system:String x:Key="SaveImage">Guardar Imagen</system:String>

@@ -180,6 +180,7 @@
     <system:String x:Key="Open">打开</system:String>
     <system:String x:Key="OpenWith">用…打开</system:String>
     <system:String x:Key="OpenFileDialog">打开文件对话框</system:String>
+    <system:String x:Key="OpenLastFile">Open last file</system:String>
     <system:String x:Key="ShowInFolder">在文件夹中显示</system:String>
     <system:String x:Key="Save">保存</system:String>
     <system:String x:Key="SaveImage">保存图片</system:String>
