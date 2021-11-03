@@ -266,20 +266,26 @@ namespace PicView.UILogic.Sizing
 
         internal static void SetLastWindowSize()
         {
-            ConfigureWindows.GetMainWindow.Top = Properties.Settings.Default.Top;
-            ConfigureWindows.GetMainWindow.Left = Properties.Settings.Default.Left;
-            ConfigureWindows.GetMainWindow.Width = Properties.Settings.Default.Width;
-            ConfigureWindows.GetMainWindow.Height = Properties.Settings.Default.Height;
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
+            {
+                ConfigureWindows.GetMainWindow.Top = Properties.Settings.Default.Top;
+                ConfigureWindows.GetMainWindow.Left = Properties.Settings.Default.Left;
+                ConfigureWindows.GetMainWindow.Width = Properties.Settings.Default.Width;
+                ConfigureWindows.GetMainWindow.Height = Properties.Settings.Default.Height;
+            });
         }
 
         internal static void SetWindowSize()
         {
-            Properties.Settings.Default.Top = GetMainWindow.Top;
-            Properties.Settings.Default.Left = GetMainWindow.Left;
-            Properties.Settings.Default.Height = GetMainWindow.Height;
-            Properties.Settings.Default.Width = GetMainWindow.Width;
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
+            {
+                Properties.Settings.Default.Top = GetMainWindow.Top;
+                Properties.Settings.Default.Left = GetMainWindow.Left;
+                Properties.Settings.Default.Height = GetMainWindow.Height;
+                Properties.Settings.Default.Width = GetMainWindow.Width;
 
-            Properties.Settings.Default.Save();
+                Properties.Settings.Default.Save();
+            });
         }
 
         #endregion Window Functions
