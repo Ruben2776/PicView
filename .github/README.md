@@ -31,6 +31,8 @@ Chinese by <a href="https://github.com/Crystal-RainSlide">Crystal-RainSlide</a><
 Spanish by <a href="https://github.com/lk-KEVIN">lk.KEVIN</a><br>
 Korean by <a href="https://github.com/VenusGirl">VenusGirl</a><br>
 German by <a href="https://github.com/Brotbox">Brotbox</a><br>
+Polish by <a href="https://github.com/YourSenseiCreeper">YourSenseiCreeper</a><br>
+France by Sylvain LOUIS <br>
 English and Danish by me<br>
 
 **Looking for translators!**
