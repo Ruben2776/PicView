@@ -175,6 +175,11 @@ namespace PicView.ChangeImage
             var cm = (MenuItem)ConfigureWindows.MainContextMenu.Items[5];
             for (int i = 0; i < maxCount; i++)
             {
+                if (fileHistory.Count == i)
+                {
+                    return;
+                }
+
                 var item = menuItem(fileHistory[i], i);
                 if (item is null) { break; }
                 if (cm.Items.Count <= i)
