@@ -5,6 +5,7 @@ using PicView.Translations;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -122,11 +123,20 @@ namespace PicView.Views.Windows
 
                 foreach (var language in Enum.GetValues(typeof(Languages)))
                 {
-                    LanguageBox.Items.Add(new ComboBoxItem
+                    try
                     {
-                        Content = new CultureInfo(language.ToString()).DisplayName,
-                        IsSelected = language.ToString() == Properties.Settings.Default.UserLanguage,
-                    });
+                        LanguageBox.Items.Add(new ComboBoxItem
+                        {
+                            Content = new CultureInfo(language.ToString()).DisplayName,
+                            IsSelected = language.ToString() == Properties.Settings.Default.UserLanguage,
+                        });
+                    }
+                    catch (Exception e)
+                    {
+#if DEBUG
+                        Trace.WriteLine($"{nameof(SettingsWindow)} Add language caught exception: \n {e.Message}");
+#endif
+                    }
                 }
 
                 LanguageBox.SelectionChanged += delegate
