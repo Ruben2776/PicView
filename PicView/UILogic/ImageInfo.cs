@@ -39,12 +39,10 @@ namespace PicView.UILogic
         {
             if (fileInfo is null)
             {
-                if (ChangeImage.Navigation.Pics.Count > 0 && ChangeImage.Error_Handling.CheckOutOfRange())
+                if (ChangeImage.Navigation.Pics.Count > 0 && ChangeImage.Navigation.Pics.Count > ChangeImage.Navigation.FolderIndex)
                 {
-                    return;
+                    fileInfo = new FileInfo(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
                 }
-
-                fileInfo = new FileInfo(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
             }
 
             bool toReturn = false;
@@ -69,10 +67,14 @@ namespace PicView.UILogic
 
             await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
-                if (ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex] != fileInfo.FullName)
+                if (fileInfo is not null)
                 {
-                    return;
+                    if (ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex] != fileInfo.FullName)
+                    {
+                        return;
+                    }
                 }
+
                 if (data == null)
                 {
                     Clear();
