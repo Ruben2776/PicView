@@ -67,12 +67,10 @@ namespace PicView.UILogic
 
             await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
-                if (fileInfo is not null)
+                if (fileInfo is not null && ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex] != fileInfo.FullName)
                 {
-                    if (ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex] != fileInfo.FullName)
-                    {
-                        return;
-                    }
+                    Clear();
+                    return;
                 }
 
                 if (data == null)
