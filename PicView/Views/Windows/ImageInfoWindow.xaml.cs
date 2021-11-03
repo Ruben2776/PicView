@@ -138,7 +138,8 @@ namespace PicView.Views.Windows
         {
             Activated += async (_, _) =>
             {
-                if (FullPathBox.Text != ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex])
+                if (ChangeImage.Navigation.Pics.Count > 0 && ChangeImage.Navigation.Pics.Count > ChangeImage.Navigation.FolderIndex
+                && FullPathBox.Text != ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex])
                 {
                     await UpdateValuesAsync(null).ConfigureAwait(false);
                 }
