@@ -95,6 +95,11 @@
     <system:String x:Key="Language">언어</system:String>
     <system:String x:Key="ChangingLanguageRequiresRestart">* 언어를 변경하려면 다시 시작해야 합니다</system:String>
 
+    <!--  Settings window, Gallery layout  -->
+    <system:String x:Key="FullscreenGalleryLayout">Fullscreen gallery layout</system:String>
+    <system:String x:Key="Vertical">Vertical</system:String>
+    <system:String x:Key="Horizontal">Horizontal</system:String>
+
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">일반 설정</system:String>
     <system:String x:Key="UISettings">UI 설정</system:String>
