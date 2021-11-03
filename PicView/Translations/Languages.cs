@@ -8,6 +8,7 @@
         es,
         zh_CN,
         ko,
-        pl
+        pl,
+        fr
     }
 }

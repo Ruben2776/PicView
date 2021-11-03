@@ -298,6 +298,10 @@
     <Page Update="Themes\Styles\ColorThemes\Light.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Translations\fr.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Translations\pl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
