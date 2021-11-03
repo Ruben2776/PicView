@@ -258,6 +258,7 @@
     <system:String x:Key="Centimeters">cm</system:String>
     <system:String x:Key="Inches">in</system:String>
     <system:String x:Key="BitDepth">位深</system:String>
+    <system:String x:Key="SizeTooltip">Enter desired size in pixels or percentage. Input 0 in either width or height to preserve aspect ratio</system:String>
 
     <!--  Keyboard key names  -->
     <system:String x:Key="Delete">Delete</system:String>
