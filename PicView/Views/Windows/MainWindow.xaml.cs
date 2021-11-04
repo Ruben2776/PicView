@@ -32,16 +32,18 @@ namespace PicView.Views.Windows
             }
             Topmost = Properties.Settings.Default.TopMost;
 
-            Loaded += async (_, _) =>
+            Loaded += (_, _) =>
             {
                 // Subscribe to Windows resized event || Need to be exactly on load
                 HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle);
                 source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
                 Translations.LoadLanguage.DetermineLanguage();
-                await StartLoading.LoadedEventsAsync().ConfigureAwait(false);
+                StartLoading.LoadedEvent();
             };
             ContentRendered += delegate
             {
+                StartLoading.ContentRenderedEvent();
+
                 // keyboard and Mouse_Keys Keys
                 KeyDown += async (sender, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
                 KeyUp += async (sender, e) => await MainKeyboardShortcuts.MainWindow_KeysUpAsync(sender, e).ConfigureAwait(false);
@@ -54,8 +56,6 @@ namespace PicView.Views.Windows
 
                 MouseMove += (sender, e) => HideInterfaceLogic.Interface_MouseMove(sender, e);
                 MouseLeave += (sender, e) => HideInterfaceLogic.Interface_MouseLeave(sender, e);
-
-                StartLoading.ContentRenderedEvent();
 
                 // MainImage
                 ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonUp += MainMouseKeys.MainImage_MouseLeftButtonUp;

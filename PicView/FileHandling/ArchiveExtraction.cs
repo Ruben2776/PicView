@@ -133,11 +133,11 @@ namespace PicView.FileHandling
             x.BeginOutputReadLine();
             x.OutputDataReceived += async delegate
             {
-                while (Pics.Count < 2 && x.HasExited == false)
+                while (Pics.Count < 1 && x.HasExited == false)
                 {
                     SetDirectory();
                 }
-                if (Pics.Count >= 2 && !x.HasExited)
+                if (Pics.Count >= 1 && !x.HasExited)
                 {
                     await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
                 }
@@ -148,7 +148,7 @@ namespace PicView.FileHandling
                 {
                     if (Navigation.FolderIndex > 0)
                     {
-                        await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
+                        await LoadPic.LoadPiFromFileAsync(Pics[0]).ConfigureAwait(false);
                     }
 
                     // Add zipped files as recent file

@@ -37,10 +37,12 @@ namespace PicView.ImageHandling
                 case ".wbmp":
                     return await getWriteableBitmapAsync(fileInfo).ConfigureAwait(false);
 
-                case ".tga":
+                case ".tga": // Make sure to to auto orient tga files https://github.com/Ruben2776/PicView/issues/22
                     return await Task.FromResult(getDefaultBitmapSource(fileInfo, true)).ConfigureAwait(false);
 
-                case ".svg": // TODO convert to drawingimage instead.. maybe
+                case ".svg":
+                    /// TODO convert to drawingimage instead.. maybe
+                    /// TODO svgz only works in getDefaultBitmapSource, need to figure out how to fix white bg instead of transparent 
                     return await getTransparentBitmapSourceAsync(fileInfo, MagickFormat.Svg).ConfigureAwait(false);
                 case ".tif":
                 case ".tiff":

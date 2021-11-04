@@ -2,11 +2,8 @@
 using PicView.SystemIntegration;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
 using static PicView.ChangeImage.Error_Handling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Loading.LoadContextMenus;
@@ -19,66 +16,54 @@ namespace PicView.UILogic.Loading
 {
     internal static class StartLoading
     {
-        internal static async Task LoadedEventsAsync()
+        internal static void LoadedEvent()
         {
-
-#if DEBUG
-            Trace.Listeners.Add(new TextWriterTraceListener("Debug.log"));
-            Trace.Unindent();
-            Trace.WriteLine(SetTitle.AppName + " started at " + DateTime.Now);
-#endif
             FreshStartup = true;
             Pics = new List<string>();
 
-            await Dispatcher.CurrentDispatcher.InvokeAsync(() =>
+            // Load sizing properties
+            MonitorInfo = MonitorSize.GetMonitorSize();
+
+            // Set min size to DPI scaling
+            ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
+            ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
+
+            if (Properties.Settings.Default.AutoFitWindow == false)
             {
-                // Load sizing properties
-                MonitorInfo = MonitorSize.GetMonitorSize();
+                SetWindowBehavior();
+            }
 
-                // Set min size to DPI scaling
-                ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
-                ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
+            ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Properties.Settings.Default.ScrollEnabled ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
 
-                if (Properties.Settings.Default.AutoFitWindow == false)
-                {
-                    SetWindowBehavior();
-                }
-
-                ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Properties.Settings.Default.ScrollEnabled ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
-
-                // Set min size to DPI scaling
-                ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
-                ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
-            });
+            // Set min size to DPI scaling
+            ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
+            ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
             if (!Properties.Settings.Default.ShowInterface)
             {
-                Dispatcher.CurrentDispatcher.Invoke(() =>
-                 {
-                     ConfigureWindows.GetMainWindow.TitleBar.Visibility =
-                        ConfigureWindows.GetMainWindow.LowerBar.Visibility
-                        = Visibility.Collapsed;
-                 });
+                ConfigureWindows.GetMainWindow.TitleBar.Visibility =
+                   ConfigureWindows.GetMainWindow.LowerBar.Visibility
+                   = Visibility.Collapsed;
             }
+        }
 
+        internal static void ContentRenderedEvent()
+        {
             // Load image if possible
             var args = Environment.GetCommandLineArgs();
             if (args.Length == 1)
             {
-                Dispatcher.CurrentDispatcher.Invoke(() =>
+                // Determine proper startup size
+                if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width != 0)
                 {
-                    // Determine proper startup size
-                    if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width != 0)
-                    {
-                        SetLastWindowSize();
-                    }
-                    else if (Properties.Settings.Default.AutoFitWindow)
-                    {
-                        SetWindowBehavior();
-                    }
+                    SetLastWindowSize();
+                }
+                else if (Properties.Settings.Default.AutoFitWindow)
+                {
+                    SetWindowBehavior();
+                }
 
-                    Unload(true); // Load clean setup when starting up without arguments
-                });
+                Unload(true); // Load clean setup when starting up without arguments
             }
             else
             {
@@ -87,34 +72,26 @@ namespace PicView.UILogic.Loading
                     _ = GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
                 }
 
-                await ChangeImage.LoadPic.QuickLoadAsync(args[1]).ConfigureAwait(false);
-
                 // Determine prefered UI for startup
                 if (Properties.Settings.Default.Fullscreen)
                 {
-                    ConfigureWindows.GetMainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Render, (Action)(() =>
-                    {
-                        Sizing.WindowSizing.Fullscreen_Restore(true);
-                    }));
+                    Sizing.WindowSizing.Fullscreen_Restore(true);
                 }
 
                 else if (Properties.Settings.Default.Width > 0 && Properties.Settings.Default.AutoFitWindow == false)
                 {
-                    Dispatcher.CurrentDispatcher.Invoke(() =>
-                    {
-                        SetLastWindowSize();
-                    });
+                    SetLastWindowSize();
                 }
+                else
+                {
+                    UILogic.Sizing.WindowSizing.SetWindowBehavior();
+                }
+
+                _ = ChangeImage.LoadPic.QuickLoadAsync(args[1]).ConfigureAwait(false);
+                // TODO maybe load extra images if multiple arguments
             }
-        }
 
-        internal static void ContentRenderedEvent()
-        {
-#if DEBUG
-            Trace.WriteLine("ContentRendered started");
-#endif
-            #region Add dictionaries
-
+            // Add dictionaries
             Application.Current.Resources.MergedDictionaries.Add(
                 new ResourceDictionary
                 {
@@ -136,17 +113,11 @@ namespace PicView.UILogic.Loading
                 }
             );
 
-            #endregion Add dictionaries
-
             ConfigureSettings.ConfigColors.UpdateColor();
 
 
             // Load UI and events
             AddUIElementsAndUpdateValues();
-
-#if DEBUG
-            Trace.WriteLine("Start Completed ");
-#endif
         }
 
         private static void AddUIElementsAndUpdateValues()

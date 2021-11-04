@@ -243,7 +243,7 @@ namespace PicView.PicGallery
         {
             var pic = Thumbnails.GetBitmapSourceThumb(new System.IO.FileInfo(Navigation.Pics[i]));
 
-            if (pic == null)
+            if (pic is null)
             {
                 pic = ImageFunctions.ImageErrorMessage();
             }

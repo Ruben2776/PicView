@@ -48,7 +48,7 @@ namespace PicView.FileHandling
                 // Vector
                 case string when ext.Equals(".svg", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".svgz", StringComparison.OrdinalIgnoreCase):
-                
+
 
                 // Camera
                 case string when ext.Equals(".3fr", StringComparison.OrdinalIgnoreCase):
@@ -85,7 +85,7 @@ namespace PicView.FileHandling
                 case string when ext.Equals(".pcx", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".xbm", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".xpm", StringComparison.OrdinalIgnoreCase):
-                
+
                     return false;
 
                 default: return null;
@@ -109,25 +109,34 @@ namespace PicView.FileHandling
         /// <returns></returns>
         internal static bool IsSupportedArchives(string file)
         {
-            string ext = Path.GetExtension(file);
-            switch (ext)
+            return IsSupportedArchives(new FileInfo(file));
+        }
+
+        /// <summary>
+        /// Returns true if supported archive
+        /// </summary>
+        /// <param name="ext"></param>
+        /// <returns></returns>
+        internal static bool IsSupportedArchives(FileInfo fileInfo)
+        {
+            switch (fileInfo.Extension)
             {
                 // Standards
-                case string when ext.Equals(".zip", StringComparison.OrdinalIgnoreCase):
-                case string when ext.Equals(".7zip", StringComparison.OrdinalIgnoreCase):
-                case string when ext.Equals(".7z", StringComparison.OrdinalIgnoreCase):
-                case string when ext.Equals(".rar", StringComparison.OrdinalIgnoreCase):
-                case string when ext.Equals(".cbr", StringComparison.OrdinalIgnoreCase):
-                case string when ext.Equals(".cb7", StringComparison.OrdinalIgnoreCase):
-                case string when ext.Equals(".cbt", StringComparison.OrdinalIgnoreCase):
-                case string when ext.Equals(".cbz", StringComparison.OrdinalIgnoreCase):
-                case string when ext.Equals(".xz", StringComparison.OrdinalIgnoreCase):
-                case string when ext.Equals(".bzip2", StringComparison.OrdinalIgnoreCase):
-                case string when ext.Equals(".gzip", StringComparison.OrdinalIgnoreCase):
-                case string when ext.Equals(".tar", StringComparison.OrdinalIgnoreCase):
-                case string when ext.Equals(".wim", StringComparison.OrdinalIgnoreCase):
-                case string when ext.Equals(".iso", StringComparison.OrdinalIgnoreCase):
-                case string when ext.Equals(".cab", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".zip", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".7zip", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".7z", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".rar", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".cbr", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".cb7", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".cbt", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".cbz", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".xz", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".bzip2", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".gzip", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".tar", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".wim", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".iso", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".cab", StringComparison.OrdinalIgnoreCase):
                     return true;
 
                 default: return false;

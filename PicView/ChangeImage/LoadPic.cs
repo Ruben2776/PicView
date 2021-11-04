@@ -54,12 +54,18 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static async Task QuickLoadAsync(FileInfo fileInfo)
         {
-            bool archive = false;
-            var pic = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-            if (pic is null)
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
             {
-                archive = SupportedFiles.IsSupportedArchives(fileInfo.FullName);
-                if (archive == false)
+                SetLoadingString();
+            });
+
+            bool archive = SupportedFiles.IsSupportedArchives(fileInfo);
+            BitmapSource? pic = null;
+
+            if (archive is false)
+            {
+                pic = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+                if (pic is null)
                 {
                     ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
                     {
@@ -67,22 +73,22 @@ namespace PicView.ChangeImage
                     });
                     return;
                 }
-            }
-            else
-            {
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Send, () =>
+                else
                 {
-                    if (fileInfo.Extension == ".gif")
+                    ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
                     {
-                        XamlAnimatedGif.AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(fileInfo.FullName));
-                    }
-                    else
-                    {
-                        ConfigureWindows.GetMainWindow.MainImage.Source = pic;
-                    }
+                        if (fileInfo.Extension == ".gif")
+                        {
+                            XamlAnimatedGif.AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(fileInfo.FullName));
+                        }
+                        else
+                        {
+                            ConfigureWindows.GetMainWindow.MainImage.Source = pic;
+                        }
 
-                    SetLoadingString();
-                });
+                        FitImage(pic.PixelWidth, pic.PixelHeight);
+                    });
+                }
             }
 
             await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
@@ -98,17 +104,13 @@ namespace PicView.ChangeImage
             }
             FolderIndex = FolderIndex == -1 ? 0 : FolderIndex; // Fixes weird error if you load example.jpg where the actual name is example.JPG
 
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
+            if (pic is not null)
             {
-                FitImage(pic.PixelWidth, pic.PixelHeight);
-
-                if (Properties.Settings.Default.AutoFitWindow)
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
                 {
-                    UILogic.Sizing.WindowSizing.SetWindowBehavior();
-                }
-
-                SetTitleString(pic.PixelWidth, pic.PixelHeight, FolderIndex, fileInfo);
-            });
+                    SetTitleString(pic.PixelWidth, pic.PixelHeight, FolderIndex, fileInfo);
+                });
+            }
 
             if (archive == false)
             {
@@ -365,6 +367,13 @@ namespace PicView.ChangeImage
                         {
                             ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
                         }
+
+                        // Don't allow image size to stretch the whole screen
+                        if (XWidth == 0)
+                        {
+                            ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+                            ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
+                        }
                     });
                 }
 
@@ -508,7 +517,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="index"></param>
         /// <param name="bitmapSource"></param>
-        internal static void UpdatePic(int index, BitmapSource bitmapSource, FileInfo? fileInfo = null)
+        internal static void UpdatePic(int index, BitmapSource? bitmapSource, FileInfo? fileInfo = null)
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
             {

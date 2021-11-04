@@ -108,27 +108,37 @@ namespace PicView.ImageHandling
             return imageOptimizer.LosslessCompress(file);
         });
 
-        internal static RenderTargetBitmap ImageErrorMessage()
+        internal static RenderTargetBitmap? ImageErrorMessage()
         {
+            var brush = Application.Current.TryFindResource("MainColorBrush") as Brush;
+            if (brush == null) { return null; }
+
             var w = ScaleImage.XWidth != 0 ? ScaleImage.XWidth : 300 * WindowSizing.MonitorInfo.DpiScaling;
             var h = ScaleImage.XHeight != 0 ? ScaleImage.XHeight : 300 * WindowSizing.MonitorInfo.DpiScaling;
             var rect = new Rect(new Size(w, h));
             var visual = new DrawingVisual();
-            using (var ctx = visual.RenderOpen())
+            try
             {
-                var typeface = new Typeface("/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros");
-                //text
-                var text = new FormattedText("Unable to render image", CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, 16, (Brush)Application.Current.Resources["MainColorBrush"], WindowSizing.MonitorInfo.DpiScaling)
+                using (var ctx = visual.RenderOpen())
                 {
-                    TextAlignment = System.Windows.TextAlignment.Center
-                };
+                    var typeface = new Typeface("/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros");
+                    //text
+                    var text = new FormattedText("Unable to render image", CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, 16, brush, WindowSizing.MonitorInfo.DpiScaling)
+                    {
+                        TextAlignment = System.Windows.TextAlignment.Center
+                    };
 
-                ctx.DrawText(text, new Point(rect.Left + rect.Width / 2, rect.Top + rect.Height / 2));
+                    ctx.DrawText(text, new Point(rect.Left + rect.Width / 2, rect.Top + rect.Height / 2));
+                }
+                RenderTargetBitmap rtv = new((int)w, (int)h, 96.0, 96.0, PixelFormats.Default);
+                rtv.Render(visual);
+                rtv.Freeze();
+                return rtv;
             }
-            RenderTargetBitmap rtv = new((int)w, (int)h, 96.0, 96.0, PixelFormats.Default);
-            rtv.Render(visual);
-            rtv.Freeze();
-            return rtv;
+            catch (System.Exception)
+            {
+                return null;
+            }
         }
     }
 }
