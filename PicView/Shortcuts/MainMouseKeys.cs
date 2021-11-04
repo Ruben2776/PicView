@@ -221,7 +221,7 @@ namespace PicView.Shortcuts
             {
                 if (Properties.Settings.Default.CtrlZoom)
                 {
-                    await ZoomAsync(e.Delta > 0).ConfigureAwait(false);
+                    Zoom(e.Delta > 0);
                 }
                 else
                 {
@@ -236,7 +236,7 @@ namespace PicView.Shortcuts
                 }
                 else
                 {
-                    await ZoomAsync(e.Delta > 0).ConfigureAwait(false);
+                    Zoom(e.Delta > 0);
                 }
             }
         }

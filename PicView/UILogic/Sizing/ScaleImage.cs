@@ -55,7 +55,7 @@ namespace PicView.UILogic.Sizing
                     }
                     else
                     {
-                        var size = await ImageSizeFunctions.ImageSizeAsync(Pics[FolderIndex]).ConfigureAwait(false);
+                        var size = await ImageSizeFunctions.GetImageSizeAsync(Pics[FolderIndex]).ConfigureAwait(false);
                         if (size.HasValue)
                         {
                             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
@@ -116,7 +116,7 @@ namespace PicView.UILogic.Sizing
             Size? size = null;
             try
             {
-                size = await ImageSizeFunctions.ImageSizeAsync(source).ConfigureAwait(false);
+                size = await ImageSizeFunctions.GetImageSizeAsync(source).ConfigureAwait(false);
             }
             catch (Exception e)
             {

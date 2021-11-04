@@ -198,12 +198,12 @@ namespace PicView.Shortcuts
                 // Zoom
                 case Key.Add:
                 case Key.OemPlus:
-                    await ZoomAsync(true).ConfigureAwait(false);
+                    Zoom(true);
                     return;
 
                 case Key.Subtract:
                 case Key.OemMinus:
-                    await ZoomAsync(false).ConfigureAwait(false);
+                    Zoom(false);
                     return;
 
                 default: break;

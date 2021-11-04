@@ -1,7 +1,6 @@
 ﻿using PicView.PicGallery;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -29,7 +28,7 @@ namespace PicView.UILogic.TransformImage
         {
             get
             {
-                if (scaleTransform == null || ZoomValue <= 1)
+                if (scaleTransform == null || ZoomValue == 1)
                 {
                     return string.Empty;
                 }
@@ -203,7 +202,7 @@ namespace PicView.UILogic.TransformImage
         /// Determine zoom direction and speed
         /// </summary>
         /// <param name="i">increment</param>
-        internal static async Task ZoomAsync(bool increment)
+        internal static void Zoom(bool increment)
         {
             /// Don't zoom when gallery is open
             if (GalleryFunctions.IsHorizontalOpen || GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
@@ -260,14 +259,14 @@ namespace PicView.UILogic.TransformImage
                 ZoomValue = .09;
             }
 
-            await ZoomAsync(ZoomValue).ConfigureAwait(false);
+            Zoom(ZoomValue);
         }
 
         /// <summary>
         /// Zooms to given value
         /// </summary>
         /// <param name="value"></param>
-        internal static async Task ZoomAsync(double value)
+        internal static void Zoom(double value)
         {
             ZoomValue = value;
 
@@ -282,7 +281,7 @@ namespace PicView.UILogic.TransformImage
             {
                 Tooltip.CloseToolTipMessage();
             }
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
                 /// Display updated values
                 if (Pics.Count == 0)
