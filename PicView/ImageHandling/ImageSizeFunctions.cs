@@ -8,7 +8,7 @@ namespace PicView.ImageHandling
 {
     internal static class ImageSizeFunctions
     {
-        internal static async Task<Size?> ImageSizeAsync(string file)
+        internal static async Task<Size?> GetImageSizeAsync(string file)
         {
             using var magick = new MagickImage();
             FileInfo? fileInfo = new FileInfo(file);
