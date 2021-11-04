@@ -388,6 +388,8 @@ namespace PicView.UILogic
 
         static void Clear()
         {
+            if (ConfigureWindows.GetImageInfoWindow is null) { return; }
+
             ConfigureWindows.GetImageInfoWindow.FilenameBox.Text =
 
             ConfigureWindows.GetImageInfoWindow.FolderBox.Text =
