@@ -40,7 +40,17 @@ namespace PicView.UILogic.TransformImage
             }
         }
 
-        internal static bool IsZoomed { get { return scaleTransform != null && scaleTransform.ScaleX > 1; } }
+        internal static bool IsZoomed
+        {
+            get
+            {
+                if (scaleTransform is null)
+                {
+                    return false;
+                }
+                return scaleTransform.ScaleX != 1.0;
+            }
+        }
 
         /// <summary>
         /// Returns aspect ratio as a formatted string
@@ -244,10 +254,10 @@ namespace PicView.UILogic.TransformImage
             // Set speed
             ZoomValue += zoomSpeed;
 
-            if (ZoomValue < 1.0)
+            if (ZoomValue < .09)
             {
                 /// Don't zoom less than 1.0,
-                ZoomValue = 1.0;
+                ZoomValue = .09;
             }
 
             await ZoomAsync(ZoomValue).ConfigureAwait(false);
@@ -297,8 +307,9 @@ namespace PicView.UILogic.TransformImage
             double absoluteY = relative.Y * scaleTransform.ScaleY + translateTransform.Y;
 
             // Reset to zero if value is one, which is reset
-            double newTranslateValueX = zoomValue > 1 ? absoluteX - relative.X * zoomValue : 0;
-            double newTranslateValueY = zoomValue > 1 ? absoluteY - relative.Y * zoomValue : 0;
+            double newTranslateValueX = zoomValue != 1 ? absoluteX - relative.X * zoomValue : 0;
+            double newTranslateValueY = zoomValue != 1 ? absoluteY - relative.Y * zoomValue : 0;
+
 
             var duration = new Duration(TimeSpan.FromSeconds(.3));
 
