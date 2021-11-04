@@ -4,10 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
     Title="{StaticResource Loading}"
-    Width="700"
-    Height="700"
-    MinWidth="475"
-    MinHeight="435"
+    MinWidth="462"
+    MinHeight="400"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
     Foreground="{StaticResource MainColorBrush}"
@@ -79,7 +77,6 @@
         <Grid
             x:Name="LowerBar"
             Height="30"
-            MinWidth="444"
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Bottom">
 
