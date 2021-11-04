@@ -35,61 +35,30 @@ namespace PicView.ImageHandling
                 case ".jfif":
                 case ".webp":
                 case ".wbmp":
-                    return await getWriteableBitmap(fileInfo).ConfigureAwait(false);
+                    return await getWriteableBitmapAsync(fileInfo).ConfigureAwait(false);
 
                 case ".tga":
-                    return getDefaultBitmapSource(fileInfo, true);
+                    return await Task.FromResult(getDefaultBitmapSource(fileInfo, true)).ConfigureAwait(false);
 
                 case ".svg": // TODO convert to drawingimage instead.. maybe
-                    FileStream? filestream = null;
-                    byte[] data;
-                    MagickImage magickImage = new()
-                    {
-                        Quality = 100,
-                        ColorSpace = ColorSpace.Transparent,
-                        BackgroundColor = MagickColors.Transparent,
-                    };
-                    try
-                    {
-                        filestream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
-                        data = new byte[filestream.Length];
-                        await filestream.ReadAsync(data.AsMemory(0, (int)filestream.Length)).ConfigureAwait(false);
-                        await filestream.DisposeAsync().ConfigureAwait(false);
-
-                        magickImage.Read(data);
-                        magickImage.Settings.Format = MagickFormat.Svg;
-                        magickImage.Settings.BackgroundColor = MagickColors.Transparent;
-                        magickImage.Settings.FillColor = MagickColors.Transparent;
-                    }
-                    catch (Exception e)
-                    {
-#if DEBUG
-                        Trace.WriteLine($"{nameof(getMagicBitmapsource)} {fileInfo.Name} exception, \n {e.Message}");
-#endif
-                        return null;
-                    }
-
-                    await filestream.DisposeAsync().ConfigureAwait(false);
-
-                    var bitmap = magickImage.ToBitmapSource();
-                    magickImage.Dispose();
-                    bitmap.Freeze();
-                    return bitmap;
-                case ".svgz": // TODO convert to drawingimage instead
+                    return await getTransparentBitmapSourceAsync(fileInfo, MagickFormat.Svg).ConfigureAwait(false);
                 case ".tif":
                 case ".tiff":
                 case ".dds":
                 case ".psd":
                 case ".psb":
                 case ".xcf":
-                    return await getMagicBitmapsource(fileInfo).ConfigureAwait(false);
+                    return await getMagicBitmapSourceAsync(fileInfo).ConfigureAwait(false);
                 default: // some formats cause exceptions when using filestream, so defaulting to reading from file
-                    return getDefaultBitmapSource(fileInfo);
+                    return await Task.FromResult(getDefaultBitmapSource(fileInfo)).ConfigureAwait(false);
             }
         }
 
         #region Render Image From Source
-
+        /// <summary>
+        /// Returns the currently viewed bitmap image to MagickImage
+        /// </summary>
+        /// <returns></returns>
         internal static MagickImage? GetRenderedMagickImage()
         {
             try
@@ -99,24 +68,24 @@ namespace PicView.ImageHandling
 
                 encoder.Frames.Add(frame);
 
-                var SaveImage = new MagickImage();
+                var magickImage = new MagickImage();
                 using (var stream = new MemoryStream())
                 {
                     encoder.Save(stream);
-                    SaveImage.Read(stream.ToArray());
+                    magickImage.Read(stream.ToArray());
                 }
 
-                SaveImage.Quality = 100;
+                magickImage.Quality = 100;
 
                 // Apply transformation values
                 if (UILogic.TransformImage.Rotation.Flipped)
                 {
-                    SaveImage.Flop();
+                    magickImage.Flop();
                 }
 
-                SaveImage.Rotate(UILogic.TransformImage.Rotation.Rotateint);
+                magickImage.Rotate(UILogic.TransformImage.Rotation.Rotateint);
 
-                return SaveImage;
+                return magickImage;
             }
             catch (Exception e)
             {
@@ -127,6 +96,10 @@ namespace PicView.ImageHandling
             }
         }
 
+        /// <summary>
+        /// Returns Displayed image source to a BitmapFrame
+        /// </summary>
+        /// <returns></returns>
         internal static BitmapFrame? GetRenderedBitmapFrame()
         {
             try
@@ -171,7 +144,51 @@ namespace PicView.ImageHandling
 
         #region Private functions
 
-        private static async Task<WriteableBitmap?> getWriteableBitmap(FileInfo fileInfo)
+        /// <summary>
+        /// Create MagickImage and make sure its transparent, return it as BitmapSource
+        /// </summary>
+        /// <param name="fileInfo"></param>
+        /// <param name="magickFormat"></param>
+        /// <returns></returns>
+        internal static async Task<BitmapSource?> getTransparentBitmapSourceAsync(FileInfo fileInfo, MagickFormat magickFormat)
+        {
+            FileStream? filestream = null;
+            byte[] data;
+            MagickImage magickImage = new()
+            {
+                Quality = 100,
+                ColorSpace = ColorSpace.Transparent,
+                BackgroundColor = MagickColors.Transparent,
+            };
+            try
+            {
+                filestream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
+                data = new byte[filestream.Length];
+                await filestream.ReadAsync(data.AsMemory(0, (int)filestream.Length)).ConfigureAwait(false);
+                await filestream.DisposeAsync().ConfigureAwait(false);
+
+                magickImage.Read(data);
+                magickImage.Settings.Format = magickFormat;
+                magickImage.Settings.BackgroundColor = MagickColors.Transparent;
+                magickImage.Settings.FillColor = MagickColors.Transparent;
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(getTransparentBitmapSourceAsync)} {fileInfo.Name} exception, \n {e.Message}");
+#endif
+                return null;
+            }
+
+            await filestream.DisposeAsync().ConfigureAwait(false);
+
+            var bitmap = magickImage.ToBitmapSource();
+            magickImage.Dispose();
+            bitmap.Freeze();
+            return bitmap;
+        }
+
+        private static async Task<WriteableBitmap?> getWriteableBitmapAsync(FileInfo fileInfo)
         {
             FileStream? filestream = null; // https://devblogs.microsoft.com/dotnet/file-io-improvements-in-dotnet-6/
             byte[] data;
@@ -194,13 +211,13 @@ namespace PicView.ImageHandling
             catch (Exception e)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(getWriteableBitmap)} {fileInfo.Name} exception, \n {e.Message}");
+                Trace.WriteLine($"{nameof(getWriteableBitmapAsync)} {fileInfo.Name} exception, \n {e.Message}");
 #endif
                 return null;
             }
         }
 
-        private static async Task<BitmapSource?> getMagicBitmapsource(FileInfo fileInfo)
+        private static async Task<BitmapSource?> getMagicBitmapSourceAsync(FileInfo fileInfo)
         {
             FileStream? filestream = null;
             MagickImage magickImage = new()
@@ -217,7 +234,7 @@ namespace PicView.ImageHandling
                 catch (Exception e)
                 {
 #if DEBUG
-                    Trace.WriteLine($"{nameof(getMagicBitmapsource)} {fileInfo.Name} exception, \n {e.Message}");
+                    Trace.WriteLine($"{nameof(getMagicBitmapSourceAsync)} {fileInfo.Name} exception, \n {e.Message}");
 #endif
                     return null;
                 }
@@ -232,7 +249,7 @@ namespace PicView.ImageHandling
                 catch (Exception e)
                 {
 #if DEBUG
-                    Trace.WriteLine($"{nameof(getMagicBitmapsource)} {fileInfo.Name} exception, \n {e.Message}");
+                    Trace.WriteLine($"{nameof(getMagicBitmapSourceAsync)} {fileInfo.Name} exception, \n {e.Message}");
 #endif
                     return null;
                 }
