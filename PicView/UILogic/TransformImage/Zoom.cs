@@ -89,7 +89,7 @@ namespace PicView.UILogic.TransformImage
         internal static void InitializeZoom()
         {
             // Initialize transforms
-            ConfigureWindows.GetMainWindow.MainImage.RenderTransform = new TransformGroup
+            ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform = new TransformGroup
             {
                 Children = new TransformCollection {
                             new ScaleTransform(),
@@ -97,11 +97,11 @@ namespace PicView.UILogic.TransformImage
                         }
             };
 
-            ConfigureWindows.GetMainWindow.ParentContainer.ClipToBounds = ConfigureWindows.GetMainWindow.MainImage.ClipToBounds = true;
+            ConfigureWindows.GetMainWindow.ParentContainer.ClipToBounds = ConfigureWindows.GetMainWindow.MainImageBorder.ClipToBounds = true;
 
             // Set transforms to UI elements
-            scaleTransform = (ScaleTransform)((TransformGroup)ConfigureWindows.GetMainWindow.MainImage.RenderTransform).Children.First(tr => tr is ScaleTransform);
-            translateTransform = (TranslateTransform)((TransformGroup)ConfigureWindows.GetMainWindow.MainImage.RenderTransform).Children.First(tr => tr is TranslateTransform);
+            scaleTransform = (ScaleTransform)((TransformGroup)ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform).Children.First(tr => tr is ScaleTransform);
+            translateTransform = (TranslateTransform)((TransformGroup)ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform).Children.First(tr => tr is TranslateTransform);
         }
 
         internal static void PreparePanImage(object sender, MouseButtonEventArgs e)
@@ -133,10 +133,10 @@ namespace PicView.UILogic.TransformImage
             // Keep panning it in bounds 
             if (Properties.Settings.Default.AutoFitWindow && Properties.Settings.Default.Fullscreen == false) // TODO develop solution where you can keep window in bounds when using normal window behavior and fullscreen
             {
-                var isXOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualWidth < (ConfigureWindows.GetMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
-                var isYOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualHeight < (ConfigureWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
-                var maxX = ConfigureWindows.GetMainWindow.Scroller.ActualWidth - (ConfigureWindows.GetMainWindow.MainImage.ActualWidth * scaleTransform.ScaleX);
-                var maxY = ConfigureWindows.GetMainWindow.Scroller.ActualHeight - (ConfigureWindows.GetMainWindow.MainImage.ActualHeight * scaleTransform.ScaleY);
+                var isXOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualWidth < (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX);
+                var isYOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualHeight < (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * scaleTransform.ScaleY);
+                var maxX = ConfigureWindows.GetMainWindow.Scroller.ActualWidth - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX);
+                var maxY = ConfigureWindows.GetMainWindow.Scroller.ActualHeight - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * scaleTransform.ScaleY);
 
                 if (isXOutOfBorder && newXproperty < maxX || isXOutOfBorder == false && newXproperty > maxX)
                 {
@@ -299,7 +299,7 @@ namespace PicView.UILogic.TransformImage
         private static void BeginZoomAnimation(double zoomValue)
         {
             // TODO Make zoom work when image rotated
-            Point relative = Mouse.GetPosition(ConfigureWindows.GetMainWindow.MainImage);
+            Point relative = Mouse.GetPosition(ConfigureWindows.GetMainWindow.MainImageBorder);
 
             // Calculate new position
             double absoluteX = relative.X * scaleTransform.ScaleX + translateTransform.X;
