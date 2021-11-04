@@ -40,7 +40,41 @@ namespace PicView.ImageHandling
                 case ".tga":
                     return getDefaultBitmapSource(fileInfo, true);
 
-                case ".svg": // TODO convert to drawingimage instead
+                case ".svg": // TODO convert to drawingimage instead.. maybe
+                    FileStream? filestream = null;
+                    byte[] data;
+                    MagickImage magickImage = new()
+                    {
+                        Quality = 100,
+                        ColorSpace = ColorSpace.Transparent,
+                        BackgroundColor = MagickColors.Transparent,
+                    };
+                    try
+                    {
+                        filestream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
+                        data = new byte[filestream.Length];
+                        await filestream.ReadAsync(data.AsMemory(0, (int)filestream.Length)).ConfigureAwait(false);
+                        await filestream.DisposeAsync().ConfigureAwait(false);
+
+                        magickImage.Read(data);
+                        magickImage.Settings.Format = MagickFormat.Svg;
+                        magickImage.Settings.BackgroundColor = MagickColors.Transparent;
+                        magickImage.Settings.FillColor = MagickColors.Transparent;
+                    }
+                    catch (Exception e)
+                    {
+#if DEBUG
+                        Trace.WriteLine($"{nameof(getMagicBitmapsource)} {fileInfo.Name} exception, \n {e.Message}");
+#endif
+                        return null;
+                    }
+
+                    await filestream.DisposeAsync().ConfigureAwait(false);
+
+                    var bitmap = magickImage.ToBitmapSource();
+                    magickImage.Dispose();
+                    bitmap.Freeze();
+                    return bitmap;
                 case ".svgz": // TODO convert to drawingimage instead
                 case ".tif":
                 case ".tiff":
