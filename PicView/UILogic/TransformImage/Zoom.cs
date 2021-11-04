@@ -28,7 +28,7 @@ namespace PicView.UILogic.TransformImage
         {
             get
             {
-                if (scaleTransform == null || ZoomValue == 1)
+                if (scaleTransform == null || ZoomValue == 0)
                 {
                     return string.Empty;
                 }
