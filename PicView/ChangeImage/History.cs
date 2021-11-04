@@ -45,7 +45,10 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static void WriteToFile()
         {
-            if (fileHistory == null) { return; }
+            if (fileHistory is null)
+            {
+                fileHistory = new List<string>();
+            }
 
             // Create file called "Recent.txt" located on app folder
             var streamWriter = new StreamWriter(FileFunctions.GetWritingPath() + "\\Recent.txt");
@@ -66,7 +69,14 @@ namespace PicView.ChangeImage
         {
             if (fileHistory is null)
             {
-                InstantiateQ();
+                try // Putting in try catch prevents error when file list is empty
+                {
+                    InstantiateQ();
+                }
+                catch (System.Exception)
+                {
+                    return;
+                }
             }
 
             if (fileHistory.Count <= 0)
