@@ -1,9 +1,7 @@
-﻿using PicView.ChangeImage;
+﻿using PicView.Animations;
 using PicView.Editing;
 using PicView.ImageHandling;
 using PicView.UILogic;
-using PicView.Animations;
-using System.Windows;
 using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
@@ -59,7 +57,7 @@ namespace PicView.Views.UserControls
             };
             ColorPickerButton.Click += delegate
             {
-                if (ChangeImage.Error_Handling.CheckOutOfRange())
+                if (ConfigureWindows.GetMainWindow.MainImage.Source is null)
                 {
                     return;
                 }
@@ -103,7 +101,7 @@ namespace PicView.Views.UserControls
                 ButtonMouseLeaveAnim(OptimizeImageFill2);
                 AnimationHelper.MouseLeaveBgTexColor(OptimizeImageBrush);
             };
-            OptimizeImageButton.Click += async (_,_) => await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
+            OptimizeImageButton.Click += async (_, _) => await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
         }
     }
 }
