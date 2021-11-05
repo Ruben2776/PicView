@@ -6,7 +6,6 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using static PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.ImageHandling
 {
@@ -23,7 +22,7 @@ namespace PicView.ImageHandling
                     {
                         magickImage = ImageDecoder.GetRenderedMagickImage();
                     });
-                    
+
                 }
                 else if (bitmapSource is not null)
                 {
@@ -49,8 +48,6 @@ namespace PicView.ImageHandling
                     return false;
                 }
 
-                magickImage.Quality = 100;
-
                 // Apply transformation values
                 if (flipped && bitmapSource is not null && hlsl == false)
                 {
@@ -67,10 +64,9 @@ namespace PicView.ImageHandling
                     magickImage.Rotate(rotate);
                 }
 
-                var filestream = new FileStream(destination, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.SequentialScan);
-                await magickImage.WriteAsync(filestream).ConfigureAwait(false);
+                await magickImage.WriteAsync(destination).ConfigureAwait(false);
                 magickImage.Dispose();
-                await filestream.DisposeAsync().ConfigureAwait(false);
+                await ImageFunctions.OptimizeImageAsync(destination).ConfigureAwait(false);
             }
             catch (Exception) { return false; }
             return true;
