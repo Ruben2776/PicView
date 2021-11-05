@@ -83,7 +83,7 @@ namespace PicView.ChangeImage
                 indexBackup = FolderIndex;
 
                 // Reset preloader values to prevent errors
-                if (Pics?.Count > Preloader.LoadBehind + Preloader.LoadInfront + 2)
+                if (Pics?.Count > 10)
                 {
                     Preloader.Clear();
                 }

@@ -168,8 +168,12 @@ namespace PicView.ChangeImage
             {
                 Header = header,
                 ToolTip = filePath,
-                Icon = cmIcon
+                Icon = cmIcon,
+                Foreground = (SolidColorBrush)Application.Current.Resources["IconColorBrush"]
             };
+
+            menuItem.MouseEnter += (_, _) => menuItem.Foreground = new SolidColorBrush(Colors.White);
+            menuItem.MouseLeave += (_, _) => menuItem.Foreground = (SolidColorBrush)Application.Current.Resources["IconColorBrush"];
 
             menuItem.Click += async (_, _) => await LoadPic.LoadPiFromFileAsync(menuItem.ToolTip.ToString()).ConfigureAwait(false);
             var ext = Path.GetExtension(filePath);

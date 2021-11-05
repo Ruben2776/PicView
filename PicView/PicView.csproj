@@ -410,6 +410,8 @@
     <TargetFramework>net6.0-windows7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Description>Fast Picture Viewer with compact UI that can be hidden. </Description>
+    <PackageTags>picture-viewer,desktop-app,</PackageTags>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -163,16 +163,6 @@ namespace PicView.UILogic.Loading
             sortcmChild0.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(0).ConfigureAwait(false); };
             sortcmChild0.Header = sortcmChild0Header;
 
-            if (Properties.Settings.Default.DarkTheme == false)
-            {
-                sortcmChild0Header.MouseEnter += (_, _) => sortcmChild0Header.Foreground = new SolidColorBrush(Colors.White);
-                sortcmChild0.MouseEnter += (_, _) => sortcmChild0.Foreground = new SolidColorBrush(Colors.White);
-
-                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-                sortcmChild0.MouseLeave += (_, _) => sortcmChild0.Foreground = txt;
-                sortcmChild0Header.MouseLeave += (_, _) => sortcmChild0Header.Foreground = txt;
-            }
-
             sortcm.Items.Add(sortcmChild0);
 
             ///////////////////////////
@@ -193,16 +183,6 @@ namespace PicView.UILogic.Loading
             sortcmChild1Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(1).ConfigureAwait(false); };
             sortcmChild1.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(1).ConfigureAwait(false); };
             sortcmChild1.Header = sortcmChild1Header;
-
-            if (Properties.Settings.Default.DarkTheme == false)
-            {
-                sortcmChild1Header.MouseEnter += (_, _) => sortcmChild1Header.Foreground = new SolidColorBrush(Colors.White);
-                sortcmChild1.MouseEnter += (_, _) => sortcmChild1.Foreground = new SolidColorBrush(Colors.White);
-
-                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-                sortcmChild1.MouseLeave += (_, _) => sortcmChild1.Foreground = txt;
-                sortcmChild1Header.MouseLeave += (_, _) => sortcmChild1Header.Foreground = txt;
-            }
 
             sortcm.Items.Add(sortcmChild1);
 
@@ -225,16 +205,6 @@ namespace PicView.UILogic.Loading
             sortcmChild2.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(2).ConfigureAwait(false); };
             sortcmChild2.Header = sortcmChild2Header;
 
-            if (Properties.Settings.Default.DarkTheme == false)
-            {
-                sortcmChild2Header.MouseEnter += (_, _) => sortcmChild2Header.Foreground = new SolidColorBrush(Colors.White);
-                sortcmChild2.MouseEnter += (_, _) => sortcmChild2.Foreground = new SolidColorBrush(Colors.White);
-
-                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-                sortcmChild2.MouseLeave += (_, _) => sortcmChild2.Foreground = txt;
-                sortcmChild2Header.MouseLeave += (_, _) => sortcmChild2Header.Foreground = txt;
-            }
-
             sortcm.Items.Add(sortcmChild2);
 
             ///////////////////////////
@@ -255,16 +225,6 @@ namespace PicView.UILogic.Loading
             sortcmChild3Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(3).ConfigureAwait(false); };
             sortcmChild3.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(3).ConfigureAwait(false); };
             sortcmChild3.Header = sortcmChild3Header;
-
-            if (Properties.Settings.Default.DarkTheme == false)
-            {
-                sortcmChild3Header.MouseEnter += (_, _) => sortcmChild3Header.Foreground = new SolidColorBrush(Colors.White);
-                sortcmChild3.MouseEnter += (_, _) => sortcmChild3.Foreground = new SolidColorBrush(Colors.White);
-
-                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-                sortcmChild3.MouseLeave += (_, _) => sortcmChild3.Foreground = txt;
-                sortcmChild3Header.MouseLeave += (_, _) => sortcmChild3Header.Foreground = txt;
-            }
 
             sortcm.Items.Add(sortcmChild3);
 
@@ -287,16 +247,6 @@ namespace PicView.UILogic.Loading
             sortcmChild4.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(4).ConfigureAwait(false); };
             sortcmChild4.Header = sortcmChild4Header;
 
-            if (Properties.Settings.Default.DarkTheme == false)
-            {
-                sortcmChild4Header.MouseEnter += (_, _) => sortcmChild4Header.Foreground = new SolidColorBrush(Colors.White);
-                sortcmChild4.MouseEnter += (_, _) => sortcmChild4.Foreground = new SolidColorBrush(Colors.White);
-
-                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-                sortcmChild4.MouseLeave += (_, _) => sortcmChild4.Foreground = txt;
-                sortcmChild4Header.MouseLeave += (_, _) => sortcmChild4Header.Foreground = txt;
-            }
-
             sortcm.Items.Add(sortcmChild4);
 
             ///////////////////////////
@@ -317,16 +267,6 @@ namespace PicView.UILogic.Loading
             sortcmChild5Header.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(5).ConfigureAwait(false); };
             sortcmChild5.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(5).ConfigureAwait(false); };
             sortcmChild5.Header = sortcmChild5Header;
-
-            if (Properties.Settings.Default.DarkTheme == false)
-            {
-                sortcmChild5Header.MouseEnter += (_, _) => sortcmChild5Header.Foreground = new SolidColorBrush(Colors.White);
-                sortcmChild5.MouseEnter += (_, _) => sortcmChild5.Foreground = new SolidColorBrush(Colors.White);
-
-                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-                sortcmChild5.MouseLeave += (_, _) => sortcmChild5.Foreground = txt;
-                sortcmChild5Header.MouseLeave += (_, _) => sortcmChild5Header.Foreground = txt;
-            }
 
             sortcm.Items.Add(sortcmChild5);
 
@@ -349,16 +289,6 @@ namespace PicView.UILogic.Loading
             sortcmChild6.Click += async delegate { MainContextMenu.IsOpen = false; await ConfigureSettings.UpdateUIValues.ChangeSortingAsync(6).ConfigureAwait(false); };
             sortcmChild6.Header = sortcmChild6Header;
             sortcm.Items.Add(sortcmChild6);
-
-            if (Properties.Settings.Default.DarkTheme == false)
-            {
-                sortcmChild6Header.MouseEnter += (_, _) => sortcmChild6Header.Foreground = new SolidColorBrush(Colors.White);
-                sortcmChild6.MouseEnter += (_, _) => sortcmChild6.Foreground = new SolidColorBrush(Colors.White);
-
-                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-                sortcmChild6.MouseLeave += (_, _) => sortcmChild6.Foreground = txt;
-                sortcmChild6Header.MouseLeave += (_, _) => sortcmChild6Header.Foreground = txt;
-            }
 
             MainContextMenu.Items.Add(sortcm);
 
@@ -402,16 +332,6 @@ namespace PicView.UILogic.Loading
             settingscmLoop.Click += (_, _) => ConfigureSettings.UpdateUIValues.SetLooping();
             settingscmLoopHeader.Click += (_, _) => ConfigureSettings.UpdateUIValues.SetLooping();
 
-            if (Properties.Settings.Default.DarkTheme == false)
-            {
-                settingscmLoopHeader.MouseEnter += (_, _) => settingscmLoopHeader.Foreground = new SolidColorBrush(Colors.White);
-                settingscmLoop.MouseEnter += (_, _) => settingscmLoop.Foreground = new SolidColorBrush(Colors.White);
-
-                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-                settingscmLoop.MouseLeave += (_, _) => settingscmLoop.Foreground = txt;
-                settingscmLoopHeader.MouseLeave += (_, _) => settingscmLoopHeader.Foreground = txt;
-            }
-
             settingscm.Items.Add(settingscmLoop);
 
             ///////////////////////////
@@ -434,16 +354,6 @@ namespace PicView.UILogic.Loading
             settingscmScrollHeader.Click += ConfigureSettings.UpdateUIValues.SetScrolling;
             settingscmScroll.Header = settingscmScrollHeader;
             settingscmScroll.Click += (s, x) => { ConfigureSettings.UpdateUIValues.SetScrolling(s, x); settingscmScrollHeader.IsChecked = !(bool)settingscmScrollHeader.IsChecked; };
-
-            if (Properties.Settings.Default.DarkTheme == false)
-            {
-                settingscmScrollHeader.MouseEnter += (_, _) => settingscmScrollHeader.Foreground = new SolidColorBrush(Colors.White);
-                settingscmScroll.MouseEnter += (_, _) => settingscmScroll.Foreground = new SolidColorBrush(Colors.White);
-
-                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-                settingscmScroll.MouseLeave += (_, _) => settingscmScroll.Foreground = txt;
-                settingscmScrollHeader.MouseLeave += (_, _) => settingscmScrollHeader.Foreground = txt;
-            }
 
             settingscm.Items.Add(settingscmScroll);
 
@@ -476,16 +386,6 @@ namespace PicView.UILogic.Loading
             altcm.Header = altcmHeader;
             altcm.Click += delegate { HideInterfaceLogic.ToggleInterface(); };
 
-            if (Properties.Settings.Default.DarkTheme == false)
-            {
-                altcmHeader.MouseEnter += (_, _) => altcmHeader.Foreground = new SolidColorBrush(Colors.White);
-                altcm.MouseEnter += (_, _) => altcm.Foreground = new SolidColorBrush(Colors.White);
-
-                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-                altcm.MouseLeave += (_, _) => altcm.Foreground = txt;
-                altcmHeader.MouseLeave += (_, _) => altcmHeader.Foreground = txt;
-            }
-
             settingscm.Items.Add(altcm);
 
             ///////////////////////////
@@ -493,29 +393,14 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var transcm = new MenuItem
             {
-                InputGestureText = "T"
-            };
-            var transcmHeader = new Button
-            {
-                Content = Application.Current.Resources["ChangeBg"],
+                InputGestureText = "T",
+                Header = Application.Current.Resources["ChangeBg"],
                 ToolTip = Application.Current.Resources["ChangeBgTooltip"],
-                FontSize = 12,
-                Width = double.NaN,
-                Height = double.NaN,
-                HorizontalAlignment = HorizontalAlignment.Left
+                Foreground = (SolidColorBrush)Application.Current.Resources["MainColorBrush"]
             };
 
-            transcm.Header = transcmHeader;
-
-            if (Properties.Settings.Default.DarkTheme == false)
-            {
-                transcmHeader.MouseEnter += (_, _) => transcmHeader.Foreground = new SolidColorBrush(Colors.White);
-                transcm.MouseEnter += (_, _) => transcm.Foreground = new SolidColorBrush(Colors.White);
-
-                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-                transcm.MouseLeave += (_, _) => transcm.Foreground = txt;
-                transcmHeader.MouseLeave += (_, _) => transcmHeader.Foreground = txt;
-            }
+            transcm.MouseEnter += (_, _) => transcm.Foreground = new SolidColorBrush(Colors.White);
+            transcm.MouseLeave += (_, _) => transcm.Foreground = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
             settingscm.Items.Add(transcm);
 
             ///////////////////////////
@@ -543,49 +428,23 @@ namespace PicView.UILogic.Loading
             StaycmHeader.Click += ConfigureSettings.ConfigColors.ChangeBackground;
             Staycm.Click += ConfigureSettings.ConfigColors.ChangeBackground;
 
-            if (Properties.Settings.Default.DarkTheme == false)
-            {
-                StaycmHeader.MouseEnter += (_, _) => StaycmHeader.Foreground = new SolidColorBrush(Colors.White);
-                Staycm.MouseEnter += (_, _) => Staycm.Foreground = new SolidColorBrush(Colors.White);
-
-                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-                Staycm.MouseLeave += (_, _) => Staycm.Foreground = txt;
-                StaycmHeader.MouseLeave += (_, _) => StaycmHeader.Foreground = txt;
-            }
             settingscm.Items.Add(Staycm);
 
             ///////////////////////////
             /// Settings shortcut  \\\\
             ///////////////////////////
             settingscm.Items.Add(new Separator());
-            var stsbtn = new Button()
-            {
-                Content = Application.Current.Resources["SettingsWindow"],
-                ToolTip = Application.Current.Resources["ShowAllSettingsWindow"],
-                FontSize = 12,
-                Width = double.NaN,
-                Height = double.NaN,
-                HorizontalAlignment = HorizontalAlignment.Left
-            };
-            stsbtn.Click += (_, _) => AllSettingsWindow();
 
             var settingscmShortcut = new MenuItem
             {
-                Header = stsbtn,
-                InputGestureText = "F4"
+                Header = Application.Current.Resources["SettingsWindow"],
+                ToolTip = Application.Current.Resources["ShowAllSettingsWindow"],
+                InputGestureText = "F4",
+                Foreground = (SolidColorBrush)Application.Current.Resources["MainColorBrush"]
             };
 
-            if (Properties.Settings.Default.DarkTheme == false)
-            {
-                stsbtn.MouseEnter += (_, _) => stsbtn.Foreground = new SolidColorBrush(Colors.White);
-                settingscmShortcut.MouseEnter += (_, _) => settingscmShortcut.Foreground = new SolidColorBrush(Colors.White);
-
-                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-                settingscmShortcut.MouseLeave += (_, _) => settingscmShortcut.Foreground = txt;
-                stsbtn.MouseLeave += (_, _) => stsbtn.Foreground = txt;
-            }
-
-            stsbtn.Click += (_, _) => { AllSettingsWindow(); MainContextMenu.IsOpen = false; };
+            settingscmShortcut.MouseEnter += (_, _) => settingscmShortcut.Foreground = new SolidColorBrush(Colors.White);
+            settingscmShortcut.MouseLeave += (_, _) => settingscmShortcut.Foreground = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
             settingscmShortcut.Click += (_, _) => { AllSettingsWindow(); MainContextMenu.IsOpen = false; };
             settingscm.Items.Add(settingscmShortcut);
 
@@ -697,16 +556,6 @@ namespace PicView.UILogic.Loading
             cppcmbtn.Click += (_, _) => Copyfile();
             cppcm.Click += (_, _) => Copyfile();
 
-            if (Properties.Settings.Default.DarkTheme == false)
-            {
-                cppcmbtn.MouseEnter += (_, _) => cppcmbtn.Foreground = new SolidColorBrush(Colors.White);
-                cppcm.MouseEnter += (_, _) => cppcm.Foreground = new SolidColorBrush(Colors.White);
-
-                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-                cppcm.MouseLeave += (_, _) => cppcm.Foreground = txt;
-                cppcmbtn.MouseLeave += (_, _) => cppcmbtn.Foreground = txt;
-            }
-
             cpm.Items.Add(cppcm);
 
             ///////////////////////////
@@ -733,16 +582,6 @@ namespace PicView.UILogic.Loading
 
             cpxcmbtn.Click += async delegate { MainContextMenu.IsOpen = false; await Base64.SendToClipboard().ConfigureAwait(false); };
             cpxcm.Click += async delegate { MainContextMenu.IsOpen = false; await Base64.SendToClipboard().ConfigureAwait(false); };
-
-            if (Properties.Settings.Default.DarkTheme == false)
-            {
-                cpxcmbtn.MouseEnter += (_, _) => cpxcmbtn.Foreground = new SolidColorBrush(Colors.White);
-                cpxcm.MouseEnter += (_, _) => cpxcm.Foreground = new SolidColorBrush(Colors.White);
-
-                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-                cpxcm.MouseLeave += (_, _) => cpxcm.Foreground = txt;
-                cpxcmbtn.MouseLeave += (_, _) => cpxcmbtn.Foreground = txt;
-            }
             cpm.Items.Add(cpxcm);
 
             ///////////////////////////
@@ -768,16 +607,6 @@ namespace PicView.UILogic.Loading
             cpxbm.Click += (_, _) => { CopyBitmap(); MainContextMenu.IsOpen = false; };
             cpxbmbtn.Click += (_, _) => { CopyBitmap(); MainContextMenu.IsOpen = false; };
 
-            if (Properties.Settings.Default.DarkTheme == false)
-            {
-                cpxbmbtn.MouseEnter += (_, _) => cpxbmbtn.Foreground = new SolidColorBrush(Colors.White);
-                cpxbm.MouseEnter += (_, _) => cpxbm.Foreground = new SolidColorBrush(Colors.White);
-
-                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-                cpxbm.MouseLeave += (_, _) => cpxbm.Foreground = txt;
-                cpxbmbtn.MouseLeave += (_, _) => cpxbmbtn.Foreground = txt;
-            }
-
             cpm.Items.Add(cpxbm);
 
             ///////////////////////////
@@ -799,16 +628,6 @@ namespace PicView.UILogic.Loading
             };
             cppfm.Click += (_, _) => { CopyText(); MainContextMenu.IsOpen = false; };
             cppfmbtn.Click += (_, _) => { CopyText(); MainContextMenu.IsOpen = false; };
-
-            if (Properties.Settings.Default.DarkTheme == false)
-            {
-                cppfmbtn.MouseEnter += (_, _) => cppfmbtn.Foreground = new SolidColorBrush(Colors.White);
-                cppfm.MouseEnter += (_, _) => cppfm.Foreground = new SolidColorBrush(Colors.White);
-
-                var txt = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-                cppfm.MouseLeave += (_, _) => cppfm.Foreground = txt;
-                cppfmbtn.MouseLeave += (_, _) => cppfmbtn.Foreground = txt;
-            }
 
             cpm.Items.Add(cppfm);
 

@@ -1,5 +1,5 @@
-﻿using PicView.UILogic;
-using PicView.Animations;
+﻿using PicView.Animations;
+using PicView.UILogic;
 using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.UILogic.UC;

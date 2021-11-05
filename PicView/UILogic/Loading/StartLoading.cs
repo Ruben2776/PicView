@@ -185,13 +185,6 @@ namespace PicView.UILogic.Loading
             // Add things!
             Timers.AddTimers();
             AddContextMenus();
-
-            // Updates settings from older version to newer version
-            if (Properties.Settings.Default.CallUpgrade)
-            {
-                Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.CallUpgrade = false;
-            }
         }
     }
 }

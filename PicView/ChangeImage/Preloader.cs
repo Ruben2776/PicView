@@ -34,9 +34,6 @@ namespace PicView.ChangeImage
         private static readonly ConcurrentDictionary<
             string, PreloadValue> Sources = new ConcurrentDictionary<string, PreloadValue>();
 
-        internal const int LoadInfront = 4;
-        internal const int LoadBehind = 2;
-
         internal static bool IsRunning { get; private set; }
 
         /// <summary>
@@ -194,10 +191,13 @@ namespace PicView.ChangeImage
         {
             IsRunning = true;
 
+            int loadInfront = Pics.Count >= 10 ? 5 : 3;
+            int loadBehind = Pics.Count >= 10 ? 3 : 2;
+
             int endPoint;
             if (Reverse)
             {
-                endPoint = index - 1 - LoadInfront;
+                endPoint = index - 1 - loadInfront;
                 // Add first elements behind
                 for (int i = index - 1; i > endPoint; i--)
                 {
@@ -206,14 +206,14 @@ namespace PicView.ChangeImage
                 }
 
                 // Add second elements
-                for (int i = index + 1; i < (index + 1) + LoadBehind; i++)
+                for (int i = index + 1; i < (index + 1) + loadBehind; i++)
                 {
                     if (Pics.Count == 0) { return; }
                     _ = AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 //Clean up infront
-                for (int i = (index + 1) + LoadBehind; i < (index + 1) + LoadInfront; i++)
+                for (int i = (index + 1) + loadBehind; i < (index + 1) + loadInfront; i++)
                 {
                     if (Pics.Count == 0) { return; }
                     Remove(i % Pics.Count);
@@ -221,9 +221,9 @@ namespace PicView.ChangeImage
             }
             else
             {
-                endPoint = (index - 1) - LoadBehind;
+                endPoint = (index - 1) - loadBehind;
                 // Add first elements
-                for (int i = index + 1; i < (index + 1) + LoadInfront; i++)
+                for (int i = index + 1; i < (index + 1) + loadInfront; i++)
                 {
                     if (Pics.Count == 0) { return; }
                     _ = AddAsync(i % Pics.Count).ConfigureAwait(false);
@@ -236,7 +236,7 @@ namespace PicView.ChangeImage
                 }
 
                 //Clean up behind
-                for (int i = index - LoadInfront; i <= endPoint; i++)
+                for (int i = index - loadInfront; i <= endPoint; i++)
                 {
                     if (Pics.Count == 0) { return; }
                     Remove(i % Pics.Count);

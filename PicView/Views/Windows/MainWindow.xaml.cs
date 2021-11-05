@@ -15,6 +15,13 @@ namespace PicView.Views.Windows
     {
         public MainWindow()
         {
+            // Updates settings from older version to newer version
+            if (Properties.Settings.Default.CallUpgrade)
+            {
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.CallUpgrade = false;
+            }
+
             if (Properties.Settings.Default.DarkTheme == false)
             {
                 ConfigureSettings.ConfigColors.ChangeToLightTheme();

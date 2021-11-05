@@ -90,12 +90,8 @@
             <Trigger Property="IsHighlighted" Value="true">
                 <Setter TargetName="Border" Property="Background" Value="transparent" />
             </Trigger>
-            <Trigger Property="IsHighlighted" Value="true">
-                <Setter Property="Foreground">
-                    <Setter.Value>
-                        <SolidColorBrush Color="#FFDADADA" />
-                    </Setter.Value>
-                </Setter>
+            <Trigger Property="IsHighlighted" Value="True">
+                <Setter Property="Foreground" Value="#fff"/>
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
@@ -148,7 +144,6 @@
                     x:Name="InputGestureText"
                     Grid.Column="2"
                     Margin="5,0,0,0"
-                    DockPanel.Dock="Right"
                     Foreground="{StaticResource MainColorFadedBrush}"
                     Text="{TemplateBinding InputGestureText}" />
             </Grid>
@@ -171,18 +166,10 @@
                 <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ChosenColorBrush}" />
             </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
-                <Setter Property="Foreground">
-                    <Setter.Value>
-                        <SolidColorBrush Color="#fff" />
-                    </Setter.Value>
-                </Setter>
+                <Setter Property="Foreground" Value="#fff"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
-                <Setter Property="Foreground">
-                    <Setter.Value>
-                        <SolidColorBrush Color="{StaticResource MainColor}" />
-                    </Setter.Value>
-                </Setter>
+                <Setter Property="Foreground" Value="{StaticResource FadeColorBrush}" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
@@ -255,14 +242,10 @@
                 <Setter TargetName="Border" Property="Background" Value="{DynamicResource ChosenColorBrush}" />
             </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
-                <Setter Property="Foreground">
-                    <Setter.Value>
-                        <SolidColorBrush Color="#fff" />
-                    </Setter.Value>
-                </Setter>
+                <Setter Property="Foreground" Value="#fff"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
-                <Setter Property="Foreground" Value="{StaticResource MainColorFaded}" />
+                <Setter Property="Foreground" Value="{StaticResource MainColorFadedBrush}" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>

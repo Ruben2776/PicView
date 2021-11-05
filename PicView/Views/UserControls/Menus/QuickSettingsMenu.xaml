@@ -144,14 +144,9 @@
                     <CheckBox
                         x:Name="SetFit"
                         HorizontalContentAlignment="Center"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                        Style="{StaticResource Checkstyle}">
-                        <CheckBox.Content>
-                            <TextBlock
-                                MaxWidth="127"
-                                Text="{StaticResource ResourceKey=AutoFitWindow}"
-                                TextWrapping="Wrap" />
-                        </CheckBox.Content>
+                        Style="{StaticResource Checkstyle}"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto" 
+                        Content="{StaticResource AutoFitWindow}">
                         <CheckBox.Foreground>
                             <SolidColorBrush x:Name="SetFitFill" Color="{StaticResource MainColor}" />
                         </CheckBox.Foreground>
@@ -174,14 +169,9 @@
                     <CheckBox
                         x:Name="ToggleFill"
                         HorizontalContentAlignment="Center"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                        Style="{StaticResource Checkstyle}">
-                        <CheckBox.Content>
-                            <TextBlock
-                                MaxWidth="127"
-                                Text="{StaticResource ResourceKey=FillImageHeight}"
-                                TextWrapping="Wrap" />
-                        </CheckBox.Content>
+                        Style="{StaticResource Checkstyle}"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto" 
+                        Content="{StaticResource FillImageHeight}">
                         <CheckBox.Foreground>
                             <SolidColorBrush x:Name="ToggleFillFill" Color="{StaticResource MainColor}" />
                         </CheckBox.Foreground>
@@ -204,14 +194,9 @@
                     <CheckBox
                         x:Name="ToggleScroll"
                         HorizontalContentAlignment="Center"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                        Style="{StaticResource Checkstyle}">
-                        <CheckBox.Content>
-                            <TextBlock
-                                MaxWidth="127"
-                                Text="{StaticResource ResourceKey=ToggleScroll}"
-                                TextWrapping="Wrap" />
-                        </CheckBox.Content>
+                        Style="{StaticResource Checkstyle}"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto" 
+                        Content="{StaticResource ToggleScroll}">
                         <CheckBox.Foreground>
                             <SolidColorBrush x:Name="ToggleScrollFill" Color="{StaticResource MainColor}" />
                         </CheckBox.Foreground>
@@ -234,14 +219,9 @@
                     <CheckBox
                         x:Name="ToggleLooping"
                         HorizontalContentAlignment="Center"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                        Style="{StaticResource Checkstyle}">
-                        <CheckBox.Content>
-                            <TextBlock
-                                MaxWidth="127"
-                                Text="{StaticResource ResourceKey=ToggleLooping}"
-                                TextWrapping="Wrap" />
-                        </CheckBox.Content>
+                        Style="{StaticResource Checkstyle}"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto" 
+                        Content="{StaticResource ToggleLooping}">
                         <CheckBox.Foreground>
                             <SolidColorBrush x:Name="ToggleLoopFill" Color="{StaticResource MainColor}" />
                         </CheckBox.Foreground>
