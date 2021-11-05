@@ -1,0 +1,5 @@
+﻿From: <https://github.com/Ruben2776/PicView/blob/master/LICENSE.txt>
+
+LICENSE
+
+<Insert License Here>
