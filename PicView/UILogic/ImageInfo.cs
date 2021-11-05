@@ -69,7 +69,6 @@ namespace PicView.UILogic
             {
                 if (fileInfo is not null && ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex] != fileInfo.FullName)
                 {
-                    Clear();
                     return;
                 }
 
