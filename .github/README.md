@@ -16,6 +16,7 @@ PicView is a fast Picture Viewer with compact UI, that can be hidden. Features i
         <img alt="GPL v3 License" src="https://img.shields.io/badge/license-GPLv3-green.svg?maxAge=3600&style=flat-square">
     </a>
     <img alt="Windows OS" src="https://img.shields.io/badge/OS-Windows%2064%20bit-00adef.svg?maxAge=3600&style=flat-square">
+    <a title="Crowdin" target="_blank" href="https://crowdin.com/project/picview"><img src="https://badges.crowdin.net/picview/localized.svg"></a>
 </p>
 
 # Downloads
