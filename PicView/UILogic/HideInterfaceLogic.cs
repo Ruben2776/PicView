@@ -21,7 +21,14 @@ namespace PicView.UILogic
             // Hide interface
             if (Properties.Settings.Default.ShowInterface)
             {
-                ShowMinimalInterface();
+                if (ConfigureWindows.GetMainWindow.TitleBar.Visibility == Visibility.Visible)
+                {
+                    ShowMinimalInterface();
+                }
+                else
+                {
+                    ShowStandardInterface();
+                }
             }
             // Show interface
             else

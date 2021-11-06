@@ -186,7 +186,7 @@ namespace PicView.ChangeImage
         {
             if (fileHistory == null) { InstantiateQ(); }
 
-            var cm = (MenuItem)ConfigureWindows.MainContextMenu.Items[5];
+            var cm = (MenuItem)ConfigureWindows.MainContextMenu.Items[6];
             for (int i = 0; i < maxCount; i++)
             {
                 if (fileHistory.Count == i)

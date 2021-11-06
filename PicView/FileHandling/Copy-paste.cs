@@ -16,7 +16,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// Copy image location to clipboard
         /// </summary>
-        internal static void CopyText()
+        internal static void CopyFilePath()
         {
             Clipboard.SetText(Pics[FolderIndex]);
             ShowTooltipMessage(Application.Current.Resources["FileCopyPathMessage"] as string);
@@ -141,11 +141,16 @@ namespace PicView.FileHandling
         /// Add file to move/paste clipboard
         /// </summary>
         /// <param name="path"></param>
-        internal static void Cut(string path)
+        internal static void Cut()
         {
+            if (Pics.Count <= 0 || FolderIndex >= Pics.Count)
+            {
+                return;
+            }
+
             var x = new System.Collections.Specialized.StringCollection
             {
-                path
+                Pics[FolderIndex]
             };
 
             byte[] moveEffect = new byte[] { 2, 0, 0, 0 };
@@ -160,8 +165,6 @@ namespace PicView.FileHandling
                 Clipboard.Clear();
                 Clipboard.SetDataObject(data, true);
             }
-
-            ShowTooltipMessage(Application.Current.Resources["FileCut"] as string);
         }
     }
 }

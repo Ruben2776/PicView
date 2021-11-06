@@ -44,7 +44,7 @@ namespace PicView.Views.UserControls
                     AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
                 };
 
-                TheButton.Click += ConfigureSettings.ConfigColors.ChangeBackground;
+                TheButton.Click += (_, _) => ConfigureSettings.ConfigColors.ChangeBackground();
             };
         }
     }

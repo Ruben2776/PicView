@@ -286,11 +286,11 @@ namespace PicView.Shortcuts
                     case Key.X:
                         if (ctrlDown && !GalleryFunctions.IsHorizontalOpen)
                         {
-                            Cut(Pics[FolderIndex]);
+                            Cut();
                         }
                         else
                         {
-                            ConfigureSettings.UpdateUIValues.SetScrolling(sender, e);
+                            ConfigureSettings.UpdateUIValues.SetScrolling();
                         }
                         break;
                     // F
@@ -392,7 +392,7 @@ namespace PicView.Shortcuts
                     case Key.T:
                         if (!GalleryFunctions.IsHorizontalOpen)
                         {
-                            ConfigureSettings.ConfigColors.ChangeBackground(sender, e);
+                            ConfigureSettings.ConfigColors.ChangeBackground();
                         }
                         break;
 

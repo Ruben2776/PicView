@@ -91,6 +91,8 @@ namespace PicView.UILogic.Loading
                 // TODO maybe load extra images if multiple arguments
             }
 
+            ConfigureSettings.ConfigColors.UpdateColor();
+
             // Add dictionaries
             Application.Current.Resources.MergedDictionaries.Add(
                 new ResourceDictionary
@@ -113,8 +115,12 @@ namespace PicView.UILogic.Loading
                 }
             );
 
-            ConfigureSettings.ConfigColors.UpdateColor();
-
+            Application.Current.Resources.MergedDictionaries.Add(
+                new ResourceDictionary
+                {
+                    Source = new Uri(@"/PicView;component/Views/UserControls/Misc/MainContextMenu.xaml", UriKind.Relative)
+                }
+            );
 
             // Load UI and events
             AddUIElementsAndUpdateValues();

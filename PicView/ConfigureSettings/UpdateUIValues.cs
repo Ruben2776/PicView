@@ -2,6 +2,7 @@
 using PicView.PicGallery;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,21 +21,26 @@ namespace PicView.ConfigureSettings
                 SetTitle.SetLoadingString();
             });
 
+            FileInfo fileInfo;
             var preloadValue = Preloader.Get(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
-            if (preloadValue is null)
+            if (preloadValue is not null && preloadValue.fileInfo is not null)
             {
-                await Preloader.AddAsync(ChangeImage.Navigation.FolderIndex).ConfigureAwait(false);
+                fileInfo = preloadValue.fileInfo;
+            }
+            else
+            {
+                fileInfo = new FileInfo(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
             }
 
             Preloader.Clear();
 
             Properties.Settings.Default.SortPreference = sorting;
-            Navigation.Pics = FileHandling.FileLists.FileList(preloadValue.fileInfo);
-            await ChangeImage.LoadPic.LoadPiFromFileAsync(preloadValue.fileInfo.FullName).ConfigureAwait(false);
+            Navigation.Pics = FileHandling.FileLists.FileList(fileInfo);
+            await ChangeImage.LoadPic.LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
-                var sortcm = MainContextMenu.Items[6] as MenuItem;
+                var sortcm = MainContextMenu.Items[5] as MenuItem;
 
                 var sort0 = sortcm.Items[0] as MenuItem;
                 var sort0Header = sort0.Header as RadioButton;
@@ -133,9 +139,9 @@ namespace PicView.ConfigureSettings
             });
         }
 
-        internal static void SetScrolling(object? sender, RoutedEventArgs? e)
+        internal static void SetScrolling()
         {
-            if (GalleryFunctions.IsHorizontalFullscreenOpen 
+            if (GalleryFunctions.IsHorizontalFullscreenOpen
                 || GalleryFunctions.IsVerticalFullscreenOpen
                 || GalleryFunctions.IsHorizontalOpen) { return; }
 
@@ -160,7 +166,7 @@ namespace PicView.ConfigureSettings
         internal static void SetScrolling(bool value)
         {
             Properties.Settings.Default.ScrollEnabled = value;
-            SetScrolling(null, null);
+            SetScrolling();
         }
 
         internal static void SetLooping()

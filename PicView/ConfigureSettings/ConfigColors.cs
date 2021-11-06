@@ -112,7 +112,7 @@ namespace PicView.ConfigureSettings
 
         #region Change background
 
-        internal static void ChangeBackground(object sender, RoutedEventArgs e)
+        internal static void ChangeBackground()
         {
             if (ConfigureWindows.GetMainWindow.MainImageBorder == null)
             {
