@@ -14,7 +14,7 @@
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <projectSourceUrl>https://github.com/Ruben2776/PicView</projectSourceUrl>
     <bugTrackerUrl>https://github.com/Ruben2776/PicView/issues</bugTrackerUrl>
-    <tags>picview picture-viewer, image-viewer</tags>
+    <tags>picview picture-viewer image-viewer foss photo picture photo-viewer</tags>
     <summary>Fast Picture Viewer with compact UI that can be hidden. Features image effects, galleries, EXIF and more. The application can automatically adjusts itself to your screen. </summary>
     <description>Fast Picture Viewer with compact UI that can be hidden. Features image effects, galleries, EXIF and more. The application can automatically adjusts itself to your screen.</description>
     <releaseNotes>https://picview.org/changelog</releaseNotes>
