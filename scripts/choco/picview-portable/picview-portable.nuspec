@@ -51,7 +51,7 @@ This is a nuspec. It mostly adheres to https://docs.nuget.org/create/Nuspec-Refe
     <!--<bugTrackerUrl></bugTrackerUrl>-->
     <tags>picview-portable picture-viewer</tags>
     <summary>Fast Picture Viewer with compact UI, that can be hidden</summary>
-    <description>PicView is a fast Picture Viewer with compact UI, that can be hidden. Features image effects, galleries, light and dark theme, EXIF and more. The application can automatically adjusts itself to your screen.</description>
+    <description>PicView is a fast Picture Viewer with compact UI that can be hidden. Features image effects, galleries, light and dark theme, EXIF and more. The application can automatically adjusts itself to your screen.</description>
     <releaseNotes>https://picview.org/changelog</releaseNotes>
     <!-- =============================== -->
 
