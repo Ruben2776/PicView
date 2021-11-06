@@ -38,6 +38,32 @@ namespace PicView.ConfigureSettings
             Navigation.Pics = FileHandling.FileLists.FileList(fileInfo);
             await ChangeImage.LoadPic.LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
 
+            if (sorting == -1)
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                {
+                    var sortcm = MainContextMenu.Items[5] as MenuItem;
+
+                    var desc = sortcm.Items[8] as MenuItem;
+                    var descHeader = desc.Header as RadioButton;
+
+                    var asc = sortcm.Items[9] as MenuItem;
+                    var ascHeader = asc.Header as RadioButton;
+
+                    if (Properties.Settings.Default.Ascending)
+                    {
+                        descHeader.IsChecked = false;
+                        ascHeader.IsChecked = true;
+                    }
+                    else
+                    {
+                        descHeader.IsChecked = true;
+                        ascHeader.IsChecked = false;
+                    }
+                });
+                return;
+            }
+
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
                 var sortcm = MainContextMenu.Items[5] as MenuItem;

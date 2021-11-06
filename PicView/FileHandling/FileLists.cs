@@ -101,23 +101,65 @@ namespace PicView.FileHandling
                 default:
                 case SortFilesBy.Name: // Alphanumeric sort
                     var list = items.ToList();
-                    list.Sort((x, y) => { return SystemIntegration.NativeMethods.StrCmpLogicalW(x, y); });
+                    if (Properties.Settings.Default.Ascending)
+                    {
+                        list.Sort((x, y) => { return SystemIntegration.NativeMethods.StrCmpLogicalW(x, y); });
+                    }
+                    else
+                    {
+                        list.Sort((x, y) => { return SystemIntegration.NativeMethods.StrCmpLogicalW(y, x); });
+                    }
                     return list;
 
                 case SortFilesBy.FileSize:
-                    return items.OrderBy(f => new FileInfo(f).Length).ToList();
+                    if (Properties.Settings.Default.Ascending)
+                    {
+                        return items.OrderBy(f => new FileInfo(f).Length).ToList();
+                    }
+                    else
+                    {
+                        return items.OrderByDescending(f => new FileInfo(f).Length).ToList();
+                    }
 
                 case SortFilesBy.Extension:
-                    return items.OrderBy(f => new FileInfo(f).Extension).ToList();
+                    if (Properties.Settings.Default.Ascending)
+                    {
+                        return items.OrderBy(f => new FileInfo(f).Extension).ToList();
+                    }
+                    else
+                    {
+                        return items.OrderByDescending(f => new FileInfo(f).Extension).ToList();
+                    }
 
                 case SortFilesBy.Creationtime:
-                    return items.OrderBy(f => new FileInfo(f).CreationTime).ToList();
+                    if (Properties.Settings.Default.Ascending)
+                    {
+                        return items.OrderBy(f => new FileInfo(f).CreationTime).ToList();
+                    }
+                    else
+                    {
+                        return items.OrderByDescending(f => new FileInfo(f).CreationTime).ToList();
+                    }
 
                 case SortFilesBy.Lastaccesstime:
-                    return items.OrderBy(f => new FileInfo(f).LastAccessTime).ToList();
+                    if (Properties.Settings.Default.Ascending)
+                    {
+                        return items.OrderBy(f => new FileInfo(f).LastAccessTime).ToList();
+                    }
+                    else
+                    {
+                        return items.OrderByDescending(f => new FileInfo(f).LastAccessTime).ToList();
+                    }
 
                 case SortFilesBy.Lastwritetime:
-                    return items.OrderBy(f => new FileInfo(f).LastWriteTime).ToList();
+                    if (Properties.Settings.Default.Ascending)
+                    {
+                        return items.OrderBy(f => new FileInfo(f).LastWriteTime).ToList();
+                    }
+                    else
+                    {
+                        return items.OrderByDescending(f => new FileInfo(f).LastWriteTime).ToList();
+                    }
 
                 case SortFilesBy.Random:
                     return items.OrderBy(f => Guid.NewGuid()).ToList();

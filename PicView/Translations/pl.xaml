@@ -199,6 +199,9 @@
     <system:String x:Key="LastWriteTime">Czasie ostatniego zapisu</system:String>
     <system:String x:Key="Random">Losowo</system:String>
 
+    <system:String x:Key="Ascending">Rosnąco</system:String>
+    <system:String x:Key="Descending">Malejący</system:String>
+
     <!--  Settings  -->
     <system:String x:Key="Settings">Ustawienia</system:String>
     <system:String x:Key="Scrolling">Przewijanie</system:String>

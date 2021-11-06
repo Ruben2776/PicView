@@ -199,6 +199,9 @@
     <system:String x:Key="LastWriteTime">Last write time</system:String>
     <system:String x:Key="Random">Random</system:String>
 
+    <system:String x:Key="Ascending">Ascending</system:String>
+    <system:String x:Key="Descending">Descending</system:String>
+
     <!--  Settings  -->
     <system:String x:Key="Settings">Settings</system:String>
     <system:String x:Key="Scrolling">Scrolling</system:String>

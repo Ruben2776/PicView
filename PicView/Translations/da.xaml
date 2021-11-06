@@ -198,6 +198,9 @@
     <system:String x:Key="LastWriteTime">Sidst skrevet til</system:String>
     <system:String x:Key="Random">Vilkårlig</system:String>
 
+    <system:String x:Key="Ascending">Stigende</system:String>
+    <system:String x:Key="Descending">Faldende</system:String>
+
     <!--  Settings  -->
     <system:String x:Key="Settings">Indstillinger</system:String>
     <system:String x:Key="Scrolling">Scrolling</system:String>

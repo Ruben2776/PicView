@@ -198,6 +198,9 @@
     <system:String x:Key="LastWriteTime">Datei zuletzt geändert</system:String>
     <system:String x:Key="Random">Zufall</system:String>
 
+    <system:String x:Key="Ascending">Aufsteigend</system:String>
+    <system:String x:Key="Descending">Absteigend</system:String>
+
     <!--  Settings  -->
     <system:String x:Key="Settings">Einstellungen</system:String>
     <system:String x:Key="Scrolling">Scrolling</system:String>

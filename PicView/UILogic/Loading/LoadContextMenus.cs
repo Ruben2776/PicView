@@ -68,7 +68,7 @@ namespace PicView.UILogic.Loading
 
             // CreationTime
             var CreationTimeMenu = (MenuItem)sortfilesbycm.Items[3];
-            var CreationTimeHeader = (RadioButton)FileExtensionMenu.Header;
+            var CreationTimeHeader = (RadioButton)CreationTimeMenu.Header;
             CreationTimeHeader.IsChecked = Properties.Settings.Default.SortPreference == 2;
             CreationTimeHeader.Click += async delegate { MainContextMenu.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(2).ConfigureAwait(false); };
 
@@ -90,6 +90,23 @@ namespace PicView.UILogic.Loading
             RandomHeader.IsChecked = Properties.Settings.Default.SortPreference == 6;
             RandomHeader.Click += async delegate { MainContextMenu.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(6).ConfigureAwait(false); };
 
+            // 7 = seperator
+
+            // Ascending
+            var AscendingMenu = (MenuItem)sortfilesbycm.Items[8];
+            var AscendingHeader = (RadioButton)AscendingMenu.Header;
+            AscendingHeader.IsChecked = Properties.Settings.Default.Ascending;
+            AscendingHeader.Checked += (_, _) => Properties.Settings.Default.Ascending = !Properties.Settings.Default.Ascending;
+            AscendingHeader.Unchecked += (_, _) => Properties.Settings.Default.Ascending = true;
+            AscendingHeader.Click += async delegate { MainContextMenu.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(-1).ConfigureAwait(false); };
+
+            // Descending
+            var DescendingMenu = (MenuItem)sortfilesbycm.Items[9];
+            var DescendingHeader = (RadioButton)DescendingMenu.Header;
+            DescendingHeader.IsChecked = Properties.Settings.Default.Ascending == false;
+            DescendingHeader.Checked += (_, _) => Properties.Settings.Default.Ascending = !Properties.Settings.Default.Ascending;
+            DescendingHeader.Unchecked += (_, _) => Properties.Settings.Default.Ascending = false;
+            DescendingHeader.Click += async delegate { MainContextMenu.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(-1).ConfigureAwait(false); };
 
             // 6 == Recent files
 

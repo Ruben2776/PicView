@@ -646,5 +646,17 @@ namespace PicView.Properties {
                 this["Maximized"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Ascending {
+            get {
+                return ((bool)(this["Ascending"]));
+            }
+            set {
+                this["Ascending"] = value;
+            }
+        }
     }
 }
