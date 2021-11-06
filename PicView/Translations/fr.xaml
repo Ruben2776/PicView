@@ -177,7 +177,7 @@
     <system:String x:Key="Open">Ouvrir</system:String>
     <system:String x:Key="OpenWith">Ouvrir avec...</system:String>
     <system:String x:Key="OpenFileDialog">Ouvrir la boîte de dialogue du fichier</system:String>
-    <system:String x:Key="OpenLastFile">ouvrir le dernier fichier</system:String>
+    <system:String x:Key="OpenLastFile">Ouvrir le dernier fichier</system:String>
     <system:String x:Key="ShowInFolder">Afficher dans le dossier</system:String>
     <system:String x:Key="Save">Sauvegarder</system:String>
     <system:String x:Key="SaveImage">Enregistrer l'image</system:String>
@@ -199,8 +199,8 @@
     <system:String x:Key="LastWriteTime">Date de la dernière écriture</system:String>
     <system:String x:Key="Random">Aléatoire</system:String>
 
-    <system:String x:Key="Ascending">Ascendante</system:String>
-    <system:String x:Key="Descending">Descendante</system:String>
+    <system:String x:Key="Ascending">Ascendant</system:String>
+    <system:String x:Key="Descending">Descendant</system:String>
     
     <!--  Settings  -->
     <system:String x:Key="Settings">Options</system:String>
@@ -311,8 +311,8 @@
     <system:String x:Key="AnErrorOccuredWhenDeleting">Une erreur s'est produite lors de la suppression</system:String>
 
     <!--  Scaling messages  -->
-    <system:String x:Key="AutoFitWindowMessage">Fenêtre de montage automatique</system:String>
-    <system:String x:Key="AutoFitWindowFillHeight">Fenêtre d'ajustement automatique, s'étirant à la hauteur</system:String>
+    <system:String x:Key="AutoFitWindowMessage">Ajustement automatique de la fenêtre</system:String>
+    <system:String x:Key="AutoFitWindowFillHeight">Ajustement automatique de la fenêtre, étirement en hauteur</system:String>
     <system:String x:Key="NormalWindowBehavior">Comportement normal de la fenêtre</system:String>
     <system:String x:Key="NormalWindowBehaviorFillHeight">Comportement normal de la fenêtre, étirement en hauteur</system:String>
 
