@@ -99,7 +99,6 @@ namespace PicView.UILogic.Loading
             AscendingHeader.Checked += (_, _) => Properties.Settings.Default.Ascending = !Properties.Settings.Default.Ascending;
             AscendingHeader.Unchecked += (_, _) => Properties.Settings.Default.Ascending = true;
             AscendingHeader.Click += async (_, _) => await UpdateUIValues.ChangeSortingAsync(-1).ConfigureAwait(false);
-            AscendingMenu.Click += async (_, _) => { Properties.Settings.Default.Ascending = true; await UpdateUIValues.ChangeSortingAsync(-1).ConfigureAwait(false); };
 
             // Descending
             var DescendingMenu = (MenuItem)sortfilesbycm.Items[9];
@@ -108,7 +107,6 @@ namespace PicView.UILogic.Loading
             DescendingHeader.Checked += (_, _) => Properties.Settings.Default.Ascending = !Properties.Settings.Default.Ascending;
             DescendingHeader.Unchecked += (_, _) => Properties.Settings.Default.Ascending = false;
             DescendingHeader.Click += async (_, _) => await UpdateUIValues.ChangeSortingAsync(-1).ConfigureAwait(false);
-            DescendingMenu.Click += async (_, _) => { Properties.Settings.Default.Ascending = false; await UpdateUIValues.ChangeSortingAsync(-1).ConfigureAwait(false); };
 
             // 6 == Recent files
 
