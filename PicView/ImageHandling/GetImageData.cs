@@ -359,16 +359,27 @@ namespace PicView.ImageHandling
             if (_author.ValueAsObject is not null)
             {
                 var authorsArray = (string[])_author.ValueAsObject;
-                for (int i = 0; i < authorsArray.Length; i++)
+
+                if (authorsArray.Length == 1)
                 {
-                    if (i == 0)
+                    authorsValue = authorsArray[0];
+                }
+                else if (authorsArray.Length >= 2)
+                {
+                    var sb = new System.Text.StringBuilder();
+                    for (int i = 0; i < authorsArray.Length; i++)
                     {
-                        authorsValue = authorsArray[0];
+                        if (i == 0)
+                        {
+                            sb.Append(authorsArray[0]);
+                            authorsValue = authorsArray[0];
+                        }
+                        else
+                        {
+                            sb.Append(", " + authorsArray[i]);
+                        }
                     }
-                    else
-                    {
-                        authorsValue += ", " + authorsArray[i];
-                    }
+                    authorsValue = sb.ToString();
                 }
             }
 
