@@ -92,8 +92,7 @@ namespace PicView.FileHandling
 
             var items = Directory.EnumerateFiles(directory, "*.*", searchOption)
                 .AsParallel()
-                .Where(file => SupportedFiles.IsSupportedExt(file)
-
+                .Where(file => SupportedFiles.IsSupportedFile(fileInfo)
             );
 
             switch (sortFilesBy)
