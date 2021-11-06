@@ -105,7 +105,7 @@
 
             <Separator />
 
-            <MenuItem>
+            <MenuItem StaysOpenOnClick="True">
                 <MenuItem.Header>
                     <RadioButton Width="130" Content="{StaticResource Ascending}"/>
                 </MenuItem.Header>
@@ -114,7 +114,7 @@
                 </MenuItem.Icon>
             </MenuItem>
 
-            <MenuItem>
+            <MenuItem StaysOpenOnClick="True">
                 <MenuItem.Header>
                     <RadioButton Width="130" Content="{StaticResource Descending}"/>
                 </MenuItem.Header>
