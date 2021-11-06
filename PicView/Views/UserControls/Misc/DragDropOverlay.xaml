@@ -2,7 +2,7 @@
     x:Class="PicView.Views.UserControls.DragDropOverlay"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Grid Background="{StaticResource BackgroundColorBrushFade}">
+    <Grid Background="#A5171717">
         <StackPanel
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
@@ -13,13 +13,10 @@
             <TextBlock
                 Margin="0,10,0,0"
                 FontFamily="Roboto Black"
-                FontSize="15"
-                Foreground="#fff"
+                FontSize="16"
+                Foreground="#FFf6f4f4"
                 Text="{StaticResource DragOverString}"
                 TextAlignment="Center">
-                <TextBlock.Effect>
-                    <DropShadowEffect ShadowDepth="1" Direction="358" Color="Black" Opacity="0.6" BlurRadius="1"/>
-                </TextBlock.Effect>
             </TextBlock>
         </StackPanel>
     </Grid>
