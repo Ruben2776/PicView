@@ -1,7 +1,6 @@
 ﻿using ImageMagick;
 using PicView.UILogic;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,7 +10,7 @@ namespace PicView.ImageHandling
 {
     internal static class SaveImages
     {
-        internal static async Task<bool> TrySaveImage(int rotate, bool flipped, BitmapSource? bitmapSource, string? path, string destination, Int32Rect? rect, bool hlsl)
+        internal static async Task<bool> SaveImageAsync(int rotate, bool flipped, BitmapSource? bitmapSource, string? path, string destination, Int32Rect? rect, bool hlsl)
         {
             MagickImage? magickImage = new();
             try
@@ -33,11 +32,9 @@ namespace PicView.ImageHandling
                         encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
                     });
 
-                    using (var stream = new MemoryStream())
-                    {
-                        encoder.Save(stream);
-                        magickImage.Read(stream.ToArray());
-                    }
+                    using var stream = new MemoryStream();
+                    encoder.Save(stream);
+                    magickImage.Read(stream.ToArray());
                 }
                 else if (string.IsNullOrEmpty(path) == false)
                 {
@@ -49,12 +46,12 @@ namespace PicView.ImageHandling
                 }
 
                 // Apply transformation values
-                if (flipped && bitmapSource is not null && hlsl == false)
+                if (flipped && bitmapSource is not null && hlsl is false)
                 {
                     magickImage.Flop();
                 }
 
-                if (rect is not null && bitmapSource is not null && hlsl == false)
+                if (rect is not null && bitmapSource is not null && hlsl is false)
                 {
                     magickImage.Crop(new MagickGeometry(rect.Value.X, rect.Value.Y, rect.Value.Width, rect.Value.Height));
                 }
@@ -70,32 +67,6 @@ namespace PicView.ImageHandling
             }
             catch (Exception) { return false; }
             return true;
-        }
-
-        internal static void ResizeImageToFile(string file, int NewWidth, int NewHeight)
-        {
-            try
-            {
-                using (MagickImage magick = new MagickImage())
-                {
-                    MagickGeometry size = new MagickGeometry(NewWidth, NewHeight)
-                    {
-                        IgnoreAspectRatio = true
-                    };
-                    magick.Resize(size);
-                    magick.Quality = 100;
-                    magick.Write(file);
-                }
-            }
-#if DEBUG
-            catch (MagickException e)
-            {
-                Trace.WriteLine("ResizeImageToFile " + file + " null, \n" + e.Message);
-                return;
-            }
-#else
-                catch (MagickException) { return; }
-#endif
         }
     }
 }

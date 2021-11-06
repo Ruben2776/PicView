@@ -42,7 +42,7 @@ namespace PicView.Views.Windows
             string file = ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex];
             if (int.TryParse(WidthBox.Text, out var width) && int.TryParse(HeightBox.Text, out var height))
             {
-                var resize = await ImageSizeFunctions.ResizeImageAsync(file, width, height).ConfigureAwait(false);
+                var resize = await ImageSizeFunctions.ResizeImageAsync(file, width, height, 0).ConfigureAwait(false);
                 if (resize)
                 {
                     await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);
@@ -80,7 +80,7 @@ namespace PicView.Views.Windows
                 {
                     if (double.TryParse(match.Groups[1].Value, out double percentage))
                     {
-                        var resize = await ImageSizeFunctions.ResizeImageAsync(file, 0, 0, new ImageMagick.Percentage(percentage)).ConfigureAwait(false);
+                        var resize = await ImageSizeFunctions.ResizeImageAsync(file, 0, 0, 0, new ImageMagick.Percentage(percentage)).ConfigureAwait(false);
                         if (resize)
                         {
                             await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);

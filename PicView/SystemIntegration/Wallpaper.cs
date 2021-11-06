@@ -44,12 +44,12 @@ namespace PicView.SystemIntegration
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, async () =>
                 {
-                    await SaveImages.TrySaveImage(Rotateint, Flipped, source, null, destination, null, effectApplied).ConfigureAwait(false);
+                    await SaveImages.SaveImageAsync(Rotateint, Flipped, source, null, destination, null, effectApplied).ConfigureAwait(false);
                 });
             }
             else if (ChangeImage.Error_Handling.CheckOutOfRange() == false)
             {
-                await SaveImages.TrySaveImage(Rotateint, Flipped, null, Pics[FolderIndex], destination, null, effectApplied).ConfigureAwait(false);
+                await SaveImages.SaveImageAsync(Rotateint, Flipped, null, Pics[FolderIndex], destination, null, effectApplied).ConfigureAwait(false);
             }
             
            SetDesktopWallpaper(destination, style);

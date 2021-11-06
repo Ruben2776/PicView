@@ -137,6 +137,7 @@ namespace PicView.FileHandling
             }
 
             string fileName;
+            bool randomized = false;
 
             if (Pics?.Count > FolderIndex)
             {
@@ -149,14 +150,20 @@ namespace PicView.FileHandling
             else
             {
                 fileName = Path.GetRandomFileName();
+                randomized = true;
             }
 
             var Savedlg = new SaveFileDialog()
             {
                 Filter = FilterFiles,
                 Title = Application.Current.Resources["Save"] + $" - {SetTitle.AppName}",
-                FileName = fileName
+                FileName = fileName,
             };
+
+            if (randomized is false)
+            {
+                Savedlg.InitialDirectory = Path.GetDirectoryName(Pics[FolderIndex]);
+            }
 
             if (!Savedlg.ShowDialog().HasValue)
             {
@@ -171,11 +178,11 @@ namespace PicView.FileHandling
 
             if (Pics?.Count > FolderIndex)
             {
-                success = await SaveImages.TrySaveImage(Rotateint, Flipped, null, Pics[FolderIndex], Savedlg.FileName, null, effectApplied).ConfigureAwait(false);
+                success = await SaveImages.SaveImageAsync(Rotateint, Flipped, null, Pics[FolderIndex], Savedlg.FileName, null, effectApplied).ConfigureAwait(false);
             }
             else if (source != null)
             {
-                success = await SaveImages.TrySaveImage(Rotateint, Flipped, source, null, Savedlg.FileName, null, effectApplied).ConfigureAwait(false);
+                success = await SaveImages.SaveImageAsync(Rotateint, Flipped, source, null, Savedlg.FileName, null, effectApplied).ConfigureAwait(false);
             }
 
             if (success == false)

@@ -36,7 +36,7 @@ namespace PicView.ImageHandling
             return new Size(magick.Width, magick.Height);
         }
 
-        internal static async Task<bool> ResizeImageAsync(string file, int width, int height, Percentage? percentage = null)
+        internal static async Task<bool> ResizeImageAsync(string file, int width, int height, int quality = 100, Percentage? percentage = null)
         {
             if (string.IsNullOrWhiteSpace(file)) { return false; }
             if (File.Exists(file) == false) { return false; }
@@ -44,9 +44,13 @@ namespace PicView.ImageHandling
 
             var magick = new MagickImage()
             {
-                Quality = 100,
                 ColorSpace = ColorSpace.Transparent
             };
+
+            if (quality > 0) // not inputting quality results in lower file size
+            {
+                magick.Quality = quality;
+            }
 
             try
             {
