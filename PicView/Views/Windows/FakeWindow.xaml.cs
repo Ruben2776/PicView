@@ -5,6 +5,7 @@ using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Threading;
 using static PicView.SystemIntegration.NativeMethods;
 
 namespace PicView.Views.Windows
@@ -26,12 +27,29 @@ namespace PicView.Views.Windows
         private void FakeWindow_ContentRendered(object sender, EventArgs e)
         {
             EnableBlur(this);
-            ConfigureWindows.GetMainWindow.Activate();
 
             // Hide from alt tab
             var helper = new WindowInteropHelper(this);
             _ = SetWindowLong(helper.Handle, GWL_EX_STYLE, (GetWindowLong(helper.Handle, GWL_EX_STYLE) | WS_EX_TOOLWINDOW) & ~WS_EX_APPWINDOW);
             helper.EnsureHandle();
+
+            var timer = new System.Timers.Timer(20)
+            {
+                AutoReset = false,
+                Enabled = true
+            };
+            timer.Elapsed += delegate
+            {
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
+                {
+                    ConfigureWindows.GetMainWindow.Topmost = true;
+                    ConfigureWindows.GetMainWindow.Topmost = Properties.Settings.Default.TopMost;
+                    ConfigureWindows.GetMainWindow.BringIntoView();
+                    Keyboard.Focus(ConfigureWindows.GetMainWindow);
+                    FocusManager.SetFocusedElement(FocusManager.GetFocusScope(ConfigureWindows.GetMainWindow), null);
+                });
+            };
+            timer.Start();
 
             PreviewMouseLeftButtonDown += FakeWindow_MouseLeftButtonDown;
             PreviewMouseRightButtonDown += FakeWindow_MouseLeftButtonDown;
