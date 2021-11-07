@@ -54,7 +54,7 @@ namespace PicView.ImageHandling
             return pic;
         }
 
-        internal static BitmapSource? GetBitmapSourceThumb(FileInfo fileInfo)
+        internal static BitmapSource? GetBitmapSourceThumb(FileInfo fileInfo, byte quality = 100, int size = 500)
         {
             switch (fileInfo.Extension)
             {
@@ -88,7 +88,7 @@ namespace PicView.ImageHandling
         /// <param name="quality"></param>
         /// <param name="size"></param>
         /// <returns></returns>
-        private static BitmapSource? GetMagickImageThumb(FileInfo fileInfo, byte quality = 100, short size = 500)
+        private static BitmapSource? GetMagickImageThumb(FileInfo fileInfo, byte quality = 100, int size = 500)
         {
             BitmapSource pic;
 

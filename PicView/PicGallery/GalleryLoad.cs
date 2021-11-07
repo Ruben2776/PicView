@@ -179,7 +179,7 @@ namespace PicView.PicGallery
             }
         }
 
-        internal static Task Load() => Task.Run(async () =>
+        internal static Task Load() => Task.Run(() =>
         {
             /// TODO Maybe make this start at at folder index
             /// and get it work with a real sorting method?
@@ -190,13 +190,13 @@ namespace PicView.PicGallery
             var count = Navigation.Pics.Count;
             var index = Navigation.FolderIndex;
 
-            if (count >= 250)
+            if (count > 10)
             {
                 for (int i = 0; i < count; i++)
                 {
                     if (count != Navigation.Pics.Count)
                     {
-                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
+                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(async () =>
                         {
                             UC.GetPicGallery.Container.Children.Clear();
                             await Load().ConfigureAwait(false); // restart when changing directory
@@ -215,9 +215,9 @@ namespace PicView.PicGallery
                         }
                     }));
                 }
-                Parallel.For(0, count, i =>
+                Parallel.For(0, count, async i =>
                 {
-                    UpdatePic(i);
+                    await UpdatePic(i).ConfigureAwait(false);
                 });
             }
             else
@@ -226,7 +226,7 @@ namespace PicView.PicGallery
                 {
                     if (count != Navigation.Pics.Count)
                     {
-                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
+                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(async () =>
                         {
                             UC.GetPicGallery.Container.Children.Clear();
                             await Load().ConfigureAwait(false);
@@ -284,21 +284,21 @@ namespace PicView.PicGallery
             }));
         }
 
-        internal static void UpdatePic(int i)
+        internal static async Task UpdatePic(int i)
         {
             if (ChangeImage.Navigation.Pics?.Count < ChangeImage.Navigation.FolderIndex || ChangeImage.Navigation.Pics?.Count < 1)
             {
                 GalleryFunctions.Clear();
-                _ = Load().ConfigureAwait(false); // restart when changing directory
+                await Load().ConfigureAwait(false); // restart when changing directory
                 return;
             }
 
-            var pic = Thumbnails.GetBitmapSourceThumb(new System.IO.FileInfo(Navigation.Pics[i]));
+            var pic = Thumbnails.GetBitmapSourceThumb(new System.IO.FileInfo(Navigation.Pics[i]), 70, (int)GalleryNavigation.PicGalleryItem_Size);
             if (pic == null)
             {
                 pic = ImageFunctions.ImageErrorMessage();
             }
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(async () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(async () =>
             {
                 if (ChangeImage.Navigation.Pics?.Count < ChangeImage.Navigation.FolderIndex || ChangeImage.Navigation.Pics?.Count < 1 || i >= UC.GetPicGallery.Container.Children.Count)
                 {
