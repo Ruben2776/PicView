@@ -62,43 +62,43 @@
 
             <MenuItem>
                 <MenuItem.Header>
-                    <RadioButton Width="130" Content="{StaticResource FileName}"/>
+                    <RadioButton Width="130" Content="{StaticResource FileName}" GroupName="sorting"/>
                 </MenuItem.Header>
             </MenuItem>
 
             <MenuItem>
                 <MenuItem.Header>
-                    <RadioButton Width="130" Content="{StaticResource FileSize}"/>
+                    <RadioButton Width="130" Content="{StaticResource FileSize}" GroupName="sorting"/>
                 </MenuItem.Header>
             </MenuItem>
 
             <MenuItem>
                 <MenuItem.Header>
-                    <RadioButton Width="130" Content="{StaticResource FileExtension}"/>
+                    <RadioButton Width="130" Content="{StaticResource FileExtension}" GroupName="sorting"/>
                 </MenuItem.Header>
             </MenuItem>
 
             <MenuItem>
                 <MenuItem.Header>
-                    <RadioButton Width="130" Content="{StaticResource CreationTime}"/>
+                    <RadioButton Width="130" Content="{StaticResource CreationTime}" GroupName="sorting"/>
                 </MenuItem.Header>
             </MenuItem>
 
             <MenuItem>
                 <MenuItem.Header>
-                    <RadioButton Width="130" Content="{StaticResource LastAccessTime}"/>
+                    <RadioButton Width="130" Content="{StaticResource LastAccessTime}" GroupName="sorting"/>
                 </MenuItem.Header>
             </MenuItem>
 
             <MenuItem>
                 <MenuItem.Header>
-                    <RadioButton Width="130" Content="{StaticResource LastWriteTime}"/>
+                    <RadioButton Width="130" Content="{StaticResource LastWriteTime}" GroupName="sorting"/>
                 </MenuItem.Header>
             </MenuItem>
 
             <MenuItem>
                 <MenuItem.Header>
-                    <RadioButton Width="130" Content="{StaticResource Random}"/>
+                    <RadioButton Width="130" Content="{StaticResource Random}" GroupName="sorting"/>
                 </MenuItem.Header>
             </MenuItem>
 
@@ -107,7 +107,7 @@
 
             <MenuItem StaysOpenOnClick="True">
                 <MenuItem.Header>
-                    <RadioButton Width="130" Content="{StaticResource Ascending}"/>
+                    <RadioButton Width="130" Content="{StaticResource Ascending}" GroupName="ordering"/>
                 </MenuItem.Header>
                 <MenuItem.Icon>
                     <Image Width="12" Height="12" Source="{StaticResource sort_amount_up_solidDrawingImage}" />
@@ -116,7 +116,7 @@
 
             <MenuItem StaysOpenOnClick="True">
                 <MenuItem.Header>
-                    <RadioButton Width="130" Content="{StaticResource Descending}"/>
+                    <RadioButton Width="130" Content="{StaticResource Descending}" GroupName="ordering"/>
                 </MenuItem.Header>
                 <MenuItem.Icon>
                     <Image Width="12" Height="12" Source="{StaticResource sort_amount_down_solidDrawingImage}" />

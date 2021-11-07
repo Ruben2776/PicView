@@ -95,18 +95,23 @@ namespace PicView.UILogic.Loading
             // Ascending
             var AscendingMenu = (MenuItem)sortfilesbycm.Items[8];
             var AscendingHeader = (RadioButton)AscendingMenu.Header;
+            AscendingHeader.Checked += async (_, _) =>
+            {
+                Properties.Settings.Default.Ascending = true;
+                await UpdateUIValues.ChangeSortingAsync(0, true).ConfigureAwait(false);
+            };
             AscendingHeader.IsChecked = Properties.Settings.Default.Ascending;
-            AscendingHeader.Checked += (_, _) => Properties.Settings.Default.Ascending = !Properties.Settings.Default.Ascending;
-            AscendingHeader.Unchecked += (_, _) => Properties.Settings.Default.Ascending = true;
-            AscendingHeader.Click += async (_, _) => await UpdateUIValues.ChangeSortingAsync(-1).ConfigureAwait(false);
 
             // Descending
             var DescendingMenu = (MenuItem)sortfilesbycm.Items[9];
             var DescendingHeader = (RadioButton)DescendingMenu.Header;
+            DescendingHeader.Checked += async (_, _) =>
+            {
+                Properties.Settings.Default.Ascending = false;
+                await UpdateUIValues.ChangeSortingAsync(0, true).ConfigureAwait(false);
+            };
             DescendingHeader.IsChecked = Properties.Settings.Default.Ascending == false;
-            DescendingHeader.Checked += (_, _) => Properties.Settings.Default.Ascending = !Properties.Settings.Default.Ascending;
-            DescendingHeader.Unchecked += (_, _) => Properties.Settings.Default.Ascending = false;
-            DescendingHeader.Click += async (_, _) => await UpdateUIValues.ChangeSortingAsync(-1).ConfigureAwait(false);
+
 
             // 6 == Recent files
 

@@ -14,148 +14,16 @@ namespace PicView.ConfigureSettings
 {
     internal static class UpdateUIValues
     {
-        internal static async Task ChangeSortingAsync(short sorting)
+        internal static async Task ChangeSortingAsync(short sorting, bool changeOrder = false)
         {
-            if (sorting > -1 && sorting < 7)
+            if (changeOrder == false)
             {
                 Properties.Settings.Default.SortPreference = sorting;
-            }
-            else
-            {
-                Properties.Settings.Default.SortPreference = 0;
             }
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
                 SetTitle.SetLoadingString();
-
-                if (sorting == -1)
-                {
-                    var sortcm = MainContextMenu.Items[5] as MenuItem;
-
-                    var desc = sortcm.Items[8] as MenuItem;
-                    var descHeader = desc.Header as RadioButton;
-
-                    var asc = sortcm.Items[9] as MenuItem;
-                    var ascHeader = asc.Header as RadioButton;
-
-                    if (Properties.Settings.Default.Ascending)
-                    {
-                        descHeader.IsChecked = false;
-                        ascHeader.IsChecked = true;
-                    }
-                    else
-                    {
-                        descHeader.IsChecked = true;
-                        ascHeader.IsChecked = false;
-                    }
-                }
-                else
-                {
-                    try
-                    {
-                        var sortcm = MainContextMenu.Items[5] as MenuItem;
-
-                        var sort0 = sortcm.Items[0] as MenuItem;
-                        var sort0Header = sort0.Header as RadioButton;
-
-                        var sort1 = sortcm.Items[1] as MenuItem;
-                        var sort1Header = sort1.Header as RadioButton;
-
-                        var sort2 = sortcm.Items[2] as MenuItem;
-                        var sort2Header = sort2.Header as RadioButton;
-
-                        var sort3 = sortcm.Items[3] as MenuItem;
-                        var sort3Header = sort3.Header as RadioButton;
-
-                        var sort4 = sortcm.Items[4] as MenuItem;
-                        var sort4Header = sort4.Header as RadioButton;
-
-                        var sort5 = sortcm.Items[5] as MenuItem;
-                        var sort5Header = sort5.Header as RadioButton;
-
-                        var sort6 = sortcm.Items[6] as MenuItem;
-                        var sort6Header = sort6.Header as RadioButton;
-
-                        switch (sorting)
-                        {
-                            default:
-                            case 0:
-                                sort0Header.IsChecked = true;
-                                sort1Header.IsChecked = false;
-                                sort2Header.IsChecked = false;
-                                sort3Header.IsChecked = false;
-                                sort4Header.IsChecked = false;
-                                sort5Header.IsChecked = false;
-                                sort6Header.IsChecked = false;
-                                break;
-
-                            case 1:
-                                sort0Header.IsChecked = false;
-                                sort1Header.IsChecked = true;
-                                sort2Header.IsChecked = false;
-                                sort3Header.IsChecked = false;
-                                sort4Header.IsChecked = false;
-                                sort5Header.IsChecked = false;
-                                sort6Header.IsChecked = false;
-                                break;
-
-                            case 2:
-                                sort0Header.IsChecked = false;
-                                sort1Header.IsChecked = false;
-                                sort2Header.IsChecked = true;
-                                sort3Header.IsChecked = false;
-                                sort4Header.IsChecked = false;
-                                sort5Header.IsChecked = false;
-                                sort6Header.IsChecked = false;
-                                break;
-
-                            case 3:
-                                sort0Header.IsChecked = false;
-                                sort1Header.IsChecked = false;
-                                sort2Header.IsChecked = false;
-                                sort3Header.IsChecked = true;
-                                sort4Header.IsChecked = false;
-                                sort5Header.IsChecked = false;
-                                sort6Header.IsChecked = false;
-                                break;
-
-                            case 4:
-                                sort0Header.IsChecked = false;
-                                sort1Header.IsChecked = false;
-                                sort2Header.IsChecked = false;
-                                sort3Header.IsChecked = false;
-                                sort4Header.IsChecked = true;
-                                sort5Header.IsChecked = false;
-                                sort6Header.IsChecked = false;
-                                break;
-
-                            case 5:
-                                sort0Header.IsChecked = false;
-                                sort1Header.IsChecked = false;
-                                sort2Header.IsChecked = false;
-                                sort3Header.IsChecked = false;
-                                sort4Header.IsChecked = false;
-                                sort5Header.IsChecked = true;
-                                sort6Header.IsChecked = false;
-                                break;
-
-                            case 6:
-                                sort0Header.IsChecked = false;
-                                sort1Header.IsChecked = false;
-                                sort2Header.IsChecked = false;
-                                sort3Header.IsChecked = false;
-                                sort4Header.IsChecked = false;
-                                sort5Header.IsChecked = false;
-                                sort6Header.IsChecked = true;
-                                break;
-                        }
-                    }
-                    catch (System.Exception)
-                    {
-                        // Supress task cancelled
-                    }
-                }
             });
 
             FileInfo fileInfo;
