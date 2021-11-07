@@ -95,23 +95,22 @@ namespace PicView.UILogic.Loading
             // Ascending
             var AscendingMenu = (MenuItem)sortfilesbycm.Items[8];
             var AscendingHeader = (RadioButton)AscendingMenu.Header;
-            AscendingHeader.Checked += async (_, _) =>
+            AscendingHeader.IsChecked = Properties.Settings.Default.Ascending;
+            AscendingHeader.Click += async (_, _) =>
             {
                 Properties.Settings.Default.Ascending = true;
                 await UpdateUIValues.ChangeSortingAsync(0, true).ConfigureAwait(false);
             };
-            AscendingHeader.IsChecked = Properties.Settings.Default.Ascending;
 
             // Descending
             var DescendingMenu = (MenuItem)sortfilesbycm.Items[9];
             var DescendingHeader = (RadioButton)DescendingMenu.Header;
-            DescendingHeader.Checked += async (_, _) =>
+            DescendingHeader.IsChecked = Properties.Settings.Default.Ascending == false;
+            DescendingHeader.Click += async (_, _) =>
             {
                 Properties.Settings.Default.Ascending = false;
                 await UpdateUIValues.ChangeSortingAsync(0, true).ConfigureAwait(false);
             };
-            DescendingHeader.IsChecked = Properties.Settings.Default.Ascending == false;
-
 
             // 6 == Recent files
 
