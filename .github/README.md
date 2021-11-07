@@ -27,19 +27,6 @@ Latest releases at https://picview.org/download
 [FossHub](https://www.fosshub.com/PicView.html) <br>
 [MajorGeeks](https://www.majorgeeks.com/files/details/picview.html)
 
-# Translators/Languages
-Chinese by <a href="https://github.com/Crystal-RainSlide">Crystal-RainSlide</a><br>
-Spanish by <a href="https://github.com/lk-KEVIN">lk.KEVIN</a><br>
-Korean by <a href="https://github.com/VenusGirl">VenusGirl</a><br>
-German by <a href="https://github.com/Brotbox">Brotbox</a><br>
-Polish by <a href="https://github.com/YourSenseiCreeper">YourSenseiCreeper</a><br>
-French by <a href="https://www.challenger-systems.com/2021/11/picview-156.html">Sylvain LOUIS</a> <br>
-English and Danish by me<br>
-
-**Looking for translators!**
-If you want to help translate another language or improve a current one and be listed here, please take a look at
-https://github.com/Ruben2776/PicView/issues/13
-
 ## Contributions
 ![Visual Studio 2019](https://img.shields.io/badge/IDE-Visual%20Studio%202019-964ad4.svg?maxAge=3600)
 ![.Net](https://img.shields.io/badge/.NET-5C2D91?style=badge&logo=.net&logoColor=white)
@@ -50,6 +37,22 @@ Pull requests are welcome. Check current issues and asign yourself or create you
 Improvements to the current code or bug fixes are also welcome!
 
 Built with the latest SDK of .NET and Visual Studio
+
+
+# Translators/Languages
+Chinese by <a href="https://github.com/Crystal-RainSlide">Crystal-RainSlide</a><i>(needs updates)</i><br>
+Spanish by <a href="https://github.com/lk-KEVIN">lk.KEVIN</a> <i>(needs updates)</i><br>
+Korean by <a href="https://github.com/VenusGirl">VenusGirl</a> <i>(needs updates)</i><br>
+German by <a href="https://github.com/Brotbox">Brotbox</a> <i>(needs updates)</i><br>
+Polish by <a href="https://github.com/YourSenseiCreeper">YourSenseiCreeper</a><br>
+French by <a href="https://www.challenger-systems.com/2021/11/picview-156.html">Sylvain LOUIS</a> <br>
+English and Danish by me<br>
+
+**Looking for translators!**
+If you want to help translate another language or update/improve a current one and be listed here, please take a look at
+https://github.com/Ruben2776/PicView/issues/13
+
+
 
 ## Features
 **For a full list of features, check my website at https://picview.org**
