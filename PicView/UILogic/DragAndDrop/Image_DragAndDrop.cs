@@ -65,7 +65,7 @@ namespace PicView.UILogic.DragAndDrop
                 // Archive
                 element = new ZipIcon();
             }
-            else if (SupportedFiles.IsSupportedExt(Path.GetExtension(files[0]).ToLower()).HasValue)
+            else if (SupportedFiles.IsSupportedExt(files[0]))
             {
                 // Check if same file
                 if (files.Length == 1 && Pics.Count > 0)

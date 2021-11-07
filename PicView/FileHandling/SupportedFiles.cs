@@ -13,8 +13,9 @@ namespace PicView.FileHandling
         /// </summary>
         /// <param name="ext"></param>
         /// <returns></returns>
-        internal static bool? IsSupportedExt(string ext)
+        internal static bool? IsSupportedFile(string file)
         {
+            string ext = Path.GetExtension(file).ToLower();
             switch (ext)
             {
                 // Standards
@@ -91,11 +92,9 @@ namespace PicView.FileHandling
             }
         }
 
-        internal static bool IsSupportedFile(FileInfo fileInfo)
+        internal static bool IsSupportedExt(string file)
         {
-            if (fileInfo == null) { return false; }
-
-            var supported = IsSupportedExt(fileInfo.Extension);
+            var supported = IsSupportedFile(file);
             if (supported is null)
             {
                 return false;
