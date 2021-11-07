@@ -174,50 +174,43 @@ namespace PicView.Shortcuts
                 return;
             }
 
+            // Determine horizontal scrolling direction
+            bool dir = Properties.Settings.Default.HorizontalReverseScroll ? e.Delta < 0 : e.Delta > 0;
+
+            // 1. Handle horizontal gallery
             if (GalleryFunctions.IsHorizontalOpen)
             {
                 if (Properties.Settings.Default.FullscreenGalleryHorizontal && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                 {
-                    await NavigateToPicAsync(e.Delta > 0).ConfigureAwait(false);
+                    await NavigateToPicAsync(dir).ConfigureAwait(false);
                 }
                 else
                 {
                     GalleryNavigation.ScrollTo(sender, e);
                 }
+
+                return;
             }
-            else if (Properties.Settings.Default.ScrollEnabled && ConfigureWindows.GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
+
+            // 2. Handle scroll enabled and shift not held down
+            if (Properties.Settings.Default.ScrollEnabled && ConfigureWindows.GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible
+                && (Keyboard.Modifiers & ModifierKeys.Shift) != ModifierKeys.Shift)
             {
-                if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+                var zoomSpeed = 40;
+
+                if (e.Delta > 0)
                 {
-                    await NavigateToPicAsync(e.Delta > 0).ConfigureAwait(false);
+                    GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - zoomSpeed);
                 }
                 else
                 {
-                    if (GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Collapsed)
-                    {
-                        if (Properties.Settings.Default.CtrlZoom == false)
-                        {
-                            return;
-                        }
-                        await NavigateToPicAsync(e.Delta > 0).ConfigureAwait(false);
-                    }
-                    if (GetMainWindow.CheckAccess() == false)
-                    {
-                        return;
-                    }
-                    // Scroll vertical when scroll enabled
-                    var zoomSpeed = 45;
-                    if (e.Delta > 0)
-                    {
-                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - zoomSpeed);
-                    }
-                    else if (e.Delta < 0)
-                    {
-                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + zoomSpeed);
-                    }
+                    GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + zoomSpeed);
                 }
+
+                return;
             }
-            else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+
+            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
                 if (Properties.Settings.Default.CtrlZoom)
                 {
@@ -225,14 +218,14 @@ namespace PicView.Shortcuts
                 }
                 else
                 {
-                    await NavigateToPicAsync(e.Delta > 0).ConfigureAwait(false);
+                    await NavigateToPicAsync(dir).ConfigureAwait(false);
                 }
             }
             else
             {
                 if (Properties.Settings.Default.CtrlZoom)
                 {
-                    await NavigateToPicAsync(e.Delta > 0).ConfigureAwait(false);
+                    await NavigateToPicAsync(dir).ConfigureAwait(false);
                 }
                 else
                 {

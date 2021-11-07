@@ -100,6 +100,13 @@
     <system:String x:Key="Vertical">Vertical</system:String>
     <system:String x:Key="Horizontal">Horizontal</system:String>
 
+    <!--  Settings window, mouse  -->
+    <system:String x:Key="CtrlToZoom">Ctrl + 鼠标滚轮缩放，鼠标滚轮导航</system:String>
+    <system:String x:Key="ScrollToZoom">鼠标滚轮缩放，Ctrl + 鼠标滚轮导航</system:String>
+    <system:String x:Key="HorizontalScroll">水平卷轴</system:String>
+    <system:String x:Key="Reverse">逆转</system:String>
+    <system:String x:Key="Forward">向前</system:String>
+
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">通用设置</system:String>
     <system:String x:Key="UISettings">界面设置</system:String>
@@ -109,8 +116,6 @@
     <system:String x:Key="StayCentered">保持窗口居中</system:String>
     <system:String x:Key="ColoredWindowBorder">彩色窗口边框</system:String>
     <system:String x:Key="ShowButtonsInHiddenUI">在隐藏界面时显示按钮</system:String>
-    <system:String x:Key="CtrlToZoom">Ctrl + 鼠标滚轮缩放，鼠标滚轮导航</system:String>
-    <system:String x:Key="ScrollToZoom">鼠标滚轮缩放，Ctrl + 鼠标滚轮导航</system:String>
     <system:String x:Key="Apply">应用</system:String>
     <system:String x:Key="AdjustTimingForSlideshow">调整幻灯片切换时间</system:String>
     <system:String x:Key="AdjustTimingForZoom">调整缩放动画速度</system:String>
@@ -119,10 +124,6 @@
     <system:String x:Key="CheckForUpdates">检查更新</system:String>
 
     <!--  Effects Window  -->
-    <system:String x:Key="HLSLPictureFX">HLSL 图片特效</system:String>
-    <system:String x:Key="ClickToAddShaderEffectToImage">点击以应用指定特效</system:String>
-    <system:String x:Key="UncheckToRemoveEffect">取消勾选以移除特效</system:String>
-
     <system:String x:Key="NegativeColors">反色</system:String>
     <system:String x:Key="BlackAndWhite">黑白</system:String>
     <system:String x:Key="ColorTone">色调</system:String>
@@ -245,7 +246,6 @@
     <system:String x:Key="Created">创建时间</system:String>
     <system:String x:Key="Modified">修改时间</system:String>
     <system:String x:Key="Size">大小</system:String>
-    <system:String x:Key="SizePx">大小（像素）</system:String>
     <system:String x:Key="Pixels">px</system:String>
     <system:String x:Key="SizeMp">大小（兆像素）</system:String>
     <system:String x:Key="MegaPixels">mp</system:String>

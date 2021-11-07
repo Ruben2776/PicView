@@ -283,6 +283,17 @@
                     </RadioButton>
 
                     <Label
+                        Margin="0,4,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Content="{StaticResource HorizontalScroll}" />
+                    
+                    <ComboBox x:Name="ScrollDirection" HorizontalAlignment="Left" Margin="3,8,0,0" >
+                        <ComboBoxItem x:Name="Reverse" Content="{StaticResource Reverse}" IsSelected="True" />
+                        <ComboBoxItem Name="Forward" Content="{StaticResource Forward}" />
+                    </ComboBox>
+
+                    <Label
                         Margin="0,20,0,4"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"

@@ -100,6 +100,13 @@
     <system:String x:Key="Vertical">Vertical</system:String>
     <system:String x:Key="Horizontal">Horizontal</system:String>
 
+    <!--  Settings window, mouse  -->
+    <system:String x:Key="CtrlToZoom">Ctrl pour zoomer, défiler pour naviguer</system:String>
+    <system:String x:Key="ScrollToZoom">Faites défiler pour zoomer, Ctrl pour naviguer</system:String>
+    <system:String x:Key="HorizontalScroll">Défilement horizontal</system:String>
+    <system:String x:Key="Reverse">Inverser</system:String>
+    <system:String x:Key="Forward">Effronté</system:String>
+
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">Paramètres généraux</system:String>
     <system:String x:Key="UISettings">Paramètre de l'interface utilisateur</system:String>
@@ -109,15 +116,12 @@
     <system:String x:Key="StayCentered">Garder la fenêtre centrée</system:String>
     <system:String x:Key="ColoredWindowBorder">Bordure de la fenêtre colorée</system:String>
     <system:String x:Key="ShowButtonsInHiddenUI">Afficher les boutons de l'interface cachée</system:String>
-    <system:String x:Key="CtrlToZoom">Ctrl pour zoomer, défiler pour naviguer</system:String>
-    <system:String x:Key="ScrollToZoom">Faites défiler pour zoomer, Ctrl pour naviguer</system:String>
     <system:String x:Key="Apply">Appliquer</system:String>
     <system:String x:Key="AdjustTimingForSlideshow">Ajuster le durée pour le diaporama</system:String>
     <system:String x:Key="AdjustTimingForZoom">Ajuster la vitesse du zoom</system:String>
     <system:String x:Key="SecAbbreviation">Sec.</system:String>
     <system:String x:Key="RestartApp">Redémarrer l'application</system:String>
     <system:String x:Key="CheckForUpdates">Vérifier les mises à jour</system:String>
-
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Couleurs négatives</system:String>

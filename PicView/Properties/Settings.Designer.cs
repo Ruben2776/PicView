@@ -658,5 +658,17 @@ namespace PicView.Properties {
                 this["Ascending"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool HorizontalReverseScroll {
+            get {
+                return ((bool)(this["HorizontalReverseScroll"]));
+            }
+            set {
+                this["HorizontalReverseScroll"] = value;
+            }
+        }
     }
 }

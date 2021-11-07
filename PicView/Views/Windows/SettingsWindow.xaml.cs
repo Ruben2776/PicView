@@ -133,6 +133,7 @@ namespace PicView.Views.Windows
                     }
                     catch (Exception e)
                     {
+                        // Fix weird crash https://github.com/Ruben2776/PicView/issues/51
 #if DEBUG
                         Trace.WriteLine($"{nameof(SettingsWindow)} Add language caught exception: \n {e.Message}");
 #endif
@@ -143,6 +144,13 @@ namespace PicView.Views.Windows
                 {
                     LoadLanguage.ChangeLanguage(LanguageBox.SelectedIndex);
                 };
+
+                // ScrollDirection
+                Reverse.IsSelected = Properties.Settings.Default.HorizontalReverseScroll;
+                Reverse.Selected += (_, _) => Properties.Settings.Default.HorizontalReverseScroll = !Properties.Settings.Default.HorizontalReverseScroll;
+
+                Forward.IsSelected = !Properties.Settings.Default.HorizontalReverseScroll;
+                Forward.Selected += (_, _) => Properties.Settings.Default.HorizontalReverseScroll = !Properties.Settings.Default.HorizontalReverseScroll;
 
                 AltUIRadio.IsChecked = Properties.Settings.Default.ShowAltInterfaceButtons;
                 AltUIRadio.Click += delegate

@@ -100,6 +100,13 @@
     <system:String x:Key="Vertical">Vertical</system:String>
     <system:String x:Key="Horizontal">Horizontal</system:String>
 
+    <!--  Settings window, mouse  -->
+    <system:String x:Key="CtrlToZoom">확대/축소하려면 Ctrl, 탐색하려면 스크롤</system:String>
+    <system:String x:Key="ScrollToZoom">확대/축소하려면 스크롤하고 탐색하려면 Ctrl</system:String>
+    <system:String x:Key="HorizontalScroll">가로 스크롤</system:String>
+    <system:String x:Key="Reverse">뒤집다</system:String>
+    <system:String x:Key="Forward">앞으로</system:String>
+
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">일반 설정</system:String>
     <system:String x:Key="UISettings">UI 설정</system:String>
@@ -109,8 +116,6 @@
     <system:String x:Key="StayCentered">창 중앙 유지</system:String>
     <system:String x:Key="ColoredWindowBorder">색칠된 창</system:String>
     <system:String x:Key="ShowButtonsInHiddenUI">숨겨진 UI에 버튼 표시</system:String>
-    <system:String x:Key="CtrlToZoom">확대/축소하려면 Ctrl, 탐색하려면 스크롤</system:String>
-    <system:String x:Key="ScrollToZoom">확대/축소하려면 스크롤하고 탐색하려면 Ctrl</system:String>
     <system:String x:Key="Apply">적용</system:String>
     <system:String x:Key="AdjustTimingForSlideshow">슬라이드쇼 시간 조정</system:String>
     <system:String x:Key="AdjustTimingForZoom">확대/축소 속도 조정</system:String>

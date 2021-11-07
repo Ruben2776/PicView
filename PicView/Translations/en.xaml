@@ -100,6 +100,13 @@
     <system:String x:Key="Vertical">Vertical</system:String>
     <system:String x:Key="Horizontal">Horizontal</system:String>
 
+    <!--  Settings window, mouse  -->
+    <system:String x:Key="CtrlToZoom">Ctrl to zoom, scroll to navigate</system:String>
+    <system:String x:Key="ScrollToZoom">Zoom med musehjulet, naviger med Ctrl</system:String>
+    <system:String x:Key="HorizontalScroll">Horizontal scroll</system:String>
+    <system:String x:Key="Reverse">Reverse</system:String>
+    <system:String x:Key="Forward">Forward</system:String>
+
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">General Settings</system:String>
     <system:String x:Key="UISettings">UI Settings</system:String>
@@ -109,15 +116,12 @@
     <system:String x:Key="StayCentered">Keep window centered</system:String>
     <system:String x:Key="ColoredWindowBorder">Colored window border</system:String>
     <system:String x:Key="ShowButtonsInHiddenUI">Show buttons in hidden UI</system:String>
-    <system:String x:Key="CtrlToZoom">Ctrl to zoom, scroll to navigate</system:String>
-    <system:String x:Key="ScrollToZoom">Scroll to zoom, Ctrl to navigate</system:String>
     <system:String x:Key="Apply">Apply</system:String>
     <system:String x:Key="AdjustTimingForSlideshow">Adjust timing for slideshow</system:String>
     <system:String x:Key="AdjustTimingForZoom">Adjust zooming speed</system:String>
     <system:String x:Key="SecAbbreviation">Sec.</system:String>
     <system:String x:Key="RestartApp">Restart the application</system:String>
     <system:String x:Key="CheckForUpdates">Check for updates</system:String>
-
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negative Colors</system:String>

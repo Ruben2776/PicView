@@ -100,6 +100,13 @@
 	<system:String x:Key="Vertical">Pionowy</system:String>
     <system:String x:Key="Horizontal">Poziomy</system:String>
 
+    <!--  Settings window, mouse  -->
+    <system:String x:Key="CtrlToZoom">Wciśnij Ctrl aby przybliżyć, użyj kółka myszy aby się poruszać</system:String>
+    <system:String x:Key="ScrollToZoom">Użyj kółka myszy, aby przybliżyć, wciśnij Ctrl, aby się poruszać</system:String>
+    <system:String x:Key="HorizontalScroll">Zwój poziomy</system:String>
+    <system:String x:Key="Reverse">Odwrócić</system:String>
+    <system:String x:Key="Forward">Do przodu</system:String>
+
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">Ustawienia ogólne</system:String>
     <system:String x:Key="UISettings">Ustawienia interfejsu</system:String>
@@ -109,15 +116,12 @@
     <system:String x:Key="StayCentered">Pozostaw okno wyśrodkowane</system:String>
     <system:String x:Key="ColoredWindowBorder">Kolorowa ramka okna</system:String>
     <system:String x:Key="ShowButtonsInHiddenUI">Pokaż przyciski w ukrytym oknie</system:String>
-	<system:String x:Key="CtrlToZoom">Wciśnij Ctrl aby przybliżyć, użyj kółka myszy aby się poruszać</system:String>
-    <system:String x:Key="ScrollToZoom">Użyj kółka myszy, aby przybliżyć, wciśnij Ctrl, aby się poruszać</system:String>
     <system:String x:Key="Apply">Zastosuj</system:String>
     <system:String x:Key="AdjustTimingForSlideshow">Zmień czas na zdjęcie podczas pokazu</system:String>
     <system:String x:Key="AdjustTimingForZoom">Zmień prędkość przybliżania</system:String>
     <system:String x:Key="SecAbbreviation">Sek.</system:String>
     <system:String x:Key="RestartApp">Zrestartuj aplikację</system:String>
     <system:String x:Key="CheckForUpdates">Sprawdź aktualizacje</system:String>
-
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Przeciwne kolory</system:String>

@@ -100,6 +100,13 @@
     <system:String x:Key="Vertical">Lodret</system:String>
     <system:String x:Key="Horizontal">Vandret</system:String>
 
+    <!--  Settings window, mouse  -->
+    <system:String x:Key="CtrlToZoom">Zoom med Ctrl, naviger med musehjulet</system:String>
+    <system:String x:Key="ScrollToZoom">Zoom med musehjulet, naviger med Ctrl</system:String>
+    <system:String x:Key="HorizontalScroll">Vandret scrolling</system:String>
+    <system:String x:Key="Reverse">Baglæns</system:String>
+    <system:String x:Key="Forward">Fremad</system:String>
+
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">Generale Indstillinger</system:String>
     <system:String x:Key="UISettings">UI-indstillinger</system:String>
@@ -109,8 +116,6 @@
     <system:String x:Key="StayCentered">Hold vinduet centreret</system:String>
     <system:String x:Key="ColoredWindowBorder">Farvede vinduekanter</system:String>
     <system:String x:Key="ShowButtonsInHiddenUI">Vis knapper, når interfacet er skjult</system:String>
-    <system:String x:Key="CtrlToZoom">Zoom med Ctrl, naviger med musehjulet</system:String>
-    <system:String x:Key="ScrollToZoom">Zoom med musehjulet, naviger med Ctrl</system:String>
     <system:String x:Key="Apply">Anvend</system:String>
     <system:String x:Key="AdjustTimingForSlideshow">Juster timing for slideshowet</system:String>
     <system:String x:Key="AdjustTimingForZoom">Justér zooming hastighed</system:String>
@@ -168,8 +173,8 @@
     <system:String x:Key="ZoomIn">Zoom Ind</system:String>
     <system:String x:Key="ZoomOut">Zoom Ud</system:String>
     <system:String x:Key="Pan">Panorering</system:String>
-    <system:String x:Key="MouseDrag">Mouse træk</system:String>
-    <system:String x:Key="ResetZoom">Reset zoom</system:String>
+    <system:String x:Key="MouseDrag">Træk musen</system:String>
+    <system:String x:Key="ResetZoom">Nulstil zoom</system:String>
     <system:String x:Key="ToggleScroll">Slå scroll til/fra</system:String>
 
     <!--  File related  -->
@@ -205,7 +210,7 @@
     <system:String x:Key="Settings">Indstillinger</system:String>
     <system:String x:Key="Scrolling">Scrolling</system:String>
     <system:String x:Key="Looping">Loopning</system:String>
-    <system:String x:Key="FitToWindow">Tilpas til vindue/billede</system:String>
+    <system:String x:Key="FitToWindow">Tilpas til vinduet</system:String>
     <system:String x:Key="ShowHideUI">Vis/skjul interface</system:String>
     <system:String x:Key="ChangeBg">Skift background</system:String>
     <system:String x:Key="ChangeBgTooltip">Skift mellem baggrundsfarve til billeder med gennemsigtig baggrund</system:String>

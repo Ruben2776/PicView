@@ -100,6 +100,13 @@
     <system:String x:Key="Vertical">Vertical</system:String>
     <system:String x:Key="Horizontal">Horizontal</system:String>
 
+    <!--  Settings window, mouse  -->
+    <system:String x:Key="CtrlToZoom">Ctrl para zoom, rueda para navegar</system:String>
+    <system:String x:Key="ScrollToZoom">Rueda para zoom, Ctrl para navegar</system:String>
+    <system:String x:Key="HorizontalScroll">Desplazamiento horizontal</system:String>
+    <system:String x:Key="Reverse">Marcha atrás</system:String>
+    <system:String x:Key="Forward">Hacia adelante</system:String>
+
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">Opciones Generales</system:String>
     <system:String x:Key="UISettings">Opciones de interfaz</system:String>
@@ -109,8 +116,6 @@
     <system:String x:Key="StayCentered">Mantener ventana centrada</system:String>
     <system:String x:Key="ColoredWindowBorder">Borde de ventana coloreada</system:String>
     <system:String x:Key="ShowButtonsInHiddenUI">Mostrar botones en interfaz oculta</system:String>
-    <system:String x:Key="CtrlToZoom">Ctrl para zoom, rueda para navegar</system:String>
-    <system:String x:Key="ScrollToZoom">Rueda para zoom, Ctrl para navegar</system:String>
     <system:String x:Key="Apply">Aplicar</system:String>
     <system:String x:Key="AdjustTimingForSlideshow">Ajustar velocidad de presentación</system:String>
     <system:String x:Key="AdjustTimingForZoom">Ajustar velocidad de acercado/alejado</system:String>
