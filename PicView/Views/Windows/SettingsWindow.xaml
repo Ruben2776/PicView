@@ -149,6 +149,7 @@
                             <TextBlock
                                 Width="279"
                                 Focusable="False"
+                                FontSize="13"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                 Text="{StaticResource SearchSubdirectory}" />
                         </CheckBox.Content>
@@ -165,6 +166,7 @@
                             <TextBlock
                                 Width="279"
                                 Focusable="False"
+                                FontSize="13"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                 Text="{StaticResource StayTopMost}" />
                         </CheckBox.Content>
@@ -182,6 +184,7 @@
                             <TextBlock
                                 Width="279"
                                 Focusable="False"
+                                FontSize="13"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                 Text="{StaticResource StayCentered}" />
                         </CheckBox.Content>
@@ -399,6 +402,7 @@
                             <TextBlock
                                 Width="279"
                                 Focusable="False"
+                                FontSize="13"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                 Text="{StaticResource ColoredWindowBorder}"
                                 TextWrapping="Wrap" />
@@ -417,6 +421,7 @@
                             <TextBlock
                                 Width="279"
                                 Focusable="False"
+                                FontSize="13"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                 Text="{StaticResource ShowButtonsInHiddenUI}"
                                 TextWrapping="Wrap" />
