@@ -210,13 +210,9 @@ namespace PicView.ChangeImage
                 if (containerCheck)
                 {
                     await GalleryFunctions.SortGallery().ConfigureAwait(false);
-                    await LoadPic.LoadPicAtIndexAsync(FolderIndex, true, fileInfo).ConfigureAwait(false);
-                }
-                else
-                {
-                    await LoadPic.LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
                 }
 
+                await LoadPic.LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
                 // Reset
                 await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                 {

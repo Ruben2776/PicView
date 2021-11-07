@@ -1,10 +1,10 @@
 ﻿using PicView.ChangeImage;
-using PicView.FileHandling;
 using PicView.UILogic;
 using PicView.Views.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -40,41 +40,66 @@ namespace PicView.PicGallery
             }
         }
 
-        internal static async Task SortGallery()
+        internal static async Task SortGallery(FileInfo? fileInfo = null)
         {
-            var pics = new System.Collections.Generic.List<tempPics>();
-
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
-                for (int i = 0; i < GetPicGallery.Container.Children.Count; i++)
+                if (GetPicGallery.Container.Children.Count <= 0)
+                {
+                    return;
+                }
+            }));
+
+            if (fileInfo is null)
+            {
+                fileInfo = new FileInfo(Navigation.Pics[0]);
+            }
+
+            var thumbs = new System.Collections.Generic.List<tempPics>();
+
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>
+            {
+                for (int i = 0; i < Navigation.Pics.Count; i++)
                 {
                     var x = GetPicGallery.Container.Children[i] as PicGalleryItem;
-                    pics.Add(new tempPics(x?.img?.Source as BitmapSource, Navigation.Pics[i]));
+                    thumbs.Add(new tempPics(x?.img?.Source as BitmapSource, Navigation.Pics[i]));
                 }
 
                 Clear();
             }));
 
-            Navigation.Pics = FileLists.FileList();
+            Navigation.Pics.Clear(); // Cancel task if running
+            await FileHandling.FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
 
             try
             {
-                pics = pics.OrderBySequence(Navigation.Pics, pic => pic.name).ToList();
+                thumbs = thumbs.OrderBySequence(Navigation.Pics, pic => pic.name).ToList();
             }
             catch (Exception)
             {
+                thumbs = null;
+                Clear();
                 await GalleryLoad.Load().ConfigureAwait(false);
-                pics.Clear();
-                pics = null;
                 return;
             }
 
-            for (int i = 0; i < pics.Count; i++)
+            for (int i = 0; i < Navigation.Pics.Count; i++)
             {
-                GalleryLoad.Add(pics[i].pic, i);
+                GalleryLoad.Add(i, Navigation.FolderIndex);
+
             }
-            pics.Clear();
-            pics = null;
+
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
+            {
+                GalleryNavigation.ScrollTo();
+            }));
+
+            Parallel.For(0, Navigation.Pics.Count, i =>
+            {
+                GalleryLoad.UpdatePic(i, thumbs[i].pic);
+            });
+
+            thumbs = null;
         }
 
         internal static void Clear()
