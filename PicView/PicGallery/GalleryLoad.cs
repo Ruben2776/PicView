@@ -203,52 +203,34 @@ namespace PicView.PicGallery
                         }));
                         return;
                     }
-
-                    ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
-                    {
-                        bool selected = i == index;
-                        UC.GetPicGallery.Container.Children.Add(new PicGalleryItem(null, i, selected));
-                        if (selected)
-                        {
-                            GalleryNavigation.SelectedGalleryItem = i;
-                            Timers.PicGalleryTimerHack();
-                        }
-                    }));
+                    Add(i, index);
                 }
                 Parallel.For(0, count, async i =>
                 {
                     await UpdatePic(i).ConfigureAwait(false);
                 });
             }
-            else
-            {
-                for (int i = 0; i < count; i++)
-                {
-                    if (count != Navigation.Pics.Count)
-                    {
-                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(async () =>
-                        {
-                            UC.GetPicGallery.Container.Children.Clear();
-                            await Load().ConfigureAwait(false);
-                        }));
-                        return;
-                    }
-
-                    Add(i);
-                }
-            }
         });
 
-        internal static void Add(int i)
+        internal static void Add(int i, int index)
         {
-            var pic = Thumbnails.GetBitmapSourceThumb(new System.IO.FileInfo(Navigation.Pics[i]));
-
-            if (pic is null)
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
             {
-                pic = ImageFunctions.ImageErrorMessage();
-            }
+                bool selected = i == index;
+                var item = new PicGalleryItem(null, i, selected);
+                item.MouseLeftButtonDown += async delegate
+                {
+                    await GalleryClick.ClickAsync(i).ConfigureAwait(false);
+                };
 
-            AddUI(pic, i);
+                UC.GetPicGallery.Container.Children.Add(item);
+
+                if (selected)
+                {
+                    GalleryNavigation.SelectedGalleryItem = i;
+                    Timers.PicGalleryTimerHack();
+                }
+            }));
         }
 
         internal static void Add(BitmapSource? pic, int i)
@@ -308,10 +290,6 @@ namespace PicView.PicGallery
                 }
                 var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
                 item.img.Source = pic;
-                item.MouseLeftButtonDown += async delegate
-                {
-                    await GalleryClick.ClickAsync(i).ConfigureAwait(false);
-                };
             }));
         }
     }
