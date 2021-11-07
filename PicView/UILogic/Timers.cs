@@ -31,10 +31,18 @@ namespace PicView.UILogic
             };
             timer.Elapsed += async delegate
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                try
                 {
-                    PicGallery.GalleryNavigation.ScrollTo();
-                }));
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                    {
+                        PicGallery.GalleryNavigation.ScrollTo();
+                    }));
+                }
+                catch (Exception)
+                {
+                    return; // Suppress task cancellation
+                }
+
             };
         }
     }

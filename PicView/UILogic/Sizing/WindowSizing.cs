@@ -333,6 +333,9 @@ namespace PicView.UILogic.Sizing
                 Properties.Settings.Default.Height = GetMainWindow.Height;
                 Properties.Settings.Default.Width = GetMainWindow.Width;
             }
+
+            ChangeImage.Navigation.Pics.Clear(); // Make it cancel task
+
             GetMainWindow.Hide(); // Make it feel faster
 
             // Close Extra windows when closing

@@ -4,6 +4,7 @@ using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -179,38 +180,52 @@ namespace PicView.PicGallery
             }
         }
 
-        internal static Task Load() => Task.Run(() =>
+        internal static async Task Load()
         {
-            /// TODO Maybe make this start at at folder index
-            /// and get it work with a real sorting method?
-            /// 
+            CancellationTokenSource source = new CancellationTokenSource();
+            Task task = Task.Run(() => Loop(source.Token), source.Token);
+            try
+            {
+                await task;
+            }
+            catch (TaskCanceledException)
+            {
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(async () =>
+                {
+                    UC.GetPicGallery.Container.Children.Clear();
+                    await Load().ConfigureAwait(false); // restart when changing directory
+                }));
+                return;
+            }
+            finally { source.Dispose(); }
+        }
 
+        static void Loop(CancellationToken cancellationToken)
+        {
             if (UC.GetPicGallery is null) { return; }
 
             var count = Navigation.Pics.Count;
             var index = Navigation.FolderIndex;
 
-            if (count > 10)
+            for (int i = 0; i < count; i++)
             {
-                for (int i = 0; i < count; i++)
+                if (count != Navigation.Pics.Count)
                 {
-                    if (count != Navigation.Pics.Count)
-                    {
-                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(async () =>
-                        {
-                            UC.GetPicGallery.Container.Children.Clear();
-                            await Load().ConfigureAwait(false); // restart when changing directory
-                        }));
-                        return;
-                    }
-                    Add(i, index);
+                    throw new TaskCanceledException();
                 }
-                Parallel.For(0, count, async i =>
-                {
-                    await UpdatePic(i).ConfigureAwait(false);
-                });
+
+                Add(i, index);
             }
-        });
+
+            Parallel.For(0, count, async i =>
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+                await UpdatePic(i).ConfigureAwait(false);
+            });
+        }
 
         internal static void Add(int i, int index)
         {
@@ -280,17 +295,24 @@ namespace PicView.PicGallery
             {
                 pic = ImageFunctions.ImageErrorMessage();
             }
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(async () =>
+            try
             {
-                if (ChangeImage.Navigation.Pics?.Count < ChangeImage.Navigation.FolderIndex || ChangeImage.Navigation.Pics?.Count < 1 || i >= UC.GetPicGallery.Container.Children.Count)
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(async () =>
                 {
-                    GalleryFunctions.Clear();
-                    await Load().ConfigureAwait(false); // restart when changing directory
-                    return;
-                }
-                var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
-                item.img.Source = pic;
-            }));
+                    if (ChangeImage.Navigation.Pics?.Count < ChangeImage.Navigation.FolderIndex || ChangeImage.Navigation.Pics?.Count < 1 || i >= UC.GetPicGallery.Container.Children.Count)
+                    {
+                        GalleryFunctions.Clear();
+                        await Load().ConfigureAwait(false); // restart when changing directory
+                        return;
+                    }
+                    var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
+                    item.img.Source = pic;
+                }));
+            }
+            catch (Exception)
+            {
+                return; // Suppress task cancellation
+            }
         }
     }
 }
