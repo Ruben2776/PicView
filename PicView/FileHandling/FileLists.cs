@@ -25,38 +25,6 @@ namespace PicView.FileHandling
         /// <summary>
         /// Sort and return list of supported files
         /// </summary>
-        internal static List<string>? FileList()
-        {
-            if (Properties.Settings.Default.IncludeSubDirectories)
-            {
-                var args = Environment.GetCommandLineArgs();
-
-                if (args.Length > 1)
-                {
-                    var originFolder = Path.GetDirectoryName(Path.GetDirectoryName(args[1]));
-                    if (string.IsNullOrWhiteSpace(originFolder) == false || Directory.Exists(originFolder) == false)
-                    {
-                        return null;
-                    }
-                    var currentFolder = Path.GetDirectoryName(Path.GetDirectoryName(Navigation.Pics?[Navigation.FolderIndex]));
-                    if (string.IsNullOrWhiteSpace(currentFolder) == false || Directory.Exists(currentFolder) == false)
-                    {
-                        return null;
-                    }
-                    if (originFolder != currentFolder)
-                    {
-                        return FileList(new FileInfo(currentFolder));
-                    }
-                    return FileList(new FileInfo(originFolder));
-                }
-                return FileList(new FileInfo(Path.GetDirectoryName(Navigation.Pics?[Navigation.FolderIndex])));
-            }
-            return FileList(new FileInfo(Path.GetDirectoryName(Navigation.Pics?[Navigation.FolderIndex])));
-        }
-
-        /// <summary>
-        /// Sort and return list of supported files
-        /// </summary>
         internal static List<string>? FileList(FileInfo fileInfo) => Properties.Settings.Default.SortPreference switch
         {
             0 => FileList(fileInfo, SortFilesBy.Name),
@@ -180,7 +148,7 @@ namespace PicView.FileHandling
             // Check if to load from archive
             if (SupportedFiles.IsSupportedArchives(fileInfo.FullName))
             {
-                if (!Extract(fileInfo.FullName))
+                if (!Extract(fileInfo.FullName)) // Start extracting logic
                 {
                     if (Error_Handling.CheckOutOfRange() == false)
                     {
