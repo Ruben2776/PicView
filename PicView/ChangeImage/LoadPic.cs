@@ -251,6 +251,7 @@ namespace PicView.ChangeImage
             if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 await GalleryLoad.Load().ConfigureAwait(false);
+                GalleryNavigation.SetSelected(FolderIndex, true);
             }
         }
 
