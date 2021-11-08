@@ -24,6 +24,11 @@ namespace PicView.ChangeImage
         internal static string? BackupPath { get; set; }
 
         /// <summary>
+        /// First file when starting application, used for recursive directory, eroor checking etc.
+        /// </summary>
+        internal static string? InitialPath { get; set; }
+
+        /// <summary>
         /// Used to determine if values need to get retrieved (again)
         /// </summary>
         internal static bool FreshStartup { get; set; }

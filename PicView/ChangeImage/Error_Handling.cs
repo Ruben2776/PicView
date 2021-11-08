@@ -16,6 +16,10 @@ namespace PicView.ChangeImage
 {
     internal static class Error_Handling
     {
+        /// <summary>
+        /// Returns true, if navigating will result in out of rang exception
+        /// </summary>
+        /// <returns></returns>
         internal static bool CheckOutOfRange()
         {
             if (Pics?.Count < FolderIndex || Pics?.Count < 1 || UILogic.UC.GetCropppingTool != null && UILogic.UC.GetCropppingTool.IsVisible)
@@ -170,6 +174,10 @@ namespace PicView.ChangeImage
                 }
                 path = BackupPath;
             }
+            else if (string.IsNullOrWhiteSpace(Navigation.InitialPath) == false)
+            {
+                path = Navigation.InitialPath;
+            }
             else if (CheckOutOfRange() == false)
             {
                 path = Pics[FolderIndex];
@@ -189,44 +197,21 @@ namespace PicView.ChangeImage
 
             if (File.Exists(path))
             {
-                // Force reloading values by setting freshStartup to true
-                FreshStartup = true;
-
-                Preloader.Clear();
-
-                FileInfo fileInfo = new FileInfo(path);
-                await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
-
-                bool containerCheck = false;
-
-                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                var fileInfo = new FileInfo(path);
+                await resetValues(fileInfo).ConfigureAwait(false);
+                await LoadPic.LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
+            }
+            else if (Directory.Exists(path))
+            {
+                int index = 0;
+                var fileInfo = new FileInfo(path);
+                if (CheckOutOfRange() == false)
                 {
-                    if (UC.GetPicGallery?.Container?.Children?.Count > 0)
-                    {
-                        containerCheck = true;
-                    }
-                });
-
-                if (containerCheck)
-                {
-                    await GalleryFunctions.SortGallery().ConfigureAwait(false);
+                    index = FolderIndex;
                 }
 
-                await LoadPic.LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
-                // Reset
-                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-                {
-                    if (Flipped)
-                    {
-                        Flip();
-                    }
-
-                    if (Rotateint != 0)
-                    {
-                        Rotate(0);
-                    }
-                });
-
+                await resetValues(fileInfo).ConfigureAwait(false);
+                await LoadPic.LoadPicFromFolderAsync(fileInfo, index).ConfigureAwait(false);
             }
             else if (Base64.IsBase64String(path))
             {
@@ -246,6 +231,51 @@ namespace PicView.ChangeImage
             }
         }
 
+        private static async Task resetValues(FileInfo fileInfo)
+        {
+            if (fileInfo is null)
+            {
+                UnexpectedError();
+                return;
+            }
+
+            // Force reloading values by setting freshStartup to true
+            FreshStartup = true;
+
+            Preloader.Clear();
+
+            await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
+
+            bool containerCheck = false;
+
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                if (UC.GetPicGallery?.Container?.Children?.Count > 0)
+                {
+                    containerCheck = true;
+                }
+            });
+
+            if (containerCheck)
+            {
+                await GalleryFunctions.SortGallery().ConfigureAwait(false);
+            }
+
+            // Reset
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                if (Flipped)
+                {
+                    Flip();
+                }
+
+                if (Rotateint != 0)
+                {
+                    Rotate(0);
+                }
+            });
+        }
+
         /// <summary>
         /// Reset to default state
         /// </summary>
@@ -254,7 +284,8 @@ namespace PicView.ChangeImage
             ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["NoImage"];
             ConfigureWindows.GetMainWindow.Title = Application.Current.Resources["NoImage"] + " - " + SetTitle.AppName;
             ConfigureWindows.GetMainWindow.MainImage.Source = null;
-
+            ConfigureWindows.GetMainWindow.MainImage.Width = 0;
+            ConfigureWindows.GetMainWindow.MainImage.Height = 0;
 
             UC.ToggleStartUpUC(!showStartup);
 

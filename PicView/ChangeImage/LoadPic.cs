@@ -45,6 +45,7 @@ namespace PicView.ChangeImage
             }
 
             await QuickLoadAsync(new FileInfo(file)).ConfigureAwait(false);
+            InitialPath = file;
         }
 
         /// <summary>
@@ -102,6 +103,7 @@ namespace PicView.ChangeImage
                     FolderIndex = 0;
                     break;
             }
+            FolderIndex = Pics.Count > 0 ? Pics.IndexOf(fileInfo.FullName) : 0;
             FolderIndex = FolderIndex == -1 ? 0 : FolderIndex; // Fixes weird error if you load example.jpg where the actual name is example.JPG
 
             if (pic is not null)
@@ -253,6 +255,11 @@ namespace PicView.ChangeImage
                 await GalleryLoad.Load().ConfigureAwait(false);
                 GalleryNavigation.SetSelected(FolderIndex, true);
             }
+
+            if (string.IsNullOrWhiteSpace(InitialPath))
+            {
+                InitialPath = fileInfo.FullName;
+            }
         }
 
         /// <summary>
@@ -275,7 +282,7 @@ namespace PicView.ChangeImage
         /// Handle logic if user wants to load from a folder
         /// </summary>
         /// <param name="folder"></param>
-        internal static async Task LoadPicFromFolderAsync(FileInfo fileInfo)
+        internal static async Task LoadPicFromFolderAsync(FileInfo fileInfo, int index = -1)
         {
             // TODO add new function that can go to next/prev folder
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
@@ -283,6 +290,11 @@ namespace PicView.ChangeImage
                 SetLoadingString();
                 UC.ToggleStartUpUC(true);
             });
+
+            if (Error_Handling.CheckOutOfRange() == false)
+            {
+                BackupPath = Pics[FolderIndex];
+            }
 
             bool folderChanged = await Error_Handling.CheckDirectoryChangeAndPicGallery(fileInfo).ConfigureAwait(false);
 
@@ -293,19 +305,29 @@ namespace PicView.ChangeImage
 
             await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
 
-            if (Pics?.Count > 0)
+            if (Pics.Count < 0)
             {
-                await LoadPicAtIndexAsync(0).ConfigureAwait(false);
+                await Error_Handling.ReloadAsync(true).ConfigureAwait(false);
+                return;
+            }
+
+            if (index >= 0)
+            {
+                await LoadPicAtIndexAsync(index).ConfigureAwait(false);
             }
             else
             {
-                Error_Handling.UnexpectedError();
-                return;
+                await LoadPicAtIndexAsync(0).ConfigureAwait(false);
             }
 
             if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 await GalleryLoad.Load().ConfigureAwait(false);
+            }
+
+            if (string.IsNullOrWhiteSpace(InitialPath) || folderChanged)
+            {
+                InitialPath = fileInfo.FullName;
             }
         }
 
@@ -343,9 +365,19 @@ namespace PicView.ChangeImage
                         }
                         else
                         {
-                            await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
-                            await LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
-                            return;
+                            try // Fix deleting files outside application
+                            {
+                                var x = index - 1 >= 0 ? index - 1 : 0;
+                                fileInfo = new FileInfo(Pics[x]);
+                                await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
+                                await LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
+                                return;
+                            }
+                            catch (Exception)
+                            {
+                                Error_Handling.UnexpectedError();
+                                return;
+                            }
                         }
                     }
 
@@ -487,8 +519,6 @@ namespace PicView.ChangeImage
                 });
             }
 
-            _ = ImageInfo.UpdateValuesAsync(preloadValue.fileInfo).ConfigureAwait(false);
-
             if (Pics?.Count > 1)
             {
                 if (Preloader.IsRunning == false)
@@ -500,6 +530,11 @@ namespace PicView.ChangeImage
                 {
                     _ = Taskbar.Progress((double)index / Pics.Count).ConfigureAwait(false);
                 }
+            }
+
+            if (ConfigureWindows.GetImageInfoWindow is not null)
+            {
+                await ImageInfo.UpdateValuesAsync(preloadValue.fileInfo).ConfigureAwait(false);
             }
 
             // Add recent files, except when browing archive

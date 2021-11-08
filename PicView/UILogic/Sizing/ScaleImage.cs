@@ -157,7 +157,7 @@ namespace PicView.UILogic.Sizing
             var monitorWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
             var monitorHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
 
-            double padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0;// Padding to make it feel more comfortable
+            double padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0; // Padding to make it feel more comfortable
 
             if (GalleryFunctions.IsVerticalFullscreenOpen)
             {
@@ -251,7 +251,6 @@ namespace PicView.UILogic.Sizing
                 }
                 else if (Properties.Settings.Default.AutoFitWindow)
                 {
-
                     if (Properties.Settings.Default.KeepCentered)
                     {
                         CenterWindowOnScreen();
