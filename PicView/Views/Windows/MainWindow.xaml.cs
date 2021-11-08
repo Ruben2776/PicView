@@ -61,8 +61,8 @@ namespace PicView.Views.Windows
                 LowerBar.Drop += async (sender, e) => await UILogic.DragAndDrop.Image_DragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
                 LowerBar.MouseLeftButtonDown += UILogic.Sizing.WindowSizing.MoveAlt;
 
-                MouseMove += (sender, e) => HideInterfaceLogic.Interface_MouseMove(sender, e);
-                MouseLeave += (sender, e) => HideInterfaceLogic.Interface_MouseLeave(sender, e);
+                MouseMove += async (_, _) => await HideInterfaceLogic.Interface_MouseMove().ConfigureAwait(false);
+                MouseLeave += async (_, _) => await HideInterfaceLogic.Interface_MouseLeave().ConfigureAwait(false);
 
                 // MainImage
                 ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonUp += MainMouseKeys.MainImage_MouseLeftButtonUp;

@@ -25,7 +25,7 @@
     <ContextMenu x:Key="mainCM">
 
         <!--Open-->
-        <MenuItem Header="{StaticResource Open}" Foreground="{StaticResource MainColorBrush}" >
+        <MenuItem Header="{StaticResource Open}" Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path Width="12" Height="12" Stretch="Fill" Fill="{StaticResource IconColorBrush}" Data="M1717 931q0-35-53-35h-1088q-40 0-85.5 21.5t-71.5 52.5l-294 363q-18 24-18 40 0 35 53 35h1088q40 0 86-22t71-53l294-363q18-22 18-39zm-1141-163h768v-160q0-40-28-68t-68-28h-576q-40 0-68-28t-28-68v-64q0-40-28-68t-68-28h-320q-40 0-68 28t-28 68v853l256-315q44-53 116-87.5t140-34.5zm1269 163q0 62-46 120l-295 363q-43 53-116 87.5t-140 34.5h-1088q-92 0-158-66t-66-158v-960q0-92 66-158t158-66h320q92 0 158 66t66 158v32h544q92 0 158 66t66 158v160h192q54 0 99 24.5t67 70.5q15 32 15 68z"/>
             </MenuItem.Icon>
@@ -125,6 +125,7 @@
 
         </MenuItem>
 
+        <!--Recent files-->
         <MenuItem Header="{StaticResource RecentFiles}" Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path Width="12" Height="12" Stretch="Fill" Fill="{StaticResource IconColorBrush}" Data="M288,48H136c-22.092,0-40,17.908-40,40v336c0,22.092,17.908,40,40,40h240c22.092,0,40-17.908,40-40V176L288,48z M272,192 V80l112, 112H272z"/>
@@ -132,6 +133,7 @@
         </MenuItem>
 
 
+        <!--Settings-->
         <MenuItem Header="{StaticResource Settings}" Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path Width="12" Height="12" Stretch="Fill" Fill="{StaticResource IconColorBrush}" Data="M474.1 398.2L289.1 212c18.3-47 8.1-102.3-30.5-141.1C217.9 30 156.9 21.8 108.1 44.3l87.4 88-61 61.4-89.5-88c-24.3 49-14.1 110.4 26.5 151.3 38.6 38.9 93.5 49.1 140.3 30.7l185 186.2c8.1 8.2 20.3 8.2 28.5 0l46.8-47c10.2-8.3 10.2-22.6 2-28.7z"/>
@@ -155,7 +157,11 @@
                 </MenuItem.Header>
             </MenuItem>
 
-            <MenuItem Header="{StaticResource ChangeBg}" InputGestureText="T" ToolTip="{StaticResource ChangeBgTooltip}" StaysOpenOnClick="True" />
+            <MenuItem 
+                Header="{StaticResource ChangeBg}"
+                InputGestureText="T"
+                ToolTip="{StaticResource ChangeBgTooltip}"
+                StaysOpenOnClick="True" />
 
             <MenuItem>
                 <MenuItem.Header>
@@ -229,7 +235,12 @@
 
         <Separator />
 
-        <MenuItem Header="{StaticResource DeletedFile}" Foreground="{StaticResource MainColorBrush}" ToolTip="{StaticResource SendCurrentImageToRecycleBin}" InputGestureText="{StaticResource Delete}">
+        <MenuItem 
+            Header="{StaticResource DeletedFile}"
+            Foreground="{StaticResource MainColorBrush}"
+            ToolTip="{StaticResource SendCurrentImageToRecycleBin}"
+            InputGestureText="{StaticResource Delete}"
+            StaysOpenOnClick="True">
             <MenuItem.Icon>
                 <Path Width="12" Height="12" Stretch="Fill" Fill="{StaticResource IconColorBrush}" Data="M836 1169l-15 368-2 22-420-29q-36-3-67-31.5t-47-65.5q-11-27-14.5-55t4-65 12-55 21.5-64 19-53q78 12 509 28zm-387-586l180 379-147-92q-63 72-111.5 144.5t-72.5 125-39.5 94.5-18.5 63l-4 21-190-357q-17-26-18-56t6-47l8-18q35-63 114-188l-140-86zm1231 517l-188 359q-12 29-36.5 46.5t-43.5 20.5l-18 4q-71 7-219 12l8 164-230-367 211-362 7 173q170 16 283 5t170-33zm-785-924q-47 63-265 435l-317-187-19-12 225-356q20-31 60-45t80-10q24 2 48.5 12t42 21 41.5 33 36 34.5 36 39.5 32 35zm655 307l212 363q18 37 12.5 76t-27.5 74q-13 20-33 37t-38 28-48.5 22-47 16-51.5 14-46 12q-34-72-265-436l313-195zm-143-226l142-83-220 373-419-20 151-86q-34-89-75-166t-75.5-123.5-64.5-80-47-46.5l-17-13 405 1q31-3 58 10.5t39 28.5l11 15q39 61 112 190z"/>
             </MenuItem.Icon>
@@ -237,7 +248,11 @@
 
         <Separator />
 
-        <MenuItem Header="{StaticResource Close}" Foreground="{StaticResource MainColorBrush}" ToolTip="{StaticResource CloseApp}" InputGestureText="{StaticResource Esc}">
+        <MenuItem 
+            Header="{StaticResource Close}"
+            Foreground="{StaticResource MainColorBrush}"
+            ToolTip="{StaticResource CloseApp}"
+            InputGestureText="{StaticResource Esc}">
             <MenuItem.Icon>
                 <Path Width="12" Height="12" Stretch="Fill" Fill="{StaticResource IconColorBrush}" Data="M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z"/>
             </MenuItem.Icon>

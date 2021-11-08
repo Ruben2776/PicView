@@ -19,10 +19,9 @@ namespace PicView.Animations
         /// Hides/shows interface elements with a fade animation
         /// </summary>
         /// <param name="show"></param>
-        internal static async Task FadeAsync(bool show, double time = .5)
+        internal static async Task FadeAsync(bool show)
         {
-            if (Properties.Settings.Default.ShowInterface
-                || Properties.Settings.Default.Fullscreen
+            if (Properties.Settings.Default.ShowInterface && Properties.Settings.Default.Fullscreen == false
                 || GetClickArrowRight == null
                 || GetClickArrowLeft == null
                 || Getx2 == null
@@ -45,18 +44,6 @@ namespace PicView.Animations
                     }
                 }
 
-                if (!Properties.Settings.Default.ShowAltInterfaceButtons)
-                {
-                    HideInterfaceLogic.ShowNavigation(false);
-                    HideInterfaceLogic.ShowShortcuts(false);
-                    return;
-                }
-                else if (!GetClickArrowLeft.IsVisible)
-                {
-                    HideInterfaceLogic.ShowNavigation(true);
-                    HideInterfaceLogic.ShowShortcuts(true);
-                }
-
                 if (Properties.Settings.Default.ScrollEnabled && ConfigureWindows.GetMainWindow?.Scroller?.ScrollableHeight > 0)
                 {
                     ScrollbarFade(show);
@@ -68,19 +55,7 @@ namespace PicView.Animations
                     return;
                 }
 
-                TimeSpan timespan = TimeSpan.FromSeconds(time);
-
-                if (!show)
-                {
-                    AnimationHelper.Fade(GetClickArrowLeft, 0, timespan);
-                    AnimationHelper.Fade(GetClickArrowRight, 0, timespan);
-                    AnimationHelper.Fade(GetGalleryShortcut, 0, timespan);
-                    AnimationHelper.Fade(Getx2, 0, timespan);
-                    AnimationHelper.Fade(GetMinus, 0, timespan);
-                    AnimationHelper.Fade(GetRestorebutton, 0, timespan);
-                    return;
-                }
-                else if (Scroll.IsAutoScrolling)
+                if (Scroll.IsAutoScrolling)
                 {
                     GetClickArrowLeft.Opacity =
                     GetClickArrowRight.Opacity =
@@ -90,12 +65,17 @@ namespace PicView.Animations
                     return;
                 }
 
-                AnimationHelper.Fade(GetClickArrowLeft, 1, timespan);
-                AnimationHelper.Fade(GetClickArrowRight, 1, timespan);
-                AnimationHelper.Fade(GetGalleryShortcut, 1, timespan);
-                AnimationHelper.Fade(Getx2, 1, timespan);
-                AnimationHelper.Fade(GetMinus, 1, timespan);
-                AnimationHelper.Fade(GetRestorebutton, 1, timespan);
+                TimeSpan timespan = TimeSpan.FromSeconds(show ? .5 : 1);
+
+                int opacity = show ? 1 : 0;
+
+                AnimationHelper.Fade(GetClickArrowLeft, opacity, timespan);
+                AnimationHelper.Fade(GetClickArrowRight, opacity, timespan);
+                AnimationHelper.Fade(GetGalleryShortcut, opacity, timespan);
+                AnimationHelper.Fade(Getx2, opacity, timespan);
+                AnimationHelper.Fade(GetMinus, opacity, timespan);
+                AnimationHelper.Fade(GetRestorebutton, opacity, timespan);
+
             }));
         }
 

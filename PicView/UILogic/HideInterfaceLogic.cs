@@ -1,6 +1,6 @@
 ﻿using PicView.PicGallery;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using static PicView.Animations.FadeControls;
 
 namespace PicView.UILogic
@@ -18,7 +18,6 @@ namespace PicView.UILogic
                 return;
             }
 
-            // Hide interface
             if (Properties.Settings.Default.ShowInterface)
             {
                 if (ConfigureWindows.GetMainWindow.TitleBar.Visibility == Visibility.Visible)
@@ -30,13 +29,20 @@ namespace PicView.UILogic
                     ShowStandardInterface();
                 }
             }
-            // Show interface
             else
             {
                 ShowStandardInterface();
             }
 
             UC.Close_UserControls();
+
+            // Recalculate to new size
+            var timer = new System.Timers.Timer(50) // If not fired in timer, calculation incorrect 
+            {
+                AutoReset = false,
+                Enabled = true,
+            };
+            timer.Elapsed += (_, _) => _ = Sizing.ScaleImage.TryFitImageAsync().ConfigureAwait(true);
         }
 
         internal static void ShowStandardInterface()
@@ -133,9 +139,9 @@ namespace PicView.UILogic
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static void Interface_MouseMove(object sender, MouseEventArgs e)
+        internal static async Task Interface_MouseMove()
         {
-            _ = FadeAsync(true).ConfigureAwait(false);
+            await FadeAsync(true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -143,9 +149,9 @@ namespace PicView.UILogic
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static void Interface_MouseLeave(object sender, MouseEventArgs e)
+        internal static async Task Interface_MouseLeave()
         {
-            _ = FadeAsync(false).ConfigureAwait(false);
+            await FadeAsync(false).ConfigureAwait(false);
         }
     }
 }

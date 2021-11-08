@@ -3,9 +3,7 @@ using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.UILogic.TransformImage;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Windows;
 using static PicView.ChangeImage.Navigation;
 using static PicView.PicGallery.GalleryNavigation;
 using static PicView.UILogic.ConfigureWindows;
@@ -103,38 +101,6 @@ namespace PicView.UILogic.Sizing
                     }
                     return false;
                 });
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Tries to call Zoomfit with specified path
-        /// </summary>
-        internal static async Task<bool> TryFitImageAsync(string source)
-        {
-            Size? size = null;
-            try
-            {
-                size = await ImageSizeFunctions.GetImageSizeAsync(source).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-#if DEBUG
-                Trace.WriteLine(e.Message);
-#endif
-                Tooltip.ShowTooltipMessage(e.Message);
-                throw;
-            }
-
-            if (size is not null && size.HasValue)
-            {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
-                {
-                    FitImage(size.Value.Width, size.Value.Height);
-                });
-
-                return true;
             }
 
             return false;
