@@ -305,7 +305,7 @@ namespace PicView.ChangeImage
 
             await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
 
-            if (Pics.Count < 0)
+            if (Pics.Count < 0) // TODO make function to find first folder with pics, when not browsing recursively
             {
                 await Error_Handling.ReloadAsync(true).ConfigureAwait(false);
                 return;
@@ -325,7 +325,7 @@ namespace PicView.ChangeImage
                 await GalleryLoad.Load().ConfigureAwait(false);
             }
 
-            if (string.IsNullOrWhiteSpace(InitialPath) || folderChanged)
+            if (folderChanged || string.IsNullOrWhiteSpace(InitialPath))
             {
                 InitialPath = fileInfo.FullName;
             }

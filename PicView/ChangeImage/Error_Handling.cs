@@ -10,7 +10,6 @@ using System.Windows;
 using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.DeleteFiles;
-using static PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.ChangeImage
 {
@@ -174,13 +173,19 @@ namespace PicView.ChangeImage
                 }
                 path = BackupPath;
             }
-            else if (string.IsNullOrWhiteSpace(Navigation.InitialPath) == false)
-            {
-                path = Navigation.InitialPath;
-            }
             else if (CheckOutOfRange() == false)
             {
-                path = Pics[FolderIndex];
+                // Determine if browsing directories recursively or only update from single directory
+                if (string.IsNullOrWhiteSpace(Navigation.InitialPath) == false
+                    && Properties.Settings.Default.IncludeSubDirectories
+                    && Path.GetDirectoryName(Navigation.InitialPath) != Path.GetDirectoryName(Pics[FolderIndex]))
+                {
+                    path = Navigation.InitialPath;
+                }
+                else
+                {
+                    path = Pics[FolderIndex];
+                }
             }
             else
             {
@@ -260,20 +265,6 @@ namespace PicView.ChangeImage
             {
                 await GalleryFunctions.SortGallery().ConfigureAwait(false);
             }
-
-            // Reset
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                if (Flipped)
-                {
-                    Flip();
-                }
-
-                if (Rotateint != 0)
-                {
-                    Rotate(0);
-                }
-            });
         }
 
         /// <summary>
