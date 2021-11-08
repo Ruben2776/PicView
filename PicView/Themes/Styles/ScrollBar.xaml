@@ -40,10 +40,10 @@
                 <ControlTemplate TargetType="{x:Type Thumb}">
                     <Rectangle
                         Name="ellipse"
-                        Height="15"
-                        Fill="{StaticResource BackgroundColorBrush}"
-                        RadiusX="3.5"
-                        RadiusY="3.5" />
+                        MinWidth="30"
+                        Opacity=".9"
+                        Fill="{StaticResource BackgroundColorBrushFadeSubtle}"
+                        Stroke="{StaticResource BorderBrush}" />
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter TargetName="ellipse" Property="Fill" Value="{DynamicResource ChosenColorBrush}" />
