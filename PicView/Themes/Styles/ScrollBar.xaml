@@ -13,7 +13,8 @@
                     <Rectangle
                         Name="ellipse"
                         Width="13"
-                        Fill="{StaticResource BackgroundColorBrush}"
+                        Opacity=".9"
+                        Fill="{StaticResource BackgroundColorBrushFadeSubtle}"
                         Stroke="{StaticResource BorderBrush}" />
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
