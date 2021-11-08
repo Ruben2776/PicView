@@ -14,6 +14,8 @@ namespace PicView.ConfigureSettings
 {
     internal static class UpdateUIValues
     {
+        // Todo Rewrite to use MVVM.. One day.
+
         internal static async Task ChangeSortingAsync(short sorting, bool changeOrder = false)
         {
             if (changeOrder == false)
@@ -108,6 +110,36 @@ namespace PicView.ConfigureSettings
                 Properties.Settings.Default.Looping = true;
                 loopcmHeader.IsChecked = true;
                 ShowTooltipMessage(Application.Current.Resources["LoopingEnabled"]);
+            }
+        }
+
+        internal static void SetTopMost()
+        {
+            var settingscm = (MenuItem)MainContextMenu.Items[7];
+            var TopmostMenu = (MenuItem)settingscm.Items[4];
+            var TopmostHeader = (CheckBox)TopmostMenu.Header;
+
+            if (Properties.Settings.Default.TopMost)
+            {
+                Properties.Settings.Default.TopMost = false;
+                ConfigureWindows.GetMainWindow.Topmost = false;
+                TopmostHeader.IsChecked = false;
+
+                if (ConfigureWindows.GetSettingsWindow is not null)
+                {
+                    ConfigureWindows.GetSettingsWindow.TopmostRadio.IsChecked = false;
+                }
+            }
+            else
+            {
+                Properties.Settings.Default.TopMost = true;
+                ConfigureWindows.GetMainWindow.Topmost = true;
+                TopmostHeader.IsChecked = true;
+
+                if (ConfigureWindows.GetSettingsWindow is not null)
+                {
+                    ConfigureWindows.GetSettingsWindow.TopmostRadio.IsChecked = true;
+                }
             }
         }
 

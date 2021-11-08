@@ -147,9 +147,9 @@ namespace PicView.UILogic.Loading
             // Topmost
             var TopmostMenu = (MenuItem)settingscm.Items[4];
             var TopmostHeader = (CheckBox)TopmostMenu.Header;
-            TopmostHeader.IsChecked = Properties.Settings.Default.ShowInterface;
-            TopmostHeader.Checked += (_, _) => ConfigureWindows.IsMainWindowTopMost = !Properties.Settings.Default.TopMost;
-            TopmostHeader.Unchecked += (_, _) => ConfigureWindows.IsMainWindowTopMost = false;
+            TopmostHeader.IsChecked = Properties.Settings.Default.TopMost;
+            TopmostHeader.Click += (_, _) => UpdateUIValues.SetTopMost();
+            TopmostMenu.Click += (_, _) => UpdateUIValues.SetTopMost();
 
             // 5 = seperator
 
