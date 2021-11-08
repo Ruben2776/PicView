@@ -157,16 +157,7 @@ namespace PicView.UILogic.Sizing
             var monitorWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
             var monitorHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
 
-            double padding;// Padding to make it feel more comfortable
-            switch (MonitorInfo.DpiScaling)
-            {
-                case <= 1:
-                    padding = 20 * MonitorInfo.DpiScaling;
-                    break;
-                default:
-                    padding = 0;
-                    break;
-            }
+            double padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0;// Padding to make it feel more comfortable
 
             if (GalleryFunctions.IsVerticalFullscreenOpen)
             {
@@ -221,23 +212,14 @@ namespace PicView.UILogic.Sizing
 
             if (Properties.Settings.Default.ScrollEnabled)
             {
-                if (Properties.Settings.Default.FillImage)
-                {
-                    GetMainWindow.MainImage.Width = maxWidth;
-                    GetMainWindow.MainImage.Height = maxWidth * height / width;
+                GetMainWindow.MainImage.Height = maxWidth * height / width;
+                GetMainWindow.MainImage.Width = maxWidth;
 
+                if (Properties.Settings.Default.AutoFitWindow)
+                {
                     GetMainWindow.ParentContainer.Width = maxWidth;
                     GetMainWindow.ParentContainer.Height = XHeight = height * AspectRatio;
                 }
-                else
-                {
-                    /// Calculate height based on width
-                    GetMainWindow.MainImage.Height = maxWidth * height / width;
-
-                    GetMainWindow.ParentContainer.Width = GetMainWindow.MainImage.Width = XWidth = Math.Min(monitorWidth - padding, width);
-                    GetMainWindow.ParentContainer.Height = XHeight = height * AspectRatio;
-                }
-
             }
             else
             {
@@ -246,27 +228,13 @@ namespace PicView.UILogic.Sizing
                 GetMainWindow.MainImage.Width = XWidth = width * AspectRatio;
                 GetMainWindow.MainImage.Height = XHeight = height * AspectRatio;
 
-                if (Properties.Settings.Default.Fullscreen)
-                {
-                    GetMainWindow.ParentContainer.Width = MonitorInfo.Width * MonitorInfo.DpiScaling;
-                    GetMainWindow.ParentContainer.Height = MonitorInfo.Height * MonitorInfo.DpiScaling;
-                }
-                else
-                {
-                    GetMainWindow.ParentContainer.Width = double.NaN;
-                    GetMainWindow.ParentContainer.Height = double.NaN;
-                    GetMainWindow.ParentContainer.HorizontalAlignment = HorizontalAlignment.Stretch;
-                    GetMainWindow.ParentContainer.VerticalAlignment = VerticalAlignment.Stretch;
-                }
+                GetMainWindow.ParentContainer.Width = double.NaN;
+                GetMainWindow.ParentContainer.Height = double.NaN;
             }
 
             // Calculate window position
             if (GetMainWindow.WindowState == System.Windows.WindowState.Normal)
             {
-                /// Update TitleBar
-                var interfaceSize = (GetMainWindow.Logo.ActualWidth + 13) + GetMainWindow.MinButton.ActualWidth
-                    + GetMainWindow.FullscreenButton.ActualWidth + GetMainWindow.CloseButton.ActualWidth * MonitorInfo.DpiScaling;
-
                 var autoWidth = Properties.Settings.Default.AutoFitWindow ? GetMainWindow.ActualWidth : XWidth;
                 var autoHeight = Properties.Settings.Default.AutoFitWindow ? GetMainWindow.ActualHeight : XHeight;
 
@@ -283,19 +251,11 @@ namespace PicView.UILogic.Sizing
                 }
                 else if (Properties.Settings.Default.AutoFitWindow)
                 {
-                    /// Update mainWindow.TitleBar width to dynamically fit new size
-                    var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
-                    GetMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
 
                     if (Properties.Settings.Default.KeepCentered)
                     {
                         CenterWindowOnScreen();
                     }
-                }
-                else
-                {
-                    /// Fix title width to window size
-                    GetMainWindow.TitleText.MaxWidth = GetMainWindow.ActualWidth - interfaceSize;
                 }
             }
 
