@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
@@ -79,6 +80,22 @@ namespace PicView.Views.UserControls
             };
 
             PasteButton.Click += (_, _) => FileHandling.Copy_Paste.Paste();
+        }
+
+        public void ResponsiveSize(double width)
+        {
+            if (width < 900)
+            {
+                logo.Width = 247;
+                buttons.Margin = new Thickness(0, 0, 0, 0);
+                buttons.VerticalAlignment = VerticalAlignment.Bottom;
+            }
+            else if (width > 900)
+            {
+                logo.Width = double.NaN;
+                buttons.Margin = new Thickness(0, 181, 25, 16);
+                buttons.VerticalAlignment = VerticalAlignment.Center;
+            }
         }
     }
 }
