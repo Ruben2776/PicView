@@ -48,6 +48,10 @@ namespace PicView.Translations
                     source = new Uri(@"/PicView;component/Translations/fr.xaml", UriKind.Relative);
                     break;
 
+                case "it":
+                    source = new Uri(@"/PicView;component/Translations/it.xaml", UriKind.Relative);
+                    break;
+                    
                 default:
                 case "en":
                     source = new Uri(@"/PicView;component/Translations/en.xaml", UriKind.Relative);

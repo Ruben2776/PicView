@@ -9,6 +9,7 @@
         zh_CN,
         ko,
         pl,
-        fr
+        fr,
+        it
     }
 }
