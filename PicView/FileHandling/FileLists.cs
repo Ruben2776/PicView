@@ -83,50 +83,35 @@ namespace PicView.FileHandling
                     {
                         return items.OrderBy(f => new FileInfo(f).Length).ToList();
                     }
-                    else
-                    {
-                        return items.OrderByDescending(f => new FileInfo(f).Length).ToList();
-                    }
+                    return items.OrderByDescending(f => new FileInfo(f).Length).ToList();
 
                 case SortFilesBy.Extension:
                     if (Properties.Settings.Default.Ascending)
                     {
                         return items.OrderBy(f => new FileInfo(f).Extension).ToList();
                     }
-                    else
-                    {
-                        return items.OrderByDescending(f => new FileInfo(f).Extension).ToList();
-                    }
+                    return items.OrderByDescending(f => new FileInfo(f).Extension).ToList();
 
                 case SortFilesBy.Creationtime:
                     if (Properties.Settings.Default.Ascending)
                     {
                         return items.OrderBy(f => new FileInfo(f).CreationTime).ToList();
                     }
-                    else
-                    {
-                        return items.OrderByDescending(f => new FileInfo(f).CreationTime).ToList();
-                    }
+                    return items.OrderByDescending(f => new FileInfo(f).CreationTime).ToList();
 
                 case SortFilesBy.Lastaccesstime:
                     if (Properties.Settings.Default.Ascending)
                     {
                         return items.OrderBy(f => new FileInfo(f).LastAccessTime).ToList();
                     }
-                    else
-                    {
-                        return items.OrderByDescending(f => new FileInfo(f).LastAccessTime).ToList();
-                    }
+                    return items.OrderByDescending(f => new FileInfo(f).LastAccessTime).ToList();
 
                 case SortFilesBy.Lastwritetime:
                     if (Properties.Settings.Default.Ascending)
                     {
                         return items.OrderBy(f => new FileInfo(f).LastWriteTime).ToList();
                     }
-                    else
-                    {
-                        return items.OrderByDescending(f => new FileInfo(f).LastWriteTime).ToList();
-                    }
+                    return items.OrderByDescending(f => new FileInfo(f).LastWriteTime).ToList();
 
                 case SortFilesBy.Random:
                     return items.OrderBy(f => Guid.NewGuid()).ToList();
