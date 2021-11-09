@@ -22,7 +22,13 @@ PicView is a fast Picture Viewer with compact UI, that can be hidden. Features i
 # Downloads
 Latest releases at https://picview.org/download
 
-<a href="https://github.com/microsoft/winget-cli">Winget</a>:<br>
+
+Chocolatey:
+```powershell
+Powershell $> choco install picview --version=1.5.6 -y
+```
+
+Winget:
 ```powershell
 Powershell $> winget install picview
 ```
