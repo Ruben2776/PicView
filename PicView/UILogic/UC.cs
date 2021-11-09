@@ -387,12 +387,10 @@ namespace PicView.UILogic
             if (GetStartUpUC is null)
             {
                 GetStartUpUC = new StartUpUC();
-                ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetStartUpUC);
             }
-            else if (ConfigureWindows.GetMainWindow.ParentContainer.Children.Contains(GetStartUpUC) == false)
-            {
-                ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetStartUpUC);
-            }
+
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetStartUpUC);
+            UC.GetStartUpUC.ResponsiveSize(ConfigureWindows.GetMainWindow.Width);
         }
     }
 }
