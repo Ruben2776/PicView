@@ -67,10 +67,10 @@ namespace PicView.ChangeImage
         /// <summary>
         /// Goes to next, previous, first or last file in folder
         /// </summary>
-        /// <param name="next">Whether it's forward or not</param>
+        /// <param name="forward">Whether it's forward or not</param>
         /// <param name="end">Whether to go to last or first,
         /// depending on the next value</param>
-        internal static async Task NavigateToPicAsync(bool next = true, bool end = false)
+        internal static async Task NavigateToPicAsync(bool forward = true, bool end = false, bool fastPic = false)
         {
             // Exit if not intended to change picture
             if (Error_Handling.CheckOutOfRange())
@@ -78,14 +78,14 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            // Make backup
-            int indexBackup = FolderIndex;
-            int startingpoint = FolderIndex;
+            // Make backups
+            int prev = FolderIndex;
+            int next = FolderIndex;
 
             if (end) // Go to first or last
             {
-                startingpoint = next ? Pics.Count - 1 : 0;
-                indexBackup = FolderIndex;
+                next = forward ? Pics.Count - 1 : 0;
+                prev = FolderIndex;
 
                 // Reset preloader values to prevent errors
                 if (Pics?.Count > 10)
@@ -95,12 +95,12 @@ namespace PicView.ChangeImage
             }
             else // Go to next or previous
             {
-                if (next)
+                if (forward)
                 {
                     // loop next
                     if (Properties.Settings.Default.Looping || Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
                     {
-                        startingpoint = FolderIndex == Pics?.Count - 1 ? 0 : FolderIndex + 1;
+                        next = FolderIndex == Pics?.Count - 1 ? 0 : FolderIndex + 1;
                     }
                     else
                     {
@@ -110,7 +110,7 @@ namespace PicView.ChangeImage
                             return;
                         }
 
-                        startingpoint++;
+                        next++;
                     }
                     Reverse = false;
                 }
@@ -119,29 +119,35 @@ namespace PicView.ChangeImage
                     // Loop prev
                     if (Properties.Settings.Default.Looping || Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
                     {
-                        startingpoint = FolderIndex == 0 ? Pics.Count - 1 : FolderIndex - 1;
+                        next = FolderIndex == 0 ? Pics.Count - 1 : FolderIndex - 1;
                     }
                     else
                     {
                         // Go to prev if able
-                        if (startingpoint - 1 < 0)
+                        if (next - 1 < 0)
                         {
                             return;
                         }
 
-                        startingpoint--;
+                        next--;
                     }
                     Reverse = true;
                 }
             }
 
+            if (fastPic)
+            {
+                await FastPic.Run(next).ConfigureAwait(false);
+                return;
+            }
+
             if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
             {
-                GalleryNavigation.SetSelected(indexBackup, false);
+                GalleryNavigation.SetSelected(prev, false);
             }
 
             // Go to the image!
-            await LoadPic.LoadPicAtIndexAsync(startingpoint).ConfigureAwait(false);
+            await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
         }
 
         /// <summary>

@@ -410,18 +410,6 @@ namespace PicView.ChangeImage
                     });
                 }
 
-                if (FastPicRunning) // Holding down button is too fast and will be laggy when not just loading thumbnails
-                {
-                    var image = Application.Current.Resources["Image"] as string;
-
-                    ConfigureWindows.GetMainWindow.TitleText.ToolTip =
-                    ConfigureWindows.GetMainWindow.Title =
-                    ConfigureWindows.GetMainWindow.TitleText.Text
-                    = $"{image} {index + 1} / {Pics?.Count}";
-
-                    return;
-                }
-
                 if (preloadValue is not null)
                 {
                     preloadValue = await CheckLoadingAsync(preloadValue, index).ConfigureAwait(false);
@@ -730,54 +718,8 @@ namespace PicView.ChangeImage
             UpdatePic(b64, pic);
         }
 
-        /// <summary>
-        /// Update after FastPic() was used
-        /// </summary>
-        internal static async Task FastPicUpdateAsync()
-        {
-            // Make sure it's only updated when the key is actually held down
-            if (FastPicRunning == false)
-            {
-                return;
-            }
-
-            FastPicRunning = false;
-
-            Preloader.PreloadValue? preloadValue;
-
-            // Reset preloader values to prevent errors
-            if (Pics?.Count > 10)
-            {
-                Preloader.Clear();
-                await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
-                preloadValue = Preloader.Get(Navigation.Pics[FolderIndex]);
-            }
-            else
-            {
-                preloadValue = Preloader.Get(Navigation.Pics[FolderIndex]);
-
-                if (preloadValue == null) // Error correctiom
-                {
-                    await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
-                    preloadValue = Preloader.Get(Navigation.Pics[FolderIndex]);
-                }
-                while (preloadValue != null && preloadValue.isLoading)
-                {
-                    // Wait for finnished result
-                    await Task.Delay(5).ConfigureAwait(false);
-                }
-            }
-
-            if (preloadValue == null || preloadValue.bitmapSource == null)
-            {
-                Error_Handling.UnexpectedError();
-                return;
-            }
-
-            UpdatePic(FolderIndex, preloadValue.bitmapSource);
-        }
-
         #endregion
+
 
         static async Task<Preloader.PreloadValue?> CheckLoadingAsync(Preloader.PreloadValue preloadValue, int index)
         {

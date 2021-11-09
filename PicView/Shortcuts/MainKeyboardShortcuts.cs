@@ -85,7 +85,7 @@ namespace PicView.Shortcuts
                     else
                     {
                         FastPicRunning = e.IsRepeat; // Report if key held down
-                        await NavigateToPicAsync().ConfigureAwait(false);
+                        await NavigateToPicAsync(true, false, e.IsRepeat).ConfigureAwait(false);
                     }
                     return;
 
@@ -104,8 +104,7 @@ namespace PicView.Shortcuts
                     }
                     else
                     {
-                        FastPicRunning = e.IsRepeat; // Report if key held down
-                        await NavigateToPicAsync(false).ConfigureAwait(false);
+                        await NavigateToPicAsync(false, false, e.IsRepeat).ConfigureAwait(false);
                     }
                     return;
 
@@ -549,7 +548,7 @@ namespace PicView.Shortcuts
                     {
                         return;
                     }
-                    await ChangeImage.LoadPic.FastPicUpdateAsync().ConfigureAwait(false);
+                    await ChangeImage.FastPic.FastPicUpdateAsync().ConfigureAwait(false);
                     return;
 
                 default: break;
