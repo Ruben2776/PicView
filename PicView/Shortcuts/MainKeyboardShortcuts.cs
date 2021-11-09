@@ -533,26 +533,10 @@ namespace PicView.Shortcuts
             #endregion Key is not held down
         }
 
-        internal static async Task MainWindow_KeysUpAsync(object sender, KeyEventArgs e)
+        internal static void MainWindow_KeysUp(object sender, KeyEventArgs e)
         {
             // Don't allow keys when typing in text
             if (GetMainWindow.TitleText.IsKeyboardFocusWithin) { return; }
-
-            switch (e.Key)
-            {
-                case Key.A:
-                case Key.Right:
-                case Key.Left:
-                case Key.D:
-                    if (FolderIndex <= 0 || Pics?.Count < FolderIndex)
-                    {
-                        return;
-                    }
-                    await ChangeImage.FastPic.FastPicUpdateAsync().ConfigureAwait(false);
-                    return;
-
-                default: break;
-            }
 
             var altDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
             if (altDown && !e.IsRepeat)

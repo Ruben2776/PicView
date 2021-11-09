@@ -88,52 +88,6 @@ namespace PicView.ChangeImage
                 }
             });
 
-            // Add next image to preloader and remove previous
-            _ = Preloader.AddAsync(Navigation.GetImageIterateIndex(Navigation.Reverse, false)).ConfigureAwait(false);
-            Preloader.Remove(Navigation.GetImageIterateIndex(Navigation.Reverse == false, false));
-        }
-
-        /// <summary>
-        /// Update after FastPic() was used
-        /// </summary>
-        internal static async Task FastPicUpdateAsync()
-        {
-            if (timer is null) { return; }
-
-            timer = null;
-            BitmapSource? pic = null;
-
-            var preloadValue = Preloader.Get(Navigation.Pics[FolderIndex]);
-            if (preloadValue is null)
-            {
-                await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
-                preloadValue = Preloader.Get(Navigation.Pics[FolderIndex]);
-
-                if (preloadValue is not null)
-                {
-                    if (preloadValue.bitmapSource is null)
-                    {
-                        pic = ImageFunctions.ImageErrorMessage();
-                        if (pic is null)
-                        {
-                            Error_Handling.UnexpectedError();
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        pic = preloadValue.bitmapSource;
-                    }
-                }
-                else
-                {
-                    Error_Handling.UnexpectedError();
-                    return;
-                }
-            }
-
-            LoadPic.UpdatePic(FolderIndex, pic);
-
             if (Preloader.IsRunning is false)
             {
                 await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
