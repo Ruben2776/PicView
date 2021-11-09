@@ -163,18 +163,7 @@ namespace PicView.SystemIntegration
                     {
                         if (UC.GetStartUpUC is not null)
                         {
-                            if (w.Width < 900)
-                            {
-                                UC.GetStartUpUC.logo.Width = 247;
-                                UC.GetStartUpUC.buttons.Margin = new Thickness(0, 0, 0, 0);
-                                UC.GetStartUpUC.buttons.VerticalAlignment = VerticalAlignment.Bottom;
-                            }
-                            else if (w.Width > 900)
-                            {
-                                UC.GetStartUpUC.logo.Width = double.NaN;
-                                UC.GetStartUpUC.buttons.Margin = new Thickness(0, 181, 25, 16);
-                                UC.GetStartUpUC.buttons.VerticalAlignment = VerticalAlignment.Center;
-                            }
+                            UC.GetStartUpUC.ResponsiveSize(w.Width);
                         }
                     }
                 }
