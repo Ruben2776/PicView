@@ -17,6 +17,7 @@ namespace PicView.PicGallery
 {
     internal static class GalleryLoad
     {
+        internal static bool IsLoading { get; private set; }
         internal static void PicGallery_Loaded(object sender, RoutedEventArgs e)
         {
             // Add events and set fields, when it's loaded.
@@ -182,11 +183,13 @@ namespace PicView.PicGallery
 
         internal static async Task Load()
         {
+            IsLoading = true;
             CancellationTokenSource source = new CancellationTokenSource();
             Task task = Task.Run(() => Loop(source.Token), source.Token);
             try
             {
                 await task.ConfigureAwait(false);
+                IsLoading = false;
             }
             catch (TaskCanceledException)
             {

@@ -26,7 +26,7 @@ namespace PicView.PicGallery
             IsHorizontalOpen = true;
             IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, () =>
             {
                 GalleryLoad.LoadLayout(false);
                 GetPicGallery.Visibility = Visibility.Visible;
@@ -54,30 +54,7 @@ namespace PicView.PicGallery
                 }
             });
 
-            bool toLoad = false;
-
-            if (GetPicGallery.Container.Children.Count == 0)
-            {
-                await GalleryLoad.Load().ConfigureAwait(false);
-                toLoad = true;
-            }
-            else if (GetPicGallery.Container.Children.Count == 1 && Pics.Count > 1)
-            {
-                GetPicGallery.Container.Children.Clear();
-                await GalleryLoad.Load().ConfigureAwait(false);
-                toLoad = true;
-            }
-
-            if (toLoad is false)
-            {
-                GalleryNavigation.SelectedGalleryItem = FolderIndex;
-
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
-                {
-                    GalleryNavigation.SetSelected(FolderIndex, true);
-                    GalleryNavigation.ScrollTo();
-                });
-            }
+            await LoadAndScrollToAsync().ConfigureAwait(false);
         }
 
         internal static async Task OpenFullscreenGalleryAsync(bool startup)
@@ -86,8 +63,6 @@ namespace PicView.PicGallery
             {
                 return;
             }
-
-            bool loadItems = false;
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
@@ -166,17 +141,6 @@ namespace PicView.PicGallery
                 VisualStateManager.GoToElementState(GetPicGallery, "Opacity", false);
                 VisualStateManager.GoToElementState(GetPicGallery.Container, "Opacity", false);
                 GetPicGallery.Opacity = GetPicGallery.Container.Opacity = 1;
-
-                if (GetPicGallery.Container.Children.Count == 0)
-                {
-                    loadItems = true;
-                }
-                else
-                {
-                    GalleryNavigation.SelectedGalleryItem = FolderIndex;
-                    GalleryNavigation.SetSelected(FolderIndex, true);
-                    GalleryNavigation.ScrollTo();
-                }
             });
 
             if (startup == false)
@@ -184,10 +148,7 @@ namespace PicView.PicGallery
                 await UILogic.Sizing.ScaleImage.TryFitImageAsync().ConfigureAwait(false);
             }
 
-            if (loadItems)
-            {
-                await GalleryLoad.Load().ConfigureAwait(false);
-            }
+            await LoadAndScrollToAsync().ConfigureAwait(false);
         }
 
         #endregion Open
@@ -262,5 +223,18 @@ namespace PicView.PicGallery
         }
 
         #endregion Close
+
+        private static async Task LoadAndScrollToAsync()
+        {
+            if (GalleryLoad.IsLoading == false)
+            {
+                await GalleryLoad.Load().ConfigureAwait(false);
+            }
+
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, () =>
+            {
+                GalleryNavigation.ScrollTo();
+            });
+        }
     }
 }
