@@ -23,7 +23,6 @@
         <DockPanel
             x:Name="TitleBar"
             Height="30"
-            MaxWidth="{Binding ElementName=ParentContainer, Path=ActualWidth}"
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 

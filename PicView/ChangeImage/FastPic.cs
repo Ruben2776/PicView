@@ -1,17 +1,17 @@
-﻿using PicView.UILogic;
+﻿using PicView.ImageHandling;
+using PicView.UILogic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 
 namespace PicView.ChangeImage
 {
-    internal class FastPic
+    internal static class FastPic
     {
         static System.Timers.Timer? timer;
-
-        internal static void Stop() { timer = null; }
 
         internal static async Task Run(int index)
         {
@@ -27,26 +27,37 @@ namespace PicView.ChangeImage
             {
                 return;
             }
+            FolderIndex = index;
 
             timer.Start();
-
             var image = Application.Current.Resources["Image"] as string; // Show string 'image' fron translation service
-            var thumb = ImageHandling.Thumbnails.GetBitmapSourceThumb(new FileInfo(Pics[index])); // Load thumb
+            var fileInfo = new FileInfo(Pics[index]);
+            BitmapSource? pic = null;
+            bool fitImage = true;
+            if (fileInfo.Length < 4e+6) // Load images that are less than 4mb
+            {
+                pic = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+            }
+            else
+            {
+                pic = Thumbnails.GetBitmapSourceThumb(fileInfo);
+                fitImage = false;
+            }
+            if (pic is null)
+            {
+                return;
+            }
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
             {
-                ConfigureWindows.GetMainWindow.TitleText.ToolTip =
-                ConfigureWindows.GetMainWindow.Title =
-                ConfigureWindows.GetMainWindow.TitleText.Text
-                = $"{image} {index + 1} / {Pics?.Count}";
+                SetTitle.SetTitleString(pic.PixelWidth, pic.PixelHeight, index, fileInfo);
+                ConfigureWindows.GetMainWindow.MainImage.Source = pic;
 
-                if (thumb != null)
+                if (fitImage)
                 {
-                    ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
+                    UILogic.Sizing.ScaleImage.FitImage(pic.PixelWidth, pic.PixelHeight);
                 }
             });
-
-            FolderIndex = index;
         }
 
         /// <summary>
@@ -58,27 +69,17 @@ namespace PicView.ChangeImage
 
             Preloader.PreloadValue? preloadValue;
 
-            // Reset preloader values to prevent errors
-            if (Pics?.Count > 10)
+            preloadValue = Preloader.Get(Navigation.Pics[FolderIndex]);
+
+            if (preloadValue == null) // Error correctiom
             {
-                Preloader.Clear();
                 await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
                 preloadValue = Preloader.Get(Navigation.Pics[FolderIndex]);
             }
-            else
+            while (preloadValue != null && preloadValue.isLoading)
             {
-                preloadValue = Preloader.Get(Navigation.Pics[FolderIndex]);
-
-                if (preloadValue == null) // Error correctiom
-                {
-                    await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
-                    preloadValue = Preloader.Get(Navigation.Pics[FolderIndex]);
-                }
-                while (preloadValue != null && preloadValue.isLoading)
-                {
-                    // Wait for finnished result
-                    await Task.Delay(5).ConfigureAwait(false);
-                }
+                // Wait for finnished result
+                await Task.Delay(5).ConfigureAwait(false);
             }
 
             if (preloadValue == null || preloadValue.bitmapSource == null)

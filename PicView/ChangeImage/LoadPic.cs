@@ -117,7 +117,7 @@ namespace PicView.ChangeImage
             if (archive == false)
             {
                 _ = Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
-                _ = Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
+                _ = Preloader.AddAsync(FolderIndex, fileInfo, pic).ConfigureAwait(false);
             }
 
             if (FolderIndex > 0)

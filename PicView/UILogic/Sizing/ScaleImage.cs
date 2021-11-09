@@ -201,6 +201,10 @@ namespace PicView.UILogic.Sizing
             // Calculate window position
             if (GetMainWindow.WindowState == System.Windows.WindowState.Normal)
             {
+                /// Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
+                var interfaceSize = (GetMainWindow.Logo.ActualWidth + 13) + GetMainWindow.MinButton.ActualWidth
+                    + GetMainWindow.FullscreenButton.ActualWidth + GetMainWindow.CloseButton.ActualWidth * MonitorInfo.DpiScaling;
+
                 var autoWidth = Properties.Settings.Default.AutoFitWindow ? GetMainWindow.ActualWidth : XWidth;
                 var autoHeight = Properties.Settings.Default.AutoFitWindow ? GetMainWindow.ActualHeight : XHeight;
 
@@ -221,6 +225,15 @@ namespace PicView.UILogic.Sizing
                     {
                         CenterWindowOnScreen();
                     }
+
+                    /// Update mainWindow.TitleBar width to dynamically fit new size
+                    var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
+                    GetMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
+                }
+                else
+                {
+                    /// Fix title width to window size
+                    GetMainWindow.TitleText.MaxWidth = GetMainWindow.ActualWidth - interfaceSize;
                 }
             }
 
