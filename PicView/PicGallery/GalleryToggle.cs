@@ -231,10 +231,17 @@ namespace PicView.PicGallery
                 await GalleryLoad.Load().ConfigureAwait(false);
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, () =>
+            try
             {
-                GalleryNavigation.ScrollTo();
-            });
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, () =>
+                {
+                    GalleryNavigation.ScrollTo();
+                });
+            }
+            catch (TaskCanceledException)
+            {
+                // Suppress TaskCanceledException
+            }
         }
     }
 }
