@@ -666,6 +666,8 @@ namespace PicView.ChangeImage
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, async () =>
             {
+                UC.ToggleStartUpUC(true);
+
                 if (Properties.Settings.Default.ScrollEnabled)
                 {
                     ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
@@ -699,9 +701,9 @@ namespace PicView.ChangeImage
             await Taskbar.NoProgress().ConfigureAwait(false);
             FolderIndex = 0;
 
-            await ImageInfo.UpdateValuesAsync(fileInfo).ConfigureAwait(false);
-
             DeleteFiles.DeleteTempFiles();
+
+
         }
 
         /// <summary>

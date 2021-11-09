@@ -29,21 +29,11 @@ namespace PicView.FileHandling
 
             Error_Handling.ChangeFolder(true);
 
+            string destination;
+
             try
             {
-                var destination = await DownloadData(url, true).ConfigureAwait(false);
-                var isGif = Path.GetExtension(url).Contains(".gif", StringComparison.OrdinalIgnoreCase);
-
-                await LoadPic.LoadPreparedPicAsync(destination, url, isGif).ConfigureAwait(false);
-
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                {
-                    // Fix not having focus after drag and drop
-                    if (!ConfigureWindows.GetMainWindow.IsFocused)
-                    {
-                        ConfigureWindows.GetMainWindow.Focus();
-                    }
-                });
+                destination = await DownloadData(url, true).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -58,6 +48,22 @@ namespace PicView.FileHandling
 
                 return;
             }
+
+            var isGif = Path.GetExtension(url).Contains(".gif", StringComparison.OrdinalIgnoreCase);
+
+            await LoadPic.LoadPreparedPicAsync(destination, url, isGif).ConfigureAwait(false);
+
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            {
+                // Fix not having focus after drag and drop
+                if (!ConfigureWindows.GetMainWindow.IsFocused)
+                {
+                    ConfigureWindows.GetMainWindow.Focus();
+                }
+            });
+
+            History.Add(url);
+            Navigation.InitialPath = url;
         }
 
         internal static async Task<string> DownloadData(string url, bool displayProgress)
@@ -156,7 +162,6 @@ namespace PicView.FileHandling
                 var isMoreToRead = true;
 
                 using (var fileStream = new FileStream(_destinationFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
-                {
                     do
                     {
                         var bytesRead = await contentStream.ReadAsync(buffer);
@@ -178,7 +183,6 @@ namespace PicView.FileHandling
                         }
                     }
                     while (isMoreToRead);
-                }
             }
 
             private void TriggerProgressChanged(long? totalDownloadSize, long totalBytesRead)

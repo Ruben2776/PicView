@@ -193,7 +193,13 @@ namespace PicView.ChangeImage
                 {
                     path = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
                 });
+
+                if (path == (string)Application.Current.Resources["Loading"])
+                {
+                    path = Navigation.InitialPath;
+                }
             }
+
             if (path == null)
             {
                 UnexpectedError();

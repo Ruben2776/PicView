@@ -89,7 +89,7 @@ namespace PicView.ChangeImage
                 UC.ToggleStartUpUC(true);
             });
 
-            await LoadPic.LoadPiFromFileAsync(fileHistory.Last()).ConfigureAwait(false);
+            LoadPic.LoadPicFromString(fileHistory.Last());
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace PicView.ChangeImage
 
                 if (fileHistory.Count >= maxCount)
                 {
-                    fileHistory.Remove(fileHistory[fileHistory.Count - 1]);
+                    fileHistory.Remove(fileHistory[0]);
                 }
 
                 fileHistory.Add(fileName);
@@ -175,7 +175,7 @@ namespace PicView.ChangeImage
             menuItem.MouseEnter += (_, _) => menuItem.Foreground = new SolidColorBrush(Colors.White);
             menuItem.MouseLeave += (_, _) => menuItem.Foreground = (SolidColorBrush)Application.Current.Resources["IconColorBrush"];
 
-            menuItem.Click += async (_, _) => await LoadPic.LoadPiFromFileAsync(menuItem.ToolTip.ToString()).ConfigureAwait(false);
+            menuItem.Click += (_, _) => LoadPic.LoadPicFromString(menuItem.ToolTip.ToString());
             var ext = Path.GetExtension(filePath);
             var ext5 = !string.IsNullOrWhiteSpace(ext) && ext.Length >= 5 ? ext.Substring(0, 5) : ext;
             menuItem.InputGestureText = ext5;
