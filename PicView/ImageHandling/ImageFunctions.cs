@@ -23,7 +23,7 @@ namespace PicView.ImageHandling
             {
                 using (MagickImage image = new MagickImage(Navigation.Pics[Navigation.FolderIndex]))
                 {
-                    var profile = new ExifProfile();
+                    var profile = image.GetExifProfile();
                     profile.SetValue(ExifTag.Rating, rating);
 
                     image.SetProfile(profile);
