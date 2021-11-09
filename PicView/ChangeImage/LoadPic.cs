@@ -721,7 +721,7 @@ namespace PicView.ChangeImage
         #endregion
 
 
-        static async Task<Preloader.PreloadValue?> CheckLoadingAsync(Preloader.PreloadValue preloadValue, int index)
+        internal static async Task<Preloader.PreloadValue?> CheckLoadingAsync(Preloader.PreloadValue preloadValue, int index)
         {
             while (preloadValue.isLoading)
             {

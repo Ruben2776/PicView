@@ -72,20 +72,38 @@ namespace PicView.ChangeImage
         /// depending on the next value</param>
         internal static async Task NavigateToPicAsync(bool forward = true, bool end = false, bool fastPic = false)
         {
-            // Exit if not intended to change picture
-            if (Error_Handling.CheckOutOfRange())
+            int prev = FolderIndex;
+            int next = GetImageIterateIndex(forward, end);
+            if (next == -1) { return; }
+
+            if (fastPic)
             {
+                await FastPic.Run(next).ConfigureAwait(false);
                 return;
             }
 
-            // Make backups
-            int prev = FolderIndex;
+            if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
+            {
+                GalleryNavigation.SetSelected(prev, false);
+            }
+
+            // Go to the image!
+            await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
+        }
+
+        internal static int GetImageIterateIndex(bool forward = true, bool end = false)
+        {
+            // Exit if not intended to change picture
+            if (Error_Handling.CheckOutOfRange())
+            {
+                return -1;
+            }
+
             int next = FolderIndex;
 
             if (end) // Go to first or last
             {
                 next = forward ? Pics.Count - 1 : 0;
-                prev = FolderIndex;
 
                 // Reset preloader values to prevent errors
                 if (Pics?.Count > 10)
@@ -107,7 +125,7 @@ namespace PicView.ChangeImage
                         // Go to next if able
                         if (FolderIndex + 1 == Pics?.Count)
                         {
-                            return;
+                            return -1;
                         }
 
                         next++;
@@ -126,7 +144,7 @@ namespace PicView.ChangeImage
                         // Go to prev if able
                         if (next - 1 < 0)
                         {
-                            return;
+                            return -1;
                         }
 
                         next--;
@@ -135,19 +153,7 @@ namespace PicView.ChangeImage
                 }
             }
 
-            if (fastPic)
-            {
-                await FastPic.Run(next).ConfigureAwait(false);
-                return;
-            }
-
-            if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
-            {
-                GalleryNavigation.SetSelected(prev, false);
-            }
-
-            // Go to the image!
-            await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
+            return next;
         }
 
         /// <summary>

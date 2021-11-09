@@ -2,7 +2,6 @@
 using PicView.UILogic;
 using System.IO;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
@@ -27,25 +26,55 @@ namespace PicView.ChangeImage
             {
                 return;
             }
-            FolderIndex = index;
 
+            FolderIndex = index;
             timer.Start();
-            var image = Application.Current.Resources["Image"] as string; // Show string 'image' fron translation service
-            var fileInfo = new FileInfo(Pics[index]);
+            FileInfo? fileInfo = null;
             BitmapSource? pic = null;
             bool fitImage = true;
-            if (fileInfo.Length < 4e+6) // Load images that are less than 4mb
+
+            var preloadValue = Preloader.Get(Pics[index]);
+            if (preloadValue != null)
             {
-                pic = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+                if (preloadValue.isLoading)
+                {
+                    do
+                    {
+                        await Task.Delay(50);
+                    } while (preloadValue.isLoading);
+                }
+                if (preloadValue.bitmapSource is not null)
+                {
+                    pic = preloadValue.bitmapSource;
+                }
+                if (preloadValue.fileInfo is not null)
+                {
+                    fileInfo = preloadValue.fileInfo;
+                }
             }
             else
             {
-                pic = Thumbnails.GetBitmapSourceThumb(fileInfo);
-                fitImage = false;
+                fileInfo = new FileInfo(Pics[index]);
+
+                if (fileInfo.Length < 4e+6) // Load images that are less than 4mb
+                {
+                    pic = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+                }
+                else
+                {
+                    pic = Thumbnails.GetBitmapSourceThumb(fileInfo);
+                    fitImage = false;
+                }
             }
+
             if (pic is null)
             {
-                return;
+                pic = ImageFunctions.ImageErrorMessage();
+                if (pic is null)
+                {
+                    Error_Handling.UnexpectedError();
+                    return;
+                }
             }
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
@@ -58,6 +87,10 @@ namespace PicView.ChangeImage
                     UILogic.Sizing.ScaleImage.FitImage(pic.PixelWidth, pic.PixelHeight);
                 }
             });
+
+            // Add next image to preloader and remove previous
+            _ = Preloader.AddAsync(Navigation.GetImageIterateIndex(Navigation.Reverse, false)).ConfigureAwait(false);
+            Preloader.Remove(Navigation.GetImageIterateIndex(Navigation.Reverse == false, false));
         }
 
         /// <summary>
@@ -65,30 +98,46 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static async Task FastPicUpdateAsync()
         {
+            if (timer is null) { return; }
+
             timer = null;
+            BitmapSource? pic = null;
 
-            Preloader.PreloadValue? preloadValue;
-
-            preloadValue = Preloader.Get(Navigation.Pics[FolderIndex]);
-
-            if (preloadValue == null) // Error correctiom
+            var preloadValue = Preloader.Get(Navigation.Pics[FolderIndex]);
+            if (preloadValue is null)
             {
                 await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
                 preloadValue = Preloader.Get(Navigation.Pics[FolderIndex]);
-            }
-            while (preloadValue != null && preloadValue.isLoading)
-            {
-                // Wait for finnished result
-                await Task.Delay(5).ConfigureAwait(false);
+
+                if (preloadValue is not null)
+                {
+                    if (preloadValue.bitmapSource is null)
+                    {
+                        pic = ImageFunctions.ImageErrorMessage();
+                        if (pic is null)
+                        {
+                            Error_Handling.UnexpectedError();
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        pic = preloadValue.bitmapSource;
+                    }
+                }
+                else
+                {
+                    Error_Handling.UnexpectedError();
+                    return;
+                }
             }
 
-            if (preloadValue == null || preloadValue.bitmapSource == null)
-            {
-                await Error_Handling.ReloadAsync().ConfigureAwait(false);
-                return;
-            }
+            LoadPic.UpdatePic(FolderIndex, pic);
 
-            LoadPic.UpdatePic(FolderIndex, preloadValue.bitmapSource);
+            if (Preloader.IsRunning is false)
+            {
+                await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
+            }
         }
     }
 }
