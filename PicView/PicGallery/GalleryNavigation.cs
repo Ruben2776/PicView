@@ -176,21 +176,24 @@ namespace PicView.PicGallery
         /// <param name="selected">selected or deselected</param>
         internal static void SetSelected(int x, bool selected)
         {
-            if (GetPicGallery is not null && x > GetPicGallery.Container.Children.Count - 1 || x < 0) { return; }
-
-            // Select next item
-            var nextItem = GetPicGallery.Container.Children[x] as Views.UserControls.PicGalleryItem;
-
-            if (selected)
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
             {
-                nextItem.innerborder.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
-                nextItem.innerborder.Width = nextItem.innerborder.Height = PicGalleryItem_Size;
-            }
-            else
-            {
-                nextItem.innerborder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
-                nextItem.innerborder.Width = nextItem.innerborder.Height = PicGalleryItem_Size_s;
-            }
+                if (GetPicGallery is not null && x > GetPicGallery.Container.Children.Count - 1 || x < 0) { return; }
+
+                // Select next item
+                var nextItem = GetPicGallery.Container.Children[x] as Views.UserControls.PicGalleryItem;
+
+                if (selected)
+                {
+                    nextItem.innerborder.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
+                    nextItem.innerborder.Width = nextItem.innerborder.Height = PicGalleryItem_Size;
+                }
+                else
+                {
+                    nextItem.innerborder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
+                    nextItem.innerborder.Width = nextItem.innerborder.Height = PicGalleryItem_Size_s;
+                }
+            });
         }
 
         #endregion Select and deselect behaviour
@@ -248,9 +251,11 @@ namespace PicView.PicGallery
             {
                 return;
             }
-
-            // Keep item in center of scrollviewer
-            GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
+            {
+                // Keep item in center of scrollviewer
+                GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
+            });
         }
 
         internal static void FullscreenGalleryNavigation()
