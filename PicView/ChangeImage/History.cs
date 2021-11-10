@@ -175,6 +175,9 @@ namespace PicView.ChangeImage
 
         static MenuItem menuItem(string filePath, int i)
         {
+            var selected = i == maxCount - 1;
+            var mainColor = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
+            var accentColor = (SolidColorBrush)Application.Current.Resources["ChosenColorBrush"];
             var cmIcon = new TextBlock
             {
                 Text = (i + 1).ToString(CultureInfo.CurrentCulture),
@@ -182,7 +185,7 @@ namespace PicView.ChangeImage
                 FontSize = 11,
                 Width = 12,
                 Height = 12,
-                Foreground = (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"]
+                Foreground = (SolidColorBrush)Application.Current.Resources["IconColorBrush"]
             };
 
             var header = Path.GetFileNameWithoutExtension(filePath);
@@ -193,7 +196,8 @@ namespace PicView.ChangeImage
                 Header = header,
                 ToolTip = filePath,
                 Icon = cmIcon,
-                Foreground = (SolidColorBrush)Application.Current.Resources["IconColorBrush"]
+                Foreground = selected ? accentColor : mainColor,
+                FontWeight = selected ? FontWeights.Bold : FontWeights.Normal,
             };
 
             menuItem.MouseEnter += (_, _) => menuItem.Foreground = new SolidColorBrush(Colors.White);
@@ -211,6 +215,7 @@ namespace PicView.ChangeImage
             if (fileHistory == null) { InstantiateQ(); }
 
             var cm = (MenuItem)ConfigureWindows.MainContextMenu.Items[6];
+
             for (int i = 0; i < maxCount; i++)
             {
                 if (fileHistory.Count == i)
