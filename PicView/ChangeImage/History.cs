@@ -46,6 +46,8 @@ namespace PicView.ChangeImage
             }
             else
             {
+                using FileStream fs = File.Create(path);
+                fs.Seek(0, SeekOrigin.Begin);
                 WriteToFile();
             }
         }
@@ -86,14 +88,7 @@ namespace PicView.ChangeImage
         {
             if (fileHistory is null)
             {
-                try // Putting in try catch prevents error when file list is empty
-                {
-                    InstantiateQ();
-                }
-                catch (System.Exception)
-                {
-                    return;
-                }
+                InstantiateQ();
             }
 
             if (fileHistory.Count <= 0)
@@ -106,7 +101,7 @@ namespace PicView.ChangeImage
                 UC.ToggleStartUpUC(true);
             });
 
-            LoadPic.LoadPicFromString(fileHistory.Last());
+            await LoadPic.LoadPicFromString(fileHistory.Last()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -135,6 +130,12 @@ namespace PicView.ChangeImage
 
         internal static async Task NextAsync()
         {
+            if (Navigation.Pics.Count == 0)
+            {
+                await OpenLastFileAsync().ConfigureAwait(false);
+                return;
+            }
+
             var index = fileHistory.IndexOf(Navigation.Pics[Navigation.FolderIndex]);
             index++;
 
@@ -153,6 +154,12 @@ namespace PicView.ChangeImage
 
         internal static async Task PrevAsync()
         {
+            if (Navigation.Pics.Count == 0)
+            {
+                await OpenLastFileAsync().ConfigureAwait(false);
+                return;
+            }
+
             var index = fileHistory.IndexOf(Navigation.Pics[Navigation.FolderIndex]);
             index--;
 
@@ -192,7 +199,7 @@ namespace PicView.ChangeImage
             menuItem.MouseEnter += (_, _) => menuItem.Foreground = new SolidColorBrush(Colors.White);
             menuItem.MouseLeave += (_, _) => menuItem.Foreground = (SolidColorBrush)Application.Current.Resources["IconColorBrush"];
 
-            menuItem.Click += (_, _) => LoadPic.LoadPicFromString(menuItem.ToolTip.ToString());
+            menuItem.Click += async (_, _) => await LoadPic.LoadPicFromString(menuItem.ToolTip.ToString()).ConfigureAwait(false);
             var ext = Path.GetExtension(filePath);
             var ext5 = !string.IsNullOrWhiteSpace(ext) && ext.Length >= 5 ? ext.Substring(0, 5) : ext;
             menuItem.InputGestureText = ext5;

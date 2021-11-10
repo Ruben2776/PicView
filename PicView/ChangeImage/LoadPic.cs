@@ -33,7 +33,6 @@ namespace PicView.ChangeImage
         {
             if (File.Exists(file) == false)
             {
-                LoadPicFromString(file, false);
                 if (Properties.Settings.Default.AutoFitWindow)
                 {
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
@@ -41,6 +40,7 @@ namespace PicView.ChangeImage
                         UILogic.Sizing.WindowSizing.SetWindowBehavior();
                     });
                 }
+                await LoadPicFromString(file, false).ConfigureAwait(false);
                 return;
             }
 
@@ -148,7 +148,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        internal static void LoadPicFromString(string path, bool checkExists = true, FileInfo? fileInfo = null)
+        internal static async Task LoadPicFromString(string path, bool checkExists = true, FileInfo? fileInfo = null)
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
             {
@@ -164,7 +164,7 @@ namespace PicView.ChangeImage
 
                 LoadingPreview(fileInfo);
 
-                _ = LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
+                await LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
             }
             else
             {
@@ -176,10 +176,10 @@ namespace PicView.ChangeImage
                 string check = Error_Handling.CheckIfLoadableString(path);
                 switch (check)
                 {
-                    default: _ = LoadPic.LoadPiFromFileAsync(check).ConfigureAwait(false); return;
-                    case "web": _ = WebFunctions.PicWeb(path).ConfigureAwait(false); return;
-                    case "base64": _ = LoadPic.LoadBase64PicAsync(path).ConfigureAwait(false); return;
-                    case "directory": _ = LoadPic.LoadPicFromFolderAsync(path).ConfigureAwait(false); return;
+                    default: await LoadPic.LoadPiFromFileAsync(check).ConfigureAwait(false); return;
+                    case "web": await WebFunctions.PicWeb(path).ConfigureAwait(false); return;
+                    case "base64": await LoadPic.LoadBase64PicAsync(path).ConfigureAwait(false); return;
+                    case "directory": await LoadPic.LoadPicFromFolderAsync(path).ConfigureAwait(false); return;
                     case "": ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () => { Unload(true); }); return;
                 }
             }
@@ -208,7 +208,7 @@ namespace PicView.ChangeImage
 
             if (fileInfo.Exists == false)
             {
-                LoadPicFromString(fileInfo.FullName, false, fileInfo);
+                await LoadPicFromString(fileInfo.FullName, false, fileInfo).ConfigureAwait(false);
                 return;
             }
 
