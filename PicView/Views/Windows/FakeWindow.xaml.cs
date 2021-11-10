@@ -1,4 +1,5 @@
 ﻿using PicView.PicGallery;
+using PicView.Shortcuts;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System;
@@ -53,6 +54,7 @@ namespace PicView.Views.Windows
 
             PreviewMouseLeftButtonDown += FakeWindow_MouseLeftButtonDown;
             PreviewMouseRightButtonDown += FakeWindow_MouseLeftButtonDown;
+            PreviewMouseWheel += async (sender, e) => await MainMouseKeys.MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);
             Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
             StateChanged += FakeWindow_StateChanged;
             ConfigureWindows.GetMainWindow.Activated += GetMainWindow_Activated;
