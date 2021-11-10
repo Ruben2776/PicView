@@ -101,11 +101,11 @@
     <system:String x:Key="Horizontal">Orizzontale</system:String>
 
     <!--  Settings window, mouse  -->
-    <system:String x:Key="CtrlToZoom">Ctrl to zoom, scroll to navigate</system:String>
-    <system:String x:Key="ScrollToZoom">Zoom med musehjulet, naviger med Ctrl</system:String>
+    <system:String x:Key="CtrlToZoom">Ctrl per ingrandire, scorri per navigare</system:String>
+    <system:String x:Key="ScrollToZoom">Scorri per ingrandire, Ctrl per navigare</system:String>
     <system:String x:Key="HorizontalScroll">Horizontal scroll</system:String>
-    <system:String x:Key="Reverse">Reverse</system:String>
-    <system:String x:Key="Forward">Forward</system:String>
+    <system:String x:Key="Reverse">Inversione</system:String>
+    <system:String x:Key="Forward">Inoltrare</system:String>
 
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">Impostazioni generali</system:String>

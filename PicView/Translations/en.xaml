@@ -102,7 +102,7 @@
 
     <!--  Settings window, mouse  -->
     <system:String x:Key="CtrlToZoom">Ctrl to zoom, scroll to navigate</system:String>
-    <system:String x:Key="ScrollToZoom">Zoom med musehjulet, naviger med Ctrl</system:String>
+    <system:String x:Key="ScrollToZoom">Zoom with mousewheel, navigate with Ctrl</system:String>
     <system:String x:Key="HorizontalScroll">Horizontal scroll</system:String>
     <system:String x:Key="Reverse">Reverse</system:String>
     <system:String x:Key="Forward">Forward</system:String>

@@ -100,6 +100,13 @@
     <system:String x:Key="Vertical">Vertical</system:String>
     <system:String x:Key="Horizontal">Horizontal</system:String>
 
+    <!--  Settings window, mouse  -->
+    <system:String x:Key="CtrlToZoom">Strg zum zoomen, Scrollen zum navigieren</system:String>
+    <system:String x:Key="ScrollToZoom">Scrollen zum zoomen, Strg zum navigieren</system:String>
+    <system:String x:Key="HorizontalScroll">horizontaler Scrolling</system:String>
+    <system:String x:Key="Reverse">Umkehren</system:String>
+    <system:String x:Key="Forward">Vordere</system:String>
+
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">Allgemeine Einstellungen</system:String>
     <system:String x:Key="UISettings">UI-Einstellungen</system:String>
@@ -109,8 +116,6 @@
     <system:String x:Key="StayCentered">Fenster zentriert halten</system:String>
     <system:String x:Key="ColoredWindowBorder">Farbiger Fensterrand</system:String>
     <system:String x:Key="ShowButtonsInHiddenUI">Show buttons in hidden UI</system:String>
-    <system:String x:Key="CtrlToZoom">Strg zum zoomen, Scrollen zum navigieren</system:String>
-    <system:String x:Key="ScrollToZoom">Scrollen zum zoomen, Strg zum navigieren</system:String>
     <system:String x:Key="Apply">Anwenden</system:String>
     <system:String x:Key="AdjustTimingForSlideshow">Passen Sie das Timing für die Diashow an</system:String>
     <system:String x:Key="AdjustTimingForZoom">Zoom-Geschwindigkeit anpassen</system:String>
