@@ -135,7 +135,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="ColorTheme" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">10</Value>
+      <Value Profile="(Default)">3</Value>
     </Setting>
     <Setting Name="ZoomSpeed" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0.2</Value>
@@ -159,7 +159,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="Ascending" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="HorizontalReverseScroll" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
