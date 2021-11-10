@@ -49,6 +49,8 @@ namespace PicView.ChangeImage
                 i = Math.Abs(i);
             }
 
+            if (Contains(Navigation.Pics[i])) { return true; }
+
             var preloadValue = new PreloadValue(null, true, null);
             if (preloadValue is null) { return false; }
 
@@ -68,9 +70,8 @@ namespace PicView.ChangeImage
                     preloadValue.isLoading = false;
                     preloadValue.fileInfo = fileInfo;
                 }).ConfigureAwait(false);
-                return true;
             }
-            return false;
+            return true;
         }
 
         /// <summary>
