@@ -264,7 +264,7 @@
     <system:String x:Key="SizeTooltip">Indtast størrelse i pixels eller procent. Indtast 0 i højde eller bredde for at bevare størrelsesforholdet.</system:String>
 
     <!--  Keyboard key names  -->
-    <system:String x:Key="Delete">Del</system:String>
+    <system:String x:Key="Del">Del</system:String>
     <system:String x:Key="Ctrl">Ctrl</system:String>
     <system:String x:Key="Shift">Skift</system:String>
     <system:String x:Key="Alt">Alt</system:String>

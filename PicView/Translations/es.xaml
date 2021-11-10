@@ -264,7 +264,7 @@
     <system:String x:Key="SizeTooltip">Enter desired size in pixels or percentage. Input 0 in either width or height to preserve aspect ratio</system:String>
 
     <!--  Keyboard key names  -->
-    <system:String x:Key="Delete">Eliminar</system:String>
+    <system:String x:Key="Del">Supr</system:String>
     <system:String x:Key="Ctrl">Ctrl</system:String>
     <system:String x:Key="Shift">Shift</system:String>
     <system:String x:Key="Alt">Alt</system:String>

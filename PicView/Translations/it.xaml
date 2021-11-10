@@ -264,7 +264,7 @@
     <system:String x:Key="SizeTooltip">Inserisci la dimensione desiderata in pixel o in percentuale. Inserisci 0 in larghezza o altezza per preservare le proporzioni</system:String>
 
     <!--  Keyboard key names  -->
-    <system:String x:Key="Delete">Canc</system:String>
+    <system:String x:Key="Del">Canc</system:String>
     <system:String x:Key="Ctrl">Ctrl</system:String>
     <system:String x:Key="Shift">Shift</system:String>
     <system:String x:Key="Alt">Alt</system:String>
