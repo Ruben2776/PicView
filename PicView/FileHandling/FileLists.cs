@@ -152,9 +152,6 @@ namespace PicView.FileHandling
                 await Error_Handling.ReloadAsync(true).ConfigureAwait(false);
                 return;
             }
-#if DEBUG
-            Trace.WriteLine("Getvalues completed ");
-#endif
         });
     }
 }
