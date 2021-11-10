@@ -40,9 +40,9 @@ namespace PicView.ChangeImage
         /// Add file to preloader from index
         /// </summary>
         /// <param name="i">Index of Pics</param>
-        internal static async Task AddAsync(int i, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null)
+        internal static async Task<bool> AddAsync(int i, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null)
         {
-            if (i >= Pics?.Count) { return; }
+            if (i >= Pics?.Count) { return false; }
 
             if (i < 0)
             {
@@ -50,7 +50,7 @@ namespace PicView.ChangeImage
             }
 
             var preloadValue = new PreloadValue(null, true, null);
-            if (preloadValue is null) { return; }
+            if (preloadValue is null) { return false; }
 
             if (Sources.TryAdd(Navigation.Pics[i], preloadValue))
             {
@@ -68,7 +68,9 @@ namespace PicView.ChangeImage
                     preloadValue.isLoading = false;
                     preloadValue.fileInfo = fileInfo;
                 }).ConfigureAwait(false);
+                return true;
             }
+            return false;
         }
 
         /// <summary>

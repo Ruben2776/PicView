@@ -1,9 +1,7 @@
 ﻿using PicView.ImageHandling;
-using PicView.UILogic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 
 namespace PicView.ChangeImage
@@ -11,6 +9,7 @@ namespace PicView.ChangeImage
     internal static class FastPic
     {
         static System.Timers.Timer? timer;
+        static bool updateSource;
 
         internal static async Task Run(int index)
         {
@@ -31,7 +30,7 @@ namespace PicView.ChangeImage
             timer.Start();
             FileInfo? fileInfo = null;
             BitmapSource? pic = null;
-            bool fitImage = true;
+            updateSource = false;
 
             var preloadValue = Preloader.Get(Pics[index]);
             if (preloadValue != null)
@@ -63,7 +62,7 @@ namespace PicView.ChangeImage
                 else
                 {
                     pic = Thumbnails.GetBitmapSourceThumb(fileInfo);
-                    fitImage = false;
+                    updateSource = true; // Update it when key released
                 }
             }
 
@@ -76,22 +75,52 @@ namespace PicView.ChangeImage
                     return;
                 }
             }
-
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
-            {
-                SetTitle.SetTitleString(pic.PixelWidth, pic.PixelHeight, index, fileInfo);
-                ConfigureWindows.GetMainWindow.MainImage.Source = pic;
-
-                if (fitImage)
-                {
-                    UILogic.Sizing.ScaleImage.FitImage(pic.PixelWidth, pic.PixelHeight);
-                }
-            });
+            LoadPic.UpdatePic(FolderIndex, pic);
 
             if (Preloader.IsRunning is false)
             {
                 await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
             }
+        }
+
+        /// <summary>
+        /// Update after FastPic() was used
+        /// </summary>
+        internal static async Task FastPicUpdateAsync()
+        {
+            if (updateSource == false) { return; }
+
+            // Update picture in case it didn't load. Won't happen normally
+
+            timer = null;
+            BitmapSource? pic = null;
+            Preloader.PreloadValue? preloadValue = null;
+
+            var exists = await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
+            if (exists)
+            {
+                preloadValue = Preloader.Get(Pics[FolderIndex]);
+                if (preloadValue is null)
+                {
+                    await Error_Handling.ReloadAsync().ConfigureAwait(false);
+                    return;
+                }
+                if (preloadValue.bitmapSource is not null)
+                {
+                    pic = preloadValue.bitmapSource;
+                }
+                else
+                {
+                    pic = ImageFunctions.ImageErrorMessage();
+                }
+            }
+            else
+            {
+                await Error_Handling.ReloadAsync().ConfigureAwait(false);
+                return;
+            }
+
+            LoadPic.UpdatePic(FolderIndex, pic, preloadValue.fileInfo);
         }
     }
 }

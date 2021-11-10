@@ -538,6 +538,22 @@ namespace PicView.Shortcuts
             // Don't allow keys when typing in text
             if (GetMainWindow.TitleText.IsKeyboardFocusWithin) { return; }
 
+            switch (e.Key)
+            {
+                case Key.A:
+                case Key.Right:
+                case Key.Left:
+                case Key.D:
+                    if (FolderIndex <= 0 || Pics?.Count < FolderIndex)
+                    {
+                        return;
+                    }
+                    _ = ChangeImage.FastPic.FastPicUpdateAsync().ConfigureAwait(false);
+                    return;
+
+                default: break;
+            }
+
             var altDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
             if (altDown && !e.IsRepeat)
             {

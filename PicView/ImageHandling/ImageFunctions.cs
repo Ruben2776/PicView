@@ -21,18 +21,16 @@ namespace PicView.ImageHandling
 
             try
             {
-                using (MagickImage image = new MagickImage(Navigation.Pics[Navigation.FolderIndex]))
-                {
-                    var profile = image.GetExifProfile();
-                    profile.SetValue(ExifTag.Rating, rating);
+                using MagickImage image = new MagickImage(Navigation.Pics[Navigation.FolderIndex]);
+                var profile = image.GetExifProfile();
+                profile.SetValue(ExifTag.Rating, rating);
 
-                    image.SetProfile(profile);
+                image.SetProfile(profile);
 
-                    image.Write(Navigation.Pics[Navigation.FolderIndex]);
-                }
+                image.Write(Navigation.Pics[Navigation.FolderIndex]);
                 return true;
             }
-            catch (System.Exception)
+            catch (MagickException)
             {
                 return false;
             }
