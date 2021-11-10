@@ -236,7 +236,7 @@
         <Separator />
 
         <MenuItem 
-            Header="{StaticResource DeletedFile}"
+            Header="{StaticResource DeleteFile}"
             Foreground="{StaticResource MainColorBrush}"
             ToolTip="{StaticResource SendCurrentImageToRecycleBin}"
             InputGestureText="{StaticResource Delete}"

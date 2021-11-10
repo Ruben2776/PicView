@@ -274,7 +274,7 @@
     <system:String x:Key="NumpadPlus">Numpad +</system:String>
     <system:String x:Key="NumpadMinus">Numpad -</system:String>
     <!--  Mouse key names  -->
-    <system:String x:Key="MouseWheel">Mouse hjul</system:String>
+    <system:String x:Key="MouseWheel">Musehjul</system:String>
     <system:String x:Key="MouseKeyForward">Mouse knap fremad</system:String>
     <system:String x:Key="MouseKeyBack">Mouse knap tilbage</system:String>
     <system:String x:Key="DoubleClick">Dobbeltklik</system:String>
