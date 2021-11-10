@@ -54,6 +54,10 @@ namespace PicView.ImageHandling
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
                 toCenter = UC.QuickSettingsMenuOpen;
+                if (toCenter is false)
+                {
+                    toCenter = UC.ToolsAndEffectsMenuOpen;
+                }
             });
 
             Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"] as string, toCenter);
