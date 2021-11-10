@@ -21,10 +21,20 @@ namespace PicView.ChangeImage
             fileHistory = new List<string>();
 
             string path = FileFunctions.GetWritingPath() + "\\Recent.txt";
+            StreamReader? listToRead = null;
 
             if (File.Exists(path))
             {
-                var listToRead = new StreamReader(path);
+                try
+                {
+                    listToRead = new StreamReader(path);
+                }
+                catch (System.Exception)
+                {
+                    return; // Putting in try catch prevents error when file list is empty
+                }
+
+                if (listToRead == null) { return; }
 
                 using (listToRead)
                 {
@@ -50,19 +60,26 @@ namespace PicView.ChangeImage
                 fileHistory = new List<string>();
             }
 
-            // Create file called "Recent.txt" located on app folder
-            var streamWriter = new StreamWriter(FileFunctions.GetWritingPath() + "\\Recent.txt");
-
-            foreach (string item in fileHistory)
+            try
             {
-                // Write list to stream
-                streamWriter.WriteLine(item);
-            }
+                // Create file called "Recent.txt" located on app folder
+                var streamWriter = new StreamWriter(FileFunctions.GetWritingPath() + "\\Recent.txt");
 
-            // Write stream to file
-            streamWriter.Flush();
-            // Close the stream and reclaim memory
-            streamWriter.Close();
+                foreach (string item in fileHistory)
+                {
+                    // Write list to stream
+                    streamWriter.WriteLine(item);
+                }
+
+                // Write stream to file
+                streamWriter.Flush();
+                // Close the stream and reclaim memory
+                streamWriter.Close();
+            }
+            catch (System.Exception)
+            {
+                // Putting in try catch prevents error when file list is empty
+            }
         }
 
         internal static async Task OpenLastFileAsync()
