@@ -15,23 +15,27 @@ namespace PicView.Views.UserControls
         {
             InitializeComponent();
 
-            ToggleScroll.IsChecked = Properties.Settings.Default.ScrollEnabled;
-            ToggleScroll.Click += (s, x) => ConfigureSettings.UpdateUIValues.SetScrolling(Properties.Settings.Default.ScrollEnabled);
-
             SettingsButton.TheButton.Click += delegate
             {
                 ConfigureWindows.AllSettingsWindow();
                 Close_UserControls();
             };
 
+            ToggleScroll.IsChecked = Properties.Settings.Default.ScrollEnabled;
+            ToggleScroll.Click += (s, x) => ConfigureSettings.UpdateUIValues.SetScrolling(Properties.Settings.Default.ScrollEnabled);
+            ToggleScroll.MouseLeftButtonDown += (s, x) => ConfigureSettings.UpdateUIValues.SetScrolling(Properties.Settings.Default.ScrollEnabled);
+
             ToggleFill.IsChecked = Properties.Settings.Default.FillImage;
             ToggleFill.Click += async (s, e) => await ConfigureSettings.UpdateUIValues.SetAutoFillAsync(s, e).ConfigureAwait(false);
+            ToggleFillBorder.MouseLeftButtonDown += async (s, e) => await ConfigureSettings.UpdateUIValues.SetAutoFillAsync(s, e).ConfigureAwait(false);
 
             ToggleLooping.IsChecked = Properties.Settings.Default.Looping;
             ToggleLooping.Click += (_, _) => ConfigureSettings.UpdateUIValues.SetLooping();
+            ToggleLoopingBorder.MouseLeftButtonDown += (_, _) => ConfigureSettings.UpdateUIValues.SetLooping();
 
             SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
             SetFit.Click += async (s, e) => await ConfigureSettings.UpdateUIValues.SetAutoFitAsync(s, e).ConfigureAwait(false);
+            SetFitBorder.MouseLeftButtonDown += async (s, e) => await ConfigureSettings.UpdateUIValues.SetAutoFitAsync(s, e).ConfigureAwait(false);
 
 
             // CropButton
@@ -50,32 +54,32 @@ namespace PicView.Views.UserControls
             #region Animation events
 
             // Toggle Scroll
-            ToggleScroll.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ToggleScrollFill); };
-            ToggleScroll.MouseEnter += delegate { ButtonMouseOverAnim(ToggleScrollFill); };
-            ToggleScroll.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ToggleScrollBrush); };
-            ToggleScroll.MouseLeave += delegate { ButtonMouseLeaveAnim(ToggleScrollFill); };
-            ToggleScroll.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ToggleScrollBrush); };
+            ToggleScrollBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ToggleScrollFill); };
+            ToggleScrollBorder.MouseEnter += delegate { ButtonMouseOverAnim(ToggleScrollFill); };
+            ToggleScrollBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ToggleScrollBrush); };
+            ToggleScrollBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(ToggleScrollFill); };
+            ToggleScrollBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ToggleScrollBrush); };
 
             // Toggle Loop
-            ToggleLooping.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ToggleLoopFill); };
-            ToggleLooping.MouseEnter += delegate { ButtonMouseOverAnim(ToggleLoopFill); };
-            ToggleLooping.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ToggleLoopBrush); };
-            ToggleLooping.MouseLeave += delegate { ButtonMouseLeaveAnim(ToggleLoopFill); };
-            ToggleLooping.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ToggleLoopBrush); };
+            ToggleLoopingBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ToggleLoopFill); };
+            ToggleLoopingBorder.MouseEnter += delegate { ButtonMouseOverAnim(ToggleLoopFill); };
+            ToggleLoopingBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ToggleLoopBrush); };
+            ToggleLoopingBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(ToggleLoopFill); };
+            ToggleLoopingBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ToggleLoopBrush); };
 
             // Set Fit
-            SetFit.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(SetFitFill); };
-            SetFit.MouseEnter += delegate { ButtonMouseOverAnim(SetFitFill); };
-            SetFit.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SetFitBrush); };
-            SetFit.MouseLeave += delegate { ButtonMouseLeaveAnim(SetFitFill); };
-            SetFit.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SetFitBrush); };
+            SetFitBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(SetFitFill); };
+            SetFitBorder.MouseEnter += delegate { ButtonMouseOverAnim(SetFitFill); };
+            SetFitBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SetFitBrush); };
+            SetFitBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(SetFitFill); };
+            SetFitBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SetFitBrush); };
 
             // ToggleFill
-            ToggleFill.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ToggleFillFill); };
-            ToggleFill.MouseEnter += delegate { ButtonMouseOverAnim(ToggleFillFill); };
-            ToggleFill.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ToggleFillBrush); };
-            ToggleFill.MouseLeave += delegate { ButtonMouseLeaveAnim(ToggleFillFill); };
-            ToggleFill.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ToggleFillBrush); };
+            ToggleFillBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ToggleFillFill); };
+            ToggleFillBorder.MouseEnter += delegate { ButtonMouseOverAnim(ToggleFillFill); };
+            ToggleFillBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ToggleFillBrush); };
+            ToggleFillBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(ToggleFillFill); };
+            ToggleFillBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ToggleFillBrush); };
 
             // CropButton
             CropButton.MouseEnter += delegate
