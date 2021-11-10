@@ -219,7 +219,10 @@ namespace PicView.PicGallery
                 UILogic.Sizing.WindowSizing.SetLastWindowSize();
             }
 
-            UILogic.Sizing.ScaleImage.FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
+            if (GetMainWindow.MainImage.Source is not null)
+            {
+                UILogic.Sizing.ScaleImage.FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
+            }
         }
 
         #endregion Close
