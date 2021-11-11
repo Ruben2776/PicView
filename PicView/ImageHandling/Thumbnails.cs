@@ -66,7 +66,6 @@ namespace PicView.ImageHandling
                 case ".gif":
                 case ".ico":
                 case ".jfif":
-                case ".webp":
                 case ".wbmp":
                     return GetWindowsThumbnail(fileInfo.FullName);
                 default:
