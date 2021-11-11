@@ -156,15 +156,12 @@
                                 TextTrimming="CharacterEllipsis"
                                 TextAlignment="Center"
                                 VerticalAlignment="Center"
-                                HorizontalAlignment="Center" />
-                            <CheckBox
-                                x:Name="SetFit"
-                                HorizontalContentAlignment="Center"
-                                Style="{StaticResource Checkstyle}">
-                                <CheckBox.Foreground>
+                                HorizontalAlignment="Center">
+                                <TextBlock.Foreground>
                                     <SolidColorBrush x:Name="SetFitFill" Color="{StaticResource MainColor}" />
-                                </CheckBox.Foreground>
-                            </CheckBox>
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                            <CheckBox x:Name="SetFit" Style="{StaticResource Checkstyle}" />
                         </StackPanel>
                     </Border>
                 </Border>
@@ -174,7 +171,7 @@
                     Canvas.Left="184"
                     Canvas.Top="114"
                     Width="167"
-                    Height="51"
+                    Height="51" 
                     Background="{StaticResource BackgroundColorBrushAlt}"
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1"
@@ -194,15 +191,15 @@
                                 TextTrimming="CharacterEllipsis"
                                 TextAlignment="Center"
                                 VerticalAlignment="Center"
-                                HorizontalAlignment="Center" />
+                                HorizontalAlignment="Center">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="ToggleFillFill" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <CheckBox
                                 x:Name="ToggleFill"
                                 HorizontalContentAlignment="Center" 
-                                Style="{StaticResource Checkstyle}">
-                                <CheckBox.Foreground>
-                                    <SolidColorBrush x:Name="ToggleFillFill" Color="{StaticResource MainColor}" />
-                                </CheckBox.Foreground>
-                            </CheckBox>
+                                Style="{StaticResource Checkstyle}" />
                         </StackPanel>
                     </Border>
                 </Border>
@@ -232,12 +229,12 @@
                                 TextTrimming="CharacterEllipsis"
                                 TextAlignment="Center"
                                 VerticalAlignment="Center"
-                                HorizontalAlignment="Center" />
-                            <CheckBox x:Name="ToggleScroll" Style="{StaticResource Checkstyle}">
-                                <CheckBox.Foreground>
+                                HorizontalAlignment="Center">
+                                <TextBlock.Foreground>
                                     <SolidColorBrush x:Name="ToggleScrollFill" Color="{StaticResource MainColor}" />
-                                </CheckBox.Foreground>
-                            </CheckBox>
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                            <CheckBox x:Name="ToggleScroll" Style="{StaticResource Checkstyle}" />
                         </StackPanel>
                     </Border>
                 </Border>
@@ -267,12 +264,12 @@
                                 TextTrimming="CharacterEllipsis"
                                 TextAlignment="Center"
                                 VerticalAlignment="Center"
-                                HorizontalAlignment="Center" />
-                            <CheckBox x:Name="ToggleLooping" Style="{StaticResource Checkstyle}">
-                                <CheckBox.Foreground>
+                                HorizontalAlignment="Center">
+                                <TextBlock.Foreground>
                                     <SolidColorBrush x:Name="ToggleLoopFill" Color="{StaticResource MainColor}" />
-                                </CheckBox.Foreground>
-                            </CheckBox>
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                            <CheckBox x:Name="ToggleLooping" Style="{StaticResource Checkstyle}" />
                         </StackPanel>
                     </Border>
                 </Border>

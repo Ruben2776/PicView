@@ -103,12 +103,14 @@ namespace PicView.ConfigureSettings
             {
                 Properties.Settings.Default.Looping = false;
                 loopcmHeader.IsChecked = false;
+                UC.GetQuickSettingsMenu.ToggleLooping.IsChecked = false;
                 ShowTooltipMessage(Application.Current.Resources["LoopingDisabled"]);
             }
             else
             {
                 Properties.Settings.Default.Looping = true;
                 loopcmHeader.IsChecked = true;
+                UC.GetQuickSettingsMenu.ToggleLooping.IsChecked = true;
                 ShowTooltipMessage(Application.Current.Resources["LoopingEnabled"]);
             }
         }
