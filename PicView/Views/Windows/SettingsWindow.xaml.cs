@@ -32,6 +32,7 @@ namespace PicView.Views.Windows
                 MaxHeight = WindowSizing.MonitorInfo.WorkArea.Height;
                 Width *= WindowSizing.MonitorInfo.DpiScaling;
             }
+
             InitializeComponent();
 
             ContentRendered += delegate
@@ -80,6 +81,8 @@ namespace PicView.Views.Windows
                         SetTitle.SetTitleString(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight,
                             Navigation.FolderIndex, preloadValue.fileInfo);
                     });
+
+                    Properties.Settings.Default.Save();
                 };
 
                 // BorderColorRadio
@@ -114,11 +117,13 @@ namespace PicView.Views.Windows
                 {
                     ChangeToDarkTheme();
                     LightThemeRadio.IsChecked = false;
+                    Properties.Settings.Default.Save();
                 };
                 LightThemeRadio.Click += delegate
                 {
                     ChangeToLightTheme();
                     DarkThemeRadio.IsChecked = false;
+                    Properties.Settings.Default.Save();
                 };
 
                 foreach (var language in Enum.GetValues(typeof(Languages)))

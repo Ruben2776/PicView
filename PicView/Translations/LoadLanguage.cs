@@ -51,7 +51,7 @@ namespace PicView.Translations
                 case "it":
                     source = new Uri(@"/PicView;component/Translations/it.xaml", UriKind.Relative);
                     break;
-                    
+
                 default:
                 case "en":
                     source = new Uri(@"/PicView;component/Translations/en.xaml", UriKind.Relative);
@@ -77,6 +77,8 @@ namespace PicView.Translations
         {
             var choice = (Languages)language;
             Properties.Settings.Default.UserLanguage = choice.ToString();
+
+            Properties.Settings.Default.Save();
         }
     }
 }

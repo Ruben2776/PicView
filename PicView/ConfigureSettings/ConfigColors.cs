@@ -56,6 +56,8 @@ namespace PicView.ConfigureSettings
 #endif
                 }
             }
+
+            Properties.Settings.Default.Save();
         }
 
         internal static void SetColors()
@@ -127,6 +129,8 @@ namespace PicView.ConfigureSettings
             }
 
             ConfigureWindows.GetMainWindow.MainImageBorder.Background = BackgroundColorBrush;
+
+            Properties.Settings.Default.Save();
         }
 
         internal static Brush BackgroundColorBrush => Properties.Settings.Default.BgColorChoice switch
