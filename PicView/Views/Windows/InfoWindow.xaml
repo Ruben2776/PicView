@@ -91,7 +91,7 @@
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
 
-            <StackPanel Margin="7,0,7,0">
+            <StackPanel>
 
                 <Label
                     Margin="0,12,0,4"
@@ -1477,9 +1477,8 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            d:Text="Delete"
                             FontSize="12"
-                            Text="{StaticResource ResourceKey=Delete}" />
+                            Text="{StaticResource ResourceKey=Del}" />
                     </Border>
 
                     <Border
@@ -1502,9 +1501,8 @@
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
                             <TextBlock
-                                d:Text="Delete"
                                 FontSize="12"
-                                Text="{StaticResource ResourceKey=Delete}" />
+                                Text="{StaticResource ResourceKey=Del}" />
                         </StackPanel>
                     </Border>
 
