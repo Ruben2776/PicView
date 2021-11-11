@@ -187,7 +187,7 @@ namespace PicView.UILogic.Loading
 
             // Initilize Things!
             InitializeZoom();
-            ChangeImage.History.InstantiateQ();
+            ChangeImage.History.InstantiateFileHistory();
 
             // Add things!
             Timers.AddTimers();

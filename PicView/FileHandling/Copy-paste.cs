@@ -97,7 +97,7 @@ namespace PicView.FileHandling
 
                 if (files != null)
                 {
-                    _ = LoadPic.LoadPicFromString(files[0]).ConfigureAwait(false);
+                    _ = LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
 
                     if (files.Length > 1)
                     {

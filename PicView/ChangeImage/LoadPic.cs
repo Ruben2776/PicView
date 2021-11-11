@@ -40,7 +40,7 @@ namespace PicView.ChangeImage
                         UILogic.Sizing.WindowSizing.SetWindowBehavior();
                     });
                 }
-                await LoadPicFromString(file, false).ConfigureAwait(false);
+                await LoadPicFromStringAsync(file, false).ConfigureAwait(false);
                 return;
             }
 
@@ -148,7 +148,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        internal static async Task LoadPicFromString(string path, bool checkExists = true, FileInfo? fileInfo = null)
+        internal static async Task LoadPicFromStringAsync(string path, bool checkExists = true, FileInfo? fileInfo = null)
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
             {
@@ -208,7 +208,7 @@ namespace PicView.ChangeImage
 
             if (fileInfo.Exists == false)
             {
-                await LoadPicFromString(fileInfo.FullName, false, fileInfo).ConfigureAwait(false);
+                await LoadPicFromStringAsync(fileInfo.FullName, false, fileInfo).ConfigureAwait(false);
                 return;
             }
 

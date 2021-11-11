@@ -16,7 +16,7 @@ namespace PicView.ChangeImage
         static List<string>? fileHistory;
         const short maxCount = 15;
 
-        internal static void InstantiateQ()
+        internal static void InstantiateFileHistory()
         {
             fileHistory = new List<string>();
 
@@ -46,8 +46,16 @@ namespace PicView.ChangeImage
             }
             else
             {
-                using FileStream fs = File.Create(path);
-                fs.Seek(0, SeekOrigin.Begin);
+                try
+                {
+                    using FileStream fs = File.Create(path);
+                    fs.Seek(0, SeekOrigin.Begin);
+                }
+                catch (System.Exception)
+                {
+                    return;
+                }
+
                 WriteToFile();
             }
         }
@@ -88,7 +96,7 @@ namespace PicView.ChangeImage
         {
             if (fileHistory is null)
             {
-                InstantiateQ();
+                InstantiateFileHistory();
             }
 
             if (fileHistory.Count <= 0)
@@ -101,7 +109,7 @@ namespace PicView.ChangeImage
                 UC.ToggleStartUpUC(true);
             });
 
-            await LoadPic.LoadPicFromString(fileHistory.Last()).ConfigureAwait(false);
+            await LoadPic.LoadPicFromStringAsync(fileHistory.Last()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -110,7 +118,7 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static void Add(string fileName)
         {
-            if (fileHistory == null) { InstantiateQ(); }
+            if (fileHistory == null) { InstantiateFileHistory(); }
 
             lock (fileHistory) // index out of range exception when multiple threads accessing it
             {
@@ -149,7 +157,7 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            await LoadPic.LoadPiFromFileAsync(fileHistory[index]).ConfigureAwait(false);
+            await LoadPic.LoadPicFromStringAsync(fileHistory[index]).ConfigureAwait(false);
         }
 
         internal static async Task PrevAsync()
@@ -170,7 +178,7 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            await LoadPic.LoadPiFromFileAsync(fileHistory[index]).ConfigureAwait(false);
+            await LoadPic.LoadPicFromStringAsync(fileHistory[index]).ConfigureAwait(false);
         }
 
         static MenuItem menuItem(string filePath, int i)
@@ -203,7 +211,7 @@ namespace PicView.ChangeImage
             menuItem.MouseEnter += (_, _) => menuItem.Foreground = new SolidColorBrush(Colors.White);
             menuItem.MouseLeave += (_, _) => menuItem.Foreground = (SolidColorBrush)Application.Current.Resources["IconColorBrush"];
 
-            menuItem.Click += async (_, _) => await LoadPic.LoadPicFromString(menuItem.ToolTip.ToString()).ConfigureAwait(false);
+            menuItem.Click += async (_, _) => await LoadPic.LoadPicFromStringAsync(menuItem.ToolTip.ToString()).ConfigureAwait(false);
             var ext = Path.GetExtension(filePath);
             var ext5 = !string.IsNullOrWhiteSpace(ext) && ext.Length >= 5 ? ext.Substring(0, 5) : ext;
             menuItem.InputGestureText = ext5;
@@ -212,7 +220,7 @@ namespace PicView.ChangeImage
 
         internal static void RefreshRecentItemsMenu()
         {
-            if (fileHistory == null) { InstantiateQ(); }
+            if (fileHistory == null) { InstantiateFileHistory(); }
 
             var cm = (MenuItem)ConfigureWindows.MainContextMenu.Items[6];
 

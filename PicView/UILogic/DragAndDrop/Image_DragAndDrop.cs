@@ -178,7 +178,7 @@ namespace PicView.UILogic.DragAndDrop
                 }
             }
 
-            await LoadPic.LoadPicFromString(files[0]).ConfigureAwait(false);
+            await LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
 
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, () =>
             {
