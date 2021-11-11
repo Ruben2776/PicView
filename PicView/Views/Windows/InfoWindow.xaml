@@ -1072,7 +1072,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="12"
-                            Text="T" />
+                            Text="B" />
                     </Border>
 
                     <Border
@@ -1646,6 +1646,7 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
                     <Border
@@ -1907,8 +1908,6 @@
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,1" />
 
-
-
                     <Border
                         Grid.Row="6"
                         Grid.Column="0"
@@ -1953,6 +1952,43 @@
                         Background="{StaticResource BackgroundSubtleHighlightBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,1" />
+
+                    <Border
+                        Grid.Row="7"
+                        Grid.Column="0"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1,1,1,1">
+                        <TextBlock
+                            Margin="10,3,0,3"
+                            FontSize="12"
+                            Text="{StaticResource ResourceKey=StayTopMost}" />
+                    </Border>
+
+                    <Border
+                        Grid.Row="7"
+                        Grid.Column="1"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,1,1,1">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            Text="T" />
+                    </Border>
+
+                    <Border
+                        Grid.Row="7"
+                        Grid.Column="2"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,1,1,1" />
+
+
                 </Grid>
 
                 <Label

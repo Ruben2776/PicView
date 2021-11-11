@@ -159,13 +159,13 @@
 
             <MenuItem 
                 Header="{StaticResource ChangeBg}"
-                InputGestureText="T"
+                InputGestureText="B"
                 ToolTip="{StaticResource ChangeBgTooltip}"
                 StaysOpenOnClick="True" />
 
-            <MenuItem>
+            <MenuItem InputGestureText="T">
                 <MenuItem.Header>
-                    <CheckBox MinWidth="130" Padding="0,0,5,0" Content="{StaticResource StayTopMost}"/>
+                    <CheckBox MinWidth="130" Padding="0,0,5,0" Content="{StaticResource StayTopMost}" />
                 </MenuItem.Header>
             </MenuItem>
 

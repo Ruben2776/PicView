@@ -268,6 +268,14 @@ namespace PicView.Shortcuts
                         }
                         break;
 
+                    // B
+                    case Key.B:
+                        if (!GalleryFunctions.IsHorizontalOpen)
+                        {
+                            ConfigureSettings.ConfigColors.ChangeBackground();
+                        }
+                        break;
+
                     // Ctrl + Q
                     case Key.Q:
                         if (ctrlDown)
@@ -389,10 +397,7 @@ namespace PicView.Shortcuts
 
                     // T
                     case Key.T:
-                        if (!GalleryFunctions.IsHorizontalOpen)
-                        {
-                            ConfigureSettings.ConfigColors.ChangeBackground();
-                        }
+                        ConfigureSettings.UpdateUIValues.SetTopMost();
                         break;
 
                     // N

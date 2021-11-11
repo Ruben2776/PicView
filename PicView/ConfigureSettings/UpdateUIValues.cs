@@ -115,6 +115,11 @@ namespace PicView.ConfigureSettings
 
         internal static void SetTopMost()
         {
+            if (Properties.Settings.Default.Fullscreen)
+            {
+                return;
+            }
+
             var settingscm = (MenuItem)MainContextMenu.Items[7];
             var TopmostMenu = (MenuItem)settingscm.Items[4];
             var TopmostHeader = (CheckBox)TopmostMenu.Header;
