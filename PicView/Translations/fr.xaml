@@ -105,7 +105,7 @@
     <system:String x:Key="ScrollToZoom">Faites défiler pour zoomer, Ctrl pour naviguer</system:String>
     <system:String x:Key="HorizontalScroll">Défilement horizontal</system:String>
     <system:String x:Key="Reverse">Inverser</system:String>
-    <system:String x:Key="Forward">Effronté</system:String>
+    <system:String x:Key="Forward">Suivant</system:String>
 
     <!--  Settings window, misc  -->
     <system:String x:Key="GeneralSettings">Paramètres généraux</system:String>
