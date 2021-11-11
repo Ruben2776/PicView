@@ -41,15 +41,7 @@ namespace PicView.ImageHandling
         {
             if (Error_Handling.CheckOutOfRange()) { return; }
 
-            var preloadValue = Preloader.Get(Navigation.Pics[Navigation.FolderIndex]);
-            if (preloadValue == null)
-            {
-                await Preloader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
-            }
-
             bool toCenter = false;
-
-            var success = await OptimizeImageAsync(Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
             {
@@ -62,6 +54,8 @@ namespace PicView.ImageHandling
 
             Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"] as string, toCenter);
 
+            var success = await OptimizeImageAsync(Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
+
             if (success)
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, () =>
@@ -72,6 +66,17 @@ namespace PicView.ImageHandling
                     SetTitle.SetTitleString((int)width, (int)height, ChangeImage.Navigation.FolderIndex, null);
                     Tooltip.CloseToolTipMessage();
                 });
+            }
+            else
+            {
+                Tooltip.ShowTooltipMessage($"0%", toCenter);
+                return;
+            }
+
+            var preloadValue = Preloader.Get(Navigation.Pics[Navigation.FolderIndex]);
+            if (preloadValue == null)
+            {
+                await Preloader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
             }
 
             var fileInfo = new System.IO.FileInfo(Navigation.Pics[Navigation.FolderIndex]);
