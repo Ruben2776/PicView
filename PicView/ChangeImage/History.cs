@@ -138,7 +138,7 @@ namespace PicView.ChangeImage
 
         internal static async Task NextAsync()
         {
-            if (Navigation.Pics.Count == 0)
+            if (Navigation.Pics.Count <= 0)
             {
                 await OpenLastFileAsync().ConfigureAwait(false);
                 return;
