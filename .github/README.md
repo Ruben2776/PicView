@@ -15,7 +15,7 @@ PicView is a fast Picture Viewer with compact UI, that can be hidden. Features i
     <a href="https://github.com/Ruben2776/PicView/blob/master/LICENSE.txt">
         <img alt="GPL v3 License" src="https://img.shields.io/badge/license-GPLv3-green.svg?maxAge=3600&style=flat-square">
     </a>
-    <img alt="Windows OS" src="https://img.shields.io/badge/OS-Windows%2064%20bit-00adef.svg?maxAge=3600&style=flat-square">
+    <img alt="Windows OS" src="https://img.shields.io/badge/OS-Windows%2010/11%2064%20bit-00adef.svg?maxAge=3600&style=flat-square">
     <a title="Crowdin" target="_blank" href="https://crowdin.com/project/picview"><img src="https://badges.crowdin.net/picview/localized.svg"></a>
 </p>
 
@@ -132,8 +132,8 @@ If you have 7-Zip or WinRAR installed, you can view images inside archives, such
 * Open file in external application, show it in folder or view file properties
 * Color picker
 
-<img src="https://i.imgur.com/MzMCVSG.png"/><br>
-Rename or move files in the titlebar by pressing `F2` or right clicking it
+<img src="https://picview.org/assets/screenshots/PicView-Dark-Titlebar.webp"/><br>
+Rename or move files in the titlebar by pressing `F2` or right clicking it.
 
 **File support** 
  > .jpg  .jpeg  .jpe  .png  .bmp  .tif  .tiff  .gif  .ico  .jfif  .webp .svg .svgz <br>
