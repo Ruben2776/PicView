@@ -231,7 +231,18 @@ namespace PicView.PicGallery
         {
             if (GalleryLoad.IsLoading == false)
             {
-                await GalleryLoad.Load().ConfigureAwait(false);
+                bool checkLoad = false;
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                {
+                    if (GetPicGallery.Container.Children.Count == ChangeImage.Navigation.Pics.Count)
+                    {
+                        checkLoad = true;
+                    }
+                });
+                if (checkLoad == false)
+                {
+                    await GalleryLoad.Load().ConfigureAwait(false);
+                }
             }
 
             try
