@@ -4,7 +4,7 @@
     xmlns:system="clr-namespace:System;assembly=mscorlib">
 
     <!--  Text in the title bar  -->
-    <system:String x:Key="Loading">正在加载…</system:String>
+    <system:String x:Key="Loading">正在加载...</system:String>
     <system:String x:Key="NoImage">请打开图片</system:String>
     <system:String x:Key="Files">文件</system:String>
     <system:String x:Key="File">文件</system:String>
@@ -78,12 +78,12 @@
 
     <!--  Settings window, theme  -->
     <system:String x:Key="Theme">主题</system:String>
-    <system:String x:Key="DarkTheme">暗色主题</system:String>
+    <system:String x:Key="DarkTheme">深色主题</system:String>
     <system:String x:Key="LightTheme">亮色主题</system:String>
     <system:String x:Key="ChangingThemeRequiresRestart">* 切换主题需要重新启动应用程序</system:String>
 
     <!--  Settings window, wallpaper  -->
-    <system:String x:Key="SetCurrentImageAsWallpaper">将当前图片设置为壁纸：</system:String>
+    <system:String x:Key="SetCurrentImageAsWallpaper">将当前图像设置为壁纸：</system:String>
 
     <system:String x:Key="Fill">填充</system:String>
     <system:String x:Key="Center">居中</system:String>
@@ -96,9 +96,9 @@
     <system:String x:Key="ChangingLanguageRequiresRestart">* 切换语言需要重新启动应用程序</system:String>
 
     <!--  Settings window, Gallery layout  -->
-    <system:String x:Key="FullscreenGalleryLayout">Fullscreen gallery layout</system:String>
-    <system:String x:Key="Vertical">Vertical</system:String>
-    <system:String x:Key="Horizontal">Horizontal</system:String>
+    <system:String x:Key="FullscreenGalleryLayout">全屏图库布局</system:String>
+    <system:String x:Key="Vertical">垂直</system:String>
+    <system:String x:Key="Horizontal">水平</system:String>
 
     <!--  Settings window, mouse  -->
     <system:String x:Key="CtrlToZoom">Ctrl + 鼠标滚轮缩放，鼠标滚轮导航</system:String>
@@ -108,7 +108,7 @@
     <system:String x:Key="Forward">向前</system:String>
 
     <!--  Settings window, misc  -->
-    <system:String x:Key="GeneralSettings">通用设置</system:String>
+    <system:String x:Key="GeneralSettings">常规设置</system:String>
     <system:String x:Key="UISettings">界面设置</system:String>
     <system:String x:Key="MiscSettings">其他设置</system:String>
     <system:String x:Key="SearchSubdirectory">包含子目录中的图片</system:String>
@@ -120,7 +120,7 @@
     <system:String x:Key="AdjustTimingForSlideshow">调整幻灯片切换时间</system:String>
     <system:String x:Key="AdjustTimingForZoom">调整缩放动画速度</system:String>
     <system:String x:Key="SecAbbreviation">秒</system:String>
-    <system:String x:Key="RestartApp">重启本应用程序</system:String>
+    <system:String x:Key="RestartApp">重新启动应用程序</system:String>
     <system:String x:Key="CheckForUpdates">检查更新</system:String>
 
     <!--  Effects Window  -->
@@ -162,7 +162,7 @@
     <!--  Navigation related  -->
     <system:String x:Key="Navigation">导航</system:String>
     <system:String x:Key="NextImage">下一张图片</system:String>
-    <system:String x:Key="PrevImage">前一张图片</system:String>
+    <system:String x:Key="PrevImage">上一张图片</system:String>
     <system:String x:Key="LastImage">最后一张图片</system:String>
     <system:String x:Key="FirstImage">第一张图片</system:String>
     <system:String x:Key="ToggleLooping">切换循环</system:String>
@@ -179,7 +179,7 @@
 
     <!--  File related  -->
     <system:String x:Key="Open">打开</system:String>
-    <system:String x:Key="OpenWith">用…打开</system:String>
+    <system:String x:Key="OpenWith">打开使用</system:String>
     <system:String x:Key="OpenFileDialog">打开文件对话框</system:String>
     <system:String x:Key="OpenLastFile">打开最后一个文件</system:String>
     <system:String x:Key="ShowInFolder">在文件夹中显示</system:String>
@@ -227,8 +227,8 @@
     <system:String x:Key="FileCutMessage">文件已剪切</system:String>
 
     <!--  Copy image  -->
-    <system:String x:Key="CopyImage">复制图片</system:String>
-    <system:String x:Key="CopiedImage">已将图片复制至剪贴板</system:String>
+    <system:String x:Key="CopyImage">复制图像</system:String>
+    <system:String x:Key="CopiedImage">已将图像复制至剪贴板</system:String>
     <system:String x:Key="CopyImageTooltip">将图片复制至剪贴板</system:String>
 
     <!--  Paste  -->
@@ -238,7 +238,7 @@
     <system:String x:Key="FileCut">剪切文件</system:String>
 
     <!--  Image info  -->
-    <system:String x:Key="ImageInfo">图片信息</system:String>
+    <system:String x:Key="ImageInfo">图像信息</system:String>
     <system:String x:Key="Image">图片</system:String>
     <system:String x:Key="Width">宽度</system:String>
     <system:String x:Key="Height">高度</system:String>
@@ -261,7 +261,7 @@
     <system:String x:Key="Centimeters">cm</system:String>
     <system:String x:Key="Inches">in</system:String>
     <system:String x:Key="BitDepth">位深</system:String>
-    <system:String x:Key="SizeTooltip">Enter desired size in pixels or percentage. Input 0 in either width or height to preserve aspect ratio</system:String>
+    <system:String x:Key="SizeTooltip">以像素或百分比输入所需的大小。在宽度或高度中输入 0 以保持纵横比。</system:String>
 
     <!--  Keyboard key names  -->
     <system:String x:Key="Del">Del</system:String>
@@ -287,7 +287,7 @@
     <!--  Error messages  -->
     <system:String x:Key="SavingFileFailed">文件保存失败</system:String>
     <system:String x:Key="UnexpectedError">发生未知错误</system:String>
-    <system:String x:Key="NoImages">无图片</system:String>
+    <system:String x:Key="NoImages">无图像</system:String>
     <system:String x:Key="AnErrorOccuredMovingFile">移动文件时发生错误</system:String>
 
     <!--  Drag and drop  -->
@@ -296,7 +296,7 @@
     <!--  Wallpaper  -->
     <system:String x:Key="SetAs">设置为…</system:String>
     <system:String x:Key="SetAsWallpaper">设置为背景</system:String>
-    <system:String x:Key="SetAsLockScreenImage">设置为锁屏图片</system:String>
+    <system:String x:Key="SetAsLockScreenImage">设置为锁屏图像</system:String>
 
     <!--  Edit  -->
     <system:String x:Key="Crop">裁剪</system:String>
@@ -315,10 +315,10 @@
     <system:String x:Key="AnErrorOccuredWhenDeleting">删除时发生错误</system:String>
 
     <!--  Scaling messages  -->
-    <system:String x:Key="AutoFitWindowMessage">Set to center image in window</system:String>
-    <system:String x:Key="AutoFitWindowFillHeight">Set to center image in window, fill height</system:String>
-    <system:String x:Key="NormalWindowBehavior">Set to center application to window</system:String>
-    <system:String x:Key="NormalWindowBehaviorFillHeight">Set to center application to window, fill height</system:String>
+    <system:String x:Key="AutoFitWindowMessage">设置为窗口中心图像</system:String>
+    <system:String x:Key="AutoFitWindowFillHeight">设置为窗口中心图像，填充高度</system:String>
+    <system:String x:Key="NormalWindowBehavior">设置为将应用程序居中到窗口</system:String>
+    <system:String x:Key="NormalWindowBehaviorFillHeight">设置为将应用程序居中到窗口，填充高度</system:String>
 
     <system:String x:Key="ScrollingEnabled">已启用滚动</system:String>
     <system:String x:Key="ScrollingDisabled">已禁用滚动</system:String>
@@ -356,7 +356,7 @@
 
     <system:String x:Key="CropPicture">裁剪图片</system:String>
 
-    <system:String x:Key="ShowImageInfo">显示图片信息</system:String>
+    <system:String x:Key="ShowImageInfo">显示图像信息</system:String>
 
     <system:String x:Key="ColorPickerTool">取色工具</system:String>
     <system:String x:Key="ColorPickerToolTooltip">从图片中选取颜色</system:String>
