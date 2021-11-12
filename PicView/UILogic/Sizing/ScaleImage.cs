@@ -226,9 +226,16 @@ namespace PicView.UILogic.Sizing
                         CenterWindowOnScreen();
                     }
 
-                    /// Update mainWindow.TitleBar width to dynamically fit new size
+                    // Update mainWindow.TitleBar width to dynamically fit new size
                     var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
-                    GetMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
+                    if (Properties.Settings.Default.ScrollEnabled)
+                    {
+                        GetMainWindow.TitleText.MaxWidth = x;
+                    }
+                    else
+                    {
+                        GetMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
+                    }
                 }
                 else
                 {
