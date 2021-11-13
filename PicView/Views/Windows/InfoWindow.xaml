@@ -6,6 +6,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
     Title="{StaticResource ResourceKey=InfoWindowTitle}"
+    Height="378"
+    d:Height="Auto"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
@@ -31,7 +33,7 @@
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Logo />
+            <uc:Icon Width="35"/>
 
             <Rectangle
                 Width="1"
@@ -88,10 +90,140 @@
             x:Name="Scroller"
             Background="{StaticResource NoisyBg}"
             CanContentScroll="False"
+            Focusable="False"
             HorizontalScrollBarVisibility="Disabled"
-            VerticalScrollBarVisibility="Auto">
+            VerticalScrollBarVisibility="Hidden">
 
             <StackPanel>
+
+
+
+                <StackPanel Margin="0,36,0,0">
+
+                    <Image
+                        Width="40"
+                        Height="40"
+                        Margin="0,0,0,5"
+                        Source="pack://application:,,,/Themes/Resources/img/icon__Q6k_icon.ico" />
+                    <uc:Logo Height="40" Margin="0,0,0,-7" />
+
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <TextBlock>
+                            <Hyperlink NavigateUri="https://github.com/Ruben2776/PicView" RequestNavigate="Hyperlink_RequestNavigate">
+                                <Hyperlink.Foreground>
+                                    <SolidColorBrush x:Name="GitHubBrush" Color="{StaticResource MainColor}" />
+                                </Hyperlink.Foreground>
+                                <TextBlock
+                                    x:Name="GitHub"
+                                    d:Text="Github repository"
+                                    FontSize="14"
+                                    Text="{StaticResource ResourceKey=GithubRepo}"
+                                    TextAlignment="Center"
+                                    ToolTip="https://github.com/Ruben2776/PicView" />
+                            </Hyperlink>
+                        </TextBlock>
+                        <Path
+                            Width="16"
+                            Height="16"
+                            Margin="5,0,0,0"
+                            Data="M256,32C132.3,32,32,134.9,32,261.7c0,101.5,64.2,187.5,153.2,217.9a17.56,17.56,0,0,0,3.8.4c8.3,0,11.5-6.1,11.5-11.4,0-5.5-.2-19.9-.3-39.1a102.4,102.4,0,0,1-22.6,2.7c-43.1,0-52.9-33.5-52.9-33.5-10.2-26.5-24.9-33.6-24.9-33.6-19.5-13.7-.1-14.1,1.4-14.1h.1c22.5,2,34.3,23.8,34.3,23.8,11.2,19.6,26.2,25.1,39.6,25.1a63,63,0,0,0,25.6-6c2-14.8,7.8-24.9,14.2-30.7-49.7-5.8-102-25.5-102-113.5,0-25.1,8.7-45.6,23-61.6-2.3-5.8-10-29.2,2.2-60.8a18.64,18.64,0,0,1,5-.5c8.1,0,26.4,3.1,56.6,24.1a208.21,208.21,0,0,1,112.2,0c30.2-21,48.5-24.1,56.6-24.1a18.64,18.64,0,0,1,5,.5c12.2,31.6,4.5,55,2.2,60.8,14.3,16.1,23,36.6,23,61.6,0,88.2-52.4,107.6-102.3,113.3,8,7.1,15.2,21.1,15.2,42.5,0,30.7-.3,55.5-.3,63,0,5.4,3.1,11.5,11.4,11.5a19.35,19.35,0,0,0,4-.4C415.9,449.2,480,363.1,480,261.7,480,134.9,379.7,32,256,32Z"
+                            Fill="{StaticResource MainColorBrush}"
+                            Stretch="Fill" />
+                    </StackPanel>
+
+                    <TextBlock Margin="0,7,0,4" HorizontalAlignment="Center">
+                        <Hyperlink NavigateUri="https://picView.org/" RequestNavigate="Hyperlink_RequestNavigate">
+                            <Hyperlink.Foreground>
+                                <SolidColorBrush x:Name="PicViewBrush" Color="{StaticResource MainColor}" />
+                            </Hyperlink.Foreground>
+                            <TextBlock
+                                x:Name="PicViewSite"
+                                FontSize="14"
+                                Text="PicView.org"
+                                TextAlignment="Center"
+                                ToolTip="https://picView.org/" />
+                        </Hyperlink>
+                    </TextBlock>
+
+                    <TextBlock
+                        Margin="0,7,0,2"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        FontSize="14"
+                        Text="2017 - 2021 © Ruben Hyldgaard Negendahl" />
+
+                    <TextBlock
+                        Margin="0,8,0,2"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom">
+                        <Hyperlink NavigateUri="https://github.com/Ruben2776/PicView/blob/master/LICENSE.txt" RequestNavigate="Hyperlink_RequestNavigate">
+                            <Hyperlink.Foreground>
+                                <SolidColorBrush x:Name="LicenseBrush" Color="{StaticResource MainColor}" />
+                            </Hyperlink.Foreground>
+                            <TextBlock
+                                x:Name="License"
+                                FontSize="12"
+                                Text="GNU GPLv3"
+                                ToolTip="{StaticResource ResourceKey=ViewLicenseFile}" />
+                        </Hyperlink>
+                    </TextBlock>
+
+                    <TextBlock
+                        x:Name="appVersion"
+                        Margin="0,17,0,15"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        FontSize="14"
+                        FontWeight="Bold"
+                        Text="{StaticResource ResourceKey=Version}" />
+
+                    <Border
+                        Margin="0,0,0,21"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Background="{StaticResource BackgroundColorBrushAlt}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="2"
+                        Effect="{StaticResource MenuShadowButtonBorder}"
+                        Focusable="False">
+                        <Label
+                            x:Name="UpdateButton"
+                            Padding="10"
+                            Content="{StaticResource CheckForUpdates}">
+                            <Label.Background>
+                                <SolidColorBrush x:Name="UpdateBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            </Label.Background>
+                            <Label.Foreground>
+                                <SolidColorBrush x:Name="UpdateText" Color="{StaticResource MainColor}" />
+                            </Label.Foreground>
+                        </Label>
+                    </Border>
+
+                </StackPanel>
+
+                <Border BorderThickness="0,1,0,1" BorderBrush="{StaticResource BorderBrush}">
+                    <Button Height="25" x:Name="ExpandButton">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="ExpandButtonBg" Color="{StaticResource BackgroundColorFadeSubtle}" />
+                        </Button.Background>
+                        <Image Width="20" Height="20">
+                            <Image.Source>
+                                <DrawingImage>
+                                    <DrawingImage.Drawing>
+                                        <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                            <GeometryDrawing x:Name="xGeo" Geometry="F1 M512,512z M0,0z M98,190.06L237.78,353.18A24,24,0,0,0,274.22,353.18L414,190.06C427.34,174.49,416.28,150.44,395.78,150.44L116.18,150.44C95.6799999999999,150.44,84.6199999999999,174.49,97.9999999999999,190.06z" >
+                                                <GeometryDrawing.Brush>
+                                                    <SolidColorBrush x:Name="chevronDownBrush" Color="{StaticResource IconColor}" />
+                                                </GeometryDrawing.Brush>
+                                            </GeometryDrawing>
+                                        </DrawingGroup>
+                                    </DrawingImage.Drawing>
+                                </DrawingImage>
+                            </Image.Source>
+                        </Image>
+                    </Button>
+                </Border>
 
                 <Label
                     Margin="0,12,0,4"
@@ -2161,7 +2293,7 @@
                         BorderThickness="0,1,1,0" />
                 </Grid>
 
-                <StackPanel Margin="0,28,0,7">
+                <StackPanel Margin="0,10,0,15">
 
                     <Label 
                         FontSize="16"
@@ -2248,109 +2380,6 @@
                     </TextBlock>
                 </StackPanel>
 
-                <StackPanel Margin="0,36,0,0">
-
-                    <Image
-                        Width="40"
-                        Height="40"
-                        Margin="0,0,0,5"
-                        Source="pack://application:,,,/Themes/Resources/img/icon__Q6k_icon.ico" />
-                    <uc:Logo Height="40" Margin="0,0,0,-7" />
-
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                        <TextBlock>
-                            <Hyperlink NavigateUri="https://github.com/Ruben2776/PicView" RequestNavigate="Hyperlink_RequestNavigate">
-                                <Hyperlink.Foreground>
-                                    <SolidColorBrush x:Name="GitHubBrush" Color="{StaticResource MainColor}" />
-                                </Hyperlink.Foreground>
-                                <TextBlock
-                                    x:Name="GitHub"
-                                    d:Text="Github repository"
-                                    FontSize="14"
-                                    Text="{StaticResource ResourceKey=GithubRepo}"
-                                    TextAlignment="Center"
-                                    ToolTip="https://github.com/Ruben2776/PicView" />
-                            </Hyperlink>
-                        </TextBlock>
-                        <Path
-                            Width="16"
-                            Height="16"
-                            Margin="5,0,0,0"
-                            Data="M256,32C132.3,32,32,134.9,32,261.7c0,101.5,64.2,187.5,153.2,217.9a17.56,17.56,0,0,0,3.8.4c8.3,0,11.5-6.1,11.5-11.4,0-5.5-.2-19.9-.3-39.1a102.4,102.4,0,0,1-22.6,2.7c-43.1,0-52.9-33.5-52.9-33.5-10.2-26.5-24.9-33.6-24.9-33.6-19.5-13.7-.1-14.1,1.4-14.1h.1c22.5,2,34.3,23.8,34.3,23.8,11.2,19.6,26.2,25.1,39.6,25.1a63,63,0,0,0,25.6-6c2-14.8,7.8-24.9,14.2-30.7-49.7-5.8-102-25.5-102-113.5,0-25.1,8.7-45.6,23-61.6-2.3-5.8-10-29.2,2.2-60.8a18.64,18.64,0,0,1,5-.5c8.1,0,26.4,3.1,56.6,24.1a208.21,208.21,0,0,1,112.2,0c30.2-21,48.5-24.1,56.6-24.1a18.64,18.64,0,0,1,5,.5c12.2,31.6,4.5,55,2.2,60.8,14.3,16.1,23,36.6,23,61.6,0,88.2-52.4,107.6-102.3,113.3,8,7.1,15.2,21.1,15.2,42.5,0,30.7-.3,55.5-.3,63,0,5.4,3.1,11.5,11.4,11.5a19.35,19.35,0,0,0,4-.4C415.9,449.2,480,363.1,480,261.7,480,134.9,379.7,32,256,32Z"
-                            Fill="{StaticResource MainColorBrush}"
-                            Stretch="Fill" />
-                    </StackPanel>
-
-                    <TextBlock Margin="0,7,0,4" HorizontalAlignment="Center">
-                        <Hyperlink NavigateUri="https://picView.org/" RequestNavigate="Hyperlink_RequestNavigate">
-                            <Hyperlink.Foreground>
-                                <SolidColorBrush x:Name="PicViewBrush" Color="{StaticResource MainColor}" />
-                            </Hyperlink.Foreground>
-                            <TextBlock
-                                x:Name="PicViewSite"
-                                FontSize="14"
-                                Text="PicView.org"
-                                TextAlignment="Center"
-                                ToolTip="https://picView.org/" />
-                        </Hyperlink>
-                    </TextBlock>
-
-                    <TextBlock
-                        Margin="0,7,0,2"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Bottom"
-                        FontSize="14"
-                        Text="2017 - 2021 © Ruben Hyldgaard Negendahl" />
-
-                    <TextBlock
-                        Margin="0,8,0,2"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Bottom">
-                        <Hyperlink NavigateUri="https://github.com/Ruben2776/PicView/blob/master/LICENSE.txt" RequestNavigate="Hyperlink_RequestNavigate">
-                            <Hyperlink.Foreground>
-                                <SolidColorBrush x:Name="LicenseBrush" Color="{StaticResource MainColor}" />
-                            </Hyperlink.Foreground>
-                            <TextBlock
-                                x:Name="License"
-                                FontSize="12"
-                                Text="GNU GPLv3"
-                                ToolTip="{StaticResource ResourceKey=ViewLicenseFile}" />
-                        </Hyperlink>
-                    </TextBlock>
-
-                    <TextBlock
-                        x:Name="appVersion"
-                        Margin="0,17,0,15"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Bottom"
-                        FontSize="14"
-                        FontWeight="Bold"
-                        Text="{StaticResource ResourceKey=Version}" />
-
-                    <Border
-                        Margin="0,0,0,21"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Background="{StaticResource BackgroundColorBrushAlt}"
-                        BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="2"
-                        Effect="{StaticResource MenuShadowButtonBorder}"
-                        Focusable="False">
-                        <Label
-                            x:Name="UpdateButton"
-                            Padding="10"
-                            Content="{StaticResource CheckForUpdates}">
-                            <Label.Background>
-                                <SolidColorBrush x:Name="UpdateBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </Label.Background>
-                            <Label.Foreground>
-                                <SolidColorBrush x:Name="UpdateText" Color="{StaticResource MainColor}" />
-                            </Label.Foreground>
-                        </Label>
-                    </Border>
-
-                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </DockPanel>

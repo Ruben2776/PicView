@@ -30,14 +30,14 @@
                 </Image.Source>
             </Image>
             <TextBlock
-                Width="80"
                 Margin="5,0,5,0"
-                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                FontSize="14"
-                FontWeight="Normal"
-                Text="{StaticResource InfoWindow}"
-                TextAlignment="Center"
-                TextWrapping="Wrap">
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                FontSize="13"
+                MaxWidth="57"
+                Text="{StaticResource About}"
+                ToolTip="{StaticResource About}"
+                TextWrapping="Wrap"
+                TextTrimming="CharacterEllipsis">
                 <TextBlock.Foreground>
                     <SolidColorBrush x:Name="txtBrush" Color="{StaticResource MainColor}" />
                 </TextBlock.Foreground>

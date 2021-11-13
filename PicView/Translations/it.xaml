@@ -21,7 +21,8 @@
     <system:String x:Key="Fullscreen">A schermo intero</system:String>
     <system:String x:Key="NewWindow">Nuova finestra</system:String>
 
-    <!--  Info window  -->
+    <!--  About window  -->
+    <system:String x:Key="About">About</system:String>
     <system:String x:Key="InfoWindowTitle">Informazioni e scorciatoie</system:String>
     <system:String x:Key="ApplicationShortcuts">Scorciatoie per le applicazioni</system:String>
     <system:String x:Key="SavedOnNextStartUp">(Salvato al prossimo avvio)</system:String>
@@ -351,8 +352,8 @@
 
     <system:String x:Key="OptimizeImage">Ottimizza immagine</system:String>
 
-    <system:String x:Key="ShaderEffects">Effetti Shader</system:String>
-    <system:String x:Key="ShaderEffectsTooltip">Mostra finestra effetti immagine</system:String>
+    <system:String x:Key="Effects">Effetti Shader</system:String>
+    <system:String x:Key="EffectsTooltip">Mostra finestra effetti immagine</system:String>
 
     <system:String x:Key="CropPicture">Ritaglia immagine</system:String>
 
@@ -362,8 +363,10 @@
     <system:String x:Key="ColorPickerToolTooltip">Scegli il colore dall'immagine</system:String>
 
     <!--  Resize Window  -->
-    <system:String x:Key="ResizeWindow">Resize window</system:String>
+    <system:String x:Key="ShowResizeWindow">Show batch Resize window</system:String>
 
-    <system:String x:Key="SingleImage">Single Image</system:String>
+    <system:String x:Key="Resize">Resize</system:String>
+    <system:String x:Key="ResizeImage">Resize Image</system:String>
+
     <system:String x:Key="BatchResize">Batch Resize</system:String>
 </ResourceDictionary>

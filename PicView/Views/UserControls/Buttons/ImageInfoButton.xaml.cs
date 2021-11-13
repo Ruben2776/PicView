@@ -1,39 +1,33 @@
 ﻿using PicView.Animations;
 using System.Windows.Controls;
-using System.Windows.Media;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
 {
-    public partial class ResizeButton : UserControl
+    public partial class ImageInfoButton : UserControl
     {
-        public ResizeButton()
+        public ImageInfoButton()
         {
             InitializeComponent();
 
             Loaded += delegate
             {
-                var IconBrush = (SolidColorBrush)Resources["IconBrush"];
                 TheButton.PreviewMouseLeftButtonDown += delegate
                 {
-                    ButtonMouseOverAnim(IconBrush, false, true);
-                    ButtonMouseOverAnim(ButtonBrush, false, true);
-                    AnimationHelper.MouseEnterBgTexColor(ButtonBrush);
+                    PreviewMouseButtonDownAnim(IconBrush);
                 };
 
                 TheButton.MouseEnter += delegate
                 {
                     ButtonMouseOverAnim(IconBrush);
-                    AnimationHelper.MouseEnterBgTexColor(ButtonBrush);
+                    AnimationHelper.MouseEnterBgTexColor(TheButtonBrush);
                 };
 
                 TheButton.MouseLeave += delegate
                 {
                     ButtonMouseLeaveAnim(IconBrush);
-                    AnimationHelper.MouseLeaveBgTexColor(ButtonBrush);
+                    AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
                 };
-
-                TheButton.Click += (_, _) => UILogic.ConfigureWindows.ResizeWindow();
             };
         }
     }

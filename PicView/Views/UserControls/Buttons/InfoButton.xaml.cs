@@ -31,6 +31,8 @@ namespace PicView.Views.UserControls
                     ButtonMouseLeaveAnim(txtBrush);
                     AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
                 };
+
+                TheButton.Click += (_, _) => UILogic.ConfigureWindows.InfoWindow();
             };
         }
     }

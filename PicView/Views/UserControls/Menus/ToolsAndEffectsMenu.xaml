@@ -6,6 +6,10 @@
     Canvas.ZIndex="3"
     Foreground="{StaticResource MainColorBrush}">
 
+    <UserControl.Resources>
+        <SolidColorBrush x:Name="IconBrush" x:Key="IconBrush" Color="{StaticResource IconColor}" />
+    </UserControl.Resources>
+
     <StackPanel>
         <Border
             Width="358"
@@ -36,13 +40,81 @@
                         Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
 
-                    <Rectangle
-                        Canvas.Left="143"
-                        Width="1"
-                        Height="50"
-                        Panel.ZIndex="1"
-                        Stroke="{StaticResource BorderBrush}"
-                        StrokeThickness="1" />
+                    <Button 
+                        x:Name="ResizeButton"
+                        Width="169"  
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="ResizeButtonBrush" Color="Transparent" />
+                        </Button.Background>
+                        <StackPanel Width="173" Orientation="Horizontal">
+                            <TextBlock
+                                Width="126"
+                                MaxWidth="126"
+                                Margin="0,2,0,2"
+                                FontSize="13"
+                                Text="{StaticResource BatchResize}"
+                                TextAlignment="Center"
+                                TextWrapping="Wrap" 
+                                TextTrimming="CharacterEllipsis"
+                                VerticalAlignment="Center">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="ResizeText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                            <Canvas Width="51" Height="51">
+                                <Image 
+                                    Height="22" 
+                                    Canvas.Left="0"
+                                    Canvas.Top="15">
+                                    <Image.Source>
+                                        <DrawingImage>
+                                            <DrawingImage.Drawing>
+                                                <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                                    <GeometryDrawing Brush="{StaticResource IconBrush}" Geometry="F1 M512,512z M0,0z M464,448L48,448C21.49,448,0,426.51,0,400L0,112C0,85.49,21.49,64,48,64L464,64C490.51,64,512,85.49,512,112L512,400C512,426.51,490.51,448,464,448z M112,120C81.072,120 56,145.072 56,176 56,206.928 81.072,232 112,232 142.928,232 168,206.928 168,176 168,145.072 142.928,120 112,120z M64,384L448,384 448,272 360.485,184.485C355.799,179.799,348.201,179.799,343.514,184.485L208,320 152.485,264.485C147.799,259.799,140.201,259.799,135.514,264.485L64,336 64,384z" />
+                                                </DrawingGroup>
+                                            </DrawingImage.Drawing>
+                                        </DrawingImage>
+                                    </Image.Source>
+                                </Image>
+
+                                <Image 
+                                    Panel.ZIndex="-1"
+                                    Opacity=".9"
+                                    Height="15"
+                                    Canvas.Left="15"
+                                    Canvas.Top="18">
+                                    <Image.Source>
+                                        <DrawingImage>
+                                            <DrawingImage.Drawing>
+                                                <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                                    <GeometryDrawing Brush="{StaticResource IconBrush}" Geometry="F1 M512,512z M0,0z M464,448L48,448C21.49,448,0,426.51,0,400L0,112C0,85.49,21.49,64,48,64L464,64C490.51,64,512,85.49,512,112L512,400C512,426.51,490.51,448,464,448z M112,120C81.072,120 56,145.072 56,176 56,206.928 81.072,232 112,232 142.928,232 168,206.928 168,176 168,145.072 142.928,120 112,120z M64,384L448,384 448,272 360.485,184.485C355.799,179.799,348.201,179.799,343.514,184.485L208,320 152.485,264.485C147.799,259.799,140.201,259.799,135.514,264.485L64,336 64,384z" />
+                                                </DrawingGroup>
+                                            </DrawingImage.Drawing>
+                                        </DrawingImage>
+                                    </Image.Source>
+                                </Image>
+
+                                <Image 
+                                    Panel.ZIndex="-2"
+                                    Opacity=".7"
+                                    Height="8"
+                                    Canvas.Left="27"
+                                    Canvas.Top="22">
+                                    <Image.Source>
+                                        <DrawingImage>
+                                            <DrawingImage.Drawing>
+                                                <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                                    <GeometryDrawing Brush="{StaticResource IconBrush}" Geometry="F1 M512,512z M0,0z M464,448L48,448C21.49,448,0,426.51,0,400L0,112C0,85.49,21.49,64,48,64L464,64C490.51,64,512,85.49,512,112L512,400C512,426.51,490.51,448,464,448z M112,120C81.072,120 56,145.072 56,176 56,206.928 81.072,232 112,232 142.928,232 168,206.928 168,176 168,145.072 142.928,120 112,120z M64,384L448,384 448,272 360.485,184.485C355.799,179.799,348.201,179.799,343.514,184.485L208,320 152.485,264.485C147.799,259.799,140.201,259.799,135.514,264.485L64,336 64,384z" />
+                                                </DrawingGroup>
+                                            </DrawingImage.Drawing>
+                                        </DrawingImage>
+                                    </Image.Source>
+                                </Image>
+
+                            </Canvas>
+                        </StackPanel>
+                    </Button>
 
                     <Rectangle
                         Canvas.Left="304"
@@ -54,20 +126,23 @@
 
                     <Button
                         x:Name="EffectsButton"
-                        Canvas.Left="144"
-                        Width="160"
+                        Canvas.Left="169"
+                        Width="135"
                         Height="51"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold"
-                        ToolTip="{StaticResource ShaderEffectsTooltip}">
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                        ToolTip="{StaticResource EffectsTooltip}">
                         <Button.Background>
                             <SolidColorBrush x:Name="EffectsButtonBrush" Color="Transparent" />
                         </Button.Background>
                         <StackPanel MaxWidth="135" Orientation="Horizontal">
                             <TextBlock
-                                MaxWidth="105"
-                                Margin="6,2,8,2"
-                                FontSize="14"
-                                Text="{StaticResource ShaderEffects}"
+                                Width="110"
+                                MaxWidth="110"
+                                Margin="0,2,0,2"
+                                FontSize="13"
+                                Text="{StaticResource Effects}"
+                                TextAlignment="Center"
+                                TextTrimming="CharacterEllipsis"
                                 TextWrapping="Wrap">
                                 <TextBlock.Foreground>
                                     <SolidColorBrush x:Name="EffectsText" Color="{StaticResource MainColor}" />
@@ -76,7 +151,8 @@
                             <Image
                                 Width="17"
                                 Height="17"
-                                Stretch="Fill">
+                                Stretch="Fill" 
+                                Margin="0,0,7,0">
                                 <Image.Source>
                                     <DrawingImage>
                                         <DrawingImage.Drawing>
@@ -95,7 +171,15 @@
                     </Button>
 
 
-                    <uc:InfoButton x:Name="InfoButton" Width="143" />
+
+
+                    <Rectangle
+                        Canvas.Left="169"
+                        Width="1"
+                        Height="50"
+                        Panel.ZIndex="1"
+                        Stroke="{StaticResource BorderBrush}"
+                        StrokeThickness="1" />
 
                     <Border
                         x:Name="ImageInfoButtonBorder"
@@ -115,9 +199,10 @@
                             </Button.Background>
                             <StackPanel Width="150" Orientation="Horizontal">
                                 <TextBlock
-                                    Width="120"
-                                    Margin="5,2,2,2"
-                                    FontSize="14"
+                                    Width="126"
+                                    MaxWidth="126"
+                                    Margin="0,2,2,2"
+                                    FontSize="13"
                                     Text="{StaticResource ImageInfo}"
                                     TextAlignment="Center"
                                     TextWrapping="Wrap">
@@ -152,12 +237,12 @@
                             <Button.Background>
                                 <SolidColorBrush x:Name="ColorPickerBrush" Color="Transparent" />
                             </Button.Background>
-                            <StackPanel Width="150" Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal">
                                 <TextBlock
-                                    Width="120"
-                                    Margin="5,2,2,2"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
+                                    Width="136"
+                                    MaxWidth="136"
+                                    Margin="0,2,2,2"
+                                    FontSize="13"
                                     Text="{StaticResource ColorPickerTool}"
                                     TextAlignment="Center"
                                     TextWrapping="Wrap">
@@ -195,9 +280,10 @@
                             </Button.Background>
                             <StackPanel Width="150" Orientation="Horizontal">
                                 <TextBlock
-                                    Width="120"
-                                    Margin="5,2,2,2"
-                                    FontSize="14"
+                                    Width="126"
+                                    MaxWidth="126"
+                                    Margin="0,2,2,2"
+                                    FontSize="13"
                                     Text="{StaticResource OptimizeImage}"
                                     TextAlignment="Center"
                                     TextWrapping="Wrap">
@@ -248,49 +334,123 @@
                     </Border>
 
                     <Border
-                        x:Name="ResizeButtonBorder"
+                        x:Name="BgBorder"
                         Canvas.Left="172"
                         Canvas.Top="113"
                         Width="176"
                         Height="51"
                         Style="{StaticResource ButtonBorder}">
-                        <Button
-                            x:Name="ResizeButton"
-                            Canvas.Left="196"
-                            Canvas.Top="59"
-                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold">
-                            <Button.Background>
-                                <SolidColorBrush x:Name="ResizeButtonBrush" Color="Transparent" />
-                            </Button.Background>
-                            <StackPanel Width="150" Orientation="Horizontal">
-                                <TextBlock
-                                    Width="120"
-                                    Margin="5,2,0,2"
-                                    FontSize="14"
-                                    Text="{StaticResource BatchResize}"
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel.Background>
+                                <SolidColorBrush x:Name="BgBrush" />
+                            </StackPanel.Background>
+                            <TextBlock
+                                    Width="136"
+                                    MaxWidth="136"
+                                    VerticalAlignment="Center"
+                                    Margin="4,2,2,2"
+                                    FontSize="13"
+                                    Text="{StaticResource ChangeBackground}"
                                     TextAlignment="Center"
                                     TextWrapping="Wrap">
-                                    <TextBlock.Foreground>
-                                        <SolidColorBrush x:Name="ResizeText" Color="{StaticResource MainColor}" />
-                                    </TextBlock.Foreground>
-                                </TextBlock>
-                                <Image Height="23">
-                                    <Image.Source>
-                                        <DrawingImage>
-                                            <DrawingImage.Drawing>
-                                                <DrawingGroup ClipGeometry="M0,0 V512 H384 V0 H0 Z">
-                                                    <GeometryDrawing Geometry="F1 M384,512z M0,0z M320,0L128,0 0,128 0,448C0,483.3,28.7,512,64,512L320,512C355.3,512,384,483.3,384,448L384,64C384,28.7,355.3,0,320,0z M160,160L112,160 112,64 160,64 160,160z M240,160L192,160 192,64 240,64 240,160z M320,160L272,160 272,64 320,64 320,160z">
-                                                        <GeometryDrawing.Brush>
-                                                            <SolidColorBrush x:Name="ResizeBrush" Color="{StaticResource IconColor}" />
-                                                        </GeometryDrawing.Brush>
-                                                    </GeometryDrawing>
-                                                </DrawingGroup>
-                                            </DrawingImage.Drawing>
-                                        </DrawingImage>
-                                    </Image.Source>
-                                </Image>
-                            </StackPanel>
-                        </Button>
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="BgText" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                            <Image Width="20" Height="20">
+                                <Image.Source>
+                                    <DrawingImage>
+                                        <DrawingImage.Drawing>
+                                            <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                                <GeometryDrawing>
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            EndLineCap="Flat"
+                                                            LineJoin="Round"
+                                                            StartLineCap="Flat"
+                                                            Thickness="32">
+                                                            <Pen.Brush>
+                                                                <SolidColorBrush x:Name="IconBrush1" Color="{StaticResource IconColor}" />
+                                                            </Pen.Brush>
+                                                        </Pen>
+                                                    </GeometryDrawing.Pen>
+                                                    <GeometryDrawing.Geometry>
+                                                        <RectangleGeometry
+                                                            RadiusX="32"
+                                                            RadiusY="32"
+                                                            Rect="48,80,416,272" />
+                                                    </GeometryDrawing.Geometry>
+                                                </GeometryDrawing>
+                                                <GeometryDrawing>
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            EndLineCap="Round"
+                                                            LineJoin="Round"
+                                                            StartLineCap="Round"
+                                                            Thickness="32">
+                                                            <Pen.Brush>
+                                                                <SolidColorBrush x:Name="IconBrush2" Color="{StaticResource IconColor}" />
+                                                            </Pen.Brush>
+                                                        </Pen>
+                                                    </GeometryDrawing.Pen>
+                                                    <GeometryDrawing.Geometry>
+                                                        <LineGeometry StartPoint="256,416" EndPoint="256,352" />
+                                                    </GeometryDrawing.Geometry>
+                                                </GeometryDrawing>
+                                                <GeometryDrawing>
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            EndLineCap="Round"
+                                                            LineJoin="Round"
+                                                            StartLineCap="Round"
+                                                            Thickness="32">
+                                                            <Pen.Brush>
+                                                                <SolidColorBrush x:Name="IconBrush3" Color="{StaticResource IconColor}" />
+                                                            </Pen.Brush>
+                                                        </Pen>
+                                                    </GeometryDrawing.Pen>
+                                                    <GeometryDrawing.Geometry>
+                                                        <LineGeometry StartPoint="256,80" EndPoint="256,48" />
+                                                    </GeometryDrawing.Geometry>
+                                                </GeometryDrawing>
+                                                <GeometryDrawing>
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            EndLineCap="Round"
+                                                            LineJoin="Round"
+                                                            StartLineCap="Round"
+                                                            Thickness="32">
+                                                            <Pen.Brush>
+                                                                <SolidColorBrush x:Name="IconBrush4" Color="{StaticResource IconColor}" />
+                                                            </Pen.Brush>
+                                                        </Pen>
+                                                    </GeometryDrawing.Pen>
+                                                    <GeometryDrawing.Geometry>
+                                                        <LineGeometry StartPoint="400,464" EndPoint="368,352" />
+                                                    </GeometryDrawing.Geometry>
+                                                </GeometryDrawing>
+                                                <GeometryDrawing>
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            EndLineCap="Round"
+                                                            LineJoin="Round"
+                                                            StartLineCap="Round"
+                                                            Thickness="32">
+                                                            <Pen.Brush>
+                                                                <SolidColorBrush x:Name="IconBrush5" Color="{StaticResource IconColor}" />
+                                                            </Pen.Brush>
+                                                        </Pen>
+                                                    </GeometryDrawing.Pen>
+                                                    <GeometryDrawing.Geometry>
+                                                        <LineGeometry StartPoint="112,464" EndPoint="144,352" />
+                                                    </GeometryDrawing.Geometry>
+                                                </GeometryDrawing>
+                                            </DrawingGroup>
+                                        </DrawingImage.Drawing>
+                                    </DrawingImage>
+                                </Image.Source>
+                            </Image>
+                        </StackPanel>
                     </Border>
 
                     <uc:MenuCloseButton x:Name="CloseButton" Canvas.Left="305" />

@@ -201,6 +201,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Update="Views\UserControls\Buttons\ImageInfoButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\UserControls\Buttons\LinkButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -308,6 +311,10 @@
     <Page Update="Translations\pl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
+    <Page Update="Views\UserControls\Buttons\ImageInfoButton.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\UserControls\Buttons\LinkButton.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
@@ -369,6 +376,9 @@
     </Page>
     <Page Update="Views\UserControls\Buttons\CloseButton.xaml">
       <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserControls\Misc\QuickResize.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Views\UserControls\Gallery\PicGalleryTopButtonsV2.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>

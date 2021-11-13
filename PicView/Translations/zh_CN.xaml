@@ -21,7 +21,8 @@
     <system:String x:Key="Fullscreen">全屏</system:String>
     <system:String x:Key="NewWindow">新窗口</system:String>
 
-    <!--  Info window  -->
+    <!--  About window  -->
+    <system:String x:Key="About">About</system:String>
     <system:String x:Key="InfoWindowTitle">信息与快捷键</system:String>
     <system:String x:Key="ApplicationShortcuts">应用程序快捷键</system:String>
     <system:String x:Key="SavedOnNextStartUp">（保存至下次启动）</system:String>
@@ -351,8 +352,8 @@
 
     <system:String x:Key="OptimizeImage">优化图像</system:String>
 
-    <system:String x:Key="ShaderEffects">特效</system:String>
-    <system:String x:Key="ShaderEffectsTooltip">显示图像特效窗口</system:String>
+    <system:String x:Key="Effects">特效</system:String>
+    <system:String x:Key="EffectsTooltip">显示图像特效窗口</system:String>
 
     <system:String x:Key="CropPicture">裁剪图片</system:String>
 
@@ -362,8 +363,10 @@
     <system:String x:Key="ColorPickerToolTooltip">从图片中选取颜色</system:String>
 
     <!--  Resize Window  -->
-    <system:String x:Key="ResizeWindow">Resize window</system:String>
+    <system:String x:Key="ShowResizeWindow">Show batch Resize window</system:String>
 
-    <system:String x:Key="SingleImage">Single Image</system:String>
+    <system:String x:Key="Resize">Resize</system:String>
+    <system:String x:Key="ResizeImage">Resize Image</system:String>
+
     <system:String x:Key="BatchResize">Batch Resize</system:String>
 </ResourceDictionary>

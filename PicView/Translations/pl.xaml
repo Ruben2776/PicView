@@ -21,7 +21,8 @@
     <system:String x:Key="Fullscreen">Pełny ekran</system:String>
     <system:String x:Key="NewWindow">Nowe okno</system:String>
 
-    <!--  Info window  -->
+    <!--  About window  -->
+    <system:String x:Key="About">About</system:String>
     <system:String x:Key="InfoWindowTitle">Informacje i skróty</system:String>
     <system:String x:Key="ApplicationShortcuts">Skróty aplikacji</system:String>
     <system:String x:Key="SavedOnNextStartUp">(Zapisano do następnego uruchomienia)</system:String>
@@ -264,7 +265,7 @@
     <system:String x:Key="SizeTooltip">Wprowadź wybrany rozmiar w pikselach lub procentach. Wpis 0 w długości lub wysokości, aby zachować obecny aspekt</system:String>
 
     <!--  Keyboard key names  -->
-    <system:String x:Key="Delete">Usuń</system:String>
+    <system:String x:Key="Del">Usuń</system:String>
     <system:String x:Key="Ctrl">Ctrl</system:String>
     <system:String x:Key="Shift">Shift</system:String>
     <system:String x:Key="Alt">Alt</system:String>
@@ -351,8 +352,8 @@
 
     <system:String x:Key="OptimizeImage">Optymalizuj zdjęcie</system:String>
 
-    <system:String x:Key="ShaderEffects">Efekty cieniowania</system:String>
-    <system:String x:Key="ShaderEffectsTooltip">Pokaż okno z efektami zdjęć</system:String>
+    <system:String x:Key="Effects">Efekty cieniowania</system:String>
+    <system:String x:Key="EffectsTooltip">Pokaż okno z efektami zdjęć</system:String>
 
     <system:String x:Key="CropPicture">Przytnij zdjęcie</system:String>
 
@@ -362,8 +363,10 @@
     <system:String x:Key="ColorPickerToolTooltip">Wybierz kolor ze zdjęcia</system:String>
 
     <!--  Resize Window  -->
-    <system:String x:Key="ResizeWindow">Resize window</system:String>
+    <system:String x:Key="ShowResizeWindow">Show batch Resize window</system:String>
 
-    <system:String x:Key="SingleImage">Single Image</system:String>
+    <system:String x:Key="Resize">Resize</system:String>
+    <system:String x:Key="ResizeImage">Resize Image</system:String>
+
     <system:String x:Key="BatchResize">Batch Resize</system:String>
 </ResourceDictionary>

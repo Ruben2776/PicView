@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
     Foreground="{StaticResource MainColorBrush}"
+    ToolTip="{StaticResource ShowImageInfo}"
     Canvas.ZIndex="3">
     <StackPanel>
         <Border
@@ -29,10 +30,10 @@
                     Height="49"
                     Fill="{StaticResource BackgroundColorBrushAlt}" />
 
-                <uc:SettingsButton x:Name="SettingsButton" Width="131" />
+                <uc:SettingsButton x:Name="SettingsButton" Width="110" />
 
                 <Rectangle
-                    Canvas.Left="132"
+                    Canvas.Left="109"
                     Canvas.Top="-1"
                     Width="1"
                     Height="51"
@@ -40,11 +41,35 @@
                     Stroke="{StaticResource BorderBrush}"
                     StrokeThickness="1" />
 
-                <uc:BackGroundButton
-                    x:Name="BackgroundButton"
-                    Canvas.Left="134"
-                    Width="169"
-                    Height="51" />
+                <uc:InfoButton 
+                    x:Name="InfoButton"
+                    Canvas.Left="110"
+                    Width="91" />
+
+                <uc:ImageInfoButton 
+                    x:Name="ImageInfoButton"
+                    Canvas.Left="202"
+                    Width="50" />
+
+                <Rectangle
+                    Canvas.Left="201"
+                    Canvas.Top="-1"
+                    Width="1"
+                    Height="51"
+                    Panel.ZIndex="1"
+                    Stroke="{StaticResource BorderBrush}"
+                    StrokeThickness="1" />
+
+                <uc:ResizeButton Canvas.Left="253" x:Name="QuickResize" />
+
+                <Rectangle
+                    Canvas.Left="252"
+                    Canvas.Top="-1"
+                    Width="1"
+                    Height="51"
+                    Panel.ZIndex="1"
+                    Stroke="{StaticResource BorderBrush}"
+                    StrokeThickness="1" />
 
                 <uc:MenuCloseButton
                     x:Name="CloseButton"
@@ -113,23 +138,23 @@
                 </Border>
 
                 <Border
-                    x:Name="OptimizeBorder"
+                    x:Name="ResizeBorder"
                     Canvas.Left="242"
                     Canvas.Top="57"
                     Width="51"
                     Height="51"
                     Style="{StaticResource ButtonBorder}">
-                    <uc:OptimizeButton x:Name="OptimizeButton" />
+                    <uc:BackGroundButton x:Name="BackgroundButton" />
                 </Border>
 
                 <Border
-                    x:Name="ResizeBorder"
+                    x:Name="OptimizeBorder"
                     Canvas.Left="299"
                     Canvas.Top="57"
                     Width="51"
                     Height="51"
                     Style="{StaticResource ButtonBorder}">
-                    <uc:ResizeButton x:Name="ResizeButton" />
+                    <uc:OptimizeButton x:Name="OptimizeButton" />
                 </Border>
 
                 <Rectangle

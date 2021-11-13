@@ -21,7 +21,8 @@
     <system:String x:Key="Fullscreen">전체 화면</system:String>
     <system:String x:Key="NewWindow">새 창</system:String>
 
-    <!--  Info window  -->
+    <!--  About window  -->
+    <system:String x:Key="About">About</system:String>
     <system:String x:Key="InfoWindowTitle">정보 및 바로가기</system:String>
     <system:String x:Key="ApplicationShortcuts">응용프로그램 바로가기</system:String>
     <system:String x:Key="SavedOnNextStartUp">(다음 시작 시 저장됨)</system:String>
@@ -351,8 +352,8 @@
 
     <system:String x:Key="OptimizeImage">이미지 최적화</system:String>
 
-    <system:String x:Key="ShaderEffects">셰이더 효과</system:String>
-    <system:String x:Key="ShaderEffectsTooltip">이미지 효과 표시 창</system:String>
+    <system:String x:Key="Effects">셰이더 효과</system:String>
+    <system:String x:Key="EffectsTooltip">이미지 효과 표시 창</system:String>
 
     <system:String x:Key="CropPicture">사진 자르기</system:String>
 
@@ -362,8 +363,10 @@
     <system:String x:Key="ColorPickerToolTooltip">이미지에서 색 선택</system:String>
 
     <!--  Resize Window  -->
-    <system:String x:Key="ResizeWindow">Resize window</system:String>
+    <system:String x:Key="ShowResizeWindow">Show batch Resize window</system:String>
 
-    <system:String x:Key="SingleImage">Single Image</system:String>
+    <system:String x:Key="Resize">Resize</system:String>
+    <system:String x:Key="ResizeImage">Resize Image</system:String>
+
     <system:String x:Key="BatchResize">Batch Resize</system:String>
 </ResourceDictionary>

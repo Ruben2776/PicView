@@ -67,11 +67,7 @@
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <Image
-                Width="20"
-                Height="20"
-                Margin="8,0,0,0"
-                Source="pack://application:,,,/Themes/Resources/img/icon__Q6k_icon.ico" />
+            <uc:Icon />
 
             <Rectangle
                 Width="1"
@@ -577,6 +573,7 @@
 
 
                     <StackPanel DockPanel.Dock="Bottom" Margin="0,7,0,0">
+                        
                         <Border BorderThickness="0,1,0,1" BorderBrush="{StaticResource BorderBrush}">
                             <Button Height="25" x:Name="ExpandButton">
                                 <Button.Background>

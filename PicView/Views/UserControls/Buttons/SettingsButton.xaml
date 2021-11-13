@@ -52,10 +52,12 @@
             </Image>
             <TextBlock
                 Margin="5,0,5,0"
-                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                FontSize="14"
-                FontWeight="Normal"
-                Text="{StaticResource Settings}">
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                FontSize="13"
+                MaxWidth="57"
+                Text="{StaticResource Settings}"
+                ToolTip="{StaticResource Settings}"
+                TextTrimming="CharacterEllipsis">
                 <TextBlock.Foreground>
                     <SolidColorBrush x:Name="txtBrush" Color="{StaticResource MainColor}" />
                 </TextBlock.Foreground>

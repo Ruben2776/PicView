@@ -7,113 +7,98 @@
         <Button.Background>
             <SolidColorBrush x:Name="TheButtonBrush" Color="Transparent" />
         </Button.Background>
-        <StackPanel Margin="5,0,5,0" Orientation="Horizontal">
-            <Image Width="17" Height="17">
-                <Image.Source>
-                    <DrawingImage>
-                        <DrawingImage.Drawing>
-                            <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                <GeometryDrawing>
-                                    <GeometryDrawing.Pen>
-                                        <Pen
-                                            EndLineCap="Flat"
-                                            LineJoin="Round"
-                                            StartLineCap="Flat"
-                                            Thickness="32">
-                                            <Pen.Brush>
-                                                <SolidColorBrush x:Name="IconBrush1" Color="{StaticResource IconColor}" />
-                                            </Pen.Brush>
-                                        </Pen>
-                                    </GeometryDrawing.Pen>
-                                    <GeometryDrawing.Geometry>
-                                        <RectangleGeometry
-                                            RadiusX="32"
-                                            RadiusY="32"
-                                            Rect="48,80,416,272" />
-                                    </GeometryDrawing.Geometry>
-                                </GeometryDrawing>
-                                <GeometryDrawing>
-                                    <GeometryDrawing.Pen>
-                                        <Pen
-                                            EndLineCap="Round"
-                                            LineJoin="Round"
-                                            StartLineCap="Round"
-                                            Thickness="32">
-                                            <Pen.Brush>
-                                                <SolidColorBrush x:Name="IconBrush2" Color="{StaticResource IconColor}" />
-                                            </Pen.Brush>
-                                        </Pen>
-                                    </GeometryDrawing.Pen>
-                                    <GeometryDrawing.Geometry>
-                                        <LineGeometry StartPoint="256,416" EndPoint="256,352" />
-                                    </GeometryDrawing.Geometry>
-                                </GeometryDrawing>
-                                <GeometryDrawing>
-                                    <GeometryDrawing.Pen>
-                                        <Pen
-                                            EndLineCap="Round"
-                                            LineJoin="Round"
-                                            StartLineCap="Round"
-                                            Thickness="32">
-                                            <Pen.Brush>
-                                                <SolidColorBrush x:Name="IconBrush3" Color="{StaticResource IconColor}" />
-                                            </Pen.Brush>
-                                        </Pen>
-                                    </GeometryDrawing.Pen>
-                                    <GeometryDrawing.Geometry>
-                                        <LineGeometry StartPoint="256,80" EndPoint="256,48" />
-                                    </GeometryDrawing.Geometry>
-                                </GeometryDrawing>
-                                <GeometryDrawing>
-                                    <GeometryDrawing.Pen>
-                                        <Pen
-                                            EndLineCap="Round"
-                                            LineJoin="Round"
-                                            StartLineCap="Round"
-                                            Thickness="32">
-                                            <Pen.Brush>
-                                                <SolidColorBrush x:Name="IconBrush4" Color="{StaticResource IconColor}" />
-                                            </Pen.Brush>
-                                        </Pen>
-                                    </GeometryDrawing.Pen>
-                                    <GeometryDrawing.Geometry>
-                                        <LineGeometry StartPoint="400,464" EndPoint="368,352" />
-                                    </GeometryDrawing.Geometry>
-                                </GeometryDrawing>
-                                <GeometryDrawing>
-                                    <GeometryDrawing.Pen>
-                                        <Pen
-                                            EndLineCap="Round"
-                                            LineJoin="Round"
-                                            StartLineCap="Round"
-                                            Thickness="32">
-                                            <Pen.Brush>
-                                                <SolidColorBrush x:Name="IconBrush5" Color="{StaticResource IconColor}" />
-                                            </Pen.Brush>
-                                        </Pen>
-                                    </GeometryDrawing.Pen>
-                                    <GeometryDrawing.Geometry>
-                                        <LineGeometry StartPoint="112,464" EndPoint="144,352" />
-                                    </GeometryDrawing.Geometry>
-                                </GeometryDrawing>
-                            </DrawingGroup>
-                        </DrawingImage.Drawing>
-                    </DrawingImage>
-                </Image.Source>
-            </Image>
-            <TextBlock
-                Width="127"
-                Margin="5,0,5,0"
-                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                FontSize="14"
-                FontWeight="Normal"
-                Text="{StaticResource ChangeBackground}"
-                TextAlignment="Center"
-                TextWrapping="Wrap">
-                <TextBlock.Foreground>
-                    <SolidColorBrush x:Name="txtBrush" Color="{StaticResource MainColor}" />
-                </TextBlock.Foreground>
-            </TextBlock>
-        </StackPanel>
+        <Image Width="20" Height="20">
+            <Image.Source>
+                <DrawingImage>
+                    <DrawingImage.Drawing>
+                        <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                            <GeometryDrawing>
+                                <GeometryDrawing.Pen>
+                                    <Pen
+                                        EndLineCap="Flat"
+                                        LineJoin="Round"
+                                        StartLineCap="Flat"
+                                        Thickness="32">
+                                        <Pen.Brush>
+                                            <SolidColorBrush x:Name="IconBrush1" Color="{StaticResource IconColor}" />
+                                        </Pen.Brush>
+                                    </Pen>
+                                </GeometryDrawing.Pen>
+                                <GeometryDrawing.Geometry>
+                                    <RectangleGeometry
+                                        RadiusX="32"
+                                        RadiusY="32"
+                                        Rect="48,80,416,272" />
+                                </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                            <GeometryDrawing>
+                                <GeometryDrawing.Pen>
+                                    <Pen
+                                        EndLineCap="Round"
+                                        LineJoin="Round"
+                                        StartLineCap="Round"
+                                        Thickness="32">
+                                        <Pen.Brush>
+                                            <SolidColorBrush x:Name="IconBrush2" Color="{StaticResource IconColor}" />
+                                        </Pen.Brush>
+                                    </Pen>
+                                </GeometryDrawing.Pen>
+                                <GeometryDrawing.Geometry>
+                                    <LineGeometry StartPoint="256,416" EndPoint="256,352" />
+                                </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                            <GeometryDrawing>
+                                <GeometryDrawing.Pen>
+                                    <Pen
+                                        EndLineCap="Round"
+                                        LineJoin="Round"
+                                        StartLineCap="Round"
+                                        Thickness="32">
+                                        <Pen.Brush>
+                                            <SolidColorBrush x:Name="IconBrush3" Color="{StaticResource IconColor}" />
+                                        </Pen.Brush>
+                                    </Pen>
+                                </GeometryDrawing.Pen>
+                                <GeometryDrawing.Geometry>
+                                    <LineGeometry StartPoint="256,80" EndPoint="256,48" />
+                                </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                            <GeometryDrawing>
+                                <GeometryDrawing.Pen>
+                                    <Pen
+                                        EndLineCap="Round"
+                                        LineJoin="Round"
+                                        StartLineCap="Round"
+                                        Thickness="32">
+                                        <Pen.Brush>
+                                            <SolidColorBrush x:Name="IconBrush4" Color="{StaticResource IconColor}" />
+                                        </Pen.Brush>
+                                    </Pen>
+                                </GeometryDrawing.Pen>
+                                <GeometryDrawing.Geometry>
+                                    <LineGeometry StartPoint="400,464" EndPoint="368,352" />
+                                </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                            <GeometryDrawing>
+                                <GeometryDrawing.Pen>
+                                    <Pen
+                                        EndLineCap="Round"
+                                        LineJoin="Round"
+                                        StartLineCap="Round"
+                                        Thickness="32">
+                                        <Pen.Brush>
+                                            <SolidColorBrush x:Name="IconBrush5" Color="{StaticResource IconColor}" />
+                                        </Pen.Brush>
+                                    </Pen>
+                                </GeometryDrawing.Pen>
+                                <GeometryDrawing.Geometry>
+                                    <LineGeometry StartPoint="112,464" EndPoint="144,352" />
+                                </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                        </DrawingGroup>
+                    </DrawingImage.Drawing>
+                </DrawingImage>
+            </Image.Source>
+        </Image>
     </Button>
 </UserControl>

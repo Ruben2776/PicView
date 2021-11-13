@@ -19,7 +19,6 @@ namespace PicView.Views.UserControls
                     PreviewMouseButtonDownAnim(IconBrush3);
                     PreviewMouseButtonDownAnim(IconBrush4);
                     PreviewMouseButtonDownAnim(IconBrush5);
-                    PreviewMouseButtonDownAnim(txtBrush);
                 };
 
                 TheButton.MouseEnter += delegate
@@ -29,7 +28,6 @@ namespace PicView.Views.UserControls
                     ButtonMouseOverAnim(IconBrush3);
                     ButtonMouseOverAnim(IconBrush4);
                     ButtonMouseOverAnim(IconBrush5);
-                    ButtonMouseOverAnim(txtBrush);
                     AnimationHelper.MouseEnterBgTexColor(TheButtonBrush);
                 };
 
@@ -40,7 +38,6 @@ namespace PicView.Views.UserControls
                     ButtonMouseLeaveAnim(IconBrush3);
                     ButtonMouseLeaveAnim(IconBrush4);
                     ButtonMouseLeaveAnim(IconBrush5);
-                    ButtonMouseLeaveAnim(txtBrush);
                     AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
                 };
 

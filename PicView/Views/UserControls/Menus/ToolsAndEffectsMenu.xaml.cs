@@ -35,13 +35,6 @@ namespace PicView.Views.UserControls
                 ConfigureWindows.EffectsWindow();
             };
 
-            // InfoButton
-            InfoButton.TheButton.Click += delegate
-            {
-                UC.Close_UserControls();
-                ConfigureWindows.InfoWindow();
-            };
-
             // ColorPickerButton
             ColorPickerButton.MouseEnter += delegate
             {
@@ -107,16 +100,48 @@ namespace PicView.Views.UserControls
             ResizeButton.MouseEnter += delegate
             {
                 ButtonMouseOverAnim(ResizeText);
-                ButtonMouseOverAnim(ResizeBrush);
                 AnimationHelper.MouseEnterBgTexColor(ResizeButtonBrush);
             };
             ResizeButton.MouseLeave += delegate
             {
                 ButtonMouseLeaveAnim(ResizeText);
-                ButtonMouseLeaveAnim(ResizeBrush);
                 AnimationHelper.MouseLeaveBgTexColor(ResizeButtonBrush);
             };
             ResizeButton.Click += (_, _) => ConfigureWindows.ResizeWindow();
+
+            BgBorder.PreviewMouseLeftButtonDown += delegate
+            {
+                PreviewMouseButtonDownAnim(IconBrush1);
+                PreviewMouseButtonDownAnim(IconBrush2);
+                PreviewMouseButtonDownAnim(IconBrush3);
+                PreviewMouseButtonDownAnim(IconBrush4);
+                PreviewMouseButtonDownAnim(IconBrush5);
+                PreviewMouseButtonDownAnim(BgText);
+            };
+
+            BgBorder.MouseEnter += delegate
+            {
+                ButtonMouseOverAnim(IconBrush1);
+                ButtonMouseOverAnim(IconBrush2);
+                ButtonMouseOverAnim(IconBrush3);
+                ButtonMouseOverAnim(IconBrush4);
+                ButtonMouseOverAnim(IconBrush5);
+                ButtonMouseOverAnim(BgText);
+                AnimationHelper.MouseEnterBgTexColor(BgBrush);
+            };
+
+            BgBorder.MouseLeave += delegate
+            {
+                ButtonMouseLeaveAnim(IconBrush1);
+                ButtonMouseLeaveAnim(IconBrush2);
+                ButtonMouseLeaveAnim(IconBrush3);
+                ButtonMouseLeaveAnim(IconBrush4);
+                ButtonMouseLeaveAnim(IconBrush5);
+                ButtonMouseLeaveAnim(BgText);
+                AnimationHelper.MouseLeaveBgTexColor(BgBrush);
+            };
+
+            BgBorder.MouseLeftButtonDown += (_, _) => ConfigureSettings.ConfigColors.ChangeBackground();
         }
     }
 }

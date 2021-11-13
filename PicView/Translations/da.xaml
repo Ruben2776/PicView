@@ -21,7 +21,8 @@
     <system:String x:Key="Fullscreen">Fuldskærm</system:String>
     <system:String x:Key="NewWindow">Nyt vindue</system:String>
 
-    <!--  Info window  -->
+    <!--  About window  -->
+    <system:String x:Key="About">Om</system:String>
     <system:String x:Key="InfoWindowTitle">Information, og genveje</system:String>
     <system:String x:Key="ApplicationShortcuts">Genveje til programmet</system:String>
     <system:String x:Key="SavedOnNextStartUp">(Gemt ved næste startup)</system:String>
@@ -351,8 +352,8 @@
 
     <system:String x:Key="OptimizeImage">Optimer billede</system:String>
 
-    <system:String x:Key="ShaderEffects">Shader Effekter</system:String>
-    <system:String x:Key="ShaderEffectsTooltip">Vis billedeffektsvinduet</system:String>
+    <system:String x:Key="Effects">Shader Effekter</system:String>
+    <system:String x:Key="EffectsTooltip">Vis billedeffektsvinduet</system:String>
 
     <system:String x:Key="CropPicture">Beskær billede</system:String>
 
@@ -362,8 +363,10 @@
     <system:String x:Key="ColorPickerToolTooltip">Vælg en farve fra billedet</system:String>
 
     <!--  Resize Window  -->
-    <system:String x:Key="ResizeWindow">Resize window</system:String>
+    <system:String x:Key="ShowResizeWindow">Show batch Resize window</system:String>
 
-    <system:String x:Key="SingleImage">Single Image</system:String>
+    <system:String x:Key="Resize">Resize</system:String>
+    <system:String x:Key="ResizeImage">Resize Image</system:String>
+
     <system:String x:Key="BatchResize">Batch Resize</system:String>
 </ResourceDictionary>
