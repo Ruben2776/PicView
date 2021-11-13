@@ -360,4 +360,10 @@
 
     <system:String x:Key="ColorPickerTool">Cuentagotas</system:String>
     <system:String x:Key="ColorPickerToolTooltip">Elegir color desde imagen</system:String>
+
+    <!--  Resize Window  -->
+    <system:String x:Key="ResizeWindow">Resize window</system:String>
+
+    <system:String x:Key="SingleImage">Single Image</system:String>
+    <system:String x:Key="BatchResize">Batch Resize</system:String>
 </ResourceDictionary>

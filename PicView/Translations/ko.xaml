@@ -360,4 +360,10 @@
 
     <system:String x:Key="ColorPickerTool">색 선택 도구</system:String>
     <system:String x:Key="ColorPickerToolTooltip">이미지에서 색 선택</system:String>
+
+    <!--  Resize Window  -->
+    <system:String x:Key="ResizeWindow">Resize window</system:String>
+
+    <system:String x:Key="SingleImage">Single Image</system:String>
+    <system:String x:Key="BatchResize">Batch Resize</system:String>
 </ResourceDictionary>

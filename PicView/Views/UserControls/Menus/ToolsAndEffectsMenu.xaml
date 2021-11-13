@@ -108,8 +108,6 @@
                             x:Name="ImageInfoButton"
                             Canvas.Left="196"
                             Canvas.Top="59"
-                            Width="154"
-                            Height="51"
                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold"
                             ToolTip="{StaticResource ShowImageInfo}">
                             <Button.Background>
@@ -191,8 +189,6 @@
                             x:Name="OptimizeImageButton"
                             Canvas.Left="196"
                             Canvas.Top="59"
-                            Width="154"
-                            Height="51"
                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold">
                             <Button.Background>
                                 <SolidColorBrush x:Name="OptimizeImageBrush" Color="Transparent" />
@@ -241,6 +237,52 @@
                                                                 </Pen.Brush>
                                                             </Pen>
                                                         </GeometryDrawing.Pen>
+                                                    </GeometryDrawing>
+                                                </DrawingGroup>
+                                            </DrawingImage.Drawing>
+                                        </DrawingImage>
+                                    </Image.Source>
+                                </Image>
+                            </StackPanel>
+                        </Button>
+                    </Border>
+
+                    <Border
+                        x:Name="ResizeButtonBorder"
+                        Canvas.Left="172"
+                        Canvas.Top="113"
+                        Width="176"
+                        Height="51"
+                        Style="{StaticResource ButtonBorder}">
+                        <Button
+                            x:Name="ResizeButton"
+                            Canvas.Left="196"
+                            Canvas.Top="59"
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold">
+                            <Button.Background>
+                                <SolidColorBrush x:Name="ResizeButtonBrush" Color="Transparent" />
+                            </Button.Background>
+                            <StackPanel Width="150" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="120"
+                                    Margin="5,2,0,2"
+                                    FontSize="14"
+                                    Text="{StaticResource BatchResize}"
+                                    TextAlignment="Center"
+                                    TextWrapping="Wrap">
+                                    <TextBlock.Foreground>
+                                        <SolidColorBrush x:Name="ResizeText" Color="{StaticResource MainColor}" />
+                                    </TextBlock.Foreground>
+                                </TextBlock>
+                                <Image Height="23">
+                                    <Image.Source>
+                                        <DrawingImage>
+                                            <DrawingImage.Drawing>
+                                                <DrawingGroup ClipGeometry="M0,0 V512 H384 V0 H0 Z">
+                                                    <GeometryDrawing Geometry="F1 M384,512z M0,0z M320,0L128,0 0,128 0,448C0,483.3,28.7,512,64,512L320,512C355.3,512,384,483.3,384,448L384,64C384,28.7,355.3,0,320,0z M160,160L112,160 112,64 160,64 160,160z M240,160L192,160 192,64 240,64 240,160z M320,160L272,160 272,64 320,64 320,160z">
+                                                        <GeometryDrawing.Brush>
+                                                            <SolidColorBrush x:Name="ResizeBrush" Color="{StaticResource IconColor}" />
+                                                        </GeometryDrawing.Brush>
                                                     </GeometryDrawing>
                                                 </DrawingGroup>
                                             </DrawingImage.Drawing>

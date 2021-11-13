@@ -122,6 +122,16 @@
                     <uc:OptimizeButton x:Name="OptimizeButton" />
                 </Border>
 
+                <Border
+                    x:Name="ResizeBorder"
+                    Canvas.Left="299"
+                    Canvas.Top="57"
+                    Width="51"
+                    Height="51"
+                    Style="{StaticResource ButtonBorder}">
+                    <uc:ResizeButton x:Name="ResizeButton" />
+                </Border>
+
                 <Rectangle
                     Canvas.Left="304"
                     Canvas.Top="0"

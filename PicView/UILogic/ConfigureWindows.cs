@@ -10,6 +10,7 @@ namespace PicView.UILogic
         internal static InfoWindow? GetInfoWindow { get; set; }
         internal static EffectsWindow? GetEffectsWindow { get; set; }
         internal static ImageInfoWindow? GetImageInfoWindow { get; set; }
+        internal static ResizeWindow? GetResizeWindow { get; set; }
 
         /// <summary>
         /// The Main Window?
@@ -161,6 +162,36 @@ namespace PicView.UILogic
             else
             {
                 GetImageInfoWindow.Topmost = false;
+            }
+        }
+
+        internal static void ResizeWindow()
+        {
+            if (GetResizeWindow == null)
+            {
+                GetResizeWindow = new ResizeWindow { Owner = GetMainWindow };
+
+                GetResizeWindow.Show();
+            }
+            else
+            {
+                if (GetResizeWindow.Visibility == Visibility.Visible)
+                {
+                    GetResizeWindow.Focus();
+                }
+                else
+                {
+                    GetResizeWindow.Show();
+                }
+            }
+            if (Properties.Settings.Default.Fullscreen)
+            {
+                GetResizeWindow.Topmost = true;
+                GetResizeWindow.BringIntoView();
+            }
+            else
+            {
+                GetResizeWindow.Topmost = false;
             }
         }
 

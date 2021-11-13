@@ -102,6 +102,21 @@ namespace PicView.Views.UserControls
                 AnimationHelper.MouseLeaveBgTexColor(OptimizeImageBrush);
             };
             OptimizeImageButton.Click += async (_, _) => await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
+
+            // ResizeButton
+            ResizeButton.MouseEnter += delegate
+            {
+                ButtonMouseOverAnim(ResizeText);
+                ButtonMouseOverAnim(ResizeBrush);
+                AnimationHelper.MouseEnterBgTexColor(ResizeButtonBrush);
+            };
+            ResizeButton.MouseLeave += delegate
+            {
+                ButtonMouseLeaveAnim(ResizeText);
+                ButtonMouseLeaveAnim(ResizeBrush);
+                AnimationHelper.MouseLeaveBgTexColor(ResizeButtonBrush);
+            };
+            ResizeButton.Click += (_, _) => ConfigureWindows.ResizeWindow();
         }
     }
 }
