@@ -29,10 +29,18 @@ namespace PicView.Shortcuts
             var altDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
             var shiftDown = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
 
-            // Don't execute keys when entering in GoToPicBox
+            // Don't execute keys when entering in GoToPicBox || QuickResize
             if (GetImageSettingsMenu.GoToPic != null)
             {
                 if (GetImageSettingsMenu.GoToPic.GoToPicBox.IsKeyboardFocusWithin)
+                {
+                    return;
+                }
+            }
+
+            if (GetQuickResize != null)
+            {
+                if (GetQuickResize.WidthBox.IsKeyboardFocused || GetQuickResize.HeightBox.IsKeyboardFocused)
                 {
                     return;
                 }
@@ -347,11 +355,14 @@ namespace PicView.Shortcuts
                         }
                         break;
 
-                    // Ctrl + I
                     case Key.I:
                         if (ctrlDown && !GalleryFunctions.IsHorizontalOpen)
                         {
                             SystemIntegration.NativeMethods.ShowFileProperties(Pics[FolderIndex]);
+                        }
+                        else
+                        {
+                            GetQuickSettingsMenu.QuickResize.ToggleQuickResize();
                         }
                         break;
 

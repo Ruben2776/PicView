@@ -2,8 +2,6 @@
 using PicView.ImageHandling;
 using PicView.UILogic;
 using System.IO;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -34,62 +32,6 @@ namespace PicView.Views.Windows
                     await UpdateValuesAsync(null).ConfigureAwait(false);
                 }
             };
-        }
-
-        private async Task FireResizeAsync(KeyEventArgs e)
-        {
-            if (e.Key != System.Windows.Input.Key.Enter) { return; }
-            string file = ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex];
-            if (int.TryParse(WidthBox.Text, out var width) && int.TryParse(HeightBox.Text, out var height))
-            {
-                var resize = await ImageSizeFunctions.ResizeImageAsync(file, width, height, 0).ConfigureAwait(false);
-                if (resize)
-                {
-                    await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);
-                }
-                else
-                {
-                    Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
-                }
-            }
-            else // handle if it contains percentage
-            {
-                var tryWidth = await FirePercentageAsync(WidthBox.Text, file).ConfigureAwait(false);
-                if (tryWidth)
-                {
-                    await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);
-                    return;
-                }
-                var tryHeight = await FirePercentageAsync(HeightBox.Text, file).ConfigureAwait(false);
-                if (tryHeight)
-                {
-                    await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);
-                }
-                else
-                {
-                    Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
-                }
-            }
-        }
-
-        private static async Task<bool> FirePercentageAsync(string text, string file)
-        {
-            foreach (Match match in Regex.Matches(text, @"(\d+)%"))
-            {
-                if (match.Success)
-                {
-                    if (double.TryParse(match.Groups[1].Value, out double percentage))
-                    {
-                        var resize = await ImageSizeFunctions.ResizeImageAsync(file, 0, 0, 0, new ImageMagick.Percentage(percentage)).ConfigureAwait(false);
-                        if (resize)
-                        {
-                            await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);
-                        }
-                    }
-                    return true;
-                }
-            }
-            return false;
         }
 
         private void ExtendOrCollopase()
@@ -282,11 +224,11 @@ namespace PicView.Views.Windows
 
             // WidhtBox
             WidthBox.AcceptsReturn = false;
-            WidthBox.KeyUp += async (_, e) => await FireResizeAsync(e).ConfigureAwait(false);
+            WidthBox.KeyUp += async (_, e) => await ImageSizeFunctions.FireResizeAsync(e, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
 
             // HeightBox
             HeightBox.AcceptsReturn = false;
-            HeightBox.KeyUp += async (_, e) => await FireResizeAsync(e).ConfigureAwait(false);
+            HeightBox.KeyUp += async (_, e) => await ImageSizeFunctions.FireResizeAsync(e, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
 
             FilenameCopy.TheButton.Click += (_, _) => Clipboard.SetText(FilenameBox.Text);
 

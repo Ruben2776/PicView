@@ -292,5 +292,20 @@ namespace PicView.UILogic.Loading
             Trace.WriteLine(nameof(GetColorPicker) + " loaded ");
 #endif
         }
+
+        internal static void LoadQuickResize()
+        {
+            GetQuickResize = new QuickResize
+            {
+                Opacity = 0,
+                Visibility = Visibility.Collapsed,
+            };
+
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetQuickResize);
+
+#if DEBUG
+            Trace.WriteLine(nameof(GetQuickResize) + " loaded ");
+#endif
+        }
     }
 }

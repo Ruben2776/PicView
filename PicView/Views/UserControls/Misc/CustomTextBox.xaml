@@ -20,6 +20,7 @@
         SelectionTextBrush="{StaticResource MainColorBrush}"
         Text="{StaticResource Loading}"
         TextAlignment="Center"
+        IsTabStop="False"
         UndoLimit="200">
         <TextBox.Style>
             <Style TargetType="TextBox">

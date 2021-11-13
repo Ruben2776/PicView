@@ -11,7 +11,7 @@
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
     d:DesignHeight="300"
-    d:DesignWidth="300"
+    d:DesignWidth="363.967"
     mc:Ignorable="d">
     <Border
         x:Name="border"
@@ -29,6 +29,7 @@
                 Background="{StaticResource NoisyBg}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Center">
                 
                 <DockPanel HorizontalAlignment="Center">
@@ -64,6 +65,17 @@
                             IsReadOnly="False"
                             d:Text="1080" />
                     </StackPanel>
+
+                    <Label
+                        x:Name="ApplyButton"
+                        Background="{DynamicResource BorderBrushAlt}"
+                        Content="{StaticResource Apply}" 
+                        Margin="5,0,5,0" 
+                        VerticalAlignment="Center">
+                        <Label.Foreground>
+                            <SolidColorBrush x:Name="ApplyBrush" Color="{DynamicResource ChosenColor}" />
+                        </Label.Foreground>
+                    </Label>
 
                 </DockPanel>
             </Border>

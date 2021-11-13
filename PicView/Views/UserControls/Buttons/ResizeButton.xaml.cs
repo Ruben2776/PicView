@@ -1,4 +1,6 @@
 ﻿using PicView.Animations;
+using PicView.UILogic;
+using PicView.UILogic.Loading;
 using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.Animations.MouseOverAnimations;
@@ -27,14 +29,26 @@ namespace PicView.Views.UserControls
                     AnimationHelper.MouseEnterBgTexColor(ButtonBrush);
                 };
 
-                TheButton.MouseLeave += delegate
-                {
-                    ButtonMouseLeaveAnim(IconBrush);
-                    AnimationHelper.MouseLeaveBgTexColor(ButtonBrush);
-                };
-
-                TheButton.Click += (_, _) => UILogic.ConfigureWindows.ResizeWindow();
+                TheButton.MouseLeave += (_, _) => ToggleQuickResize();
             };
+        }
+
+        internal void ToggleQuickResize()
+        {
+            UC.Close_UserControls();
+
+            if (UC.GetQuickResize is null)
+            {
+                LoadControls.LoadQuickResize();
+            }
+            if (UC.GetQuickResize.Visibility == System.Windows.Visibility.Collapsed)
+            {
+                UC.GetQuickResize.Show();
+            }
+            else
+            {
+                UC.GetQuickResize.Hide();
+            }
         }
     }
 }

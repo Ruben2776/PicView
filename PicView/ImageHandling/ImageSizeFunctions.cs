@@ -1,6 +1,7 @@
 ﻿using ImageMagick;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -87,6 +88,64 @@ namespace PicView.ImageHandling
 
             magick.Dispose();
             return true;
+        }
+
+        internal static async Task<bool> FireResizeAsync(System.Windows.Input.KeyEventArgs? e, string widthText, string heightText)
+        {
+            if (e is not null && e.Key != System.Windows.Input.Key.Enter) { return false; }
+
+            string file = ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex];
+            if (int.TryParse(widthText, out var width) && int.TryParse(heightText, out var height))
+            {
+                var resize = await ImageSizeFunctions.ResizeImageAsync(file, width, height, 0).ConfigureAwait(false);
+                if (resize)
+                {
+                    await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);
+                }
+                else
+                {
+                    UILogic.Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                }
+            }
+            else // handle if it contains percentage
+            {
+                var tryWidth = await FirePercentageAsync(widthText, file).ConfigureAwait(false);
+                if (tryWidth)
+                {
+                    await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);
+                    return false;
+                }
+                var tryHeight = await FirePercentageAsync(heightText, file).ConfigureAwait(false);
+                if (tryHeight)
+                {
+                    await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);
+                }
+                else
+                {
+                    UILogic.Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                }
+            }
+            return true;
+        }
+
+        internal static async Task<bool> FirePercentageAsync(string text, string file)
+        {
+            foreach (Match match in Regex.Matches(text, @"(\d+)%"))
+            {
+                if (match.Success)
+                {
+                    if (double.TryParse(match.Groups[1].Value, out double percentage))
+                    {
+                        var resize = await ImageSizeFunctions.ResizeImageAsync(file, 0, 0, 0, new ImageMagick.Percentage(percentage)).ConfigureAwait(false);
+                        if (resize)
+                        {
+                            await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);
+                        }
+                    }
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
