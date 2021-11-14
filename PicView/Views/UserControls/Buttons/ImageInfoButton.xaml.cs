@@ -28,6 +28,12 @@ namespace PicView.Views.UserControls
                     ButtonMouseLeaveAnim(IconBrush);
                     AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
                 };
+
+                TheButton.Click += (_, _) =>
+                {
+                    UILogic.UC.Close_UserControls();
+                    UILogic.ConfigureWindows.ImageInfoWindow();
+                };
             };
         }
     }
