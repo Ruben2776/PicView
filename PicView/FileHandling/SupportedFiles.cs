@@ -44,6 +44,7 @@ namespace PicView.FileHandling
                 case string when ext.Equals(".hdr", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".xcf", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".jxl", StringComparison.OrdinalIgnoreCase):
+                case string when ext.Equals(".jp2", StringComparison.OrdinalIgnoreCase):
 
                 // Vector
                 case string when ext.Equals(".svg", StringComparison.OrdinalIgnoreCase):
