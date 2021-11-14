@@ -5,13 +5,11 @@
     xmlns:UserControls="clr-namespace:PicView.Views.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="clr-namespace:PicView.Views.UserControls"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
     d:DesignHeight="300"
-    d:DesignWidth="363.967"
     mc:Ignorable="d">
     <Border
         x:Name="border"
@@ -65,6 +63,21 @@
                             IsReadOnly="False"
                             d:Text="1080" />
                     </StackPanel>
+
+                    <Label Content="⇔" VerticalAlignment="Center" Margin="10,0,10,0"/>
+
+                    <ComboBox MinWidth="70">
+                        <ComboBoxItem IsSelected="True" Content="100%" />
+                        <ComboBoxItem Content="90%" />
+                        <ComboBoxItem Content="80%" />
+                        <ComboBoxItem Content="70%" />
+                        <ComboBoxItem Content="60%" />
+                        <ComboBoxItem Content="50%" />
+                        <ComboBoxItem Content="40%" />
+                        <ComboBoxItem Content="30%" />
+                        <ComboBoxItem Content="20%" />
+                        <ComboBoxItem Content="10%" />
+                    </ComboBox>
 
                     <Label
                         x:Name="ApplyButton"
