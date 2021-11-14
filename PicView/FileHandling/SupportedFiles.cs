@@ -55,6 +55,7 @@ namespace PicView.FileHandling
                 case string when ext.Equals(".3fr", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".arw", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".cr2", StringComparison.OrdinalIgnoreCase):
+                case string when ext.Equals(".cr3", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".crw", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".dcr", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".dng", StringComparison.OrdinalIgnoreCase):
