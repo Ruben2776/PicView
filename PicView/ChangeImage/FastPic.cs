@@ -116,8 +116,7 @@ namespace PicView.ChangeImage
             }
             else
             {
-                BackupPath = Pics[FolderIndex];
-                await Error_Handling.ReloadAsync(true).ConfigureAwait(false);
+                await Error_Handling.ReloadAsync().ConfigureAwait(false);
                 return;
             }
 
