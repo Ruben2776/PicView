@@ -29,6 +29,12 @@ namespace PicView.Views.UserControls
                     AnimationHelper.MouseEnterBgTexColor(ButtonBrush);
                 };
 
+                TheButton.MouseLeave += delegate
+                {
+                    ButtonMouseLeaveAnim(IconBrush);
+                    AnimationHelper.MouseLeaveBgTexColor(ButtonBrush);
+                };
+
                 TheButton.Click += (_, _) => ToggleQuickResize();
             };
         }
