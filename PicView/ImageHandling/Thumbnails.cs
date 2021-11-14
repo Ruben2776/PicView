@@ -72,7 +72,7 @@ namespace PicView.ImageHandling
                     break;
             }
 
-            if (fileInfo.Length > 1e+9)
+            if (fileInfo.Length > 5e+6)
             {
                 return null;
             }
