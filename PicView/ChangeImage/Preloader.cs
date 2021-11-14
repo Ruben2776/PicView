@@ -34,8 +34,6 @@ namespace PicView.ChangeImage
         private static readonly ConcurrentDictionary<
             string, PreloadValue> Sources = new ConcurrentDictionary<string, PreloadValue>();
 
-        internal static bool IsRunning { get; private set; }
-
         /// <summary>
         /// Add file to preloader from index
         /// </summary>
@@ -194,8 +192,6 @@ namespace PicView.ChangeImage
         /// <param name="reverse"></param>
         internal static Task PreLoad(int index) => Task.Run(() =>
         {
-            IsRunning = true;
-
             int loadInfront = Pics.Count >= 10 ? 5 : 3;
             int loadBehind = Pics.Count >= 10 ? 3 : 2;
 
@@ -247,8 +243,6 @@ namespace PicView.ChangeImage
                     Remove(i % Pics.Count);
                 }
             }
-
-            IsRunning = false;
         });
     }
 }

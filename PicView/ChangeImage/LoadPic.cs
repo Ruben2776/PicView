@@ -410,62 +410,56 @@ namespace PicView.ChangeImage
                     });
                 }
 
-                if (preloadValue is not null)
+                if (preloadValue is null)
                 {
-                    preloadValue = await CheckLoadingAsync(preloadValue, index).ConfigureAwait(false);
-                    if (preloadValue is null)
+                    bool added = await Preloader.AddAsync(index, fileInfo, null).ConfigureAwait(false);
+                    if (added)
                     {
-                        if (FolderIndex == index)
-                        {
-                            Error_Handling.UnexpectedError();
-                        }
-                        return;
-                    }
-                }
-                else if (FolderIndex == index && Pics?.Count > index && index > -1) // Error correctiom
-                {
-                    try
-                    {
-                        await Preloader.AddAsync(index).ConfigureAwait(false);
                         preloadValue = Preloader.Get(Navigation.Pics[index]);
                     }
-                    catch (Exception)
+
+                    if (preloadValue is null)
                     {
-                        if (FolderIndex == index)
-                        {
-                            Error_Handling.UnexpectedError();
-                        }
+                        Preloader.Remove(index);
                         return;
                     }
 
-                    if (preloadValue == null)
+                    if (preloadValue.bitmapSource is null)
                     {
-                        if (index == FolderIndex)
+                        preloadValue.bitmapSource = ImageFunctions.ImageErrorMessage();
+                    }
+                }
+                else
+                {
+                    while (preloadValue.isLoading)
+                    {
+                        // Make loading skippable
+                        if (FolderIndex != index)
                         {
-                            // Trying again fixes error when recovering from divide by zero
-                            await Preloader.AddAsync(index).ConfigureAwait(false);
-                            preloadValue = Preloader.Get(Navigation.Pics[index]);
-                        }
-                        else { return; }
+                            await Preloader.PreLoad(index).ConfigureAwait(false);
 
-                        if (preloadValue == null)
-                        {
-                            if (FolderIndex == index)
+                            if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
                             {
-                                Error_Handling.UnexpectedError();
+                                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                                {
+                                    GalleryNavigation.FullscreenGalleryNavigation();
+                                });
                             }
                             return;
                         }
-                    }
 
-                    preloadValue = await CheckLoadingAsync(preloadValue, index).ConfigureAwait(false);
-                    if (preloadValue == null)
+                        // Wait for finnished result
+                        await Task.Delay(20).ConfigureAwait(false); // Using task delay makes it responsive and enables showing thumb whilst loading
+                    }
+                    if (preloadValue.bitmapSource == null) // Show image error, unload if showing image error somehow fails
                     {
-                        if (FolderIndex == index)
+                        preloadValue = new Preloader.PreloadValue(ImageFunctions.ImageErrorMessage(), false, null);
+
+                        if (preloadValue == null || preloadValue.bitmapSource == null)
                         {
-                            Error_Handling.UnexpectedError();
+                            await Preloader.PreLoad(index).ConfigureAwait(false);
+                            return;
                         }
-                        return;
                     }
                 }
             }
@@ -473,12 +467,6 @@ namespace PicView.ChangeImage
             // Make loading skippable
             if (FolderIndex != index)
             {
-                // Start preloading when browsing very fast to catch up
-                if (Preloader.IsRunning == false)
-                {
-                    _ = Preloader.PreLoad(index).ConfigureAwait(false);
-                }
-
                 if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
                 {
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
@@ -486,6 +474,7 @@ namespace PicView.ChangeImage
                         GalleryNavigation.FullscreenGalleryNavigation();
                     });
                 }
+                await Preloader.PreLoad(index).ConfigureAwait(false);
                 return;
             }
 
@@ -509,10 +498,7 @@ namespace PicView.ChangeImage
 
             if (Pics?.Count > 1)
             {
-                if (Preloader.IsRunning == false)
-                {
-                    _ = Preloader.PreLoad(index).ConfigureAwait(false);
-                }
+                _ = Preloader.PreLoad(index).ConfigureAwait(false);
 
                 if (FolderIndex == index)
                 {
@@ -522,7 +508,7 @@ namespace PicView.ChangeImage
 
             if (ConfigureWindows.GetImageInfoWindow is not null)
             {
-                await ImageInfo.UpdateValuesAsync(preloadValue.fileInfo).ConfigureAwait(false);
+                _ = ImageInfo.UpdateValuesAsync(preloadValue.fileInfo).ConfigureAwait(false);
             }
 
             // Add recent files, except when browing archive
@@ -719,33 +705,6 @@ namespace PicView.ChangeImage
         }
 
         #endregion
-
-
-        internal static async Task<Preloader.PreloadValue?> CheckLoadingAsync(Preloader.PreloadValue preloadValue, int index)
-        {
-            while (preloadValue.isLoading)
-            {
-                // Wait for finnished result
-                await Task.Delay(100).ConfigureAwait(false); // Using task delay makes it responsive and enables showing thumb whilst loading
-
-                if (FolderIndex != index && Preloader.IsRunning == false)
-                {
-                    // Start preloading when browsing very fast to catch up
-                    await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
-                }
-            }
-            if (preloadValue.bitmapSource == null) // Show image error, unload if showing image error somehow fails
-            {
-                preloadValue = new Preloader.PreloadValue(ImageFunctions.ImageErrorMessage(), false, null);
-
-                if (preloadValue == null || preloadValue.bitmapSource == null)
-                {
-                    Error_Handling.UnexpectedError();
-                    return null;
-                }
-            }
-            return preloadValue;
-        }
 
         static void LoadingPreview(FileInfo fileInfo)
         {

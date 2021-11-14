@@ -25,33 +25,27 @@ namespace PicView.ImageHandling
 
             switch (fileInfo.Extension)
             {
-                case ".jpg":
-                case ".jpeg":
-                case ".jpe":
-                case ".png":
-                case ".bmp":
-                case ".gif":
-                case ".ico":
-                case ".jfif":
-                case ".webp":
-                case ".wbmp":
+                case string when fileInfo.Extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".jpe", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".png", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".bmp", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".jfif", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".ico", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".webp", StringComparison.OrdinalIgnoreCase):
+                case string when fileInfo.Extension.Equals(".wbmp", StringComparison.OrdinalIgnoreCase):
                     return await getWriteableBitmapAsync(fileInfo).ConfigureAwait(false);
 
-                case ".tga": // Make sure to to auto orient tga files https://github.com/Ruben2776/PicView/issues/22
+                case string when fileInfo.Extension.Equals(".tga", StringComparison.OrdinalIgnoreCase): // Make sure to to auto orient tga files https://github.com/Ruben2776/PicView/issues/22
                     return await Task.FromResult(getDefaultBitmapSource(fileInfo, true)).ConfigureAwait(false);
 
-                case ".svg":
+                case string when fileInfo.Extension.Equals(".svg", StringComparison.OrdinalIgnoreCase):
                     /// TODO convert to drawingimage instead.. maybe
                     /// TODO svgz only works in getDefaultBitmapSource, need to figure out how to fix white bg instead of transparent 
                     return await getTransparentBitmapSourceAsync(fileInfo, MagickFormat.Svg).ConfigureAwait(false);
-                case ".tif":
-                case ".tiff":
-                case ".dds":
-                case ".psd":
-                case ".psb":
-                case ".xcf":
-                    return await getMagicBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-                default: // some formats cause exceptions when using filestream, so defaulting to reading from file
+
+                default:
                     return await Task.FromResult(getDefaultBitmapSource(fileInfo)).ConfigureAwait(false);
             }
         }
@@ -161,6 +155,7 @@ namespace PicView.ImageHandling
                 Quality = 100,
                 ColorSpace = ColorSpace.Transparent,
                 BackgroundColor = MagickColors.Transparent,
+                Format = magickFormat,
             };
             try
             {
@@ -217,53 +212,6 @@ namespace PicView.ImageHandling
 #endif
                 return null;
             }
-        }
-
-        private static async Task<BitmapSource?> getMagicBitmapSourceAsync(FileInfo fileInfo)
-        {
-            FileStream? filestream = null;
-            MagickImage magickImage = new()
-            {
-                Quality = 100,
-                ColorSpace = ColorSpace.Transparent
-            };
-            if (fileInfo.Length >= 2147483647) // Streams with a length larger than 2147483647 are not supported, read from file instead
-            {
-                try
-                {
-                    magickImage.Read(fileInfo);
-                }
-                catch (Exception e)
-                {
-#if DEBUG
-                    Trace.WriteLine($"{nameof(getMagicBitmapSourceAsync)} {fileInfo.Name} exception, \n {e.Message}");
-#endif
-                    return null;
-                }
-            }
-            else
-            {
-                try
-                {
-                    filestream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
-                    magickImage.Read(filestream);
-                }
-                catch (Exception e)
-                {
-#if DEBUG
-                    Trace.WriteLine($"{nameof(getMagicBitmapSourceAsync)} {fileInfo.Name} exception, \n {e.Message}");
-#endif
-                    return null;
-                }
-
-                await filestream.DisposeAsync().ConfigureAwait(false);
-            }
-
-            var bitmap = magickImage.ToBitmapSource();
-            magickImage.Dispose();
-            bitmap.Freeze();
-
-            return bitmap;
         }
 
         private static BitmapSource? getDefaultBitmapSource(FileInfo fileInfo, bool autoOrient = false)
