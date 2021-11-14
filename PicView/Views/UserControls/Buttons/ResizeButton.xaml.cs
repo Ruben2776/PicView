@@ -29,11 +29,11 @@ namespace PicView.Views.UserControls
                     AnimationHelper.MouseEnterBgTexColor(ButtonBrush);
                 };
 
-                TheButton.MouseLeave += (_, _) => ToggleQuickResize();
+                TheButton.Click += (_, _) => ToggleQuickResize();
             };
         }
 
-        internal void ToggleQuickResize()
+        internal static void ToggleQuickResize()
         {
             UC.Close_UserControls();
 

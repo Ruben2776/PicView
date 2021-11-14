@@ -362,7 +362,7 @@ namespace PicView.Shortcuts
                         }
                         else
                         {
-                            GetQuickSettingsMenu.QuickResize.ToggleQuickResize();
+                            Views.UserControls.ResizeButton.ToggleQuickResize();
                         }
                         break;
 

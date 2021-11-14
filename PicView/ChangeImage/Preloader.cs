@@ -207,21 +207,21 @@ namespace PicView.ChangeImage
                 // Add first elements behind
                 for (int i = index - 1; i > endPoint; i--)
                 {
-                    if (Pics.Count == 0) { return; }
+                    if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
                     _ = AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 // Add second elements
                 for (int i = index + 1; i < (index + 1) + loadBehind; i++)
                 {
-                    if (Pics.Count == 0) { return; }
+                    if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
                     _ = AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 //Clean up infront
                 for (int i = (index + 1) + loadBehind; i < (index + 1) + loadInfront; i++)
                 {
-                    if (Pics.Count == 0) { return; }
+                    if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
                     Remove(i % Pics.Count);
                 }
             }
@@ -231,20 +231,20 @@ namespace PicView.ChangeImage
                 // Add first elements
                 for (int i = index + 1; i < (index + 1) + loadInfront; i++)
                 {
-                    if (Pics.Count == 0) { return; }
+                    if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
                     _ = AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
                 // Add second elements behind
                 for (int i = index - 1; i > endPoint; i--)
                 {
-                    if (Pics.Count == 0) { return; }
+                    if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
                     _ = AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 //Clean up behind
                 for (int i = index - loadInfront; i <= endPoint; i++)
                 {
-                    if (Pics.Count == 0) { return; }
+                    if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
                     Remove(i % Pics.Count);
                 }
             }

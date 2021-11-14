@@ -19,7 +19,7 @@ namespace PicView.Views.UserControls
         {
             InitializeComponent();
 
-            Loaded += async delegate
+            Loaded += delegate
             {
                 x2.MouseLeftButtonDown += (_, _) => Hide();
                 WidthBox.GotKeyboardFocus += (_, _) => WidthBox.SelectAll();
