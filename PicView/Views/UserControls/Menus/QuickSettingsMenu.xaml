@@ -60,7 +60,7 @@
                     Stroke="{StaticResource BorderBrush}"
                     StrokeThickness="1" />
 
-                <uc:ResizeButton Canvas.Left="253" x:Name="QuickResize" />
+                <uc:ResizeButton x:Name="QuickResize" Canvas.Left="253" />
 
                 <Rectangle
                     Canvas.Left="252"
