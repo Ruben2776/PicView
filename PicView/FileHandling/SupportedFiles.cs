@@ -11,11 +11,11 @@ namespace PicView.FileHandling
         /// False if uncommon,
         /// Null if unsupported
         /// </summary>
-        /// <param name="ext"></param>
+        /// <param name="ext">File extension</param>
         /// <returns></returns>
         internal static bool? IsSupportedFile(string file)
         {
-            string ext = Path.GetExtension(file).ToLower();
+            string ext = Path.GetExtension(file);
             switch (ext)
             {
                 // Standards
@@ -41,6 +41,7 @@ namespace PicView.FileHandling
                 case string when ext.Equals(".dds", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".tga", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".heic", StringComparison.OrdinalIgnoreCase):
+                case string when ext.Equals(".heif", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".hdr", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".xcf", StringComparison.OrdinalIgnoreCase):
                 case string when ext.Equals(".jxl", StringComparison.OrdinalIgnoreCase):

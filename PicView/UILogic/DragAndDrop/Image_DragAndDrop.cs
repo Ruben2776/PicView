@@ -154,7 +154,7 @@ namespace PicView.UILogic.DragAndDrop
                 return;
             }
 
-            if (SupportedFiles.IsSupportedExt(Path.GetExtension(files[0]).ToLower()) == false)
+            if (SupportedFiles.IsSupportedExt(files[0]) == false)
             {
                 if (Directory.Exists(files[0]))
                 {

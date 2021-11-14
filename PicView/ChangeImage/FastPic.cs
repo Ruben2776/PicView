@@ -75,12 +75,10 @@ namespace PicView.ChangeImage
                     return;
                 }
             }
+
             LoadPic.UpdatePic(FolderIndex, pic);
 
-            if (Preloader.IsRunning is false)
-            {
-                await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
-            }
+            await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
         }
 
         /// <summary>
