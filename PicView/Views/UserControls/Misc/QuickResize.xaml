@@ -23,13 +23,19 @@
                 VerticalAlignment="Top"
                 Panel.ZIndex="1" />
 
+            <Label 
+                Content="{StaticResource ResizeImage}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Margin="0,0,0,67" />
+            
             <Border 
                 Background="{StaticResource NoisyBg}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center">
-                
+             
                 <DockPanel HorizontalAlignment="Center">
 
                     <StackPanel Orientation="Horizontal">
@@ -66,7 +72,7 @@
 
                     <Label Content="⇔" VerticalAlignment="Center" Margin="10,0,10,0"/>
 
-                    <ComboBox MinWidth="70">
+                    <ComboBox x:Name="PercentageBox" KeyboardNavigation.DirectionalNavigation="Cycle" MinWidth="70">
                         <ComboBoxItem IsSelected="True" Content="100%" />
                         <ComboBoxItem Content="90%" />
                         <ComboBoxItem Content="80%" />

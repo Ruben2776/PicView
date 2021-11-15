@@ -27,6 +27,16 @@ namespace PicView.Views.UserControls
 
                 KeyDown += (_, e) => { if (e.Key == Key.Escape) { Hide(); } };
 
+                PercentageBox.PreviewKeyDown += (_, e) =>
+                {
+                    // Prevent alt tab navigation and instead move back to WidthBox
+                    if (e.Key == Key.Tab)
+                    {
+                        e.Handled = true;
+                        WidthBox.Focus();
+                    }
+                };
+
                 // WidhtBox
                 WidthBox.AcceptsReturn = false;
                 WidthBox.KeyUp += async (_, e) => await Fire(e).ConfigureAwait(false);

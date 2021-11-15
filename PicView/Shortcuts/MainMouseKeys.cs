@@ -165,6 +165,23 @@ namespace PicView.Shortcuts
         /// <param name="e"></param>
         internal static async Task MainImage_MouseWheelAsync(object sender, MouseWheelEventArgs e)
         {
+            // Don't execute keys when entering in GoToPicBox || QuickResize
+            if (GetImageSettingsMenu.GoToPic != null)
+            {
+                if (GetImageSettingsMenu.GoToPic.GoToPicBox.IsKeyboardFocusWithin)
+                {
+                    return;
+                }
+            }
+
+            if (GetQuickResize != null)
+            {
+                if (GetQuickResize.WidthBox.IsKeyboardFocused || GetQuickResize.HeightBox.IsKeyboardFocused)
+                {
+                    return;
+                }
+            }
+
             // Disable normal scroll, so we can use our own values
             e.Handled = true;
 
