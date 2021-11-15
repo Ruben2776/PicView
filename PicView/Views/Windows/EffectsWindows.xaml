@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
     Width="413"
-    Height="483"
+    Height="450"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros"
