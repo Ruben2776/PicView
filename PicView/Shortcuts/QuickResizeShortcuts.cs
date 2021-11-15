@@ -1,5 +1,6 @@
 ﻿using PicView.ImageHandling;
 using PicView.UILogic;
+using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -10,7 +11,7 @@ namespace PicView.Shortcuts
 {
     internal static class QuickResizeShortcuts
     {
-        internal static async Task QuickResizePreviewKeys(TextBox box, KeyEventArgs e, string width, string height)
+        internal static async Task QuickResizePreviewKeys(KeyEventArgs e, string width, string height)
         {
             switch (e.Key)
             {
@@ -36,6 +37,7 @@ namespace PicView.Shortcuts
                 case Key.NumPad9:
                 case Key.Back:
                 case Key.Delete:
+                    break;
                 case Key.Left:
                 case Key.Right:
                 case Key.Tab:
@@ -66,6 +68,33 @@ namespace PicView.Shortcuts
                 default:
                     e.Handled = true; // Don't allow other keys
                     break;
+            }
+        }
+
+        internal static void QuickResizeAspectRatio(TextBox widthBox, TextBox heightBox, bool widthBoxChanged, KeyEventArgs e)
+        {
+            if (widthBox == null || heightBox == null) { return; }
+            if (e.Key == Key.Tab) { return; } // Fixes weird bug
+
+            if (int.TryParse(widthBox.Text, out int width) && int.TryParse(heightBox.Text, out int height))
+            {
+                double originalWidth = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
+                double originalHeight = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
+
+                double aspectRatio = originalWidth / originalHeight;
+
+                if (aspectRatio <= 0) { return; }
+
+                if (widthBoxChanged)
+                {
+                    var newHeight = Math.Round(width / aspectRatio);
+                    heightBox.Text = newHeight.ToString();
+                }
+                else
+                {
+                    var newWidth = Math.Round(height / aspectRatio);
+                    widthBox.Text = newWidth.ToString();
+                }
             }
         }
 

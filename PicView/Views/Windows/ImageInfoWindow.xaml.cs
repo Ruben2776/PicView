@@ -1,5 +1,6 @@
 ﻿using PicView.Animations;
 using PicView.ImageHandling;
+using PicView.Shortcuts;
 using PicView.UILogic;
 using System.IO;
 using System.Windows;
@@ -224,11 +225,14 @@ namespace PicView.Views.Windows
 
             // WidhtBox
             WidthBox.AcceptsReturn = false;
-            WidthBox.PreviewKeyDown += async (_, e) => await Shortcuts.QuickResizeShortcuts.QuickResizePreviewKeys(WidthBox, e, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
+            WidthBox.PreviewKeyDown += async (_, e) => await Shortcuts.QuickResizeShortcuts.QuickResizePreviewKeys(e, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
 
             // HeightBox
             HeightBox.AcceptsReturn = false;
-            HeightBox.PreviewKeyDown += async (_, e) => await Shortcuts.QuickResizeShortcuts.QuickResizePreviewKeys(HeightBox, e, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
+            HeightBox.PreviewKeyDown += async (_, e) => await Shortcuts.QuickResizeShortcuts.QuickResizePreviewKeys(e, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
+
+            WidthBox.KeyUp += (_, e) => QuickResizeShortcuts.QuickResizeAspectRatio(WidthBox, HeightBox, true, e);
+            HeightBox.KeyUp += (_, e) => QuickResizeShortcuts.QuickResizeAspectRatio(WidthBox, HeightBox, false, e);
 
             FilenameCopy.TheButton.Click += (_, _) => Clipboard.SetText(FilenameBox.Text);
 

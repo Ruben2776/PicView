@@ -1,4 +1,5 @@
 ﻿using PicView.Animations;
+using PicView.Shortcuts;
 using PicView.UILogic;
 using System;
 using System.Timers;
@@ -25,11 +26,11 @@ namespace PicView.Views.UserControls
 
                 // WidhtBox
                 WidthBox.AcceptsReturn = false;
-                WidthBox.PreviewKeyDown += async (_, e) => await Shortcuts.QuickResizeShortcuts.QuickResizePreviewKeys(WidthBox, e, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
+                WidthBox.PreviewKeyDown += async (_, e) => await QuickResizeShortcuts.QuickResizePreviewKeys(e, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
 
                 // HeightBox
                 HeightBox.AcceptsReturn = false;
-                HeightBox.PreviewKeyDown += async (_, e) => await Shortcuts.QuickResizeShortcuts.QuickResizePreviewKeys(HeightBox, e, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
+                HeightBox.PreviewKeyDown += async (_, e) => await QuickResizeShortcuts.QuickResizePreviewKeys(e, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
 
                 PercentageBox.PreviewKeyDown += (_, e) =>
                 {
@@ -40,6 +41,9 @@ namespace PicView.Views.UserControls
                         WidthBox.Focus();
                     }
                 };
+
+                WidthBox.KeyUp += (_, e) => QuickResizeShortcuts.QuickResizeAspectRatio(WidthBox, HeightBox, true, e);
+                HeightBox.KeyUp += (_, e) => QuickResizeShortcuts.QuickResizeAspectRatio(WidthBox, HeightBox, false, e);
 
                 var colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.1) };
 
@@ -57,7 +61,7 @@ namespace PicView.Views.UserControls
                     ApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
 
-                ApplyButton.MouseLeftButtonDown += async (_, _) => await Shortcuts.QuickResizeShortcuts.Fire(WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
+                ApplyButton.MouseLeftButtonDown += async (_, _) => await QuickResizeShortcuts.Fire(WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
             };
         }
 
