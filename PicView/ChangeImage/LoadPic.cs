@@ -68,11 +68,7 @@ namespace PicView.ChangeImage
                 pic = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
                 if (pic is null)
                 {
-                    ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
-                    {
-                        Unload(true);
-                    });
-                    return;
+                    pic = ImageFunctions.ImageErrorMessage();
                 }
                 else
                 {
