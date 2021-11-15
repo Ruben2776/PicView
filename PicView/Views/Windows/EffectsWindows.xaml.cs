@@ -17,7 +17,7 @@ namespace PicView.Views.Windows
         public EffectsWindow()
         {
             InitializeComponent();
-            Title = Application.Current.Resources["ShaderEffects"] + " - PicView";
+            Title = Application.Current.Resources["Effects"] + " - PicView";
             MaxHeight = WindowSizing.MonitorInfo.WorkArea.Height;
             Width *= WindowSizing.MonitorInfo.DpiScaling;
             if (double.IsNaN(Width)) // Fixes if user opens window when loading from startup

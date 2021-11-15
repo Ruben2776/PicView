@@ -22,7 +22,7 @@
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Logo />
+            <uc:Icon />
 
             <Rectangle
                 Width="1"
@@ -65,7 +65,7 @@
                 FontSize="16"
                 FontWeight="Bold"
                 Foreground="{StaticResource MainColorBrush}"
-                Text="{StaticResource ShaderEffects}"
+                Text="{StaticResource Effects}"
                 TextAlignment="Center"
                 TextTrimming="CharacterEllipsis" />
         </DockPanel>
