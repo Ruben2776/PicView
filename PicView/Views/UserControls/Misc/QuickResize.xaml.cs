@@ -57,7 +57,7 @@ namespace PicView.Views.UserControls
                     ApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
 
-                ApplyButton.MouseLeftButtonDown += async (_, e) => await Shortcuts.QuickResizeShortcuts.Fire(null, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
+                ApplyButton.MouseLeftButtonDown += async (_, _) => await Shortcuts.QuickResizeShortcuts.Fire(WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
             };
         }
 

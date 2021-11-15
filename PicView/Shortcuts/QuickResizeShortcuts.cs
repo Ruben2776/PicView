@@ -60,7 +60,7 @@ namespace PicView.Shortcuts
                     break;
 
                 case Key.Enter: // Execute it!
-                    await Fire(e, width, height).ConfigureAwait(false);
+                    await Fire(width, height).ConfigureAwait(false);
                     break;
 
                 default:
@@ -69,16 +69,16 @@ namespace PicView.Shortcuts
             }
         }
 
-        internal static async Task Fire(KeyEventArgs? e, string width, string height)
+        internal static async Task Fire(string width, string height)
         {
-            var resize = await FireResizeAsync(e, width, height).ConfigureAwait(false);
+            var resize = await FireResizeAsync(width, height).ConfigureAwait(false);
             if (resize)
             {
                 UC.GetQuickResize.Hide();
             }
         }
 
-        static async Task<bool> FireResizeAsync(KeyEventArgs? e, string widthText, string heightText)
+        static async Task<bool> FireResizeAsync(string widthText, string heightText)
         {
             string file = ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex];
             if (int.TryParse(widthText, out var width) && int.TryParse(heightText, out var height))
