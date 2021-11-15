@@ -1,7 +1,6 @@
 ﻿using ImageMagick;
 using PicView.UILogic;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,10 +15,21 @@ namespace PicView.ImageHandling
         /// </summary>
         /// <param name="base64String"></param>
         /// <returns></returns>
-        internal static Task<BitmapSource?> Base64StringToBitmap(string base64String) => Task.Run(() =>
+        internal static Task<BitmapSource?> Base64StringToBitmap(string base64String) => Task.Run(async () =>
         {
             byte[] binaryData = Convert.FromBase64String(base64String);
+            return await Task.FromResult(Base64FromBytes(binaryData)).ConfigureAwait(false);
+        });
 
+        internal static Task<BitmapSource?> Base64StringToBitmap(FileInfo fileInfo) => Task.Run(async () =>
+        {
+            var text = await File.ReadAllTextAsync(fileInfo.FullName).ConfigureAwait(false);
+            byte[] binaryData = Convert.FromBase64String(text);
+            return await Task.FromResult(Base64FromBytes(binaryData)).ConfigureAwait(false);
+        });
+
+        static BitmapSource? Base64FromBytes(byte[] binaryData)
+        {
             using MagickImage magick = new MagickImage();
             var mrs = new MagickReadSettings()
             {
@@ -31,15 +41,10 @@ namespace PicView.ImageHandling
             {
                 magick.Read(new MemoryStream(binaryData), mrs);
             }
-#if DEBUG
-            catch (MagickException e)
+            catch (MagickException)
             {
-                Trace.WriteLine("Base64StringToBitmap " + base64String + " null, \n" + e.Message);
                 return null;
             }
-#else
-                catch (MagickException) { return null; }
-#endif
             // Set values for maximum quality
             magick.Quality = 100;
             magick.ColorSpace = ColorSpace.Transparent;
@@ -47,7 +52,7 @@ namespace PicView.ImageHandling
             var pic = magick.ToBitmapSource();
             pic.Freeze();
             return pic;
-        });
+        }
 
         internal static bool IsBase64String(string base64)
         {

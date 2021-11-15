@@ -45,6 +45,9 @@ namespace PicView.ImageHandling
                     /// TODO svgz only works in getDefaultBitmapSource, need to figure out how to fix white bg instead of transparent 
                     return await getTransparentBitmapSourceAsync(fileInfo, MagickFormat.Svg).ConfigureAwait(false);
 
+                case string when fileInfo.Extension.Equals(".b64", StringComparison.OrdinalIgnoreCase):
+                    return await Base64.Base64StringToBitmap(fileInfo).ConfigureAwait(false);
+
                 default:
                     return await Task.FromResult(getDefaultBitmapSource(fileInfo)).ConfigureAwait(false);
             }
