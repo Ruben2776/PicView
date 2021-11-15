@@ -94,17 +94,7 @@ namespace PicView.ChangeImage
 
             await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
 
-            switch (Pics.Count)
-            {
-                case > 0:
-                    FolderIndex = Pics.IndexOf(fileInfo.FullName);
-                    break;
-                default:
-                    FolderIndex = 0;
-                    break;
-            }
             FolderIndex = Pics.Count > 0 ? Pics.IndexOf(fileInfo.FullName) : 0;
-            FolderIndex = FolderIndex == -1 ? 0 : FolderIndex; // Fixes weird error if you load example.jpg where the actual name is example.JPG
 
             if (pic is not null)
             {
@@ -218,7 +208,7 @@ namespace PicView.ChangeImage
                 {
                     await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
                 }
-                await LoadPicAtIndexAsync(Pics.IndexOf(fileInfo.FullName), false, fileInfo).ConfigureAwait(false);
+                await LoadPicAtIndexAsync(Pics.IndexOf(fileInfo.FullName), fileInfo).ConfigureAwait(false);
                 return;
             }
 
@@ -245,7 +235,7 @@ namespace PicView.ChangeImage
             if (FolderIndex >= 0 && Pics?.Count > 0) // check if being extracted and need to wait for it instead
             {
                 // Navigate to picture using obtained index
-                await LoadPicAtIndexAsync(FolderIndex, false, fileInfo).ConfigureAwait(false);
+                await LoadPicAtIndexAsync(FolderIndex, fileInfo).ConfigureAwait(false);
             }
 
             FreshStartup = false;
@@ -335,7 +325,7 @@ namespace PicView.ChangeImage
         /// Loads image at specified index
         /// </summary>
         /// <param name="index">The index of file to load from Pics</param>
-        internal static async Task LoadPicAtIndexAsync(int index, bool showLoadingThumb = true, FileInfo? fileInfo = null)
+        internal static async Task LoadPicAtIndexAsync(int index, FileInfo? fileInfo = null)
         {
             if (Pics?.Count < index || Pics?.Count < 1)
             {
@@ -348,67 +338,64 @@ namespace PicView.ChangeImage
             // Initate loading behavior, if needed
             if (preloadValue == null || preloadValue.isLoading)
             {
-                if (showLoadingThumb)
-                {
-                    // Show a thumbnail while loading
-                    BitmapSource? thumb = null;
+                // Show a thumbnail while loading
+                BitmapSource? thumb = null;
 
-                    if (GalleryFunctions.IsHorizontalFullscreenOpen == false || GalleryFunctions.IsVerticalFullscreenOpen == false)
+                if (GalleryFunctions.IsHorizontalFullscreenOpen == false || GalleryFunctions.IsVerticalFullscreenOpen == false)
+                {
+                    if (fileInfo is null)
                     {
-                        if (fileInfo is null)
+                        fileInfo = new FileInfo(Pics[FolderIndex]);
+                    }
+                    if (fileInfo.Exists)
+                    {
+                        thumb = GetBitmapSourceThumb(fileInfo);
+                    }
+                    else
+                    {
+                        try // Fix deleting files outside application
                         {
-                            fileInfo = new FileInfo(Pics[FolderIndex]);
+                            var x = index - 1 >= 0 ? index - 1 : 0;
+                            fileInfo = new FileInfo(Pics[x]);
+                            await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
+                            await LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
+                            return;
                         }
-                        if (fileInfo.Exists)
+                        catch (Exception)
                         {
-                            thumb = GetBitmapSourceThumb(fileInfo);
-                        }
-                        else
-                        {
-                            try // Fix deleting files outside application
-                            {
-                                var x = index - 1 >= 0 ? index - 1 : 0;
-                                fileInfo = new FileInfo(Pics[x]);
-                                await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
-                                await LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
-                                return;
-                            }
-                            catch (Exception)
-                            {
-                                Error_Handling.UnexpectedError();
-                                return;
-                            }
+                            Error_Handling.UnexpectedError();
+                            return;
                         }
                     }
-
-                    ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
-                    {
-                        if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
-                        {
-                            thumb = GetThumb(index, fileInfo);
-                            GalleryNavigation.FullscreenGalleryNavigation();
-                        }
-
-                        if (FreshStartup)
-                        {
-                            // Set loading from translation service
-                            SetLoadingString();
-                            FreshStartup = false;
-                        }
-
-                        if (thumb != null)
-                        {
-                            ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
-                        }
-
-                        // Don't allow image size to stretch the whole screen
-                        if (XWidth == 0)
-                        {
-                            ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
-                            ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
-                        }
-                    });
                 }
+
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
+                {
+                    if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
+                    {
+                        thumb = GetThumb(index, fileInfo);
+                        GalleryNavigation.FullscreenGalleryNavigation();
+                    }
+
+                    if (FreshStartup)
+                    {
+                        // Set loading from translation service
+                        SetLoadingString();
+                        FreshStartup = false;
+                    }
+
+                    if (thumb != null)
+                    {
+                        ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
+                    }
+
+                    // Don't allow image size to stretch the whole screen
+                    if (XWidth == 0)
+                    {
+                        ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+                        ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
+                    }
+                });
 
                 if (preloadValue is null)
                 {

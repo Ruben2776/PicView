@@ -9,10 +9,9 @@ namespace PicView.ImageHandling
 {
     internal static class ImageSizeFunctions
     {
-        internal static async Task<Size?> GetImageSizeAsync(string file)
+        internal static async Task<Size?> GetImageSizeAsync(FileInfo fileInfo)
         {
             using var magick = new MagickImage();
-            FileInfo? fileInfo = new FileInfo(file);
             if (fileInfo.Length > 2e+9)
             {
 #if DEBUG
@@ -27,7 +26,7 @@ namespace PicView.ImageHandling
 #if DEBUG
             catch (MagickException e)
             {
-                Trace.WriteLine("ImageSize returned " + file + " null, \n" + e.Message);
+                Trace.WriteLine("ImageSize returned " + fileInfo.FullName + " null, \n" + e.Message);
                 return null;
             }
 #else
@@ -35,6 +34,12 @@ namespace PicView.ImageHandling
 #endif
 
             return new Size(magick.Width, magick.Height);
+        }
+
+        internal static async Task<Size?> GetImageSizeAsync(string file)
+        {
+            FileInfo fileInfo = new FileInfo(file);
+            return await GetImageSizeAsync(fileInfo).ConfigureAwait(false);
         }
 
         internal static async Task<bool> ResizeImageAsync(string file, int width, int height, int quality = 100, Percentage? percentage = null)

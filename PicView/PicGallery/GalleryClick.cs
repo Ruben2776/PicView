@@ -149,7 +149,7 @@ namespace PicView.PicGallery
                 GalleryNavigation.SelectedGalleryItem = id;
             });
             // Change image
-            await LoadPic.LoadPicAtIndexAsync(id, resize).ConfigureAwait(false);
+            await LoadPic.LoadPicAtIndexAsync(id).ConfigureAwait(false);
         }
     }
 }
