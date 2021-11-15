@@ -1,8 +1,6 @@
 ﻿using PicView.Animations;
-using PicView.ImageHandling;
 using PicView.UILogic;
 using System;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,7 +23,13 @@ namespace PicView.Views.UserControls
                 WidthBox.GotKeyboardFocus += (_, _) => WidthBox.SelectAll();
                 HeightBox.GotKeyboardFocus += (_, _) => HeightBox.SelectAll();
 
-                KeyDown += (_, e) => { if (e.Key == Key.Escape) { Hide(); } };
+                // WidhtBox
+                WidthBox.AcceptsReturn = false;
+                WidthBox.PreviewKeyDown += async (_, e) => await Shortcuts.QuickResizeShortcuts.QuickResizePreviewKeys(WidthBox, e, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
+
+                // HeightBox
+                HeightBox.AcceptsReturn = false;
+                HeightBox.PreviewKeyDown += async (_, e) => await Shortcuts.QuickResizeShortcuts.QuickResizePreviewKeys(HeightBox, e, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
 
                 PercentageBox.PreviewKeyDown += (_, e) =>
                 {
@@ -36,14 +40,6 @@ namespace PicView.Views.UserControls
                         WidthBox.Focus();
                     }
                 };
-
-                // WidhtBox
-                WidthBox.AcceptsReturn = false;
-                WidthBox.KeyUp += async (_, e) => await Fire(e).ConfigureAwait(false);
-
-                // HeightBox
-                HeightBox.AcceptsReturn = false;
-                HeightBox.KeyUp += async (_, e) => await Fire(e).ConfigureAwait(false);
 
                 var colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.1) };
 
@@ -61,17 +57,8 @@ namespace PicView.Views.UserControls
                     ApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
 
-                ApplyButton.MouseLeftButtonDown += async (_, e) => await Fire(null).ConfigureAwait(false);
+                ApplyButton.MouseLeftButtonDown += async (_, e) => await Shortcuts.QuickResizeShortcuts.Fire(null, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
             };
-        }
-
-        async Task Fire(KeyEventArgs? e)
-        {
-            var resize = await ImageSizeFunctions.FireResizeAsync(e, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
-            if (resize)
-            {
-                Hide();
-            }
         }
 
         public void Show()

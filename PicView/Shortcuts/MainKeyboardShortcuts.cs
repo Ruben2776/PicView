@@ -25,10 +25,6 @@ namespace PicView.Shortcuts
             // Don't allow keys when typing in text
             if (GetMainWindow.TitleText.IsKeyboardFocusWithin) { return; }
 
-            var ctrlDown = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
-            var altDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
-            var shiftDown = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
-
             // Don't execute keys when entering in GoToPicBox || QuickResize
             if (GetImageSettingsMenu.GoToPic != null)
             {
@@ -45,6 +41,10 @@ namespace PicView.Shortcuts
                     return;
                 }
             }
+
+            var ctrlDown = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
+            var altDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
+            var shiftDown = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
 
             #region CroppingKeys
 
@@ -205,12 +205,18 @@ namespace PicView.Shortcuts
                 // Zoom
                 case Key.Add:
                 case Key.OemPlus:
-                    Zoom(true);
+                    if (!GalleryFunctions.IsHorizontalFullscreenOpen || !GalleryFunctions.IsVerticalFullscreenOpen || !GalleryFunctions.IsHorizontalOpen)
+                    {
+                        Zoom(true);
+                    }
                     return;
 
                 case Key.Subtract:
                 case Key.OemMinus:
-                    Zoom(false);
+                    if (!GalleryFunctions.IsHorizontalFullscreenOpen || !GalleryFunctions.IsVerticalFullscreenOpen || !GalleryFunctions.IsHorizontalOpen)
+                    {
+                        Zoom(false);
+                    }
                     return;
 
                 default: break;
@@ -266,6 +272,10 @@ namespace PicView.Shortcuts
                         {
                             UILogic.Sizing.WindowSizing.Fullscreen_Restore();
                         }
+                        if (GetQuickResize is not null && GetQuickResize.Opacity > 0)
+                        {
+                            GetQuickResize.Hide();
+                        }
                         else if (!MainContextMenu.IsVisible)
                         {
                             if (GetCropppingTool != null && GetCropppingTool.IsVisible)
@@ -299,13 +309,16 @@ namespace PicView.Shortcuts
 
                     // X, Ctrl + X
                     case Key.X:
-                        if (ctrlDown && !GalleryFunctions.IsHorizontalOpen)
+                        if (GalleryFunctions.IsHorizontalOpen is false)
                         {
-                            Cut();
-                        }
-                        else
-                        {
-                            ConfigureSettings.UpdateUIValues.SetScrolling();
+                            if (ctrlDown)
+                            {
+                                Cut();
+                            }
+                            else
+                            {
+                                ConfigureSettings.UpdateUIValues.SetScrolling();
+                            }
                         }
                         break;
                     // F

@@ -224,11 +224,11 @@ namespace PicView.Views.Windows
 
             // WidhtBox
             WidthBox.AcceptsReturn = false;
-            WidthBox.KeyUp += async (_, e) => await ImageSizeFunctions.FireResizeAsync(e, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
+            WidthBox.PreviewKeyDown += async (_, e) => await Shortcuts.QuickResizeShortcuts.QuickResizePreviewKeys(WidthBox, e, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
 
             // HeightBox
             HeightBox.AcceptsReturn = false;
-            HeightBox.KeyUp += async (_, e) => await ImageSizeFunctions.FireResizeAsync(e, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
+            HeightBox.PreviewKeyDown += async (_, e) => await Shortcuts.QuickResizeShortcuts.QuickResizePreviewKeys(HeightBox, e, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
 
             FilenameCopy.TheButton.Click += (_, _) => Clipboard.SetText(FilenameBox.Text);
 
