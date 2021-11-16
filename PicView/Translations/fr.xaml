@@ -216,7 +216,7 @@
     <system:String x:Key="ChangeBackgroundTooltip">Changer la couleur d'arrière-plan pour les images avec un fond transparent</system:String>
 
     <!--  Copy related  -->
-    <system:String x:Key="Copier">Copy</system:String>
+    <system:String x:Key="Copy">Copier</system:String>
     <system:String x:Key="AddedToClipboard">Ajouter au presse-papier</system:String>
 
     <!--  Copy file  -->
