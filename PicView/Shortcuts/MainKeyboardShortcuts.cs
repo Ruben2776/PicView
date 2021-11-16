@@ -328,6 +328,14 @@ namespace PicView.Shortcuts
                         }
                         break;
 
+                    // J
+                    case Key.J:
+                        if (!GalleryFunctions.IsHorizontalOpen)
+                        {
+                            Views.UserControls.ResizeButton.ToggleQuickResize();
+                        }
+                        break;
+
                     // Delete, Shift + Delete
                     case Key.Delete:
                         if (!GalleryFunctions.IsHorizontalOpen)

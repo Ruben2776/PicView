@@ -194,7 +194,6 @@ namespace PicView.UILogic.Loading
 
             var ImageSize = (MenuItem)ImageChoices.Items[3];
             ImageSize.Click += (_, _) => Views.UserControls.ResizeButton.ToggleQuickResize();
-            ImageSize.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + {Application.Current.Resources["Alt"]} + I";
 
             var BatchSize = (MenuItem)ImageChoices.Items[4];
             BatchSize.Click += (_, _) => ConfigureWindows.ResizeWindow();

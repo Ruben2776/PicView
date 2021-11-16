@@ -196,7 +196,7 @@
             <MenuItem Header="{StaticResource ImageInfo}" Foreground="{StaticResource MainColorBrush}" ToolTip="{StaticResource ShowImageInfo}" InputGestureText="I" />
             <MenuItem Header="{StaticResource FileProperties}" Foreground="{StaticResource MainColorBrush}" />
             <Separator />
-            <MenuItem Header="{StaticResource ResizeImage}" Foreground="{StaticResource MainColorBrush}" />
+            <MenuItem Header="{StaticResource ResizeImage}" Foreground="{StaticResource MainColorBrush}"  InputGestureText="J" />
             <MenuItem Header="{StaticResource BatchResize}" Foreground="{StaticResource MainColorBrush}" />
         </MenuItem>
 
