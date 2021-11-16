@@ -135,6 +135,7 @@ namespace PicView.UILogic.Loading
 
             // ToogleUI
             var ToogleUIMenu = (MenuItem)settingscm.Items[2];
+            ToogleUIMenu.InputGestureText = $"{Application.Current.Resources["Alt"]} + Z";
             var ToogleUIHeader = (CheckBox)ToogleUIMenu.Header;
             ToogleUIHeader.IsChecked = Properties.Settings.Default.ShowInterface;
             ToogleUIHeader.Click += (_, _) => HideInterfaceLogic.ToggleInterface();
