@@ -208,14 +208,17 @@ namespace PicView.UILogic.Loading
 
             // Copy file
             var copyFileCm = (MenuItem)CopyCm.Items[0];
+            copyFileCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + {Application.Current.Resources["Shift"]} + C";
             copyFileCm.Click += (_, _) => FileHandling.Copy_Paste.Copyfile();
 
             // FileCopyPath
             var FileCopyPathCm = (MenuItem)CopyCm.Items[1];
+            FileCopyPathCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + {Application.Current.Resources["Alt"]} + C";
             FileCopyPathCm.Click += (_, _) => FileHandling.Copy_Paste.CopyFilePath();
 
             // CopyImage
             var CopyImageCm = (MenuItem)CopyCm.Items[2];
+            CopyImageCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + C";
             CopyImageCm.Click += (_, _) => FileHandling.Copy_Paste.CopyBitmap();
 
             // CopyBase64

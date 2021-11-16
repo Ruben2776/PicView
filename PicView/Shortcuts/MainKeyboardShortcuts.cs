@@ -1,6 +1,5 @@
 ﻿using PicView.Editing;
 using PicView.Editing.Crop;
-using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.UILogic;
 using System.Threading.Tasks;
@@ -347,7 +346,7 @@ namespace PicView.Shortcuts
                             }
                             else if (altDown)
                             {
-                                System.Threading.Tasks.Task task = Base64.SendToClipboard();
+                                CopyFilePath();
                             }
                             else
                             {
