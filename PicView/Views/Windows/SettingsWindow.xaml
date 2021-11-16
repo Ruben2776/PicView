@@ -133,7 +133,15 @@
                     <Setter Property="Background" Value="{StaticResource NoisyBg}" />
                 </Style>
             </TabControl.Resources>
-            <TabItem FontSize="14" Header="{StaticResource GeneralSettings}">
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock
+                        Text="{StaticResource GeneralSettings}"
+                        MaxWidth="155"
+                        TextWrapping="Wrap"
+                        TextTrimming="CharacterEllipsis"
+                        FontSize="14" />
+                </TabItem.Header>
 
                 <StackPanel Margin="10,10,10,10">
 
@@ -385,8 +393,16 @@
 
                 </StackPanel>
             </TabItem>
-
-            <TabItem FontSize="14" Header="{StaticResource UISettings}">
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock
+                        Text="{StaticResource UISettings}"
+                        MaxWidth="155"
+                        TextWrapping="Wrap"
+                        TextTrimming="CharacterEllipsis"
+                        FontSize="14" />
+                </TabItem.Header>
+            
                 <StackPanel Margin="10">
                     
                     <Label
