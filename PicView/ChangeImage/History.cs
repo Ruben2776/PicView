@@ -183,7 +183,16 @@ namespace PicView.ChangeImage
 
         static MenuItem menuItem(string filePath, int i)
         {
-            var selected = filePath == ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex];
+            bool selected;
+            if (Error_Handling.CheckOutOfRange())
+            {
+                selected = false;
+            }
+            else
+            {
+                selected = filePath == ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex];
+            }
+
             var mainColor = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
             var accentColor = (SolidColorBrush)Application.Current.Resources["ChosenColorBrush"];
             var cmIcon = new TextBlock
