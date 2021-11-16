@@ -17,9 +17,11 @@ namespace PicView.UILogic.TransformImage
 
         internal static async Task RotateAndMoveCursor(bool right, UIElement uIElement)
         {
-            Rotate(false);
+            Rotate(right);
+            if (Properties.Settings.Default.AutoFitWindow == false) { return; }
+
             // Move cursor after rotating
-            await Task.Delay(300).ConfigureAwait(true); // Delay it, so that the move takes place after window has resized
+            await Task.Delay(50).ConfigureAwait(true); // Delay it, so that the move takes place after window has resized
             var p = uIElement.PointToScreen(new System.Windows.Point(25, 25));
             SystemIntegration.NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
         }
@@ -37,7 +39,7 @@ namespace PicView.UILogic.TransformImage
 
             var rt = new RotateTransform { Angle = Rotateint = r };
 
-            _ = ScaleImage.TryFitImageAsync();
+            ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width, ConfigureWindows.GetMainWindow.MainImage.Source.Height);
 
             // If it's flipped, keep it flipped when rotating
             if (Flipped)
