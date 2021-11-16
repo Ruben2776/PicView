@@ -555,7 +555,13 @@ namespace PicView.ImageHandling
                 var colorSpace = exifData.GetValue(ExifTag.ColorSpace);
                 if (colorSpace is not null)
                 {
-                    colorRepresentationValue = colorSpace.Value.ToString();
+                    switch (colorSpace.Value)
+                    {
+                        case 1: colorRepresentationValue = "sRGB"; break;
+                        case 2: colorRepresentationValue = "Adobe RGB"; break;
+                        case 65535: colorRepresentationValue = "Uncalibrated"; break;
+                        default: colorRepresentationValue = "Unknown"; break;
+                    }
                 }
 
                 var compr = exifData.GetValue(ExifTag.Compression);
