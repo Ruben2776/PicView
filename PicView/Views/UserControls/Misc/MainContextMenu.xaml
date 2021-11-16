@@ -128,7 +128,7 @@
         <!--Recent files-->
         <MenuItem Header="{StaticResource RecentFiles}" Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
-                <Path Width="12" Height="12" Stretch="Fill" Fill="{StaticResource IconColorBrush}" Data="M288,48H136c-22.092,0-40,17.908-40,40v336c0,22.092,17.908,40,40,40h240c22.092,0,40-17.908,40-40V176L288,48z M272,192 V80l112, 112H272z"/>
+                <Path Width="12" Height="12" Stretch="Fill" Fill="{StaticResource IconColorBrush}" Data="M504 255.531c.253 136.64-111.18 248.372-247.82 248.468-59.015.042-113.223-20.53-155.822-54.911-11.077-8.94-11.905-25.541-1.839-35.607l11.267-11.267c8.609-8.609 22.353-9.551 31.891-1.984C173.062 425.135 212.781 440 256 440c101.705 0 184-82.311 184-184 0-101.705-82.311-184-184-184-48.814 0-93.149 18.969-126.068 49.932l50.754 50.754c10.08 10.08 2.941 27.314-11.313 27.314H24c-8.837 0-16-7.163-16-16V38.627c0-14.254 17.234-21.393 27.314-11.314l49.372 49.372C129.209 34.136 189.552 8 256 8c136.81 0 247.747 110.78 248 247.531zm-180.912 78.784l9.823-12.63c8.138-10.463 6.253-25.542-4.21-33.679L288 256.349V152c0-13.255-10.745-24-24-24h-16c-13.255 0-24 10.745-24 24v135.651l65.409 50.874c10.463 8.137 25.541 6.253 33.679-4.21z"/>
             </MenuItem.Icon>
         </MenuItem>
 
@@ -189,12 +189,16 @@
             </MenuItem.Icon>
         </MenuItem>
 
-        <MenuItem Header="{StaticResource ImageInfo}" Foreground="{StaticResource MainColorBrush}" ToolTip="{StaticResource ShowImageInfo}">
+        <MenuItem Header="{StaticResource Image}" Foreground="{StaticResource MainColorBrush}" ToolTip="{StaticResource ShowImageInfo}">
             <MenuItem.Icon>
-                <Path Width="12" Height="12" Stretch="Fill" Fill="{StaticResource IconColorBrush}" Data="M398.6,169.2c-0.9-2.2-2-4.3-3.5-6.1l-83.8-91.7c-1.9-2.1-4.2-3.6-6.7-4.9c-2.9-1.5-6.1-2.1-9.5-2.1H135.2   c-12.4,0-22.7,10.6-22.7,23.9v335.2c0,13.4,10.3,24.9,22.7,24.9h243.1c12.4,0,22.2-11.5,22.2-24.9V179.4   C400.5,175.8,400,172.3,398.6,169.2z M160.5,178.6c0-1.5,1.8-2.1,3.4-2.1h70.8c1.6,0,2.8,0.6,2.8,2.1v10.8c0,1.4-1.1,3.1-2.8,3.1   h-70.8c-1.6,0-3.4-1.7-3.4-3.1V178.6z M160.5,306.6c0-1.5,1.8-2.1,3.4-2.1h122.2c1.6,0,2.4,0.6,2.4,2.1v10.8c0,1.4-0.7,3.1-2.4,3.1   H163.9c-1.6,0-3.4-1.7-3.4-3.1V306.6z M320.5,381.4c0,1.4-0.7,3.1-2.4,3.1H163.9c-1.6,0-3.4-1.7-3.4-3.1v-10.8   c0-1.5,1.8-2.1,3.4-2.1h154.2c1.6,0,2.4,0.6,2.4,2.1V381.4z M352.5,253.4c0,1.4-0.7,3.1-2.4,3.1H163.9c-1.6,0-3.4-1.7-3.4-3.1   v-10.8c0-1.5,1.8-2.1,3.4-2.1h186.2c1.6,0,2.4,0.6,2.4,2.1V253.4z M305.6,177.5c-5.6,0-11.1-5.2-11.1-11.3v-66l71.2,77.3H305.6"/>
+                <Path Width="12" Height="12" Stretch="Fill" Fill="{StaticResource IconColorBrush}" Data="M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM332.1 128H256V51.9l76.1 76.1zM48 464V48h160v104c0 13.3 10.7 24 24 24h104v288H48zm32-48h224V288l-23.5-23.5c-4.7-4.7-12.3-4.7-17 0L176 352l-39.5-39.5c-4.7-4.7-12.3-4.7-17 0L80 352v64zm48-240c-26.5 0-48 21.5-48 48s21.5 48 48 48 48-21.5 48-48-21.5-48-48-48z"/>
             </MenuItem.Icon>
+            <MenuItem Header="{StaticResource ImageInfo}" Foreground="{StaticResource MainColorBrush}" ToolTip="{StaticResource ShowImageInfo}" InputGestureText="I" />
+            <MenuItem Header="{StaticResource FileProperties}" Foreground="{StaticResource MainColorBrush}" />
+            <Separator />
+            <MenuItem Header="{StaticResource ResizeImage}" Foreground="{StaticResource MainColorBrush}" />
+            <MenuItem Header="{StaticResource BatchResize}" Foreground="{StaticResource MainColorBrush}" />
         </MenuItem>
-
 
         <Separator />
 

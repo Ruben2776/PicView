@@ -272,7 +272,7 @@ namespace PicView.Shortcuts
                         {
                             UILogic.Sizing.WindowSizing.Fullscreen_Restore();
                         }
-                        if (GetQuickResize is not null && GetQuickResize.Opacity > 0)
+                        else if (GetQuickResize is not null && GetQuickResize.Opacity > 0)
                         {
                             GetQuickResize.Hide();
                         }
@@ -371,11 +371,18 @@ namespace PicView.Shortcuts
                     case Key.I:
                         if (ctrlDown && !GalleryFunctions.IsHorizontalOpen)
                         {
-                            SystemIntegration.NativeMethods.ShowFileProperties(Pics[FolderIndex]);
+                            if (altDown)
+                            {
+                                Views.UserControls.ResizeButton.ToggleQuickResize();
+                            }
+                            else
+                            {
+                                FileHandling.FileFunctions.ShowFileProperties();
+                            }
                         }
                         else
                         {
-                            Views.UserControls.ResizeButton.ToggleQuickResize();
+                            ConfigureWindows.ImageInfoWindow();
                         }
                         break;
 
@@ -567,6 +574,25 @@ namespace PicView.Shortcuts
             // Don't allow keys when typing in text
             if (GetMainWindow.TitleText.IsKeyboardFocusWithin) { return; }
 
+            if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt)
+            {
+                if (e.SystemKey == Key.Z)
+                {
+                    if (GalleryFunctions.IsHorizontalOpen || !GalleryFunctions.IsVerticalFullscreenOpen || !GalleryFunctions.IsHorizontalFullscreenOpen)
+                    {
+                        HideInterfaceLogic.ToggleInterface();
+                    }
+                }
+                else if (e.SystemKey == Key.Enter) // Doesn't work..
+                {
+                    if (Properties.Settings.Default.FullscreenGalleryHorizontal == false)
+                    {
+                        UILogic.Sizing.WindowSizing.Fullscreen_Restore();
+                    }
+                }
+                return;
+            }
+
             switch (e.Key)
             {
                 case Key.A:
@@ -581,25 +607,6 @@ namespace PicView.Shortcuts
                     return;
 
                 default: break;
-            }
-
-            var altDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
-            if (altDown && !e.IsRepeat)
-            {
-                // Alt + Z
-                if ((e.SystemKey == Key.Z) && !GalleryFunctions.IsHorizontalOpen || !GalleryFunctions.IsVerticalFullscreenOpen || !GalleryFunctions.IsHorizontalFullscreenOpen)
-                {
-                    HideInterfaceLogic.ToggleInterface();
-                }
-
-                // Alt + Enter
-                else if ((e.SystemKey == Key.Enter))
-                {
-                    if (Properties.Settings.Default.FullscreenGalleryHorizontal == false)
-                    {
-                        UILogic.Sizing.WindowSizing.Fullscreen_Restore();
-                    }
-                }
             }
         }
     }

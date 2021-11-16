@@ -96,6 +96,10 @@ namespace PicView.Shortcuts
                     widthBox.Text = newWidth.ToString();
                 }
             }
+            else
+            {
+                // if contains %, write code to handle it
+            }
         }
 
         internal static async Task Fire(string width, string height)

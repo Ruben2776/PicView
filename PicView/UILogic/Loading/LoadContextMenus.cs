@@ -178,10 +178,25 @@ namespace PicView.UILogic.Loading
 
 
             ///////////////////////////
-            ///   ImageInfo        \\\\
+            ///   Image choices    \\\\
             ///////////////////////////
-            var ImageInfoCm = (MenuItem)MainContextMenu.Items[11];
+            var ImageChoices = (MenuItem)MainContextMenu.Items[11];
+
+            var ImageInfoCm = (MenuItem)ImageChoices.Items[0];
             ImageInfoCm.Click += (_, _) => ConfigureWindows.ImageInfoWindow();
+
+            var FileProps = (MenuItem)ImageChoices.Items[1];
+            FileProps.Click += (_, _) => FileHandling.FileFunctions.ShowFileProperties();
+            FileProps.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + I";
+
+            // 2 = seperator
+
+            var ImageSize = (MenuItem)ImageChoices.Items[3];
+            ImageSize.Click += (_, _) => Views.UserControls.ResizeButton.ToggleQuickResize();
+            ImageSize.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + {Application.Current.Resources["Alt"]} + I";
+
+            var BatchSize = (MenuItem)ImageChoices.Items[4];
+            BatchSize.Click += (_, _) => ConfigureWindows.ResizeWindow();
 
             // 12 = seperator
 

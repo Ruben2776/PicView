@@ -12,6 +12,12 @@ namespace PicView.FileHandling
 {
     internal static class FileFunctions
     {
+        internal static void ShowFileProperties()
+        {
+            if (ChangeImage.Error_Handling.CheckOutOfRange()) { return; }
+
+            SystemIntegration.NativeMethods.ShowFileProperties(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
+        }
 
         [DllImport("shell32.dll", SetLastError = true)]
         public static extern int SHOpenFolderAndSelectItems(IntPtr pidlFolder, uint cidl, [In, MarshalAs(UnmanagedType.LPArray)] IntPtr[] apidl, uint dwFlags);
