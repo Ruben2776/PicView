@@ -47,7 +47,6 @@
     <!--  info window, interface configuration  -->
     <system:String x:Key="InterfaceConfiguration">Interface configuration</system:String>
     <system:String x:Key="HideShowInterface">Hide/show interface</system:String>
-    <system:String x:Key="ChangeBackground">Change background</system:String>
     <system:String x:Key="ToggleFullscreen">Toggle fullscreen</system:String>
 
     <!--  Info window, window management  -->
@@ -213,8 +212,8 @@
     <system:String x:Key="Looping">Looping</system:String>
     <system:String x:Key="FitToWindow">Fit to window/image</system:String>
     <system:String x:Key="ShowHideUI">Show/hide interface</system:String>
-    <system:String x:Key="ChangeBg">Change background</system:String>
-    <system:String x:Key="ChangeBgTooltip">Change between background color for images with transparent background</system:String>
+    <system:String x:Key="ChangeBackground">Change background</system:String>
+    <system:String x:Key="ChangeBackgroundTooltip">Change between background color for images with transparent background</system:String>
 
     <!--  Copy related  -->
     <system:String x:Key="Copy">Copy</system:String>

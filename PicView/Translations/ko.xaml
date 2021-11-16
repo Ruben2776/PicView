@@ -47,7 +47,6 @@
     <!--  info window, interface configuration  -->
     <system:String x:Key="InterfaceConfiguration">인터페이스 구성</system:String>
     <system:String x:Key="HideShowInterface">인터페이스 숨기기/표시</system:String>
-    <system:String x:Key="ChangeBackground">배경 변경</system:String>
     <system:String x:Key="ToggleFullscreen">전체 화면 전환</system:String>
 
     <!--  Info window, window management  -->
@@ -213,8 +212,8 @@
     <system:String x:Key="Looping">순환</system:String>
     <system:String x:Key="FitToWindow">창/이미지에 맞춤</system:String>
     <system:String x:Key="ShowHideUI">인터페이스 표시/숨기기</system:String>
-    <system:String x:Key="ChangeBg">배경 변경</system:String>
-    <system:String x:Key="ChangeBgTooltip">투명 배경을 가진 이미지의 배경색 변경</system:String>
+    <system:String x:Key="ChangeBackground">배경 변경</system:String>
+    <system:String x:Key="ChangeBackgroundTooltip">투명 배경을 가진 이미지의 배경색 변경</system:String>
 
     <!--  Copy related  -->
     <system:String x:Key="Copy">복사</system:String>

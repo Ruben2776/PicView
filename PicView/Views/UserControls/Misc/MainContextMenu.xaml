@@ -158,9 +158,9 @@
             </MenuItem>
 
             <MenuItem 
-                Header="{StaticResource ChangeBg}"
+                Header="{StaticResource ChangeBackground}"
                 InputGestureText="B"
-                ToolTip="{StaticResource ChangeBgTooltip}"
+                ToolTip="{StaticResource ChangeBackgroundTooltip}"
                 StaysOpenOnClick="True" />
 
             <MenuItem InputGestureText="T">

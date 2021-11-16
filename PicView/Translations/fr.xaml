@@ -47,7 +47,6 @@
     <!--  info window, interface configuration  -->
     <system:String x:Key="InterfaceConfiguration">Configuration de l'interface</system:String>
     <system:String x:Key="HideShowInterface">Masquer/afficher l'interface</system:String>
-    <system:String x:Key="ChangeBackground">Modifier l'arrière plan</system:String>
     <system:String x:Key="ToggleFullscreen">Basculer en plein écran</system:String>
 
     <!--  Info window, window management  -->
@@ -213,8 +212,8 @@
     <system:String x:Key="Looping">Boucle</system:String>
     <system:String x:Key="FitToWindow">Ajuster à la fenêtre / à l'image"</system:String>
     <system:String x:Key="ShowHideUI">Afficher/masquer l'interface</system:String>
-    <system:String x:Key="ChangeBg">Modifier l'arrière plan</system:String>
-    <system:String x:Key="ChangeBgTooltip">Changer la couleur d'arrière-plan pour les images avec un fond transparent</system:String>
+    <system:String x:Key="ChangeBackground">Modifier l'arrière plan</system:String>
+    <system:String x:Key="ChangeBackgroundTooltip">Changer la couleur d'arrière-plan pour les images avec un fond transparent</system:String>
 
     <!--  Copy related  -->
     <system:String x:Key="Copier">Copy</system:String>

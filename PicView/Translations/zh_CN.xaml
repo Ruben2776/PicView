@@ -47,7 +47,6 @@
     <!--  info window, interface configuration  -->
     <system:String x:Key="InterfaceConfiguration">界面配置</system:String>
     <system:String x:Key="HideShowInterface">显示/隐藏界面</system:String>
-    <system:String x:Key="ChangeBackground">切换背景</system:String>
     <system:String x:Key="ToggleFullscreen">切换全屏</system:String>
 
     <!--  Info window, window management  -->
@@ -213,8 +212,8 @@
     <system:String x:Key="Looping">循环</system:String>
     <system:String x:Key="FitToWindow">适应窗口/图片</system:String>
     <system:String x:Key="ShowHideUI">显示/隐藏界面</system:String>
-    <system:String x:Key="ChangeBg">切换背景</system:String>
-    <system:String x:Key="ChangeBgTooltip">为透明图像切换背景</system:String>
+    <system:String x:Key="ChangeBackground">切换背景</system:String>
+    <system:String x:Key="ChangeBackgroundTooltip">为透明图像切换背景</system:String>
 
     <!--  Copy related  -->
     <system:String x:Key="Copy">复制</system:String>

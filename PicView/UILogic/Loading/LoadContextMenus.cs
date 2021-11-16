@@ -141,8 +141,8 @@ namespace PicView.UILogic.Loading
             ToogleUIMenu.Click += (_, _) => { HideInterfaceLogic.ToggleInterface(); ToogleUIHeader.IsChecked = !ToogleUIHeader.IsChecked; };
 
             // Change bg
-            var ChangeBgMenu = (MenuItem)settingscm.Items[3];
-            ChangeBgMenu.Click += (_, _) => ConfigColors.ChangeBackground();
+            var ChangeBackgroundMenu = (MenuItem)settingscm.Items[3];
+            ChangeBackgroundMenu.Click += (_, _) => ConfigColors.ChangeBackground();
 
             // Topmost
             var TopmostMenu = (MenuItem)settingscm.Items[4];

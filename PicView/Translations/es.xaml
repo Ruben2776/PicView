@@ -47,7 +47,6 @@
     <!--  info window, interface configuration  -->
     <system:String x:Key="InterfaceConfiguration">Configuración de interfaz</system:String>
     <system:String x:Key="HideShowInterface">Ocultar/mostrar interfaz</system:String>
-    <system:String x:Key="ChangeBackground">Cambiar fondo de pantalla</system:String>
     <system:String x:Key="ToggleFullscreen">Alternar pantalla completa</system:String>
 
     <!--  Info window, window management  -->
@@ -213,8 +212,8 @@
     <system:String x:Key="Looping">Bucle</system:String>
     <system:String x:Key="FitToWindow">Ajustar a ventana/imagen</system:String>
     <system:String x:Key="ShowHideUI">Mostrar/ocultar interfaz</system:String>
-    <system:String x:Key="ChangeBg">Cambiar fondo</system:String>
-    <system:String x:Key="ChangeBgTooltip">Cambiar entre color de fondo para imágenes de fondo transparente</system:String>
+    <system:String x:Key="ChangeBackground">Cambiar fondo</system:String>
+    <system:String x:Key="ChangeBackgroundTooltip">Cambiar entre color de fondo para imágenes de fondo transparente</system:String>
 
     <!--  Copy related  -->
     <system:String x:Key="Copy">Copiar</system:String>

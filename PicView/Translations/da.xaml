@@ -47,7 +47,6 @@
     <!--  info window, interface configuration  -->
     <system:String x:Key="InterfaceConfiguration">Interfacekonfiguration</system:String>
     <system:String x:Key="HideShowInterface">Vis/skjul interface</system:String>
-    <system:String x:Key="ChangeBackground">Skift baggrund</system:String>
     <system:String x:Key="ToggleFullscreen">Skift fuldskærmstilstand</system:String>
 
     <!--  Info window, window management  -->
@@ -213,8 +212,8 @@
     <system:String x:Key="Looping">Loopning</system:String>
     <system:String x:Key="FitToWindow">Tilpas til vinduet</system:String>
     <system:String x:Key="ShowHideUI">Vis/skjul interface</system:String>
-    <system:String x:Key="ChangeBg">Skift background</system:String>
-    <system:String x:Key="ChangeBgTooltip">Skift mellem baggrundsfarve til billeder med gennemsigtig baggrund</system:String>
+    <system:String x:Key="ChangeBackground">Skift background</system:String>
+    <system:String x:Key="ChangeBackgroundTooltip">Skift mellem baggrundsfarve til billeder med gennemsigtig baggrund</system:String>
 
     <!--  Copy related  -->
     <system:String x:Key="Copy">Kopier</system:String>

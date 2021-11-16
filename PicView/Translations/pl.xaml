@@ -46,8 +46,7 @@
 
     <!--  info window, interface configuration  -->
     <system:String x:Key="InterfaceConfiguration">Konfiguracja interfejsu</system:String>
-	<system:String x:Key="HideShowInterface">Ukryj/pokaż interfejs</system:String>
-    <system:String x:Key="ChangeBackground">Zmień tło</system:String>
+    <system:String x:Key="HideShowInterface">Ukryj/pokaż interfejs</system:String>
     <system:String x:Key="ToggleFullscreen">Włącz tryb pełnoekranowy</system:String>
 
     <!--  Info window, window management  -->
@@ -213,8 +212,8 @@
     <system:String x:Key="Looping">Zapętlanie</system:String>
     <system:String x:Key="FitToWindow">Dopasuj do okna/obrazu</system:String>
 	<system:String x:Key="ShowHideUI">Pokaż/ukryj interfejs</system:String>
-    <system:String x:Key="ChangeBg">Zmień tło</system:String>
-    <system:String x:Key="ChangeBgTooltip">Zmień kolor tła dla obrazów z transparentnym tłem</system:String>
+    <system:String x:Key="ChangeBackground">Zmień tło</system:String>
+    <system:String x:Key="ChangeBackgroundTooltip">Zmień kolor tła dla obrazów z transparentnym tłem</system:String>
 
     <!--  Copy related  -->
     <system:String x:Key="Copy">Kopiuj</system:String>
