@@ -42,6 +42,7 @@
             <TextBlock 
                 Text="{StaticResource Settings}"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                FontSize="14"
                 VerticalAlignment="Center"
                 TextAlignment="Center"/>
 
@@ -197,7 +198,7 @@
                     <Label Margin="0,15,0,0" Content="{StaticResource SetAsWallpaper}" />
 
                     <StackPanel Margin="5,9,0,7" Orientation="Horizontal">
-                        <ComboBox x:Name="WallpaperBox" HorizontalAlignment="Left">
+                        <ComboBox x:Name="WallpaperBox" HorizontalAlignment="Left" IsTabStop="False">
                             <ComboBoxItem
                                 x:Name="Fill"
                                 Content="{StaticResource Fill}"
@@ -229,6 +230,7 @@
                     <ComboBox
                         x:Name="LanguageBox"
                         Margin="5,9,0,7"
+                        IsTabStop="False"
                         HorizontalAlignment="Left" />
 
                     <TextBlock
@@ -292,7 +294,11 @@
                         VerticalAlignment="Center"
                         Content="{StaticResource HorizontalScroll}" />
                     
-                    <ComboBox x:Name="ScrollDirection" HorizontalAlignment="Left" Margin="3,8,0,0" >
+                    <ComboBox 
+                        x:Name="ScrollDirection"
+                        IsTabStop="False"
+                        HorizontalAlignment="Left"
+                        Margin="3,8,0,0" >
                         <ComboBoxItem x:Name="Reverse" Content="{StaticResource Reverse}" IsSelected="True" />
                         <ComboBoxItem Name="Forward" Content="{StaticResource Forward}" />
                     </ComboBox>
@@ -391,6 +397,7 @@
                         x:Name="GalleryBox"
                         Width="150"
                         Margin="8,2,0,2"
+                        IsTabStop="False"
                         HorizontalAlignment="Left">
                         <ComboBoxItem
                             x:Name="GalleryVertical"

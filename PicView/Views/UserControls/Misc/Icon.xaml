@@ -4,6 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     Width="25"
     Height="25"
-    Margin="7,1,0,0">
+    Margin="10,1,10,1">
     <Image Source="pack://application:,,,/Themes/Resources/img/icon__Q6k_icon.ico" />
 </UserControl>

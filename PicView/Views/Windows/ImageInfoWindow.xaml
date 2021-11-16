@@ -67,7 +67,7 @@
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Icon />
+            <uc:Icon Margin="7,1,0,1" />
 
             <Rectangle
                 Width="1"
