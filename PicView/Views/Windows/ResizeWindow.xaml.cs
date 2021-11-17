@@ -1,5 +1,6 @@
 ﻿using PicView.UILogic.Sizing;
 using System.Windows;
+using System.Windows.Input;
 
 namespace PicView.Views.Windows
 {
@@ -24,6 +25,8 @@ namespace PicView.Views.Windows
 
             ContentRendered += (sender, e) =>
             {
+                MouseLeftButtonDown += (_, e) => { if (e.LeftButton == MouseButtonState.Pressed) DragMove(); };
+
                 KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(null, e, this);
 
                 // CloseButton
