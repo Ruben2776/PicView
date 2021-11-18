@@ -325,6 +325,14 @@ namespace PicView.ChangeImage
         {
             if (Pics?.Count < index || Pics?.Count < 1)
             {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, async () =>
+                {
+                    if (ConfigureWindows.GetMainWindow.TitleText.Text == (string)Application.Current.Resources["Loading"])
+                    {
+                        await ReloadAsync(true).ConfigureAwait(false);
+                    }
+                });
+
                 return;
             }
 
