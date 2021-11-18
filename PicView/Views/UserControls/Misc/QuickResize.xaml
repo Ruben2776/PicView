@@ -72,7 +72,7 @@
 
                     <Label Content="⇔" VerticalAlignment="Center" Margin="10,0,10,0"/>
 
-                    <ComboBox x:Name="PercentageBox" KeyboardNavigation.DirectionalNavigation="Cycle" MinWidth="70">
+                    <ComboBox x:Name="PercentageBox" KeyboardNavigation.DirectionalNavigation="Cycle" Width="80" MinWidth="70">
                         <ComboBoxItem IsSelected="True" Content="100%" />
                         <ComboBoxItem Content="90%" />
                         <ComboBoxItem Content="80%" />
@@ -99,6 +99,11 @@
                 </DockPanel>
             </Border>
 
+            <TextBlock 
+                Text="{StaticResource CropMessage}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Margin="0,78,0,0" />
         </Grid>
     </Border>
 </UserControl>
