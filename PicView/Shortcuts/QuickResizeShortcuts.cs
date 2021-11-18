@@ -75,7 +75,7 @@ namespace PicView.Shortcuts
         internal static void QuickResizeAspectRatio(TextBox widthBox, TextBox heightBox, bool widthBoxChanged, KeyEventArgs? e, double percentageValue = 0)
         {
             if (widthBox == null || heightBox == null) { return; }
-            if (e is not null && e.Key == Key.Tab) { return; } // Fixes weird bug
+            if (e?.Key == Key.Tab) { return; } // Fixes weird bug
 
             double originalWidth = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
             double originalHeight = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
@@ -99,39 +99,31 @@ namespace PicView.Shortcuts
             }
             else
             {
-                if (e is not null && e.Key == Key.Back || e is not null && e.Key == Key.Delete) { return; }
+                if (e?.Key == Key.Back || e?.Key == Key.Delete) { return; }
 
-                if (percentageValue <= 0)
+                if (percentageValue > 0)
                 {
-                    // Determine if % character
-                    string text = widthBoxChanged ? widthBox.Text : heightBox.Text;
-                    percentageValue = returnPercentageFromString(text);
-                    if (percentageValue <= 0) { return; }
+                    var newWidth = originalWidth * percentageValue;
+                    var newHeight = originalHeight * percentageValue;
 
-                    if (widthBoxChanged)
-                    {
-                        percentageValue = returnPercentageFromString(widthBox.Text);
-                        if (percentageValue > 0)
-                        {
-                            heightBox.Text = widthBox.Text;
-                        }
-                    }
-                    else
-                    {
-                        percentageValue = returnPercentageFromString(heightBox.Text);
-                        if (percentageValue > 0)
-                        {
-                            widthBox.Text = heightBox.Text;
-                        }
-                    }
+                    widthBox.Text = newWidth.ToString("# ", CultureInfo.CurrentCulture);
+                    heightBox.Text = newHeight.ToString("# ", CultureInfo.CurrentCulture);
                     return;
                 }
 
-                var newWidth = originalWidth * percentageValue;
-                var newHeight = originalHeight * percentageValue;
+                // Determine if % character
+                string text = widthBoxChanged ? widthBox.Text : heightBox.Text;
+                percentageValue = returnPercentageFromString(text);
+                if (percentageValue <= 0) { return; }
 
-                widthBox.Text = newWidth.ToString("# ", CultureInfo.CurrentCulture);
-                heightBox.Text = newHeight.ToString("# ", CultureInfo.CurrentCulture);
+                if (widthBoxChanged && returnPercentageFromString(widthBox.Text) > 0)
+                {
+                    heightBox.Text = widthBox.Text;
+                }
+                else if (returnPercentageFromString(heightBox.Text) > 0)
+                {
+                    widthBox.Text = heightBox.Text;
+                }
             }
         }
 
