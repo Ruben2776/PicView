@@ -261,7 +261,7 @@
     <system:String x:Key="Centimeters">cm</system:String>
     <system:String x:Key="Inches">in</system:String>
     <system:String x:Key="BitDepth">位深</system:String>
-    <system:String x:Key="SizeTooltip">以像素或百分比输入所需的大小。在宽度或高度中输入 0 以保持纵横比。</system:String>
+    <system:String x:Key="SizeTooltip">以像素或百分比输入所需的大小。</system:String>
 
     <!--  Keyboard key names  -->
     <system:String x:Key="Del">Del</system:String>
@@ -362,10 +362,10 @@
     <system:String x:Key="ColorPickerToolTooltip">从图片中选取颜色</system:String>
 
     <!--  Resize Window  -->
-    <system:String x:Key="ShowResizeWindow">Show batch Resize window</system:String>
+    <system:String x:Key="ShowResizeWindow">显示调整大小窗口</system:String>
 
-    <system:String x:Key="Resize">Resize</system:String>
-    <system:String x:Key="ResizeImage">Resize Image</system:String>
+    <system:String x:Key="Resize">调整大小</system:String>
+    <system:String x:Key="ResizeImage">调整图像大小</system:String>
 
-    <system:String x:Key="BatchResize">Batch Resize</system:String>
+    <system:String x:Key="BatchResize">图像批量调整大小</system:String>
 </ResourceDictionary>

@@ -261,7 +261,7 @@
     <system:String x:Key="Centimeters">centimetri</system:String>
     <system:String x:Key="Inches">pollici</system:String>
     <system:String x:Key="BitDepth">Profondità di bit</system:String>
-    <system:String x:Key="SizeTooltip">Inserisci la dimensione desiderata in pixel o in percentuale. Inserisci 0 in larghezza o altezza per preservare le proporzioni</system:String>
+    <system:String x:Key="SizeTooltip">Inserisci la dimensione desiderata in pixel o in percentuale.</system:String>
 
     <!--  Keyboard key names  -->
     <system:String x:Key="Del">Canc</system:String>
@@ -362,10 +362,10 @@
     <system:String x:Key="ColorPickerToolTooltip">Scegli il colore dall'immagine</system:String>
 
     <!--  Resize Window  -->
-    <system:String x:Key="ShowResizeWindow">Show batch Resize window</system:String>
+    <system:String x:Key="ShowResizeWindow">Mostra la finestra Ridimensiona</system:String>
 
-    <system:String x:Key="Resize">Resize</system:String>
-    <system:String x:Key="ResizeImage">Resize Image</system:String>
+    <system:String x:Key="Resize">Ridimensionamento</system:String>
+    <system:String x:Key="ResizeImage">Ridimensiona l'immagine</system:String>
 
-    <system:String x:Key="BatchResize">Batch Resize</system:String>
+    <system:String x:Key="BatchResize">Batch ridimensiona</system:String>
 </ResourceDictionary>

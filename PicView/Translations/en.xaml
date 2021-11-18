@@ -261,7 +261,7 @@
     <system:String x:Key="Centimeters">centimeters</system:String>
     <system:String x:Key="Inches">inches</system:String>
     <system:String x:Key="BitDepth">Bit depth</system:String>
-    <system:String x:Key="SizeTooltip">Enter desired size in pixels or percentage. Input 0 in either width or height to preserve aspect ratio</system:String>
+    <system:String x:Key="SizeTooltip">Enter desired size in pixels or percentage.</system:String>
 
     <!--  Keyboard key names  -->
     <system:String x:Key="Del">Del</system:String>
@@ -362,7 +362,7 @@
     <system:String x:Key="ColorPickerToolTooltip">Pick color from image</system:String>
 
     <!--  Resize Window  -->
-    <system:String x:Key="ShowResizeWindow">Show batch Resize window</system:String>
+    <system:String x:Key="ShowResizeWindow">Show the Resize Window</system:String>
 
     <system:String x:Key="Resize">Resize</system:String>
     <system:String x:Key="ResizeImage">Resize Image</system:String>

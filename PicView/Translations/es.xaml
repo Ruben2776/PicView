@@ -261,7 +261,7 @@
     <system:String x:Key="Centimeters">centímetros</system:String>
     <system:String x:Key="Inches">pulgadas</system:String>
     <system:String x:Key="BitDepth">Profundidad de bits</system:String>
-    <system:String x:Key="SizeTooltip">Enter desired size in pixels or percentage. Input 0 in either width or height to preserve aspect ratio</system:String>
+    <system:String x:Key="SizeTooltip">Ingrese el tamaño deseado en píxeles o porcentaje.</system:String>
 
     <!--  Keyboard key names  -->
     <system:String x:Key="Del">Supr</system:String>
@@ -362,10 +362,10 @@
     <system:String x:Key="ColorPickerToolTooltip">Elegir color desde imagen</system:String>
 
     <!--  Resize Window  -->
-    <system:String x:Key="ShowResizeWindow">Show batch Resize window</system:String>
+    <system:String x:Key="ShowResizeWindow">Mostrar la ventana de cambio de tamaño</system:String>
 
-    <system:String x:Key="Resize">Resize</system:String>
-    <system:String x:Key="ResizeImage">Resize Image</system:String>
+    <system:String x:Key="Resize">Cambiar de tamaño</system:String>
+    <system:String x:Key="ResizeImage">Cambiar el tamaño de la imagen</system:String>
 
-    <system:String x:Key="BatchResize">Batch Resize</system:String>
+    <system:String x:Key="BatchResize">Cambio de tamaño por lotes</system:String>
 </ResourceDictionary>

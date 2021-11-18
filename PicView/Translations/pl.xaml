@@ -261,7 +261,7 @@
     <system:String x:Key="Centimeters">centymetrów</system:String>
     <system:String x:Key="Inches">cali</system:String>
     <system:String x:Key="BitDepth">Bitów głębkości koloru</system:String>
-    <system:String x:Key="SizeTooltip">Wprowadź wybrany rozmiar w pikselach lub procentach. Wpis 0 w długości lub wysokości, aby zachować obecny aspekt</system:String>
+    <system:String x:Key="SizeTooltip">Wprowadź wybrany rozmiar w pikselach lub procentach.</system:String>
 
     <!--  Keyboard key names  -->
     <system:String x:Key="Del">Usuń</system:String>
@@ -362,10 +362,10 @@
     <system:String x:Key="ColorPickerToolTooltip">Wybierz kolor ze zdjęcia</system:String>
 
     <!--  Resize Window  -->
-    <system:String x:Key="ShowResizeWindow">Show batch Resize window</system:String>
+    <system:String x:Key="ShowResizeWindow">Pokaż okno Zmiana rozmiaru</system:String>
 
-    <system:String x:Key="Resize">Resize</system:String>
-    <system:String x:Key="ResizeImage">Resize Image</system:String>
+    <system:String x:Key="Resize">Zmień rozmiar</system:String>
+    <system:String x:Key="ResizeImage">Zmiana rozmiaru obrazu</system:String>
 
-    <system:String x:Key="BatchResize">Batch Resize</system:String>
+    <system:String x:Key="BatchResize">Resize wsadowe</system:String>
 </ResourceDictionary>

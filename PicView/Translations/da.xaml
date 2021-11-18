@@ -261,7 +261,7 @@
     <system:String x:Key="Centimeters">centimeter</system:String>
     <system:String x:Key="Inches">tommer</system:String>
     <system:String x:Key="BitDepth">Bit dybde</system:String>
-    <system:String x:Key="SizeTooltip">Indtast størrelse i pixels eller procent. Indtast 0 i højde eller bredde for at bevare størrelsesforholdet.</system:String>
+    <system:String x:Key="SizeTooltip">Indtast størrelse i pixels eller procent.</system:String>
 
     <!--  Keyboard key names  -->
     <system:String x:Key="Del">Del</system:String>
@@ -362,10 +362,10 @@
     <system:String x:Key="ColorPickerToolTooltip">Vælg en farve fra billedet</system:String>
 
     <!--  Resize Window  -->
-    <system:String x:Key="ShowResizeWindow">Show batch Resize window</system:String>
+    <system:String x:Key="ShowResizeWindow">Vis størrelsesændringsvinduet</system:String>
 
-    <system:String x:Key="Resize">Resize</system:String>
-    <system:String x:Key="ResizeImage">Resize Image</system:String>
+    <system:String x:Key="Resize">Ændre størrelse</system:String>
+    <system:String x:Key="ResizeImage">Ændre billedets størrelse</system:String>
 
-    <system:String x:Key="BatchResize">Batch Resize</system:String>
+    <system:String x:Key="BatchResize">Batch Billedstørrelse</system:String>
 </ResourceDictionary>

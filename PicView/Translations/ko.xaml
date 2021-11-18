@@ -261,7 +261,7 @@
     <system:String x:Key="Centimeters">센티미터</system:String>
     <system:String x:Key="Inches">인치</system:String>
     <system:String x:Key="BitDepth">비트 깊이</system:String>
-    <system:String x:Key="SizeTooltip">Enter desired size in pixels or percentage. Input 0 in either width or height to preserve aspect ratio</system:String>
+    <system:String x:Key="SizeTooltip">원하는 크기를 픽셀 또는 백분율로 입력하십시오.</system:String>
 
     <!--  Keyboard key names  -->
     <system:String x:Key="Del">Del</system:String>
@@ -362,10 +362,10 @@
     <system:String x:Key="ColorPickerToolTooltip">이미지에서 색 선택</system:String>
 
     <!--  Resize Window  -->
-    <system:String x:Key="ShowResizeWindow">Show batch Resize window</system:String>
+    <system:String x:Key="ShowResizeWindow">크기 조정 창을 보여줍니다</system:String>
 
-    <system:String x:Key="Resize">Resize</system:String>
-    <system:String x:Key="ResizeImage">Resize Image</system:String>
+    <system:String x:Key="Resize">크기를 조정하십시오</system:String>
+    <system:String x:Key="ResizeImage">이미지 크기를 조정하십시오</system:String>
 
-    <system:String x:Key="BatchResize">Batch Resize</system:String>
+    <system:String x:Key="BatchResize">이미지 크기 조정 대량</system:String>
 </ResourceDictionary>
