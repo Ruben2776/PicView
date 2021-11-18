@@ -81,7 +81,7 @@
                                 <Image 
                                     Panel.ZIndex="-1"
                                     Opacity=".9"
-                                    Height="15"
+                                    Height="16"
                                     Canvas.Left="15"
                                     Canvas.Top="18">
                                     <Image.Source>
@@ -98,9 +98,9 @@
                                 <Image 
                                     Panel.ZIndex="-2"
                                     Opacity=".7"
-                                    Height="8"
+                                    Height="10"
                                     Canvas.Left="27"
-                                    Canvas.Top="22">
+                                    Canvas.Top="21">
                                     <Image.Source>
                                         <DrawingImage>
                                             <DrawingImage.Drawing>

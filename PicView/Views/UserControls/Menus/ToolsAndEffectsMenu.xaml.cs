@@ -3,6 +3,7 @@ using PicView.Editing;
 using PicView.ImageHandling;
 using PicView.UILogic;
 using System.Windows.Controls;
+using System.Windows.Media;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
@@ -15,6 +16,23 @@ namespace PicView.Views.UserControls
         public ToolsAndEffectsMenu()
         {
             InitializeComponent();
+
+            // ResizeButton
+            var iconBrush = (SolidColorBrush)Resources["IconBrush"];
+            ResizeButton.MouseEnter += delegate
+            {
+                ButtonMouseOverAnim(ResizeText);
+                ButtonMouseOverAnim(iconBrush);
+                AnimationHelper.MouseEnterBgTexColor(ResizeButtonBrush);
+            };
+            ResizeButton.MouseLeave += delegate
+            {
+                ButtonMouseLeaveAnim(ResizeText);
+                ButtonMouseLeaveAnim(iconBrush);
+                AnimationHelper.MouseLeaveBgTexColor(ResizeButtonBrush);
+            };
+
+            ResizeButton.Click += (_, _) => ConfigureWindows.ResizeWindow();
 
             // EffectsButton
             EffectsButton.MouseEnter += delegate
@@ -95,19 +113,6 @@ namespace PicView.Views.UserControls
                 AnimationHelper.MouseLeaveBgTexColor(OptimizeImageBrush);
             };
             OptimizeImageButton.Click += async (_, _) => await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
-
-            // ResizeButton
-            ResizeButton.MouseEnter += delegate
-            {
-                ButtonMouseOverAnim(ResizeText);
-                AnimationHelper.MouseEnterBgTexColor(ResizeButtonBrush);
-            };
-            ResizeButton.MouseLeave += delegate
-            {
-                ButtonMouseLeaveAnim(ResizeText);
-                AnimationHelper.MouseLeaveBgTexColor(ResizeButtonBrush);
-            };
-            ResizeButton.Click += (_, _) => ConfigureWindows.ResizeWindow();
 
             BgBorder.PreviewMouseLeftButtonDown += delegate
             {

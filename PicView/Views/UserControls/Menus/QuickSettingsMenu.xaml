@@ -149,7 +149,7 @@
 
                 <Border
                     x:Name="OptimizeBorder"
-                    Canvas.Left="299"
+                    Canvas.Left="299.5"
                     Canvas.Top="57"
                     Width="51"
                     Height="51"
