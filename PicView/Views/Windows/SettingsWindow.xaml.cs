@@ -240,7 +240,8 @@ namespace PicView.Views.Windows
         {
             KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(null, e, this);
 
-            MouseLeftButtonDown += (_, e) => { if (e.LeftButton == MouseButtonState.Pressed) DragMove(); };
+            MouseLeftButtonDown += (_, e) =>
+            { if (e.LeftButton == MouseButtonState.Pressed) { DragMove(); } };
 
             // CloseButton
             CloseButton.TheButton.Click += delegate { Hide(); };

@@ -25,7 +25,8 @@ namespace PicView.Views.Windows
 
             ContentRendered += (sender, e) =>
             {
-                MouseLeftButtonDown += (_, e) => { if (e.LeftButton == MouseButtonState.Pressed) DragMove(); };
+                MouseLeftButtonDown += (_, e) =>
+                { if (e.LeftButton == MouseButtonState.Pressed) { DragMove(); } };
 
                 KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(null, e, this);
 

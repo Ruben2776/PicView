@@ -345,7 +345,8 @@
                             d:Text="3"
                             IsReadOnly="True"
                             Text="{Binding ElementName=SlideshowSlider, Path=Value}"
-                            TextAlignment="Center" />
+                            TextAlignment="Center"
+                            IsTabStop="False"/>
 
                         <TextBlock
                             Margin="2,2,0,0"
@@ -388,7 +389,8 @@
                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                             FontSize="12"
                             IsReadOnly="True"
-                            TextAlignment="Center" />
+                            TextAlignment="Center"
+                            IsTabStop="False"/>
                     </StackPanel>
 
                 </StackPanel>

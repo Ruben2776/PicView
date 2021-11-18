@@ -82,7 +82,8 @@ namespace PicView.Views.Windows
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            MouseLeftButtonDown += (_, e) => { if (e.LeftButton == MouseButtonState.Pressed) DragMove(); };
+            MouseLeftButtonDown += (_, e) =>
+            { if (e.LeftButton == MouseButtonState.Pressed) { DragMove(); } };
 
             // ExpandButton
             ExpandButton.PreviewMouseLeftButtonDown += (_, _) => MouseOverAnimations.PreviewMouseButtonDownAnim(chevronDownBrush);
