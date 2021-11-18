@@ -229,6 +229,7 @@ namespace PicView.UILogic.Loading
             ///   Cut File         \\\\
             ///////////////////////////
             var Cutcm = (MenuItem)MainContextMenu.Items[14];
+            Cutcm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + X";
             Cutcm.Click += (_, _) => { MainContextMenu.IsOpen = false; FileHandling.Copy_Paste.Cut(); };
 
 
@@ -236,6 +237,7 @@ namespace PicView.UILogic.Loading
             ///   Paste File       \\\\
             ///////////////////////////
             var pastecm = (MenuItem)MainContextMenu.Items[15];
+            pastecm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + V";
             pastecm.Click += (_, _) => { MainContextMenu.IsOpen = false; FileHandling.Copy_Paste.Paste(); };
 
             // 16 = seperator
