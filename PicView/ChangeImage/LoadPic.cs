@@ -242,7 +242,7 @@ namespace PicView.ChangeImage
                 GalleryNavigation.SetSelected(FolderIndex, true);
             }
 
-            if (string.IsNullOrWhiteSpace(InitialPath))
+            if (string.IsNullOrWhiteSpace(InitialPath) || folderChanged)
             {
                 InitialPath = fileInfo.FullName;
             }

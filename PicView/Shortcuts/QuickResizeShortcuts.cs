@@ -130,7 +130,7 @@ namespace PicView.Shortcuts
         internal static async Task Fire(string width, string height)
         {
             var resize = await FireResizeAsync(width, height).ConfigureAwait(false);
-            if (resize)
+            if (resize && UC.GetQuickResize is not null)
             {
                 UC.GetQuickResize.Hide();
             }
