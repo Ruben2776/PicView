@@ -1,6 +1,7 @@
 ﻿using PicView.ImageHandling;
 using PicView.UILogic;
 using System;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -71,20 +72,20 @@ namespace PicView.Shortcuts
             }
         }
 
-        internal static void QuickResizeAspectRatio(TextBox widthBox, TextBox heightBox, bool widthBoxChanged, KeyEventArgs e)
+        internal static void QuickResizeAspectRatio(TextBox widthBox, TextBox heightBox, bool widthBoxChanged, KeyEventArgs? e, double percentageValue = 0)
         {
             if (widthBox == null || heightBox == null) { return; }
-            if (e.Key == Key.Tab) { return; } // Fixes weird bug
+            if (e is not null && e.Key == Key.Tab) { return; } // Fixes weird bug
 
-            if (int.TryParse(widthBox.Text, out int width) && int.TryParse(heightBox.Text, out int height))
+            double originalWidth = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
+            double originalHeight = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
+
+            double aspectRatio = originalWidth / originalHeight;
+
+            if (aspectRatio <= 0) { return; }
+
+            if (percentageValue <= 0 && int.TryParse(widthBox.Text, out int width) && int.TryParse(heightBox.Text, out int height))
             {
-                double originalWidth = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
-                double originalHeight = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
-
-                double aspectRatio = originalWidth / originalHeight;
-
-                if (aspectRatio <= 0) { return; }
-
                 if (widthBoxChanged)
                 {
                     var newHeight = Math.Round(width / aspectRatio);
@@ -98,7 +99,39 @@ namespace PicView.Shortcuts
             }
             else
             {
-                // if contains %, write code to handle it
+                if (e is not null && e.Key == Key.Back || e is not null && e.Key == Key.Delete) { return; }
+
+                if (percentageValue <= 0)
+                {
+                    // Determine if % character
+                    string text = widthBoxChanged ? widthBox.Text : heightBox.Text;
+                    percentageValue = returnPercentageFromString(text);
+                    if (percentageValue <= 0) { return; }
+
+                    if (widthBoxChanged)
+                    {
+                        percentageValue = returnPercentageFromString(widthBox.Text);
+                        if (percentageValue > 0)
+                        {
+                            heightBox.Text = widthBox.Text;
+                        }
+                    }
+                    else
+                    {
+                        percentageValue = returnPercentageFromString(heightBox.Text);
+                        if (percentageValue > 0)
+                        {
+                            widthBox.Text = heightBox.Text;
+                        }
+                    }
+                    return;
+                }
+
+                var newWidth = originalWidth * percentageValue;
+                var newHeight = originalHeight * percentageValue;
+
+                widthBox.Text = newWidth.ToString("# ", CultureInfo.CurrentCulture);
+                heightBox.Text = newHeight.ToString("# ", CultureInfo.CurrentCulture);
             }
         }
 
@@ -149,22 +182,32 @@ namespace PicView.Shortcuts
 
         static async Task<bool> FirePercentageAsync(string text, string file)
         {
+            var percentage = returnPercentageFromString(text);
+            if (percentage > 0)
+            {
+                var resize = await ImageSizeFunctions.ResizeImageAsync(file, 0, 0, 0, new ImageMagick.Percentage(percentage)).ConfigureAwait(false);
+                if (resize)
+                {
+                    await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        static double returnPercentageFromString(string text)
+        {
             foreach (Match match in Regex.Matches(text, @"(\d+)%")) // Find % sign
             {
                 if (match.Success)
                 {
                     if (double.TryParse(match.Groups[1].Value, out double percentage))
                     {
-                        var resize = await ImageSizeFunctions.ResizeImageAsync(file, 0, 0, 0, new ImageMagick.Percentage(percentage)).ConfigureAwait(false);
-                        if (resize)
-                        {
-                            await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);
-                        }
+                        return percentage;
                     }
-                    return true;
                 }
             }
-            return false;
+            return 0;
         }
     }
 }

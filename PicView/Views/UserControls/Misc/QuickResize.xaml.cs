@@ -32,13 +32,18 @@ namespace PicView.Views.UserControls
                 HeightBox.AcceptsReturn = false;
                 HeightBox.PreviewKeyDown += async (_, e) => await QuickResizeShortcuts.QuickResizePreviewKeys(e, WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
 
-                PercentageBox.PreviewKeyDown += (_, e) =>
+                PercentageBox.PreviewKeyDown += async (_, e) =>
                 {
                     // Prevent alt tab navigation and instead move back to WidthBox
                     if (e.Key == Key.Tab)
                     {
                         e.Handled = true;
                         WidthBox.Focus();
+                    }
+                    if (e.Key == Key.Enter)
+                    {
+                        e.Handled = true;
+                        await QuickResizeShortcuts.Fire(WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
                     }
                 };
 
@@ -62,7 +67,33 @@ namespace PicView.Views.UserControls
                 };
 
                 ApplyButton.MouseLeftButtonDown += async (_, _) => await QuickResizeShortcuts.Fire(WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
+
+                for (int i = 0; i < PercentageBox.Items.Count; i++)
+                {
+                    var item = (ComboBoxItem)PercentageBox.Items[i];
+                    item.GotFocus += (_, _) =>
+                    {
+                        if (item.IsMouseOver is false)
+                        {
+                            item.IsSelected = true;
+                        }
+                    };
+                }
+                PercentageBox.SelectionChanged += PercentageBox_SelectionChanged;
             };
+        }
+
+        private void PercentageBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var originalWidth = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
+            var originalHeight = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
+
+            var content = ((ComboBoxItem)PercentageBox.SelectedItem).Content as string;
+            if (content == null) { return; }
+
+            var value = decimal.Parse(content.TrimEnd(new char[] { '%', ' ' })) / 100M; // Convert from percentage to decimal
+
+            QuickResizeShortcuts.QuickResizeAspectRatio(WidthBox, HeightBox, true, null, (double)value);
         }
 
         public void Show()
