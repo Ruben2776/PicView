@@ -325,6 +325,7 @@ namespace PicView.ChangeImage
         {
             if (Pics?.Count < index || Pics?.Count < 1)
             {
+                //  Prevent infinite loading when dropping folder and can't find file
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, async () =>
                 {
                     if (ConfigureWindows.GetMainWindow.TitleText.Text == (string)Application.Current.Resources["Loading"])
