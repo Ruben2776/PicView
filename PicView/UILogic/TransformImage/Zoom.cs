@@ -63,12 +63,12 @@ namespace PicView.UILogic.TransformImage
             var x = width / gcd;
             var y = height / gcd;
 
-            if (x > 32 || y > 9)
+            if (x > 48 || y > 18)
             {
                 return ") ";
             }
 
-            return ", " + x + ":" + y + ") ";
+            return $", {x} : {y})";
         }
 
         /// <summary>
