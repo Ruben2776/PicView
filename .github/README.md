@@ -83,8 +83,6 @@ __Resize image:__
 
 Edit the Width and Height boxes to rezise image.
 
-Input 0 in either Width or Height to preserve aspect ratio.
-
 Use % to resize it by percentage.
 
 #### EXIF:
@@ -133,7 +131,7 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
 
 **File support** 
  > .jpg  .jpeg  .jpe  .png  .bmp  .tif  .tiff  .gif  .ico  .jfif  .webp .svg .svgz <br>
-   .psd  .psb .xcf .jxl .heic .hdr .tga .dds<br>.3fr  .arw  .cr2  .crw  .dcr  .dng  .erf  .kdc  .mdc  .mef  .mos  .mrw  .nef  .nrw  .orf  .pef .raf  .raw  .rw2  .srf  .x3f *<br>
+   .psd  .psb .xcf .jxl .heic .heif .jp2 .hdr .tga .dds<br>.3fr  .arw  .cr2 .cr3  .crw  .dcr  .dng  .erf  .kdc  .mdc  .mef  .mos  .mrw  .nef  .nrw  .orf  .pef .raf  .raw  .rw2  .srf  .x3f *<br>
    .pgm  .hdr  .cut  .exr  .dib  .emf  .wmf  .wpg  .pcx  .xbm  .xpm .wbmp *
    
    _* RAW camera formats may be slower to load_
