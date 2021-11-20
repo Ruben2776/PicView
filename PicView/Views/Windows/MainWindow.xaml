@@ -10,9 +10,9 @@
     MinHeight="400"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
+    Focusable="True"
     Foreground="{StaticResource MainColorBrush}"
     Style="{DynamicResource MyWindowStyle}"
-    Focusable="True"
     WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -26,7 +26,7 @@
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Logo x:Name="Logo"/>
+            <uc:Logo x:Name="Logo" />
 
             <Rectangle
                 Width="1"
@@ -96,7 +96,7 @@
                     Height="1"
                     Fill="{StaticResource BorderBrush}" />
 
-                <uc:FolderButton Canvas.Left="1" />
+                <uc:FolderButton x:Name="FolderButton" Canvas.Left="1" />
 
                 <Rectangle
                     Canvas.Left="56"
@@ -431,7 +431,10 @@
                             Stretch="Fill" />
                     </Border>
                 </ScrollViewer>
-                <Canvas x:Name="topLayer" IsHitTestVisible="False" Canvas.ZIndex="3" />
+                <Canvas
+                    x:Name="topLayer"
+                    Canvas.ZIndex="3"
+                    IsHitTestVisible="False" />
             </Grid>
         </Border>
     </DockPanel>
