@@ -43,6 +43,11 @@ namespace PicView.FileHandling
         {
             if (fileInfo is null) { return null; }
 
+            var checkIfDir = FileFunctions.CheckIfDirectoryOrFile(fileInfo.FullName);
+            if (checkIfDir is null) { return null; }
+
+            var directory = checkIfDir.Value ? fileInfo.FullName : fileInfo.DirectoryName;
+
             SearchOption searchOption;
 
             if (Properties.Settings.Default.IncludeSubDirectories && string.IsNullOrWhiteSpace(TempZipFile)) // Don't search subdirectories when zipped
@@ -53,9 +58,6 @@ namespace PicView.FileHandling
             {
                 searchOption = SearchOption.TopDirectoryOnly;
             }
-
-            string? directory = FileFunctions.CheckIfDirectoryOrFile(fileInfo.FullName) ? fileInfo.FullName : fileInfo.DirectoryName;
-            if (directory == null) { return null; }
 
             var items = Directory.EnumerateFiles(directory, "*.*", searchOption)
                 .AsParallel()

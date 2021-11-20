@@ -68,7 +68,7 @@ namespace PicView.UILogic.TransformImage
                 return ") ";
             }
 
-            return $", {x} : {y})";
+            return $", {x} : {y}) ";
         }
 
         /// <summary>

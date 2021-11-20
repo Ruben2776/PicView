@@ -65,10 +65,17 @@ namespace PicView.FileHandling
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        internal static bool CheckIfDirectoryOrFile(string path)
+        internal static bool? CheckIfDirectoryOrFile(string path)
         {
-            var getAttributes = File.GetAttributes(path);
-            return getAttributes.HasFlag(FileAttributes.Directory);
+            try
+            {
+                var getAttributes = File.GetAttributes(path);
+                return getAttributes.HasFlag(FileAttributes.Directory);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         internal static bool RenameFile(string path, string newPath)

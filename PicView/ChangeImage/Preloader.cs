@@ -35,7 +35,7 @@ namespace PicView.ChangeImage
             string, PreloadValue> Sources = new ConcurrentDictionary<string, PreloadValue>();
 
         /// <summary>
-        /// Add file to preloader from index
+        /// Add file to preloader from index. Returns true if new value added.
         /// </summary>
         /// <param name="i">Index of Pics</param>
         internal static async Task<bool> AddAsync(int i, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null)
@@ -130,11 +130,8 @@ namespace PicView.ChangeImage
             {
                 return false;
             }
-            if (Sources.TryAdd(name, preloadValue))
-            {
-                return true;
-            }
-            return false;
+
+            return Sources.TryAdd(name, preloadValue);
         }
 
         /// <summary>
