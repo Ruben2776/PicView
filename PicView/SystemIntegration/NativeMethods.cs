@@ -157,14 +157,11 @@ namespace PicView.SystemIntegration
                 var w = UILogic.ConfigureWindows.GetMainWindow;
                 if (w == null) { return IntPtr.Zero; }
 
-                if (ChangeImage.Navigation.FreshStartup)
+                if (w.MainImage.Source == null)
                 {
-                    if (w.MainImage.Source == null)
+                    if (UC.GetStartUpUC is not null)
                     {
-                        if (UC.GetStartUpUC is not null)
-                        {
-                            UC.GetStartUpUC.ResponsiveSize(w.Width);
-                        }
+                        UC.GetStartUpUC.ResponsiveSize(w.Width);
                     }
                 }
                 else
