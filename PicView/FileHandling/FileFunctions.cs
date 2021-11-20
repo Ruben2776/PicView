@@ -51,7 +51,7 @@ namespace PicView.FileHandling
                 fileArray = new IntPtr[] { nativeFile };
             }
 
-            int v = SHOpenFolderAndSelectItems(nativeFolder, (uint)fileArray.Length, fileArray, 0);
+            _= SHOpenFolderAndSelectItems(nativeFolder, (uint)fileArray.Length, fileArray, 0);
 
             Marshal.FreeCoTaskMem(nativeFolder);
             if (nativeFile != IntPtr.Zero)

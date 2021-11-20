@@ -37,14 +37,14 @@
                 x:Name="MinButton"
                 Width="30"
                 Height="30"
-                DockPanel.Dock="Right"/>
+                DockPanel.Dock="Right" />
 
-            <TextBlock 
-                Text="{StaticResource Settings}"
+            <TextBlock
+                VerticalAlignment="Center"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                 FontSize="14"
-                VerticalAlignment="Center"
-                TextAlignment="Center"/>
+                Text="{StaticResource Settings}"
+                TextAlignment="Center" />
 
         </DockPanel>
 
@@ -136,11 +136,11 @@
             <TabItem>
                 <TabItem.Header>
                     <TextBlock
-                        Text="{StaticResource GeneralSettings}"
                         MaxWidth="155"
-                        TextWrapping="Wrap"
+                        FontSize="14"
+                        Text="{StaticResource GeneralSettings}"
                         TextTrimming="CharacterEllipsis"
-                        FontSize="14" />
+                        TextWrapping="Wrap" />
                 </TabItem.Header>
 
                 <StackPanel Margin="10,10,10,10">
@@ -162,8 +162,8 @@
                             <TextBlock
                                 Width="279"
                                 Focusable="False"
-                                FontSize="13"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                FontSize="13"
                                 Text="{StaticResource SearchSubdirectory}" />
                         </CheckBox.Content>
                     </CheckBox>
@@ -179,8 +179,8 @@
                             <TextBlock
                                 Width="279"
                                 Focusable="False"
-                                FontSize="13"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                FontSize="13"
                                 Text="{StaticResource StayTopMost}" />
                         </CheckBox.Content>
                     </CheckBox>
@@ -197,8 +197,8 @@
                             <TextBlock
                                 Width="279"
                                 Focusable="False"
-                                FontSize="13"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                FontSize="13"
                                 Text="{StaticResource StayCentered}" />
                         </CheckBox.Content>
                     </CheckBox>
@@ -206,7 +206,10 @@
                     <Label Margin="0,15,0,0" Content="{StaticResource SetAsWallpaper}" />
 
                     <StackPanel Margin="5,9,0,7" Orientation="Horizontal">
-                        <ComboBox x:Name="WallpaperBox" HorizontalAlignment="Left" IsTabStop="False">
+                        <ComboBox
+                            x:Name="WallpaperBox"
+                            HorizontalAlignment="Left"
+                            IsTabStop="False">
                             <ComboBoxItem
                                 x:Name="Fill"
                                 Content="{StaticResource Fill}"
@@ -238,8 +241,8 @@
                     <ComboBox
                         x:Name="LanguageBox"
                         Margin="5,9,0,7"
-                        IsTabStop="False"
-                        HorizontalAlignment="Left" />
+                        HorizontalAlignment="Left"
+                        IsTabStop="False" />
 
                     <TextBlock
                         x:Name="LanguageRestart"
@@ -301,13 +304,16 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                         Content="{StaticResource HorizontalScroll}" />
-                    
-                    <ComboBox 
+
+                    <ComboBox
                         x:Name="ScrollDirection"
-                        IsTabStop="False"
+                        Margin="3,8,0,0"
                         HorizontalAlignment="Left"
-                        Margin="3,8,0,0" >
-                        <ComboBoxItem x:Name="Reverse" Content="{StaticResource Reverse}" IsSelected="True" />
+                        IsTabStop="False">
+                        <ComboBoxItem
+                            x:Name="Reverse"
+                            Content="{StaticResource Reverse}"
+                            IsSelected="True" />
                         <ComboBoxItem Name="Forward" Content="{StaticResource Forward}" />
                     </ComboBox>
 
@@ -344,9 +350,9 @@
                             VerticalAlignment="Center"
                             d:Text="3"
                             IsReadOnly="True"
+                            IsTabStop="False"
                             Text="{Binding ElementName=SlideshowSlider, Path=Value}"
-                            TextAlignment="Center"
-                            IsTabStop="False"/>
+                            TextAlignment="Center" />
 
                         <TextBlock
                             Margin="2,2,0,0"
@@ -389,8 +395,8 @@
                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                             FontSize="12"
                             IsReadOnly="True"
-                            TextAlignment="Center"
-                            IsTabStop="False"/>
+                            IsTabStop="False"
+                            TextAlignment="Center" />
                     </StackPanel>
 
                 </StackPanel>
@@ -398,25 +404,25 @@
             <TabItem>
                 <TabItem.Header>
                     <TextBlock
-                        Text="{StaticResource UISettings}"
                         MaxWidth="155"
-                        TextWrapping="Wrap"
+                        FontSize="14"
+                        Text="{StaticResource UISettings}"
                         TextTrimming="CharacterEllipsis"
-                        FontSize="14" />
+                        TextWrapping="Wrap" />
                 </TabItem.Header>
-            
+
                 <StackPanel Margin="10">
-                    
+
                     <Label
                         VerticalAlignment="Center"
-                        Foreground="{StaticResource MainColorBrush}"
-                        Content="{StaticResource FullscreenGalleryLayout}"/>
+                        Content="{StaticResource FullscreenGalleryLayout}"
+                        Foreground="{StaticResource MainColorBrush}" />
                     <ComboBox
                         x:Name="GalleryBox"
                         Width="150"
                         Margin="8,2,0,2"
-                        IsTabStop="False"
-                        HorizontalAlignment="Left">
+                        HorizontalAlignment="Left"
+                        IsTabStop="False">
                         <ComboBoxItem
                             x:Name="GalleryVertical"
                             Content="{StaticResource Vertical}"
@@ -442,8 +448,8 @@
                             <TextBlock
                                 Width="279"
                                 Focusable="False"
-                                FontSize="13"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                FontSize="13"
                                 Text="{StaticResource ColoredWindowBorder}"
                                 TextWrapping="Wrap" />
                         </CheckBox.Content>
@@ -461,8 +467,8 @@
                             <TextBlock
                                 Width="279"
                                 Focusable="False"
-                                FontSize="13"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                FontSize="13"
                                 Text="{StaticResource ShowButtonsInHiddenUI}"
                                 TextWrapping="Wrap" />
                         </CheckBox.Content>
@@ -476,9 +482,9 @@
 
                     <WrapPanel
                         Margin="5,3,5,8"
-                        ItemWidth="146"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
+                        ItemWidth="146"
                         Orientation="Horizontal">
 
                         <RadioButton

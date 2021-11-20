@@ -34,7 +34,7 @@
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Icon Width="35"/>
+            <uc:Icon Width="35" />
 
             <Rectangle
                 Width="1"
@@ -203,8 +203,8 @@
 
                 </StackPanel>
 
-                <Border BorderThickness="0,1,0,1" BorderBrush="{StaticResource BorderBrush}">
-                    <Button Height="25" x:Name="ExpandButton">
+                <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,1">
+                    <Button x:Name="ExpandButton" Height="25">
                         <Button.Background>
                             <SolidColorBrush x:Name="ExpandButtonBg" Color="{StaticResource BackgroundColorFadeSubtle}" />
                         </Button.Background>
@@ -213,7 +213,7 @@
                                 <DrawingImage>
                                     <DrawingImage.Drawing>
                                         <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                            <GeometryDrawing x:Name="xGeo" Geometry="F1 M512,512z M0,0z M98,190.06L237.78,353.18A24,24,0,0,0,274.22,353.18L414,190.06C427.34,174.49,416.28,150.44,395.78,150.44L116.18,150.44C95.6799999999999,150.44,84.6199999999999,174.49,97.9999999999999,190.06z" >
+                                            <GeometryDrawing x:Name="xGeo" Geometry="F1 M512,512z M0,0z M98,190.06L237.78,353.18A24,24,0,0,0,274.22,353.18L414,190.06C427.34,174.49,416.28,150.44,395.78,150.44L116.18,150.44C95.6799999999999,150.44,84.6199999999999,174.49,97.9999999999999,190.06z">
                                                 <GeometryDrawing.Brush>
                                                     <SolidColorBrush x:Name="chevronDownBrush" Color="{StaticResource IconColor}" />
                                                 </GeometryDrawing.Brush>
@@ -680,8 +680,7 @@
                         Padding="0,3,0,3"
                         Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="1,1,1,1">
-                    </Border>
+                        BorderThickness="1,1,1,1" />
 
                     <Border
                         Grid.Row="4"
@@ -725,8 +724,7 @@
                         Padding="0,3,0,3"
                         Background="{StaticResource BackgroundSubtleHighlightBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="1,1,1,1">
-                    </Border>
+                        BorderThickness="1,1,1,1" />
 
                     <Border
                         Grid.Row="5"
@@ -766,16 +764,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Alt}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Alt}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -1659,16 +1653,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Alt}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Alt}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -1777,9 +1767,7 @@
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Del}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Del}" />
                         </StackPanel>
                     </Border>
 
@@ -2029,8 +2017,7 @@
                         Padding="0,3,0,3"
                         Background="{StaticResource BackgroundSubtleHighlightBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="0,0,1,0">
-                    </Border>
+                        BorderThickness="0,0,1,0" />
 
                     <Border
                         Grid.Row="3"
@@ -2195,16 +2182,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Shift}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Shift}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=DoubleClick}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=DoubleClick}" />
                         </StackPanel>
                     </Border>
 
@@ -2240,16 +2223,12 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock
-                                FontSize="12"
-                                Text="N" />
+                            <TextBlock FontSize="12" Text="N" />
                         </StackPanel>
                     </Border>
 
@@ -2436,17 +2415,17 @@
 
                 <StackPanel Margin="0,10,0,15">
 
-                    <Label 
-                        FontSize="16"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Black"
+                    <Label
                         HorizontalAlignment="Center"
-                        Content="{StaticResource ResourceKey=Credits}" />
+                        Content="{StaticResource ResourceKey=Credits}"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Black"
+                        FontSize="16" />
 
                     <Label
                         Margin="0,0,0,3"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Black"
                         HorizontalAlignment="Center"
-                        Content="{StaticResource ResourceKey=IconsUsed}" />
+                        Content="{StaticResource ResourceKey=IconsUsed}"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Black" />
 
                     <TextBlock
                         Margin="0,0,0,2"
@@ -2472,7 +2451,7 @@
                         TextAlignment="Center"
                         ToolTip="http://Ionicons.com/">
                         <Hyperlink NavigateUri="http://Ionicons.com/" RequestNavigate="Hyperlink_RequestNavigate">
-                                   Ioinicons
+                            Ioinicons
                             <Hyperlink.Foreground>
                                 <SolidColorBrush x:Name="IonicBrush" Color="{StaticResource MainColor}" />
                             </Hyperlink.Foreground>

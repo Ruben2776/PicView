@@ -1,15 +1,15 @@
 ﻿<UserControl
+    x:Class="PicView.Views.UserControls.QuickResize"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:UserControls="clr-namespace:PicView.Views.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    x:Class="PicView.Views.UserControls.QuickResize"
+    d:DesignHeight="300"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
-    d:DesignHeight="300"
     mc:Ignorable="d">
 
     <Grid x:Name="grid">
@@ -19,8 +19,7 @@
             Height="{Binding ActualHeight, ElementName=grid}"
             Background="{StaticResource BackgroundColorBrushFade}"
             BorderBrush="{StaticResource BorderBrush}"
-            BorderThickness="1,0,1,0">
-        </Border>
+            BorderThickness="1,0,1,0" />
 
         <UserControls:X2
             x:Name="x2"
@@ -28,24 +27,24 @@
             VerticalAlignment="Top"
             Panel.ZIndex="1" />
 
-        <Label 
-            Content="{StaticResource ResizeImage}"
+        <Label
+            Margin="0,0,0,115"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Margin="0,0,0,115" />
+            Content="{StaticResource ResizeImage}" />
 
-        <TextBlock 
-            Text="{StaticResource CropMessage}"
+        <TextBlock
+            Margin="0,0,0,67"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Margin="0,0,0,67"/>
+            Text="{StaticResource CropMessage}" />
 
-        <Border 
+        <Border
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
             Background="{StaticResource NoisyBg}"
             BorderBrush="{StaticResource BorderBrush}"
-            BorderThickness="1"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center">
+            BorderThickness="1">
 
             <DockPanel HorizontalAlignment="Center">
 
@@ -60,14 +59,14 @@
                     <TextBox
                         x:Name="WidthBox"
                         Width="55"
+                        d:Text="1920"
                         IsReadOnly="False"
-                        ToolTip="{StaticResource SizeTooltip}"
-                        d:Text="1920" />
+                        ToolTip="{StaticResource SizeTooltip}" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock
-                        Margin="10,0,10,0" 
+                        Margin="10,0,10,0"
                         VerticalAlignment="Center"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                         FontSize="14"
@@ -75,16 +74,23 @@
                         ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
                     <TextBox
                         x:Name="HeightBox"
-                        ToolTip="{StaticResource SizeTooltip}"
                         Width="55"
+                        d:Text="1080"
                         IsReadOnly="False"
-                        d:Text="1080" />
+                        ToolTip="{StaticResource SizeTooltip}" />
                 </StackPanel>
 
-                <Label Content="⇔" VerticalAlignment="Center" Margin="10,0,10,0"/>
+                <Label
+                    Margin="10,0,10,0"
+                    VerticalAlignment="Center"
+                    Content="⇔" />
 
-                <ComboBox x:Name="PercentageBox" KeyboardNavigation.DirectionalNavigation="Cycle" Width="80" MinWidth="70">
-                    <ComboBoxItem IsSelected="True" Content="100%" />
+                <ComboBox
+                    x:Name="PercentageBox"
+                    Width="80"
+                    MinWidth="70"
+                    KeyboardNavigation.DirectionalNavigation="Cycle">
+                    <ComboBoxItem Content="100%" IsSelected="True" />
                     <ComboBoxItem Content="90%" />
                     <ComboBoxItem Content="80%" />
                     <ComboBoxItem Content="70%" />
@@ -98,10 +104,10 @@
 
                 <Label
                     x:Name="ApplyButton"
+                    Margin="5,0,5,0"
+                    VerticalAlignment="Center"
                     Background="{DynamicResource BorderBrushAlt}"
-                    Content="{StaticResource Apply}" 
-                    Margin="5,0,5,0" 
-                    VerticalAlignment="Center">
+                    Content="{StaticResource Apply}">
                     <Label.Foreground>
                         <SolidColorBrush x:Name="ApplyBrush" Color="{DynamicResource ChosenColor}" />
                     </Label.Foreground>
