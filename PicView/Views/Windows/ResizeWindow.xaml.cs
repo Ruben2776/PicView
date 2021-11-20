@@ -11,7 +11,7 @@ namespace PicView.Views.Windows
     {
         public ResizeWindow()
         {
-            Title = Application.Current.Resources["ResizeWindow"] + " - PicView";
+            Title = Application.Current.Resources["BatchResize"] + " - PicView";
             MaxHeight = WindowSizing.MonitorInfo.WorkArea.Height;
             Width *= WindowSizing.MonitorInfo.DpiScaling;
             if (double.IsNaN(Width)) // Fixes if user opens window when loading from startup
