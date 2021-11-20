@@ -41,7 +41,7 @@ namespace PicView.UILogic
         {
             if (GetInfoWindow == null)
             {
-                GetInfoWindow = new InfoWindow();
+                GetInfoWindow = new InfoWindow { Owner = GetMainWindow };
                 GetInfoWindow.Show();
             }
             else
@@ -73,7 +73,7 @@ namespace PicView.UILogic
         {
             if (GetSettingsWindow == null)
             {
-                GetSettingsWindow = new SettingsWindow();
+                GetSettingsWindow = new SettingsWindow { Owner = GetMainWindow };
 
                 GetSettingsWindow.Show();
             }
@@ -106,7 +106,7 @@ namespace PicView.UILogic
         {
             if (GetEffectsWindow == null)
             {
-                GetEffectsWindow = new EffectsWindow();
+                GetEffectsWindow = new EffectsWindow { Owner = GetMainWindow };
 
                 GetEffectsWindow.Show();
             }

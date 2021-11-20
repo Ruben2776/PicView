@@ -13,6 +13,7 @@
     ResizeMode="CanMinimize"
     SizeToContent="Height"
     Style="{DynamicResource MyWindowStyle}"
+    WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary Source="\Themes\Styles\ComboBox.xaml" />
