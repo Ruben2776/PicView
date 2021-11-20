@@ -68,15 +68,17 @@
                 <TextBlock Text="Source folder" />
                 <TextBox
                     Width="298"
+                    FontSize="11"
                     IsReadOnly="False"
                     Text="B:\Pictures\new folder" />
                 <uc:FolderButton x:Name="SourceFolderButton" />
             </StackPanel>
 
-            <StackPanel Margin="0,0,0,20" Orientation="Horizontal">
+            <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
                 <TextBlock Text="Output folder" />
                 <TextBox
                     Width="298"
+                    FontSize="11"
                     IsReadOnly="False"
                     Text="B:\Pictures\another new folder" />
                 <uc:FolderButton x:Name="OutputFolderButton" />
@@ -84,9 +86,9 @@
 
 
 
-            <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+            <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
                 <TextBlock Text="Convert to" />
-                <ComboBox>
+                <ComboBox MinWidth="130">
                     <ComboBoxItem Content="No conversion" IsSelected="True" />
                     <ComboBoxItem Name="webp" Content=".webp" />
                     <ComboBoxItem Name="jpg" Content=".jpg" />
@@ -108,19 +110,18 @@
                     </Style>
                 </StackPanel.Style>
                 <TextBlock Text="Compression" />
-                <ComboBox>
+                <ComboBox MinWidth="130">
                     <ComboBoxItem Content="Lossless" IsSelected="True" />
                     <ComboBoxItem Content="Lossy" />
                     <ComboBoxItem Content="No compression" />
                 </ComboBox>
             </StackPanel>
 
-            <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
+            <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
                 <TextBlock Text="Quality" />
                 <ComboBox
                     x:Name="QualityPercentage"
-                    Width="80"
-                    MinWidth="70"
+                    MinWidth="130"
                     KeyboardNavigation.DirectionalNavigation="Cycle">
                     <ComboBoxItem Content="100%" />
                     <ComboBoxItem Content="95%" />
@@ -140,9 +141,9 @@
                 </ComboBox>
             </StackPanel>
 
-            <StackPanel Margin="0,20,0,0" Orientation="Horizontal">
+            <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
                 <TextBlock Text="{StaticResource Resize}" />
-                <ComboBox x:Name="ResizeComboBox">
+                <ComboBox x:Name="ResizeComboBox" Width="130">
                     <ComboBoxItem
                         x:Name="NoResize"
                         Content="No Resize"
@@ -154,7 +155,7 @@
             </StackPanel>
 
             <StackPanel
-                Margin="0,5,0,0"
+                Margin="0,10,0,0"
                 d:Visibility="Visible"
                 Orientation="Horizontal">
                 <StackPanel.Style>
@@ -171,13 +172,13 @@
                 <TextBlock Text="{StaticResource Width}" />
 
                 <TextBox
-                    Width="55"
+                    MinWidth="130"
                     IsReadOnly="False"
                     Text="100" />
             </StackPanel>
 
             <StackPanel
-                Margin="0,5,0,0"
+                Margin="0,10,0,0"
                 d:Visibility="Visible"
                 Orientation="Horizontal">
                 <StackPanel.Style>
@@ -194,13 +195,13 @@
                 <TextBlock Text="{StaticResource Height}" />
 
                 <TextBox
-                    Width="55"
+                    MinWidth="130"
                     IsReadOnly="False"
                     Text="100" />
             </StackPanel>
 
             <StackPanel
-                Margin="0,5,0,0"
+                Margin="0,10,0,0"
                 d:Visibility="Visible"
                 Orientation="Horizontal">
                 <StackPanel.Style>
@@ -217,7 +218,7 @@
                 <TextBlock Text="Percentage" />
 
                 <TextBox
-                    Width="55"
+                    MinWidth="65"
                     IsReadOnly="False"
                     Text="90" />
                 <Label
@@ -226,10 +227,10 @@
                     Content="%" />
             </StackPanel>
 
-            <StackPanel Margin="0,15,0,7" Orientation="Horizontal">
+            <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
 
                 <TextBlock Text="Generate Thumbnails" />
-                <ComboBox Width="60" MinWidth="60">
+                <ComboBox MinWidth="65">
                     <ComboBoxItem Content="0" />
                     <ComboBoxItem Content="1" />
                     <ComboBoxItem Content="2" />
@@ -245,54 +246,124 @@
             </StackPanel>
 
             <StackPanel Margin="8,3,0,5" Orientation="Horizontal">
-                <TextBlock Width="210">
+                <TextBlock Width="188">
                     <Run Text="Thumbnail" />
                     <Run Text=" 1 " />
                     <Run Text="output folder" />
                 </TextBlock>
                 <TextBox
-                    Width="209"
+                    Width="231"
+                    FontSize="11"
                     IsReadOnly="False"
-                    Text="Large" />
+                    Text="B:\Pictures\another new folder\Large" />
                 <uc:FolderButton x:Name="OutputFolderThumb1" />
+            </StackPanel>
+
+            <StackPanel Margin="17,3,0,6" Orientation="Horizontal">
+
+                <TextBlock Width="179" Text="{StaticResource Resize}" />
+
+                <StackPanel Orientation="Horizontal">
+
+                    <ComboBox>
+                        <ComboBoxItem Content="{StaticResource Width}" />
+                        <ComboBoxItem Content="{StaticResource Height}" />
+                        <ComboBoxItem Content="Percentage" IsSelected="True" />
+                    </ComboBox>
+                    <TextBox
+                        Width="96"
+                        Margin="15,0,0,0"
+                        IsReadOnly="False"
+                        Text="80" />
+                </StackPanel>
             </StackPanel>
 
 
             <StackPanel Margin="8,3,0,5" Orientation="Horizontal">
-                <TextBlock Width="210">
+                <TextBlock Width="188">
                     <Run Text="Thumbnail" />
                     <Run Text=" 2 " />
                     <Run Text="output folder" />
                 </TextBlock>
                 <TextBox
-                    Width="209"
+                    Width="231"
+                    FontSize="11"
                     IsReadOnly="False"
-                    Text="Medium" />
+                    Text="B:\Pictures\another new folder\Medium" />
                 <uc:FolderButton x:Name="OutputFolderThumb2" />
             </StackPanel>
 
+            <StackPanel Margin="17,3,0,6" Orientation="Horizontal">
+
+                <TextBlock Width="179" Text="{StaticResource Resize}" />
+
+                <StackPanel Orientation="Horizontal">
+
+                    <ComboBox>
+                        <ComboBoxItem Content="{StaticResource Width}" />
+                        <ComboBoxItem Content="{StaticResource Height}" />
+                        <ComboBoxItem Content="Percentage" IsSelected="True" />
+                    </ComboBox>
+                    <TextBox
+                        Width="96"
+                        Margin="15,0,0,0"
+                        IsReadOnly="False"
+                        Text="50" />
+                </StackPanel>
+            </StackPanel>
+
+
 
             <StackPanel Margin="8,3,0,5" Orientation="Horizontal">
-                <TextBlock Width="210">
+                <TextBlock Width="188">
                     <Run Text="Thumbnail" />
                     <Run Text=" 3 " />
                     <Run Text="output folder" />
                 </TextBlock>
                 <TextBox
-                    Width="209"
+                    Width="231"
+                    FontSize="11"
                     IsReadOnly="False"
-                    Text="Small" />
+                    Text="B:\Pictures\another new folder\Small" />
                 <uc:FolderButton x:Name="OutputFolderThumb3" />
             </StackPanel>
+
+            <StackPanel Margin="17,3,0,6" Orientation="Horizontal">
+
+                <TextBlock Width="179" Text="{StaticResource Resize}" />
+
+                <StackPanel Orientation="Horizontal">
+
+                    <ComboBox>
+                        <ComboBoxItem Content="{StaticResource Width}" />
+                        <ComboBoxItem Content="{StaticResource Height}" />
+                        <ComboBoxItem Content="Percentage" IsSelected="True" />
+                    </ComboBox>
+                    <TextBox
+                        Width="96"
+                        Margin="15,0,0,0"
+                        IsReadOnly="False"
+                        Text="30" />
+                </StackPanel>
+            </StackPanel>
+
 
             <TextBox
                 Height="150"
                 Margin="15,15,15,0"
-                ToolTip="" />
+                FontSize="11"
+                Text="B:\Pictures\new folder.jpg 114.5 kb ==&gt; B:\Pictures\another new folder.webp 80.4 kb"
+                ToolTip="{x:Null}" />
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Start" Style="{StaticResource MetroFlatButton}" Margin="0,10,5,0" />
-                <Button Content="Cancel" Style="{StaticResource MetroFlatButton}" Margin="10,10,0,0" />
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <Button
+                    Margin="0,10,5,0"
+                    Content="Start"
+                    Style="{StaticResource MetroFlatButton}" />
+                <Button
+                    Margin="10,10,0,0"
+                    Content="Cancel"
+                    Style="{StaticResource MetroFlatButton}" />
             </StackPanel>
 
         </StackPanel>
