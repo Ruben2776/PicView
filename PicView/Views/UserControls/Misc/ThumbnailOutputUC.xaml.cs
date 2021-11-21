@@ -17,12 +17,13 @@ namespace PicView.Views.UserControls
 {
     public partial class ThumbnailOutputUC : UserControl
     {
-        public ThumbnailOutputUC(int i, string folderPath, string filename)
+        public ThumbnailOutputUC(int i, string folderPath, string filename, string value)
         {
             InitializeComponent();
 
-            OutPutString.Text = $"Thumbnail {i} output folder";
+            OutPutString.Text = $"Thumbnail {i} destination";
             OutPutStringBox.Text = folderPath + @"\" + filename;
+            ValueBox.Text = value;
          }
     }
 }

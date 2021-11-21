@@ -233,18 +233,15 @@
             <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
 
                 <TextBlock Text="Generate Thumbnails" />
-                <ComboBox MinWidth="65">
-                    <ComboBoxItem Content="0" />
+                <ComboBox x:Name="ThumbnailsComboBox" MinWidth="65">
+                    <ComboBoxItem Content="0" IsSelected="True" />
                     <ComboBoxItem Content="1" />
                     <ComboBoxItem Content="2" />
-                    <ComboBoxItem Content="3" IsSelected="True" />
+                    <ComboBoxItem Content="3" />
                     <ComboBoxItem Content="4" />
                     <ComboBoxItem Content="5" />
                     <ComboBoxItem Content="6" />
                     <ComboBoxItem Content="7" />
-                    <ComboBoxItem Content="8" />
-                    <ComboBoxItem Content="9" />
-                    <ComboBoxItem Content="10" />
                 </ComboBox>
             </StackPanel>
 
