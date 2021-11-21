@@ -104,7 +104,7 @@ namespace PicView.Views.Windows
 
             KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(Scroller, e, this);
             Scroller.MouseWheel += (_, e) => Shortcuts.GenericWindowShortcuts.Window_MouseWheel(Scroller, e);
-            Bar.MouseLeftButtonDown += (_, _) => DragMove();
+            TitleBar.MouseLeftButtonDown += (_, _) => DragMove();
 
             CloseButton.TheButton.Click += delegate { Hide(); };
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };

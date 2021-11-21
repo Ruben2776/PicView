@@ -25,6 +25,12 @@
             <Setter Property="FontSize" Value="11" />
             <Setter Property="Foreground" Value="{StaticResource MainColorFadedBrush}" />
         </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
+        </Style>
     </Window.Resources>
 
     <DockPanel LastChildFill="True">
@@ -35,52 +41,28 @@
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Icon Width="35" />
-
-            <Rectangle
-                Width="1"
-                Height="30"
-                Margin="6,0,0,0"
-                Fill="{StaticResource BorderBrush}" />
+            <uc:Icon />
 
             <uc:CloseButton
                 x:Name="CloseButton"
                 Width="30"
                 Height="30"
-                VerticalAlignment="Center"
                 DockPanel.Dock="Right" />
-
-            <Rectangle
-                Width="1"
-                Height="30"
-                DockPanel.Dock="Right"
-                Fill="{StaticResource BorderBrush}" />
 
             <uc:MinButton
                 x:Name="MinButton"
                 Width="30"
                 Height="30"
-                VerticalAlignment="Center"
                 DockPanel.Dock="Right" />
 
-            <Rectangle
-                Width="1"
-                Height="30"
-                DockPanel.Dock="Right"
-                Fill="{StaticResource BorderBrush}" />
-
             <TextBlock
-                x:Name="Bar"
-                Height="30"
-                Padding="0,5,0,0"
+                Width="Auto"
+                Margin="0,0,0,0"
                 VerticalAlignment="Center"
-                Background="{StaticResource BackgroundSubtleHighlightBrush}"
-                FontSize="16"
-                FontWeight="Bold"
-                Foreground="{StaticResource MainColorBrush}"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                FontSize="14"
                 Text="{StaticResource InfoWindowTitle}"
-                TextAlignment="Center"
-                TextTrimming="CharacterEllipsis" />
+                TextAlignment="Center" />
         </DockPanel>
 
         <Rectangle
@@ -117,7 +99,6 @@
                                 </Hyperlink.Foreground>
                                 <TextBlock
                                     x:Name="GitHub"
-                                    d:Text="Github repository"
                                     FontSize="14"
                                     Text="{StaticResource ResourceKey=GithubRepo}"
                                     TextAlignment="Center"
@@ -230,7 +211,6 @@
                 <Label
                     Margin="0,12,0,4"
                     HorizontalAlignment="Center"
-                    d:Content="Application Shortcuts"
                     Content="{StaticResource ResourceKey=ApplicationShortcuts}"
                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Black"
                     FontSize="16" />
@@ -238,7 +218,6 @@
                 <Label
                     Width="480"
                     Margin="-4,0,0,10"
-                    d:Content="Navigation"
                     Content="{StaticResource ResourceKey=Navigation}" />
 
                 <Grid Width="480" Margin="0,0,0,20">
@@ -335,7 +314,6 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            d:Text="Right"
                             FontSize="12"
                             Text="{StaticResource ResourceKey=Left}" />
                     </Border>
@@ -364,10 +342,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                d:Text="Ctrl"
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -387,10 +362,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                d:Text="Ctrl"
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -411,7 +383,6 @@
                         BorderThickness="1,0,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
-                            d:Text="Last image"
                             FontSize="12"
                             Text="{StaticResource ResourceKey=LastImage}" />
                     </Border>
@@ -427,10 +398,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                d:Text="Ctrl"
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -450,10 +418,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                d:Text="Ctrl"
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -474,7 +439,6 @@
                         BorderThickness="1,1,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
-                            d:Text="Toggle looping"
                             FontSize="12"
                             Text="{StaticResource ResourceKey=ToggleLooping}" />
                     </Border>
@@ -537,7 +501,6 @@
                         BorderThickness="1,1,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
-                            d:Text="Rotate right"
                             FontSize="12"
                             Text="{StaticResource ResourceKey=RotateRight}" />
                     </Border>
@@ -579,7 +542,6 @@
                         BorderThickness="1,1,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
-                            d:Text="Rotate left"
                             FontSize="12"
                             Text="{StaticResource ResourceKey=RotateLeft}" />
                     </Border>
@@ -621,7 +583,6 @@
                         BorderThickness="1,0,1,1">
                         <TextBlock
                             Margin="10,3,0,3"
-                            d:Text="Flip"
                             FontSize="12"
                             Text="{StaticResource ResourceKey=Flip}" />
                     </Border>
@@ -707,10 +668,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                d:Text="Ctrl"
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -1451,10 +1409,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                d:Text="Ctrl"
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -1502,10 +1457,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                d:Text="Ctrl"
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -1615,10 +1567,7 @@
                             VerticalAlignment="Center"
                             Orientation="Horizontal"
                             ToolTip="{StaticResource ResourceKey=DragFileTo}">
-                            <TextBlock
-                                d:Text="Ctrl"
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -1701,10 +1650,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                d:Text="Ctrl"
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -1869,10 +1815,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                d:Text="Ctrl"
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -2062,10 +2005,7 @@
                             VerticalAlignment="Center"
                             Orientation="Horizontal"
                             ToolTip="{StaticResource ResourceKey=CloseApp}">
-                            <TextBlock
-                                d:Text="Ctrl"
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
@@ -2358,10 +2298,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <TextBlock
-                                d:Text="Ctrl"
-                                FontSize="12"
-                                Text="{StaticResource ResourceKey=Ctrl}" />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Ctrl}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"

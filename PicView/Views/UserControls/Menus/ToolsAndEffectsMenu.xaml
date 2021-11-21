@@ -7,7 +7,10 @@
     Foreground="{StaticResource MainColorBrush}">
 
     <UserControl.Resources>
-        <SolidColorBrush x:Name="IconBrush" x:Key="IconBrush" Color="{StaticResource IconColor}" />
+        <SolidColorBrush
+            x:Key="IconBrush"
+            x:Name="IconBrush"
+            Color="{StaticResource IconColor}" />
     </UserControl.Resources>
 
     <StackPanel>
@@ -40,9 +43,9 @@
                         Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
 
-                    <Button 
+                    <Button
                         x:Name="ResizeButton"
-                        Width="169"  
+                        Width="169"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium">
                         <Button.Background>
                             <SolidColorBrush x:Name="ResizeButtonBrush" Color="Transparent" />
@@ -51,22 +54,22 @@
                             <TextBlock
                                 Width="126"
                                 MaxWidth="126"
-                                Margin="0,2,0,2"
-                                FontSize="13"
+                                Margin="2,2,2,2"
+                                VerticalAlignment="Center"
+                                FontSize="12"
                                 Text="{StaticResource BatchResize}"
                                 TextAlignment="Center"
-                                TextWrapping="Wrap" 
                                 TextTrimming="CharacterEllipsis"
-                                VerticalAlignment="Center">
+                                TextWrapping="Wrap">
                                 <TextBlock.Foreground>
                                     <SolidColorBrush x:Name="ResizeText" Color="{StaticResource MainColor}" />
                                 </TextBlock.Foreground>
                             </TextBlock>
                             <Canvas Width="51" Height="51">
-                                <Image 
-                                    Height="22" 
+                                <Image
                                     Canvas.Left="0"
-                                    Canvas.Top="15">
+                                    Canvas.Top="15"
+                                    Height="22">
                                     <Image.Source>
                                         <DrawingImage>
                                             <DrawingImage.Drawing>
@@ -78,12 +81,12 @@
                                     </Image.Source>
                                 </Image>
 
-                                <Image 
-                                    Panel.ZIndex="-1"
-                                    Opacity=".9"
-                                    Height="16"
+                                <Image
                                     Canvas.Left="15"
-                                    Canvas.Top="18">
+                                    Canvas.Top="18"
+                                    Height="16"
+                                    Panel.ZIndex="-1"
+                                    Opacity=".9">
                                     <Image.Source>
                                         <DrawingImage>
                                             <DrawingImage.Drawing>
@@ -95,12 +98,12 @@
                                     </Image.Source>
                                 </Image>
 
-                                <Image 
-                                    Panel.ZIndex="-2"
-                                    Opacity=".7"
-                                    Height="10"
+                                <Image
                                     Canvas.Left="27"
-                                    Canvas.Top="21">
+                                    Canvas.Top="21"
+                                    Height="10"
+                                    Panel.ZIndex="-2"
+                                    Opacity=".7">
                                     <Image.Source>
                                         <DrawingImage>
                                             <DrawingImage.Drawing>
@@ -139,7 +142,7 @@
                                 Width="110"
                                 MaxWidth="110"
                                 Margin="0,2,0,2"
-                                FontSize="13"
+                                FontSize="12"
                                 Text="{StaticResource Effects}"
                                 TextAlignment="Center"
                                 TextTrimming="CharacterEllipsis"
@@ -151,8 +154,8 @@
                             <Image
                                 Width="17"
                                 Height="17"
-                                Stretch="Fill" 
-                                Margin="0,0,7,0">
+                                Margin="0,0,7,0"
+                                Stretch="Fill">
                                 <Image.Source>
                                     <DrawingImage>
                                         <DrawingImage.Drawing>
@@ -202,7 +205,7 @@
                                     Width="126"
                                     MaxWidth="126"
                                     Margin="0,2,2,2"
-                                    FontSize="13"
+                                    FontSize="12"
                                     Text="{StaticResource ImageInfo}"
                                     TextAlignment="Center"
                                     TextWrapping="Wrap">
@@ -242,7 +245,7 @@
                                     Width="136"
                                     MaxWidth="136"
                                     Margin="0,2,2,2"
-                                    FontSize="13"
+                                    FontSize="12"
                                     Text="{StaticResource ColorPickerTool}"
                                     TextAlignment="Center"
                                     TextWrapping="Wrap">
@@ -283,7 +286,7 @@
                                     Width="126"
                                     MaxWidth="126"
                                     Margin="0,2,2,2"
-                                    FontSize="13"
+                                    FontSize="12"
                                     Text="{StaticResource OptimizeImage}"
                                     TextAlignment="Center"
                                     TextWrapping="Wrap">
@@ -345,14 +348,14 @@
                                 <SolidColorBrush x:Name="BgBrush" />
                             </StackPanel.Background>
                             <TextBlock
-                                    Width="136"
-                                    MaxWidth="136"
-                                    VerticalAlignment="Center"
-                                    Margin="4,2,2,2"
-                                    FontSize="13"
-                                    Text="{StaticResource ChangeBackground}"
-                                    TextAlignment="Center"
-                                    TextWrapping="Wrap">
+                                Width="136"
+                                MaxWidth="136"
+                                Margin="4,2,2,2"
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                Text="{StaticResource ChangeBackground}"
+                                TextAlignment="Center"
+                                TextWrapping="Wrap">
                                 <TextBlock.Foreground>
                                     <SolidColorBrush x:Name="BgText" Color="{StaticResource MainColor}" />
                                 </TextBlock.Foreground>

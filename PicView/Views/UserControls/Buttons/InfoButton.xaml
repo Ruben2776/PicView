@@ -14,7 +14,7 @@
             <Image
                 Width="14"
                 Height="14"
-                Margin="5,0,0,0">
+                Margin="2,0,0,0">
                 <Image.Source>
                     <DrawingImage>
                         <DrawingImage.Drawing>
@@ -30,14 +30,13 @@
                 </Image.Source>
             </Image>
             <TextBlock
-                Margin="5,0,5,0"
+                MaxWidth="70"
+                Margin="3,0,3,0"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 FontSize="13"
-                MaxWidth="57"
                 Text="{StaticResource About}"
-                ToolTip="{StaticResource About}"
-                TextWrapping="Wrap"
-                TextTrimming="CharacterEllipsis">
+                TextTrimming="CharacterEllipsis"
+                ToolTip="{StaticResource About}">
                 <TextBlock.Foreground>
                     <SolidColorBrush x:Name="txtBrush" Color="{StaticResource MainColor}" />
                 </TextBlock.Foreground>

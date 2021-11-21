@@ -11,10 +11,7 @@
             <SolidColorBrush x:Name="TheButtonBrush" Color="Transparent" />
         </Button.Background>
         <StackPanel Orientation="Horizontal">
-            <Image
-                Width="18"
-                Height="18"
-                Margin="6,0,0,0">
+            <Image Width="18" Margin="3,0,0,0">
                 <Image.Source>
                     <DrawingImage>
                         <DrawingImage.Drawing>
@@ -51,13 +48,13 @@
                 </Image.Source>
             </Image>
             <TextBlock
-                Margin="5,0,5,0"
+                MaxWidth="80"
+                Margin="3,0,3,0"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 FontSize="13"
-                MaxWidth="57"
                 Text="{StaticResource Settings}"
-                ToolTip="{StaticResource Settings}"
-                TextTrimming="CharacterEllipsis">
+                TextTrimming="CharacterEllipsis"
+                ToolTip="{StaticResource Settings}">
                 <TextBlock.Foreground>
                     <SolidColorBrush x:Name="txtBrush" Color="{StaticResource MainColor}" />
                 </TextBlock.Foreground>
