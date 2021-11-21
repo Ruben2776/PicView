@@ -10,6 +10,7 @@
         ko,
         pl,
         fr,
-        it
+        it,
+        ru
     }
 }
