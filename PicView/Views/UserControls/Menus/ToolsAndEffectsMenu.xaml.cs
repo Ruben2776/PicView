@@ -17,6 +17,17 @@ namespace PicView.Views.UserControls
         {
             InitializeComponent();
 
+            switch (Properties.Settings.Default.UserLanguage)
+            {
+                case "ru":
+                case "pl":
+                case "es":
+                    ResizeButton.FontSize = EffectsButton.FontSize =
+                       ImageInfoButton.FontSize = ColorPickerButton.FontSize =
+                       OptimizeImageButton.FontSize = BgButton.FontSize = 12;
+                    break;
+            }
+
             // ResizeButton
             var iconBrush = (SolidColorBrush)Resources["IconBrush"];
             ResizeButton.MouseEnter += delegate
@@ -146,7 +157,7 @@ namespace PicView.Views.UserControls
                 AnimationHelper.MouseLeaveBgTexColor(BgBrush);
             };
 
-            BgBorder.MouseLeftButtonDown += (_, _) => ConfigureSettings.ConfigColors.ChangeBackground();
+            BgButton.Click += (_, _) => ConfigureSettings.ConfigColors.ChangeBackground();
         }
     }
 }

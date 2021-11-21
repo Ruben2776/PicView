@@ -76,7 +76,6 @@
                             <TextBlock
                                 MaxWidth="175"
                                 Margin="0,0,10,0"
-                                FontSize="14"
                                 Text="{StaticResource ShowFullscreenGallery}"
                                 TextWrapping="Wrap">
                                 <TextBlock.Foreground>
@@ -126,7 +125,6 @@
                             <TextBlock
                                 MaxWidth="175"
                                 Margin="0,0,7,0"
-                                FontSize="14"
                                 Text="{StaticResource ShowHorizontalGallery}"
                                 TextWrapping="Wrap">
                                 <TextBlock.Foreground>

@@ -14,6 +14,15 @@ namespace PicView.Views.UserControls
         {
             InitializeComponent();
 
+            switch (Properties.Settings.Default.UserLanguage)
+            {
+                case "ru":
+                case "pl":
+                case "es":
+                    Contained_Gallery.FontSize = Fullscreen_Gallery.FontSize = 13;
+                    break;
+            }
+
             // FullscreenGalleryBorder
             FullscreenGalleryBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(FullscreenFill1); };
             FullscreenGalleryBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(FullscreenFill2); };
