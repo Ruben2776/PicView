@@ -1,12 +1,12 @@
-﻿using PicView.UILogic.Sizing;
+﻿using PicView.ChangeImage;
+using PicView.UILogic;
+using PicView.UILogic.Sizing;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 
 namespace PicView.Views.Windows
 {
-    /// <summary>
-    /// Interaction logic for ResizeWindow.xaml
-    /// </summary>
     public partial class ResizeWindow : Window
     {
         public ResizeWindow()
@@ -25,6 +25,25 @@ namespace PicView.Views.Windows
 
             ContentRendered += (sender, e) =>
             {
+                if (Error_Handling.CheckOutOfRange() == false)
+                {
+                    SourceFolderInput.Text = Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]);
+                    OutputFolderInput.Text = SourceFolderInput.Text + @"\Processed Pictures";
+                }
+
+                //GenerateThumbnailsCB.SelectionChanged += delegate
+                //{
+
+                //};
+
+                for (int i = 1; i <= 5; i++)
+                {
+                    GeneratedThumbnailsContainer.Children.Add(new UserControls.ThumbnailOutputUC(i, OutputFolderInput.Text, "xl"));
+                }
+
+                
+
+
                 MouseLeftButtonDown += (_, e) =>
                 { if (e.LeftButton == MouseButtonState.Pressed) { DragMove(); } };
 
