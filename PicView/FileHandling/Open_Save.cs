@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using PicView.ChangeImage;
 using PicView.ImageHandling;
 using PicView.UILogic;
@@ -229,5 +230,22 @@ namespace PicView.FileHandling
             }
             return true;
         }
+
+        internal static string? SelectAndReturnFolder()
+        {
+            IsDialogOpen = true;
+
+            var dialog = new CommonOpenFileDialog
+            {
+                IsFolderPicker = true,
+            };
+
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                return dialog.FileName;
+            }
+
+            return null;
+        } 
     }
 }
