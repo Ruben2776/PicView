@@ -17,11 +17,12 @@
 
     <StackPanel>
         <StackPanel Margin="15,3,0,5" Orientation="Horizontal">
-            <TextBlock x:Name="OutPutString" Width="170" />
+            <TextBlock x:Name="OutPutString" TextWrapping="Wrap" />
 
             <TextBox
                 x:Name="OutPutStringBox"
-                Width="260"
+                Width="300"
+                AllowDrop="True"
                 FontSize="11"
                 IsReadOnly="False" />
             <uc:FolderButton x:Name="OutputFolderButton" />
@@ -29,21 +30,42 @@
 
         <StackPanel Margin="15,3,0,6" Orientation="Horizontal">
 
-            <TextBlock Width="170" Text="{StaticResource Resize}" />
+            <TextBlock Text="{StaticResource Resize}" />
 
             <StackPanel Orientation="Horizontal">
 
                 <ComboBox Width="130">
                     <ComboBoxItem Content="{StaticResource Width}" />
                     <ComboBoxItem Content="{StaticResource Height}" />
-                    <ComboBoxItem Content="Percentage" IsSelected="True" />
+                    <ComboBoxItem
+                        Name="Percentage"
+                        Content="Percentage"
+                        IsSelected="True" />
                 </ComboBox>
                 <TextBox
                     x:Name="ValueBox"
-                    Width="115"
+                    Width="155"
                     Margin="15,0,0,0"
                     IsReadOnly="False"
                     Text="80" />
+                <Label
+                    Margin="16,0,0,0"
+                    VerticalAlignment="Center"
+                    Content="%"
+                    FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                    FontSize="14"
+                    Foreground="{StaticResource IconColorBrush}">
+                    <Label.Style>
+                        <Style TargetType="Label">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=Percentage, Path=IsSelected}" Value="false">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
             </StackPanel>
         </StackPanel>
     </StackPanel>

@@ -1,5 +1,4 @@
 ﻿using PicView.ChangeImage;
-using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System.IO;
 using System.Windows;
@@ -32,6 +31,23 @@ namespace PicView.Views.Windows
                     SourceFolderInput.Text = Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]);
                     OutputFolderInput.Text = SourceFolderInput.Text + @"\Processed Pictures";
                 }
+
+                SourceFolderButton.FileMenuButton.Click += (_, _) =>
+                {
+                    var newFolder = FileHandling.Open_Save.SelectAndReturnFolder();
+                    if (string.IsNullOrWhiteSpace(newFolder) == false)
+                    {
+                        SourceFolderInput.Text = newFolder;
+                    }
+                };
+                OutputFolderButton.FileMenuButton.Click += (_, _) =>
+                {
+                    var newFolder = FileHandling.Open_Save.SelectAndReturnFolder();
+                    if (string.IsNullOrWhiteSpace(newFolder) == false)
+                    {
+                        OutputFolderInput.Text = newFolder;
+                    }
+                };
 
                 ThumbnailsComboBox.SelectionChanged += delegate
                 {
@@ -76,7 +92,7 @@ namespace PicView.Views.Windows
                                 newSize[1] = "30"; newSize[2] = "50";
                                 break;
 
-                            case 1: default: 
+                            default: 
                                 size[1] = "small";
                                 newSize[1] = "30";
                                 break;

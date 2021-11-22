@@ -71,6 +71,7 @@
                     x:Name="SourceFolderInput"
                     Width="298"
                     d:Text="B:\Pictures\new folder"
+                    AllowDrop="True"
                     FontSize="11"
                     IsReadOnly="False" />
                 <uc:FolderButton x:Name="SourceFolderButton" />
@@ -82,6 +83,7 @@
                     x:Name="OutputFolderInput"
                     Width="298"
                     d:Text="B:\Pictures\another new folder"
+                    AllowDrop="True"
                     FontSize="11"
                     IsReadOnly="False" />
                 <uc:FolderButton x:Name="OutputFolderButton" />
@@ -101,7 +103,7 @@
 
 
 
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
                 <StackPanel.Style>
                     <Style TargetType="StackPanel">
                         <Setter Property="Visibility" Value="Visible" />
@@ -120,7 +122,7 @@
                 </ComboBox>
             </StackPanel>
 
-            <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Quality" />
                 <ComboBox
                     x:Name="QualityPercentage"
@@ -129,9 +131,9 @@
                     <ComboBoxItem Content="100%" />
                     <ComboBoxItem Content="95%" />
                     <ComboBoxItem Content="90%" />
-                    <ComboBoxItem Content="85%" />
+                    <ComboBoxItem Content="85%" IsSelected="True" />
                     <ComboBoxItem Content="80%" />
-                    <ComboBoxItem Content="75%" IsSelected="True" />
+                    <ComboBoxItem Content="75%" />
                     <ComboBoxItem Content="70%" />
                     <ComboBoxItem Content="65%" />
                     <ComboBoxItem Content="60%" />
@@ -221,7 +223,7 @@
                 <TextBlock Text="Percentage" />
 
                 <TextBox
-                    MinWidth="65"
+                    Width="65"
                     IsReadOnly="False"
                     Text="90" />
                 <Label
@@ -233,7 +235,10 @@
             <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
 
                 <TextBlock Text="Generate Thumbnails" />
-                <ComboBox x:Name="ThumbnailsComboBox" MinWidth="65">
+                <ComboBox
+                    x:Name="ThumbnailsComboBox"
+                    Width="65"
+                    MinWidth="65">
                     <ComboBoxItem Content="0" IsSelected="True" />
                     <ComboBoxItem Content="1" />
                     <ComboBoxItem Content="2" />
@@ -245,7 +250,7 @@
                 </ComboBox>
             </StackPanel>
 
-            <ScrollViewer MaxHeight="420">
+            <ScrollViewer MaxHeight="350">
                 <ScrollViewer.Style>
                     <Style TargetType="{x:Type ScrollViewer}">
                         <Setter Property="OverridesDefaultStyle" Value="True" />

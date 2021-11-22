@@ -1,17 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows.Controls;
 
 namespace PicView.Views.UserControls
 {
@@ -21,9 +8,18 @@ namespace PicView.Views.UserControls
         {
             InitializeComponent();
 
-            OutPutString.Text = $"Thumbnail {i} destination";
+            OutPutString.Text = $"Thumb {i}";
             OutPutStringBox.Text = folderPath + @"\" + filename;
             ValueBox.Text = value;
+
+            OutputFolderButton.FileMenuButton.Click += (_, _) => 
+            {
+                var newFolder = FileHandling.Open_Save.SelectAndReturnFolder();
+                if (string.IsNullOrWhiteSpace(newFolder) == false)
+                {
+                    OutPutStringBox.Text = newFolder;
+                }
+            };
          }
     }
 }
