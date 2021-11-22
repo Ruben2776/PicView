@@ -42,15 +42,21 @@
                                 <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
                             </MultiTrigger.Setters>
                         </MultiTrigger>
-                        
+
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsReadOnly" Value="False" />
+                                <Condition Property="IsFocused" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+
                         <Trigger Property="IsMouseOver" Value="False">
                             <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ResourceKey=BorderBrush}" />
                         </Trigger>
-                        
-                        <Trigger Property="IsFocused" Value="True">
-                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
-                        </Trigger>
-                        
+
                         <Trigger Property="IsReadOnly" Value="True">
                             <Setter TargetName="border" Property="Background" Value="{StaticResource BackgroundColorBrush}"  />
                         </Trigger>

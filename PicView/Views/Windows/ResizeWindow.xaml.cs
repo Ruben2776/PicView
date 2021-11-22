@@ -1,4 +1,5 @@
-﻿using PicView.ChangeImage;
+﻿using PicView.Animations;
+using PicView.ChangeImage;
 using PicView.UILogic.Sizing;
 using System.IO;
 using System.Windows;
@@ -122,6 +123,16 @@ namespace PicView.Views.Windows
                 MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
 
                 TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
+
+                StartButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(StartText); };
+                StartButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(StartBrush); };
+                StartButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(StartText); };
+                StartButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(StartBrush); };
+
+                CencelButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(CencelText); };
+                CencelButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(CancelBrush); };
+                CencelButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(CencelText); };
+                CencelButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(CancelBrush); };
             };
         }
 
@@ -145,17 +156,13 @@ namespace PicView.Views.Windows
                 {
                     var data = e.Data.GetData(DataFormats.Text);
 
-                    if (data != null) // Check if from web)
+                    if (data != null)
                     {
                         var text = data.ToString();
                         if (Directory.Exists(text))
                         {
                             textBox.Text = text;
                         }
-                    }
-                    else
-                    {
-                        return;
                     }
                 }
                 else if (Directory.Exists(files[0]))

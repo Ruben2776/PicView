@@ -290,19 +290,61 @@
             <TextBox
                 Height="150"
                 Margin="15,15,15,0"
-                FontSize="11"
-                Text="B:\Pictures\new folder.jpg 114.5 kb ==&gt; B:\Pictures\another new folder.webp 80.4 kb"
+                BorderThickness="1.5"
+                Effect="{StaticResource MenuShadowButtonBorder}"
+                Text="B:\Pictures\new folder.jpg 114.5 kb 🠚 B:\Pictures\another new folder.webp 80.4 kb"
                 ToolTip="{x:Null}" />
 
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                <Button
-                    Margin="0,10,5,0"
-                    Content="Start"
-                    Style="{StaticResource MetroFlatButton}" />
-                <Button
-                    Margin="10,10,0,0"
-                    Content="Cancel"
-                    Style="{StaticResource MetroFlatButton}" />
+
+                <Border
+                    Margin="0,10,10,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="{StaticResource BackgroundColorBrushAlt}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="2"
+                    Effect="{StaticResource MenuShadowButtonBorder}"
+                    Focusable="False">
+                    <Label
+                        x:Name="StartButton"
+                        Padding="20,10,20,10"
+                        Content="Start"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium">
+                        <Label.Background>
+                            <SolidColorBrush x:Name="StartBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Label.Background>
+                        <Label.Foreground>
+                            <SolidColorBrush x:Name="StartText" Color="{StaticResource MainColor}" />
+                        </Label.Foreground>
+                    </Label>
+                </Border>
+
+                <Border
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="{StaticResource BackgroundColorBrushAlt}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="2"
+                    Effect="{StaticResource MenuShadowButtonBorder}"
+                    Focusable="False">
+                    <Label
+                        x:Name="CencelButton"
+                        Padding="10"
+                        Content="Cancel"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium">
+                        <Label.Background>
+                            <SolidColorBrush x:Name="CancelBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Label.Background>
+                        <Label.Foreground>
+                            <SolidColorBrush x:Name="CencelText" Color="{StaticResource MainColor}" />
+                        </Label.Foreground>
+                    </Label>
+                </Border>
+
             </StackPanel>
 
         </StackPanel>
