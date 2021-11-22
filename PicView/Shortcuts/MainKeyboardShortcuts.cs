@@ -444,6 +444,10 @@ namespace PicView.Shortcuts
                         {
                             ProcessHandling.ProcessLogic.StartNewProcess();
                         }
+                        else
+                        {
+                            ConfigureWindows.ResizeWindow();
+                        }
                         break;
 
                     // G
@@ -543,6 +547,11 @@ namespace PicView.Shortcuts
                     // F7
                     case Key.F7:
                         ResetZoom();
+                        break;
+
+                    // F9
+                    case Key.F9:
+                        ResizeWindow();
                         break;
 
                     // F11

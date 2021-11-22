@@ -1855,6 +1855,7 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
                     <Border
@@ -1963,6 +1964,7 @@
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,0,1,0" />
 
+
                     <Border
                         Grid.Row="3"
                         Grid.Column="0"
@@ -1972,9 +1974,8 @@
                         BorderThickness="1,0,1,0">
                         <TextBlock
                             Margin="10,3,0,3"
-                            d:Text="Close"
                             FontSize="12"
-                            Text="{StaticResource ResourceKey=Close}" />
+                            Text="{StaticResource ResourceKey=BatchResize}" />
                     </Border>
 
                     <Border
@@ -1987,10 +1988,8 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            d:Text="Esc"
                             FontSize="12"
-                            Text="{StaticResource ResourceKey=Esc}"
-                            ToolTip="{StaticResource ResourceKey=EscCloseTooltip}" />
+                            Text="N" />
                     </Border>
 
                     <Border
@@ -1998,6 +1997,51 @@
                         Grid.Column="2"
                         Padding="0,3,0,3"
                         Background="{StaticResource BackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,0,1,0" >
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            Text="F9" />
+                    </Border>
+
+
+                    <Border
+                        Grid.Row="4"
+                        Grid.Column="0"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1,0,1,0">
+                        <TextBlock
+                            Margin="10,3,0,3"
+                            d:Text="Close"
+                            FontSize="12"
+                            Text="{StaticResource ResourceKey=Close}" />
+                    </Border>
+
+                    <Border
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,0,1,0">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            d:Text="Esc"
+                            FontSize="12"
+                            Text="{StaticResource ResourceKey=Esc}"
+                            ToolTip="{StaticResource ResourceKey=EscCloseTooltip}" />
+                    </Border>
+
+                    <Border
+                        Grid.Row="4"
+                        Grid.Column="2"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,0,1,0">
                         <StackPanel
@@ -2015,10 +2059,10 @@
                     </Border>
 
                     <Border
-                        Grid.Row="4"
+                        Grid.Row="5"
                         Grid.Column="0"
                         Padding="0,3,0,3"
-                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
+                        Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1,1,1,0">
                         <TextBlock
@@ -2029,10 +2073,10 @@
                     </Border>
 
                     <Border
-                        Grid.Row="4"
+                        Grid.Row="5"
                         Grid.Column="1"
                         Padding="0,3,0,3"
-                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
+                        Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,0">
                         <StackPanel
@@ -2055,18 +2099,18 @@
                     </Border>
 
                     <Border
-                        Grid.Row="4"
+                        Grid.Row="5"
                         Grid.Column="2"
                         Padding="0,3,0,3"
-                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
+                        Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,0" />
 
                     <Border
-                        Grid.Row="5"
+                        Grid.Row="6"
                         Grid.Column="0"
                         Padding="0,3,0,3"
-                        Background="{StaticResource BackgroundColorBrush}"
+                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1,0,1,0">
                         <TextBlock
@@ -2077,10 +2121,10 @@
                     </Border>
 
                     <Border
-                        Grid.Row="5"
+                        Grid.Row="6"
                         Grid.Column="1"
                         Padding="0,3,0,3"
-                        Background="{StaticResource BackgroundColorBrush}"
+                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,0,1,0">
                         <TextBlock
@@ -2092,18 +2136,18 @@
                     </Border>
 
                     <Border
-                        Grid.Row="5"
+                        Grid.Row="6"
                         Grid.Column="2"
                         Padding="0,3,0,3"
-                        Background="{StaticResource BackgroundColorBrush}"
+                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,0,1,0" />
 
                     <Border
-                        Grid.Row="6"
+                        Grid.Row="7"
                         Grid.Column="0"
                         Padding="0,3,0,3"
-                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
+                        Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1,1,1,1">
                         <TextBlock
@@ -2113,10 +2157,10 @@
                     </Border>
 
                     <Border
-                        Grid.Row="6"
+                        Grid.Row="7"
                         Grid.Column="1"
                         Padding="0,3,0,3"
-                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
+                        Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,1">
                         <StackPanel
@@ -2133,18 +2177,18 @@
                     </Border>
 
                     <Border
-                        Grid.Row="6"
+                        Grid.Row="7"
                         Grid.Column="2"
                         Padding="0,3,0,3"
-                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
+                        Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,1" />
 
                     <Border
-                        Grid.Row="7"
+                        Grid.Row="8"
                         Grid.Column="0"
                         Padding="0,3,0,3"
-                        Background="{StaticResource BackgroundColorBrush}"
+                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1,1,1,1">
                         <TextBlock
@@ -2154,10 +2198,10 @@
                     </Border>
 
                     <Border
-                        Grid.Row="7"
+                        Grid.Row="8"
                         Grid.Column="1"
                         Padding="0,3,0,3"
-                        Background="{StaticResource BackgroundColorBrush}"
+                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,1">
                         <StackPanel
@@ -2174,18 +2218,18 @@
                     </Border>
 
                     <Border
-                        Grid.Row="7"
+                        Grid.Row="8"
                         Grid.Column="2"
                         Padding="0,3,0,3"
-                        Background="{StaticResource BackgroundColorBrush}"
+                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,1" />
 
                     <Border
-                        Grid.Row="8"
+                        Grid.Row="9"
                         Grid.Column="0"
                         Padding="0,3,0,3"
-                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
+                        Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1,1,1,1">
                         <TextBlock
@@ -2195,10 +2239,10 @@
                     </Border>
 
                     <Border
-                        Grid.Row="8"
+                        Grid.Row="9"
                         Grid.Column="1"
                         Padding="0,3,0,3"
-                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
+                        Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,1">
                         <TextBlock
@@ -2209,10 +2253,10 @@
                     </Border>
 
                     <Border
-                        Grid.Row="8"
+                        Grid.Row="9"
                         Grid.Column="2"
                         Padding="0,3,0,3"
-                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
+                        Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,1" />
 
