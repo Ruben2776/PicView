@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
     Width="500"
+    AllowDrop="False"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
@@ -77,7 +78,10 @@
                 <uc:FolderButton x:Name="SourceFolderButton" />
             </StackPanel>
 
-            <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
+            <StackPanel
+                Margin="0,0,0,10"
+                AllowDrop="True"
+                Orientation="Horizontal">
                 <TextBlock Text="Output folder" />
                 <TextBox
                     x:Name="OutputFolderInput"

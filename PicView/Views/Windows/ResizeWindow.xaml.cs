@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using static PicView.UILogic.Sizing.WindowSizing;
 
 namespace PicView.Views.Windows
@@ -32,6 +33,9 @@ namespace PicView.Views.Windows
                     OutputFolderInput.Text = SourceFolderInput.Text + @"\Processed Pictures";
                 }
 
+                SetTextboxDragEvent(SourceFolderInput);
+                SetTextboxDragEvent(OutputFolderInput);
+
                 SourceFolderButton.FileMenuButton.Click += (_, _) =>
                 {
                     var newFolder = FileHandling.Open_Save.SelectAndReturnFolder();
@@ -40,6 +44,7 @@ namespace PicView.Views.Windows
                         SourceFolderInput.Text = newFolder;
                     }
                 };
+
                 OutputFolderButton.FileMenuButton.Click += (_, _) =>
                 {
                     var newFolder = FileHandling.Open_Save.SelectAndReturnFolder();
@@ -117,6 +122,48 @@ namespace PicView.Views.Windows
                 MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
 
                 TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
+            };
+        }
+
+        internal static void SetTextboxDragEvent(TextBox textBox)
+        {
+            textBox.PreviewDragOver += (_, e) =>
+            {
+                e.Handled = true; // Needs this to allow drag to work
+
+                textBox.Background = (SolidColorBrush)Application.Current.Resources["BackgroundHoverHighlightBrush"];
+            };
+
+            textBox.PreviewDragLeave += (_, _) =>
+            {
+                textBox.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"];
+            };
+
+            textBox.Drop += (_, e) =>
+            {
+                if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
+                {
+                    var data = e.Data.GetData(DataFormats.Text);
+
+                    if (data != null) // Check if from web)
+                    {
+                        var text = data.ToString();
+                        if (Directory.Exists(text))
+                        {
+                            textBox.Text = text;
+                        }
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                else if (Directory.Exists(files[0]))
+                {
+                    textBox.Text = files[0];
+                }
+
+                textBox.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"];
             };
         }
 

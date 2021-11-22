@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace PicView.Views.UserControls
 {
@@ -20,6 +22,8 @@ namespace PicView.Views.UserControls
                     OutPutStringBox.Text = newFolder;
                 }
             };
+
+            Windows.ResizeWindow.SetTextboxDragEvent(OutPutStringBox);
          }
     }
 }
