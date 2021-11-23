@@ -1,21 +1,22 @@
-﻿<UserControl x:Class="PicView.Views.UserControls.TextboxInfo"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:uc="clr-namespace:PicView.Views.UserControls"
-             mc:Ignorable="d" 
-             Margin="10,10,10,0">
+﻿<UserControl
+    x:Class="PicView.Views.UserControls.TextboxInfo"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="clr-namespace:PicView.Views.UserControls"
+    Margin="10,10,10,0"
+    mc:Ignorable="d">
     <StackPanel Orientation="Horizontal">
         <TextBlock
             x:Name="ValueName"
             Width="130"
             Margin="0,0,10,0"
             VerticalAlignment="Center"
-            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
-            Foreground="{StaticResource MainColorBrush}"
-            FontSize="14"
             d:Text="{StaticResource FileName}"
+            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+            FontSize="14"
+            Foreground="{StaticResource MainColorBrush}"
             TextTrimming="CharacterEllipsis"
             ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
         <TextBox
@@ -28,7 +29,8 @@
             Height="35"
             Margin="10,0,0,0"
             BorderBrush="{StaticResource BorderBrush}"
-            BorderThickness="1">
+            BorderThickness="1"
+            CornerRadius="2">
             <uc:CopyButton x:Name="ValueCopy" ToolTip="{StaticResource Copy}" />
         </Border>
     </StackPanel>

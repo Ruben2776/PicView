@@ -99,7 +99,7 @@
                                 </Image>
 
                                 <Image
-                                    Canvas.Left="27"
+                                    Canvas.Left="26"
                                     Canvas.Top="21"
                                     Height="10"
                                     Panel.ZIndex="-2"

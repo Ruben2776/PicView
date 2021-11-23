@@ -20,7 +20,7 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="0"
+                        CornerRadius="2"
                         SnapsToDevicePixels="True">
                         <ScrollViewer
                             x:Name="PART_ContentHost"
@@ -32,7 +32,7 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="border" Property="Opacity" Value="0.56" />
                         </Trigger>
-                        
+
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsReadOnly" Value="False" />
@@ -58,7 +58,7 @@
                         </Trigger>
 
                         <Trigger Property="IsReadOnly" Value="True">
-                            <Setter TargetName="border" Property="Background" Value="{StaticResource BackgroundColorBrush}"  />
+                            <Setter TargetName="border" Property="Background" Value="{StaticResource BackgroundColorBrush}" />
                         </Trigger>
 
                         <Trigger Property="IsReadOnly" Value="False">
