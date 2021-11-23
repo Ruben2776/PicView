@@ -139,7 +139,7 @@ namespace PicView.UILogic
         {
             if (GetImageInfoWindow == null)
             {
-                GetImageInfoWindow = new ImageInfoWindow { Owner = GetMainWindow };
+                GetImageInfoWindow = new();
 
                 GetImageInfoWindow.Show();
             }

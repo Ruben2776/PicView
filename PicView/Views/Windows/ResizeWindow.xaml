@@ -8,7 +8,7 @@
     Width="500"
     AllowDrop="False"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
-    BorderThickness="1"
+    BorderThickness="1.2"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="CanMinimize"
@@ -54,9 +54,10 @@
                 Margin="0,0,0,0"
                 VerticalAlignment="Center"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
-                FontSize="14"
+                FontSize="13"
                 Text="{StaticResource BatchResize}"
                 TextAlignment="Center" />
+
         </DockPanel>
 
         <Rectangle
@@ -227,6 +228,7 @@
                 <TextBlock Text="Percentage" />
 
                 <TextBox
+                    x:Name="PercentageBox"
                     Width="65"
                     IsReadOnly="False"
                     Text="90" />
@@ -287,13 +289,27 @@
                 <StackPanel x:Name="GeneratedThumbnailsContainer" />
             </ScrollViewer>
 
+
             <TextBox
                 Height="150"
-                Margin="15,15,15,0"
+                Margin="10,12,10,0"
                 BorderThickness="1.5"
                 Effect="{StaticResource MenuShadowButtonBorder}"
                 Text="B:\Pictures\new folder.jpg 114.5 kb 🠚 B:\Pictures\another new folder.webp 80.4 kb"
                 ToolTip="{x:Null}" />
+
+            <Border
+                Margin="10,11,10,0"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="2">
+                <ProgressBar
+                    x:Name="ProgressBar"
+                    Height="20"
+                    Background="{StaticResource AltInterfaceBrush}"
+                    BorderThickness="0"
+                    Value="20" />
+            </Border>
 
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 
@@ -309,7 +325,7 @@
                     Focusable="False">
                     <Label
                         x:Name="StartButton"
-                        Padding="20,10,20,10"
+                        Padding="20,7,20,7"
                         Content="Start"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium">
                         <Label.Background>
@@ -333,7 +349,7 @@
                     Focusable="False">
                     <Label
                         x:Name="CencelButton"
-                        Padding="10"
+                        Padding="10,7,10,7"
                         Content="Cancel"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium">
                         <Label.Background>

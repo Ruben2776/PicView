@@ -1,7 +1,9 @@
 ﻿using PicView.Animations;
 using PicView.ChangeImage;
+using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -28,6 +30,8 @@ namespace PicView.Views.Windows
 
             ContentRendered += (sender, e) =>
             {
+                Owner = null; // Remove owner, so that minizing mainwindow will not minize this
+
                 if (Error_Handling.CheckOutOfRange() == false)
                 {
                     SourceFolderInput.Text = Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]);
@@ -58,47 +62,47 @@ namespace PicView.Views.Windows
                 ThumbnailsComboBox.SelectionChanged += delegate
                 {
                     var selected = (ComboBoxItem)ThumbnailsComboBox.SelectedItem;
-                    if (int.TryParse(selected?.Content.ToString(), out var count)) 
+                    if (int.TryParse(selected?.Content.ToString(), out var count))
                     {
                         GeneratedThumbnailsContainer.Children.Clear();
 
                         if (count <= 0) { return; }
 
                         var size = new string[count + 1];
-                        var newSize = new string[size.Length]; 
+                        var newSize = new string[size.Length];
                         switch (count)
                         {
-                            case 7: 
+                            case 7:
                                 size[7] = "xxs"; size[6] = "xs"; size[5] = "small"; size[4] = "medium"; size[3] = "large"; size[2] = "xl"; size[1] = "xxl";
-                                newSize[7] = "20"; newSize[6] = "30"; newSize[5] = "40"; newSize[4] = "50"; newSize[3] = "60"; newSize[2] = "70"; newSize[1] = "80"; 
+                                newSize[7] = "20"; newSize[6] = "30"; newSize[5] = "40"; newSize[4] = "50"; newSize[3] = "60"; newSize[2] = "70"; newSize[1] = "80";
                                 break;
 
-                            case 6: 
+                            case 6:
                                 size[6] = "xxs"; size[5] = "xs"; size[4] = "small"; size[3] = "medium"; size[2] = "large"; size[1] = "xl";
                                 newSize[6] = "20"; newSize[5] = "30"; newSize[4] = "40"; newSize[3] = "50"; newSize[2] = "60"; newSize[1] = "70";
                                 break;
 
-                            case 5: 
+                            case 5:
                                 size[5] = "xs"; size[4] = "small"; size[3] = "medium"; size[2] = "large"; size[1] = "xl";
                                 newSize[5] = "20"; newSize[4] = "30"; newSize[3] = "50"; newSize[2] = "60"; newSize[1] = "70";
                                 break;
 
-                            case 4: 
+                            case 4:
                                 size[4] = "xs"; size[3] = "small"; size[2] = "medium"; size[1] = "large";
                                 newSize[4] = "25"; newSize[3] = "40"; newSize[2] = "50"; newSize[1] = "70";
                                 break;
 
-                            case 3: 
+                            case 3:
                                 size[3] = "small"; size[2] = "medium"; size[1] = "large";
                                 newSize[3] = "25"; newSize[2] = "50"; newSize[1] = "70";
                                 break;
 
-                            case 2: 
+                            case 2:
                                 size[1] = "small"; size[2] = "medium";
                                 newSize[1] = "30"; newSize[2] = "50";
                                 break;
 
-                            default: 
+                            default:
                                 size[1] = "small";
                                 newSize[1] = "30";
                                 break;
@@ -128,6 +132,52 @@ namespace PicView.Views.Windows
                 StartButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(StartBrush); };
                 StartButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(StartText); };
                 StartButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(StartBrush); };
+
+                StartButton.MouseLeftButtonDown += async delegate
+                {
+                    bool toResize = NoResize.IsSelected == false;
+                    double ResizeAmount = 0;
+                    ImageMagick.Percentage? percentage = null;
+
+                    if (toResize)
+                    {
+                        if (PercentageResize.IsSelected && int.TryParse(PercentageBox.Text, out var number))
+                        {
+                            percentage = new ImageMagick.Percentage(number);
+                        }
+                        else
+                        {
+                            if (WidthResize.IsSelected && int.TryParse(WidthResize.Content.ToString(), out var resizeWidth))
+                            {
+                                ResizeAmount = resizeWidth;
+                            }
+                            else if (HeightResize.IsSelected && int.TryParse(HeightResize.Content.ToString(), out var resizeHeight))
+                            {
+                                ResizeAmount = resizeHeight;
+                            }
+                        }
+                    }
+
+                    bool sameDir = false;
+                    if (Error_Handling.CheckOutOfRange() == false)
+                    {
+                        sameDir = Path.GetDirectoryName(Navigation.Pics[0]) == Path.GetDirectoryName(SourceFolderInput.Text);
+                    }
+
+                    var sourceFileist = sameDir ? Navigation.Pics : FileHandling.FileLists.FileList(new FileInfo(SourceFolderInput.Text));
+
+                    await Task.Run(() =>
+                    {
+                        Parallel.For(0, sourceFileist.Count, i =>
+                        {
+                            if (toResize)
+                            {
+
+                            }
+                        });
+                    });
+
+                };
 
                 CencelButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(CencelText); };
                 CencelButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(CancelBrush); };
