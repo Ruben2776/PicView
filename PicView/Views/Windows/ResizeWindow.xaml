@@ -121,8 +121,11 @@
                 </StackPanel.Style>
                 <TextBlock Text="Compression" />
                 <ComboBox MinWidth="130">
-                    <ComboBoxItem Content="Lossless" IsSelected="True" />
-                    <ComboBoxItem Content="Lossy" />
+                    <ComboBoxItem
+                        x:Name="LosslessCompressionChoice"
+                        Content="Lossless"
+                        IsSelected="True" />
+                    <ComboBoxItem x:Name="LossyCompressionChoice" Content="Lossy" />
                     <ComboBoxItem Content="No compression" />
                 </ComboBox>
             </StackPanel>
@@ -182,6 +185,7 @@
                 <TextBlock Text="{StaticResource Width}" />
 
                 <TextBox
+                    x:Name="WidthValue"
                     MinWidth="130"
                     IsReadOnly="False"
                     Text="100" />
@@ -205,6 +209,7 @@
                 <TextBlock Text="{StaticResource Height}" />
 
                 <TextBox
+                    x:Name="HeightValue"
                     MinWidth="130"
                     IsReadOnly="False"
                     Text="100" />
@@ -291,12 +296,16 @@
 
 
             <TextBox
+                x:Name="LogTextBox"
                 Height="150"
                 Margin="10,12,10,0"
+                AcceptsReturn="True"
                 BorderThickness="1.5"
                 Effect="{StaticResource MenuShadowButtonBorder}"
-                Text="B:\Pictures\new folder.jpg 114.5 kb 🠚 B:\Pictures\another new folder.webp 80.4 kb"
-                ToolTip="{x:Null}" />
+                MaxLines="999"
+                TextWrapping="Wrap"
+                ToolTip="{x:Null}"
+                VerticalScrollBarVisibility="Visible" />
 
             <Border
                 Margin="10,11,10,0"
@@ -308,7 +317,7 @@
                     Height="20"
                     Background="{StaticResource AltInterfaceBrush}"
                     BorderThickness="0"
-                    Value="20" />
+                    Value="0" />
             </Border>
 
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
@@ -348,7 +357,7 @@
                     Effect="{StaticResource MenuShadowButtonBorder}"
                     Focusable="False">
                     <Label
-                        x:Name="CencelButton"
+                        x:Name="CancelButton"
                         Padding="10,7,10,7"
                         Content="Cancel"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium">
@@ -356,7 +365,7 @@
                             <SolidColorBrush x:Name="CancelBrush" Color="{StaticResource BackgroundColorAlt}" />
                         </Label.Background>
                         <Label.Foreground>
-                            <SolidColorBrush x:Name="CencelText" Color="{StaticResource MainColor}" />
+                            <SolidColorBrush x:Name="CancelText" Color="{StaticResource MainColor}" />
                         </Label.Foreground>
                     </Label>
                 </Border>

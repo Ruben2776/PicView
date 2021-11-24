@@ -41,11 +41,13 @@ namespace PicView.ImageHandling
             return await GetImageSizeAsync(fileInfo).ConfigureAwait(false);
         }
 
-        internal static async Task<bool> ResizeImageAsync(string file, int width, int height, int quality = 100, Percentage? percentage = null)
+        internal static async Task<bool> ResizeImageAsync(string file, int width, int height, int quality = 100, Percentage? percentage = null, string? destination = null, bool? compress = null)
         {
             if (string.IsNullOrWhiteSpace(file)) { return false; }
             if (File.Exists(file) == false) { return false; }
             if (width < 0 && percentage is not null || height < 0 && percentage is not null) { return false; }
+
+            var filestream = new FileStream(file, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None, 4096, true);
 
             var magick = new MagickImage()
             {
@@ -59,7 +61,7 @@ namespace PicView.ImageHandling
 
             try
             {
-                await magick.ReadAsync(file).ConfigureAwait(false);
+                await magick.ReadAsync(filestream).ConfigureAwait(false);
             }
             catch (MagickException e)
             {
@@ -80,7 +82,24 @@ namespace PicView.ImageHandling
                     magick.Resize(width, height);
                 }
 
-                await magick.WriteAsync(file).ConfigureAwait(false);
+                if (destination is null)
+                {
+                    await magick.WriteAsync(filestream).ConfigureAwait(false);
+                    await filestream.DisposeAsync().ConfigureAwait(false);
+                }
+                else
+                {
+                    await filestream.DisposeAsync().ConfigureAwait(false);
+                    var dir = Path.GetDirectoryName(destination);
+                    if (dir is null) { return false; }
+                    if (Directory.Exists(dir) == false)
+                    {
+                        Directory.CreateDirectory(dir);
+                    }
+                    var destinationStream = new FileStream(destination, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 4096, true);
+                    await magick.WriteAsync(destinationStream).ConfigureAwait(false);
+                    await destinationStream.DisposeAsync().ConfigureAwait(false);
+                }
             }
             catch (MagickException e)
             {
@@ -91,6 +110,21 @@ namespace PicView.ImageHandling
             }
 
             magick.Dispose();
+
+            if (compress.HasValue)
+            {
+                ImageOptimizer imageOptimizer = new()
+                {
+                    OptimalCompression = compress.Value,
+                };
+
+                if (imageOptimizer.IsSupported(file) == false)
+                {
+                    return true;
+                }
+                imageOptimizer.Compress(file);
+            }
+
             return true;
         }
     }

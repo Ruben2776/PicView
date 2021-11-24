@@ -100,11 +100,11 @@ namespace PicView.ImageHandling
 
         }
 
-        internal static async Task<bool> OptimizeImageAsync(string file) => await Task.Run(() =>
+        internal static async Task<bool> OptimizeImageAsync(string file, bool lossless = true) => await Task.Run(() =>
         {
             ImageOptimizer imageOptimizer = new()
             {
-                OptimalCompression = true
+                OptimalCompression = lossless
             };
 
             if (imageOptimizer.IsSupported(file) == false)
@@ -112,7 +112,15 @@ namespace PicView.ImageHandling
                 return false;
             }
 
-            return imageOptimizer.LosslessCompress(file);
+            try
+            {
+                return imageOptimizer.LosslessCompress(file);
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
+
         });
 
         internal static RenderTargetBitmap? ImageErrorMessage()

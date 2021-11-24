@@ -1,19 +1,26 @@
 ﻿using PicView.Animations;
 using PicView.ChangeImage;
+using PicView.FileHandling;
+using PicView.ImageHandling;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
+using System;
 using System.IO;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using static PicView.UILogic.Sizing.WindowSizing;
 
 namespace PicView.Views.Windows
 {
     public partial class ResizeWindow : Window
     {
+        bool running;
         public ResizeWindow()
         {
             Title = Application.Current.Resources["BatchResize"] + " - PicView";
@@ -135,9 +142,27 @@ namespace PicView.Views.Windows
 
                 StartButton.MouseLeftButtonDown += async delegate
                 {
+                    LogTextBox.Text = String.Empty;
+                    running = true;
+
                     bool toResize = NoResize.IsSelected == false;
-                    double ResizeAmount = 0;
+                    int ResizeAmount = 0;
                     ImageMagick.Percentage? percentage = null;
+                    int quality = 100;
+                    bool? compress = null;
+                    if (LosslessCompressionChoice.IsSelected)
+                    {
+                        compress = true;
+                    }
+                    else if (LossyCompressionChoice.IsSelected)
+                    {
+                        compress = false;
+                    }
+
+                    if (int.TryParse(QualityPercentage.Text, out var q))
+                    {
+                        quality = q;
+                    }
 
                     if (toResize)
                     {
@@ -147,11 +172,11 @@ namespace PicView.Views.Windows
                         }
                         else
                         {
-                            if (WidthResize.IsSelected && int.TryParse(WidthResize.Content.ToString(), out var resizeWidth))
+                            if (WidthResize.IsSelected && int.TryParse(WidthValue.Text, out var resizeWidth))
                             {
                                 ResizeAmount = resizeWidth;
                             }
-                            else if (HeightResize.IsSelected && int.TryParse(HeightResize.Content.ToString(), out var resizeHeight))
+                            else if (HeightResize.IsSelected && int.TryParse(HeightValue.Text, out var resizeHeight))
                             {
                                 ResizeAmount = resizeHeight;
                             }
@@ -164,25 +189,84 @@ namespace PicView.Views.Windows
                         sameDir = Path.GetDirectoryName(Navigation.Pics[0]) == Path.GetDirectoryName(SourceFolderInput.Text);
                     }
 
-                    var sourceFileist = sameDir ? Navigation.Pics : FileHandling.FileLists.FileList(new FileInfo(SourceFolderInput.Text));
+                    var sourceFileist = sameDir ? Navigation.Pics : FileLists.FileList(new FileInfo(SourceFolderInput.Text));
+                    string outputFolder = OutputFolderInput.Text + @"\";
+                    ProgressBar.Maximum = sourceFileist.Count;
+                    var cancelToken = new CancellationTokenSource();
+                    int thumbs;
+                    var selectedThumb = (ComboBoxItem)ThumbnailsComboBox.SelectedItem;
+                    if (int.TryParse(selectedThumb.Content.ToString(), out var thumbNumber))
+                    {
+                        thumbs = thumbNumber;
+                    }
+                    else
+                    {
+                        thumbs = 0;
+                    }
 
                     await Task.Run(() =>
                     {
-                        Parallel.For(0, sourceFileist.Count, i =>
+                        Parallel.For(0, sourceFileist.Count, async i =>
                         {
+                            var sourceFile = new FileInfo(sourceFileist[i]);
+                            var destination = outputFolder + sourceFile.Name;
+                            var destinationFile = new FileInfo(destination);
+                            var sb = new StringBuilder();
+
                             if (toResize)
                             {
-
+                                var success = await ImageSizeFunctions.ResizeImageAsync(sourceFile.FullName, ResizeAmount, ResizeAmount, quality, percentage, destination, compress).ConfigureAwait(false);
+                                if (running is false)
+                                {
+                                    cancelToken.Cancel();
+                                }
+                                if (success)
+                                {
+                                    sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(sourceFile.Length)).Append(" 🠚 ")
+                                        .Append(destinationFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(destinationFile.Length)).
+                                        Append(' ').AppendLine(Environment.NewLine);
+                                }
                             }
+                            else if (thumbs <= 0 && compress.HasValue)
+                            {
+                                if (sourceFile.DirectoryName == destinationFile.DirectoryName)
+                                {
+                                    sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(sourceFile.Length));
+                                    await ImageFunctions.OptimizeImageAsync(sourceFile.FullName).ConfigureAwait(false);
+                                    sb.Append(" 🠚 ").Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(sourceFile.Length)).AppendLine(Environment.NewLine);
+                                }
+                                else
+                                {
+
+                                }
+
+                                if (running is false)
+                                {
+                                    cancelToken.Cancel();
+                                }
+                            }
+
+                            ConfigureWindows.GetResizeWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
+                            {
+                                LogTextBox.Text += sb.ToString();
+                                ProgressBar.Value++;
+                                LogTextBox.ScrollToEnd();
+                                if (ProgressBar.Value == ProgressBar.Maximum)
+                                {
+                                    LogTextBox.Text += Environment.NewLine + "Completed";
+                                }
+                            });
                         });
-                    });
+                    }, cancelToken.Token).ConfigureAwait(false);
 
                 };
 
-                CencelButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(CencelText); };
-                CencelButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(CancelBrush); };
-                CencelButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(CencelText); };
-                CencelButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(CancelBrush); };
+                CancelButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(CancelText); };
+                CancelButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(CancelBrush); };
+                CancelButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(CancelText); };
+                CancelButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(CancelBrush); };
+
+                CancelButton.MouseLeftButtonDown += (_, _) => { if (running) { running = false; } };
             };
         }
 
