@@ -47,8 +47,6 @@ namespace PicView.ImageHandling
             if (File.Exists(file) == false) { return false; }
             if (width < 0 && percentage is not null || height < 0 && percentage is not null) { return false; }
 
-            var filestream = new FileStream(file, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None, 4096, true);
-
             var magick = new MagickImage()
             {
                 ColorSpace = ColorSpace.Transparent
@@ -61,7 +59,7 @@ namespace PicView.ImageHandling
 
             try
             {
-                await magick.ReadAsync(filestream).ConfigureAwait(false);
+                await magick.ReadAsync(file).ConfigureAwait(false);
             }
             catch (MagickException e)
             {
@@ -84,21 +82,17 @@ namespace PicView.ImageHandling
 
                 if (destination is null)
                 {
-                    await magick.WriteAsync(filestream).ConfigureAwait(false);
-                    await filestream.DisposeAsync().ConfigureAwait(false);
+                    await magick.WriteAsync(file).ConfigureAwait(false);
                 }
                 else
                 {
-                    await filestream.DisposeAsync().ConfigureAwait(false);
                     var dir = Path.GetDirectoryName(destination);
                     if (dir is null) { return false; }
                     if (Directory.Exists(dir) == false)
                     {
                         Directory.CreateDirectory(dir);
                     }
-                    var destinationStream = new FileStream(destination, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 4096, true);
-                    await magick.WriteAsync(destinationStream).ConfigureAwait(false);
-                    await destinationStream.DisposeAsync().ConfigureAwait(false);
+                    await magick.WriteAsync(destination).ConfigureAwait(false);
                 }
             }
             catch (MagickException e)
@@ -118,11 +112,13 @@ namespace PicView.ImageHandling
                     OptimalCompression = compress.Value,
                 };
 
-                if (imageOptimizer.IsSupported(file) == false)
+                var x = destination is null ? file : destination;
+
+                if (imageOptimizer.IsSupported(x) == false)
                 {
                     return true;
                 }
-                imageOptimizer.Compress(file);
+                imageOptimizer.Compress(x);
             }
 
             return true;

@@ -35,8 +35,8 @@
             <StackPanel Orientation="Horizontal">
 
                 <ComboBox Width="130">
-                    <ComboBoxItem Content="{StaticResource Width}" />
-                    <ComboBoxItem Content="{StaticResource Height}" />
+                    <ComboBoxItem x:Name="WidthBox" Content="{StaticResource Width}" />
+                    <ComboBoxItem x:Name="HeightBox" Content="{StaticResource Height}" />
                     <ComboBoxItem
                         Name="Percentage"
                         Content="Percentage"

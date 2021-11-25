@@ -1,4 +1,5 @@
-﻿using PicView.Animations;
+﻿using ImageMagick;
+using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.FileHandling;
 using PicView.ImageHandling;
@@ -21,6 +22,7 @@ namespace PicView.Views.Windows
     public partial class ResizeWindow : Window
     {
         bool running;
+        System.Collections.Generic.List<BatchFunctions.ThumbNailHolder> thumbs = new();
         public ResizeWindow()
         {
             Title = Application.Current.Resources["BatchResize"] + " - PicView";
@@ -146,8 +148,8 @@ namespace PicView.Views.Windows
                     running = true;
 
                     bool toResize = NoResize.IsSelected == false;
-                    int ResizeAmount = 0;
-                    ImageMagick.Percentage? percentage = null;
+                    int resizeAmount = 0;
+                    Percentage? percentage = null;
                     int quality = 100;
                     bool? compress = null;
                     if (LosslessCompressionChoice.IsSelected)
@@ -168,17 +170,17 @@ namespace PicView.Views.Windows
                     {
                         if (PercentageResize.IsSelected && int.TryParse(PercentageBox.Text, out var number))
                         {
-                            percentage = new ImageMagick.Percentage(number);
+                            percentage = new Percentage(number);
                         }
                         else
                         {
                             if (WidthResize.IsSelected && int.TryParse(WidthValue.Text, out var resizeWidth))
                             {
-                                ResizeAmount = resizeWidth;
+                                resizeAmount = resizeWidth;
                             }
                             else if (HeightResize.IsSelected && int.TryParse(HeightValue.Text, out var resizeHeight))
                             {
-                                ResizeAmount = resizeHeight;
+                                resizeAmount = resizeHeight;
                             }
                         }
                     }
@@ -191,74 +193,44 @@ namespace PicView.Views.Windows
 
                     var sourceFileist = sameDir ? Navigation.Pics : FileLists.FileList(new FileInfo(SourceFolderInput.Text));
                     string outputFolder = OutputFolderInput.Text + @"\";
-                    ProgressBar.Maximum = sourceFileist.Count;
                     var cancelToken = new CancellationTokenSource();
-                    int thumbs;
-                    var selectedThumb = (ComboBoxItem)ThumbnailsComboBox.SelectedItem;
-                    if (int.TryParse(selectedThumb.Content.ToString(), out var thumbNumber))
-                    {
-                        thumbs = thumbNumber;
-                    }
-                    else
-                    {
-                        thumbs = 0;
-                    }
+                    int thumbSize = 0;
+                    Percentage? thumbPercentage = null;
 
-                    await Task.Run(() =>
+                    for (int i = 0; i < GeneratedThumbnailsContainer.Children.Count; i++)
                     {
-                        Parallel.For(0, sourceFileist.Count, async i =>
+                        var container = (UserControls.ThumbnailOutputUC)GeneratedThumbnailsContainer.Children[i];
+                        if (container == null) { continue; }
+                        if (container.Percentage.IsSelected && int.TryParse(container.ValueBox.Text, out var number))
                         {
-                            var sourceFile = new FileInfo(sourceFileist[i]);
-                            var destination = outputFolder + sourceFile.Name;
-                            var destinationFile = new FileInfo(destination);
-                            var sb = new StringBuilder();
-
-                            if (toResize)
+                            thumbPercentage = new Percentage(number);
+                        }
+                        else
+                        {
+                            if (container.WidthBox.IsSelected && int.TryParse(WidthValue.Text, out var resizeWidth))
                             {
-                                var success = await ImageSizeFunctions.ResizeImageAsync(sourceFile.FullName, ResizeAmount, ResizeAmount, quality, percentage, destination, compress).ConfigureAwait(false);
-                                if (running is false)
-                                {
-                                    cancelToken.Cancel();
-                                }
-                                if (success)
-                                {
-                                    sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(sourceFile.Length)).Append(" 🠚 ")
-                                        .Append(destinationFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(destinationFile.Length)).
-                                        Append(' ').AppendLine(Environment.NewLine);
-                                }
+                                thumbSize = resizeWidth;
                             }
-                            else if (thumbs <= 0 && compress.HasValue)
+                            else if (container.HeightBox.IsSelected && int.TryParse(HeightValue.Text, out var resizeHeight))
                             {
-                                if (sourceFile.DirectoryName == destinationFile.DirectoryName)
-                                {
-                                    sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(sourceFile.Length));
-                                    await ImageFunctions.OptimizeImageAsync(sourceFile.FullName).ConfigureAwait(false);
-                                    sb.Append(" 🠚 ").Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(sourceFile.Length)).AppendLine(Environment.NewLine);
-                                }
-                                else
-                                {
-
-                                }
-
-                                if (running is false)
-                                {
-                                    cancelToken.Cancel();
-                                }
+                                thumbSize = resizeHeight;
                             }
+                        }
+                        thumbs.Add(new BatchFunctions.ThumbNailHolder(container.OutPutStringBox.Text, thumbSize, thumbPercentage));
+                    }
 
-                            ConfigureWindows.GetResizeWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
-                            {
-                                LogTextBox.Text += sb.ToString();
-                                ProgressBar.Value++;
-                                LogTextBox.ScrollToEnd();
-                                if (ProgressBar.Value == ProgressBar.Maximum)
-                                {
-                                    LogTextBox.Text += Environment.NewLine + "Completed";
-                                }
-                            });
-                        });
-                    }, cancelToken.Token).ConfigureAwait(false);
+                    ProgressBar.Maximum = thumbs.Count > 0 ? sourceFileist.Count * thumbs.Count : sourceFileist.Count;
 
+                    await BatchFunctions.RunAsync(sourceFileist, resizeAmount, quality, percentage, compress, outputFolder, toResize, LogTextBox, ProgressBar).ConfigureAwait(false);
+
+                    Parallel.For(0, thumbs.Count, async i =>
+                    {
+                        var thumbLoc = thumbs[i].directory + @"\" + Path.GetFileName(sourceFileist[i]);
+                        if (string.IsNullOrWhiteSpace(thumbLoc) == false)
+                        {
+                            await BatchFunctions.RunAsync(sourceFileist, thumbs[i].size, quality, thumbs[i].percentage, compress, thumbLoc, true, LogTextBox, ProgressBar).ConfigureAwait(false);
+                        }
+                    });
                 };
 
                 CancelButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(CancelText); };
@@ -266,7 +238,7 @@ namespace PicView.Views.Windows
                 CancelButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(CancelText); };
                 CancelButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(CancelBrush); };
 
-                CancelButton.MouseLeftButtonDown += (_, _) => { if (running) { running = false; } };
+                CancelButton.MouseLeftButtonDown += (_, _) => running = false;
             };
         }
 

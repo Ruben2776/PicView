@@ -302,7 +302,7 @@
                 AcceptsReturn="True"
                 BorderThickness="1.5"
                 Effect="{StaticResource MenuShadowButtonBorder}"
-                MaxLines="999"
+                MaxLines="9999"
                 TextWrapping="Wrap"
                 ToolTip="{x:Null}"
                 VerticalScrollBarVisibility="Visible" />
