@@ -1,0 +1,23 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/src/PicView.Win32/obj/project.nuget.cache
+/src/PicView.Win32/obj/project.assets.json
+/src/PicView.Win32/obj/PicView.Win32.csproj.nuget.g.targets
+/src/PicView.Win32/obj/PicView.Win32.csproj.nuget.g.props
+/src/PicView.Win32/obj/PicView.Win32.csproj.nuget.dgspec.json
+/src/PicView.Win32/obj/Debug/net6.0/PicView.Win32.GlobalUsings.g.cs
+/src/PicView.Win32/obj/Debug/net6.0/PicView.Win32.GeneratedMSBuildEditorConfig.editorconfig
+/src/PicView.Win32/obj/Debug/net6.0/PicView.Win32.csproj.AssemblyReference.cache
+/src/PicView.Win32/obj/Debug/net6.0/PicView.Win32.assets.cache
+/src/PicView.Win32/obj/Debug/net6.0/PicView.Win32.AssemblyInfoInputs.cache
+/src/PicView.Win32/obj/Debug/net6.0/PicView.Win32.AssemblyInfo.cs
+/src/PicView.Win32/obj/Debug/net6.0/.NETCoreApp,Version=v6.0.AssemblyAttributes.cs
+/src/PicView.Tests
+/src/PicView.Win32/bin/Debug/net6.0
+/src/PicView.Win32/obj/Debug/net6.0/ref
+/src/PicView.Win32/obj/Debug/net6.0
+/src/PicView.MacOS/obj
+/src/.vs/PicView/DesignTimeBuild
+/src/.vs/PicView/v17/.futdcache.v1
